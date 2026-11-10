@@ -89,7 +89,7 @@ class SystemHubPanel extends HTMLElement {
     main { max-width:1040px; margin:0 auto; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; }
     .note { padding:16px; color:var(--secondary-text-color); display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
     .note.error { color:var(--primary-text-color); border-left:3px solid var(--tone-bad); }
-    .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:10px; }
+    .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; }
     .tile { position:relative; overflow:hidden; padding:12px 14px; display:flex; align-items:center; gap:12px; min-width:0; }
     .tile.link { cursor:pointer; }
     .tile .spark { position:absolute; inset:auto 0 0 0; width:100%; height:45%; opacity:.5; pointer-events:none; }
@@ -112,6 +112,9 @@ class SystemHubPanel extends HTMLElement {
     .item.link:hover { background:var(--secondary-background-color, rgba(127,127,127,.08)); }
     .item > ha-icon { flex:none; --mdc-icon-size:22px; color:var(--tone-text, var(--secondary-text-color)); }
     .side { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:4px; font-size:12px; text-align:right; min-width:90px; }
+    .side.fixed { width:150px; min-width:0; }
+    .trend { flex:none; width:90px; height:22px; }
+    .trend .spark { width:100%; height:100%; display:block; }
     .meter { width:90px; height:6px; border-radius:3px; background:var(--divider-color, rgba(127,127,127,.25)); overflow:hidden; }
     .meter > span { display:block; height:100%; background:var(--tone, var(--primary-color)); }
     .muted { color:var(--secondary-text-color); }
@@ -134,6 +137,7 @@ class SystemHubPanel extends HTMLElement {
     .block h2 { margin:0; font-size:16px; font-weight:500; }
     .row { display:flex; align-items:center; gap:12px; min-height:40px; }
     .row .who .n { font-size:14px; }
+    .row .who .s { white-space:normal; }
     .icon-btn { border:0; background:none; cursor:pointer; color:var(--secondary-text-color); padding:8px; border-radius:50%; display:flex; --mdc-icon-size:20px; }
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
@@ -142,10 +146,14 @@ class SystemHubPanel extends HTMLElement {
     code { font-family:var(--code-font-family, monospace); font-size:12px; }
     @media (max-width: 600px) {
       main { padding:12px 8px; }
+      .tiles { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; }
       .tile { padding:10px 12px; gap:10px; }
       .avatar { width:32px; height:32px; --mdc-icon-size:18px; }
       .side { min-width:70px; }
       .meter { width:70px; }
+      .side.fixed { width:auto; }
+      .trend { display:none; }
+      .tile .more { display:none; }
     }
   `;
 
@@ -398,6 +406,16 @@ class SystemHubPanel extends HTMLElement {
     }
   }
 
+  _day(iso) {
+    var date = new Date(iso);
+    if (!iso || Number.isNaN(date.getTime())) return '—';
+    try {
+      return date.toLocaleDateString(this._hass?.locale?.language || this._hass?.language || undefined, { dateStyle: 'medium' });
+    } catch (_err) {
+      return iso.slice(0, 10);
+    }
+  }
+
   // System: the System Monitor sensors
   _system() {
     var sensors = this._state.system || [];
@@ -428,13 +446,13 @@ class SystemHubPanel extends HTMLElement {
     var loads = ['load_1m', 'load_5m', 'load_15m'].map(one).filter(Boolean);
     if (loads.length) {
       tiles.push(
-        this._tile('mdi:speedometer', loads.map((s) => `<b>${shEsc(shNum(s.state)?.toFixed(2) ?? '—')}</b>`).join(' '), this._t('load'), '', {
+        this._tile('mdi:speedometer', loads.map((s, i) => (i ? `<span class="more">${shEsc(shNum(s.state)?.toFixed(2) ?? '—')}</span>` : `<b>${shEsc(shNum(s.state)?.toFixed(2) ?? '—')}</b>`)).join(' '), this._t('load'), '', {
           entity: loads[0].entity_id,
         }),
       );
     }
     var boot = one('last_boot');
-    if (boot) tiles.push(this._tile('mdi:clock-start', shEsc(this._ago(boot.state)), this._t('uptime'), '', { entity: boot.entity_id }));
+    if (boot) tiles.push(this._tile('mdi:clock-start', shEsc(this._day(boot.state)), this._t('uptime'), '', { entity: boot.entity_id }));
     var rates = ['throughput_network_in', 'throughput_network_out']
       .map((key) => sensors.filter((s) => s.key === key))
       .map((list) => list.reduce((sum, s) => sum + (shNum(s.state) || 0), 0));
@@ -484,14 +502,15 @@ class SystemHubPanel extends HTMLElement {
         var version = c.update_available ? this._t('update', { version: c.version_latest }) : c.version || '';
         return `<div class="item ${tone}"><ha-icon icon="${c.kind === 'addon' ? 'mdi:puzzle-outline' : c.kind === 'core' ? 'mdi:home-assistant' : 'mdi:shield-home-outline'}"></ha-icon>
           <div class="who"><div class="n">${shEsc(c.name)}</div><div class="s">${shEsc(kind)}${version ? ` · ${shEsc(version)}` : ''}</div></div>
+          ${spark ? `<div class="trend ${tone}">${spark}</div>` : ''}
           <span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span>
-          <div class="side">${
+          <div class="side fixed">${
             on
               ? `<span>CPU ${cpu === null ? '—' : `${Math.round(cpu)}%`} · RAM ${mem === null ? '—' : `${Math.round(mem)}%`}</span>
             <div class="meter ${shTone(mem)}"><span style="width:${Math.min(mem || 0, 100)}%"></span></div>
             <span class="muted">${shBytes(c.memory_usage)}</span>`
               : ''
-          }${spark ? `<div style="width:90px;height:18px">${spark}</div>` : ''}</div></div>`;
+          }</div></div>`;
       })
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>
@@ -508,7 +527,7 @@ class SystemHubPanel extends HTMLElement {
     var tiles = [
       this._tile('mdi:puzzle-remove-outline', `<b>${unavailable.length}</b>`, this._entityName('sensor', 'watchdog_unavailable'), unavailable.length ? 'warn' : 'good'),
       this._tile('mdi:cancel', `<b>${gaveUp.length}</b>`, this._t('gave_up'), gaveUp.length ? 'bad' : 'good'),
-      this._tile('mdi:restart', `<b>${data.reloads ?? 0}</b>`, this._entityName('sensor', 'watchdog_last_reload'), ''),
+      this._tile('mdi:restart', `<b>${data.reloads ?? 0}</b>`, this._l(`component.${SH_DOMAIN}.entity.sensor.watchdog_last_reload.state_attributes.reloads.name`) || 'Reloads', ''),
       this._tile('mdi:clock-check-outline', shEsc(data.running ? '…' : this._ago(data.last_check)), this._t('last_check'), data.paused ? 'warn' : ''),
     ];
     var rows = unavailable

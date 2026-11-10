@@ -13,6 +13,8 @@ Home Assistant integration that brings the care of your Home Assistant system to
 
 > **Work in progress.** System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor) and [ha-git-sync](https://github.com/juju35/ha-git-sync). Their features are being brought in; keep using them until the first release.
 
+<p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="System Hub sidebar panel, System tab" width="800"></p>
+
 ## Features
 
 - **System**: CPU, memory, disks, network and temperatures from the System Monitor integration.
@@ -99,6 +101,26 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 | Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
 
 Git Sync can't be turned on from the panel the first time: its repository is checked in **Configure → Modules**.
+
+### Screenshots
+
+Every tab, light and dark themes:
+
+| Tab | Light | Dark |
+|---|---|---|
+| System | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="sidebar panel, System tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system-dark.png" alt="sidebar panel, System tab, dark theme" width="400"> |
+| Containers | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-containers.png" alt="sidebar panel, Containers tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-containers-dark.png" alt="sidebar panel, Containers tab, dark theme" width="400"> |
+| Watchdog | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-watchdog.png" alt="sidebar panel, Watchdog tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-watchdog-dark.png" alt="sidebar panel, Watchdog tab, dark theme" width="400"> |
+| Marketplace | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-marketplace.png" alt="sidebar panel, Marketplace tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-marketplace-dark.png" alt="sidebar panel, Marketplace tab, dark theme" width="400"> |
+| Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries.png" alt="sidebar panel, Batteries tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-dark.png" alt="sidebar panel, Batteries tab, dark theme" width="400"> |
+| Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync.png" alt="sidebar panel, Git Sync tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-dark.png" alt="sidebar panel, Git Sync tab, dark theme" width="400"> |
+| Settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings.png" alt="sidebar panel, Settings tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings-dark.png" alt="sidebar panel, Settings tab, dark theme" width="400"> |
+
+On a phone:
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-phone.png" alt="sidebar panel on a phone" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-phone-dark.png" alt="sidebar panel on a phone, dark theme" width="300"> |
 
 ## Containers
 
