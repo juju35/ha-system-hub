@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Виберіть модулі для ввімкнення. Кожен модуль налаштовується в параметрах.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
           "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
           "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor недоступний: потрібна Home Assistant OS або встановлення Supervised.",
       "marketplace_not_loaded": "Marketplace не завантажено."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Параметри System Hub",
         "menu_options": {
           "modules": "Модулі",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Додати перезапуск через розетку",
           "watchdog_remove_power_cycle": "Watchdog: Видалити перезапуски через розетку",
@@ -38,12 +42,27 @@
         "title": "Модулі",
         "description": "Увімкніть або вимкніть модулі. Вимкнений модуль припиняє перевірки, а його сутності видаляються; його налаштування зберігаються.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
           "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
           "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Інтервал оновлення",
+          "notify": "Сповіщати",
+          "notify_services": "Дії сповіщень"
+        },
+        "data_description": {
+          "scan_interval": "Секунди між двома опитуваннями Supervisor.",
+          "notify": "Сповіщати, коли контейнер, який має працювати (доповнення, що запускається під час завантаження), зупиняється, і коли він повертається.",
+          "notify_services": "Також надсилати кожне сповіщення за допомогою цих дій (notify.mobile_app_…). Постійне сповіщення створюється завжди."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Цей пристрій уже має перезапуск через розетку: спершу видаліть його.",
       "switch_on_device": "Розетка не може бути об'єктом самого пристрою: вона була б недоступна разом із ним.",
       "device_without_entities": "Цей пристрій не має об'єктів для спостереження, крім розетки.",
-      "marketplace_not_loaded": "Marketplace не завантажено."
+      "marketplace_not_loaded": "Marketplace не завантажено.",
+      "supervisor_not_available": "Supervisor недоступний: потрібна Home Assistant OS або встановлення Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Працюючі контейнери",
+        "state_attributes": {
+          "total": {
+            "name": "Усього"
+          },
+          "error": {
+            "name": "Помилка"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Зупинені контейнери",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Останнє оновлення"
+      },
       "watchdog_unavailable": {
         "name": "Недоступні інтеграції",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Оновити контейнери",
+      "description": "Зараз зчитує Home Assistant Core, Supervisor і доповнення із Supervisor."
+    },
     "watchdog_check": {
       "name": "Перевірити інтеграції",
       "description": "Шукає інтеграції, усі сутності яких недоступні, і перезавантажує ті, у яких минув період очікування."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Контейнер зупинено",
+    "containers_down": "{name} має працювати, але перебуває в стані {state}.",
+    "containers_back_title": "Контейнер знову працює",
+    "containers_back": "{name} знову працює.",
     "watchdog_reloaded_title": "Інтеграцію перезавантажено",
     "watchdog_reloaded": "{title} ({domain}) перезавантажено: усі її сутності були недоступні з {since}. Перезавантаження {attempt}/{max}.",
     "watchdog_reload_failed_title": "Не вдалося перезавантажити інтеграцію",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Залишилося замало запитів GitHub для перевірки всіх репозиторіїв (залишилося {remaining}, потрібно {needed}): перевірка повториться після скидання ліміту о {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Не вдалося отримати контейнери від Supervisor: {error}"
     }
   },
   "issues": {

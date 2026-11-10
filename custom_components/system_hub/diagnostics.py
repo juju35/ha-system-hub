@@ -28,6 +28,7 @@ TO_REDACT = {
     "refresh_token",
     "github_token",
     "api_key",
+    "ip_address",
 }
 
 
@@ -36,6 +37,12 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: SystemH
         "entry": {"data": dict(entry.data), "options": dict(entry.options)},
         "modules": enabled_modules(entry),
     }
+    if (monitor := entry.runtime_data.containers) is not None:
+        data["containers"] = {
+            "last_update": monitor.last_update.isoformat() if monitor.last_update else None,
+            "error": monitor.error,
+            "containers": [c.as_dict() for c in monitor.containers.values()],
+        }
     if (watchdog := entry.runtime_data.watchdog) is not None:
         data |= _watchdog(watchdog)
     if (refresher := entry.runtime_data.marketplace) is not None:

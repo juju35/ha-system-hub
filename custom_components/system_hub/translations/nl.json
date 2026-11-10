@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig.",
       "marketplace_not_loaded": "Marketplace is niet geladen."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Opties van System Hub",
         "menu_options": {
           "modules": "Modules",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Herstart via stekker toevoegen",
           "watchdog_remove_power_cycle": "Watchdog: Herstarts via stekker verwijderen",
@@ -38,12 +42,27 @@
         "title": "Modules",
         "description": "Schakel modules in of uit. Een uitgeschakelde module stopt met controleren en haar entiteiten worden verwijderd; haar instellingen blijven bewaard.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Verversingsinterval",
+          "notify": "Melden",
+          "notify_services": "Meldingsacties"
+        },
+        "data_description": {
+          "scan_interval": "Seconden tussen twee uitlezingen van de Supervisor.",
+          "notify": "Melden wanneer een container die zou moeten draaien (een add-on die bij het opstarten start) stopt, en wanneer hij terug is.",
+          "notify_services": "Stuur elke melding ook met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Dit apparaat heeft al een herstart via stekker: verwijder die eerst.",
       "switch_on_device": "De stekker kan geen entiteit van het apparaat zelf zijn: hij zou er samen mee onbeschikbaar zijn.",
       "device_without_entities": "Dit apparaat heeft naast de stekker geen entiteit om te bewaken.",
-      "marketplace_not_loaded": "Marketplace is niet geladen."
+      "marketplace_not_loaded": "Marketplace is niet geladen.",
+      "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Draaiende containers",
+        "state_attributes": {
+          "total": {
+            "name": "Totaal"
+          },
+          "error": {
+            "name": "Fout"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Gestopte containers",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Laatste update"
+      },
       "watchdog_unavailable": {
         "name": "Niet-beschikbare integraties",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Containers verversen",
+      "description": "Leest nu Home Assistant Core, de Supervisor en de add-ons uit via de Supervisor."
+    },
     "watchdog_check": {
       "name": "Integraties controleren",
       "description": "Zoekt de integraties waarvan alle entiteiten niet beschikbaar zijn en herlaadt die waarvan de wachttijd voorbij is."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Container gestopt",
+    "containers_down": "{name} zou moeten draaien maar is {state}.",
+    "containers_back_title": "Container terug",
+    "containers_back": "{name} draait weer.",
     "watchdog_reloaded_title": "Integratie herladen",
     "watchdog_reloaded": "{title} ({domain}) is herladen: al zijn entiteiten waren niet beschikbaar sinds {since}. Herlaadpoging {attempt}/{max}.",
     "watchdog_reload_failed_title": "Herladen van integratie mislukt",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Niet genoeg GitHub-verzoeken over om elke repository te controleren ({remaining} over, {needed} nodig): de controle draait opnieuw nadat de limiet om {reset} is gereset."
+    },
+    "containers_read_failed": {
+      "message": "Kan de containers niet uitlezen van de Supervisor: {error}"
     }
   },
   "issues": {

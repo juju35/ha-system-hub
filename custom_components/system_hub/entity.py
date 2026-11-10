@@ -10,7 +10,11 @@ from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN
 
-DEVICE_NAMES = {"watchdog": "System Hub Watchdog", "marketplace": "System Hub Marketplace"}
+DEVICE_NAMES = {
+    "containers": "System Hub Containers",
+    "watchdog": "System Hub Watchdog",
+    "marketplace": "System Hub Marketplace",
+}
 
 
 class Listenable(Protocol):

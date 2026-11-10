@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Επιλέξτε τις μονάδες που θα ενεργοποιηθούν. Κάθε μονάδα ρυθμίζεται στις επιλογές.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
           "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Ο Supervisor δεν είναι διαθέσιμος: απαιτείται Home Assistant OS ή εγκατάσταση Supervised.",
       "marketplace_not_loaded": "Το Marketplace δεν έχει φορτωθεί."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Επιλογές System Hub",
         "menu_options": {
           "modules": "Μονάδες",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Προσθήκη επανεκκίνησης μέσω πρίζας",
           "watchdog_remove_power_cycle": "Watchdog: Αφαίρεση επανεκκινήσεων μέσω πρίζας",
@@ -38,12 +42,27 @@
         "title": "Μονάδες",
         "description": "Ενεργοποιήστε ή απενεργοποιήστε μονάδες. Μια απενεργοποιημένη μονάδα σταματά τους ελέγχους της και οι οντότητές της αφαιρούνται· οι ρυθμίσεις της διατηρούνται.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
           "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Διάστημα ανανέωσης",
+          "notify": "Ειδοποίηση",
+          "notify_services": "Ενέργειες ειδοποίησης"
+        },
+        "data_description": {
+          "scan_interval": "Δευτερόλεπτα μεταξύ δύο αναγνώσεων του Supervisor.",
+          "notify": "Ειδοποίηση όταν ένα κοντέινερ που θα έπρεπε να λειτουργεί (πρόσθετο που ξεκινά κατά την εκκίνηση) σταματά, και όταν επιστρέφει.",
+          "notify_services": "Αποστολή κάθε ειδοποίησης και με αυτές τις ενέργειες (notify.mobile_app_…). Μια μόνιμη ειδοποίηση δημιουργείται πάντα."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Αυτή η συσκευή έχει ήδη επανεκκίνηση μέσω πρίζας: αφαιρέστε την πρώτα.",
       "switch_on_device": "Η πρίζα δεν μπορεί να είναι οντότητα της ίδιας της συσκευής: θα ήταν μη διαθέσιμη μαζί της.",
       "device_without_entities": "Αυτή η συσκευή δεν έχει καμία οντότητα προς παρακολούθηση εκτός από την πρίζα.",
-      "marketplace_not_loaded": "Το Marketplace δεν έχει φορτωθεί."
+      "marketplace_not_loaded": "Το Marketplace δεν έχει φορτωθεί.",
+      "supervisor_not_available": "Ο Supervisor δεν είναι διαθέσιμος: απαιτείται Home Assistant OS ή εγκατάσταση Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Κοντέινερ σε λειτουργία",
+        "state_attributes": {
+          "total": {
+            "name": "Σύνολο"
+          },
+          "error": {
+            "name": "Σφάλμα"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Σταματημένα κοντέινερ",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Τελευταία ενημέρωση"
+      },
       "watchdog_unavailable": {
         "name": "Μη διαθέσιμες ενσωματώσεις",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Ανανέωση κοντέινερ",
+      "description": "Διαβάζει τώρα το Home Assistant Core, τον Supervisor και τα πρόσθετα από τον Supervisor."
+    },
     "watchdog_check": {
       "name": "Έλεγχος ενσωματώσεων",
       "description": "Αναζητά τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες και επαναφορτώνει όσες έχουν ξεπεράσει την περίοδο χάριτος."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Το κοντέινερ σταμάτησε",
+    "containers_down": "Το {name} θα έπρεπε να λειτουργεί αλλά είναι {state}.",
+    "containers_back_title": "Το κοντέινερ επέστρεψε",
+    "containers_back": "Το {name} λειτουργεί ξανά.",
     "watchdog_reloaded_title": "Η ενσωμάτωση επαναφορτώθηκε",
     "watchdog_reloaded": "Η ενσωμάτωση {title} ({domain}) επαναφορτώθηκε: όλες οι οντότητές της ήταν μη διαθέσιμες από {since}. Επαναφόρτωση {attempt}/{max}.",
     "watchdog_reload_failed_title": "Η επαναφόρτωση της ενσωμάτωσης απέτυχε",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Δεν απομένουν αρκετά αιτήματα GitHub για τον έλεγχο όλων των αποθετηρίων (απομένουν {remaining}, χρειάζονται {needed}): ο έλεγχος θα επαναληφθεί μετά τον μηδενισμό του ορίου στις {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Δεν ήταν δυνατή η ανάγνωση των κοντέινερ από τον Supervisor: {error}"
     }
   },
   "issues": {

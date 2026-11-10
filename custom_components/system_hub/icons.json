@@ -9,6 +9,15 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "default": "mdi:docker"
+      },
+      "containers_down": {
+        "default": "mdi:package-variant-closed-remove"
+      },
+      "containers_last_update": {
+        "default": "mdi:clock-check-outline"
+      },
       "watchdog_unavailable": {
         "default": "mdi:puzzle-remove-outline"
       },
@@ -34,6 +43,9 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "service": "mdi:refresh"
+    },
     "watchdog_check": {
       "service": "mdi:shield-search"
     },

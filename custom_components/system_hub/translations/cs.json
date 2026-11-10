@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Vyberte moduly, které chcete zapnout. Každý modul se nastavuje v možnostech.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised.",
       "marketplace_not_loaded": "Marketplace není načten."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Možnosti System Hub",
         "menu_options": {
           "modules": "Moduly",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
           "watchdog_remove_power_cycle": "Watchdog: Odebrat restarty přes zásuvku",
@@ -38,12 +42,27 @@
         "title": "Moduly",
         "description": "Zapněte nebo vypněte moduly. Vypnutý modul zastaví své kontroly a jeho entity jsou odstraněny; jeho nastavení zůstává zachováno.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Interval obnovení",
+          "notify": "Upozornit",
+          "notify_services": "Akce oznámení"
+        },
+        "data_description": {
+          "scan_interval": "Sekundy mezi dvěma načteními ze Supervisoru.",
+          "notify": "Upozornit, když se kontejner, který by měl běžet (doplněk spouštěný při startu), zastaví, a když se vrátí.",
+          "notify_services": "Každé oznámení odeslat také pomocí těchto akcí (notify.mobile_app_…). Trvalé oznámení se vytvoří vždy."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Toto zařízení už má restart přes zásuvku: nejprve ho odeberte.",
       "switch_on_device": "Zásuvka nemůže být entitou samotného zařízení: byla by nedostupná spolu s ním.",
       "device_without_entities": "Toto zařízení nemá kromě zásuvky žádnou entitu ke sledování.",
-      "marketplace_not_loaded": "Marketplace není načten."
+      "marketplace_not_loaded": "Marketplace není načten.",
+      "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Běžící kontejnery",
+        "state_attributes": {
+          "total": {
+            "name": "Celkem"
+          },
+          "error": {
+            "name": "Chyba"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Zastavené kontejnery",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Poslední aktualizace"
+      },
       "watchdog_unavailable": {
         "name": "Nedostupné integrace",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Obnovit kontejnery",
+      "description": "Nyní načte Home Assistant Core, Supervisor a doplňky ze Supervisoru."
+    },
     "watchdog_check": {
       "name": "Zkontrolovat integrace",
       "description": "Vyhledá integrace, jejichž všechny entity jsou nedostupné, a znovu načte ty, kterým uplynula ochranná lhůta."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Kontejner zastaven",
+    "containers_down": "{name} by měl běžet, ale je ve stavu {state}.",
+    "containers_back_title": "Kontejner opět běží",
+    "containers_back": "{name} opět běží.",
     "watchdog_reloaded_title": "Integrace znovu načtena",
     "watchdog_reloaded": "{title} ({domain}) byla znovu načtena: všechny její entity byly nedostupné od {since}. Opětovné načtení {attempt}/{max}.",
     "watchdog_reload_failed_title": "Opětovné načtení integrace selhalo",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Nezbývá dost požadavků GitHub na kontrolu všech repozitářů (zbývá {remaining}, potřeba {needed}): kontrola proběhne znovu po vynulování limitu v {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Kontejnery se nepodařilo načíst ze Supervisoru: {error}"
     }
   },
   "issues": {

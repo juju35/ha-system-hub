@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Válassza ki a bekapcsolandó modulokat. Minden modult a beállításokban lehet megadni.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "A Supervisor nem érhető el: Home Assistant OS vagy Supervised telepítés szükséges.",
       "marketplace_not_loaded": "A Marketplace nincs betöltve."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "System Hub beállításai",
         "menu_options": {
           "modules": "Modulok",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Újraindítás hozzáadása konnektorral",
           "watchdog_remove_power_cycle": "Watchdog: Konnektoros újraindítások eltávolítása",
@@ -38,12 +42,27 @@
         "title": "Modulok",
         "description": "Kapcsolja be vagy ki a modulokat. A kikapcsolt modul leállítja az ellenőrzéseit, és az entitásai törlődnek; a beállításai megmaradnak.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Frissítési időköz",
+          "notify": "Értesítés",
+          "notify_services": "Értesítési műveletek"
+        },
+        "data_description": {
+          "scan_interval": "Másodpercek a Supervisor két lekérdezése között.",
+          "notify": "Értesítés, ha egy konténer, amelynek futnia kellene (rendszerinduláskor induló kiegészítő), leáll, és amikor újra fut.",
+          "notify_services": "Minden értesítés elküldése ezekkel a műveletekkel is (notify.mobile_app_…). Állandó értesítés mindig létrejön."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Ennek az eszköznek már van konnektoros újraindítása: előbb távolítsa el.",
       "switch_on_device": "A konnektor nem lehet magának az eszköznek az entitása: vele együtt elérhetetlen lenne.",
       "device_without_entities": "Ennek az eszköznek a konnektoron kívül nincs figyelendő entitása.",
-      "marketplace_not_loaded": "A Marketplace nincs betöltve."
+      "marketplace_not_loaded": "A Marketplace nincs betöltve.",
+      "supervisor_not_available": "A Supervisor nem érhető el: Home Assistant OS vagy Supervised telepítés szükséges."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Futó konténerek",
+        "state_attributes": {
+          "total": {
+            "name": "Összesen"
+          },
+          "error": {
+            "name": "Hiba"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Leállt konténerek",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Utolsó frissítés"
+      },
       "watchdog_unavailable": {
         "name": "Nem elérhető integrációk",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Konténerek frissítése",
+      "description": "Most beolvassa a Home Assistant Core-t, a Supervisort és a kiegészítőket a Supervisorból."
+    },
     "watchdog_check": {
       "name": "Integrációk ellenőrzése",
       "description": "Megkeresi azokat az integrációkat, amelyeknek minden entitása nem elérhető, és újratölti azokat, amelyeknek lejárt a türelmi ideje."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Konténer leállt",
+    "containers_down": "{name} futnia kellene, de állapota: {state}.",
+    "containers_back_title": "Konténer újra fut",
+    "containers_back": "{name} újra fut.",
     "watchdog_reloaded_title": "Integráció újratöltve",
     "watchdog_reloaded": "{title} ({domain}) újratöltve: minden entitása nem volt elérhető {since} óta. Újratöltés: {attempt}/{max}.",
     "watchdog_reload_failed_title": "Az integráció újratöltése sikertelen",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Nem maradt elég GitHub-kérés az összes tároló ellenőrzéséhez ({remaining} maradt, {needed} kell): az ellenőrzés a korlát {reset}-kor történő visszaállítása után újra lefut."
+    },
+    "containers_read_failed": {
+      "message": "Nem sikerült beolvasni a konténereket a Supervisorból: {error}"
     }
   },
   "issues": {

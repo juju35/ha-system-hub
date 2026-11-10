@@ -16,7 +16,17 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
-from .const import CONF_MODULES, DOMAIN, MARKETPLACE_DOMAIN, MODULE_MARKETPLACE, MODULE_WATCHDOG, MODULES
+from .const import (
+    CONF_MODULES,
+    DOMAIN,
+    MARKETPLACE_DOMAIN,
+    MODULE_CONTAINERS,
+    MODULE_MARKETPLACE,
+    MODULE_WATCHDOG,
+    MODULES,
+)
+from .containers import flow as containers_flow
+from .containers.monitor import supervisor_available
 from .marketplace import flow as marketplace_flow
 from .watchdog import flow as watchdog_flow
 from .watchdog.const import CONF_DELAY, CONF_DEVICE, CONF_OFF_TIME, CONF_POWER_CYCLES, CONF_SWITCH
@@ -27,9 +37,22 @@ def _modules_schema(current: list[str]) -> vol.Schema:
 
 
 def _modules_errors(hass: HomeAssistant, user_input: dict[str, Any]) -> dict[str, str]:
+    errors = {}
+    if user_input.get(MODULE_CONTAINERS) and not supervisor_available(hass):
+        errors[MODULE_CONTAINERS] = "supervisor_not_available"
     if user_input.get(MODULE_MARKETPLACE) and MARKETPLACE_DOMAIN not in hass.config.components:
-        return {MODULE_MARKETPLACE: "marketplace_not_loaded"}
-    return {}
+        errors[MODULE_MARKETPLACE] = "marketplace_not_loaded"
+    return errors
+
+
+def _available(hass: HomeAssistant) -> list[str]:
+    """The modules that can run here, turned on by default."""
+    return [
+        m
+        for m in MODULES
+        if (m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in hass.config.components)
+        and (m != MODULE_CONTAINERS or supervisor_available(hass))
+    ]
 
 
 def _chosen(user_input: dict[str, Any]) -> list[str]:
@@ -46,8 +69,7 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
         errors = _modules_errors(self.hass, user_input) if user_input is not None else {}
         if user_input is not None and not errors:
             return self.async_create_entry(title="System Hub", data={}, options={CONF_MODULES: _chosen(user_input)})
-        defaults = [m for m in MODULES if m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in self.hass.config.components]
-        schema = _modules_schema(defaults)
+        schema = _modules_schema(_available(self.hass))
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
@@ -75,6 +97,8 @@ class SystemHubOptionsFlow(OptionsFlow):
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         menu = ["modules"]
         modules = self._modules()
+        if MODULE_CONTAINERS in modules:
+            menu.append("containers")
         if MODULE_WATCHDOG in modules:
             menu += ["watchdog", "watchdog_add_power_cycle"]
             if self._cycles():
@@ -92,6 +116,15 @@ class SystemHubOptionsFlow(OptionsFlow):
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(step_id="modules", data_schema=schema, errors=errors)
+
+    # Containers
+
+    async def async_step_containers(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Refresh interval and notifications."""
+        if user_input is not None:
+            return self._save(**{MODULE_CONTAINERS: containers_flow.settings_options(user_input)})
+        schema = containers_flow.settings_schema(self.hass, self._module(MODULE_CONTAINERS))
+        return self.async_show_form(step_id="containers", data_schema=schema)
 
     # Watchdog
 

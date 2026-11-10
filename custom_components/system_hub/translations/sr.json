@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Изаберите модуле које желите да укључите. Сваки модул се подешава у опцијама.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
           "watchdog": "Поново учитава интеграције чији су сви ентитети недоступни.",
           "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor није доступан: потребан је Home Assistant OS или Supervised инсталација.",
       "marketplace_not_loaded": "Marketplace није учитан."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Опције System Hub-а",
         "menu_options": {
           "modules": "Модули",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Додај рестарт преко утичнице",
           "watchdog_remove_power_cycle": "Watchdog: Уклони рестарте преко утичнице",
@@ -38,12 +42,27 @@
         "title": "Модули",
         "description": "Укључите или искључите модуле. Искључен модул зауставља своје провере и његови ентитети се уклањају; његова подешавања се чувају.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
           "watchdog": "Поново учитава интеграције чији су сви ентитети недоступни.",
           "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Интервал освежавања",
+          "notify": "Обавештавај",
+          "notify_services": "Акције обавештења"
+        },
+        "data_description": {
+          "scan_interval": "Секунде између два очитавања Supervisor-а.",
+          "notify": "Обавести када се контејнер који би требало да ради (додатак који се покреће при старту) заустави, и када се врати.",
+          "notify_services": "Свако обавештење пошаљи и овим акцијама (notify.mobile_app_…). Трајно обавештење се увек креира."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Овај уређај већ има рестарт преко утичнице: прво га уклоните.",
       "switch_on_device": "Утичница не може бити ентитет самог уређаја: била би недоступна заједно с њим.",
       "device_without_entities": "Овај уређај нема ентитет за праћење осим утичнице.",
-      "marketplace_not_loaded": "Marketplace није учитан."
+      "marketplace_not_loaded": "Marketplace није учитан.",
+      "supervisor_not_available": "Supervisor није доступан: потребан је Home Assistant OS или Supervised инсталација."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Контејнери који раде",
+        "state_attributes": {
+          "total": {
+            "name": "Укупно"
+          },
+          "error": {
+            "name": "Грешка"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Заустављени контејнери",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Последње ажурирање"
+      },
       "watchdog_unavailable": {
         "name": "Недоступне интеграције",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Освежи контејнере",
+      "description": "Сада очитава Home Assistant Core, Supervisor и додатке из Supervisor-а."
+    },
     "watchdog_check": {
       "name": "Провери интеграције",
       "description": "Тражи интеграције чији су сви ентитети недоступни и поново учитава оне којима је истекао период чекања."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Контејнер заустављен",
+    "containers_down": "{name} би требало да ради, али је {state}.",
+    "containers_back_title": "Контејнер поново ради",
+    "containers_back": "{name} поново ради.",
     "watchdog_reloaded_title": "Интеграција поново учитана",
     "watchdog_reloaded": "{title} ({domain}) је поново учитана: сви њени ентитети су били недоступни од {since}. Поновно учитавање {attempt}/{max}.",
     "watchdog_reload_failed_title": "Поновно учитавање интеграције није успело",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Нема довољно преосталих GitHub захтева за проверу свих репозиторијума ({remaining} преостало, {needed} потребно): провера ће се поновити када се ограничење ресетује у {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Није могуће очитати контејнере из Supervisor-а: {error}"
     }
   },
   "issues": {
