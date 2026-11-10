@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Santé du système, conteneurs de Home Assistant, mises à jour du Marketplace et surveillance des intégrations dans un seul panneau d'administration."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "System Hub est déjà configuré."
+    }
+  }
+}

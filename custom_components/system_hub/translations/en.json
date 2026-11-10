@@ -1,0 +1,13 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "System health, Home Assistant containers, Marketplace updates and the integration watchdog in one admin panel."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "System Hub is already set up."
+    }
+  }
+}
