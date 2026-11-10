@@ -1,0 +1,65 @@
+containers_refresh:
+
+watchdog_check:
+watchdog_reset:
+  fields:
+    entry_id:
+      required: true
+      example: 01JABCDEF0123456789ABCDEFG
+      selector:
+        config_entry:
+
+marketplace_check_updates:
+  fields:
+    wait:
+      default: false
+      selector:
+        boolean:
+
+marketplace_check_repository:
+  fields:
+    entity_id:
+      required: true
+      selector:
+        entity:
+          multiple: true
+          integration: marketplace
+          domain: update
+
+marketplace_install_updates:
+  fields:
+    entity_id:
+      selector:
+        entity:
+          multiple: true
+          integration: marketplace
+          domain: update
+    wait:
+      default: false
+      selector:
+        boolean:
+    backup:
+      selector:
+        boolean:
+
+batteries_notify:
+batteries_export:
+  fields:
+    path:
+      example: "/config/system_hub_batteries.csv"
+      selector:
+        text:
+batteries_set_stock:
+  fields:
+    battery_type:
+      required: true
+      example: "AA"
+      selector:
+        text:
+    count:
+      example: 4
+      selector:
+        number:
+          min: 0
+          max: 999
+          mode: box

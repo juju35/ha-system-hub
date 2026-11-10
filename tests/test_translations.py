@@ -1,0 +1,89 @@
+"""Every translation has exactly the keys and placeholders of the English one."""
+
+from __future__ import annotations
+
+import json
+import re
+import string
+from pathlib import Path
+
+import pytest
+
+TRANSLATIONS = Path(__file__).parent.parent / "custom_components" / "system_hub" / "translations"
+LANGUAGES = [
+    "bg",
+    "cs",
+    "da",
+    "de",
+    "el",
+    "es",
+    "fr",
+    "hu",
+    "it",
+    "lv",
+    "nl",
+    "pl",
+    "pt",
+    "pt-BR",
+    "ro",
+    "ru",
+    "sk",
+    "sl",
+    "sr",
+    "sr-Latn",
+    "sv",
+    "uk",
+]
+
+
+def _flatten(data: dict, prefix: str = "") -> dict[str, str]:
+    flat: dict[str, str] = {}
+    for key, value in data.items():
+        path = f"{prefix}.{key}" if prefix else key
+        if isinstance(value, dict):
+            flat.update(_flatten(value, path))
+        else:
+            flat[path] = value
+    return flat
+
+
+def _load(language: str) -> dict[str, str]:
+    return _flatten(json.loads((TRANSLATIONS / f"{language}.json").read_text(encoding="utf-8")))
+
+
+def _placeholders(text: str) -> set[str]:
+    return {name for _, name, _, _ in string.Formatter().parse(text) if name is not None}
+
+
+def test_all_languages_are_tested():
+    """A new translations/*.json file is added to LANGUAGES."""
+    assert sorted(p.stem for p in TRANSLATIONS.glob("*.json")) == sorted(["en", *LANGUAGES])
+
+
+@pytest.mark.parametrize("language", LANGUAGES)
+def test_translation_parity(language: str):
+    """Same keys as en.json, same placeholders in each string, nothing empty."""
+    english, other = _load("en"), _load(language)
+    assert sorted(other) == sorted(english)
+    for key, text in english.items():
+        assert other[key].strip(), key
+        assert _placeholders(other[key]) == _placeholders(text), key
+
+
+# Serbian: brands, placeholders and identifiers stay in Latin script in the Cyrillic translation.
+_SR_LATIN_ALLOWED = re.compile(
+    r"System Hub|Watchdog|Marketplace|Containers|Batteries|Home Assistant|Core|Supervisor|Supervised"
+    r"|OS|CPU|CSV|GitHub"
+    r"|Battery Notes|AA|CR2032|allowlist_external_dirs|system_hub[\w.]*"
+    r"|notify\.mobile_app_|zha|\{\w+\}"
+)
+
+
+@pytest.mark.parametrize(
+    ("language", "forbidden"),
+    [("sr", r"[A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u024f]"), ("sr-Latn", r"[\u0400-\u04ff]")],
+)
+def test_serbian_script(language: str, forbidden: str):
+    """No Latin letter in sr (but brands and placeholders), no Cyrillic letter in sr-Latn."""
+    for key, text in _load(language).items():
+        assert not re.search(forbidden, _SR_LATIN_ALLOWED.sub("", text)), key

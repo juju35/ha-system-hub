@@ -1,0 +1,95 @@
+{
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "default": "mdi:shield-search"
+      },
+      "marketplace_check_updates": {
+        "default": "mdi:archive-refresh"
+      },
+      "batteries_notify_now": {
+        "default": "mdi:bell-ring-outline"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "default": "mdi:docker"
+      },
+      "containers_down": {
+        "default": "mdi:package-variant-closed-remove"
+      },
+      "containers_last_update": {
+        "default": "mdi:clock-check-outline"
+      },
+      "watchdog_unavailable": {
+        "default": "mdi:puzzle-remove-outline"
+      },
+      "watchdog_last_reload": {
+        "default": "mdi:restart"
+      },
+      "watchdog_last_check": {
+        "default": "mdi:clock-check-outline"
+      },
+      "watchdog_reloads_24h": {
+        "default": "mdi:counter"
+      },
+      "marketplace_status": {
+        "default": "mdi:archive-check",
+        "state": {
+          "running": "mdi:archive-sync",
+          "error": "mdi:archive-alert"
+        }
+      },
+      "marketplace_last_check": {
+        "default": "mdi:clock-check-outline"
+      },
+      "batteries_low_batteries": {
+        "default": "mdi:battery-alert-variant-outline",
+        "state": {
+          "0": "mdi:battery-check-outline"
+        }
+      },
+      "batteries_last_notification": {
+        "default": "mdi:bell-check-outline"
+      },
+      "batteries_spare_batteries": {
+        "default": "mdi:cart-outline",
+        "state": {
+          "0": "mdi:battery-plus-outline"
+        }
+      },
+      "batteries_next_replacement": {
+        "default": "mdi:calendar-clock"
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "service": "mdi:refresh"
+    },
+    "watchdog_check": {
+      "service": "mdi:shield-search"
+    },
+    "watchdog_reset": {
+      "service": "mdi:restart"
+    },
+    "marketplace_check_updates": {
+      "service": "mdi:archive-refresh"
+    },
+    "marketplace_check_repository": {
+      "service": "mdi:archive-refresh-outline"
+    },
+    "marketplace_install_updates": {
+      "service": "mdi:package-down"
+    },
+    "batteries_notify": {
+      "service": "mdi:bell-ring-outline"
+    },
+    "batteries_set_stock": {
+      "service": "mdi:battery-plus-outline"
+    },
+    "batteries_export": {
+      "service": "mdi:file-delimited-outline"
+    }
+  }
+}

@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Выберите модули для включения. Каждый модуль настраивается в параметрах.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
+          "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
+          "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов.",
+          "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised.",
+      "marketplace_not_loaded": "Marketplace не загружен."
+    },
+    "abort": {
+      "already_configured": "System Hub уже настроен.",
+      "single_instance_allowed": "System Hub уже настроен."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметры System Hub",
+        "menu_options": {
+          "modules": "Модули",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Добавить перезапуск через розетку",
+          "watchdog_remove_power_cycle": "Watchdog: Удалить перезапуски через розетку",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Модули",
+        "description": "Включите или отключите модули. Отключённый модуль прекращает проверки, а его объекты удаляются; его настройки сохраняются.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
+          "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
+          "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов.",
+          "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Интервал обновления",
+          "notify": "Уведомлять",
+          "notify_services": "Действия уведомлений"
+        },
+        "data_description": {
+          "scan_interval": "Секунды между двумя опросами Supervisor.",
+          "notify": "Уведомлять, когда контейнер, который должен работать (дополнение, запускаемое при загрузке), останавливается, и когда он возвращается.",
+          "notify_services": "Также отправлять каждое уведомление с помощью этих действий (notify.mobile_app_…). Постоянное уведомление создаётся всегда."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Интервал проверки",
+          "grace_period": "Период ожидания",
+          "grace_overrides": "Льготный период для интеграции",
+          "max_reloads": "Перезагрузок подряд",
+          "ignored_integrations": "Игнорируемые интеграции",
+          "notify_services": "Действия уведомлений",
+          "ignored_entries": "Игнорируемые записи",
+          "pause_entity": "Объект паузы"
+        },
+        "data_description": {
+          "scan_interval": "Минуты между двумя проверками.",
+          "grace_period": "Сколько минут все объекты интеграции должны быть недоступны, прежде чем она будет перезагружена. В течение этого времени после запуска Home Assistant ничего не перезагружается.",
+          "grace_overrides": "Одна строка на интеграцию: домен: минуты (zha: 30). Заменяет льготный период этой интеграции и паузы между её перезагрузками; после запуска глобальный льготный период по-прежнему действует для всех.",
+          "max_reloads": "Сколько раз перезагружать интеграцию, которая остаётся недоступной, прежде чем прекратить попытки до её восстановления. Интервал между двумя перезагрузками каждый раз удваивается: период ожидания, 2 × период ожидания…",
+          "ignored_integrations": "Интеграции, которые никогда не перезагружаются. Введите домен, чтобы добавить ещё не настроенную интеграцию.",
+          "notify_services": "Также отправлять каждое уведомление с помощью этих действий (notify.mobile_app_…). Постоянное уведомление создаётся всегда.",
+          "ignored_entries": "Отдельные записи интеграции, которые никогда не перезагружаются; остальные записи их интеграции по-прежнему отслеживаются (например, одна из нескольких камер).",
+          "pause_entity": "Пока этот объект включён (input_boolean на время обслуживания, расписание на ночь…), ничего не перезагружается; проверки по-прежнему перечисляют недоступные интеграции."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Перезапуск устройства через его розетку",
+        "description": "Когда все объекты устройства остаются недоступными, умная розетка, которая его питает, выключается, а затем снова включается. Те же ограничения, что и для перезагрузок: перезагрузки подряд, удваивающаяся задержка, объект паузы, ничего в течение льготного периода после запуска.",
+        "data": {
+          "device_id": "Устройство",
+          "switch": "Умная розетка",
+          "delay": "Недоступно в течение",
+          "off_time": "Выключена на"
+        },
+        "data_description": {
+          "device_id": "Устройство для перезапуска: все его включённые объекты должны быть недоступны.",
+          "switch": "Выключатель, который его питает. Выключается, только если включён: выключенная или недоступная розетка не трогается.",
+          "delay": "Минуты, в течение которых все объекты устройства должны быть недоступны, прежде чем его розетка будет выключена. Задержка между двумя перезапусками каждый раз удваивается.",
+          "off_time": "Секунды, в течение которых розетка остаётся выключенной перед повторным включением."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Удалить перезапуски через розетку",
+        "data": {
+          "power_cycles": "Перезапуски через розетку"
+        },
+        "data_description": {
+          "power_cycles": "Перезапуски через розетку, которые нужно удалить."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Интервал проверки",
+          "backup_before_install": "Резервная копия перед установкой обновлений"
+        },
+        "data_description": {
+          "scan_interval": "Часы между двумя автоматическими проверками. 0 отключает автоматическую проверку: используйте кнопку или действие.",
+          "backup_before_install": "Перед «Обновить всё» (или действием без backup) создаётся автоматическая резервная копия Home Assistant с настройками из Настройки > Система > Резервные копии; если она не удалась, ничего не устанавливается."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Порог разряда батареи",
+          "duration": "Разряжена не менее",
+          "morning_time": "Утреннее уведомление",
+          "evening_time": "Вечернее уведомление",
+          "notify_services": "Действия уведомления",
+          "ignored_entities": "Игнорируемые батареи",
+          "ignored_integrations": "Игнорируемые интеграции"
+        },
+        "data_description": {
+          "threshold": "Ниже этого уровня батарея считается разряженной.",
+          "duration": "Сколько часов батарея должна оставаться ниже порога, прежде чем о ней будет отправлено уведомление (0: при следующем уведомлении).",
+          "morning_time": "Первое из двух ежедневных уведомлений.",
+          "evening_time": "Второе из двух ежедневных уведомлений.",
+          "notify_services": "Отправлять уведомления с помощью этих действий (notify.mobile_app_…). Постоянное уведомление создаётся всегда.",
+          "ignored_entities": "Батареи, которые никогда не отслеживаются.",
+          "ignored_integrations": "Интеграции, батареи которых никогда не отслеживаются (по умолчанию телефоны и планшеты мобильного приложения). Введите домен, чтобы добавить ещё не настроенную интеграцию."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Каждая строка должна иметь вид домен: минуты, от 1 до 1440 (zha: 30).",
+      "device_already_cycled": "У этого устройства уже есть перезапуск через розетку: сначала удалите его.",
+      "switch_on_device": "Розетка не может быть объектом самого устройства: она была бы недоступна вместе с ним.",
+      "device_without_entities": "У этого устройства нет объектов для наблюдения, кроме розетки.",
+      "marketplace_not_loaded": "Marketplace не загружен.",
+      "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Проверить сейчас"
+      },
+      "marketplace_check_updates": {
+        "name": "Проверить обновления"
+      },
+      "batteries_notify_now": {
+        "name": "Уведомить сейчас"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Работающие контейнеры",
+        "state_attributes": {
+          "total": {
+            "name": "Всего"
+          },
+          "error": {
+            "name": "Ошибка"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Остановленные контейнеры",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Последнее обновление"
+      },
+      "watchdog_unavailable": {
+        "name": "Недоступные интеграции",
+        "state_attributes": {
+          "integrations": {
+            "name": "Интеграции"
+          },
+          "ignored": {
+            "name": "Игнорируемые"
+          },
+          "max_reloads": {
+            "name": "Макс. перезагрузок"
+          },
+          "paused": {
+            "name": "Приостановлено"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Последняя перезагрузка",
+        "state_attributes": {
+          "domain": {
+            "name": "Домен"
+          },
+          "title": {
+            "name": "Название"
+          },
+          "entry_id": {
+            "name": "ID записи"
+          },
+          "success": {
+            "name": "Успешно"
+          },
+          "reloads": {
+            "name": "Перезагрузки"
+          },
+          "history": {
+            "name": "История"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Последняя проверка"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Перезагрузки за 24 ч",
+        "state_attributes": {
+          "failed": {
+            "name": "Неудачные"
+          },
+          "integrations": {
+            "name": "Интеграции"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Статус",
+        "state": {
+          "idle": "Ожидание",
+          "running": "Проверка",
+          "error": "Ошибка"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Проверено"
+          },
+          "total": {
+            "name": "Репозитории"
+          },
+          "updates": {
+            "name": "Доступные обновления"
+          },
+          "failed": {
+            "name": "С ошибкой"
+          },
+          "error": {
+            "name": "Ошибка"
+          },
+          "checking": {
+            "name": "Проверяются"
+          },
+          "installing": {
+            "name": "Устанавливаются"
+          },
+          "install_failed": {
+            "name": "Не удалось установить"
+          },
+          "github_connected": {
+            "name": "GitHub подключён"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Последняя проверка",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Интервал проверки"
+          },
+          "next_check": {
+            "name": "Следующая проверка"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Разряженные батареи",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Недоступные"
+          },
+          "due": {
+            "name": "К уведомлению"
+          },
+          "threshold": {
+            "name": "Порог"
+          },
+          "duration": {
+            "name": "Длительность"
+          },
+          "batteries": {
+            "name": "Батареи"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Последнее уведомление",
+        "state_attributes": {
+          "notified": {
+            "name": "Батареи в уведомлении"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Следующая замена",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Объект"
+          },
+          "name": {
+            "name": "Батарея"
+          },
+          "level": {
+            "name": "Уровень"
+          },
+          "days_left": {
+            "name": "Осталось дней"
+          },
+          "forecast_at": {
+            "name": "Прогноз измерен"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Запасные батарейки",
+        "state_attributes": {
+          "stock": {
+            "name": "В наличии"
+          },
+          "needed": {
+            "name": "Нужно"
+          },
+          "short": {
+            "name": "Не хватает"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Обновить контейнеры",
+      "description": "Сейчас считывает Home Assistant Core, Supervisor и дополнения из Supervisor."
+    },
+    "watchdog_check": {
+      "name": "Проверить интеграции",
+      "description": "Ищет интеграции, все объекты которых недоступны, и перезагружает те, у которых истёк период ожидания."
+    },
+    "watchdog_reset": {
+      "name": "Сбросить интеграцию",
+      "description": "Забывает перезагрузки интеграции (оставленной или нет) и сразу перезагружает её.",
+      "fields": {
+        "entry_id": {
+          "name": "Запись интеграции",
+          "description": "Запись интеграции, которую нужно сбросить и перезагрузить."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Проверить обновления",
+      "description": "Проверяет наличие обновлений для всех репозиториев, загруженных через Marketplace. Выполняется в фоне, если не задан wait.",
+      "fields": {
+        "wait": {
+          "name": "Ждать",
+          "description": "Дождаться проверки всех репозиториев до завершения действия; в этом случае действие завершается ошибкой, если проверка не удалась или какой-либо репозиторий не удалось проверить."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Проверить обновления репозитория",
+      "description": "Проверяет наличие обновлений для репозиториев, стоящих за этими объектами обновления Marketplace, и ожидает результата.",
+      "fields": {
+        "entity_id": {
+          "name": "Объекты обновления",
+          "description": "Объекты обновления Marketplace репозиториев, которые нужно проверить."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Установить обновления",
+      "description": "Устанавливает обновления репозиториев Marketplace по очереди, в фоне, если не задан wait. Только для администраторов.",
+      "fields": {
+        "entity_id": {
+          "name": "Объекты обновления",
+          "description": "Объекты обновления Marketplace, которые нужно обновить; оставьте пустым для всех репозиториев с обновлением."
+        },
+        "wait": {
+          "name": "Ждать",
+          "description": "Дождаться установки всех обновлений до завершения действия; в этом случае действие завершается ошибкой, если какое-либо обновление не удалось установить."
+        },
+        "backup": {
+          "name": "Сначала резервная копия",
+          "description": "Создать автоматическую резервную копию Home Assistant перед установкой; ничего не устанавливается, если она не удалась. Оставьте пустым, чтобы следовать параметру интеграции."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Уведомить о разряженных батареях",
+      "description": "Отправляет уведомление сразу со всеми батареями ниже порога или недоступными, независимо от длительности, или сообщение о том, что ни одна не требует внимания."
+    },
+    "batteries_export": {
+      "name": "Экспорт батарей в CSV",
+      "description": "Записывает каждую отслеживаемую батарею (уровень, комната, низкий заряд, недоступна, требует внимания, с какого момента, разряд в день, осталось дней, дата замены) в CSV-файл.",
+      "fields": {
+        "path": {
+          "name": "Файл",
+          "description": "Путь к CSV-файлу; system_hub_batteries.csv в папке конфигурации, если пусто."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Задать запасные батарейки",
+      "description": "Задаёт, сколько запасных батареек данного типа у вас есть; каждая обнаруженная замена этого типа вычитается.",
+      "fields": {
+        "battery_type": {
+          "name": "Тип батарейки",
+          "description": "Как его называет Battery Notes, без количества: AA, CR2032…"
+        },
+        "count": {
+          "name": "Количество",
+          "description": "Запасные батарейки этого типа. Оставьте пустым, чтобы перестать считать."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Контейнер остановлен",
+    "containers_down": "{name} должен работать, но находится в состоянии {state}.",
+    "containers_back_title": "Контейнер снова работает",
+    "containers_back": "{name} снова работает.",
+    "watchdog_reloaded_title": "Интеграция перезагружена",
+    "watchdog_reloaded": "{title} ({domain}) перезагружена: все её объекты были недоступны с {since}. Перезагрузка {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Не удалось перезагрузить интеграцию",
+    "watchdog_reload_failed": "Не удалось перезагрузить {title} ({domain}): все её объекты были недоступны с {since}. Перезагрузка {attempt}/{max}, см. журналы.",
+    "watchdog_gave_up_title": "Интеграция по-прежнему недоступна",
+    "watchdog_gave_up": "{title} ({domain}) по-прежнему недоступна. Выполнено перезагрузок: {attempt}. Она не будет перезагружаться, пока один из её объектов не станет доступен.",
+    "watchdog_power_cycled_title": "Устройство перезапущено",
+    "watchdog_power_cycled": "{title} перезапущено с помощью {switch}: все его объекты были недоступны с {since}. Перезапуск {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Не удалось перезапустить устройство",
+    "watchdog_power_cycle_failed": "Не удалось перезапустить {title} с помощью {switch}: все его объекты были недоступны с {since}. Перезапуск {attempt}/{max}, смотрите журналы.",
+    "watchdog_power_cycle_gave_up_title": "Устройство всё ещё недоступно",
+    "watchdog_power_cycle_gave_up": "{title} всё ещё недоступно после {attempt} перезапусков. {switch} больше не будет выключаться, пока один из его объектов не станет доступен."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub не загружен."
+    },
+    "module_disabled": {
+      "message": "Модуль {module} отключён в параметрах System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Нет записи интеграции {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "Не удалось перезагрузить {title}, см. журналы. Счётчик перезагрузок сброшен: System Hub начинает заново."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace не загружен."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Эта версия Marketplace не поддерживается (отсутствует {path}); пожалуйста, создайте issue на {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace отключён ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace отключён."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} не является объектом обновления Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} не является репозиторием, загруженным через Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Не удалось проверить {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Проверка отменена (System Hub был перезагружен или удалён)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Полная проверка не удалась: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Обновления уже устанавливаются."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Идёт установка обновлений: проверьте обновления после её завершения."
+    },
+    "marketplace_install_failed": {
+      "message": "Не удалось установить {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Установка отменена (System Hub был перезагружен или удалён)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Осталось недостаточно запросов GitHub для проверки всех репозиториев (осталось {remaining}, нужно {needed}): проверка повторится после сброса лимита в {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Не удалось получить контейнеры от Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 разряженная батарея"
+    },
+    "batteries_title_many": {
+      "message": "Разряженные батареи: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: разряжена{type}"
+    },
+    "batteries_none_title": {
+      "message": "Нет батарей для проверки"
+    },
+    "batteries_none": {
+      "message": "Все батареи выше {threshold} % и доступны."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: недоступна{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 батарея для проверки"
+    },
+    "batteries_check_many": {
+      "message": "Батареи для проверки: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} находится вне разрешённых папок (папка конфигурации или allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} не является файлом CSV (.csv): экспорт записывает только файлы CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} находится в скрытой папке (например, .storage): экспорт туда не записывает."
+    },
+    "batteries_spares_short": {
+      "message": "Купить запасные батарейки: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} по-прежнему недоступна",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) по-прежнему недоступна. Перезагрузок, выполненных System Hub: {attempt}. Она не будет перезагружаться, пока один из её объектов не станет доступен.\n\nПроверьте устройство или сервис, к которому она подключается, а также журналы. Эта проблема исчезнет, когда интеграция восстановится.\n\nПодтвердите, чтобы повторить сейчас: System Hub забудет её перезагрузки и перезагрузит интеграцию."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub не загружен.",
+          "reload_started": "Перезагрузка **{title}** запущена: счётчик перезагрузок сброшен, System Hub начинает заново. Эта проблема исчезнет, как только начнётся перезагрузка; ошибка будет в журналах."
+        }
+      }
+    }
+  }
+}

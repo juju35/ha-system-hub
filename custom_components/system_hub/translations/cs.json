@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Vyberte moduly, které chcete zapnout. Každý modul se nastavuje v možnostech.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
+          "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
+          "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
+          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised.",
+      "marketplace_not_loaded": "Marketplace není načten."
+    },
+    "abort": {
+      "already_configured": "System Hub je již nakonfigurován.",
+      "single_instance_allowed": "System Hub je již nakonfigurován."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti System Hub",
+        "menu_options": {
+          "modules": "Moduly",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
+          "watchdog_remove_power_cycle": "Watchdog: Odebrat restarty přes zásuvku",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Moduly",
+        "description": "Zapněte nebo vypněte moduly. Vypnutý modul zastaví své kontroly a jeho entity jsou odstraněny; jeho nastavení zůstává zachováno.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
+          "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
+          "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
+          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Interval obnovení",
+          "notify": "Upozornit",
+          "notify_services": "Akce oznámení"
+        },
+        "data_description": {
+          "scan_interval": "Sekundy mezi dvěma načteními ze Supervisoru.",
+          "notify": "Upozornit, když se kontejner, který by měl běžet (doplněk spouštěný při startu), zastaví, a když se vrátí.",
+          "notify_services": "Každé oznámení odeslat také pomocí těchto akcí (notify.mobile_app_…). Trvalé oznámení se vytvoří vždy."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Interval kontroly",
+          "grace_period": "Ochranná lhůta",
+          "grace_overrides": "Ochranná lhůta pro integraci",
+          "max_reloads": "Opětovná načtení za sebou",
+          "ignored_integrations": "Ignorované integrace",
+          "notify_services": "Akce oznámení",
+          "ignored_entries": "Ignorované položky",
+          "pause_entity": "Entita pozastavení"
+        },
+        "data_description": {
+          "scan_interval": "Počet minut mezi dvěma kontrolami.",
+          "grace_period": "Počet minut, po které musí být všechny entity integrace nedostupné, než se znovu načte. Během této doby po spuštění Home Assistant se nic znovu nenačítá.",
+          "grace_overrides": "Jeden řádek na integraci: doména: minuty (zha: 30). Nahrazuje ochrannou lhůtu této integrace a čekání mezi jejími opětovnými načteními; po spuštění stále platí globální ochranná lhůta pro všechny.",
+          "max_reloads": "Počet opětovných načtení integrace, která zůstává nedostupná, než se vzdá až do jejího obnovení. Odstup mezi dvěma opětovnými načteními se pokaždé zdvojnásobí: ochranná lhůta, 2 × ochranná lhůta…",
+          "ignored_integrations": "Integrace, které se nikdy znovu nenačtou. Zadejte doménu, chcete-li přidat integraci, která ještě není nastavená.",
+          "notify_services": "Každé oznámení odeslat také pomocí těchto akcí (notify.mobile_app_…). Trvalé oznámení se vytvoří vždy.",
+          "ignored_entries": "Jednotlivé položky integrace, které se nikdy znovu nenačtou; ostatní položky jejich integrace zůstávají sledované (např. jedna z několika kamer).",
+          "pause_entity": "Dokud je tato entita zapnutá (input_boolean pro údržbu, plán na noc…), nic se nenačítá znovu; kontroly dál vypisují nedostupné integrace."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Restart zařízení přes jeho zásuvku",
+        "description": "Když všechny entity zařízení zůstávají nedostupné, chytrá zásuvka, která ho napájí, se vypne a poté znovu zapne. Stejné limity jako u opětovných načtení: načtení za sebou, zdvojnásobující se čekání, entita pozastavení, nic během ochranné lhůty po spuštění.",
+        "data": {
+          "device_id": "Zařízení",
+          "switch": "Chytrá zásuvka",
+          "delay": "Nedostupné po dobu",
+          "off_time": "Vypnutá na"
+        },
+        "data_description": {
+          "device_id": "Zařízení k restartu: všechny jeho povolené entity musí být nedostupné.",
+          "switch": "Spínač, který ho napájí. Vypne se, jen když je zapnutý: vypnutá nebo nedostupná zásuvka zůstane nedotčená.",
+          "delay": "Minuty, po které musí být všechny entity zařízení nedostupné, než se jeho zásuvka vypne. Čekání mezi dvěma restarty se pokaždé zdvojnásobí.",
+          "off_time": "Sekundy, po které zásuvka zůstane vypnutá, než se znovu zapne."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Odebrat restarty přes zásuvku",
+        "data": {
+          "power_cycles": "Restarty přes zásuvku"
+        },
+        "data_description": {
+          "power_cycles": "Restarty přes zásuvku k odebrání."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Interval kontroly",
+          "backup_before_install": "Zálohovat před instalací aktualizací"
+        },
+        "data_description": {
+          "scan_interval": "Počet hodin mezi dvěma automatickými kontrolami. 0 vypne automatickou kontrolu: použijte tlačítko nebo akci.",
+          "backup_before_install": "Před Aktualizovat vše (nebo akcí bez backup) se vytvoří automatická záloha Home Assistant s nastavením z Nastavení > Systém > Zálohy; pokud selže, nic se nenainstaluje."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Práh slabé baterie",
+          "duration": "Slabá alespoň",
+          "morning_time": "Ranní oznámení",
+          "evening_time": "Večerní oznámení",
+          "notify_services": "Akce oznámení",
+          "ignored_entities": "Ignorované baterie",
+          "ignored_integrations": "Ignorované integrace"
+        },
+        "data_description": {
+          "threshold": "Pod touto úrovní je baterie slabá.",
+          "duration": "Počet hodin, po které musí baterie zůstat pod prahem, než na ni přijde upozornění (0: při příštím oznámení).",
+          "morning_time": "První ze dvou denních oznámení.",
+          "evening_time": "Druhé ze dvou denních oznámení.",
+          "notify_services": "Odesílat oznámení pomocí těchto akcí (notify.mobile_app_…). Trvalé oznámení se vytvoří vždy.",
+          "ignored_entities": "Baterie, které se nikdy nesledují.",
+          "ignored_integrations": "Integrace, jejichž baterie se nikdy nesledují (ve výchozím nastavení telefony a tablety mobilní aplikace). Zadejte doménu pro přidání integrace, která ještě není nastavena."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Každý řádek musí mít tvar doména: minuty, od 1 do 1440 (zha: 30).",
+      "device_already_cycled": "Toto zařízení už má restart přes zásuvku: nejprve ho odeberte.",
+      "switch_on_device": "Zásuvka nemůže být entitou samotného zařízení: byla by nedostupná spolu s ním.",
+      "device_without_entities": "Toto zařízení nemá kromě zásuvky žádnou entitu ke sledování.",
+      "marketplace_not_loaded": "Marketplace není načten.",
+      "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Zkontrolovat nyní"
+      },
+      "marketplace_check_updates": {
+        "name": "Zkontrolovat aktualizace"
+      },
+      "batteries_notify_now": {
+        "name": "Upozornit nyní"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Běžící kontejnery",
+        "state_attributes": {
+          "total": {
+            "name": "Celkem"
+          },
+          "error": {
+            "name": "Chyba"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Zastavené kontejnery",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Poslední aktualizace"
+      },
+      "watchdog_unavailable": {
+        "name": "Nedostupné integrace",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrace"
+          },
+          "ignored": {
+            "name": "Ignorované"
+          },
+          "max_reloads": {
+            "name": "Max. opětovných načtení"
+          },
+          "paused": {
+            "name": "Pozastaveno"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Poslední opětovné načtení",
+        "state_attributes": {
+          "domain": {
+            "name": "Doména"
+          },
+          "title": {
+            "name": "Název"
+          },
+          "entry_id": {
+            "name": "ID záznamu"
+          },
+          "success": {
+            "name": "Úspěch"
+          },
+          "reloads": {
+            "name": "Opětovná načtení"
+          },
+          "history": {
+            "name": "Historie"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Poslední kontrola"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Znovunačtení za 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Neúspěšná"
+          },
+          "integrations": {
+            "name": "Integrace"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Stav",
+        "state": {
+          "idle": "Nečinný",
+          "running": "Probíhá kontrola",
+          "error": "Chyba"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Zkontrolováno"
+          },
+          "total": {
+            "name": "Repozitáře"
+          },
+          "updates": {
+            "name": "Dostupné aktualizace"
+          },
+          "failed": {
+            "name": "Neúspěšné"
+          },
+          "error": {
+            "name": "Chyba"
+          },
+          "checking": {
+            "name": "Kontrolují se"
+          },
+          "installing": {
+            "name": "Instalují se"
+          },
+          "install_failed": {
+            "name": "Nepodařilo se nainstalovat"
+          },
+          "github_connected": {
+            "name": "GitHub připojen"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Poslední kontrola",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Interval kontroly"
+          },
+          "next_check": {
+            "name": "Další kontrola"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Slabé baterie",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Nedostupné"
+          },
+          "due": {
+            "name": "K oznámení"
+          },
+          "threshold": {
+            "name": "Práh"
+          },
+          "duration": {
+            "name": "Doba trvání"
+          },
+          "batteries": {
+            "name": "Baterie"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Poslední oznámení",
+        "state_attributes": {
+          "notified": {
+            "name": "Oznámené baterie"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Další výměna",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entita"
+          },
+          "name": {
+            "name": "Baterie"
+          },
+          "level": {
+            "name": "Úroveň"
+          },
+          "days_left": {
+            "name": "Zbývající dny"
+          },
+          "forecast_at": {
+            "name": "Prognóza naměřena"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Náhradní baterie",
+        "state_attributes": {
+          "stock": {
+            "name": "Na skladě"
+          },
+          "needed": {
+            "name": "Potřeba"
+          },
+          "short": {
+            "name": "Chybí"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Obnovit kontejnery",
+      "description": "Nyní načte Home Assistant Core, Supervisor a doplňky ze Supervisoru."
+    },
+    "watchdog_check": {
+      "name": "Zkontrolovat integrace",
+      "description": "Vyhledá integrace, jejichž všechny entity jsou nedostupné, a znovu načte ty, kterým uplynula ochranná lhůta."
+    },
+    "watchdog_reset": {
+      "name": "Resetovat integraci",
+      "description": "Zapomene opětovná načtení integrace (vzdané či ne) a hned ji znovu načte.",
+      "fields": {
+        "entry_id": {
+          "name": "Záznam integrace",
+          "description": "Záznam integrace, který se resetuje a znovu načte."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Zkontrolovat aktualizace",
+      "description": "Kontroluje aktualizace všech repozitářů stažených přes Marketplace. Běží na pozadí, pokud není nastaveno wait.",
+      "fields": {
+        "wait": {
+          "name": "Čekat",
+          "description": "Počkat, než budou zkontrolovány všechny repozitáře, a teprve pak akci ukončit; akce pak selže, pokud kontrola selhala nebo se některý repozitář nepodařilo zkontrolovat."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Zkontrolovat aktualizace repozitáře",
+      "description": "Kontroluje aktualizace repozitářů za těmito entitami aktualizace Marketplace a čeká na výsledek.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity aktualizace",
+          "description": "Entity aktualizace Marketplace repozitářů, které se mají zkontrolovat."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Nainstalovat aktualizace",
+      "description": "Instaluje aktualizace repozitářů Marketplace jednu po druhé, na pozadí, pokud není nastaveno wait. Pouze pro správce.",
+      "fields": {
+        "entity_id": {
+          "name": "Entity aktualizace",
+          "description": "Entity aktualizace Marketplace, které se mají aktualizovat; ponechte prázdné pro všechny repozitáře s aktualizací."
+        },
+        "wait": {
+          "name": "Čekat",
+          "description": "Počkat, než budou nainstalovány všechny aktualizace, a teprve pak akci ukončit; akce pak selže, pokud se některou aktualizaci nepodařilo nainstalovat."
+        },
+        "backup": {
+          "name": "Nejprve záloha",
+          "description": "Vytvořit automatickou zálohu Home Assistant před instalací; pokud selže, nic se nenainstaluje. Ponechte prázdné, aby platila možnost integrace."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Upozornit na slabé baterie",
+      "description": "Okamžitě odešle oznámení se všemi bateriemi pod prahem nebo nedostupnými bez ohledu na dobu trvání, nebo zprávu, že žádná nevyžaduje pozornost."
+    },
+    "batteries_export": {
+      "name": "Exportovat baterie do CSV",
+      "description": "Zapíše každou sledovanou baterii (úroveň, místnost, slabá, nedostupná, k řešení, odkdy, vybíjení za den, zbývající dny, datum výměny) do souboru CSV.",
+      "fields": {
+        "path": {
+          "name": "Soubor",
+          "description": "Cesta k souboru CSV; system_hub_batteries.csv v konfigurační složce, pokud je prázdné."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Nastavit náhradní baterie",
+      "description": "Nastaví, kolik náhradních baterií daného typu máte; každá zjištěná výměna tohoto typu je odečte.",
+      "fields": {
+        "battery_type": {
+          "name": "Typ baterie",
+          "description": "Jak ho pojmenovává Battery Notes, bez počtu: AA, CR2032…"
+        },
+        "count": {
+          "name": "Počet",
+          "description": "Náhradní baterie tohoto typu. Ponechte prázdné, aby se přestal počítat."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Kontejner zastaven",
+    "containers_down": "{name} by měl běžet, ale je ve stavu {state}.",
+    "containers_back_title": "Kontejner opět běží",
+    "containers_back": "{name} opět běží.",
+    "watchdog_reloaded_title": "Integrace znovu načtena",
+    "watchdog_reloaded": "{title} ({domain}) byla znovu načtena: všechny její entity byly nedostupné od {since}. Opětovné načtení {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Opětovné načtení integrace selhalo",
+    "watchdog_reload_failed": "{title} ({domain}) se nepodařilo znovu načíst: všechny její entity byly nedostupné od {since}. Opětovné načtení {attempt}/{max}, viz protokoly.",
+    "watchdog_gave_up_title": "Integrace je stále nedostupná",
+    "watchdog_gave_up": "{title} ({domain}) je stále nedostupná. Počet opětovných načtení: {attempt}. Znovu se nenačte, dokud nebude některá z jejích entit dostupná.",
+    "watchdog_power_cycled_title": "Zařízení restartováno",
+    "watchdog_power_cycled": "{title} bylo restartováno přes {switch}: všechny jeho entity byly nedostupné od {since}. Restart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Restart zařízení selhal",
+    "watchdog_power_cycle_failed": "{title} se nepodařilo restartovat přes {switch}: všechny jeho entity byly nedostupné od {since}. Restart {attempt}/{max}, viz protokoly.",
+    "watchdog_power_cycle_gave_up_title": "Zařízení je stále nedostupné",
+    "watchdog_power_cycle_gave_up": "{title} je stále nedostupné po restartech: {attempt}. {switch} se už nevypne, dokud nebude dostupná některá z jeho entit."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub není načten."
+    },
+    "module_disabled": {
+      "message": "Modul {module} je vypnutý v možnostech System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Žádný záznam integrace {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} se nepodařilo znovu načíst, viz protokoly. Její opětovná načtení byla resetována: System Hub začíná znovu."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace není načten."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Tato verze Marketplace není podporována (chybí {path}); otevřete prosím issue na {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace je zakázán ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace je zakázán."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} není entita aktualizace Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} není repozitář stažený přes Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Nepodařilo se zkontrolovat {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Kontrola byla zrušena (System Hub byl znovu načten nebo odebrán)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Úplná kontrola selhala: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Aktualizace se již instalují."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Probíhá instalace aktualizací: zkontrolujte aktualizace, až bude dokončena."
+    },
+    "marketplace_install_failed": {
+      "message": "Nepodařilo se nainstalovat {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Instalace byly zrušeny (System Hub byl znovu načten nebo odebrán)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Nezbývá dost požadavků GitHub na kontrolu všech repozitářů (zbývá {remaining}, potřeba {needed}): kontrola proběhne znovu po vynulování limitu v {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Kontejnery se nepodařilo načíst ze Supervisoru: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 slabá baterie"
+    },
+    "batteries_title_many": {
+      "message": "Slabé baterie: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: slabá{type}"
+    },
+    "batteries_none_title": {
+      "message": "Žádná baterie ke kontrole"
+    },
+    "batteries_none": {
+      "message": "Všechny baterie jsou nad {threshold} % a dostupné."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: nedostupná{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 baterie ke kontrole"
+    },
+    "batteries_check_many": {
+      "message": "Baterie ke kontrole: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} je mimo povolené složky (konfigurační složka nebo allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} není soubor CSV (.csv): export zapisuje pouze soubory CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} je ve skryté složce (například .storage): export tam nezapisuje."
+    },
+    "batteries_spares_short": {
+      "message": "Náhradní baterie ke koupi: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} je stále nedostupná",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) je stále nedostupná. Počet opětovných načtení pomocí System Hub: {attempt}. Znovu se nenačte, dokud nebude některá z jejích entit dostupná.\n\nZkontrolujte zařízení nebo službu, ke které se připojuje, a protokoly. Tento problém zmizí, jakmile se integrace zotaví.\n\nPotvrďte a zkuste to znovu hned: System Hub zapomene její opětovná načtení a znovu načte integraci."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub není načten.",
+          "reload_started": "Opětovné načtení **{title}** bylo spuštěno: její opětovná načtení byla resetována a System Hub začíná znovu. Tento problém zmizí, jakmile načítání začne; chyba bude v protokolech."
+        }
+      }
+    }
+  }
+}

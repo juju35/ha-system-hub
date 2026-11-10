@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Wählen Sie die zu aktivierenden Module. Jedes Modul wird in den Optionen eingerichtet.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
+          "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
+          "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
+          "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "Der Supervisor ist nicht verfügbar: Home Assistant OS oder eine Supervised-Installation ist erforderlich.",
+      "marketplace_not_loaded": "Marketplace ist nicht geladen."
+    },
+    "abort": {
+      "already_configured": "System Hub ist bereits eingerichtet.",
+      "single_instance_allowed": "System Hub ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen von System Hub",
+        "menu_options": {
+          "modules": "Module",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Neustart per Steckdose hinzufügen",
+          "watchdog_remove_power_cycle": "Watchdog: Neustarts per Steckdose entfernen",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Module",
+        "description": "Module ein- oder ausschalten. Ein ausgeschaltetes Modul beendet seine Prüfungen und seine Entitäten werden entfernt; seine Einstellungen bleiben erhalten.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
+          "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
+          "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
+          "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Aktualisierungsintervall",
+          "notify": "Benachrichtigen",
+          "notify_services": "Benachrichtigungsaktionen"
+        },
+        "data_description": {
+          "scan_interval": "Sekunden zwischen zwei Abfragen des Supervisors.",
+          "notify": "Benachrichtigen, wenn ein Container, der laufen sollte (ein beim Start gestartetes Add-on), stoppt und wenn er wieder läuft.",
+          "notify_services": "Jede Benachrichtigung zusätzlich mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Prüfintervall",
+          "grace_period": "Karenzzeit",
+          "grace_overrides": "Karenzzeit pro Integration",
+          "max_reloads": "Neuladevorgänge in Folge",
+          "ignored_integrations": "Ignorierte Integrationen",
+          "notify_services": "Benachrichtigungsaktionen",
+          "ignored_entries": "Ignorierte Einträge",
+          "pause_entity": "Pause-Entität"
+        },
+        "data_description": {
+          "scan_interval": "Minuten zwischen zwei Prüfungen.",
+          "grace_period": "Minuten, die alle Entitäten einer Integration nicht verfügbar gewesen sein müssen, bevor sie neu geladen wird. Während dieser Zeit nach dem Start von Home Assistant wird nichts neu geladen.",
+          "grace_overrides": "Eine Zeile pro Integration: Domain: Minuten (zha: 30). Sie ersetzt die Karenzzeit dieser Integration und die Abstände zwischen ihren Neuladungen; nach einem Start gilt weiterhin die globale Karenzzeit für alle.",
+          "max_reloads": "Neuladevorgänge einer weiterhin nicht verfügbaren Integration, bevor sie aufgegeben wird, bis sie sich erholt. Die Wartezeit zwischen zwei Neuladevorgängen verdoppelt sich jedes Mal: Karenzzeit, 2 × Karenzzeit…",
+          "ignored_integrations": "Integrationen, die nie neu geladen werden. Gib eine Domain ein, um eine noch nicht eingerichtete hinzuzufügen.",
+          "notify_services": "Jede Benachrichtigung zusätzlich mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt.",
+          "ignored_entries": "Einzelne Integrationseinträge, die nie neu geladen werden; die anderen Einträge ihrer Integration bleiben überwacht (z. B. eine von mehreren Kameras).",
+          "pause_entity": "Solange diese Entität an ist (ein input_boolean für Wartung, ein Zeitplan für die Nacht…), wird nichts neu geladen; die Prüfungen listen weiterhin die nicht verfügbaren Integrationen."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Gerät per Steckdose neu starten",
+        "description": "Wenn alle Entitäten eines Geräts nicht verfügbar bleiben, wird die smarte Steckdose, die es versorgt, aus- und wieder eingeschaltet. Gleiche Grenzen wie bei den Neuladungen: Neuladungen in Folge, sich verdoppelnde Wartezeit, Pausen-Entität, nichts während der Karenzzeit nach einem Start.",
+        "data": {
+          "device_id": "Gerät",
+          "switch": "Smarte Steckdose",
+          "delay": "Nicht verfügbar seit",
+          "off_time": "Aus für"
+        },
+        "data_description": {
+          "device_id": "Das neu zu startende Gerät: alle seine aktivierten Entitäten müssen nicht verfügbar sein.",
+          "switch": "Der Schalter, der es versorgt. Nur ausgeschaltet, wenn er an ist: eine ausgeschaltete oder nicht verfügbare Steckdose bleibt unberührt.",
+          "delay": "Minuten, die alle Entitäten des Geräts nicht verfügbar sein müssen, bevor seine Steckdose ausgeschaltet wird. Die Wartezeit zwischen zwei Neustarts verdoppelt sich jedes Mal.",
+          "off_time": "Sekunden, die die Steckdose aus bleibt, bevor sie wieder eingeschaltet wird."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Neustarts per Steckdose entfernen",
+        "data": {
+          "power_cycles": "Neustarts per Steckdose"
+        },
+        "data_description": {
+          "power_cycles": "Die zu entfernenden Neustarts per Steckdose."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Prüfintervall",
+          "backup_before_install": "Vor dem Installieren von Updates sichern"
+        },
+        "data_description": {
+          "scan_interval": "Stunden zwischen zwei automatischen Prüfungen. 0 deaktiviert die automatische Prüfung: Verwende dann die Schaltfläche oder die Aktion.",
+          "backup_before_install": "Vor Alle aktualisieren (oder der Aktion ohne backup) das automatische Backup von Home Assistant erstellen, mit seinen Einstellungen unter Einstellungen > System > Backups; schlägt es fehl, wird nichts installiert."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Schwelle für schwache Batterie",
+          "duration": "Schwach seit mindestens",
+          "morning_time": "Morgendliche Benachrichtigung",
+          "evening_time": "Abendliche Benachrichtigung",
+          "notify_services": "Benachrichtigungsaktionen",
+          "ignored_entities": "Ignorierte Batterien",
+          "ignored_integrations": "Ignorierte Integrationen"
+        },
+        "data_description": {
+          "threshold": "Unter diesem Wert gilt eine Batterie als schwach.",
+          "duration": "Stunden, die eine Batterie unter der Schwelle bleiben muss, bevor sie gemeldet wird (0: bei der nächsten Benachrichtigung).",
+          "morning_time": "Erste der beiden täglichen Benachrichtigungen.",
+          "evening_time": "Zweite der beiden täglichen Benachrichtigungen.",
+          "notify_services": "Die Benachrichtigungen mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt.",
+          "ignored_entities": "Batterien, die nie überwacht werden.",
+          "ignored_integrations": "Integrationen, deren Batterien nie überwacht werden (standardmäßig Smartphones und Tablets der Companion-App). Gib eine Domain ein, um eine noch nicht eingerichtete hinzuzufügen."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Jede Zeile muss Domain: Minuten sein, von 1 bis 1440 (zha: 30).",
+      "device_already_cycled": "Dieses Gerät hat bereits einen Neustart per Steckdose: zuerst entfernen.",
+      "switch_on_device": "Die Steckdose darf keine Entität des Geräts selbst sein: sie wäre mit ihm nicht verfügbar.",
+      "device_without_entities": "Dieses Gerät hat außer der Steckdose keine zu überwachende Entität.",
+      "marketplace_not_loaded": "Marketplace ist nicht geladen.",
+      "supervisor_not_available": "Der Supervisor ist nicht verfügbar: Home Assistant OS oder eine Supervised-Installation ist erforderlich."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Jetzt prüfen"
+      },
+      "marketplace_check_updates": {
+        "name": "Nach Updates suchen"
+      },
+      "batteries_notify_now": {
+        "name": "Jetzt benachrichtigen"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Laufende Container",
+        "state_attributes": {
+          "total": {
+            "name": "Gesamt"
+          },
+          "error": {
+            "name": "Fehler"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Gestoppte Container",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Letzte Aktualisierung"
+      },
+      "watchdog_unavailable": {
+        "name": "Nicht verfügbare Integrationen",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrationen"
+          },
+          "ignored": {
+            "name": "Ignoriert"
+          },
+          "max_reloads": {
+            "name": "Max. Neuladungen"
+          },
+          "paused": {
+            "name": "Pausiert"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Letztes Neuladen",
+        "state_attributes": {
+          "domain": {
+            "name": "Domain"
+          },
+          "title": {
+            "name": "Titel"
+          },
+          "entry_id": {
+            "name": "Eintrags-ID"
+          },
+          "success": {
+            "name": "Erfolgreich"
+          },
+          "reloads": {
+            "name": "Neuladevorgänge"
+          },
+          "history": {
+            "name": "Verlauf"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Letzte Prüfung"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Neuladungen in 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Fehlgeschlagen"
+          },
+          "integrations": {
+            "name": "Integrationen"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Bereit",
+          "running": "Prüfung läuft",
+          "error": "Fehler"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Geprüft"
+          },
+          "total": {
+            "name": "Repositorys"
+          },
+          "updates": {
+            "name": "Verfügbare Updates"
+          },
+          "failed": {
+            "name": "Fehlgeschlagen"
+          },
+          "error": {
+            "name": "Fehler"
+          },
+          "checking": {
+            "name": "Wird geprüft"
+          },
+          "installing": {
+            "name": "Wird installiert"
+          },
+          "install_failed": {
+            "name": "Nicht installierbar"
+          },
+          "github_connected": {
+            "name": "GitHub verbunden"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Letzte Prüfung",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Prüfintervall"
+          },
+          "next_check": {
+            "name": "Nächste Prüfung"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Schwache Batterien",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Nicht verfügbar"
+          },
+          "due": {
+            "name": "Fällig"
+          },
+          "threshold": {
+            "name": "Schwelle"
+          },
+          "duration": {
+            "name": "Dauer"
+          },
+          "batteries": {
+            "name": "Batterien"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Letzte Benachrichtigung",
+        "state_attributes": {
+          "notified": {
+            "name": "Gemeldete Batterien"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Nächster Austausch",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entität"
+          },
+          "name": {
+            "name": "Batterie"
+          },
+          "level": {
+            "name": "Ladestand"
+          },
+          "days_left": {
+            "name": "Verbleibende Tage"
+          },
+          "forecast_at": {
+            "name": "Prognose gemessen"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Ersatzbatterien",
+        "state_attributes": {
+          "stock": {
+            "name": "Vorrätig"
+          },
+          "needed": {
+            "name": "Benötigt"
+          },
+          "short": {
+            "name": "Fehlend"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Container aktualisieren",
+      "description": "Liest jetzt Home Assistant Core, den Supervisor und die Add-ons vom Supervisor."
+    },
+    "watchdog_check": {
+      "name": "Integrationen prüfen",
+      "description": "Sucht die Integrationen, deren Entitäten alle nicht verfügbar sind, und lädt diejenigen neu, deren Karenzzeit abgelaufen ist."
+    },
+    "watchdog_reset": {
+      "name": "Integration zurücksetzen",
+      "description": "Vergisst die Neuladevorgänge einer Integration (aufgegeben oder nicht) und lädt sie sofort neu.",
+      "fields": {
+        "entry_id": {
+          "name": "Integrationseintrag",
+          "description": "Der Integrationseintrag, der zurückgesetzt und neu geladen wird."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Nach Updates suchen",
+      "description": "Sucht nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Läuft im Hintergrund, außer wenn Warten aktiviert ist.",
+      "fields": {
+        "wait": {
+          "name": "Warten",
+          "description": "Warten, bis alle Repositorys geprüft wurden, bevor die Aktion endet; die Aktion schlägt dann fehl, wenn die Prüfung fehlgeschlagen ist oder ein Repository nicht geprüft werden konnte."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Repository auf Updates prüfen",
+      "description": "Sucht nach Updates für die Repositorys hinter diesen Marketplace-Update-Entitäten und wartet auf das Ergebnis.",
+      "fields": {
+        "entity_id": {
+          "name": "Update-Entitäten",
+          "description": "Marketplace-Update-Entitäten der zu prüfenden Repositorys."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Updates installieren",
+      "description": "Installiert die Updates der Marketplace-Repositorys nacheinander, im Hintergrund, außer wenn Warten gesetzt ist. Nur für Administratoren.",
+      "fields": {
+        "entity_id": {
+          "name": "Update-Entitäten",
+          "description": "Zu aktualisierende Marketplace-Update-Entitäten; leer lassen für alle Repositorys mit einem Update."
+        },
+        "wait": {
+          "name": "Warten",
+          "description": "Warten, bis alle Updates installiert sind, bevor die Aktion endet; die Aktion schlägt dann fehl, wenn ein Update nicht installiert werden konnte."
+        },
+        "backup": {
+          "name": "Zuerst sichern",
+          "description": "Vor dem Installieren das automatische Backup von Home Assistant erstellen; schlägt es fehl, wird nichts installiert. Leer lassen, um der Option der Integration zu folgen."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Schwache Batterien melden",
+      "description": "Sendet die Benachrichtigung sofort, mit jeder Batterie unter der Schwelle oder nicht verfügbar, unabhängig von der Dauer, oder eine Nachricht, dass keine Batterie Aufmerksamkeit erfordert."
+    },
+    "batteries_export": {
+      "name": "Batterien als CSV exportieren",
+      "description": "Schreibt jede überwachte Batterie (Ladestand, Raum, schwach, nicht verfügbar, fällig, seit wann, Entladung pro Tag, verbleibende Tage, Austauschdatum) in eine CSV-Datei.",
+      "fields": {
+        "path": {
+          "name": "Datei",
+          "description": "Pfad der CSV-Datei; system_hub_batteries.csv im Konfigurationsordner, wenn leer."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Ersatzbatterien festlegen",
+      "description": "Legt fest, wie viele Ersatzbatterien eines Typs vorhanden sind; jeder erkannte Austausch dieses Typs zieht seine Batterien ab.",
+      "fields": {
+        "battery_type": {
+          "name": "Batterietyp",
+          "description": "Wie Battery Notes ihn nennt, ohne Anzahl: AA, CR2032…"
+        },
+        "count": {
+          "name": "Anzahl",
+          "description": "Ersatzbatterien dieses Typs. Leer lassen, um ihn nicht mehr zu zählen."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Container gestoppt",
+    "containers_down": "{name} sollte laufen, ist aber {state}.",
+    "containers_back_title": "Container wieder da",
+    "containers_back": "{name} läuft wieder.",
+    "watchdog_reloaded_title": "Integration neu geladen",
+    "watchdog_reloaded": "{title} ({domain}) wurde neu geladen: Alle ihre Entitäten waren seit {since} nicht verfügbar. Neuladen {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Neuladen einer Integration fehlgeschlagen",
+    "watchdog_reload_failed": "{title} ({domain}) konnte nicht neu geladen werden: Alle ihre Entitäten waren seit {since} nicht verfügbar. Neuladen {attempt}/{max}, siehe Protokolle.",
+    "watchdog_gave_up_title": "Integration weiterhin nicht verfügbar",
+    "watchdog_gave_up": "{title} ({domain}) ist nach {attempt} Neuladevorgängen weiterhin nicht verfügbar. Sie wird erst wieder neu geladen, wenn eine ihrer Entitäten verfügbar ist.",
+    "watchdog_power_cycled_title": "Gerät neu gestartet",
+    "watchdog_power_cycled": "{title} wurde mit {switch} neu gestartet: alle seine Entitäten waren seit {since} nicht verfügbar. Neustart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Neustart des Geräts fehlgeschlagen",
+    "watchdog_power_cycle_failed": "{title} konnte mit {switch} nicht neu gestartet werden: alle seine Entitäten waren seit {since} nicht verfügbar. Neustart {attempt}/{max}, siehe Protokolle.",
+    "watchdog_power_cycle_gave_up_title": "Gerät weiterhin nicht verfügbar",
+    "watchdog_power_cycle_gave_up": "{title} ist nach {attempt} Neustarts weiterhin nicht verfügbar. {switch} wird nicht mehr ausgeschaltet, bis eine seiner Entitäten verfügbar ist."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub ist nicht geladen."
+    },
+    "module_disabled": {
+      "message": "Das Modul {module} ist in den Optionen von System Hub ausgeschaltet."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Kein Integrationseintrag {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} konnte nicht neu geladen werden, siehe Protokolle. Die Neuladevorgänge wurden zurückgesetzt: System Hub beginnt von vorn."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace ist nicht geladen."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Diese Marketplace-Version wird nicht unterstützt ({path} fehlt); bitte erstelle ein Issue auf {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace ist deaktiviert ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace ist deaktiviert."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} ist keine Marketplace-Update-Entität."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} ist kein mit Marketplace heruntergeladenes Repository."
+    },
+    "marketplace_check_failed": {
+      "message": "{failed} konnte nicht geprüft werden."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Die Prüfung wurde abgebrochen (System Hub wurde neu geladen oder entfernt)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Die vollständige Prüfung ist fehlgeschlagen: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Es werden bereits Updates installiert."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Es werden gerade Updates installiert: prüfe nach Updates, sobald sie fertig sind."
+    },
+    "marketplace_install_failed": {
+      "message": "{failed} konnte nicht installiert werden."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Die Installationen wurden abgebrochen (System Hub wurde neu geladen oder entfernt)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Nicht genug GitHub-Anfragen übrig, um alle Repositories zu prüfen ({remaining} übrig, {needed} nötig): Die Prüfung läuft erneut, nachdem das Limit um {reset} zurückgesetzt wurde."
+    },
+    "containers_read_failed": {
+      "message": "Die Container konnten nicht vom Supervisor gelesen werden: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 schwache Batterie"
+    },
+    "batteries_title_many": {
+      "message": "{count} schwache Batterien"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: schwach{type}"
+    },
+    "batteries_none_title": {
+      "message": "Keine Batterie zu prüfen"
+    },
+    "batteries_none": {
+      "message": "Alle Batterien liegen über {threshold} % und sind verfügbar."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: nicht verfügbar{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 Batterie zu prüfen"
+    },
+    "batteries_check_many": {
+      "message": "{count} Batterien zu prüfen"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} liegt außerhalb der erlaubten Ordner (Konfigurationsordner oder allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} ist keine CSV-Datei (.csv): Der Export schreibt nur CSV-Dateien."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} liegt in einem versteckten Ordner (wie .storage): Der Export schreibt dort nicht."
+    },
+    "batteries_spares_short": {
+      "message": "Zu kaufende Ersatzbatterien: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} ist weiterhin nicht verfügbar",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) ist nach {attempt} Neuladevorgängen durch System Hub weiterhin nicht verfügbar. Sie wird erst wieder neu geladen, wenn eine ihrer Entitäten verfügbar ist.\n\nPrüfe das Gerät oder den Dienst, mit dem sie sich verbindet, sowie die Protokolle. Dieses Problem verschwindet, sobald die Integration wieder funktioniert.\n\nAbsenden, um es jetzt erneut zu versuchen: System Hub vergisst die Neuladevorgänge und lädt die Integration neu."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub ist nicht geladen.",
+          "reload_started": "**{title}** wird neu geladen: Die Neuladevorgänge wurden zurückgesetzt und System Hub beginnt von vorn. Dieses Problem verschwindet, sobald das Neuladen beginnt; ein Fehler steht in den Protokollen."
+        }
+      }
+    }
+  }
+}

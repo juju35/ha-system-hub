@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
+          "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
+          "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
+          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig.",
+      "marketplace_not_loaded": "Marketplace is niet geladen."
+    },
+    "abort": {
+      "already_configured": "System Hub is al geconfigureerd.",
+      "single_instance_allowed": "System Hub is al geconfigureerd."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opties van System Hub",
+        "menu_options": {
+          "modules": "Modules",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Herstart via stekker toevoegen",
+          "watchdog_remove_power_cycle": "Watchdog: Herstarts via stekker verwijderen",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Modules",
+        "description": "Schakel modules in of uit. Een uitgeschakelde module stopt met controleren en haar entiteiten worden verwijderd; haar instellingen blijven bewaard.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
+          "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
+          "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
+          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Verversingsinterval",
+          "notify": "Melden",
+          "notify_services": "Meldingsacties"
+        },
+        "data_description": {
+          "scan_interval": "Seconden tussen twee uitlezingen van de Supervisor.",
+          "notify": "Melden wanneer een container die zou moeten draaien (een add-on die bij het opstarten start) stopt, en wanneer hij terug is.",
+          "notify_services": "Stuur elke melding ook met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Controle-interval",
+          "grace_period": "Wachttijd",
+          "grace_overrides": "Respijttijd per integratie",
+          "max_reloads": "Herlaadpogingen op rij",
+          "ignored_integrations": "Genegeerde integraties",
+          "notify_services": "Meldingsacties",
+          "ignored_entries": "Genegeerde items",
+          "pause_entity": "Pauze-entiteit"
+        },
+        "data_description": {
+          "scan_interval": "Minuten tussen twee controles.",
+          "grace_period": "Minuten dat alle entiteiten van een integratie niet beschikbaar moeten zijn voordat deze wordt herladen. Na het opstarten van Home Assistant wordt gedurende deze tijd niets herladen.",
+          "grace_overrides": "Eén regel per integratie: domein: minuten (zha: 30). Vervangt de respijttijd van die integratie en de wachttijden tussen haar herlaadbeurten; na een start geldt de algemene respijttijd nog steeds voor alle.",
+          "max_reloads": "Herlaadpogingen van een integratie die niet beschikbaar blijft voordat ze wordt opgegeven tot ze herstelt. De tijd tussen twee herlaadpogingen verdubbelt telkens: wachttijd, 2 × wachttijd…",
+          "ignored_integrations": "Integraties die nooit worden herladen. Typ een domein om er een toe te voegen die nog niet is ingesteld.",
+          "notify_services": "Stuur elke melding ook met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt.",
+          "ignored_entries": "Afzonderlijke integratie-items die nooit herladen worden; de andere items van hun integratie blijven bewaakt (bijvoorbeeld één camera van meerdere).",
+          "pause_entity": "Zolang deze entiteit aan staat (een input_boolean voor onderhoud, een schema voor de nacht…), wordt niets herladen; de controles tonen nog steeds de onbeschikbare integraties."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Apparaat herstarten via zijn stekker",
+        "description": "Als alle entiteiten van een apparaat onbeschikbaar blijven, wordt de slimme stekker die het voedt uit- en weer ingeschakeld. Dezelfde grenzen als bij het herladen: herlaadpogingen op rij, verdubbelende wachttijd, pauze-entiteit, niets tijdens de respijtperiode na een start.",
+        "data": {
+          "device_id": "Apparaat",
+          "switch": "Slimme stekker",
+          "delay": "Onbeschikbaar gedurende",
+          "off_time": "Uit gedurende"
+        },
+        "data_description": {
+          "device_id": "Het te herstarten apparaat: al zijn ingeschakelde entiteiten moeten onbeschikbaar zijn.",
+          "switch": "De schakelaar die het voedt. Alleen uitgeschakeld als die aan staat: een stekker die uit of onbeschikbaar is, blijft onaangeroerd.",
+          "delay": "Minuten dat alle entiteiten van het apparaat onbeschikbaar moeten zijn voordat zijn stekker wordt uitgeschakeld. De wachttijd tussen twee herstarts verdubbelt telkens.",
+          "off_time": "Seconden dat de stekker uit blijft voordat hij weer wordt ingeschakeld."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Herstarts via stekker verwijderen",
+        "data": {
+          "power_cycles": "Herstarts via stekker"
+        },
+        "data_description": {
+          "power_cycles": "De te verwijderen herstarts via stekker."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Controle-interval",
+          "backup_before_install": "Back-up maken vóór het installeren van updates"
+        },
+        "data_description": {
+          "scan_interval": "Uren tussen twee automatische controles. 0 zet de automatische controle uit: gebruik de knop of de actie.",
+          "backup_before_install": "Vóór Alles bijwerken (of de actie zonder backup) de automatische back-up van Home Assistant maken, met de instellingen onder Instellingen > Systeem > Back-ups; mislukt die, dan wordt niets geïnstalleerd."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Drempel voor bijna lege batterij",
+          "duration": "Minstens zo lang bijna leeg",
+          "morning_time": "Ochtendmelding",
+          "evening_time": "Avondmelding",
+          "notify_services": "Meldingsacties",
+          "ignored_entities": "Genegeerde batterijen",
+          "ignored_integrations": "Genegeerde integraties"
+        },
+        "data_description": {
+          "threshold": "Onder dit niveau is een batterij bijna leeg.",
+          "duration": "Aantal uren dat een batterij onder de drempel moet zijn gebleven voordat ze wordt gemeld (0: bij de volgende melding).",
+          "morning_time": "Eerste van de twee dagelijkse meldingen.",
+          "evening_time": "Tweede van de twee dagelijkse meldingen.",
+          "notify_services": "Verstuur de meldingen met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt.",
+          "ignored_entities": "Batterijen die nooit worden bewaakt.",
+          "ignored_integrations": "Integraties waarvan de batterijen nooit worden bewaakt (standaard telefoons en tablets van de mobiele app). Typ een domein om er een toe te voegen die nog niet is ingesteld."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Elke regel moet domein: minuten zijn, van 1 tot 1440 (zha: 30).",
+      "device_already_cycled": "Dit apparaat heeft al een herstart via stekker: verwijder die eerst.",
+      "switch_on_device": "De stekker kan geen entiteit van het apparaat zelf zijn: hij zou er samen mee onbeschikbaar zijn.",
+      "device_without_entities": "Dit apparaat heeft naast de stekker geen entiteit om te bewaken.",
+      "marketplace_not_loaded": "Marketplace is niet geladen.",
+      "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Nu controleren"
+      },
+      "marketplace_check_updates": {
+        "name": "Controleren op updates"
+      },
+      "batteries_notify_now": {
+        "name": "Nu melden"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Draaiende containers",
+        "state_attributes": {
+          "total": {
+            "name": "Totaal"
+          },
+          "error": {
+            "name": "Fout"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Gestopte containers",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Laatste update"
+      },
+      "watchdog_unavailable": {
+        "name": "Niet-beschikbare integraties",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integraties"
+          },
+          "ignored": {
+            "name": "Genegeerd"
+          },
+          "max_reloads": {
+            "name": "Maximaal aantal herlaadpogingen"
+          },
+          "paused": {
+            "name": "Gepauzeerd"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Laatste herlaadpoging",
+        "state_attributes": {
+          "domain": {
+            "name": "Domein"
+          },
+          "title": {
+            "name": "Titel"
+          },
+          "entry_id": {
+            "name": "Item-ID"
+          },
+          "success": {
+            "name": "Geslaagd"
+          },
+          "reloads": {
+            "name": "Herlaadpogingen"
+          },
+          "history": {
+            "name": "Geschiedenis"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Laatste controle"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Herladen in 24 u",
+        "state_attributes": {
+          "failed": {
+            "name": "Mislukt"
+          },
+          "integrations": {
+            "name": "Integraties"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Inactief",
+          "running": "Bezig met controleren",
+          "error": "Fout"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Gecontroleerd"
+          },
+          "total": {
+            "name": "Repository's"
+          },
+          "updates": {
+            "name": "Beschikbare updates"
+          },
+          "failed": {
+            "name": "Mislukt"
+          },
+          "error": {
+            "name": "Fout"
+          },
+          "checking": {
+            "name": "Wordt gecontroleerd"
+          },
+          "installing": {
+            "name": "Wordt geïnstalleerd"
+          },
+          "install_failed": {
+            "name": "Kon niet worden geïnstalleerd"
+          },
+          "github_connected": {
+            "name": "GitHub verbonden"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Laatste controle",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Controle-interval"
+          },
+          "next_check": {
+            "name": "Volgende controle"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Bijna lege batterijen",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Niet beschikbaar"
+          },
+          "due": {
+            "name": "Te melden"
+          },
+          "threshold": {
+            "name": "Drempel"
+          },
+          "duration": {
+            "name": "Duur"
+          },
+          "batteries": {
+            "name": "Batterijen"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Laatste melding",
+        "state_attributes": {
+          "notified": {
+            "name": "Gemelde batterijen"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Volgende vervanging",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entiteit"
+          },
+          "name": {
+            "name": "Batterij"
+          },
+          "level": {
+            "name": "Niveau"
+          },
+          "days_left": {
+            "name": "Resterende dagen"
+          },
+          "forecast_at": {
+            "name": "Prognose gemeten"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Reservebatterijen",
+        "state_attributes": {
+          "stock": {
+            "name": "Op voorraad"
+          },
+          "needed": {
+            "name": "Nodig"
+          },
+          "short": {
+            "name": "Ontbrekend"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Containers verversen",
+      "description": "Leest nu Home Assistant Core, de Supervisor en de add-ons uit via de Supervisor."
+    },
+    "watchdog_check": {
+      "name": "Integraties controleren",
+      "description": "Zoekt de integraties waarvan alle entiteiten niet beschikbaar zijn en herlaadt die waarvan de wachttijd voorbij is."
+    },
+    "watchdog_reset": {
+      "name": "Integratie resetten",
+      "description": "Vergeet hoe vaak een integratie is herladen (opgegeven of niet) en herlaadt haar nu.",
+      "fields": {
+        "entry_id": {
+          "name": "Integratie-item",
+          "description": "Het integratie-item dat gereset en herladen wordt."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Controleren op updates",
+      "description": "Controleert alle met Marketplace gedownloade repository's op updates. Draait op de achtergrond, tenzij Wachten is ingesteld.",
+      "fields": {
+        "wait": {
+          "name": "Wachten",
+          "description": "Wachten tot alle repository's zijn gecontroleerd voordat de actie eindigt; de actie mislukt dan als de controle mislukt is of een repository niet kon worden gecontroleerd."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Een repository controleren op updates",
+      "description": "Controleert de repository's achter deze Marketplace-update-entiteiten op updates en wacht op het resultaat.",
+      "fields": {
+        "entity_id": {
+          "name": "Update-entiteiten",
+          "description": "Marketplace-update-entiteiten van de te controleren repository's."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Updates installeren",
+      "description": "Installeert de updates van de Marketplace-repository's, de een na de ander, op de achtergrond tenzij Wachten is ingesteld. Alleen beheerders.",
+      "fields": {
+        "entity_id": {
+          "name": "Update-entiteiten",
+          "description": "Bij te werken Marketplace-update-entiteiten; laat leeg voor alle repository's met een update."
+        },
+        "wait": {
+          "name": "Wachten",
+          "description": "Wachten tot alle updates zijn geïnstalleerd voordat de actie eindigt; de actie mislukt dan als een update niet kon worden geïnstalleerd."
+        },
+        "backup": {
+          "name": "Eerst een back-up",
+          "description": "De automatische back-up van Home Assistant maken vóór het installeren; mislukt die, dan wordt niets geïnstalleerd. Leeg laten om de optie van de integratie te volgen."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Bijna lege batterijen melden",
+      "description": "Verstuurt nu de melding met alle batterijen die onder de drempel zitten of niet beschikbaar zijn, ongeacht hoe lang al, of anders een bericht dat geen enkele batterij aandacht nodig heeft."
+    },
+    "batteries_export": {
+      "name": "Batterijen exporteren naar CSV",
+      "description": "Schrijft elke bewaakte batterij (niveau, kamer, laag, niet beschikbaar, te behandelen, sinds wanneer, ontlading per dag, resterende dagen, vervangingsdatum) naar een CSV-bestand.",
+      "fields": {
+        "path": {
+          "name": "Bestand",
+          "description": "Pad van het CSV-bestand; system_hub_batteries.csv in de configuratiemap indien leeg."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Reservebatterijen instellen",
+      "description": "Stelt in hoeveel reservebatterijen van een type je hebt; elke gedetecteerde vervanging van dat type gaat eraf.",
+      "fields": {
+        "battery_type": {
+          "name": "Batterijtype",
+          "description": "Zoals Battery Notes het noemt, zonder aantal: AA, CR2032…"
+        },
+        "count": {
+          "name": "Aantal",
+          "description": "Reservebatterijen van dat type. Leeg laten om het niet meer te tellen."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Container gestopt",
+    "containers_down": "{name} zou moeten draaien maar is {state}.",
+    "containers_back_title": "Container terug",
+    "containers_back": "{name} draait weer.",
+    "watchdog_reloaded_title": "Integratie herladen",
+    "watchdog_reloaded": "{title} ({domain}) is herladen: al zijn entiteiten waren niet beschikbaar sinds {since}. Herlaadpoging {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Herladen van integratie mislukt",
+    "watchdog_reload_failed": "{title} ({domain}) kon niet worden herladen: al zijn entiteiten waren niet beschikbaar sinds {since}. Herlaadpoging {attempt}/{max}, zie de logboeken.",
+    "watchdog_gave_up_title": "Integratie nog steeds niet beschikbaar",
+    "watchdog_gave_up": "{title} ({domain}) is nog steeds niet beschikbaar na {attempt} herlaadpogingen. Deze wordt niet opnieuw herladen totdat een van zijn entiteiten beschikbaar is.",
+    "watchdog_power_cycled_title": "Apparaat herstart",
+    "watchdog_power_cycled": "{title} is herstart met {switch}: al zijn entiteiten waren onbeschikbaar sinds {since}. Herstart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Herstarten van apparaat mislukt",
+    "watchdog_power_cycle_failed": "{title} kon niet worden herstart met {switch}: al zijn entiteiten waren onbeschikbaar sinds {since}. Herstart {attempt}/{max}, zie de logboeken.",
+    "watchdog_power_cycle_gave_up_title": "Apparaat nog steeds onbeschikbaar",
+    "watchdog_power_cycle_gave_up": "{title} is na {attempt} herstarts nog steeds onbeschikbaar. {switch} wordt niet meer uitgeschakeld tot een van zijn entiteiten beschikbaar is."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub is niet geladen."
+    },
+    "module_disabled": {
+      "message": "De module {module} is uitgeschakeld in de opties van System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Geen integratie-item {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} kon niet herladen worden, zie de logboeken. Het aantal keer herladen is gereset: System Hub begint opnieuw."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace is niet geladen."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Deze versie van Marketplace wordt niet ondersteund ({path} ontbreekt); open een issue op {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace is uitgeschakeld ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace is uitgeschakeld."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} is geen Marketplace-update-entiteit."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} is geen met Marketplace gedownloade repository."
+    },
+    "marketplace_check_failed": {
+      "message": "Kon {failed} niet controleren."
+    },
+    "marketplace_check_cancelled": {
+      "message": "De controle is geannuleerd (System Hub is herladen of verwijderd)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "De volledige controle is mislukt: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Er worden al updates geïnstalleerd."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Er worden updates geïnstalleerd: controleer op updates zodra ze klaar zijn."
+    },
+    "marketplace_install_failed": {
+      "message": "Kon {failed} niet installeren."
+    },
+    "marketplace_install_cancelled": {
+      "message": "De installaties zijn geannuleerd (System Hub is herladen of verwijderd)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Niet genoeg GitHub-verzoeken over om elke repository te controleren ({remaining} over, {needed} nodig): de controle draait opnieuw nadat de limiet om {reset} is gereset."
+    },
+    "containers_read_failed": {
+      "message": "Kan de containers niet uitlezen van de Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 bijna lege batterij"
+    },
+    "batteries_title_many": {
+      "message": "{count} bijna lege batterijen"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: bijna leeg{type}"
+    },
+    "batteries_none_title": {
+      "message": "Geen batterij te controleren"
+    },
+    "batteries_none": {
+      "message": "Alle batterijen zitten boven {threshold} % en zijn beschikbaar."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: niet beschikbaar{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 batterij te controleren"
+    },
+    "batteries_check_many": {
+      "message": "{count} batterijen te controleren"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} ligt buiten de toegestane mappen (configuratiemap of allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} is geen CSV-bestand (.csv): de export schrijft alleen CSV-bestanden."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} staat in een verborgen map (zoals .storage): de export schrijft daar niet."
+    },
+    "batteries_spares_short": {
+      "message": "Te kopen reservebatterijen: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} is nog steeds niet beschikbaar",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) is na {attempt} keer herladen door System Hub nog steeds niet beschikbaar. Ze wordt pas opnieuw herladen als een van haar entiteiten beschikbaar is.\n\nControleer het apparaat of de dienst waarmee ze verbindt, en de logboeken. Dit probleem verdwijnt zodra de integratie hersteld is.\n\nVerstuur om het nu opnieuw te proberen: System Hub vergeet hoe vaak ze is herladen en herlaadt de integratie."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub is niet geladen.",
+          "reload_started": "**{title}** wordt herladen: het aantal keer herladen is gereset en System Hub begint opnieuw. Dit probleem verdwijnt zodra het herladen begint; een fout staat in de logboeken."
+        }
+      }
+    }
+  }
+}

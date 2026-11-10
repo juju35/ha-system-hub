@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Виберіть модулі для ввімкнення. Кожен модуль налаштовується в параметрах.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
+          "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
+          "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
+          "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "Supervisor недоступний: потрібна Home Assistant OS або встановлення Supervised.",
+      "marketplace_not_loaded": "Marketplace не завантажено."
+    },
+    "abort": {
+      "already_configured": "System Hub уже налаштовано.",
+      "single_instance_allowed": "System Hub уже налаштовано."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметри System Hub",
+        "menu_options": {
+          "modules": "Модулі",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Додати перезапуск через розетку",
+          "watchdog_remove_power_cycle": "Watchdog: Видалити перезапуски через розетку",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Модулі",
+        "description": "Увімкніть або вимкніть модулі. Вимкнений модуль припиняє перевірки, а його сутності видаляються; його налаштування зберігаються.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
+          "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
+          "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
+          "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Інтервал оновлення",
+          "notify": "Сповіщати",
+          "notify_services": "Дії сповіщень"
+        },
+        "data_description": {
+          "scan_interval": "Секунди між двома опитуваннями Supervisor.",
+          "notify": "Сповіщати, коли контейнер, який має працювати (доповнення, що запускається під час завантаження), зупиняється, і коли він повертається.",
+          "notify_services": "Також надсилати кожне сповіщення за допомогою цих дій (notify.mobile_app_…). Постійне сповіщення створюється завжди."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Інтервал перевірки",
+          "grace_period": "Період очікування",
+          "grace_overrides": "Пільговий період для інтеграції",
+          "max_reloads": "Перезавантажень поспіль",
+          "ignored_integrations": "Ігноровані інтеграції",
+          "notify_services": "Дії сповіщень",
+          "ignored_entries": "Ігноровані записи",
+          "pause_entity": "Об'єкт паузи"
+        },
+        "data_description": {
+          "scan_interval": "Хвилини між двома перевірками.",
+          "grace_period": "Скільки хвилин усі сутності інтеграції мають бути недоступні, перш ніж її буде перезавантажено. Протягом цього часу після запуску Home Assistant нічого не перезавантажується.",
+          "grace_overrides": "Один рядок на інтеграцію: домен: хвилини (zha: 30). Замінює пільговий період цієї інтеграції та паузи між її перезавантаженнями; після запуску глобальний пільговий період і далі діє для всіх.",
+          "max_reloads": "Скільки разів перезавантажувати інтеграцію, що залишається недоступною, перш ніж припинити спроби до її відновлення. Інтервал між двома перезавантаженнями щоразу подвоюється: період очікування, 2 × період очікування…",
+          "ignored_integrations": "Інтеграції, які ніколи не перезавантажуються. Введіть домен, щоб додати ще не налаштовану інтеграцію.",
+          "notify_services": "Також надсилати кожне сповіщення за допомогою цих дій (notify.mobile_app_…). Постійне сповіщення створюється завжди.",
+          "ignored_entries": "Окремі записи інтеграції, які ніколи не перезавантажуються; інші записи їхньої інтеграції й далі відстежуються (наприклад, одна з кількох камер).",
+          "pause_entity": "Поки цей об'єкт увімкнено (input_boolean на час обслуговування, розклад на ніч…), нічого не перезавантажується; перевірки й далі перелічують недоступні інтеграції."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Перезапуск пристрою через його розетку",
+        "description": "Коли всі об'єкти пристрою залишаються недоступними, розумна розетка, що його живить, вимикається, а потім знову вмикається. Ті самі обмеження, що й для перезавантажень: перезавантаження поспіль, затримка, що подвоюється, об'єкт паузи, нічого протягом пільгового періоду після запуску.",
+        "data": {
+          "device_id": "Пристрій",
+          "switch": "Розумна розетка",
+          "delay": "Недоступний протягом",
+          "off_time": "Вимкнена на"
+        },
+        "data_description": {
+          "device_id": "Пристрій для перезапуску: усі його увімкнені об'єкти мають бути недоступними.",
+          "switch": "Вимикач, що його живить. Вимикається, лише якщо увімкнений: вимкнена або недоступна розетка не чіпається.",
+          "delay": "Хвилини, протягом яких усі об'єкти пристрою мають бути недоступними, перш ніж його розетку буде вимкнено. Затримка між двома перезапусками щоразу подвоюється.",
+          "off_time": "Секунди, протягом яких розетка залишається вимкненою перед повторним увімкненням."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Видалити перезапуски через розетку",
+        "data": {
+          "power_cycles": "Перезапуски через розетку"
+        },
+        "data_description": {
+          "power_cycles": "Перезапуски через розетку, які треба видалити."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Інтервал перевірки",
+          "backup_before_install": "Резервна копія перед встановленням оновлень"
+        },
+        "data_description": {
+          "scan_interval": "Години між двома автоматичними перевірками. 0 вимикає автоматичну перевірку: скористайтеся кнопкою або дією.",
+          "backup_before_install": "Перед «Оновити все» (або дією без backup) створюється автоматична резервна копія Home Assistant з налаштуваннями з Налаштування > Система > Резервні копії; якщо не вдалося, нічого не встановлюється."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Поріг розрядженої батареї",
+          "duration": "Розряджена щонайменше",
+          "morning_time": "Ранкове сповіщення",
+          "evening_time": "Вечірнє сповіщення",
+          "notify_services": "Дії сповіщення",
+          "ignored_entities": "Ігноровані батареї",
+          "ignored_integrations": "Ігноровані інтеграції"
+        },
+        "data_description": {
+          "threshold": "Нижче цього рівня батарея вважається розрядженою.",
+          "duration": "Скільки годин батарея має залишатися нижче порогу, перш ніж про неї буде надіслано сповіщення (0: під час наступного сповіщення).",
+          "morning_time": "Перше з двох щоденних сповіщень.",
+          "evening_time": "Друге з двох щоденних сповіщень.",
+          "notify_services": "Надсилати сповіщення за допомогою цих дій (notify.mobile_app_…). Постійне сповіщення створюється завжди.",
+          "ignored_entities": "Батареї, які ніколи не відстежуються.",
+          "ignored_integrations": "Інтеграції, батареї яких ніколи не відстежуються (за замовчуванням телефони й планшети мобільного застосунку). Введіть домен, щоб додати ще не налаштовану інтеграцію."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Кожен рядок має бути у вигляді домен: хвилини, від 1 до 1440 (zha: 30).",
+      "device_already_cycled": "Цей пристрій уже має перезапуск через розетку: спершу видаліть його.",
+      "switch_on_device": "Розетка не може бути об'єктом самого пристрою: вона була б недоступна разом із ним.",
+      "device_without_entities": "Цей пристрій не має об'єктів для спостереження, крім розетки.",
+      "marketplace_not_loaded": "Marketplace не завантажено.",
+      "supervisor_not_available": "Supervisor недоступний: потрібна Home Assistant OS або встановлення Supervised."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Перевірити зараз"
+      },
+      "marketplace_check_updates": {
+        "name": "Перевірити оновлення"
+      },
+      "batteries_notify_now": {
+        "name": "Сповістити зараз"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Працюючі контейнери",
+        "state_attributes": {
+          "total": {
+            "name": "Усього"
+          },
+          "error": {
+            "name": "Помилка"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Зупинені контейнери",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Останнє оновлення"
+      },
+      "watchdog_unavailable": {
+        "name": "Недоступні інтеграції",
+        "state_attributes": {
+          "integrations": {
+            "name": "Інтеграції"
+          },
+          "ignored": {
+            "name": "Ігноровані"
+          },
+          "max_reloads": {
+            "name": "Макс. перезавантажень"
+          },
+          "paused": {
+            "name": "Призупинено"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Останнє перезавантаження",
+        "state_attributes": {
+          "domain": {
+            "name": "Домен"
+          },
+          "title": {
+            "name": "Назва"
+          },
+          "entry_id": {
+            "name": "ID запису"
+          },
+          "success": {
+            "name": "Успішно"
+          },
+          "reloads": {
+            "name": "Перезавантаження"
+          },
+          "history": {
+            "name": "Історія"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Остання перевірка"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Перезавантаження за 24 год",
+        "state_attributes": {
+          "failed": {
+            "name": "Невдалі"
+          },
+          "integrations": {
+            "name": "Інтеграції"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Стан",
+        "state": {
+          "idle": "Очікування",
+          "running": "Перевірка",
+          "error": "Помилка"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Перевірено"
+          },
+          "total": {
+            "name": "Репозиторії"
+          },
+          "updates": {
+            "name": "Доступні оновлення"
+          },
+          "failed": {
+            "name": "З помилкою"
+          },
+          "error": {
+            "name": "Помилка"
+          },
+          "checking": {
+            "name": "Перевіряються"
+          },
+          "installing": {
+            "name": "Встановлюються"
+          },
+          "install_failed": {
+            "name": "Не вдалося встановити"
+          },
+          "github_connected": {
+            "name": "GitHub підключено"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Остання перевірка",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Інтервал перевірки"
+          },
+          "next_check": {
+            "name": "Наступна перевірка"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Розряджені батареї",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Недоступні"
+          },
+          "due": {
+            "name": "До сповіщення"
+          },
+          "threshold": {
+            "name": "Поріг"
+          },
+          "duration": {
+            "name": "Тривалість"
+          },
+          "batteries": {
+            "name": "Батареї"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Останнє сповіщення",
+        "state_attributes": {
+          "notified": {
+            "name": "Батареї у сповіщенні"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Наступна заміна",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Сутність"
+          },
+          "name": {
+            "name": "Батарея"
+          },
+          "level": {
+            "name": "Рівень"
+          },
+          "days_left": {
+            "name": "Залишилось днів"
+          },
+          "forecast_at": {
+            "name": "Прогноз виміряно"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Запасні батарейки",
+        "state_attributes": {
+          "stock": {
+            "name": "У наявності"
+          },
+          "needed": {
+            "name": "Потрібно"
+          },
+          "short": {
+            "name": "Бракує"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Оновити контейнери",
+      "description": "Зараз зчитує Home Assistant Core, Supervisor і доповнення із Supervisor."
+    },
+    "watchdog_check": {
+      "name": "Перевірити інтеграції",
+      "description": "Шукає інтеграції, усі сутності яких недоступні, і перезавантажує ті, у яких минув період очікування."
+    },
+    "watchdog_reset": {
+      "name": "Скинути інтеграцію",
+      "description": "Забуває перезавантаження інтеграції (покинутої чи ні) і одразу перезавантажує її.",
+      "fields": {
+        "entry_id": {
+          "name": "Запис інтеграції",
+          "description": "Запис інтеграції, який треба скинути й перезавантажити."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Перевірити оновлення",
+      "description": "Перевіряє наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Виконується у фоні, якщо не задано wait.",
+      "fields": {
+        "wait": {
+          "name": "Чекати",
+          "description": "Дочекатися перевірки всіх репозиторіїв до завершення дії; тоді дія завершується помилкою, якщо перевірка не вдалася або якийсь репозиторій не вдалося перевірити."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Перевірити оновлення репозиторію",
+      "description": "Перевіряє наявність оновлень для репозиторіїв, що стоять за цими сутностями оновлення Marketplace, і чекає на результат.",
+      "fields": {
+        "entity_id": {
+          "name": "Сутності оновлення",
+          "description": "Сутності оновлення Marketplace репозиторіїв, які потрібно перевірити."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Встановити оновлення",
+      "description": "Встановлює оновлення репозиторіїв Marketplace одне за одним, у фоні, якщо не задано wait. Лише для адміністраторів.",
+      "fields": {
+        "entity_id": {
+          "name": "Сутності оновлення",
+          "description": "Сутності оновлення Marketplace, які потрібно оновити; залиште порожнім для всіх репозиторіїв з оновленням."
+        },
+        "wait": {
+          "name": "Чекати",
+          "description": "Дочекатися встановлення всіх оновлень до завершення дії; тоді дія завершується помилкою, якщо якесь оновлення не вдалося встановити."
+        },
+        "backup": {
+          "name": "Спершу резервна копія",
+          "description": "Створити автоматичну резервну копію Home Assistant перед встановленням; нічого не встановлюється, якщо не вдалося. Залиште порожнім, щоб діяв параметр інтеграції."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Сповістити про розряджені батареї",
+      "description": "Надсилає сповіщення одразу з усіма батареями нижче порогу або недоступними, незалежно від тривалості, або повідомлення, що жодна не потребує уваги."
+    },
+    "batteries_export": {
+      "name": "Експорт батарей у CSV",
+      "description": "Записує кожну відстежувану батарею (рівень, кімната, низький заряд, недоступна, потребує уваги, відколи, розряд за день, залишилось днів, дата заміни) у CSV-файл.",
+      "fields": {
+        "path": {
+          "name": "Файл",
+          "description": "Шлях до CSV-файлу; system_hub_batteries.csv у теці конфігурації, якщо порожньо."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Задати запасні батарейки",
+      "description": "Задає, скільки запасних батарейок певного типу у вас є; кожна виявлена заміна цього типу віднімається.",
+      "fields": {
+        "battery_type": {
+          "name": "Тип батарейки",
+          "description": "Як його називає Battery Notes, без кількості: AA, CR2032…"
+        },
+        "count": {
+          "name": "Кількість",
+          "description": "Запасні батарейки цього типу. Залиште порожнім, щоб припинити облік."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Контейнер зупинено",
+    "containers_down": "{name} має працювати, але перебуває в стані {state}.",
+    "containers_back_title": "Контейнер знову працює",
+    "containers_back": "{name} знову працює.",
+    "watchdog_reloaded_title": "Інтеграцію перезавантажено",
+    "watchdog_reloaded": "{title} ({domain}) перезавантажено: усі її сутності були недоступні з {since}. Перезавантаження {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Не вдалося перезавантажити інтеграцію",
+    "watchdog_reload_failed": "Не вдалося перезавантажити {title} ({domain}): усі її сутності були недоступні з {since}. Перезавантаження {attempt}/{max}, див. журнали.",
+    "watchdog_gave_up_title": "Інтеграція досі недоступна",
+    "watchdog_gave_up": "{title} ({domain}) досі недоступна. Виконано перезавантажень: {attempt}. Її не буде перезавантажено, доки одна з її сутностей не стане доступною.",
+    "watchdog_power_cycled_title": "Пристрій перезапущено",
+    "watchdog_power_cycled": "{title} перезапущено за допомогою {switch}: усі його об'єкти були недоступні з {since}. Перезапуск {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Не вдалося перезапустити пристрій",
+    "watchdog_power_cycle_failed": "Не вдалося перезапустити {title} за допомогою {switch}: усі його об'єкти були недоступні з {since}. Перезапуск {attempt}/{max}, перегляньте журнали.",
+    "watchdog_power_cycle_gave_up_title": "Пристрій досі недоступний",
+    "watchdog_power_cycle_gave_up": "{title} досі недоступний після {attempt} перезапусків. {switch} більше не вимикатиметься, доки один із його об'єктів не стане доступним."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub не завантажено."
+    },
+    "module_disabled": {
+      "message": "Модуль {module} вимкнено в параметрах System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Немає запису інтеграції {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "Не вдалося перезавантажити {title}, див. журнали. Лічильник перезавантажень скинуто: System Hub починає спочатку."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace не завантажено."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Ця версія Marketplace не підтримується (відсутній {path}); будь ласка, створіть issue на {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace вимкнено ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace вимкнено."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} не є сутністю оновлення Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} не є репозиторієм, завантаженим через Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Не вдалося перевірити {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Перевірку скасовано (System Hub було перезавантажено або видалено)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Повна перевірка не вдалася: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Оновлення вже встановлюються."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Триває встановлення оновлень: перевірте оновлення після його завершення."
+    },
+    "marketplace_install_failed": {
+      "message": "Не вдалося встановити {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Встановлення скасовано (System Hub було перезавантажено або видалено)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Залишилося замало запитів GitHub для перевірки всіх репозиторіїв (залишилося {remaining}, потрібно {needed}): перевірка повториться після скидання ліміту о {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Не вдалося отримати контейнери від Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 розряджена батарея"
+    },
+    "batteries_title_many": {
+      "message": "Розряджені батареї: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: розряджена{type}"
+    },
+    "batteries_none_title": {
+      "message": "Немає батарей для перевірки"
+    },
+    "batteries_none": {
+      "message": "Усі батареї вище {threshold} % і доступні."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: недоступна{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 батарея для перевірки"
+    },
+    "batteries_check_many": {
+      "message": "Батареї для перевірки: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} поза дозволеними теками (тека конфігурації або allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} не є файлом CSV (.csv): експорт записує лише файли CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} знаходиться в прихованій теці (наприклад, .storage): експорт туди не записує."
+    },
+    "batteries_spares_short": {
+      "message": "Купити запасні батарейки: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} досі недоступна",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) досі недоступна. Перезавантажень, виконаних System Hub: {attempt}. Її не буде перезавантажено, доки одна з її сутностей не стане доступною.\n\nПеревірте пристрій або сервіс, до якого вона підключається, а також журнали. Ця проблема зникне, щойно інтеграція відновиться.\n\nПідтвердьте, щоб повторити зараз: System Hub забуде її перезавантаження і перезавантажить інтеграцію."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub не завантажено.",
+          "reload_started": "Перезавантаження **{title}** запущено: лічильник перезавантажень скинуто, System Hub починає спочатку. Ця проблема зникне, щойно почнеться перезавантаження; помилка буде в журналах."
+        }
+      }
+    }
+  }
+}

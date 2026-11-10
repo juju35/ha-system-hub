@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Изберете модулите за включване. Всеки модул се настройва в опциите.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
+          "watchdog": "Презарежда интеграциите, чиито обекти са всички недостъпни.",
+          "marketplace": "Проверява на сървъра за актуализации на всички хранилища, изтеглени с Marketplace. Самият Marketplace проверява потребителските хранилища само веднъж на 48 часа.",
+          "batteries": "Изпраща известие два пъти на ден за устройствата, чиято батерия е останала изтощена."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "Supervisor не е наличен: необходима е Home Assistant OS или инсталация Supervised.",
+      "marketplace_not_loaded": "Marketplace не е зареден."
+    },
+    "abort": {
+      "already_configured": "System Hub вече е конфигуриран.",
+      "single_instance_allowed": "System Hub вече е конфигуриран."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Опции на System Hub",
+        "menu_options": {
+          "modules": "Модули",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Добавяне на рестарт чрез контакт",
+          "watchdog_remove_power_cycle": "Watchdog: Премахване на рестарти чрез контакт",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Модули",
+        "description": "Включете или изключете модули. Изключен модул спира проверките си и обектите му се премахват; настройките му се запазват.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
+          "watchdog": "Презарежда интеграциите, чиито обекти са всички недостъпни.",
+          "marketplace": "Проверява на сървъра за актуализации на всички хранилища, изтеглени с Marketplace. Самият Marketplace проверява потребителските хранилища само веднъж на 48 часа.",
+          "batteries": "Изпраща известие два пъти на ден за устройствата, чиято батерия е останала изтощена."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Интервал на опресняване",
+          "notify": "Известяване",
+          "notify_services": "Действия за известяване"
+        },
+        "data_description": {
+          "scan_interval": "Секунди между две четения от Supervisor.",
+          "notify": "Известяване, когато контейнер, който трябва да работи (добавка, стартирана при зареждане), спре, и когато се върне.",
+          "notify_services": "Изпращай всяко известие и чрез тези действия (notify.mobile_app_…). Винаги се създава постоянно известие."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Интервал на проверка",
+          "grace_period": "Гратисен период",
+          "grace_overrides": "Гратисен период за интеграция",
+          "max_reloads": "Последователни презареждания",
+          "ignored_integrations": "Игнорирани интеграции",
+          "notify_services": "Действия за известяване",
+          "ignored_entries": "Пренебрегнати записи",
+          "pause_entity": "Обект за пауза"
+        },
+        "data_description": {
+          "scan_interval": "Минути между две проверки.",
+          "grace_period": "Минути, през които всички обекти на дадена интеграция трябва да са били недостъпни, преди тя да бъде презаредена. През това време след стартирането на Home Assistant нищо не се презарежда.",
+          "grace_overrides": "По един ред за интеграция: домейн: минути (zha: 30). Заменя гратисния период на тази интеграция и паузите между презарежданията ѝ; след стартиране глобалният гратисен период продължава да важи за всички.",
+          "max_reloads": "Презареждания на интеграция, която остава недостъпна, преди да бъде изоставена, докато не се възстанови. Интервалът между две презареждания се удвоява всеки път: гратисен период, 2 × гратисен период…",
+          "ignored_integrations": "Интеграции, които никога не се презареждат. Въведете домейн, за да добавите интеграция, която още не е настроена.",
+          "notify_services": "Изпращай всяко известие и чрез тези действия (notify.mobile_app_…). Винаги се създава постоянно известие.",
+          "ignored_entries": "Отделни записи на интеграция, които никога не се презареждат; другите записи на интеграцията им остават наблюдавани (напр. една от няколко камери).",
+          "pause_entity": "Докато този обект е включен (input_boolean за поддръжка, график за нощта…), нищо не се презарежда; проверките продължават да изброяват недостъпните интеграции."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Рестарт на устройство чрез неговия контакт",
+        "description": "Когато всички обекти на устройство остават недостъпни, смарт контактът, който го захранва, се изключва и после се включва отново. Същите ограничения като при презарежданията: презареждания подред, удвояващо се изчакване, обект за пауза, нищо по време на гратисния период след стартиране.",
+        "data": {
+          "device_id": "Устройство",
+          "switch": "Смарт контакт",
+          "delay": "Недостъпно за",
+          "off_time": "Изключен за"
+        },
+        "data_description": {
+          "device_id": "Устройството за рестартиране: всички негови активни обекти трябва да са недостъпни.",
+          "switch": "Превключвателят, който го захранва. Изключва се само ако е включен: изключен или недостъпен контакт не се пипа.",
+          "delay": "Минути, през които всички обекти на устройството трябва да са недостъпни, преди контактът му да бъде изключен. Изчакването между два рестарта се удвоява всеки път.",
+          "off_time": "Секунди, през които контактът остава изключен, преди да бъде включен отново."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Премахване на рестарти чрез контакт",
+        "data": {
+          "power_cycles": "Рестарти чрез контакт"
+        },
+        "data_description": {
+          "power_cycles": "Рестартите чрез контакт за премахване."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Интервал на проверка",
+          "backup_before_install": "Резервно копие преди инсталиране на обновления"
+        },
+        "data_description": {
+          "scan_interval": "Часове между две автоматични проверки. 0 изключва автоматичната проверка: използвайте бутона или действието.",
+          "backup_before_install": "Преди Обнови всички (или действието без backup) се създава автоматичното резервно копие на Home Assistant с настройките от Настройки > Система > Резервни копия; ако не успее, нищо не се инсталира."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Праг за изтощена батерия",
+          "duration": "Изтощена поне",
+          "morning_time": "Сутрешно известие",
+          "evening_time": "Вечерно известие",
+          "notify_services": "Действия за известяване",
+          "ignored_entities": "Игнорирани батерии",
+          "ignored_integrations": "Игнорирани интеграции"
+        },
+        "data_description": {
+          "threshold": "Под това ниво батерията се смята за изтощена.",
+          "duration": "Часове, през които батерията трябва да е останала под прага, преди да бъде включена в известие (0: при следващото известие).",
+          "morning_time": "Първото от двете ежедневни известия.",
+          "evening_time": "Второто от двете ежедневни известия.",
+          "notify_services": "Изпращане на известията с тези действия (notify.mobile_app_…). Винаги се създава постоянно известие.",
+          "ignored_entities": "Батерии, които никога не се наблюдават.",
+          "ignored_integrations": "Интеграции, чиито батерии никога не се наблюдават (по подразбиране телефоните и таблетите от мобилното приложение). Въведете домейн, за да добавите интеграция, която още не е настроена."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Всеки ред трябва да е домейн: минути, от 1 до 1440 (zha: 30).",
+      "device_already_cycled": "Това устройство вече има рестарт чрез контакт: първо го премахнете.",
+      "switch_on_device": "Контактът не може да е обект на самото устройство: би бил недостъпен заедно с него.",
+      "device_without_entities": "Това устройство няма обект за наблюдение освен контакта.",
+      "marketplace_not_loaded": "Marketplace не е зареден.",
+      "supervisor_not_available": "Supervisor не е наличен: необходима е Home Assistant OS или инсталация Supervised."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Провери сега"
+      },
+      "marketplace_check_updates": {
+        "name": "Провери за актуализации"
+      },
+      "batteries_notify_now": {
+        "name": "Уведоми сега"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Работещи контейнери",
+        "state_attributes": {
+          "total": {
+            "name": "Общо"
+          },
+          "error": {
+            "name": "Грешка"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Спрени контейнери",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Последна актуализация"
+      },
+      "watchdog_unavailable": {
+        "name": "Недостъпни интеграции",
+        "state_attributes": {
+          "integrations": {
+            "name": "Интеграции"
+          },
+          "ignored": {
+            "name": "Игнорирани"
+          },
+          "max_reloads": {
+            "name": "Максимум презареждания"
+          },
+          "paused": {
+            "name": "На пауза"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Последно презареждане",
+        "state_attributes": {
+          "domain": {
+            "name": "Домейн"
+          },
+          "title": {
+            "name": "Заглавие"
+          },
+          "entry_id": {
+            "name": "ID на записа"
+          },
+          "success": {
+            "name": "Успешно"
+          },
+          "reloads": {
+            "name": "Презареждания"
+          },
+          "history": {
+            "name": "История"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Последна проверка"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Презареждания за 24 ч",
+        "state_attributes": {
+          "failed": {
+            "name": "Неуспешни"
+          },
+          "integrations": {
+            "name": "Интеграции"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Състояние",
+        "state": {
+          "idle": "Неактивен",
+          "running": "Проверява се",
+          "error": "Грешка"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Проверени"
+          },
+          "total": {
+            "name": "Хранилища"
+          },
+          "updates": {
+            "name": "Налични актуализации"
+          },
+          "failed": {
+            "name": "Неуспешни"
+          },
+          "error": {
+            "name": "Грешка"
+          },
+          "checking": {
+            "name": "В процес на проверка"
+          },
+          "installing": {
+            "name": "В процес на инсталиране"
+          },
+          "install_failed": {
+            "name": "Не можаха да бъдат инсталирани"
+          },
+          "github_connected": {
+            "name": "GitHub свързан"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Последна проверка",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Интервал на проверка"
+          },
+          "next_check": {
+            "name": "Следваща проверка"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Изтощени батерии",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Недостъпни"
+          },
+          "due": {
+            "name": "За известяване"
+          },
+          "threshold": {
+            "name": "Праг"
+          },
+          "duration": {
+            "name": "Продължителност"
+          },
+          "batteries": {
+            "name": "Батерии"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Последно известие",
+        "state_attributes": {
+          "notified": {
+            "name": "Батерии в известието"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Следваща смяна",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Обект"
+          },
+          "name": {
+            "name": "Батерия"
+          },
+          "level": {
+            "name": "Ниво"
+          },
+          "days_left": {
+            "name": "Оставащи дни"
+          },
+          "forecast_at": {
+            "name": "Прогнозата е измерена"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Резервни батерии",
+        "state_attributes": {
+          "stock": {
+            "name": "Налични"
+          },
+          "needed": {
+            "name": "Нужни"
+          },
+          "short": {
+            "name": "Липсват"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Опресняване на контейнерите",
+      "description": "Прочита сега Home Assistant Core, Supervisor и добавките от Supervisor."
+    },
+    "watchdog_check": {
+      "name": "Провери интеграциите",
+      "description": "Търси интеграциите, чиито обекти са всички недостъпни, и презарежда тези, чийто гратисен период е изтекъл."
+    },
+    "watchdog_reset": {
+      "name": "Нулиране на интеграция",
+      "description": "Забравя презарежданията на интеграция (изоставена или не) и я презарежда веднага.",
+      "fields": {
+        "entry_id": {
+          "name": "Запис на интеграция",
+          "description": "Записът на интеграция, който да бъде нулиран и презареден."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Провери за актуализации",
+      "description": "Проверява за актуализации на всички хранилища, изтеглени с Marketplace. Работи във фонов режим, освен ако не е зададено wait.",
+      "fields": {
+        "wait": {
+          "name": "Изчакване",
+          "description": "Изчаква, докато всички хранилища бъдат проверени, преди действието да приключи; действието тогава е неуспешно, ако проверката е неуспешна или някое хранилище не е могло да бъде проверено."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Провери хранилище за актуализации",
+      "description": "Проверява за актуализации хранилищата зад тези обекти за актуализация на Marketplace и изчаква резултата.",
+      "fields": {
+        "entity_id": {
+          "name": "Обекти за актуализация",
+          "description": "Обекти за актуализация на Marketplace на хранилищата за проверка."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Инсталирай актуализации",
+      "description": "Инсталира актуализациите на хранилищата в Marketplace една след друга, във фонов режим, освен ако не е зададено wait. Само за администратори.",
+      "fields": {
+        "entity_id": {
+          "name": "Обекти за актуализация",
+          "description": "Обекти за актуализация на Marketplace за актуализиране; оставете празно за всички хранилища с актуализация."
+        },
+        "wait": {
+          "name": "Изчакване",
+          "description": "Изчаква, докато всички актуализации бъдат инсталирани, преди действието да приключи; действието тогава е неуспешно, ако някоя актуализация не е могла да бъде инсталирана."
+        },
+        "backup": {
+          "name": "Първо резервно копие",
+          "description": "Създаване на автоматичното резервно копие на Home Assistant преди инсталиране; нищо не се инсталира, ако не успее. Оставете празно, за да следва опцията на интеграцията."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Известие за изтощени батерии",
+      "description": "Изпраща известието веднага, с всяка батерия под прага или недостъпна независимо от продължителността, или съобщение, че никоя не изисква внимание."
+    },
+    "batteries_export": {
+      "name": "Експорт на батериите в CSV",
+      "description": "Записва всяка наблюдавана батерия (ниво, стая, слаба, недостъпна, за обработка, откога, разряд на ден, оставащи дни, дата на смяна) в CSV файл.",
+      "fields": {
+        "path": {
+          "name": "Файл",
+          "description": "Път до CSV файла; system_hub_batteries.csv в папката с конфигурацията, ако е празно."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Задаване на резервни батерии",
+      "description": "Задава колко резервни батерии от даден тип имате; всяка открита смяна от този тип ги изважда.",
+      "fields": {
+        "battery_type": {
+          "name": "Тип батерия",
+          "description": "Както го нарича Battery Notes, без броя: AA, CR2032…"
+        },
+        "count": {
+          "name": "Брой",
+          "description": "Резервни батерии от този тип. Оставете празно, за да спре броенето."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Контейнерът е спрян",
+    "containers_down": "{name} трябва да работи, но е {state}.",
+    "containers_back_title": "Контейнерът се върна",
+    "containers_back": "{name} отново работи.",
+    "watchdog_reloaded_title": "Интеграцията е презаредена",
+    "watchdog_reloaded": "{title} ({domain}) беше презаредена: всички нейни обекти бяха недостъпни от {since}. Презареждане {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Неуспешно презареждане на интеграция",
+    "watchdog_reload_failed": "{title} ({domain}) не можа да бъде презаредена: всички нейни обекти бяха недостъпни от {since}. Презареждане {attempt}/{max}, вижте журналите.",
+    "watchdog_gave_up_title": "Интеграцията все още е недостъпна",
+    "watchdog_gave_up": "{title} ({domain}) все още е недостъпна. Направени презареждания: {attempt}. Няма да бъде презаредена отново, докато някой от нейните обекти не стане достъпен.",
+    "watchdog_power_cycled_title": "Устройството е рестартирано",
+    "watchdog_power_cycled": "{title} беше рестартирано с {switch}: всички негови обекти бяха недостъпни от {since}. Рестарт {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Рестартът на устройството е неуспешен",
+    "watchdog_power_cycle_failed": "{title} не можа да бъде рестартирано с {switch}: всички негови обекти бяха недостъпни от {since}. Рестарт {attempt}/{max}, вижте журналите.",
+    "watchdog_power_cycle_gave_up_title": "Устройството все още е недостъпно",
+    "watchdog_power_cycle_gave_up": "{title} все още е недостъпно след {attempt} рестарта. {switch} няма да бъде изключен отново, докато някой от обектите му не стане достъпен."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub не е зареден."
+    },
+    "module_disabled": {
+      "message": "Модулът {module} е изключен в опциите на System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Няма запис на интеграция {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} не можа да бъде презаредена, вижте журналите. Презарежданията ѝ бяха нулирани: System Hub започва отначало."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace не е зареден."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Тази версия на Marketplace не се поддържа (липсва {path}); моля, отворете проблем в {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace е деактивиран ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace е деактивиран."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} не е обект за актуализация на Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} не е хранилище, изтеглено с Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Неуспешна проверка на {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Проверката беше отменена (System Hub беше презареден или премахнат)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Пълната проверка е неуспешна: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Вече се инсталират актуализации."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Инсталират се актуализации: проверете за актуализации, след като приключат."
+    },
+    "marketplace_install_failed": {
+      "message": "Неуспешно инсталиране на {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Инсталациите бяха отменени (System Hub беше презареден или премахнат)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Не остават достатъчно заявки към GitHub за проверка на всички хранилища ({remaining} остават, нужни са {needed}): проверката ще се повтори след нулирането на лимита в {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Контейнерите не можаха да бъдат прочетени от Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 изтощена батерия"
+    },
+    "batteries_title_many": {
+      "message": "{count} изтощени батерии"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: изтощена{type}"
+    },
+    "batteries_none_title": {
+      "message": "Няма батерии за проверка"
+    },
+    "batteries_none": {
+      "message": "Всички батерии са над {threshold} % и са достъпни."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: недостъпна{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 батерия за проверка"
+    },
+    "batteries_check_many": {
+      "message": "{count} батерии за проверка"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} е извън разрешените папки (папката с конфигурацията или allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} не е CSV файл (.csv): експортът записва само CSV файлове."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} е в скрита папка (като .storage): експортът не записва там."
+    },
+    "batteries_spares_short": {
+      "message": "Резервни батерии за купуване: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} все още е недостъпна",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) все още е недостъпна. Презареждания от System Hub: {attempt}. Няма да бъде презаредена отново, докато някой от нейните обекти не стане достъпен.\n\nПроверете устройството или услугата, към която се свързва, както и журналите. Този проблем изчезва, след като интеграцията се възстанови.\n\nПотвърдете, за да опитате отново сега: System Hub забравя презарежданията ѝ и презарежда интеграцията."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub не е зареден.",
+          "reload_started": "Презареждането на **{title}** започна: презарежданията ѝ бяха нулирани и System Hub започва отначало. Този проблем изчезва веднага щом презареждането започне; грешка се вижда в журналите."
+        }
+      }
+    }
+  }
+}

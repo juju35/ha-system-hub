@@ -1,0 +1,585 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Escolha os módulos a ativar. Cada módulo é configurado nas opções.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Monitoriza o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitorização: nada é reiniciado.",
+          "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
+          "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
+          "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca."
+        }
+      }
+    },
+    "error": {
+      "supervisor_not_available": "O Supervisor não está disponível: é necessário o Home Assistant OS ou uma instalação Supervised.",
+      "marketplace_not_loaded": "O Marketplace não está carregado."
+    },
+    "abort": {
+      "already_configured": "O System Hub já está configurado.",
+      "single_instance_allowed": "O System Hub já está configurado."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opções do System Hub",
+        "menu_options": {
+          "modules": "Módulos",
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Adicionar um reinício por tomada",
+          "watchdog_remove_power_cycle": "Watchdog: Remover reinícios por tomada",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        }
+      },
+      "modules": {
+        "title": "Módulos",
+        "description": "Ative ou desative os módulos. Um módulo desativado deixa de fazer verificações e as suas entidades são removidas; as suas definições são mantidas.",
+        "data": {
+          "containers": "Containers",
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
+        },
+        "data_description": {
+          "containers": "Monitoriza o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitorização: nada é reiniciado.",
+          "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
+          "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
+          "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Intervalo de atualização",
+          "notify": "Notificar",
+          "notify_services": "Ações de notificação"
+        },
+        "data_description": {
+          "scan_interval": "Segundos entre duas leituras do Supervisor.",
+          "notify": "Notificar quando um contentor que devia estar a correr (um add-on iniciado no arranque) para, e quando volta.",
+          "notify_services": "Enviar também cada notificação com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Intervalo de verificação",
+          "grace_period": "Período de tolerância",
+          "grace_overrides": "Período de tolerância por integração",
+          "max_reloads": "Recarregamentos seguidos",
+          "ignored_integrations": "Integrações ignoradas",
+          "notify_services": "Ações de notificação",
+          "ignored_entries": "Entradas ignoradas",
+          "pause_entity": "Entidade de pausa"
+        },
+        "data_description": {
+          "scan_interval": "Minutos entre duas verificações.",
+          "grace_period": "Minutos durante os quais todas as entidades de uma integração têm de estar indisponíveis antes de esta ser recarregada. Nada é recarregado durante este período após o arranque do Home Assistant.",
+          "grace_overrides": "Uma linha por integração: domínio: minutos (zha: 30). Substitui o período de tolerância dessa integração e as esperas entre os seus recarregamentos; após um arranque, o período de tolerância global continua a aplicar-se a todas.",
+          "max_reloads": "Recarregamentos de uma integração que continua indisponível antes de desistir dela até que recupere. O intervalo entre dois recarregamentos duplica de cada vez: período de tolerância, 2 × período de tolerância…",
+          "ignored_integrations": "Integrações nunca recarregadas. Escreva um domínio para adicionar uma que ainda não esteja configurada.",
+          "notify_services": "Enviar também cada notificação com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente.",
+          "ignored_entries": "Entradas de integração nunca recarregadas; as outras entradas da sua integração continuam vigiadas (uma câmara entre várias, por exemplo).",
+          "pause_entity": "Enquanto esta entidade estiver ligada (um input_boolean de manutenção, um horário para a noite…), nada é recarregado; as verificações continuam a listar as integrações indisponíveis."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Reiniciar um dispositivo pela sua tomada",
+        "description": "Quando todas as entidades de um dispositivo continuam indisponíveis, a tomada inteligente que o alimenta é desligada e depois ligada de novo. Os mesmos limites dos recarregamentos: recarregamentos seguidos, espera que duplica, entidade de pausa, nada durante o período de tolerância após um arranque.",
+        "data": {
+          "device_id": "Dispositivo",
+          "switch": "Tomada inteligente",
+          "delay": "Indisponível durante",
+          "off_time": "Desligada durante"
+        },
+        "data_description": {
+          "device_id": "O dispositivo a reiniciar: todas as suas entidades ativas têm de estar indisponíveis.",
+          "switch": "O interruptor que o alimenta. Só é desligado se estiver ligado: uma tomada desligada ou indisponível não é tocada.",
+          "delay": "Minutos em que todas as entidades do dispositivo têm de estar indisponíveis antes de desligar a sua tomada. A espera entre dois reinícios duplica de cada vez.",
+          "off_time": "Segundos em que a tomada fica desligada antes de ser ligada de novo."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Remover reinícios por tomada",
+        "data": {
+          "power_cycles": "Reinícios por tomada"
+        },
+        "data_description": {
+          "power_cycles": "Os reinícios por tomada a remover."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Intervalo de verificação",
+          "backup_before_install": "Fazer cópia de segurança antes de instalar atualizações"
+        },
+        "data_description": {
+          "scan_interval": "Horas entre duas verificações automáticas. 0 desativa a verificação automática: utilize o botão ou a ação.",
+          "backup_before_install": "Antes de Atualizar tudo (ou da ação sem backup), criar a cópia de segurança automática do Home Assistant, com as definições em Definições > Sistema > Cópias de segurança; se falhar, nada é instalado."
+        }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Limiar de bateria fraca",
+          "duration": "Fraca há pelo menos",
+          "morning_time": "Notificação da manhã",
+          "evening_time": "Notificação da noite",
+          "notify_services": "Ações de notificação",
+          "ignored_entities": "Baterias ignoradas",
+          "ignored_integrations": "Integrações ignoradas"
+        },
+        "data_description": {
+          "threshold": "Uma bateria está fraca abaixo deste nível.",
+          "duration": "Horas que uma bateria tem de permanecer abaixo do limiar antes de ser notificada (0: na próxima notificação).",
+          "morning_time": "Primeira das duas notificações diárias.",
+          "evening_time": "Segunda das duas notificações diárias.",
+          "notify_services": "Enviar as notificações com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente.",
+          "ignored_entities": "Baterias nunca monitorizadas.",
+          "ignored_integrations": "Integrações cujas baterias nunca são monitorizadas (telemóveis e tablets da aplicação móvel por predefinição). Escreva um domínio para adicionar uma que ainda não esteja configurada."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Cada linha deve ser domínio: minutos, de 1 a 1440 (zha: 30).",
+      "device_already_cycled": "Este dispositivo já tem um reinício por tomada: remova-o primeiro.",
+      "switch_on_device": "A tomada não pode ser uma entidade do próprio dispositivo: ficaria indisponível com ele.",
+      "device_without_entities": "Este dispositivo não tem nenhuma entidade a vigiar além da tomada.",
+      "marketplace_not_loaded": "O Marketplace não está carregado.",
+      "supervisor_not_available": "O Supervisor não está disponível: é necessário o Home Assistant OS ou uma instalação Supervised."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Verificar agora"
+      },
+      "marketplace_check_updates": {
+        "name": "Procurar atualizações"
+      },
+      "batteries_notify_now": {
+        "name": "Notificar agora"
+      }
+    },
+    "sensor": {
+      "containers_running": {
+        "name": "Contentores em execução",
+        "state_attributes": {
+          "total": {
+            "name": "Total"
+          },
+          "error": {
+            "name": "Erro"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Contentores parados",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Última atualização"
+      },
+      "watchdog_unavailable": {
+        "name": "Integrações indisponíveis",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrações"
+          },
+          "ignored": {
+            "name": "Ignoradas"
+          },
+          "max_reloads": {
+            "name": "Recarregamentos máximos"
+          },
+          "paused": {
+            "name": "Em pausa"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Último recarregamento",
+        "state_attributes": {
+          "domain": {
+            "name": "Domínio"
+          },
+          "title": {
+            "name": "Título"
+          },
+          "entry_id": {
+            "name": "ID da entrada"
+          },
+          "success": {
+            "name": "Bem-sucedido"
+          },
+          "reloads": {
+            "name": "Recarregamentos"
+          },
+          "history": {
+            "name": "Histórico"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Última verificação"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Recarregamentos em 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Falhados"
+          },
+          "integrations": {
+            "name": "Integrações"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Estado",
+        "state": {
+          "idle": "Inativo",
+          "running": "A verificar",
+          "error": "Erro"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Verificados"
+          },
+          "total": {
+            "name": "Repositórios"
+          },
+          "updates": {
+            "name": "Atualizações disponíveis"
+          },
+          "failed": {
+            "name": "Falhados"
+          },
+          "error": {
+            "name": "Erro"
+          },
+          "checking": {
+            "name": "Em verificação"
+          },
+          "installing": {
+            "name": "Em instalação"
+          },
+          "install_failed": {
+            "name": "Não foi possível instalar"
+          },
+          "github_connected": {
+            "name": "GitHub ligado"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Última verificação",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Intervalo de verificação"
+          },
+          "next_check": {
+            "name": "Próxima verificação"
+          }
+        }
+      },
+      "batteries_low_batteries": {
+        "name": "Baterias fracas",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Indisponíveis"
+          },
+          "due": {
+            "name": "A notificar"
+          },
+          "threshold": {
+            "name": "Limiar"
+          },
+          "duration": {
+            "name": "Duração"
+          },
+          "batteries": {
+            "name": "Baterias"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Última notificação",
+        "state_attributes": {
+          "notified": {
+            "name": "Baterias notificadas"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Próxima substituição",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entidade"
+          },
+          "name": {
+            "name": "Bateria"
+          },
+          "level": {
+            "name": "Nível"
+          },
+          "days_left": {
+            "name": "Dias restantes"
+          },
+          "forecast_at": {
+            "name": "Previsão medida"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Pilhas de reserva",
+        "state_attributes": {
+          "stock": {
+            "name": "Em stock"
+          },
+          "needed": {
+            "name": "Necessárias"
+          },
+          "short": {
+            "name": "Em falta"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "containers_refresh": {
+      "name": "Atualizar contentores",
+      "description": "Lê agora o Home Assistant Core, o Supervisor e os add-ons a partir do Supervisor."
+    },
+    "watchdog_check": {
+      "name": "Verificar integrações",
+      "description": "Procura as integrações cujas entidades estão todas indisponíveis e recarrega aquelas cujo período de tolerância terminou."
+    },
+    "watchdog_reset": {
+      "name": "Repor uma integração",
+      "description": "Esquece os recarregamentos feitos numa integração (abandonada ou não) e recarrega-a agora.",
+      "fields": {
+        "entry_id": {
+          "name": "Entrada da integração",
+          "description": "A entrada da integração a repor e recarregar."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Procurar atualizações",
+      "description": "Procura atualizações de todos os repositórios transferidos com o Marketplace. É executada em segundo plano, exceto se Aguardar estiver ativado.",
+      "fields": {
+        "wait": {
+          "name": "Aguardar",
+          "description": "Aguardar que todos os repositórios sejam verificados antes de a ação terminar; a ação falha então se a verificação falhou ou se um repositório não pôde ser verificado."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Procurar atualizações de um repositório",
+      "description": "Procura atualizações dos repositórios associados a estas entidades de atualização do Marketplace e aguarda o resultado.",
+      "fields": {
+        "entity_id": {
+          "name": "Entidades de atualização",
+          "description": "Entidades de atualização do Marketplace dos repositórios a verificar."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Instalar atualizações",
+      "description": "Instala as atualizações dos repositórios Marketplace, uma após a outra, em segundo plano exceto se Aguardar estiver ativado. Apenas administradores.",
+      "fields": {
+        "entity_id": {
+          "name": "Entidades de atualização",
+          "description": "Entidades de atualização do Marketplace a atualizar; deixe vazio para todos os repositórios com uma atualização."
+        },
+        "wait": {
+          "name": "Aguardar",
+          "description": "Aguardar que todas as atualizações sejam instaladas antes de a ação terminar; a ação falha então se uma atualização não pôde ser instalada."
+        },
+        "backup": {
+          "name": "Cópia de segurança primeiro",
+          "description": "Criar a cópia de segurança automática do Home Assistant antes de instalar; nada é instalado se falhar. Deixar vazio para seguir a opção da integração."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Notificar baterias fracas",
+      "description": "Envia a notificação agora, com todas as baterias abaixo do limiar ou indisponíveis independentemente da duração, ou uma mensagem a indicar que nenhuma precisa de atenção."
+    },
+    "batteries_export": {
+      "name": "Exportar baterias para CSV",
+      "description": "Escreve cada bateria monitorizada (nível, divisão, fraca, indisponível, a tratar, desde quando, descarga por dia, dias restantes, data de substituição) num ficheiro CSV.",
+      "fields": {
+        "path": {
+          "name": "Ficheiro",
+          "description": "Caminho do ficheiro CSV; system_hub_batteries.csv na pasta de configuração se vazio."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Definir as pilhas de reserva",
+      "description": "Indica quantas pilhas de reserva de um tipo tem; cada substituição detetada desse tipo é descontada.",
+      "fields": {
+        "battery_type": {
+          "name": "Tipo de pilha",
+          "description": "Como o Battery Notes o designa, sem a quantidade: AA, CR2032…"
+        },
+        "count": {
+          "name": "Quantidade",
+          "description": "Pilhas de reserva desse tipo. Deixe vazio para deixar de o contar."
+        }
+      }
+    }
+  },
+  "common": {
+    "containers_down_title": "Contentor parado",
+    "containers_down": "{name} devia estar a correr mas está {state}.",
+    "containers_back_title": "Contentor de volta",
+    "containers_back": "{name} está novamente a correr.",
+    "watchdog_reloaded_title": "Integração recarregada",
+    "watchdog_reloaded": "{title} ({domain}) foi recarregada: todas as suas entidades estavam indisponíveis desde {since}. Recarregamento {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Falha ao recarregar uma integração",
+    "watchdog_reload_failed": "Não foi possível recarregar {title} ({domain}): todas as suas entidades estavam indisponíveis desde {since}. Recarregamento {attempt}/{max}, consulte os registos.",
+    "watchdog_gave_up_title": "Integração ainda indisponível",
+    "watchdog_gave_up": "{title} ({domain}) continua indisponível após {attempt} recarregamentos. Não voltará a ser recarregada até que uma das suas entidades esteja disponível.",
+    "watchdog_power_cycled_title": "Dispositivo reiniciado",
+    "watchdog_power_cycled": "{title} foi reiniciado com {switch}: todas as suas entidades estavam indisponíveis desde {since}. Reinício {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Falha ao reiniciar o dispositivo",
+    "watchdog_power_cycle_failed": "{title} não pôde ser reiniciado com {switch}: todas as suas entidades estavam indisponíveis desde {since}. Reinício {attempt}/{max}, veja os registos.",
+    "watchdog_power_cycle_gave_up_title": "Dispositivo ainda indisponível",
+    "watchdog_power_cycle_gave_up": "{title} continua indisponível após {attempt} reinícios. {switch} não voltará a ser desligada até uma das suas entidades estar disponível."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "O System Hub não está carregado."
+    },
+    "module_disabled": {
+      "message": "O módulo {module} está desativado nas opções do System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Não existe a entrada de integração {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "Não foi possível recarregar {title}, veja os registos. Os seus recarregamentos foram repostos: o System Hub recomeça."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "O Marketplace não está carregado."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Esta versão do Marketplace não é suportada ({path} em falta); abra um pedido em {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "O Marketplace está desativado ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "O Marketplace está desativado."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} não é uma entidade de atualização do Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} não é um repositório transferido com o Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Não foi possível verificar {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "A verificação foi cancelada (o System Hub foi recarregado ou removido)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "A verificação completa falhou: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Já estão a ser instaladas atualizações."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Estão a ser instaladas atualizações: procure atualizações quando terminarem."
+    },
+    "marketplace_install_failed": {
+      "message": "Não foi possível instalar {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "As instalações foram canceladas (o System Hub foi recarregado ou removido)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Não restam pedidos suficientes ao GitHub para verificar todos os repositórios ({remaining} restantes, {needed} necessários): a verificação repete-se depois de o limite ser reposto às {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Não foi possível ler os contentores a partir do Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 bateria fraca"
+    },
+    "batteries_title_many": {
+      "message": "{count} baterias fracas"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: fraca{type}"
+    },
+    "batteries_none_title": {
+      "message": "Nenhuma bateria a verificar"
+    },
+    "batteries_none": {
+      "message": "Todas as baterias estão acima de {threshold} % e disponíveis."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: indisponível{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 bateria a verificar"
+    },
+    "batteries_check_many": {
+      "message": "{count} baterias a verificar"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} está fora das pastas permitidas (pasta de configuração ou allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} não é um ficheiro CSV (.csv): a exportação só escreve ficheiros CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} está numa pasta oculta (como .storage): a exportação não escreve aí."
+    },
+    "batteries_spares_short": {
+      "message": "Pilhas de reserva a comprar: {spares}"
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} continua indisponível",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) continua indisponível após {attempt} recarregamentos pelo System Hub, que não a voltará a recarregar até uma das suas entidades estar disponível.\n\nVerifique o dispositivo ou o serviço a que se liga, e os registos. Este problema desaparece quando a integração recuperar.\n\nSubmeta para tentar novamente agora: o System Hub esquece os seus recarregamentos e recarrega a integração."
+          }
+        },
+        "abort": {
+          "not_loaded": "O System Hub não está carregado.",
+          "reload_started": "A recarregar **{title}**: os seus recarregamentos foram repostos e o System Hub recomeça. Este problema desaparece assim que o recarregamento começa; uma falha fica nos registos."
+        }
+      }
+    }
+  }
+}
