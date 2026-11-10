@@ -14,13 +14,14 @@ import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID, Platform
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError, Unauthorized, UnknownUser
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
+from .admin import admin_only
 from .batteries import async_disable_batteries, async_remove_batteries, async_setup_batteries
 from .batteries.const import ATTR_BATTERY_TYPE, ATTR_COUNT, ATTR_PATH, SERVICE_EXPORT, SERVICE_NOTIFY, SERVICE_SET_STOCK
 from .batteries.export import async_export
@@ -30,6 +31,7 @@ from .const import (
     DOMAIN,
     MODULE_BATTERIES,
     MODULE_CONTAINERS,
+    MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_WATCHDOG,
     MODULES,
@@ -37,6 +39,9 @@ from .const import (
 from .containers import async_setup_containers
 from .containers.const import SERVICE_REFRESH
 from .containers.monitor import ContainerMonitor
+from .git_sync import async_remove_git_sync, async_setup_git_sync, configured
+from .git_sync.coordinator import GitSyncCoordinator
+from .git_sync.services import async_setup_git_sync_services
 from .marketplace import async_options_changed, async_remove_marketplace, async_setup_marketplace
 from .marketplace.const import SERVICE_CHECK_REPOSITORY, SERVICE_CHECK_UPDATES, SERVICE_INSTALL_UPDATES
 from .marketplace.refresher import MarketplaceNotAvailableError, MarketplaceRefresher
@@ -70,6 +75,7 @@ class SystemHubData:
     watchdog: IntegrationWatchdog | None = None
     marketplace: MarketplaceRefresher | None = None
     batteries: BatteryMonitor | None = None
+    git_sync: GitSyncCoordinator | None = None
 
 
 type SystemHubConfigEntry = ConfigEntry[SystemHubData]
@@ -111,6 +117,16 @@ def loaded_batteries(hass: HomeAssistant) -> BatteryMonitor:
             translation_placeholders={"module": "Batteries"},
         )
     return monitor
+
+
+def loaded_git_sync(hass: HomeAssistant) -> GitSyncCoordinator:
+    if (coordinator := _loaded_data(hass).git_sync) is None:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="module_disabled",
+            translation_placeholders={"module": "Git Sync"},
+        )
+    return coordinator
 
 
 def loaded_watchdog(hass: HomeAssistant) -> IntegrationWatchdog:
@@ -244,23 +260,18 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     )
 
     async def batteries_export(call: ServiceCall) -> ServiceResponse:
-        # Writes a file on the server: administrators only (async_register_admin_service takes no
-        # supports_response on the oldest versions supported).
-        if call.context.user_id:
-            user = await hass.auth.async_get_user(call.context.user_id)
-            if user is None:
-                raise UnknownUser(context=call.context)
-            if not user.is_admin:
-                raise Unauthorized(context=call.context)
         return await async_export(hass, loaded_batteries(hass), call.data.get(ATTR_PATH))
 
+    # Writes a file on the server: administrators only.
     hass.services.async_register(
         DOMAIN,
         SERVICE_EXPORT,
-        batteries_export,
+        admin_only(hass, batteries_export),
         schema=vol.Schema({vol.Optional(ATTR_PATH): cv.string}),
         supports_response=SupportsResponse.OPTIONAL,
     )
+
+    async_setup_git_sync_services(hass, lambda: loaded_git_sync(hass))
     return True
 
 
@@ -281,6 +292,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
         data.batteries = await async_setup_batteries(hass, entry, module_options(entry, MODULE_BATTERIES))
     else:
         async_disable_batteries(hass)
+    if MODULE_GIT_SYNC in modules:
+        settings = module_options(entry, MODULE_GIT_SYNC)
+        if configured(settings):
+            data.git_sync = await async_setup_git_sync(hass, entry, settings)
+        else:
+            _LOGGER.warning("Git Sync module turned on without a repository: set it up in Configure → Git Sync")
     entry.runtime_data = data
     _async_remove_disabled(hass, entry, modules)
 
@@ -325,6 +342,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
     await async_remove_watchdog(hass)
     await async_remove_marketplace(hass)
     await async_remove_batteries(hass)
+    await async_remove_git_sync(hass)
 
 
 async def _async_reload(hass: HomeAssistant, entry: SystemHubConfigEntry) -> None:

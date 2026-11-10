@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
-          "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta."
+          "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
+          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Git repozitorijs",
+        "description": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Repozitorija ceļš",
+          "remote": "Remote",
+          "branch": "Zars",
+          "ssh_key": "Privātā SSH atslēga",
+          "author_name": "Autora vārds",
+          "author_email": "Autora e-pasts"
+        },
+        "data_description": {
+          "repo_path": "Mape, kurā ir direktorijs .git, parasti /config.",
+          "remote": "Git remote, uz kuru veikt push, parasti origin.",
+          "branch": "Mērķa zars remote pusē. Atstājiet tukšu, lai nosūtītu pašreizējo zaru.",
+          "ssh_key": "Privātā atslēga, ko izmanto push. Izveidojiet to ar darbību generate_ssh_key, pēc tam pievienojiet publisko atslēgu kā deploy key ar rakstīšanas tiesībām.",
+          "author_name": "Neobligāti, aizstāj repozitorija git user.name / user.email.",
+          "author_email": "Neobligāti, aizstāj repozitorija git user.name / user.email."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Supervisor nav pieejams: nepieciešama Home Assistant OS vai Supervised instalācija.",
-      "marketplace_not_loaded": "Marketplace nav ielādēts."
+      "marketplace_not_loaded": "Marketplace nav ielādēts.",
+      "not_a_repository": "Šī mape nav Git darba koks.",
+      "unknown_remote": "Šāds remote repozitorijā nepastāv.",
+      "invalid_branch": "Git nepieņem šo zara nosaukumu.",
+      "author_required": "Git nezina, kas šeit paraksta commit: ievadiet autora e-pastu (un vārdu)."
     },
     "abort": {
       "already_configured": "System Hub jau ir konfigurēts.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Pievienot restartēšanu ar kontaktligzdu",
           "watchdog_remove_power_cycle": "Watchdog: Noņemt restartēšanas ar kontaktligzdu",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Repozitorija iestatījumi",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
-          "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta."
+          "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
+          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Baterijas, kas nekad netiek uzraudzītas.",
           "ignored_integrations": "Integrācijas, kuru baterijas nekad netiek uzraudzītas (pēc noklusējuma mobilās lietotnes tālruņi un planšetdatori). Ierakstiet domēnu, lai pievienotu vēl neiestatītu integrāciju."
         }
+      },
+      "git_sync_repository": {
+        "title": "Repozitorija iestatījumi",
+        "data": {
+          "repo_path": "Repozitorija ceļš",
+          "remote": "Remote",
+          "branch": "Zars",
+          "ssh_key": "Privātā SSH atslēga",
+          "author_name": "Autora vārds",
+          "author_email": "Autora e-pasts"
+        },
+        "data_description": {
+          "repo_path": "Mape, kurā ir direktorijs .git, parasti /config.",
+          "remote": "Git remote, uz kuru veikt push, parasti origin.",
+          "branch": "Mērķa zars remote pusē. Atstājiet tukšu, lai nosūtītu pašreizējo zaru.",
+          "ssh_key": "Privātā atslēga, ko izmanto push. Izveidojiet to ar darbību generate_ssh_key, pēc tam pievienojiet publisko atslēgu kā deploy key ar rakstīšanas tiesībām.",
+          "author_name": "Neobligāti, aizstāj repozitorija git user.name / user.email.",
+          "author_email": "Neobligāti, aizstāj repozitorija git user.name / user.email."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Commit ziņojums, grafiki, paziņojumi un paneļu eksports.",
+        "data": {
+          "ai_task_entity": "AI uzdevuma vienība",
+          "commit_language": "Commit ziņojumu valoda",
+          "commit_interval": "Automātiskā commit intervāls",
+          "status_interval": "Statusa atsvaidzes intervāls",
+          "fetch_interval": "Remote pārbaudes intervāls",
+          "pull_before_push": "Pull pirms push",
+          "allow_sensitive": "Atļaut izsekotos sensitīvos failus",
+          "notify_service": "Paziņojuma darbība",
+          "notify_image": "Paziņojuma attēla URL",
+          "export_enabled": "Ikdienas paneļu eksports",
+          "export_time": "Eksporta laiks",
+          "export_dir": "Eksporta mape",
+          "export_format": "Eksporta formāts",
+          "export_before_commit": "Eksportēt paneļus pirms katra commit",
+          "commit_before_update": "Commit pirms atjauninājumiem"
+        },
+        "data_description": {
+          "ai_task_entity": "Ģenerē Conventional Commits ziņojumu no diff. Bez tās tiek izmantots vispārīgs ziņojums.",
+          "commit_interval": "Commit un push ik pēc N minūtēm, ja ir izmaiņas. 0 to atspējo.",
+          "fetch_interval": "Fetch no remote ik pēc N minūtēm, lai redzētu no citurienes nosūtītos commit (atpaliek, atšķiras). 0 to izslēdz; pirms katra push fetch tiek veikts jebkurā gadījumā.",
+          "pull_before_push": "Ja remote ir jauni commit, pirms push uz tiem tiek veikts rebase (git pull --rebase --autostash). Konflikta gadījumā rebase tiek pārtraukts, nekas netiek nosūtīts, un labojums paskaidro, kas jādara.",
+          "allow_sensitive": "Veikt commit sensitīvo failu izmaiņām, kurus Git jau izseko (secrets.yaml, .storage, atslēgas, datubāze, žurnāli). Jauni sensitīvie faili vienmēr tiek noraidīti.",
+          "notify_service": "Piemēram, notify.mobile_app_telefons. Atstājiet tukšu, lai atspējotu.",
+          "notify_image": "Absolūts HTTPS URL (nepieciešams iOS).",
+          "export_format": "JSON kopē .storage failus bez izmaiņām; YAML saglabā tikai paneļa konfigurāciju, ko vieglāk lasīt diff.",
+          "export_dir": "Konfigurācijas mapē (relatīvs ceļš sākas tur) vai allowlist_external_dirs mapē.",
+          "commit_before_update": "Kad tiek instalēts atjauninājums (Home Assistant, papildinājums, integrācija), vispirms veikt konfigurācijas commit un push, lai būtu commit, pie kura atgriezties. Viens commit kopā instalētiem atjauninājumiem."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Kontaktligzda nevar būt pašas ierīces entītija: tā būtu nepieejama kopā ar to.",
       "device_without_entities": "Šai ierīcei nav uzraugāmas entītijas, izņemot kontaktligzdu.",
       "marketplace_not_loaded": "Marketplace nav ielādēts.",
-      "supervisor_not_available": "Supervisor nav pieejams: nepieciešama Home Assistant OS vai Supervised instalācija."
+      "supervisor_not_available": "Supervisor nav pieejams: nepieciešama Home Assistant OS vai Supervised instalācija.",
+      "not_a_repository": "Šī mape nav Git darba koks.",
+      "unknown_remote": "Šāds remote repozitorijā nepastāv.",
+      "invalid_branch": "Git nepieņem šo zara nosaukumu.",
+      "author_required": "Git nezina, kas šeit paraksta commit: ievadiet autora e-pastu (un vārdu).",
+      "unknown_notify_service": "Šāda paziņojuma darbība nepastāv.",
+      "export_dir_not_allowed": "Mapei jābūt konfigurācijas mapē vai allowlist_external_dirs mapē, ārpus slēptām mapēm, piemēram, .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Paziņot tagad"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit un push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Eksportēt paneļus"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Trūkst"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Statuss",
+        "state": {
+          "clean": "Aktuāls",
+          "dirty": "Neapstiprinātas izmaiņas",
+          "ahead": "Gaida push",
+          "error": "Kļūda",
+          "behind": "Atpaliek no remote",
+          "diverged": "Atšķiras"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Zars"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "Remote URL"
+          },
+          "ahead": {
+            "name": "Commit priekšā"
+          },
+          "behind": {
+            "name": "Commit aiz"
+          },
+          "changed_count": {
+            "name": "Mainītie faili"
+          },
+          "changed_files": {
+            "name": "Mainīto failu saraksts"
+          },
+          "last_error": {
+            "name": "Pēdējā kļūda"
+          },
+          "ai_task": {
+            "name": "AI uzdevums"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Mainītie faili"
+      },
+      "git_sync_last_commit": {
+        "name": "Pēdējais commit",
+        "state_attributes": {
+          "message": {
+            "name": "Ziņojums"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Īsais commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Pēdējais push",
+        "state_attributes": {
+          "message": {
+            "name": "Ziņojums"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Pēdējais paneļu eksports",
+        "state_attributes": {
+          "files": {
+            "name": "Eksportētie faili"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Zars",
+        "state_attributes": {
+          "remote_url": {
+            "name": "Remote URL"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Šī veida rezerves baterijas. Atstājiet tukšu, lai to vairs neskaitītu."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit un push",
+      "description": "Pievieno visas izmaiņas indeksam, veic commit ar AI ģenerētu (vai norādītu) ziņojumu un push uz remote.",
+      "fields": {
+        "message": {
+          "name": "Ziņojums",
+          "description": "Commit ziņojums. Ja tukšs, to ģenerē AI uzdevums."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Eksportēt paneļus",
+      "description": "Kopē Lovelace paneļus no .storage uz eksporta mapi."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Ģenerēt SSH atslēgu",
+      "description": "Izveido SSH atslēgu pāri, ja tā nav, un atgriež publisko atslēgu, ko pievienot kā deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Ģenerēt commit ziņojumu",
+      "description": "Ar AI uzdevumu uzraksta commit ziņojumu pašreizējām izmaiņām, neveicot commit. Atgriež null, ja nekas nav mainījies."
+    },
+    "git_sync_get_diff": {
+      "name": "Iegūt izmaiņas",
+      "description": "Atgriež izmaiņas, ko iekļautu commit, failu pa failam, kā tās rāda kartītes atšķirību skats."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Ielādē attālo repozitoriju un pārņem tā jaunos commit: pārtīšana uz priekšu vai lokālie commit, pārbāzēti virs tiem (tikai ar tīru darba koku). Konflikts pārbāzēšanu atceļ."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Pērkamās rezerves baterijas: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Git Sync opcijās nav iestatīta AI uzdevuma vienība."
+    },
+    "ai_task_failed": {
+      "message": "AI uzdevums neatgrieza commit ziņojumu."
+    },
+    "diverged": {
+      "message": "Lokālais zars un {remote} ir atšķīrušies ({ahead} lokāli commit, {behind} attāli commit): nekas netika iekļauts commit vai nosūtīts ar push. Skatiet Iestatījumi → Labojumi."
+    },
+    "behind_remote": {
+      "message": "{remote} ir {behind} jauni commit, un Pull pirms push ir izslēgts: nekas netika iekļauts commit vai nosūtīts ar push. Skatiet Iestatījumi → Labojumi."
+    },
+    "rebase_conflict": {
+      "message": "Commit ir konfliktā ar {upstream} jaunajiem commit: rebase tika pārtraukts, un nekas netika nosūtīts. Skatiet Iestatījumi → Labojumi."
+    },
+    "sensitive_files": {
+      "message": "Noraidīts: izmaiņās ir sensitīvi faili ({files}), kas netiek ne iekļauti commit, ne nosūtīti AI task. Pievienojiet tos .gitignore vai atļaujiet izsekotos Git Sync opcijās."
+    },
+    "export_dir_not_allowed": {
+      "message": "Eksporta mape {path} ir ārpus konfigurācijas mapes un allowlist_external_dirs: izvēlieties citu Git Sync opcijās."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub nav ielādēts.",
           "reload_started": "**{title}** pārlāde ir sākta: tās pārlādes ir atiestatītas, un System Hub sāk no jauna. Šī problēma pazūd, tiklīdz sākas pārlāde; kļūda ir redzama žurnālos."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync nevar veikt push {repo}",
+      "description": "Zaram ir {ahead} lokāli commit, kuru nav {upstream}, un {upstream} ir {behind} commit, kuru šeit nav. Git Sync pats neapvieno atšķirīgas vēstures, tāpēc nekas netiek nosūtīts.\n\nLai to atrisinātu, atveriet termināli mapē {repo} un izpildiet:\n\n```\ngit pull --rebase\n```\n\nNovērsiet konfliktus, ja tādi ir (rediģējiet failus, `git add`, pēc tam `git rebase --continue`), un tad vēlreiz nospiediet **Commit un push**. Šis labojums pazūd pēc nākamā veiksmīgā push."
+    },
+    "behind_remote": {
+      "title": "Git Sync nevar veikt push {repo}",
+      "description": "{upstream} ir {behind} commit, kuru šeit nav, un **Pull pirms push** ir izslēgts Git Sync opcijās, tāpēc nekas netiek nosūtīts. Ieslēdziet to vai izpildiet `git pull --rebase` terminālī mapē {repo}. Šis labojums pazūd pēc nākamā veiksmīgā push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": "{repo} .gitignore neizslēdz noslēpumus",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Pievienot trūkstošās rindas .gitignore",
+            "description": "Bez šīm rindām Git Sync veiktu commit un push Home Assistant parolēm, marķieriem un autentifikācijas krātuvei:\n\n{lines}\n\nIesniedziet, lai tās pievienotu {repo}/.gitignore. Jau izsekots fails paliek izsekots: izņemiet to no repozitorija ar `git rm -r --cached secrets.yaml .storage` (faili paliek diskā)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Git Sync repozitorijs nav ielādēts."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (neapstrādāta kopija)",
+        "yaml": "YAML (tikai konfigurācija)",
+        "both": "JSON un YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Angļu",
+        "fr": "Franču",
+        "de": "Vācu",
+        "es": "Spāņu",
+        "sr": "Serbu (kirilica)",
+        "sr-latn": "Serbu (latīņu)",
+        "it": "Itāļu",
+        "nl": "Holandiešu",
+        "pt": "Portugāļu (Portugāle)",
+        "pl": "Poļu",
+        "ro": "Rumāņu",
+        "da": "Dāņu",
+        "sv": "Zviedru",
+        "bg": "Bulgāru",
+        "ru": "Krievu",
+        "uk": "Ukraiņu",
+        "hu": "Ungāru",
+        "sk": "Slovāku",
+        "cs": "Čehu",
+        "sl": "Slovēņu",
+        "lv": "Latviešu",
+        "el": "Grieķu"
       }
     }
   }

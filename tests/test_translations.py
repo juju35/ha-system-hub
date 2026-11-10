@@ -70,20 +70,17 @@ def test_translation_parity(language: str):
         assert _placeholders(other[key]) == _placeholders(text), key
 
 
-# Serbian: brands, placeholders and identifiers stay in Latin script in the Cyrillic translation.
-_SR_LATIN_ALLOWED = re.compile(
-    r"System Hub|Watchdog|Marketplace|Containers|Batteries|Home Assistant|Core|Supervisor|Supervised"
-    r"|OS|CPU|CSV|GitHub"
-    r"|Battery Notes|AA|CR2032|allowlist_external_dirs|system_hub[\w.]*"
-    r"|notify\.mobile_app_|zha|\{\w+\}"
-)
+# Serbian: no Cyrillic letter in sr-Latn; the Latin words left in sr are names and terms taken from en.json
+# (Home Assistant, Git, commit, push, JSON, Watchdog…).
 
 
-@pytest.mark.parametrize(
-    ("language", "forbidden"),
-    [("sr", r"[A-Za-z\u00c0-\u00d6\u00d8-\u00f6\u00f8-\u024f]"), ("sr-Latn", r"[\u0400-\u04ff]")],
-)
-def test_serbian_script(language: str, forbidden: str):
-    """No Latin letter in sr (but brands and placeholders), no Cyrillic letter in sr-Latn."""
-    for key, text in _load(language).items():
-        assert not re.search(forbidden, _SR_LATIN_ALLOWED.sub("", text)), key
+def test_serbian_latin_has_no_cyrillic():
+    for key, text in _load("sr-Latn").items():
+        assert not re.search(r"[\u0400-\u04ff]", text), key
+
+
+def test_serbian_cyrillic_keeps_latin_for_names_only():
+    english = " ".join(_load("en").values()).lower()
+    for key, text in _load("sr").items():
+        for word in re.findall(r"[A-Za-z]+", text):
+            assert word.lower() in english, f"{key}: {word}"

@@ -63,3 +63,20 @@ batteries_set_stock:
           min: 0
           max: 999
           mode: box
+
+git_sync_commit_push:
+  fields:
+    message:
+      example: "fix: corridor light threshold"
+      selector:
+        text:
+
+git_sync_export_dashboards:
+
+git_sync_generate_ssh_key:
+
+git_sync_generate_message:
+
+git_sync_get_diff:
+
+git_sync_pull:

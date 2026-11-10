@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Monitora Home Assistant Core, il Supervisor e gli add-on: stato, versione, CPU e memoria. Solo monitoraggio: nulla viene riavviato.",
           "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
           "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore.",
-          "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica."
+          "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica.",
+          "git_sync": "Cartella di Home Assistant versionata con Git e inviata a un remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Repository Git",
+        "description": "Cartella di Home Assistant versionata con Git e inviata a un remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Percorso del repository",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "Chiave SSH privata",
+          "author_name": "Nome dell'autore",
+          "author_email": "Email dell'autore"
+        },
+        "data_description": {
+          "repo_path": "Cartella che contiene la directory .git, di solito /config.",
+          "remote": "Remote Git verso cui fare push, di solito origin.",
+          "branch": "Branch di destinazione sul remote. Lascia vuoto per fare push del branch corrente.",
+          "ssh_key": "Chiave privata usata per il push. Usa l'azione generate_ssh_key per crearla, poi aggiungi la chiave pubblica come deploy key con accesso in scrittura.",
+          "author_name": "Facoltativo, sostituisce user.name / user.email del repository.",
+          "author_email": "Facoltativo, sostituisce user.name / user.email del repository."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Il Supervisor non è disponibile: serve Home Assistant OS o un'installazione Supervised.",
-      "marketplace_not_loaded": "Marketplace non è caricato."
+      "marketplace_not_loaded": "Marketplace non è caricato.",
+      "not_a_repository": "Questa cartella non è un repository Git.",
+      "unknown_remote": "Questo remote non esiste nel repository.",
+      "invalid_branch": "Git non accetta questo nome di branch.",
+      "author_required": "Git non sa chi firma i commit qui: inserisci l'email (e il nome) dell'autore."
     },
     "abort": {
       "already_configured": "System Hub è già configurato.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Aggiungi un riavvio tramite presa",
           "watchdog_remove_power_cycle": "Watchdog: Rimuovi riavvii tramite presa",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Impostazioni del repository",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Monitora Home Assistant Core, il Supervisor e gli add-on: stato, versione, CPU e memoria. Solo monitoraggio: nulla viene riavviato.",
           "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
           "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore.",
-          "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica."
+          "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica.",
+          "git_sync": "Cartella di Home Assistant versionata con Git e inviata a un remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Batterie mai monitorate.",
           "ignored_integrations": "Integrazioni le cui batterie non vengono mai monitorate (per impostazione predefinita telefoni e tablet dell'app mobile). Digita un dominio per aggiungerne una non ancora configurata."
         }
+      },
+      "git_sync_repository": {
+        "title": "Impostazioni del repository",
+        "data": {
+          "repo_path": "Percorso del repository",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "Chiave SSH privata",
+          "author_name": "Nome dell'autore",
+          "author_email": "Email dell'autore"
+        },
+        "data_description": {
+          "repo_path": "Cartella che contiene la directory .git, di solito /config.",
+          "remote": "Remote Git verso cui fare push, di solito origin.",
+          "branch": "Branch di destinazione sul remote. Lascia vuoto per fare push del branch corrente.",
+          "ssh_key": "Chiave privata usata per il push. Usa l'azione generate_ssh_key per crearla, poi aggiungi la chiave pubblica come deploy key con accesso in scrittura.",
+          "author_name": "Facoltativo, sostituisce user.name / user.email del repository.",
+          "author_email": "Facoltativo, sostituisce user.name / user.email del repository."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Messaggio di commit, pianificazioni, notifiche ed esportazione delle dashboard.",
+        "data": {
+          "ai_task_entity": "Entità attività IA",
+          "commit_language": "Lingua del messaggio di commit",
+          "commit_interval": "Intervallo del commit automatico",
+          "status_interval": "Intervallo di aggiornamento dello stato",
+          "fetch_interval": "Intervallo di controllo del remote",
+          "pull_before_push": "Pull prima del push",
+          "allow_sensitive": "Consenti i file sensibili tracciati",
+          "notify_service": "Azione di notifica",
+          "notify_image": "URL dell'immagine della notifica",
+          "export_enabled": "Esportazione giornaliera delle dashboard",
+          "export_time": "Ora dell'esportazione",
+          "export_dir": "Cartella di esportazione",
+          "export_format": "Formato di esportazione",
+          "export_before_commit": "Esporta le dashboard prima di ogni commit",
+          "commit_before_update": "Commit prima degli aggiornamenti"
+        },
+        "data_description": {
+          "ai_task_entity": "Genera un messaggio Conventional Commits dal diff. Senza di essa viene usato un messaggio generico.",
+          "commit_interval": "Commit e push ogni N minuti quando ci sono modifiche. 0 lo disattiva.",
+          "fetch_interval": "Esegue il fetch del remote ogni N minuti per vedere i commit inviati da altrove (indietro, divergente). 0 lo disattiva; un fetch viene comunque eseguito prima di ogni push.",
+          "pull_before_push": "Quando il remote ha nuovi commit, esegue il rebase su di essi (git pull --rebase --autostash) prima del push. In caso di conflitto il rebase viene annullato, non viene inviato nulla e una riparazione spiega cosa fare.",
+          "allow_sensitive": "Esegue il commit delle modifiche ai file sensibili già tracciati da Git (secrets.yaml, .storage, chiavi, database, log). I nuovi file sensibili vengono sempre rifiutati.",
+          "notify_service": "Ad esempio notify.mobile_app_telefono. Lascia vuoto per disattivare.",
+          "notify_image": "URL HTTPS assoluto (richiesto da iOS).",
+          "export_format": "JSON copia i file .storage così come sono; YAML mantiene solo la configurazione della dashboard, più leggibile nei diff.",
+          "export_dir": "Nella cartella di configurazione (un percorso relativo parte da lì) o in una cartella di allowlist_external_dirs.",
+          "commit_before_update": "Quando viene installato un aggiornamento (Home Assistant, un add-on, un'integrazione), esegui prima commit e push della configurazione, così c'è un commit a cui tornare. Un solo commit per gli aggiornamenti installati insieme."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "La presa non può essere un'entità del dispositivo stesso: sarebbe non disponibile con esso.",
       "device_without_entities": "Questo dispositivo non ha entità da sorvegliare oltre alla presa.",
       "marketplace_not_loaded": "Marketplace non è caricato.",
-      "supervisor_not_available": "Il Supervisor non è disponibile: serve Home Assistant OS o un'installazione Supervised."
+      "supervisor_not_available": "Il Supervisor non è disponibile: serve Home Assistant OS o un'installazione Supervised.",
+      "not_a_repository": "Questa cartella non è un repository Git.",
+      "unknown_remote": "Questo remote non esiste nel repository.",
+      "invalid_branch": "Git non accetta questo nome di branch.",
+      "author_required": "Git non sa chi firma i commit qui: inserisci l'email (e il nome) dell'autore.",
+      "unknown_notify_service": "Questa azione di notifica non esiste.",
+      "export_dir_not_allowed": "La cartella deve trovarsi nella cartella di configurazione o in una cartella di allowlist_external_dirs, fuori dalle cartelle nascoste come .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Notifica ora"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit e push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Esporta dashboard"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Mancanti"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Stato",
+        "state": {
+          "clean": "Aggiornato",
+          "dirty": "Modifiche in sospeso",
+          "ahead": "Push in sospeso",
+          "error": "Errore",
+          "behind": "Indietro rispetto al remote",
+          "diverged": "Divergente"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Branch"
+          },
+          "upstream": {
+            "name": "Branch remoto"
+          },
+          "remote_url": {
+            "name": "URL del remote"
+          },
+          "ahead": {
+            "name": "Commit in avanti"
+          },
+          "behind": {
+            "name": "Commit indietro"
+          },
+          "changed_count": {
+            "name": "File modificati"
+          },
+          "changed_files": {
+            "name": "Elenco dei file modificati"
+          },
+          "last_error": {
+            "name": "Ultimo errore"
+          },
+          "ai_task": {
+            "name": "Attività IA"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "File modificati"
+      },
+      "git_sync_last_commit": {
+        "name": "Ultimo commit",
+        "state_attributes": {
+          "message": {
+            "name": "Messaggio"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Commit breve"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Ultimo push",
+        "state_attributes": {
+          "message": {
+            "name": "Messaggio"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Ultima esportazione delle dashboard",
+        "state_attributes": {
+          "files": {
+            "name": "File esportati"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Branch",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL del remote"
+          },
+          "upstream": {
+            "name": "Branch remoto"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Batterie di ricambio di quel tipo. Lascia vuoto per non contarlo più."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit e push",
+      "description": "Aggiunge all'indice tutte le modifiche, esegue il commit con un messaggio generato dall'IA (o fornito) e fa push verso il remote.",
+      "fields": {
+        "message": {
+          "name": "Messaggio",
+          "description": "Messaggio di commit. Generato dall'attività IA se vuoto."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Esporta dashboard",
+      "description": "Copia le dashboard Lovelace da .storage alla cartella di esportazione."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Genera chiave SSH",
+      "description": "Crea la coppia di chiavi SSH se manca e restituisce la chiave pubblica da aggiungere come deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Genera messaggio di commit",
+      "description": "Scrive un messaggio di commit per le modifiche correnti con l'attività IA, senza eseguire il commit. Restituisce null se non c'è nessuna modifica."
+    },
+    "git_sync_get_diff": {
+      "name": "Ottieni modifiche",
+      "description": "Restituisce le modifiche che un commit includerebbe, file per file, come le mostra il visualizzatore diff della scheda."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Recupera il remoto e integra i suoi nuovi commit: avanzamento rapido, oppure i commit locali ribasati sopra (solo con albero di lavoro pulito). Un conflitto annulla il rebase."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Batterie di ricambio da comprare: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Nessuna entità attività IA è impostata nelle opzioni di Git Sync."
+    },
+    "ai_task_failed": {
+      "message": "L'attività IA non ha restituito alcun messaggio di commit."
+    },
+    "diverged": {
+      "message": "Il branch locale e {remote} sono divergenti ({ahead} commit locali, {behind} commit remoti): non è stato fatto né commit né push. Vedi Impostazioni → Riparazioni."
+    },
+    "behind_remote": {
+      "message": "{remote} ha {behind} nuovi commit e Pull prima del push è disattivato: non è stato fatto né commit né push. Vedi Impostazioni → Riparazioni."
+    },
+    "rebase_conflict": {
+      "message": "Il commit è in conflitto con i nuovi commit di {upstream}: il rebase è stato annullato e non è stato inviato nulla. Vedi Impostazioni → Riparazioni."
+    },
+    "sensitive_files": {
+      "message": "Rifiutato: le modifiche includono file sensibili ({files}), che non vengono né inclusi nel commit né inviati all'AI task. Aggiungili al .gitignore, oppure consenti quelli tracciati nelle opzioni di Git Sync."
+    },
+    "export_dir_not_allowed": {
+      "message": "La cartella di esportazione {path} è fuori dalla cartella di configurazione e da allowlist_external_dirs: scegline un'altra nelle opzioni di Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub non è caricato.",
           "reload_started": "Ricaricamento di **{title}** avviato: i suoi ricaricamenti sono stati reimpostati e System Hub ricomincia. Questo problema scompare non appena inizia il ricaricamento; un errore compare nei log."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync non può fare il push di {repo}",
+      "description": "Il branch ha {ahead} commit locali che non sono su {upstream}, e {upstream} ha {behind} commit che non sono qui. Git Sync non unisce da solo cronologie divergenti, quindi non viene inviato nulla.\n\nPer risolvere, apri un terminale in {repo} ed esegui:\n\n```\ngit pull --rebase\n```\n\nRisolvi gli eventuali conflitti (modifica i file, `git add`, poi `git rebase --continue`), quindi premi di nuovo **Commit e push**. Questa riparazione scompare con il prossimo push riuscito."
+    },
+    "behind_remote": {
+      "title": "Git Sync non può fare il push di {repo}",
+      "description": "{upstream} ha {behind} commit che non sono qui e **Pull prima del push** è disattivato nelle opzioni di Git Sync, quindi non viene inviato nulla. Attivalo, oppure esegui `git pull --rebase` in un terminale in {repo}. Questa riparazione scompare con il prossimo push riuscito."
+    },
+    "git_sync_gitignore_missing": {
+      "title": "Il .gitignore di {repo} non esclude i segreti",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Aggiungi le righe mancanti al .gitignore",
+            "description": "Senza queste righe, Git Sync farebbe commit e push delle password, dei token e dell'archivio di autenticazione di Home Assistant:\n\n{lines}\n\nInvia per aggiungerle a {repo}/.gitignore. Un file già tracciato resta tracciato: rimuovilo dal repository con `git rm -r --cached secrets.yaml .storage` (i file restano sul disco)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Il repository Git Sync non è caricato."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (copia grezza)",
+        "yaml": "YAML (solo configurazione)",
+        "both": "JSON e YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Inglese",
+        "fr": "Francese",
+        "de": "Tedesco",
+        "es": "Spagnolo",
+        "sr": "Serbo (cirillico)",
+        "sr-latn": "Serbo (latino)",
+        "it": "Italiano",
+        "nl": "Olandese",
+        "pt": "Portoghese (Portogallo)",
+        "pl": "Polacco",
+        "ro": "Rumeno",
+        "da": "Danese",
+        "sv": "Svedese",
+        "bg": "Bulgaro",
+        "ru": "Russo",
+        "uk": "Ucraino",
+        "hu": "Ungherese",
+        "sk": "Slovacco",
+        "cs": "Ceco",
+        "sl": "Sloveno",
+        "lv": "Lettone",
+        "el": "Greco"
       }
     }
   }

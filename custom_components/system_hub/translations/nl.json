@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
-          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven."
+          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
+          "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Git-repository",
+        "description": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Pad van de repository",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "Persoonlijke SSH-sleutel",
+          "author_name": "Naam van de auteur",
+          "author_email": "E-mail van de auteur"
+        },
+        "data_description": {
+          "repo_path": "Map met de .git-directory, meestal /config.",
+          "remote": "Git-remote om naar te pushen, meestal origin.",
+          "branch": "Doelbranch op de remote. Leeg laten om de huidige branch te pushen.",
+          "ssh_key": "Persoonlijke sleutel voor de push. Maak hem aan met de actie generate_ssh_key en voeg de publieke sleutel toe als deploy key met schrijftoegang.",
+          "author_name": "Optioneel, vervangt user.name / user.email van de repository.",
+          "author_email": "Optioneel, vervangt user.name / user.email van de repository."
         }
       }
     },
     "error": {
       "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig.",
-      "marketplace_not_loaded": "Marketplace is niet geladen."
+      "marketplace_not_loaded": "Marketplace is niet geladen.",
+      "not_a_repository": "Deze map is geen Git-repository.",
+      "unknown_remote": "Deze remote bestaat niet in de repository.",
+      "invalid_branch": "Git accepteert deze branchnaam niet.",
+      "author_required": "Git weet hier niet wie de commits ondertekent: vul het e-mailadres (en de naam) van de auteur in."
     },
     "abort": {
       "already_configured": "System Hub is al geconfigureerd.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Herstart via stekker toevoegen",
           "watchdog_remove_power_cycle": "Watchdog: Herstarts via stekker verwijderen",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Instellingen van de repository",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
-          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven."
+          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
+          "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Batterijen die nooit worden bewaakt.",
           "ignored_integrations": "Integraties waarvan de batterijen nooit worden bewaakt (standaard telefoons en tablets van de mobiele app). Typ een domein om er een toe te voegen die nog niet is ingesteld."
         }
+      },
+      "git_sync_repository": {
+        "title": "Instellingen van de repository",
+        "data": {
+          "repo_path": "Pad van de repository",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "Persoonlijke SSH-sleutel",
+          "author_name": "Naam van de auteur",
+          "author_email": "E-mail van de auteur"
+        },
+        "data_description": {
+          "repo_path": "Map met de .git-directory, meestal /config.",
+          "remote": "Git-remote om naar te pushen, meestal origin.",
+          "branch": "Doelbranch op de remote. Leeg laten om de huidige branch te pushen.",
+          "ssh_key": "Persoonlijke sleutel voor de push. Maak hem aan met de actie generate_ssh_key en voeg de publieke sleutel toe als deploy key met schrijftoegang.",
+          "author_name": "Optioneel, vervangt user.name / user.email van de repository.",
+          "author_email": "Optioneel, vervangt user.name / user.email van de repository."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Commitbericht, planning, meldingen en export van de dashboards.",
+        "data": {
+          "ai_task_entity": "AI-taakentiteit",
+          "commit_language": "Taal van het commitbericht",
+          "commit_interval": "Interval van de automatische commit",
+          "status_interval": "Vernieuwingsinterval van de status",
+          "fetch_interval": "Controle-interval van de remote",
+          "pull_before_push": "Pull vóór de push",
+          "allow_sensitive": "Gevolgde gevoelige bestanden toestaan",
+          "notify_service": "Meldingsactie",
+          "notify_image": "URL van de meldingsafbeelding",
+          "export_enabled": "Dagelijkse export van de dashboards",
+          "export_time": "Tijdstip van de export",
+          "export_dir": "Exportmap",
+          "export_format": "Exportformaat",
+          "export_before_commit": "Dashboards exporteren vóór elke commit",
+          "commit_before_update": "Commit vóór updates"
+        },
+        "data_description": {
+          "ai_task_entity": "Genereert een Conventional Commits-bericht uit de diff. Zonder deze entiteit wordt een algemeen bericht gebruikt.",
+          "commit_interval": "Commit en push elke N minuten als er wijzigingen zijn. 0 schakelt dit uit.",
+          "fetch_interval": "Elke N minuten een fetch van de remote om commits te zien die elders zijn gepusht (achter, uiteengelopen). 0 schakelt het uit; vóór elke push wordt toch een fetch gedaan.",
+          "pull_before_push": "Als de remote nieuwe commits heeft, wordt vóór de push daarop gerebased (git pull --rebase --autostash). Bij een conflict wordt de rebase afgebroken, wordt niets gepusht en legt een reparatie uit wat te doen.",
+          "allow_sensitive": "Wijzigingen committen van gevoelige bestanden die Git al volgt (secrets.yaml, .storage, sleutels, database, logs). Nieuwe gevoelige bestanden worden altijd geweigerd.",
+          "notify_service": "Bijvoorbeeld notify.mobile_app_telefoon. Leeg laten om uit te schakelen.",
+          "notify_image": "Absolute HTTPS-URL (vereist door iOS).",
+          "export_format": "JSON kopieert de .storage-bestanden ongewijzigd; YAML bewaart alleen de dashboardconfiguratie, beter leesbaar in diffs.",
+          "export_dir": "In de configuratiemap (een relatief pad begint daar) of in een map van allowlist_external_dirs.",
+          "commit_before_update": "Wanneer een update wordt geïnstalleerd (Home Assistant, een add-on, een integratie), eerst de configuratie committen en pushen, zodat er een commit is om naar terug te gaan. Eén commit voor updates die samen worden geïnstalleerd."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "De stekker kan geen entiteit van het apparaat zelf zijn: hij zou er samen mee onbeschikbaar zijn.",
       "device_without_entities": "Dit apparaat heeft naast de stekker geen entiteit om te bewaken.",
       "marketplace_not_loaded": "Marketplace is niet geladen.",
-      "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig."
+      "supervisor_not_available": "De Supervisor is niet beschikbaar: Home Assistant OS of een Supervised-installatie is nodig.",
+      "not_a_repository": "Deze map is geen Git-repository.",
+      "unknown_remote": "Deze remote bestaat niet in de repository.",
+      "invalid_branch": "Git accepteert deze branchnaam niet.",
+      "author_required": "Git weet hier niet wie de commits ondertekent: vul het e-mailadres (en de naam) van de auteur in.",
+      "unknown_notify_service": "Deze meldingsactie bestaat niet.",
+      "export_dir_not_allowed": "De map moet in de configuratiemap of in een map van allowlist_external_dirs liggen, buiten verborgen mappen zoals .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Nu melden"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit en push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Dashboards exporteren"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Ontbrekend"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Status",
+        "state": {
+          "clean": "Bijgewerkt",
+          "dirty": "Wijzigingen in afwachting",
+          "ahead": "Push in afwachting",
+          "error": "Fout",
+          "behind": "Achter op de remote",
+          "diverged": "Uiteengelopen"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Branch"
+          },
+          "upstream": {
+            "name": "Remote branch"
+          },
+          "remote_url": {
+            "name": "URL van de remote"
+          },
+          "ahead": {
+            "name": "Commits voor"
+          },
+          "behind": {
+            "name": "Commits achter"
+          },
+          "changed_count": {
+            "name": "Gewijzigde bestanden"
+          },
+          "changed_files": {
+            "name": "Lijst van gewijzigde bestanden"
+          },
+          "last_error": {
+            "name": "Laatste fout"
+          },
+          "ai_task": {
+            "name": "AI-taak"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Gewijzigde bestanden"
+      },
+      "git_sync_last_commit": {
+        "name": "Laatste commit",
+        "state_attributes": {
+          "message": {
+            "name": "Bericht"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Korte commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Laatste push",
+        "state_attributes": {
+          "message": {
+            "name": "Bericht"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Laatste export van de dashboards",
+        "state_attributes": {
+          "files": {
+            "name": "Geëxporteerde bestanden"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Branch",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL van de remote"
+          },
+          "upstream": {
+            "name": "Remote branch"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Reservebatterijen van dat type. Leeg laten om het niet meer te tellen."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit en push",
+      "description": "Zet alle wijzigingen klaar, commit met een door AI gegenereerd (of opgegeven) bericht en pusht naar de remote.",
+      "fields": {
+        "message": {
+          "name": "Bericht",
+          "description": "Commitbericht. Gegenereerd door de AI-taak als leeg."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Dashboards exporteren",
+      "description": "Kopieert de Lovelace-dashboards van .storage naar de exportmap."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "SSH-sleutel genereren",
+      "description": "Maakt het SSH-sleutelpaar aan als het ontbreekt en geeft de publieke sleutel terug om als deploy key toe te voegen."
+    },
+    "git_sync_generate_message": {
+      "name": "Commitbericht genereren",
+      "description": "Schrijft met de AI-taak een commitbericht voor de huidige wijzigingen, zonder te committen. Geeft null terug als er niets gewijzigd is."
+    },
+    "git_sync_get_diff": {
+      "name": "Wijzigingen ophalen",
+      "description": "Geeft de wijzigingen terug die een commit zou bevatten, bestand per bestand, zoals de diff-weergave van de kaart ze toont."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Haalt de remote op en neemt de nieuwe commits over: fast-forward, of de lokale commits erbovenop gerebased (alleen bij een schone werkmap). Een conflict breekt de rebase af."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Te kopen reservebatterijen: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Er is geen AI-taakentiteit ingesteld in de Git Sync-opties."
+    },
+    "ai_task_failed": {
+      "message": "De AI-taak gaf geen commitbericht terug."
+    },
+    "diverged": {
+      "message": "De lokale branch en {remote} zijn uiteengelopen ({ahead} lokale commits, {behind} externe commits): er is niets gecommit of gepusht. Zie Instellingen → Reparaties."
+    },
+    "behind_remote": {
+      "message": "{remote} heeft {behind} nieuwe commits en Pull vóór de push staat uit: er is niets gecommit of gepusht. Zie Instellingen → Reparaties."
+    },
+    "rebase_conflict": {
+      "message": "De commit conflicteert met de nieuwe commits van {upstream}: de rebase is afgebroken en er is niets gepusht. Zie Instellingen → Reparaties."
+    },
+    "sensitive_files": {
+      "message": "Geweigerd: de wijzigingen bevatten gevoelige bestanden ({files}), die niet gecommit en niet naar de AI-taak gestuurd worden. Voeg ze toe aan .gitignore, of sta de gevolgde toe in de Git Sync-opties."
+    },
+    "export_dir_not_allowed": {
+      "message": "De exportmap {path} ligt buiten de configuratiemap en allowlist_external_dirs: kies een andere in de opties van Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub is niet geladen.",
           "reload_started": "**{title}** wordt herladen: het aantal keer herladen is gereset en System Hub begint opnieuw. Dit probleem verdwijnt zodra het herladen begint; een fout staat in de logboeken."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync kan {repo} niet pushen",
+      "description": "De branch heeft {ahead} lokale commits die niet op {upstream} staan, en {upstream} heeft {behind} commits die hier ontbreken. Git Sync voegt uiteengelopen geschiedenissen niet zelf samen, dus er wordt niets gepusht.\n\nOpen om het op te lossen een terminal in {repo} en voer uit:\n\n```\ngit pull --rebase\n```\n\nLos eventuele conflicten op (bewerk de bestanden, `git add`, daarna `git rebase --continue`) en druk opnieuw op **Commit en push**. Deze reparatie verdwijnt bij de volgende geslaagde push."
+    },
+    "behind_remote": {
+      "title": "Git Sync kan {repo} niet pushen",
+      "description": "{upstream} heeft {behind} commits die hier ontbreken en **Pull vóór de push** staat uit in de Git Sync-opties, dus er wordt niets gepusht. Zet het aan, of voer `git pull --rebase` uit in een terminal in {repo}. Deze reparatie verdwijnt bij de volgende geslaagde push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": "De .gitignore van {repo} sluit de geheimen niet uit",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Ontbrekende regels aan .gitignore toevoegen",
+            "description": "Zonder deze regels zou Git Sync de wachtwoorden, de tokens en de authenticatieopslag van Home Assistant committen en pushen:\n\n{lines}\n\nVerstuur om ze aan {repo}/.gitignore toe te voegen. Een bestand dat al gevolgd wordt, blijft gevolgd: haal het uit de repository met `git rm -r --cached secrets.yaml .storage` (de bestanden blijven op de schijf)."
+          }
+        },
+        "abort": {
+          "not_loaded": "De Git Sync-repository is niet geladen."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (ruwe kopie)",
+        "yaml": "YAML (alleen configuratie)",
+        "both": "JSON en YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Engels",
+        "fr": "Frans",
+        "de": "Duits",
+        "es": "Spaans",
+        "sr": "Servisch (Cyrillisch)",
+        "sr-latn": "Servisch (Latijns)",
+        "it": "Italiaans",
+        "nl": "Nederlands",
+        "pt": "Portugees (Portugal)",
+        "pl": "Pools",
+        "ro": "Roemeens",
+        "da": "Deens",
+        "sv": "Zweeds",
+        "bg": "Bulgaars",
+        "ru": "Russisch",
+        "uk": "Oekraïens",
+        "hu": "Hongaars",
+        "sk": "Slowaaks",
+        "cs": "Tsjechisch",
+        "sl": "Sloveens",
+        "lv": "Lets",
+        "el": "Grieks"
       }
     }
   }
