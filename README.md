@@ -504,30 +504,9 @@ Prerequisites:
 > [!WARNING]
 > Everything that is not ignored is pushed. Keep credentials in `secrets.yaml` (`!secret`) and prefer a **private** repository.
 
-## Installation
-
-### Via the Marketplace (recommended)
-
-Click the button below to add the repository directly:
-
-[![Add to the Marketplace](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=juju35&repository=ha-git-sync&category=integration)
-
-Then click **Install** and restart Home Assistant.
-
-Or manually:
-
-1. Open **Settings → Marketplace → Add from link** (top right; this needs a GitHub account connected)
-2. Add `https://github.com/juju35/ha-git-sync` — Type: **Integration**
-3. Open **Git Sync** and click **Install**
-4. Restart Home Assistant
-
-### Manual
-
-Copy `custom_components/git_sync/` to `/config/custom_components/git_sync/`, then restart Home Assistant.
-
 | Setting | Default | Description |
 |---|---|---|
-| Repository path | `/config` | Folder containing `.git`. |
+| Repository path | `/config` | Folder containing `.git` |
 | Remote | `origin` | Remote to push to |
 | Branch | current branch | Target branch on the remote |
 | SSH private key | `/config/.ssh/id_ed25519` | Key used for the push |
