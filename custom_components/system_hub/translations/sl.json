@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Izberite module, ki jih želite vklopiti. Vsak modul se nastavi v možnostih.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor ni na voljo: potreben je Home Assistant OS ali namestitev Supervised.",
       "marketplace_not_loaded": "Marketplace ni naložen."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Možnosti System Hub",
         "menu_options": {
           "modules": "Moduli",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Dodaj ponovni zagon prek vtičnice",
           "watchdog_remove_power_cycle": "Watchdog: Odstrani ponovne zagone prek vtičnice",
@@ -38,12 +42,27 @@
         "title": "Moduli",
         "description": "Vklopite ali izklopite module. Izklopljen modul ustavi svoja preverjanja in njegove entitete se odstranijo; njegove nastavitve se ohranijo.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Interval osveževanja",
+          "notify": "Obveščaj",
+          "notify_services": "Dejanja obvestil"
+        },
+        "data_description": {
+          "scan_interval": "Sekunde med dvema branjema iz Supervisorja.",
+          "notify": "Obvesti, ko se vsebnik, ki bi moral delovati (dodatek, ki se zažene ob zagonu), ustavi, in ko se vrne.",
+          "notify_services": "Vsako obvestilo pošlji tudi s temi dejanji (notify.mobile_app_…). Trajno obvestilo se ustvari vedno."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Ta naprava že ima ponovni zagon prek vtičnice: najprej ga odstranite.",
       "switch_on_device": "Vtičnica ne more biti entiteta same naprave: bila bi nedosegljiva skupaj z njo.",
       "device_without_entities": "Ta naprava razen vtičnice nima entitete za nadzor.",
-      "marketplace_not_loaded": "Marketplace ni naložen."
+      "marketplace_not_loaded": "Marketplace ni naložen.",
+      "supervisor_not_available": "Supervisor ni na voljo: potreben je Home Assistant OS ali namestitev Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Delujoči vsebniki",
+        "state_attributes": {
+          "total": {
+            "name": "Skupaj"
+          },
+          "error": {
+            "name": "Napaka"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Ustavljeni vsebniki",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Zadnja posodobitev"
+      },
       "watchdog_unavailable": {
         "name": "Integracije, ki niso na voljo",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Osveži vsebnike",
+      "description": "Zdaj prebere Home Assistant Core, Supervisor in dodatke iz Supervisorja."
+    },
     "watchdog_check": {
       "name": "Preveri integracije",
       "description": "Poišče integracije, katerih nobena entiteta ni na voljo, in ponovno naloži tiste, ki jim je potekla čakalna doba."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Vsebnik ustavljen",
+    "containers_down": "{name} bi moral delovati, vendar je {state}.",
+    "containers_back_title": "Vsebnik spet deluje",
+    "containers_back": "{name} spet deluje.",
     "watchdog_reloaded_title": "Integracija ponovno naložena",
     "watchdog_reloaded": "{title} ({domain}) je bila ponovno naložena: nobena njena entiteta ni bila na voljo od {since}. Ponovno nalaganje {attempt}/{max}.",
     "watchdog_reload_failed_title": "Ponovno nalaganje integracije ni uspelo",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Ni dovolj preostalih zahtev GitHub za preverjanje vseh repozitorijev (preostalo {remaining}, potrebnih {needed}): preverjanje se ponovi po ponastavitvi omejitve ob {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Vsebnikov ni bilo mogoče prebrati iz Supervisorja: {error}"
     }
   },
   "issues": {

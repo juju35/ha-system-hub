@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor nu este disponibil: este necesar Home Assistant OS sau o instalare Supervised.",
       "marketplace_not_loaded": "Marketplace nu este încărcat."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Opțiuni System Hub",
         "menu_options": {
           "modules": "Module",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Adaugă o repornire prin priză",
           "watchdog_remove_power_cycle": "Watchdog: Elimină reporniri prin priză",
@@ -38,12 +42,27 @@
         "title": "Module",
         "description": "Activați sau dezactivați modulele. Un modul dezactivat își oprește verificările, iar entitățile sale sunt eliminate; setările sale sunt păstrate.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Interval de reîmprospătare",
+          "notify": "Notifică",
+          "notify_services": "Acțiuni de notificare"
+        },
+        "data_description": {
+          "scan_interval": "Secunde între două citiri ale Supervisor.",
+          "notify": "Notifică atunci când un container care ar trebui să ruleze (un add-on pornit la boot) se oprește și când revine.",
+          "notify_services": "Trimite fiecare notificare și prin aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Acest dispozitiv are deja o repornire prin priză: elimin-o mai întâi.",
       "switch_on_device": "Priza nu poate fi o entitate a dispozitivului însuși: ar fi indisponibilă odată cu el.",
       "device_without_entities": "Acest dispozitiv nu are nicio entitate de supravegheat în afară de priză.",
-      "marketplace_not_loaded": "Marketplace nu este încărcat."
+      "marketplace_not_loaded": "Marketplace nu este încărcat.",
+      "supervisor_not_available": "Supervisor nu este disponibil: este necesar Home Assistant OS sau o instalare Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Containere pornite",
+        "state_attributes": {
+          "total": {
+            "name": "Total"
+          },
+          "error": {
+            "name": "Eroare"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Containere oprite",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Ultima actualizare"
+      },
       "watchdog_unavailable": {
         "name": "Integrări indisponibile",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Reîmprospătează containerele",
+      "description": "Citește acum Home Assistant Core, Supervisor și add-on-urile din Supervisor."
+    },
     "watchdog_check": {
       "name": "Verifică integrările",
       "description": "Caută integrările ale căror entități sunt toate indisponibile și le reîncarcă pe cele care au depășit perioada de grație."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Container oprit",
+    "containers_down": "{name} ar trebui să ruleze, dar este {state}.",
+    "containers_back_title": "Container revenit",
+    "containers_back": "{name} rulează din nou.",
     "watchdog_reloaded_title": "Integrare reîncărcată",
     "watchdog_reloaded": "{title} ({domain}) a fost reîncărcată: toate entitățile sale erau indisponibile din {since}. Reîncărcarea {attempt}/{max}.",
     "watchdog_reload_failed_title": "Reîncărcarea integrării a eșuat",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Nu au rămas destule cereri GitHub pentru a verifica toate depozitele ({remaining} rămase, {needed} necesare): verificarea se reia după resetarea limitei la {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Containerele nu au putut fi citite din Supervisor: {error}"
     }
   },
   "issues": {

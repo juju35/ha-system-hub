@@ -21,7 +21,10 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
-from .const import CONF_MODULES, DOMAIN, MODULE_MARKETPLACE, MODULE_WATCHDOG, MODULES
+from .const import CONF_MODULES, DOMAIN, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG, MODULES
+from .containers import async_setup_containers
+from .containers.const import SERVICE_REFRESH
+from .containers.monitor import ContainerMonitor
 from .marketplace import async_options_changed, async_remove_marketplace, async_setup_marketplace
 from .marketplace.const import SERVICE_CHECK_REPOSITORY, SERVICE_CHECK_UPDATES, SERVICE_INSTALL_UPDATES
 from .marketplace.refresher import MarketplaceNotAvailableError, MarketplaceRefresher
@@ -51,6 +54,7 @@ INSTALL_UPDATES_SCHEMA = vol.Schema(
 class SystemHubData:
     """The modules set up for the entry; None when turned off."""
 
+    containers: ContainerMonitor | None = None
     watchdog: IntegrationWatchdog | None = None
     marketplace: MarketplaceRefresher | None = None
 
@@ -74,6 +78,16 @@ def _loaded_data(hass: HomeAssistant) -> SystemHubData:
     if not entries:
         raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_loaded")
     return entries[0].runtime_data
+
+
+def loaded_monitor(hass: HomeAssistant) -> ContainerMonitor:
+    if (monitor := _loaded_data(hass).containers) is None:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="module_disabled",
+            translation_placeholders={"module": "Containers"},
+        )
+    return monitor
 
 
 def loaded_watchdog(hass: HomeAssistant) -> IntegrationWatchdog:
@@ -108,6 +122,19 @@ def _validation_error(err: MarketplaceNotAvailableError) -> ServiceValidationErr
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Register the actions of every module (administrators only); those of a module turned off refuse to run."""
+
+    async def containers_refresh(_call: ServiceCall) -> None:
+        """Read the containers now; fails when the Supervisor could not be read."""
+        monitor = loaded_monitor(hass)
+        await monitor.async_refresh()
+        if monitor.error is not None:
+            raise HomeAssistantError(
+                translation_domain=DOMAIN,
+                translation_key="containers_read_failed",
+                translation_placeholders={"error": monitor.error},
+            )
+
+    async_register_admin_service(hass, DOMAIN, SERVICE_REFRESH, containers_refresh)
 
     async def watchdog_check(_call: ServiceCall) -> None:
         # Waits for a check already running, then runs its own.
@@ -177,6 +204,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
     """Set up the modules turned on; drop the entities and the device of those turned off."""
     modules = enabled_modules(entry)
     data = SystemHubData()
+    if MODULE_CONTAINERS in modules:
+        data.containers = await async_setup_containers(hass, entry, module_options(entry, MODULE_CONTAINERS))
+        entry.async_on_unload(data.containers.async_dismiss_all)
     if MODULE_WATCHDOG in modules:
         data.watchdog = await async_setup_watchdog(hass, entry, module_options(entry, MODULE_WATCHDOG))
     else:

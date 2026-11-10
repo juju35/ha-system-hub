@@ -71,7 +71,10 @@ def test_translation_parity(language: str):
 
 
 # Serbian: brands, placeholders and identifiers stay in Latin script in the Cyrillic translation.
-_SR_LATIN_ALLOWED = re.compile(r"System Hub|Watchdog|Marketplace|Home Assistant|GitHub|notify\.mobile_app_|zha|\{\w+\}")
+_SR_LATIN_ALLOWED = re.compile(
+    r"System Hub|Watchdog|Marketplace|Containers|Home Assistant|Core|Supervisor|Supervised|OS|CPU|GitHub"
+    r"|notify\.mobile_app_|zha|\{\w+\}"
+)
 
 
 @pytest.mark.parametrize(

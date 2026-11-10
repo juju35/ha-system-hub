@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Choisissez les modules à activer. Chaque module se règle dans les options.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Le Supervisor n'est pas disponible : il faut Home Assistant OS ou une installation Supervised.",
       "marketplace_not_loaded": "Le Marketplace n'est pas chargé ou est désactivé."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Options de System Hub",
         "menu_options": {
           "modules": "Modules",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog : Ajouter un redémarrage par prise",
           "watchdog_remove_power_cycle": "Watchdog : Retirer des redémarrages par prise",
@@ -38,12 +42,27 @@
         "title": "Modules",
         "description": "Activez ou désactivez les modules. Un module désactivé arrête ses vérifications et ses entités sont supprimées ; ses réglages sont conservés.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Intervalle de rafraîchissement",
+          "notify": "Notifier",
+          "notify_services": "Actions de notification"
+        },
+        "data_description": {
+          "scan_interval": "Secondes entre deux lectures du Supervisor.",
+          "notify": "Notifier quand un conteneur qui devrait tourner (un add-on lancé au démarrage) s'arrête, et quand il revient.",
+          "notify_services": "Envoyer aussi chaque notification avec ces actions (notify.mobile_app_…). Une notification persistante est toujours créée."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Cet appareil a déjà un redémarrage par prise : retirez-le d'abord.",
       "switch_on_device": "La prise ne peut pas être une entité de l'appareil lui-même : elle serait indisponible avec lui.",
       "device_without_entities": "Cet appareil n'a aucune entité à surveiller en dehors de la prise.",
-      "marketplace_not_loaded": "Le Marketplace n'est pas chargé ou est désactivé."
+      "marketplace_not_loaded": "Le Marketplace n'est pas chargé ou est désactivé.",
+      "supervisor_not_available": "Le Supervisor n'est pas disponible : il faut Home Assistant OS ou une installation Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Conteneurs en marche",
+        "state_attributes": {
+          "total": {
+            "name": "Total"
+          },
+          "error": {
+            "name": "Erreur"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Conteneurs arrêtés",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Dernière mise à jour"
+      },
       "watchdog_unavailable": {
         "name": "Intégrations indisponibles",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Rafraîchir les conteneurs",
+      "description": "Lit maintenant Home Assistant Core, le Supervisor et les add-ons depuis le Supervisor."
+    },
     "watchdog_check": {
       "name": "Vérifier les intégrations",
       "description": "Recherche les intégrations dont toutes les entités sont indisponibles et recharge celles dont le délai de grâce est écoulé."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Conteneur arrêté",
+    "containers_down": "{name} devrait tourner mais est {state}.",
+    "containers_back_title": "Conteneur revenu",
+    "containers_back": "{name} tourne de nouveau.",
     "watchdog_reloaded_title": "Intégration rechargée",
     "watchdog_reloaded": "{title} ({domain}) a été rechargée : toutes ses entités étaient indisponibles depuis {since}. Rechargement {attempt}/{max}.",
     "watchdog_reload_failed_title": "Échec du rechargement d'une intégration",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Pas assez de requêtes GitHub restantes pour vérifier tous les dépôts ({remaining} restantes, {needed} nécessaires) : la vérification reprendra après la remise à zéro de la limite à {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Impossible de lire les conteneurs depuis le Supervisor : {error}"
     }
   },
   "issues": {

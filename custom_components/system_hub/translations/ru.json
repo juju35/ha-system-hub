@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Выберите модули для включения. Каждый модуль настраивается в параметрах.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
           "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
           "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised.",
       "marketplace_not_loaded": "Marketplace не загружен."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Параметры System Hub",
         "menu_options": {
           "modules": "Модули",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Добавить перезапуск через розетку",
           "watchdog_remove_power_cycle": "Watchdog: Удалить перезапуски через розетку",
@@ -38,12 +42,27 @@
         "title": "Модули",
         "description": "Включите или отключите модули. Отключённый модуль прекращает проверки, а его объекты удаляются; его настройки сохраняются.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
           "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
           "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Интервал обновления",
+          "notify": "Уведомлять",
+          "notify_services": "Действия уведомлений"
+        },
+        "data_description": {
+          "scan_interval": "Секунды между двумя опросами Supervisor.",
+          "notify": "Уведомлять, когда контейнер, который должен работать (дополнение, запускаемое при загрузке), останавливается, и когда он возвращается.",
+          "notify_services": "Также отправлять каждое уведомление с помощью этих действий (notify.mobile_app_…). Постоянное уведомление создаётся всегда."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "У этого устройства уже есть перезапуск через розетку: сначала удалите его.",
       "switch_on_device": "Розетка не может быть объектом самого устройства: она была бы недоступна вместе с ним.",
       "device_without_entities": "У этого устройства нет объектов для наблюдения, кроме розетки.",
-      "marketplace_not_loaded": "Marketplace не загружен."
+      "marketplace_not_loaded": "Marketplace не загружен.",
+      "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Работающие контейнеры",
+        "state_attributes": {
+          "total": {
+            "name": "Всего"
+          },
+          "error": {
+            "name": "Ошибка"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Остановленные контейнеры",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Последнее обновление"
+      },
       "watchdog_unavailable": {
         "name": "Недоступные интеграции",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Обновить контейнеры",
+      "description": "Сейчас считывает Home Assistant Core, Supervisor и дополнения из Supervisor."
+    },
     "watchdog_check": {
       "name": "Проверить интеграции",
       "description": "Ищет интеграции, все объекты которых недоступны, и перезагружает те, у которых истёк период ожидания."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Контейнер остановлен",
+    "containers_down": "{name} должен работать, но находится в состоянии {state}.",
+    "containers_back_title": "Контейнер снова работает",
+    "containers_back": "{name} снова работает.",
     "watchdog_reloaded_title": "Интеграция перезагружена",
     "watchdog_reloaded": "{title} ({domain}) перезагружена: все её объекты были недоступны с {since}. Перезагрузка {attempt}/{max}.",
     "watchdog_reload_failed_title": "Не удалось перезагрузить интеграцию",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Осталось недостаточно запросов GitHub для проверки всех репозиториев (осталось {remaining}, нужно {needed}): проверка повторится после сброса лимита в {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Не удалось получить контейнеры от Supervisor: {error}"
     }
   },
   "issues": {

@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Vælg de moduler, der skal slås til. Hvert modul indstilles under indstillingerne.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor er ikke tilgængelig: Home Assistant OS eller en Supervised-installation kræves.",
       "marketplace_not_loaded": "Marketplace er ikke indlæst."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "Indstillinger for System Hub",
         "menu_options": {
           "modules": "Moduler",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Tilføj genstart via stik",
           "watchdog_remove_power_cycle": "Watchdog: Fjern genstarter via stik",
@@ -38,12 +42,27 @@
         "title": "Moduler",
         "description": "Slå moduler til eller fra. Et modul, der er slået fra, stopper sine kontroller, og dets enheder fjernes; dets indstillinger bevares.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Opdateringsinterval",
+          "notify": "Giv besked",
+          "notify_services": "Notifikationshandlinger"
+        },
+        "data_description": {
+          "scan_interval": "Sekunder mellem to aflæsninger af Supervisor.",
+          "notify": "Giv besked, når en container, der burde køre (en tilføjelse startet ved opstart), stopper, og når den er tilbage.",
+          "notify_services": "Send også hver notifikation med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Denne enhed har allerede en genstart via stik: fjern den først.",
       "switch_on_device": "Stikket kan ikke være en entitet i selve enheden: det ville være utilgængeligt sammen med den.",
       "device_without_entities": "Denne enhed har ingen entitet at overvåge ud over stikket.",
-      "marketplace_not_loaded": "Marketplace er ikke indlæst."
+      "marketplace_not_loaded": "Marketplace er ikke indlæst.",
+      "supervisor_not_available": "Supervisor er ikke tilgængelig: Home Assistant OS eller en Supervised-installation kræves."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Kørende containere",
+        "state_attributes": {
+          "total": {
+            "name": "I alt"
+          },
+          "error": {
+            "name": "Fejl"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Stoppede containere",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Seneste opdatering"
+      },
       "watchdog_unavailable": {
         "name": "Utilgængelige integrationer",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Opdater containere",
+      "description": "Aflæser nu Home Assistant Core, Supervisor og tilføjelserne fra Supervisor."
+    },
     "watchdog_check": {
       "name": "Kontrollér integrationer",
       "description": "Finder de integrationer, hvis enheder alle er utilgængelige, og genindlæser dem, hvis respitperiode er udløbet."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Container stoppet",
+    "containers_down": "{name} burde køre, men er {state}.",
+    "containers_back_title": "Container tilbage",
+    "containers_back": "{name} kører igen.",
     "watchdog_reloaded_title": "Integration genindlæst",
     "watchdog_reloaded": "{title} ({domain}) blev genindlæst: alle dens enheder havde været utilgængelige siden {since}. Genindlæsning {attempt}/{max}.",
     "watchdog_reload_failed_title": "Genindlæsning af integration mislykkedes",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Ikke nok GitHub-forespørgsler tilbage til at tjekke alle repositories ({remaining} tilbage, {needed} nødvendige): tjekket kører igen, når grænsen nulstilles kl. {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Kunne ikke aflæse containerne fra Supervisor: {error}"
     }
   },
   "issues": {

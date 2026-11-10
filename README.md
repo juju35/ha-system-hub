@@ -29,8 +29,8 @@ Home Assistant integration that brings the care of your Home Assistant system to
 | Integration | Used for |
 | --- | --- |
 | [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) | System tab |
-| [Supervisor](https://www.home-assistant.io/integrations/hassio/) | Containers tab (Home Assistant OS and Supervised installations) |
-| [Marketplace](https://www.home-assistant.io/integrations/marketplace/) | Marketplace tab |
+| [Supervisor](https://www.home-assistant.io/integrations/hassio/) | Containers module (Home Assistant OS and Supervised installations) |
+| [Marketplace](https://www.home-assistant.io/integrations/marketplace/) | Marketplace module |
 
 ## Prerequisites
 
@@ -61,24 +61,71 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 
 [![Add integration](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=system_hub)
 
-**Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Marketplace module can only be turned on when Home Assistant's Marketplace is loaded.
+**Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Containers module needs the Supervisor (Home Assistant OS or a Supervised installation), the Marketplace module Home Assistant's Marketplace.
 
-**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**).
+**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**Containers**, **Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**).
 
 ### Modules
 
 | Module | Default | What it does |
 |---|---|---|
+| Containers | on with Home Assistant OS or Supervised | Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU, memory. Monitoring only, nothing is restarted |
 | Watchdog | on | Reloads the integrations whose entities are all unavailable, power cycles devices through their smart plug |
 | Marketplace | on when the Marketplace is loaded | Checks every repository installed from the Marketplace for updates, on the server, and installs them on demand |
 
 A module turned off is not set up: its checks stop, its entities and its device are removed, its actions fail with *The … module is turned off*, and the Watchdog's Repairs issues and notifications are dismissed. Its settings and saved state (the Watchdog's history and reload counts, the Marketplace's last check) are kept, so turning it back on picks up where it left off.
 
-Every module has its own device (**System Hub Watchdog**, **System Hub Marketplace**) holding its entities.
+Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**) holding its entities.
 
 ### Diagnostics
 
 **Settings → Devices & services → System Hub → ⋮ → Download diagnostics** gives the options, the modules turned on and the state of each one. Integration titles (often an e-mail address or a host), notify actions and tokens are redacted; domains and entry ids are kept.
+
+## Containers
+
+Home Assistant's own containers, read from the Supervisor: **Home Assistant Core**, the **Supervisor** and every **add-on**. **Monitoring only**: the module never starts, stops or restarts anything.
+
+| Option | Default | Description |
+|---|---|---|
+| Refresh interval | 60 s | Seconds between two reads of the Supervisor, from 10 to 3600. The first read is done once Home Assistant has started |
+| Notify | on | Notify when a container that should run stops, and when it is back |
+| Notify actions | none | Also send each notification with these actions (`notify.mobile_app_phone`…). A persistent notification is always created |
+
+A container **should run** when it is Core, the Supervisor, or an add-on set to start at boot. It is **down** when it should run and is stopped or in error; an add-on started by hand only is never down. Going down creates a persistent notification (one per container, replaced) and coming back dismisses it. Nothing is notified at the first read, nor while Home Assistant is starting, when the add-ons are starting too. If the Supervisor can't be read (busy, restarting), the last figures are kept and the error is shown in the attributes; the next refresh tries again.
+
+For every container: state and since when, version, latest version and whether an update is available, CPU %, memory (used, limit, %), network (received, sent) and disk (read, written) since it started. The panel also gets their CPU and memory over the last 24 hours (one point every 5 minutes, in memory only).
+
+#### Entities
+
+| Entity | Description |
+|---|---|
+| `sensor.system_hub_containers_running_containers` | Containers running. Attributes: `total`, `error` (why the last read failed, else `null`), `containers` (every container: `slug`, `name`, `kind` = `core` / `supervisor` / `addon`, `state`, `since`, `version`, `version_latest`, `update_available`, `boot`, `expected`, `down`, `cpu_percent`, `memory_usage`, `memory_limit`, `memory_percent`, `network_rx`, `network_tx`, `blk_read`, `blk_write`; not recorded in the database) |
+| `sensor.system_hub_containers_stopped_containers` | Containers that should run and don't. Attribute: `containers` (`slug`, `name`, `state`) |
+| `sensor.system_hub_containers_last_update` | End of the last successful read |
+
+#### Action `system_hub.containers_refresh`
+
+Reads the containers now. Fails with the reason if the Supervisor could not be read. For administrators.
+
+```yaml
+action: system_hub.containers_refresh
+```
+
+Get a notification on the phone when an add-on stays stopped:
+
+```yaml
+triggers:
+  - trigger: numeric_state
+    entity_id: sensor.system_hub_containers_stopped_containers
+    above: 0
+    for: "00:10:00"
+actions:
+  - action: notify.mobile_app_phone
+    data:
+      message: >-
+        Stopped: {{ state_attr('sensor.system_hub_containers_stopped_containers', 'containers')
+        | map(attribute='name') | join(', ') }}
+```
 
 ## Watchdog
 

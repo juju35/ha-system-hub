@@ -5,16 +5,19 @@
         "title": "System Hub",
         "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās."
         }
       }
     },
     "error": {
+      "supervisor_not_available": "Supervisor nav pieejams: nepieciešama Home Assistant OS vai Supervised instalācija.",
       "marketplace_not_loaded": "Marketplace nav ielādēts."
     },
     "abort": {
@@ -28,6 +31,7 @@
         "title": "System Hub opcijas",
         "menu_options": {
           "modules": "Moduļi",
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Pievienot restartēšanu ar kontaktligzdu",
           "watchdog_remove_power_cycle": "Watchdog: Noņemt restartēšanas ar kontaktligzdu",
@@ -38,12 +42,27 @@
         "title": "Moduļi",
         "description": "Ieslēdziet vai izslēdziet moduļus. Izslēgts modulis pārtrauc pārbaudes, un tā entītijas tiek noņemtas; tā iestatījumi tiek saglabāti.",
         "data": {
+          "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace"
         },
         "data_description": {
+          "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās."
+        }
+      },
+      "containers": {
+        "title": "Containers",
+        "data": {
+          "scan_interval": "Atjaunināšanas intervāls",
+          "notify": "Paziņot",
+          "notify_services": "Paziņojumu darbības"
+        },
+        "data_description": {
+          "scan_interval": "Sekundes starp diviem Supervisor nolasījumiem.",
+          "notify": "Paziņot, kad konteiners, kam vajadzētu darboties (papildinājums, kas palaists ielādējot), apstājas, un kad tas atgriežas.",
+          "notify_services": "Sūtīt katru paziņojumu arī ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr."
         }
       },
       "watchdog": {
@@ -111,7 +130,8 @@
       "device_already_cycled": "Šai ierīcei jau ir restartēšana ar kontaktligzdu: vispirms noņemiet to.",
       "switch_on_device": "Kontaktligzda nevar būt pašas ierīces entītija: tā būtu nepieejama kopā ar to.",
       "device_without_entities": "Šai ierīcei nav uzraugāmas entītijas, izņemot kontaktligzdu.",
-      "marketplace_not_loaded": "Marketplace nav ielādēts."
+      "marketplace_not_loaded": "Marketplace nav ielādēts.",
+      "supervisor_not_available": "Supervisor nav pieejams: nepieciešama Home Assistant OS vai Supervised instalācija."
     }
   },
   "entity": {
@@ -124,6 +144,31 @@
       }
     },
     "sensor": {
+      "containers_running": {
+        "name": "Strādājošie konteineri",
+        "state_attributes": {
+          "total": {
+            "name": "Kopā"
+          },
+          "error": {
+            "name": "Kļūda"
+          },
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_down": {
+        "name": "Apturētie konteineri",
+        "state_attributes": {
+          "containers": {
+            "name": "Containers"
+          }
+        }
+      },
+      "containers_last_update": {
+        "name": "Pēdējā atjaunināšana"
+      },
       "watchdog_unavailable": {
         "name": "Nepieejamās integrācijas",
         "state_attributes": {
@@ -229,6 +274,10 @@
     }
   },
   "services": {
+    "containers_refresh": {
+      "name": "Atjaunināt konteinerus",
+      "description": "Tagad nolasa Home Assistant Core, Supervisor un papildinājumus no Supervisor."
+    },
     "watchdog_check": {
       "name": "Pārbaudīt integrācijas",
       "description": "Meklē integrācijas, kuru visas vienības nav pieejamas, un pārlādē tās, kurām beidzies nogaidīšanas laiks."
@@ -283,6 +332,10 @@
     }
   },
   "common": {
+    "containers_down_title": "Konteiners apturēts",
+    "containers_down": "{name} vajadzētu darboties, bet tā stāvoklis ir {state}.",
+    "containers_back_title": "Konteiners atkal darbojas",
+    "containers_back": "{name} atkal darbojas.",
     "watchdog_reloaded_title": "Integrācija pārlādēta",
     "watchdog_reloaded": "{title} ({domain}) tika pārlādēta: visas tās vienības nebija pieejamas kopš {since}. Pārlāde {attempt}/{max}.",
     "watchdog_reload_failed_title": "Integrācijas pārlāde neizdevās",
@@ -350,6 +403,9 @@
     },
     "marketplace_rate_limit_low": {
       "message": "Nepietiek atlikušo GitHub pieprasījumu visu repozitoriju pārbaudei (atlikuši {remaining}, vajag {needed}): pārbaude atkārtosies pēc limita atiestatīšanas plkst. {reset}."
+    },
+    "containers_read_failed": {
+      "message": "Neizdevās nolasīt konteinerus no Supervisor: {error}"
     }
   },
   "issues": {

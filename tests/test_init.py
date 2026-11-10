@@ -44,8 +44,10 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
     """The Marketplace module is off by default without the Marketplace, and can't be turned on."""
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     defaults = {str(key): key.default() for key in result["data_schema"].schema}
-    assert defaults == {"watchdog": True, "marketplace": False}
-    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": True})
+    assert defaults == {"containers": False, "watchdog": True, "marketplace": False}
+    result = await hass.config_entries.flow.async_configure(
+        result["flow_id"], {"containers": False, "watchdog": True, "marketplace": True}
+    )
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"marketplace": "marketplace_not_loaded"}
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": False})

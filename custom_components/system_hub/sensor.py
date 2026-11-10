@@ -1,4 +1,4 @@
-"""Sensors of the modules: Watchdog (unavailable integrations, reloads, last check), Marketplace (status)."""
+"""Sensors of the modules: Containers (running, down), Watchdog (unavailable integrations, reloads), Marketplace."""
 
 from __future__ import annotations
 
@@ -12,7 +12,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from . import SystemHubConfigEntry
-from .const import DOMAIN, MODULE_MARKETPLACE, MODULE_WATCHDOG
+from .const import DOMAIN, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG
+from .containers.monitor import ContainerMonitor
 from .entity import SystemHubEntity
 from .marketplace.const import STATE_ERROR, STATE_IDLE, STATE_RUNNING
 from .marketplace.refresher import MarketplaceRefresher
@@ -26,6 +27,12 @@ async def async_setup_entry(
 ) -> None:
     data = entry.runtime_data
     entities: list[SensorEntity] = []
+    if (c := data.containers) is not None:
+        entities += [
+            ContainersRunningSensor(c, entry.entry_id, "running"),
+            ContainersDownSensor(c, entry.entry_id, "down"),
+            ContainersLastUpdateSensor(c, entry.entry_id, "last_update"),
+        ]
     if (w := data.watchdog) is not None:
         entities += [
             UnavailableSensor(w, entry.entry_id, "unavailable"),
@@ -39,6 +46,14 @@ async def async_setup_entry(
             MarketplaceLastCheckSensor(r, entry.entry_id, "last_check"),
         ]
     async_add_entities(entities)
+
+
+class ContainersEntity(SystemHubEntity):
+    """An entity of the Containers module."""
+
+    def __init__(self, monitor: ContainerMonitor, entry_id: str, key: str) -> None:
+        super().__init__(monitor, entry_id, MODULE_CONTAINERS, key)
+        self.monitor = monitor
 
 
 class WatchdogEntity(SystemHubEntity):
@@ -209,3 +224,48 @@ class MarketplaceLastCheckSensor(MarketplaceEntity, SensorEntity):
         last = r.last_check or r.since
         due = (r.next_due or (last + timedelta(hours=hours) if last else None)) if hours > 0 else None
         return {"scan_interval": hours, "next_check": due.isoformat() if due else None}
+
+
+class ContainersRunningSensor(ContainersEntity, SensorEntity):
+    """Containers running (Core, the Supervisor, add-ons), every container with its figures in the attributes."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    # Rewritten at every refresh: kept out of the recorder database.
+    _unrecorded_attributes = frozenset({"containers"})
+
+    @property
+    def native_value(self) -> int | None:
+        return None if self.monitor.last_update is None else len(self.monitor.running)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "total": len(self.monitor.containers),
+            "error": self.monitor.error,
+            "containers": [c.as_dict() for c in self.monitor.containers.values()],
+        }
+
+
+class ContainersDownSensor(ContainersEntity, SensorEntity):
+    """Containers that should run and don't: an add-on started at boot that is stopped or in error."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+
+    @property
+    def native_value(self) -> int | None:
+        return None if self.monitor.last_update is None else len(self.monitor.down)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {"containers": [{"slug": c.slug, "name": c.name, "state": c.state} for c in self.monitor.down]}
+
+
+class ContainersLastUpdateSensor(ContainersEntity, SensorEntity):
+    """End of the last successful read of the Supervisor."""
+
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    @property
+    def native_value(self) -> datetime | None:
+        return self.monitor.last_update

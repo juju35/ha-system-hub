@@ -10,9 +10,10 @@ VERSION: Final = "0.1.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
+MODULE_CONTAINERS: Final = "containers"
 MODULE_WATCHDOG: Final = "watchdog"
 MODULE_MARKETPLACE: Final = "marketplace"
-MODULES: Final = (MODULE_WATCHDOG, MODULE_MARKETPLACE)
+MODULES: Final = (MODULE_CONTAINERS, MODULE_WATCHDOG, MODULE_MARKETPLACE)
 
 # Home Assistant's own Marketplace integration, which the Marketplace module drives.
 MARKETPLACE_DOMAIN: Final = "marketplace"
