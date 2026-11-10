@@ -17,5 +17,9 @@ MODULE_BATTERIES: Final = "batteries"
 MODULE_GIT_SYNC: Final = "git_sync"
 MODULES: Final = (MODULE_CONTAINERS, MODULE_WATCHDOG, MODULE_MARKETPLACE, MODULE_BATTERIES, MODULE_GIT_SYNC)
 
+# Panel: the order of its tabs (the System tab and the modules; Settings always comes last).
+CONF_TABS: Final = "tabs"
+TAB_SYSTEM: Final = "system"
+
 # Home Assistant's own Marketplace integration, which the Marketplace module drives.
 MARKETPLACE_DOMAIN: Final = "marketplace"

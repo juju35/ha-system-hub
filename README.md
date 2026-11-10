@@ -22,13 +22,13 @@ Home Assistant integration that brings the care of your Home Assistant system to
 - **Batteries**: battery levels of every device, low-battery notifications.
 - **Git sync**: commit and push your configuration and export the dashboards to a Git repository.
 - **Modules**: Containers, Marketplace, Watchdog, Batteries and Git sync can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
-- **Admin panel**: one sidebar panel with a tab per enabled module, which you can order.
+- **Admin panel**: one sidebar panel with the System tab and a tab per module turned on, which you can order.
 
 ## Supported integrations
 
 | Integration | Used for |
 | --- | --- |
-| [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) | System tab |
+| [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) | System tab of the panel |
 | [Supervisor](https://www.home-assistant.io/integrations/hassio/) | Containers module (Home Assistant OS and Supervised installations) |
 | [Marketplace](https://www.home-assistant.io/integrations/marketplace/) | Marketplace module |
 | [AI Task](https://www.home-assistant.io/integrations/ai_task/) | Commit messages of the Git Sync module (optional) |
@@ -83,6 +83,22 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 ### Diagnostics
 
 **Settings → Devices & services → System Hub → ⋮ → Download diagnostics** gives the options, the modules turned on and the state of each one. Integration titles (often an e-mail address or a host), notify actions and tokens are redacted; domains and entry ids are kept.
+
+## Sidebar panel
+
+**System Hub** in the sidebar (administrators only) gathers everything on one page, with a tab per module turned on; the tab is in the address (`/system-hub/watchdog`), so a link or a reload opens it again. The panel reads the modules every 10 seconds while it is shown.
+
+| Tab | Content |
+|---|---|
+| System | CPU, RAM, swap, temperature, load, up since, download and upload, and every disk, from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a tile opens its entity |
+| Containers | Running and stopped containers, last read; every container with its state, version and update, CPU, RAM and the last 24 hours of CPU; **Refresh** |
+| Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the recent reloads and power cycles |
+| Marketplace | Updates available, last and next check (progress while it runs); **Check for updates**, **Update all** (asked first) |
+| Batteries | Low and unavailable batteries, last notification; every battery, the unavailable then the lowest first; **Notify now** |
+| Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **Pull**, **Export dashboards** |
+| Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
+
+Git Sync can't be turned on from the panel the first time: its repository is checked in **Configure → Modules**.
 
 ## Containers
 
