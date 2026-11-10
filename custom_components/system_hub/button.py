@@ -7,6 +7,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import SystemHubConfigEntry
+from .git_sync.entities import BUTTONS, GitSyncButton
 from .sensor import BatteriesEntity, MarketplaceEntity, WatchdogEntity
 
 
@@ -23,6 +24,8 @@ async def async_setup_entry(
         entities.append(MarketplaceCheckButton(data.marketplace, entry.entry_id, "check_updates"))
     if data.batteries is not None:
         entities.append(BatteriesNotifyButton(data.batteries, entry.entry_id, "notify_now"))
+    if data.git_sync is not None:
+        entities += [GitSyncButton(data.git_sync, entry.entry_id, description) for description in BUTTONS]
     async_add_entities(entities)
 
 

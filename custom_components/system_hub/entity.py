@@ -15,6 +15,7 @@ DEVICE_NAMES = {
     "watchdog": "System Hub Watchdog",
     "marketplace": "System Hub Marketplace",
     "batteries": "System Hub Batteries",
+    "git_sync": "System Hub Git Sync",
 }
 
 

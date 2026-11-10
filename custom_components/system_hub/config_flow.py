@@ -23,12 +23,16 @@ from .const import (
     MARKETPLACE_DOMAIN,
     MODULE_BATTERIES,
     MODULE_CONTAINERS,
+    MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_WATCHDOG,
     MODULES,
 )
 from .containers import flow as containers_flow
 from .containers.monitor import supervisor_available
+from .git_sync import configured as git_sync_configured
+from .git_sync import flow as git_sync_flow
+from .git_sync.const import CONF_REPO_PATH
 from .marketplace import flow as marketplace_flow
 from .watchdog import flow as watchdog_flow
 from .watchdog.const import CONF_DELAY, CONF_DEVICE, CONF_OFF_TIME, CONF_POWER_CYCLES, CONF_SWITCH
@@ -54,7 +58,16 @@ def _available(hass: HomeAssistant) -> list[str]:
         for m in MODULES
         if (m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in hass.config.components)
         and (m != MODULE_CONTAINERS or supervisor_available(hass))
+        # Needs a repository set up first: turned on by choice.
+        and m != MODULE_GIT_SYNC
     ]
+
+
+async def _repository_errors(user_input: dict[str, Any]) -> dict[str, str]:
+    """Normalize the repository settings submitted, then check the repository."""
+    user_input[CONF_REPO_PATH] = user_input[CONF_REPO_PATH].rstrip("/") or "/"
+    git_sync_flow.fill_empty(user_input, git_sync_flow.REPOSITORY_OPTIONAL)
+    return await git_sync_flow.validate(user_input)
 
 
 def _chosen(user_input: dict[str, Any]) -> list[str]:
@@ -65,16 +78,38 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
     """Creates the single System Hub entry with the modules chosen."""
 
     VERSION = 1
+    _chosen_modules: list[str]
 
     async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Choose the modules; each one keeps its default settings until changed in the options."""
         errors = _modules_errors(self.hass, user_input) if user_input is not None else {}
         if user_input is not None and not errors:
-            return self.async_create_entry(title="System Hub", data={}, options={CONF_MODULES: _chosen(user_input)})
+            self._chosen_modules = _chosen(user_input)
+            if MODULE_GIT_SYNC in self._chosen_modules:
+                return await self.async_step_git_sync_repository()
+            return self.async_create_entry(title="System Hub", data={}, options={CONF_MODULES: self._chosen_modules})
         schema = _modules_schema(_available(self.hass))
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+
+    async def async_step_git_sync_repository(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The Git Sync module was chosen: its repository, checked before the entry is created."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await _repository_errors(user_input)
+            if not errors:
+                settings = user_input | git_sync_flow.default_options(self.hass)
+                return self.async_create_entry(
+                    title="System Hub",
+                    data={},
+                    options={CONF_MODULES: self._chosen_modules, MODULE_GIT_SYNC: settings},
+                )
+        return self.async_show_form(
+            step_id="git_sync_repository",
+            data_schema=self.add_suggested_values_to_schema(git_sync_flow.repository_schema({}), user_input or {}),
+            errors=errors,
+        )
 
     @staticmethod
     @callback
@@ -84,6 +119,8 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
 
 class SystemHubOptionsFlow(OptionsFlow):
     """The modules turned on, then the settings of each one; a module turned off keeps its settings."""
+
+    _pending_modules: list[str] | None = None
 
     def _modules(self) -> list[str]:
         modules = self.config_entry.options.get(CONF_MODULES)
@@ -109,13 +146,20 @@ class SystemHubOptionsFlow(OptionsFlow):
             menu.append("marketplace")
         if MODULE_BATTERIES in modules:
             menu.append("batteries")
+        if MODULE_GIT_SYNC in modules:
+            menu += ["git_sync_repository", "git_sync"]
         return self.async_show_menu(step_id="init", menu_options=menu)
 
     async def async_step_modules(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Turn modules on or off."""
         errors = _modules_errors(self.hass, user_input) if user_input is not None else {}
         if user_input is not None and not errors:
-            return self._save(**{CONF_MODULES: _chosen(user_input)})
+            chosen = _chosen(user_input)
+            if MODULE_GIT_SYNC in chosen and not git_sync_configured(self._module(MODULE_GIT_SYNC)):
+                # Turned on for the first time: its repository first, saved with the modules.
+                self._pending_modules = chosen
+                return await self.async_step_git_sync_repository()
+            return self._save(**{CONF_MODULES: chosen})
         schema = _modules_schema(self._modules())
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
@@ -213,3 +257,36 @@ class SystemHubOptionsFlow(OptionsFlow):
             return self._save(**{MODULE_BATTERIES: batteries_flow.settings_options(user_input)})
         schema = await batteries_flow.settings_schema(self.hass, self._module(MODULE_BATTERIES))
         return self.async_show_form(step_id="batteries", data_schema=schema)
+
+    # Git Sync
+
+    async def async_step_git_sync_repository(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Path, remote, branch, SSH key and commit author, checked before they are saved."""
+        current = self._module(MODULE_GIT_SYNC)
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await _repository_errors(user_input)
+            if not errors:
+                settings = (current or git_sync_flow.default_options(self.hass)) | user_input
+                modules = self._pending_modules or self._modules()
+                return self._save(**{CONF_MODULES: modules, MODULE_GIT_SYNC: settings})
+        return self.async_show_form(
+            step_id="git_sync_repository",
+            data_schema=git_sync_flow.repository_schema(user_input or current),
+            errors=errors,
+        )
+
+    async def async_step_git_sync(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Commit message, schedules, notifications and dashboard export."""
+        current = self._module(MODULE_GIT_SYNC)
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await git_sync_flow.options_errors(self.hass, user_input)
+            if not errors:
+                return self._save(**{MODULE_GIT_SYNC: current | user_input})
+        schema = git_sync_flow.options_schema(self.hass, current)
+        return self.async_show_form(
+            step_id="git_sync",
+            data_schema=self.add_suggested_values_to_schema(schema, user_input) if user_input else schema,
+            errors=errors,
+        )

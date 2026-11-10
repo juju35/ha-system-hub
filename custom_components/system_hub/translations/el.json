@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
           "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες.",
-          "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή."
+          "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή.",
+          "git_sync": "Φάκελος του Home Assistant με έλεγχο εκδόσεων Git, που γίνεται push σε remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Αποθετήριο Git",
+        "description": "Φάκελος του Home Assistant με έλεγχο εκδόσεων Git, που γίνεται push σε remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Διαδρομή αποθετηρίου",
+          "remote": "Remote",
+          "branch": "Κλάδος",
+          "ssh_key": "Ιδιωτικό κλειδί SSH",
+          "author_name": "Όνομα συντάκτη",
+          "author_email": "Email συντάκτη"
+        },
+        "data_description": {
+          "repo_path": "Φάκελος που περιέχει τον κατάλογο .git, συνήθως /config.",
+          "remote": "Το Git remote για push, συνήθως origin.",
+          "branch": "Κλάδος προορισμού στο remote. Αφήστε κενό για push του τρέχοντος κλάδου.",
+          "ssh_key": "Ιδιωτικό κλειδί για το push. Δημιουργήστε το με την ενέργεια generate_ssh_key και μετά προσθέστε το δημόσιο κλειδί ως deploy key με δικαίωμα εγγραφής.",
+          "author_name": "Προαιρετικό, αντικαθιστά τα git user.name / user.email του αποθετηρίου.",
+          "author_email": "Προαιρετικό, αντικαθιστά τα git user.name / user.email του αποθετηρίου."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Ο Supervisor δεν είναι διαθέσιμος: απαιτείται Home Assistant OS ή εγκατάσταση Supervised.",
-      "marketplace_not_loaded": "Το Marketplace δεν έχει φορτωθεί."
+      "marketplace_not_loaded": "Το Marketplace δεν έχει φορτωθεί.",
+      "not_a_repository": "Αυτός ο φάκελος δεν είναι δέντρο εργασίας Git.",
+      "unknown_remote": "Αυτό το remote δεν υπάρχει στο αποθετήριο.",
+      "invalid_branch": "Το Git δεν δέχεται αυτό το όνομα κλάδου.",
+      "author_required": "Το Git δεν ξέρει ποιος υπογράφει εδώ τα commit: εισαγάγετε το email (και το όνομα) του συντάκτη."
     },
     "abort": {
       "already_configured": "Το System Hub έχει ήδη ρυθμιστεί.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Προσθήκη επανεκκίνησης μέσω πρίζας",
           "watchdog_remove_power_cycle": "Watchdog: Αφαίρεση επανεκκινήσεων μέσω πρίζας",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Ρυθμίσεις αποθετηρίου",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
           "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες.",
-          "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή."
+          "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή.",
+          "git_sync": "Φάκελος του Home Assistant με έλεγχο εκδόσεων Git, που γίνεται push σε remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Μπαταρίες που δεν παρακολουθούνται ποτέ.",
           "ignored_integrations": "Ενσωματώσεις των οποίων οι μπαταρίες δεν παρακολουθούνται ποτέ (από προεπιλογή τα τηλέφωνα και τα tablet της εφαρμογής για κινητά). Πληκτρολογήστε ένα domain για να προσθέσετε μια ενσωμάτωση που δεν έχει ρυθμιστεί ακόμα."
         }
+      },
+      "git_sync_repository": {
+        "title": "Ρυθμίσεις αποθετηρίου",
+        "data": {
+          "repo_path": "Διαδρομή αποθετηρίου",
+          "remote": "Remote",
+          "branch": "Κλάδος",
+          "ssh_key": "Ιδιωτικό κλειδί SSH",
+          "author_name": "Όνομα συντάκτη",
+          "author_email": "Email συντάκτη"
+        },
+        "data_description": {
+          "repo_path": "Φάκελος που περιέχει τον κατάλογο .git, συνήθως /config.",
+          "remote": "Το Git remote για push, συνήθως origin.",
+          "branch": "Κλάδος προορισμού στο remote. Αφήστε κενό για push του τρέχοντος κλάδου.",
+          "ssh_key": "Ιδιωτικό κλειδί για το push. Δημιουργήστε το με την ενέργεια generate_ssh_key και μετά προσθέστε το δημόσιο κλειδί ως deploy key με δικαίωμα εγγραφής.",
+          "author_name": "Προαιρετικό, αντικαθιστά τα git user.name / user.email του αποθετηρίου.",
+          "author_email": "Προαιρετικό, αντικαθιστά τα git user.name / user.email του αποθετηρίου."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Μήνυμα commit, χρονοδιαγράμματα, ειδοποιήσεις και εξαγωγή πινάκων ελέγχου.",
+        "data": {
+          "ai_task_entity": "Οντότητα εργασίας AI",
+          "commit_language": "Γλώσσα μηνύματος commit",
+          "commit_interval": "Διάστημα αυτόματου commit",
+          "status_interval": "Διάστημα ανανέωσης κατάστασης",
+          "fetch_interval": "Διάστημα ελέγχου του remote",
+          "pull_before_push": "Pull πριν από το push",
+          "allow_sensitive": "Να επιτρέπονται παρακολουθούμενα ευαίσθητα αρχεία",
+          "notify_service": "Ενέργεια ειδοποίησης",
+          "notify_image": "URL εικόνας ειδοποίησης",
+          "export_enabled": "Ημερήσια εξαγωγή πινάκων ελέγχου",
+          "export_time": "Ώρα εξαγωγής",
+          "export_dir": "Φάκελος εξαγωγής",
+          "export_format": "Μορφή εξαγωγής",
+          "export_before_commit": "Εξαγωγή πινάκων ελέγχου πριν από κάθε commit",
+          "commit_before_update": "Commit πριν από τις ενημερώσεις"
+        },
+        "data_description": {
+          "ai_task_entity": "Δημιουργεί μήνυμα Conventional Commits από το diff. Χωρίς αυτήν χρησιμοποιείται ένα γενικό μήνυμα.",
+          "commit_interval": "Commit και push κάθε N λεπτά όταν υπάρχουν αλλαγές. Το 0 το απενεργοποιεί.",
+          "fetch_interval": "Fetch από το remote κάθε N λεπτά, ώστε να φαίνονται τα commit που στάλθηκαν από αλλού (πίσω, απόκλιση). Το 0 το απενεργοποιεί· πριν από κάθε push γίνεται πάντως fetch.",
+          "pull_before_push": "Όταν το remote έχει νέα commit, γίνεται rebase πάνω τους (git pull --rebase --autostash) πριν από το push. Σε σύγκρουση το rebase ακυρώνεται, δεν στέλνεται τίποτα και μια επιδιόρθωση εξηγεί τι να κάνετε.",
+          "allow_sensitive": "Commit των αλλαγών σε ευαίσθητα αρχεία που ήδη παρακολουθεί το Git (secrets.yaml, .storage, κλειδιά, βάση δεδομένων, αρχεία καταγραφής). Τα νέα ευαίσθητα αρχεία απορρίπτονται πάντα.",
+          "notify_service": "Για παράδειγμα notify.mobile_app_phone. Αφήστε κενό για απενεργοποίηση.",
+          "notify_image": "Απόλυτο URL HTTPS (απαιτείται από το iOS).",
+          "export_format": "Το JSON αντιγράφει τα αρχεία .storage ως έχουν· το YAML κρατά μόνο τη διαμόρφωση του πίνακα ελέγχου, πιο ευανάγνωστη στα diff.",
+          "export_dir": "Στον φάκελο ρυθμίσεων (μια σχετική διαδρομή ξεκινά από εκεί) ή σε φάκελο του allowlist_external_dirs.",
+          "commit_before_update": "Όταν εγκαθίσταται μια ενημέρωση (Home Assistant, πρόσθετο, ενσωμάτωση), γίνεται πρώτα commit και push της διαμόρφωσης, ώστε να υπάρχει commit για επιστροφή. Ένα commit για ενημερώσεις που εγκαθίστανται μαζί."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Η πρίζα δεν μπορεί να είναι οντότητα της ίδιας της συσκευής: θα ήταν μη διαθέσιμη μαζί της.",
       "device_without_entities": "Αυτή η συσκευή δεν έχει καμία οντότητα προς παρακολούθηση εκτός από την πρίζα.",
       "marketplace_not_loaded": "Το Marketplace δεν έχει φορτωθεί.",
-      "supervisor_not_available": "Ο Supervisor δεν είναι διαθέσιμος: απαιτείται Home Assistant OS ή εγκατάσταση Supervised."
+      "supervisor_not_available": "Ο Supervisor δεν είναι διαθέσιμος: απαιτείται Home Assistant OS ή εγκατάσταση Supervised.",
+      "not_a_repository": "Αυτός ο φάκελος δεν είναι δέντρο εργασίας Git.",
+      "unknown_remote": "Αυτό το remote δεν υπάρχει στο αποθετήριο.",
+      "invalid_branch": "Το Git δεν δέχεται αυτό το όνομα κλάδου.",
+      "author_required": "Το Git δεν ξέρει ποιος υπογράφει εδώ τα commit: εισαγάγετε το email (και το όνομα) του συντάκτη.",
+      "unknown_notify_service": "Αυτή η ενέργεια ειδοποίησης δεν υπάρχει.",
+      "export_dir_not_allowed": "Ο φάκελος πρέπει να βρίσκεται στον φάκελο ρυθμίσεων ή σε φάκελο του allowlist_external_dirs, εκτός κρυφών φακέλων όπως το .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Ειδοποίηση τώρα"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit και push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Εξαγωγή πινάκων ελέγχου"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Λείπουν"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Κατάσταση",
+        "state": {
+          "clean": "Ενημερωμένο",
+          "dirty": "Εκκρεμείς αλλαγές",
+          "ahead": "Εκκρεμεί push",
+          "error": "Σφάλμα",
+          "behind": "Πίσω από το remote",
+          "diverged": "Απόκλιση"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Κλάδος"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "ahead": {
+            "name": "Commit μπροστά"
+          },
+          "behind": {
+            "name": "Commit πίσω"
+          },
+          "changed_count": {
+            "name": "Αλλαγμένα αρχεία"
+          },
+          "changed_files": {
+            "name": "Λίστα αλλαγμένων αρχείων"
+          },
+          "last_error": {
+            "name": "Τελευταίο σφάλμα"
+          },
+          "ai_task": {
+            "name": "Εργασία AI"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Αλλαγμένα αρχεία"
+      },
+      "git_sync_last_commit": {
+        "name": "Τελευταίο commit",
+        "state_attributes": {
+          "message": {
+            "name": "Μήνυμα"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Σύντομο commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Τελευταίο push",
+        "state_attributes": {
+          "message": {
+            "name": "Μήνυμα"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Τελευταία εξαγωγή πινάκων ελέγχου",
+        "state_attributes": {
+          "files": {
+            "name": "Αρχεία που εξήχθησαν"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Κλάδος",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Εφεδρικές μπαταρίες του τύπου. Αφήστε κενό για να σταματήσει η καταμέτρηση."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit και push",
+      "description": "Προσθέτει όλες τις αλλαγές στο ευρετήριο, κάνει commit με μήνυμα που δημιουργεί η AI (ή που δίνεται) και push στο remote.",
+      "fields": {
+        "message": {
+          "name": "Μήνυμα",
+          "description": "Μήνυμα commit. Δημιουργείται από την εργασία AI αν είναι κενό."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Εξαγωγή πινάκων ελέγχου",
+      "description": "Αντιγράφει τους πίνακες ελέγχου Lovelace από το .storage στον φάκελο εξαγωγής."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Δημιουργία κλειδιού SSH",
+      "description": "Δημιουργεί το ζεύγος κλειδιών SSH αν λείπει και επιστρέφει το δημόσιο κλειδί για προσθήκη ως deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Δημιουργία μηνύματος commit",
+      "description": "Γράφει με την εργασία AI ένα μήνυμα commit για τις τρέχουσες αλλαγές, χωρίς commit. Επιστρέφει null όταν δεν άλλαξε τίποτα."
+    },
+    "git_sync_get_diff": {
+      "name": "Λήψη αλλαγών",
+      "description": "Επιστρέφει τις αλλαγές που θα περιλάμβανε ένα commit, αρχείο προς αρχείο, όπως τις δείχνει η προβολή διαφορών της κάρτας."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Λαμβάνει το απομακρυσμένο αποθετήριο και ενσωματώνει τα νέα του commit: γρήγορη προώθηση ή τα τοπικά commit μεταφέρονται από πάνω (μόνο με καθαρό δέντρο εργασίας). Μια σύγκρουση ακυρώνει τη μεταφορά."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Εφεδρικές μπαταρίες για αγορά: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Δεν έχει οριστεί οντότητα εργασίας AI στις επιλογές του Git Sync."
+    },
+    "ai_task_failed": {
+      "message": "Η εργασία AI δεν επέστρεψε μήνυμα commit."
+    },
+    "diverged": {
+      "message": "Ο τοπικός κλάδος και το {remote} απέκλιναν ({ahead} τοπικά commit, {behind} απομακρυσμένα commit): δεν έγινε commit ούτε push. Δείτε Ρυθμίσεις → Επιδιορθώσεις."
+    },
+    "behind_remote": {
+      "message": "Το {remote} έχει {behind} νέα commit και το Pull πριν από το push είναι ανενεργό: δεν έγινε commit ούτε push. Δείτε Ρυθμίσεις → Επιδιορθώσεις."
+    },
+    "rebase_conflict": {
+      "message": "Το commit συγκρούεται με τα νέα commit του {upstream}: το rebase ακυρώθηκε και δεν στάλθηκε τίποτα. Δείτε Ρυθμίσεις → Επιδιορθώσεις."
+    },
+    "sensitive_files": {
+      "message": "Απορρίφθηκε: οι αλλαγές περιλαμβάνουν ευαίσθητα αρχεία ({files}), που ούτε μπαίνουν σε commit ούτε στέλνονται στην εργασία AI. Προσθέστε τα στο .gitignore ή επιτρέψτε τα παρακολουθούμενα στις επιλογές του Git Sync."
+    },
+    "export_dir_not_allowed": {
+      "message": "Ο φάκελος εξαγωγής {path} είναι εκτός του φακέλου ρυθμίσεων και του allowlist_external_dirs: επιλέξτε άλλον στις επιλογές του Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "Το System Hub δεν έχει φορτωθεί.",
           "reload_started": "Η επαναφόρτωση του **{title}** ξεκίνησε: οι επαναφορτώσεις του μηδενίστηκαν και το System Hub ξεκινά από την αρχή. Αυτό το ζήτημα εξαφανίζεται μόλις ξεκινήσει η επαναφόρτωση· μια αποτυχία φαίνεται στα αρχεία καταγραφής."
         }
+      }
+    },
+    "diverged": {
+      "title": "Το Git Sync δεν μπορεί να κάνει push το {repo}",
+      "description": "Ο κλάδος έχει {ahead} τοπικά commit που δεν υπάρχουν στο {upstream}, και το {upstream} έχει {behind} commit που δεν υπάρχουν εδώ. Το Git Sync δεν συγχωνεύει μόνο του ιστορικά που απέκλιναν, οπότε δεν στέλνεται τίποτα.\n\nΓια να το λύσετε, ανοίξτε ένα τερματικό στο {repo} και εκτελέστε:\n\n```\ngit pull --rebase\n```\n\nΔιορθώστε τυχόν συγκρούσεις (επεξεργαστείτε τα αρχεία, `git add`, μετά `git rebase --continue`) και πατήστε ξανά **Commit και push**. Αυτή η επιδιόρθωση φεύγει με το επόμενο επιτυχές push."
+    },
+    "behind_remote": {
+      "title": "Το Git Sync δεν μπορεί να κάνει push το {repo}",
+      "description": "Το {upstream} έχει {behind} commit που δεν υπάρχουν εδώ και το **Pull πριν από το push** είναι ανενεργό στις επιλογές του Git Sync, οπότε δεν στέλνεται τίποτα. Ενεργοποιήστε το ή εκτελέστε `git pull --rebase` σε ένα τερματικό στο {repo}. Αυτή η επιδιόρθωση φεύγει με το επόμενο επιτυχές push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": "Το .gitignore του {repo} δεν εξαιρεί τα μυστικά",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Προσθήκη των γραμμών που λείπουν στο .gitignore",
+            "description": "Χωρίς αυτές τις γραμμές, το Git Sync θα έκανε commit και push τους κωδικούς πρόσβασης, τα διακριτικά και τον χώρο ελέγχου ταυτότητας του Home Assistant:\n\n{lines}\n\nΥποβάλετε για να προστεθούν στο {repo}/.gitignore. Ένα αρχείο που ήδη παρακολουθείται παραμένει παρακολουθούμενο: αφαιρέστε το από το αποθετήριο με `git rm -r --cached secrets.yaml .storage` (τα αρχεία μένουν στον δίσκο)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Το αποθετήριο Git Sync δεν έχει φορτωθεί."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (ακατέργαστο αντίγραφο)",
+        "yaml": "YAML (μόνο διαμόρφωση)",
+        "both": "JSON και YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Αγγλικά",
+        "fr": "Γαλλικά",
+        "de": "Γερμανικά",
+        "es": "Ισπανικά",
+        "sr": "Σερβικά (Κυριλλικό)",
+        "sr-latn": "Σερβικά (Λατινικό)",
+        "it": "Ιταλικά",
+        "nl": "Ολλανδικά",
+        "pt": "Πορτογαλικά (Πορτογαλία)",
+        "pl": "Πολωνικά",
+        "ro": "Ρουμανικά",
+        "da": "Δανικά",
+        "sv": "Σουηδικά",
+        "bg": "Βουλγαρικά",
+        "ru": "Ρωσικά",
+        "uk": "Ουκρανικά",
+        "hu": "Ουγγρικά",
+        "sk": "Σλοβακικά",
+        "cs": "Τσεχικά",
+        "sl": "Σλοβενικά",
+        "lv": "Λετονικά",
+        "el": "Ελληνικά"
       }
     }
   }

@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
-          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá."
+          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
+          "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Repozitář Git",
+        "description": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Cesta k repozitáři",
+          "remote": "Remote",
+          "branch": "Větev",
+          "ssh_key": "Soukromý klíč SSH",
+          "author_name": "Jméno autora",
+          "author_email": "E-mail autora"
+        },
+        "data_description": {
+          "repo_path": "Složka obsahující adresář .git, obvykle /config.",
+          "remote": "Git remote, na který se provádí push, obvykle origin.",
+          "branch": "Cílová větev na remote. Ponechte prázdné pro odeslání aktuální větve.",
+          "ssh_key": "Soukromý klíč používaný pro push. Vytvořte ho akcí generate_ssh_key a poté přidejte veřejný klíč jako deploy key s právem zápisu.",
+          "author_name": "Volitelné, přepisuje git user.name / user.email repozitáře.",
+          "author_email": "Volitelné, přepisuje git user.name / user.email repozitáře."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised.",
-      "marketplace_not_loaded": "Marketplace není načten."
+      "marketplace_not_loaded": "Marketplace není načten.",
+      "not_a_repository": "Tato složka není pracovní strom Gitu.",
+      "unknown_remote": "Tento remote v repozitáři neexistuje.",
+      "invalid_branch": "Git nepřijímá tento název větve.",
+      "author_required": "Git neví, kdo zde podepisuje commity: zadejte e-mail (a jméno) autora."
     },
     "abort": {
       "already_configured": "System Hub je již nakonfigurován.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
           "watchdog_remove_power_cycle": "Watchdog: Odebrat restarty přes zásuvku",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Nastavení repozitáře",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
-          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá."
+          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
+          "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Baterie, které se nikdy nesledují.",
           "ignored_integrations": "Integrace, jejichž baterie se nikdy nesledují (ve výchozím nastavení telefony a tablety mobilní aplikace). Zadejte doménu pro přidání integrace, která ještě není nastavena."
         }
+      },
+      "git_sync_repository": {
+        "title": "Nastavení repozitáře",
+        "data": {
+          "repo_path": "Cesta k repozitáři",
+          "remote": "Remote",
+          "branch": "Větev",
+          "ssh_key": "Soukromý klíč SSH",
+          "author_name": "Jméno autora",
+          "author_email": "E-mail autora"
+        },
+        "data_description": {
+          "repo_path": "Složka obsahující adresář .git, obvykle /config.",
+          "remote": "Git remote, na který se provádí push, obvykle origin.",
+          "branch": "Cílová větev na remote. Ponechte prázdné pro odeslání aktuální větve.",
+          "ssh_key": "Soukromý klíč používaný pro push. Vytvořte ho akcí generate_ssh_key a poté přidejte veřejný klíč jako deploy key s právem zápisu.",
+          "author_name": "Volitelné, přepisuje git user.name / user.email repozitáře.",
+          "author_email": "Volitelné, přepisuje git user.name / user.email repozitáře."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Zpráva commitu, plány, oznámení a export dashboardů.",
+        "data": {
+          "ai_task_entity": "Entita úlohy AI",
+          "commit_language": "Jazyk zpráv commitů",
+          "commit_interval": "Interval automatického commitu",
+          "status_interval": "Interval obnovení stavu",
+          "fetch_interval": "Interval kontroly remote",
+          "pull_before_push": "Pull před push",
+          "allow_sensitive": "Povolit sledované citlivé soubory",
+          "notify_service": "Akce oznámení",
+          "notify_image": "URL obrázku oznámení",
+          "export_enabled": "Denní export dashboardů",
+          "export_time": "Čas exportu",
+          "export_dir": "Složka exportu",
+          "export_format": "Formát exportu",
+          "export_before_commit": "Exportovat dashboardy před každým commitem",
+          "commit_before_update": "Commit před aktualizacemi"
+        },
+        "data_description": {
+          "ai_task_entity": "Vygeneruje zprávu Conventional Commits z diffu. Bez ní se použije obecná zpráva.",
+          "commit_interval": "Commit a push každých N minut, pokud jsou změny. 0 vypíná.",
+          "fetch_interval": "Fetch z remote každých N minut, aby byly vidět commity odeslané odjinud (pozadu, rozcházení). 0 jej vypne; před každým push se fetch stejně provede.",
+          "pull_before_push": "Když má remote nové commity, před push se na ně provede rebase (git pull --rebase --autostash). Při konfliktu se rebase přeruší, nic se neodešle a oprava vysvětlí, co dělat.",
+          "allow_sensitive": "Commitovat změny citlivých souborů, které Git už sleduje (secrets.yaml, .storage, klíče, databáze, logy). Nové citlivé soubory jsou vždy odmítnuty.",
+          "notify_service": "Například notify.mobile_app_telefon. Ponechte prázdné pro vypnutí.",
+          "notify_image": "Absolutní URL HTTPS (vyžaduje iOS).",
+          "export_format": "JSON zkopíruje soubory .storage beze změny; YAML ponechá pouze konfiguraci dashboardu, která se v diffech snáze čte.",
+          "export_dir": "Ve složce konfigurace (relativní cesta začíná v ní) nebo ve složce z allowlist_external_dirs.",
+          "commit_before_update": "Když se instaluje aktualizace (Home Assistant, doplněk, integrace), nejprve se provede commit a push konfigurace, aby byl commit, ke kterému se lze vrátit. Jeden commit pro aktualizace instalované společně."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Zásuvka nemůže být entitou samotného zařízení: byla by nedostupná spolu s ním.",
       "device_without_entities": "Toto zařízení nemá kromě zásuvky žádnou entitu ke sledování.",
       "marketplace_not_loaded": "Marketplace není načten.",
-      "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised."
+      "supervisor_not_available": "Supervisor není k dispozici: je potřeba Home Assistant OS nebo instalace Supervised.",
+      "not_a_repository": "Tato složka není pracovní strom Gitu.",
+      "unknown_remote": "Tento remote v repozitáři neexistuje.",
+      "invalid_branch": "Git nepřijímá tento název větve.",
+      "author_required": "Git neví, kdo zde podepisuje commity: zadejte e-mail (a jméno) autora.",
+      "unknown_notify_service": "Tato akce oznámení neexistuje.",
+      "export_dir_not_allowed": "Složka musí být ve složce konfigurace nebo ve složce z allowlist_external_dirs, mimo skryté složky, jako je .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Upozornit nyní"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit a push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Exportovat dashboardy"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Chybí"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Stav",
+        "state": {
+          "clean": "Aktuální",
+          "dirty": "Čekající změny",
+          "ahead": "Čeká na push",
+          "error": "Chyba",
+          "behind": "Pozadu za remote",
+          "diverged": "Rozchází se"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Větev"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "ahead": {
+            "name": "Commity napřed"
+          },
+          "behind": {
+            "name": "Commity pozadu"
+          },
+          "changed_count": {
+            "name": "Změněné soubory"
+          },
+          "changed_files": {
+            "name": "Seznam změněných souborů"
+          },
+          "last_error": {
+            "name": "Poslední chyba"
+          },
+          "ai_task": {
+            "name": "Úloha AI"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Změněné soubory"
+      },
+      "git_sync_last_commit": {
+        "name": "Poslední commit",
+        "state_attributes": {
+          "message": {
+            "name": "Zpráva"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Krátký commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Poslední push",
+        "state_attributes": {
+          "message": {
+            "name": "Zpráva"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Poslední export dashboardů",
+        "state_attributes": {
+          "files": {
+            "name": "Exportované soubory"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Větev",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Náhradní baterie tohoto typu. Ponechte prázdné, aby se přestal počítat."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit a push",
+      "description": "Přidá všechny změny do indexu, provede commit se zprávou vygenerovanou AI (nebo zadanou) a push na remote.",
+      "fields": {
+        "message": {
+          "name": "Zpráva",
+          "description": "Zpráva commitu. Pokud je prázdná, vygeneruje ji úloha AI."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Exportovat dashboardy",
+      "description": "Zkopíruje dashboardy Lovelace z .storage do složky exportu."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Vygenerovat klíč SSH",
+      "description": "Vytvoří pár klíčů SSH, pokud chybí, a vrátí veřejný klíč k přidání jako deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Vygenerovat zprávu commitu",
+      "description": "Pomocí úlohy AI napíše zprávu commitu pro aktuální změny, aniž by provedla commit. Vrátí null, pokud se nic nezměnilo."
+    },
+    "git_sync_get_diff": {
+      "name": "Získat změny",
+      "description": "Vrátí změny, které by commit obsahoval, soubor po souboru, tak jak je zobrazuje zobrazení rozdílů karty."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Načte vzdálený repozitář a převezme jeho nové commity: posun vpřed, nebo lokální commity přesunuté navrch (jen při čistém pracovním stromu). Konflikt přesun zruší."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Náhradní baterie ke koupi: {spares}"
+    },
+    "no_ai_task": {
+      "message": "V možnostech Git Sync není nastavena entita úlohy AI."
+    },
+    "ai_task_failed": {
+      "message": "Úloha AI nevrátila žádnou zprávu commitu."
+    },
+    "diverged": {
+      "message": "Lokální větev a {remote} se rozešly ({ahead} lokálních commitů, {behind} vzdálených commitů): nic nebylo commitnuto ani odesláno. Viz Nastavení → Opravy."
+    },
+    "behind_remote": {
+      "message": "{remote} má {behind} nových commitů a Pull před push je vypnutý: nic nebylo commitnuto ani odesláno. Viz Nastavení → Opravy."
+    },
+    "rebase_conflict": {
+      "message": "Commit je v konfliktu s novými commity {upstream}: rebase byl přerušen a nic nebylo odesláno. Viz Nastavení → Opravy."
+    },
+    "sensitive_files": {
+      "message": "Odmítnuto: změny obsahují citlivé soubory ({files}), které se necommitují ani neposílají do AI task. Přidejte je do .gitignore nebo povolte sledované v možnostech Git Sync."
+    },
+    "export_dir_not_allowed": {
+      "message": "Složka exportu {path} je mimo složku konfigurace a allowlist_external_dirs: vyberte jinou v možnostech Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub není načten.",
           "reload_started": "Opětovné načtení **{title}** bylo spuštěno: její opětovná načtení byla resetována a System Hub začíná znovu. Tento problém zmizí, jakmile načítání začne; chyba bude v protokolech."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync nemůže provést push {repo}",
+      "description": "Větev má {ahead} lokálních commitů, které nejsou na {upstream}, a {upstream} má {behind} commitů, které tu nejsou. Git Sync sám neslučuje rozcházející se historie, proto se nic neodešle.\n\nPro vyřešení otevřete terminál v {repo} a spusťte:\n\n```\ngit pull --rebase\n```\n\nVyřešte případné konflikty (upravte soubory, `git add`, potom `git rebase --continue`) a pak znovu stiskněte **Commit a push**. Tato oprava zmizí při dalším úspěšném push."
+    },
+    "behind_remote": {
+      "title": "Git Sync nemůže provést push {repo}",
+      "description": "{upstream} má {behind} commitů, které tu nejsou, a **Pull před push** je vypnutý v možnostech Git Sync, proto se nic neodešle. Zapněte jej nebo spusťte `git pull --rebase` v terminálu v {repo}. Tato oprava zmizí při dalším úspěšném push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": ".gitignore v {repo} nevylučuje tajemství",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Přidat chybějící řádky do .gitignore",
+            "description": "Bez těchto řádků by Git Sync commitnul a odeslal hesla, tokeny a úložiště ověřování Home Assistant:\n\n{lines}\n\nOdešlete pro jejich připojení do {repo}/.gitignore. Soubor, který se už sleduje, zůstane sledovaný: odstraňte jej z repozitáře příkazem `git rm -r --cached secrets.yaml .storage` (soubory zůstanou na disku)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Repozitář Git Sync není načten."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (surová kopie)",
+        "yaml": "YAML (pouze konfigurace)",
+        "both": "JSON a YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Angličtina",
+        "fr": "Francouzština",
+        "de": "Němčina",
+        "es": "Španělština",
+        "sr": "Srbština (cyrilice)",
+        "sr-latn": "Srbština (latinka)",
+        "it": "Italština",
+        "nl": "Nizozemština",
+        "pt": "Portugalština (Portugalsko)",
+        "pl": "Polština",
+        "ro": "Rumunština",
+        "da": "Dánština",
+        "sv": "Švédština",
+        "bg": "Bulharština",
+        "ru": "Ruština",
+        "uk": "Ukrajinština",
+        "hu": "Maďarština",
+        "sk": "Slovenština",
+        "cs": "Čeština",
+        "sl": "Slovinština",
+        "lv": "Lotyština",
+        "el": "Řečtina"
       }
     }
   }

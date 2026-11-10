@@ -9,6 +9,12 @@
       },
       "batteries_notify_now": {
         "default": "mdi:bell-ring-outline"
+      },
+      "git_sync_commit_push": {
+        "default": "mdi:source-commit-end"
+      },
+      "git_sync_export_dashboards": {
+        "default": "mdi:export"
       }
     },
     "sensor": {
@@ -60,6 +66,30 @@
       },
       "batteries_next_replacement": {
         "default": "mdi:calendar-clock"
+      },
+      "git_sync_status": {
+        "default": "mdi:git",
+        "state": {
+          "clean": "mdi:check-circle-outline",
+          "dirty": "mdi:file-document-edit-outline",
+          "ahead": "mdi:cloud-upload-outline",
+          "error": "mdi:alert-circle-outline"
+        }
+      },
+      "git_sync_changed_files": {
+        "default": "mdi:file-multiple-outline"
+      },
+      "git_sync_last_commit": {
+        "default": "mdi:source-commit"
+      },
+      "git_sync_last_push": {
+        "default": "mdi:cloud-check-outline"
+      },
+      "git_sync_last_export": {
+        "default": "mdi:view-dashboard-outline"
+      },
+      "git_sync_branch": {
+        "default": "mdi:source-branch"
       }
     }
   },
@@ -90,6 +120,24 @@
     },
     "batteries_export": {
       "service": "mdi:file-delimited-outline"
+    },
+    "git_sync_commit_push": {
+      "service": "mdi:source-commit-end"
+    },
+    "git_sync_export_dashboards": {
+      "service": "mdi:export"
+    },
+    "git_sync_generate_ssh_key": {
+      "service": "mdi:key-plus"
+    },
+    "git_sync_generate_message": {
+      "service": "mdi:creation-outline"
+    },
+    "git_sync_pull": {
+      "service": "mdi:source-pull"
+    },
+    "git_sync_get_diff": {
+      "service": "mdi:file-compare"
     }
   }
 }

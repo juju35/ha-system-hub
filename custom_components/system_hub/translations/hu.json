@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
-          "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt."
+          "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
+          "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Git-tároló",
+        "description": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Tároló elérési útja",
+          "remote": "Remote",
+          "branch": "Ág",
+          "ssh_key": "Privát SSH-kulcs",
+          "author_name": "Szerző neve",
+          "author_email": "Szerző e-mail-címe"
+        },
+        "data_description": {
+          "repo_path": "A .git könyvtárat tartalmazó mappa, általában /config.",
+          "remote": "A Git remote, ahová a push történik, általában origin.",
+          "branch": "Célág a remote-on. Hagyja üresen az aktuális ág pusholásához.",
+          "ssh_key": "A pushhoz használt privát kulcs. Hozza létre a generate_ssh_key művelettel, majd adja hozzá a nyilvános kulcsot írási joggal rendelkező deploy keyként.",
+          "author_name": "Opcionális, felülírja a tároló git user.name / user.email beállítását.",
+          "author_email": "Opcionális, felülírja a tároló git user.name / user.email beállítását."
         }
       }
     },
     "error": {
       "supervisor_not_available": "A Supervisor nem érhető el: Home Assistant OS vagy Supervised telepítés szükséges.",
-      "marketplace_not_loaded": "A Marketplace nincs betöltve."
+      "marketplace_not_loaded": "A Marketplace nincs betöltve.",
+      "not_a_repository": "Ez a mappa nem Git munkafa.",
+      "unknown_remote": "Ez a remote nem létezik a tárolóban.",
+      "invalid_branch": "A Git nem fogadja el ezt az ágnevet.",
+      "author_required": "A Git nem tudja, ki írja alá itt a commitokat: adja meg a szerző e-mail-címét (és nevét)."
     },
     "abort": {
       "already_configured": "Az System Hub már be van állítva.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Újraindítás hozzáadása konnektorral",
           "watchdog_remove_power_cycle": "Watchdog: Konnektoros újraindítások eltávolítása",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Tároló beállításai",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
-          "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt."
+          "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
+          "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Soha nem figyelt elemek.",
           "ignored_integrations": "Integrációk, amelyek elemeit soha nem figyeli (alapértelmezés szerint a mobilalkalmazás telefonjai és táblagépei). Írjon be egy domaint egy még be nem állított integráció hozzáadásához."
         }
+      },
+      "git_sync_repository": {
+        "title": "Tároló beállításai",
+        "data": {
+          "repo_path": "Tároló elérési útja",
+          "remote": "Remote",
+          "branch": "Ág",
+          "ssh_key": "Privát SSH-kulcs",
+          "author_name": "Szerző neve",
+          "author_email": "Szerző e-mail-címe"
+        },
+        "data_description": {
+          "repo_path": "A .git könyvtárat tartalmazó mappa, általában /config.",
+          "remote": "A Git remote, ahová a push történik, általában origin.",
+          "branch": "Célág a remote-on. Hagyja üresen az aktuális ág pusholásához.",
+          "ssh_key": "A pushhoz használt privát kulcs. Hozza létre a generate_ssh_key művelettel, majd adja hozzá a nyilvános kulcsot írási joggal rendelkező deploy keyként.",
+          "author_name": "Opcionális, felülírja a tároló git user.name / user.email beállítását.",
+          "author_email": "Opcionális, felülírja a tároló git user.name / user.email beállítását."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Commitüzenet, ütemezések, értesítések és irányítópult-exportálás.",
+        "data": {
+          "ai_task_entity": "MI-feladat entitás",
+          "commit_language": "Commitüzenet nyelve",
+          "commit_interval": "Automatikus commit időköze",
+          "status_interval": "Állapotfrissítés időköze",
+          "fetch_interval": "A remote ellenőrzési időköze",
+          "pull_before_push": "Pull a push előtt",
+          "allow_sensitive": "Követett érzékeny fájlok engedélyezése",
+          "notify_service": "Értesítési művelet",
+          "notify_image": "Értesítési kép URL-je",
+          "export_enabled": "Napi irányítópult-exportálás",
+          "export_time": "Exportálás időpontja",
+          "export_dir": "Exportálási mappa",
+          "export_format": "Exportálási formátum",
+          "export_before_commit": "Irányítópultok exportálása minden commit előtt",
+          "commit_before_update": "Commit frissítések előtt"
+        },
+        "data_description": {
+          "ai_task_entity": "Conventional Commits üzenetet generál a diffből. Nélküle általános üzenet készül.",
+          "commit_interval": "Commit és push N percenként, ha vannak módosítások. 0 letiltja.",
+          "fetch_interval": "N percenként fetch a remote-ról, hogy látszódjanak a máshonnan pusholt commitok (lemaradás, elágazás). 0 kikapcsolja; minden push előtt így is fut egy fetch.",
+          "pull_before_push": "Ha a remote-on új commitok vannak, push előtt rebase történik rájuk (git pull --rebase --autostash). Ütközéskor a rebase megszakad, semmi sem kerül push-ra, és egy javítás elmagyarázza a teendőket.",
+          "allow_sensitive": "A Git által már követett érzékeny fájlok (secrets.yaml, .storage, kulcsok, adatbázis, naplók) módosításainak commitja. Az új érzékeny fájlokat mindig elutasítja.",
+          "notify_service": "Például notify.mobile_app_telefon. Hagyja üresen a letiltáshoz.",
+          "notify_image": "Abszolút HTTPS URL (az iOS megköveteli).",
+          "export_format": "A JSON változatlanul másolja a .storage fájlokat; a YAML csak az irányítópult konfigurációját tartja meg, ami a diffekben könnyebben olvasható.",
+          "export_dir": "A konfigurációs mappában (a relatív útvonal innen indul) vagy az allowlist_external_dirs egyik mappájában.",
+          "commit_before_update": "Frissítés telepítésekor (Home Assistant, bővítmény, integráció) előbb commitolja és pusholja a konfigurációt, hogy legyen commit, amelyhez vissza lehet térni. Egy commit az együtt telepített frissítésekhez."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "A konnektor nem lehet magának az eszköznek az entitása: vele együtt elérhetetlen lenne.",
       "device_without_entities": "Ennek az eszköznek a konnektoron kívül nincs figyelendő entitása.",
       "marketplace_not_loaded": "A Marketplace nincs betöltve.",
-      "supervisor_not_available": "A Supervisor nem érhető el: Home Assistant OS vagy Supervised telepítés szükséges."
+      "supervisor_not_available": "A Supervisor nem érhető el: Home Assistant OS vagy Supervised telepítés szükséges.",
+      "not_a_repository": "Ez a mappa nem Git munkafa.",
+      "unknown_remote": "Ez a remote nem létezik a tárolóban.",
+      "invalid_branch": "A Git nem fogadja el ezt az ágnevet.",
+      "author_required": "A Git nem tudja, ki írja alá itt a commitokat: adja meg a szerző e-mail-címét (és nevét).",
+      "unknown_notify_service": "Ez az értesítési művelet nem létezik.",
+      "export_dir_not_allowed": "A mappának a konfigurációs mappában vagy az allowlist_external_dirs egyik mappájában kell lennie, rejtett mappákon (például .storage) kívül."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Értesítés most"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit és push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Irányítópultok exportálása"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Hiányzik"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Állapot",
+        "state": {
+          "clean": "Naprakész",
+          "dirty": "Függőben lévő módosítások",
+          "ahead": "Push függőben",
+          "error": "Hiba",
+          "behind": "Lemaradás a remote-hoz képest",
+          "diverged": "Elágazott"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Ág"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "Remote URL"
+          },
+          "ahead": {
+            "name": "Commitok előre"
+          },
+          "behind": {
+            "name": "Commitok lemaradva"
+          },
+          "changed_count": {
+            "name": "Módosított fájlok"
+          },
+          "changed_files": {
+            "name": "Módosított fájlok listája"
+          },
+          "last_error": {
+            "name": "Utolsó hiba"
+          },
+          "ai_task": {
+            "name": "MI-feladat"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Módosított fájlok"
+      },
+      "git_sync_last_commit": {
+        "name": "Utolsó commit",
+        "state_attributes": {
+          "message": {
+            "name": "Üzenet"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Rövid commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Utolsó push",
+        "state_attributes": {
+          "message": {
+            "name": "Üzenet"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Utolsó irányítópult-exportálás",
+        "state_attributes": {
+          "files": {
+            "name": "Exportált fájlok"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Ág",
+        "state_attributes": {
+          "remote_url": {
+            "name": "Remote URL"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Ilyen típusú tartalék elemek. Hagyd üresen a számolás leállításához."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit és push",
+      "description": "Minden módosítást az indexbe tesz, commitol egy MI által generált (vagy megadott) üzenettel, és pushol a remote-ra.",
+      "fields": {
+        "message": {
+          "name": "Üzenet",
+          "description": "Commitüzenet. Üresen hagyva az MI-feladat generálja."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Irányítópultok exportálása",
+      "description": "Átmásolja a Lovelace irányítópultokat a .storage mappából az exportálási mappába."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "SSH-kulcs generálása",
+      "description": "Létrehozza az SSH-kulcspárt, ha hiányzik, és visszaadja a deploy keyként hozzáadandó nyilvános kulcsot."
+    },
+    "git_sync_generate_message": {
+      "name": "Commitüzenet generálása",
+      "description": "Az MI-feladattal commitüzenetet ír az aktuális módosításokhoz, commit nélkül. null értéket ad vissza, ha semmi sem változott."
+    },
+    "git_sync_get_diff": {
+      "name": "Változások lekérése",
+      "description": "Visszaadja a commitba kerülő változásokat fájlonként, ahogy a kártya diff nézete mutatja őket."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Lekéri a távoli tárolót, és átveszi az új commitjait: előrepörgetés, vagy a helyi commitok áthelyezése föléjük (csak tiszta munkakönyvtárnál). Ütközés esetén az áthelyezés megszakad."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Vásárolandó tartalék elemek: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Nincs MI-feladat entitás megadva a Git Sync beállításaiban."
+    },
+    "ai_task_failed": {
+      "message": "Az MI-feladat nem adott vissza commitüzenetet."
+    },
+    "diverged": {
+      "message": "A helyi ág és a(z) {remote} elágazott ({ahead} helyi commit, {behind} távoli commit): semmi sem lett commitolva vagy pusholva. Lásd: Beállítások → Javítások."
+    },
+    "behind_remote": {
+      "message": "A(z) {remote} {behind} új committal rendelkezik, és a Pull a push előtt ki van kapcsolva: semmi sem lett commitolva vagy pusholva. Lásd: Beállítások → Javítások."
+    },
+    "rebase_conflict": {
+      "message": "A commit ütközik a(z) {upstream} új commitjaival: a rebase megszakadt, és semmi sem lett pusholva. Lásd: Beállítások → Javítások."
+    },
+    "sensitive_files": {
+      "message": "Elutasítva: a módosítások érzékeny fájlokat tartalmaznak ({files}), amelyek nem kerülnek commitba, és az AI task sem kapja meg őket. Vedd fel őket a .gitignore-ba, vagy engedélyezd a követetteket a Git Sync beállításaiban."
+    },
+    "export_dir_not_allowed": {
+      "message": "A(z) {path} exportmappa a konfigurációs mappán és az allowlist_external_dirs mappáin kívül van: válassz másikat a Git Sync beállításaiban."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "Az System Hub nincs betöltve.",
           "reload_started": "**{title}** újratöltése elindult: az újratöltései visszaállítva, az System Hub elölről kezdi. Ez a probléma eltűnik, amint az újratöltés elkezdődik; a hiba a naplókban látható."
         }
+      }
+    },
+    "diverged": {
+      "title": "A Git Sync nem tudja pusholni ezt: {repo}",
+      "description": "Az ágon {ahead} helyi commit van, amely nincs a(z) {upstream} ágon, a(z) {upstream} ágon pedig {behind} commit van, amely itt hiányzik. A Git Sync magától nem egyesít elágazott előzményeket, ezért semmi sem kerül push-ra.\n\nA megoldáshoz nyiss egy terminált itt: {repo}, és futtasd:\n\n```\ngit pull --rebase\n```\n\nOldd fel az esetleges ütközéseket (szerkeszd a fájlokat, `git add`, majd `git rebase --continue`), aztán nyomd meg újra a **Commit és push** gombot. Ez a javítás a következő sikeres push után eltűnik."
+    },
+    "behind_remote": {
+      "title": "A Git Sync nem tudja pusholni ezt: {repo}",
+      "description": "A(z) {upstream} ágon {behind} commit van, amely itt hiányzik, és a **Pull a push előtt** ki van kapcsolva a Git Sync beállításaiban, ezért semmi sem kerül push-ra. Kapcsold be, vagy futtasd a `git pull --rebase` parancsot egy terminálban itt: {repo}. Ez a javítás a következő sikeres push után eltűnik."
+    },
+    "git_sync_gitignore_missing": {
+      "title": "A(z) {repo} .gitignore fájlja nem zárja ki a titkokat",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "A hiányzó sorok hozzáadása a .gitignore-hoz",
+            "description": "Ezek nélkül a sorok nélkül a Git Sync commitolná és pusholná a Home Assistant jelszavait, tokenjeit és hitelesítési tárolóját:\n\n{lines}\n\nKüldd el, hogy hozzáfűzze őket ehhez: {repo}/.gitignore. A már követett fájl követett marad: vedd ki a tárolóból a `git rm -r --cached secrets.yaml .storage` paranccsal (a fájlok a lemezen maradnak)."
+          }
+        },
+        "abort": {
+          "not_loaded": "A Git Sync tároló nincs betöltve."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (nyers másolat)",
+        "yaml": "YAML (csak konfiguráció)",
+        "both": "JSON és YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Angol",
+        "fr": "Francia",
+        "de": "Német",
+        "es": "Spanyol",
+        "sr": "Szerb (Cirill)",
+        "sr-latn": "Szerb (Latin)",
+        "it": "Olasz",
+        "nl": "Holland",
+        "pt": "Portugál (Portugália)",
+        "pl": "Lengyel",
+        "ro": "Román",
+        "da": "Dán",
+        "sv": "Svéd",
+        "bg": "Bolgár",
+        "ru": "Orosz",
+        "uk": "Ukrán",
+        "hu": "Magyar",
+        "sk": "Szlovák",
+        "cs": "Cseh",
+        "sl": "Szlovén",
+        "lv": "Lett",
+        "el": "Görög"
       }
     }
   }

@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
           "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
           "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов.",
-          "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной."
+          "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной.",
+          "git_sync": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Репозиторий Git",
+        "description": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Путь к репозиторию",
+          "remote": "Remote",
+          "branch": "Ветка",
+          "ssh_key": "Закрытый ключ SSH",
+          "author_name": "Имя автора",
+          "author_email": "Email автора"
+        },
+        "data_description": {
+          "repo_path": "Папка, содержащая каталог .git, обычно /config.",
+          "remote": "Git remote для push, обычно origin.",
+          "branch": "Целевая ветка в remote. Оставьте пустым, чтобы отправить текущую ветку.",
+          "ssh_key": "Закрытый ключ для push. Создайте его действием generate_ssh_key, затем добавьте открытый ключ как deploy key с правом записи.",
+          "author_name": "Необязательно, заменяет git user.name / user.email репозитория.",
+          "author_email": "Необязательно, заменяет git user.name / user.email репозитория."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised.",
-      "marketplace_not_loaded": "Marketplace не загружен."
+      "marketplace_not_loaded": "Marketplace не загружен.",
+      "not_a_repository": "Эта папка не является рабочим деревом Git.",
+      "unknown_remote": "Такого remote нет в репозитории.",
+      "invalid_branch": "Git не принимает такое имя ветки.",
+      "author_required": "Git не знает, кто подписывает здесь commit-ы: укажите email (и имя) автора."
     },
     "abort": {
       "already_configured": "System Hub уже настроен.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Добавить перезапуск через розетку",
           "watchdog_remove_power_cycle": "Watchdog: Удалить перезапуски через розетку",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Настройки репозитория",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
           "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
           "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов.",
-          "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной."
+          "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной.",
+          "git_sync": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Батареи, которые никогда не отслеживаются.",
           "ignored_integrations": "Интеграции, батареи которых никогда не отслеживаются (по умолчанию телефоны и планшеты мобильного приложения). Введите домен, чтобы добавить ещё не настроенную интеграцию."
         }
+      },
+      "git_sync_repository": {
+        "title": "Настройки репозитория",
+        "data": {
+          "repo_path": "Путь к репозиторию",
+          "remote": "Remote",
+          "branch": "Ветка",
+          "ssh_key": "Закрытый ключ SSH",
+          "author_name": "Имя автора",
+          "author_email": "Email автора"
+        },
+        "data_description": {
+          "repo_path": "Папка, содержащая каталог .git, обычно /config.",
+          "remote": "Git remote для push, обычно origin.",
+          "branch": "Целевая ветка в remote. Оставьте пустым, чтобы отправить текущую ветку.",
+          "ssh_key": "Закрытый ключ для push. Создайте его действием generate_ssh_key, затем добавьте открытый ключ как deploy key с правом записи.",
+          "author_name": "Необязательно, заменяет git user.name / user.email репозитория.",
+          "author_email": "Необязательно, заменяет git user.name / user.email репозитория."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Сообщение commit, расписания, уведомления и экспорт панелей.",
+        "data": {
+          "ai_task_entity": "Объект AI-задачи",
+          "commit_language": "Язык сообщений commit",
+          "commit_interval": "Интервал автоматического commit",
+          "status_interval": "Интервал обновления состояния",
+          "fetch_interval": "Интервал проверки remote",
+          "pull_before_push": "Pull перед push",
+          "allow_sensitive": "Разрешить отслеживаемые конфиденциальные файлы",
+          "notify_service": "Действие уведомления",
+          "notify_image": "URL изображения уведомления",
+          "export_enabled": "Ежедневный экспорт панелей",
+          "export_time": "Время экспорта",
+          "export_dir": "Папка экспорта",
+          "export_format": "Формат экспорта",
+          "export_before_commit": "Экспортировать панели перед каждым commit",
+          "commit_before_update": "Коммит перед обновлениями"
+        },
+        "data_description": {
+          "ai_task_entity": "Генерирует сообщение в формате Conventional Commits по diff. Без неё используется общее сообщение.",
+          "commit_interval": "Commit и push каждые N минут при наличии изменений. 0 отключает.",
+          "fetch_interval": "Fetch из remote каждые N минут, чтобы видеть commit, отправленные из другого места (отставание, расхождение). 0 отключает; перед каждым push fetch всё равно выполняется.",
+          "pull_before_push": "Если в remote есть новые commit, перед push выполняется rebase на них (git pull --rebase --autostash). При конфликте rebase отменяется, ничего не отправляется, а исправление объясняет, что делать.",
+          "allow_sensitive": "Делать commit изменений конфиденциальных файлов, которые Git уже отслеживает (secrets.yaml, .storage, ключи, база данных, журналы). Новые конфиденциальные файлы всегда отклоняются.",
+          "notify_service": "Например, notify.mobile_app_phone. Оставьте пустым, чтобы отключить.",
+          "notify_image": "Абсолютный HTTPS URL (требуется для iOS).",
+          "export_format": "JSON копирует файлы .storage как есть; YAML сохраняет только конфигурацию панели, её проще читать в diff.",
+          "export_dir": "В папке конфигурации (относительный путь начинается от неё) или в папке из allowlist_external_dirs.",
+          "commit_before_update": "При установке обновления (Home Assistant, дополнения, интеграции) сначала выполнять коммит и push конфигурации, чтобы было к чему вернуться. Один коммит для обновлений, установленных вместе."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Розетка не может быть объектом самого устройства: она была бы недоступна вместе с ним.",
       "device_without_entities": "У этого устройства нет объектов для наблюдения, кроме розетки.",
       "marketplace_not_loaded": "Marketplace не загружен.",
-      "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised."
+      "supervisor_not_available": "Supervisor недоступен: нужна Home Assistant OS или установка Supervised.",
+      "not_a_repository": "Эта папка не является рабочим деревом Git.",
+      "unknown_remote": "Такого remote нет в репозитории.",
+      "invalid_branch": "Git не принимает такое имя ветки.",
+      "author_required": "Git не знает, кто подписывает здесь commit-ы: укажите email (и имя) автора.",
+      "unknown_notify_service": "Такого действия уведомления не существует.",
+      "export_dir_not_allowed": "Папка должна находиться в папке конфигурации или в папке из allowlist_external_dirs, вне скрытых папок, таких как .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Уведомить сейчас"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit и push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Экспортировать панели"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Не хватает"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Состояние",
+        "state": {
+          "clean": "Актуально",
+          "dirty": "Есть изменения",
+          "ahead": "Ожидает push",
+          "error": "Ошибка",
+          "behind": "Отстаёт от remote",
+          "diverged": "Расхождение"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Ветка"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "ahead": {
+            "name": "Commit-ов впереди"
+          },
+          "behind": {
+            "name": "Commit-ов позади"
+          },
+          "changed_count": {
+            "name": "Изменённые файлы"
+          },
+          "changed_files": {
+            "name": "Список изменённых файлов"
+          },
+          "last_error": {
+            "name": "Последняя ошибка"
+          },
+          "ai_task": {
+            "name": "AI-задача"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Изменённые файлы"
+      },
+      "git_sync_last_commit": {
+        "name": "Последний commit",
+        "state_attributes": {
+          "message": {
+            "name": "Сообщение"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Короткий commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Последний push",
+        "state_attributes": {
+          "message": {
+            "name": "Сообщение"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Последний экспорт панелей",
+        "state_attributes": {
+          "files": {
+            "name": "Экспортированные файлы"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Ветка",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Запасные батарейки этого типа. Оставьте пустым, чтобы перестать считать."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit и push",
+      "description": "Индексирует все изменения, выполняет commit с сообщением от AI (или заданным) и push в remote.",
+      "fields": {
+        "message": {
+          "name": "Сообщение",
+          "description": "Сообщение commit. Генерируется AI-задачей, если пусто."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Экспортировать панели",
+      "description": "Копирует панели Lovelace из .storage в папку экспорта."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Сгенерировать ключ SSH",
+      "description": "Создаёт пару ключей SSH, если её нет, и возвращает открытый ключ для добавления как deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Сгенерировать сообщение commit",
+      "description": "Пишет с помощью AI-задачи сообщение commit для текущих изменений, не выполняя commit. Возвращает null, если ничего не изменилось."
+    },
+    "git_sync_get_diff": {
+      "name": "Получить изменения",
+      "description": "Возвращает изменения, которые вошли бы в commit, файл за файлом, как их показывает просмотр различий карточки."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Получает удалённый репозиторий и забирает его новые commit-ы: перемотка вперёд или локальные commit-ы, перенесённые поверх (только при чистом рабочем дереве). Конфликт отменяет перенос."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Купить запасные батарейки: {spares}"
+    },
+    "no_ai_task": {
+      "message": "В параметрах Git Sync не задан объект AI-задачи."
+    },
+    "ai_task_failed": {
+      "message": "AI-задача не вернула сообщение commit."
+    },
+    "diverged": {
+      "message": "Локальная ветка и {remote} разошлись ({ahead} локальных commit, {behind} удалённых commit): ничего не было отправлено в commit или push. См. Настройки → Исправления."
+    },
+    "behind_remote": {
+      "message": "В {remote} {behind} новых commit, а Pull перед push выключен: ничего не было отправлено в commit или push. См. Настройки → Исправления."
+    },
+    "rebase_conflict": {
+      "message": "Commit конфликтует с новыми commit в {upstream}: rebase отменён, ничего не отправлено. См. Настройки → Исправления."
+    },
+    "sensitive_files": {
+      "message": "Отклонено: изменения содержат конфиденциальные файлы ({files}), которые не попадают в commit и не отправляются AI-задаче. Добавьте их в .gitignore или разрешите отслеживаемые в параметрах Git Sync."
+    },
+    "export_dir_not_allowed": {
+      "message": "Папка экспорта {path} находится вне папки конфигурации и allowlist_external_dirs: выберите другую в параметрах Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub не загружен.",
           "reload_started": "Перезагрузка **{title}** запущена: счётчик перезагрузок сброшен, System Hub начинает заново. Эта проблема исчезнет, как только начнётся перезагрузка; ошибка будет в журналах."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync не может выполнить push {repo}",
+      "description": "В ветке {ahead} локальных commit, которых нет в {upstream}, а в {upstream} {behind} commit, которых нет здесь. Git Sync сам не объединяет разошедшиеся истории, поэтому ничего не отправляется.\n\nЧтобы это исправить, откройте терминал в {repo} и выполните:\n\n```\ngit pull --rebase\n```\n\nУстраните конфликты, если они есть (отредактируйте файлы, `git add`, затем `git rebase --continue`), и снова нажмите **Commit и push**. Это исправление исчезнет после следующего успешного push."
+    },
+    "behind_remote": {
+      "title": "Git Sync не может выполнить push {repo}",
+      "description": "В {upstream} {behind} commit, которых нет здесь, а **Pull перед push** выключен в параметрах Git Sync, поэтому ничего не отправляется. Включите его или выполните `git pull --rebase` в терминале в {repo}. Это исправление исчезнет после следующего успешного push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": ".gitignore в {repo} не исключает секреты",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Добавить недостающие строки в .gitignore",
+            "description": "Без этих строк Git Sync выполнил бы commit и push паролей, токенов и хранилища аутентификации Home Assistant:\n\n{lines}\n\nОтправьте, чтобы дописать их в {repo}/.gitignore. Уже отслеживаемый файл остаётся отслеживаемым: удалите его из репозитория командой `git rm -r --cached secrets.yaml .storage` (файлы останутся на диске)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Репозиторий Git Sync не загружен."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (необработанная копия)",
+        "yaml": "YAML (только конфигурация)",
+        "both": "JSON и YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Английский",
+        "fr": "Французский",
+        "de": "Немецкий",
+        "es": "Испанский",
+        "sr": "Сербский (кириллица)",
+        "sr-latn": "Сербский (латиница)",
+        "it": "Итальянский",
+        "nl": "Нидерландский",
+        "pt": "Португальский (Португалия)",
+        "pl": "Польский",
+        "ro": "Румынский",
+        "da": "Датский",
+        "sv": "Шведский",
+        "bg": "Болгарский",
+        "ru": "Русский",
+        "uk": "Украинский",
+        "hu": "Венгерский",
+        "sk": "Словацкий",
+        "cs": "Чешский",
+        "sl": "Словенский",
+        "lv": "Латышский",
+        "el": "Греческий"
       }
     }
   }

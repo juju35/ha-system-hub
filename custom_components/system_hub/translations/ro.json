@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
-          "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută."
+          "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
+          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Depozit Git",
+        "description": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Calea depozitului",
+          "remote": "Remote",
+          "branch": "Ramură",
+          "ssh_key": "Cheie privată SSH",
+          "author_name": "Numele autorului",
+          "author_email": "E-mailul autorului"
+        },
+        "data_description": {
+          "repo_path": "Folderul care conține directorul .git, de obicei /config.",
+          "remote": "Remote-ul Git către care se face push, de obicei origin.",
+          "branch": "Ramura țintă de pe remote. Lăsați gol pentru a face push ramurii curente.",
+          "ssh_key": "Cheia privată folosită pentru push. Creați-o cu acțiunea generate_ssh_key, apoi adăugați cheia publică drept deploy key cu drept de scriere.",
+          "author_name": "Opțional, înlocuiește git user.name / user.email al depozitului.",
+          "author_email": "Opțional, înlocuiește git user.name / user.email al depozitului."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Supervisor nu este disponibil: este necesar Home Assistant OS sau o instalare Supervised.",
-      "marketplace_not_loaded": "Marketplace nu este încărcat."
+      "marketplace_not_loaded": "Marketplace nu este încărcat.",
+      "not_a_repository": "Acest folder nu este un arbore de lucru Git.",
+      "unknown_remote": "Acest remote nu există în depozit.",
+      "invalid_branch": "Git nu acceptă acest nume de ramură.",
+      "author_required": "Git nu știe cine semnează aici commiturile: introduceți e-mailul (și numele) autorului."
     },
     "abort": {
       "already_configured": "System Hub este deja configurat.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Adaugă o repornire prin priză",
           "watchdog_remove_power_cycle": "Watchdog: Elimină reporniri prin priză",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Setările depozitului",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
-          "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută."
+          "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
+          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Baterii care nu sunt monitorizate niciodată.",
           "ignored_integrations": "Integrări ale căror baterii nu sunt monitorizate niciodată (implicit telefoanele și tabletele aplicației mobile). Introduceți un domeniu pentru a adăuga unul care nu este încă configurat."
         }
+      },
+      "git_sync_repository": {
+        "title": "Setările depozitului",
+        "data": {
+          "repo_path": "Calea depozitului",
+          "remote": "Remote",
+          "branch": "Ramură",
+          "ssh_key": "Cheie privată SSH",
+          "author_name": "Numele autorului",
+          "author_email": "E-mailul autorului"
+        },
+        "data_description": {
+          "repo_path": "Folderul care conține directorul .git, de obicei /config.",
+          "remote": "Remote-ul Git către care se face push, de obicei origin.",
+          "branch": "Ramura țintă de pe remote. Lăsați gol pentru a face push ramurii curente.",
+          "ssh_key": "Cheia privată folosită pentru push. Creați-o cu acțiunea generate_ssh_key, apoi adăugați cheia publică drept deploy key cu drept de scriere.",
+          "author_name": "Opțional, înlocuiește git user.name / user.email al depozitului.",
+          "author_email": "Opțional, înlocuiește git user.name / user.email al depozitului."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Mesajul de commit, programări, notificări și exportul tablourilor de bord.",
+        "data": {
+          "ai_task_entity": "Entitate sarcină AI",
+          "commit_language": "Limba mesajului de commit",
+          "commit_interval": "Interval de commit automat",
+          "status_interval": "Interval de reîmprospătare a stării",
+          "fetch_interval": "Interval de verificare a remote-ului",
+          "pull_before_push": "Pull înainte de push",
+          "allow_sensitive": "Permite fișierele sensibile urmărite",
+          "notify_service": "Acțiune de notificare",
+          "notify_image": "URL-ul imaginii din notificare",
+          "export_enabled": "Export zilnic al tablourilor de bord",
+          "export_time": "Ora exportului",
+          "export_dir": "Folder de export",
+          "export_format": "Format de export",
+          "export_before_commit": "Exportă tablourile de bord înainte de fiecare commit",
+          "commit_before_update": "Commit înainte de actualizări"
+        },
+        "data_description": {
+          "ai_task_entity": "Generează un mesaj Conventional Commits din diff. Fără ea, se folosește un mesaj generic.",
+          "commit_interval": "Commit și push la fiecare N minute când există modificări. 0 dezactivează.",
+          "fetch_interval": "Face fetch din remote la fiecare N minute pentru a vedea commit-urile trimise din altă parte (în urmă, divergent). 0 dezactivează; înainte de fiecare push se face oricum un fetch.",
+          "pull_before_push": "Când remote-ul are commit-uri noi, face rebase pe ele (git pull --rebase --autostash) înainte de push. La un conflict, rebase-ul este anulat, nu se trimite nimic și o reparație explică ce e de făcut.",
+          "allow_sensitive": "Face commit modificărilor fișierelor sensibile deja urmărite de Git (secrets.yaml, .storage, chei, bază de date, loguri). Fișierele sensibile noi sunt refuzate întotdeauna.",
+          "notify_service": "De exemplu notify.mobile_app_telefon. Lăsați gol pentru a dezactiva.",
+          "notify_image": "URL HTTPS absolut (cerut de iOS).",
+          "export_format": "JSON copiază fișierele .storage ca atare; YAML păstrează doar configurația tabloului de bord, mai ușor de citit în diff-uri.",
+          "export_dir": "În dosarul de configurare (o cale relativă pornește de acolo) sau într-un dosar din allowlist_external_dirs.",
+          "commit_before_update": "Când se instalează o actualizare (Home Assistant, un add-on, o integrare), mai întâi fă commit și push configurației, ca să existe un commit la care să revii. Un singur commit pentru actualizările instalate împreună."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Priza nu poate fi o entitate a dispozitivului însuși: ar fi indisponibilă odată cu el.",
       "device_without_entities": "Acest dispozitiv nu are nicio entitate de supravegheat în afară de priză.",
       "marketplace_not_loaded": "Marketplace nu este încărcat.",
-      "supervisor_not_available": "Supervisor nu este disponibil: este necesar Home Assistant OS sau o instalare Supervised."
+      "supervisor_not_available": "Supervisor nu este disponibil: este necesar Home Assistant OS sau o instalare Supervised.",
+      "not_a_repository": "Acest folder nu este un arbore de lucru Git.",
+      "unknown_remote": "Acest remote nu există în depozit.",
+      "invalid_branch": "Git nu acceptă acest nume de ramură.",
+      "author_required": "Git nu știe cine semnează aici commiturile: introduceți e-mailul (și numele) autorului.",
+      "unknown_notify_service": "Această acțiune de notificare nu există.",
+      "export_dir_not_allowed": "Dosarul trebuie să fie în dosarul de configurare sau într-un dosar din allowlist_external_dirs, în afara dosarelor ascunse precum .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Notifică acum"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit și push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Exportă tablourile de bord"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Lipsă"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Stare",
+        "state": {
+          "clean": "Actualizat",
+          "dirty": "Modificări în așteptare",
+          "ahead": "Push în așteptare",
+          "error": "Eroare",
+          "behind": "În urma remote-ului",
+          "diverged": "Divergent"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Ramură"
+          },
+          "upstream": {
+            "name": "Ramură upstream"
+          },
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "ahead": {
+            "name": "Commituri înainte"
+          },
+          "behind": {
+            "name": "Commituri în urmă"
+          },
+          "changed_count": {
+            "name": "Fișiere modificate"
+          },
+          "changed_files": {
+            "name": "Lista fișierelor modificate"
+          },
+          "last_error": {
+            "name": "Ultima eroare"
+          },
+          "ai_task": {
+            "name": "Sarcină AI"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Fișiere modificate"
+      },
+      "git_sync_last_commit": {
+        "name": "Ultimul commit",
+        "state_attributes": {
+          "message": {
+            "name": "Mesaj"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Commit scurt"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Ultimul push",
+        "state_attributes": {
+          "message": {
+            "name": "Mesaj"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Ultimul export al tablourilor de bord",
+        "state_attributes": {
+          "files": {
+            "name": "Fișiere exportate"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Ramură",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "upstream": {
+            "name": "Ramură upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Baterii de rezervă de acel tip. Lasă gol pentru a nu-l mai număra."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit și push",
+      "description": "Adaugă toate modificările în index, face commit cu un mesaj generat de AI (sau furnizat) și face push către remote.",
+      "fields": {
+        "message": {
+          "name": "Mesaj",
+          "description": "Mesajul de commit. Generat de sarcina AI dacă este gol."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Exportă tablourile de bord",
+      "description": "Copiază tablourile de bord Lovelace din .storage în folderul de export."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Generează cheie SSH",
+      "description": "Creează perechea de chei SSH dacă lipsește și returnează cheia publică de adăugat drept deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Generează mesajul de commit",
+      "description": "Scrie cu sarcina AI un mesaj de commit pentru modificările curente, fără a face commit. Returnează null dacă nu s-a schimbat nimic."
+    },
+    "git_sync_get_diff": {
+      "name": "Obține modificările",
+      "description": "Returnează modificările pe care le-ar include un commit, fișier cu fișier, așa cum le afișează vizualizatorul de diferențe al cardului."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Preia depozitul la distanță și integrează commit-urile noi: avans rapid sau commit-urile locale rebazate deasupra (doar cu arborele de lucru curat). Un conflict anulează rebase-ul."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Baterii de rezervă de cumpărat: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Nicio entitate de sarcină AI nu este setată în opțiunile Git Sync."
+    },
+    "ai_task_failed": {
+      "message": "Sarcina AI nu a returnat niciun mesaj de commit."
+    },
+    "diverged": {
+      "message": "Ramura locală și {remote} au divergat ({ahead} commit-uri locale, {behind} commit-uri la distanță): nu s-a făcut commit sau push. Vezi Setări → Reparații."
+    },
+    "behind_remote": {
+      "message": "{remote} are {behind} commit-uri noi și Pull înainte de push este dezactivat: nu s-a făcut commit sau push. Vezi Setări → Reparații."
+    },
+    "rebase_conflict": {
+      "message": "Commit-ul intră în conflict cu commit-urile noi din {upstream}: rebase-ul a fost anulat și nu s-a trimis nimic. Vezi Setări → Reparații."
+    },
+    "sensitive_files": {
+      "message": "Refuzat: modificările includ fișiere sensibile ({files}), care nu sunt nici incluse în commit, nici trimise la AI task. Adaugă-le în .gitignore sau permite-le pe cele urmărite în opțiunile Git Sync."
+    },
+    "export_dir_not_allowed": {
+      "message": "Dosarul de export {path} este în afara dosarului de configurare și a allowlist_external_dirs: alege altul în opțiunile Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub nu este încărcat.",
           "reload_started": "Reîncărcarea **{title}** a pornit: reîncărcările sale au fost resetate și System Hub o ia de la capăt. Această problemă dispare de îndată ce începe reîncărcarea; un eșec apare în jurnale."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync nu poate face push pentru {repo}",
+      "description": "Ramura are {ahead} commit-uri locale care nu sunt în {upstream}, iar {upstream} are {behind} commit-uri care nu sunt aici. Git Sync nu unește singur istorii divergente, așa că nu se trimite nimic.\n\nPentru a rezolva, deschide un terminal în {repo} și rulează:\n\n```\ngit pull --rebase\n```\n\nRezolvă eventualele conflicte (editează fișierele, `git add`, apoi `git rebase --continue`), apoi apasă din nou **Commit și push**. Această reparație dispare la următorul push reușit."
+    },
+    "behind_remote": {
+      "title": "Git Sync nu poate face push pentru {repo}",
+      "description": "{upstream} are {behind} commit-uri care nu sunt aici și **Pull înainte de push** este dezactivat în opțiunile Git Sync, așa că nu se trimite nimic. Activează-l sau rulează `git pull --rebase` într-un terminal în {repo}. Această reparație dispare la următorul push reușit."
+    },
+    "git_sync_gitignore_missing": {
+      "title": ".gitignore din {repo} nu exclude secretele",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Adaugă liniile lipsă în .gitignore",
+            "description": "Fără aceste linii, Git Sync ar face commit și push parolelor, token-urilor și stocării de autentificare din Home Assistant:\n\n{lines}\n\nTrimite pentru a le adăuga la {repo}/.gitignore. Un fișier deja urmărit rămâne urmărit: scoate-l din depozit cu `git rm -r --cached secrets.yaml .storage` (fișierele rămân pe disc)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Depozitul Git Sync nu este încărcat."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (copie brută)",
+        "yaml": "YAML (doar configurația)",
+        "both": "JSON și YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Engleză",
+        "fr": "Franceză",
+        "de": "Germană",
+        "es": "Spaniolă",
+        "sr": "Sârbă (chirilică)",
+        "sr-latn": "Sârbă (latină)",
+        "it": "Italiană",
+        "nl": "Neerlandeză",
+        "pt": "Portugheză (Portugalia)",
+        "pl": "Poloneză",
+        "ro": "Română",
+        "da": "Daneză",
+        "sv": "Suedeză",
+        "bg": "Bulgară",
+        "ru": "Rusă",
+        "uk": "Ucraineană",
+        "hu": "Maghiară",
+        "sk": "Slovacă",
+        "cs": "Cehă",
+        "sl": "Slovenă",
+        "lv": "Letonă",
+        "el": "Greacă"
       }
     }
   }

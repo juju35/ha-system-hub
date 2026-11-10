@@ -9,6 +9,8 @@ from homeassistant.components.diagnostics import async_redact_data
 from homeassistant.core import HomeAssistant
 
 from . import SystemHubConfigEntry, enabled_modules
+from .git_sync.const import CONF_AUTHOR_EMAIL, CONF_AUTHOR_NAME, CONF_SSH_KEY
+from .git_sync.git import redact_credentials, redact_url
 from .marketplace import refresher as refresher_module
 from .watchdog.const import CONF_NOTIFY
 
@@ -29,12 +31,33 @@ TO_REDACT = {
     "github_token",
     "api_key",
     "ip_address",
+    CONF_SSH_KEY,
+    CONF_AUTHOR_NAME,
+    CONF_AUTHOR_EMAIL,
+    "secret",
+    "private_key",
+    "public_key",
 }
 
 
+def _git_sync(coordinator: Any) -> dict[str, Any]:
+    """The repository's state; its remote keeps its host but loses any user and password."""
+    state: dict[str, Any] | None = None
+    if coordinator.data is not None:
+        state = asdict(coordinator.data)
+        state["remote_url"] = redact_url(state["remote_url"])
+        if state["last_error"]:
+            state["last_error"] = redact_credentials(state["last_error"])
+    return {"last_update_success": coordinator.last_update_success, "data": state}
+
+
 async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: SystemHubConfigEntry) -> dict[str, Any]:
+    options = dict(entry.options)
+    if isinstance(git_options := options.get("git_sync"), dict) and isinstance(git_options.get("remote"), str):
+        # A remote given as a URL keeps its host but loses its user and password.
+        options["git_sync"] = {**git_options, "remote": redact_url(git_options["remote"])}
     data: dict[str, Any] = {
-        "entry": {"data": dict(entry.data), "options": dict(entry.options)},
+        "entry": {"data": dict(entry.data), "options": options},
         "modules": enabled_modules(entry),
     }
     if (monitor := entry.runtime_data.containers) is not None:
@@ -55,6 +78,8 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: SystemH
             "forecast_at": batteries.forecast_at.isoformat() if batteries.forecast_at else None,
             "batteries": [b.as_dict() for b in batteries.batteries],
         }
+    if (git := entry.runtime_data.git_sync) is not None:
+        data["git_sync"] = _git_sync(git)
     if (watchdog := entry.runtime_data.watchdog) is not None:
         data |= _watchdog(watchdog)
     if (refresher := entry.runtime_data.marketplace) is not None:

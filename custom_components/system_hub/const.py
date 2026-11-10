@@ -14,7 +14,8 @@ MODULE_CONTAINERS: Final = "containers"
 MODULE_WATCHDOG: Final = "watchdog"
 MODULE_MARKETPLACE: Final = "marketplace"
 MODULE_BATTERIES: Final = "batteries"
-MODULES: Final = (MODULE_CONTAINERS, MODULE_WATCHDOG, MODULE_MARKETPLACE, MODULE_BATTERIES)
+MODULE_GIT_SYNC: Final = "git_sync"
+MODULES: Final = (MODULE_CONTAINERS, MODULE_WATCHDOG, MODULE_MARKETPLACE, MODULE_BATTERIES, MODULE_GIT_SYNC)
 
 # Home Assistant's own Marketplace integration, which the Marketplace module drives.
 MARKETPLACE_DOMAIN: Final = "marketplace"

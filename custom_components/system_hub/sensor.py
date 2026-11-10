@@ -16,6 +16,7 @@ from .batteries.monitor import BatteryMonitor
 from .const import DOMAIN, MODULE_BATTERIES, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG
 from .containers.monitor import ContainerMonitor
 from .entity import SystemHubEntity
+from .git_sync.entities import SENSORS, GitSyncSensor
 from .marketplace.const import STATE_ERROR, STATE_IDLE, STATE_RUNNING
 from .marketplace.refresher import MarketplaceRefresher
 from .watchdog.core import IntegrationWatchdog
@@ -53,6 +54,8 @@ async def async_setup_entry(
             NextReplacementSensor(b, entry.entry_id, "next_replacement"),
             SparesSensor(b, entry.entry_id, "spare_batteries"),
         ]
+    if (g := data.git_sync) is not None:
+        entities += [GitSyncSensor(g, entry.entry_id, description) for description in SENSORS]
     async_add_entities(entities)
 
 

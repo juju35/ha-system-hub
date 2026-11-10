@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
-          "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt."
+          "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
+          "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Git-repository",
+        "description": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Sti til repository",
+          "remote": "Remote",
+          "branch": "Gren",
+          "ssh_key": "Privat SSH-nøgle",
+          "author_name": "Forfatterens navn",
+          "author_email": "Forfatterens e-mail"
+        },
+        "data_description": {
+          "repo_path": "Mappe, der indeholder .git-mappen, normalt /config.",
+          "remote": "Git-remote, der skal pushes til, normalt origin.",
+          "branch": "Målgren på remoten. Lad feltet være tomt for at pushe den aktuelle gren.",
+          "ssh_key": "Privat nøgle til push. Opret den med handlingen generate_ssh_key, og tilføj derefter den offentlige nøgle som deploy key med skriveadgang.",
+          "author_name": "Valgfrit, tilsidesætter repositoriets git user.name / user.email.",
+          "author_email": "Valgfrit, tilsidesætter repositoriets git user.name / user.email."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Supervisor er ikke tilgængelig: Home Assistant OS eller en Supervised-installation kræves.",
-      "marketplace_not_loaded": "Marketplace er ikke indlæst."
+      "marketplace_not_loaded": "Marketplace er ikke indlæst.",
+      "not_a_repository": "Denne mappe er ikke et Git-arbejdstræ.",
+      "unknown_remote": "Denne remote findes ikke i repositoriet.",
+      "invalid_branch": "Git accepterer ikke dette branch-navn.",
+      "author_required": "Git ved ikke, hvem der signerer commits her: angiv forfatterens e-mail (og navn)."
     },
     "abort": {
       "already_configured": "System Hub er allerede konfigureret.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Tilføj genstart via stik",
           "watchdog_remove_power_cycle": "Watchdog: Fjern genstarter via stik",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Indstillinger for repository",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
-          "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt."
+          "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
+          "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Batterier, der aldrig overvåges.",
           "ignored_integrations": "Integrationer, hvis batterier aldrig overvåges (som standard telefoner og tablets fra mobilappen). Skriv et domæne for at tilføje en, der endnu ikke er sat op."
         }
+      },
+      "git_sync_repository": {
+        "title": "Indstillinger for repository",
+        "data": {
+          "repo_path": "Sti til repository",
+          "remote": "Remote",
+          "branch": "Gren",
+          "ssh_key": "Privat SSH-nøgle",
+          "author_name": "Forfatterens navn",
+          "author_email": "Forfatterens e-mail"
+        },
+        "data_description": {
+          "repo_path": "Mappe, der indeholder .git-mappen, normalt /config.",
+          "remote": "Git-remote, der skal pushes til, normalt origin.",
+          "branch": "Målgren på remoten. Lad feltet være tomt for at pushe den aktuelle gren.",
+          "ssh_key": "Privat nøgle til push. Opret den med handlingen generate_ssh_key, og tilføj derefter den offentlige nøgle som deploy key med skriveadgang.",
+          "author_name": "Valgfrit, tilsidesætter repositoriets git user.name / user.email.",
+          "author_email": "Valgfrit, tilsidesætter repositoriets git user.name / user.email."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Commitbesked, tidsplaner, notifikationer og dashboardeksport.",
+        "data": {
+          "ai_task_entity": "AI-opgaveentitet",
+          "commit_language": "Sprog for commitbeskeder",
+          "commit_interval": "Interval for automatisk commit",
+          "status_interval": "Interval for statusopdatering",
+          "fetch_interval": "Kontrolinterval for remote",
+          "pull_before_push": "Pull før push",
+          "allow_sensitive": "Tillad sporede følsomme filer",
+          "notify_service": "Notifikationshandling",
+          "notify_image": "Billed-URL til notifikation",
+          "export_enabled": "Daglig dashboardeksport",
+          "export_time": "Eksporttidspunkt",
+          "export_dir": "Eksportmappe",
+          "export_format": "Eksportformat",
+          "export_before_commit": "Eksportér dashboards før hvert commit",
+          "commit_before_update": "Commit før opdateringer"
+        },
+        "data_description": {
+          "ai_task_entity": "Genererer en Conventional Commits-besked ud fra diffen. Uden den bruges en generisk besked.",
+          "commit_interval": "Commit og push hvert N. minut, når der er ændringer. 0 deaktiverer det.",
+          "fetch_interval": "Fetch fra remote hvert N. minut for at se commits pushet andre steder fra (bagud, divergeret). 0 slår det fra; der køres stadig en fetch før hver push.",
+          "pull_before_push": "Når remote har nye commits, rebases der på dem (git pull --rebase --autostash) før push. Ved en konflikt afbrydes rebasen, intet pushes, og en reparation forklarer, hvad der skal gøres.",
+          "allow_sensitive": "Commit ændringer i følsomme filer, som Git allerede sporer (secrets.yaml, .storage, nøgler, database, logs). Nye følsomme filer afvises altid.",
+          "notify_service": "For eksempel notify.mobile_app_telefon. Lad feltet være tomt for at deaktivere.",
+          "notify_image": "Absolut HTTPS-URL (krævet af iOS).",
+          "export_format": "JSON kopierer .storage-filerne som de er; YAML beholder kun dashboardets konfiguration, som er lettere at læse i diffs.",
+          "export_dir": "I konfigurationsmappen (en relativ sti starter der) eller i en mappe fra allowlist_external_dirs.",
+          "commit_before_update": "Når en opdatering installeres (Home Assistant, en tilføjelse, en integration), commit og push konfigurationen først, så der er et commit at vende tilbage til. Ét commit for opdateringer installeret samlet."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Stikket kan ikke være en entitet i selve enheden: det ville være utilgængeligt sammen med den.",
       "device_without_entities": "Denne enhed har ingen entitet at overvåge ud over stikket.",
       "marketplace_not_loaded": "Marketplace er ikke indlæst.",
-      "supervisor_not_available": "Supervisor er ikke tilgængelig: Home Assistant OS eller en Supervised-installation kræves."
+      "supervisor_not_available": "Supervisor er ikke tilgængelig: Home Assistant OS eller en Supervised-installation kræves.",
+      "not_a_repository": "Denne mappe er ikke et Git-arbejdstræ.",
+      "unknown_remote": "Denne remote findes ikke i repositoriet.",
+      "invalid_branch": "Git accepterer ikke dette branch-navn.",
+      "author_required": "Git ved ikke, hvem der signerer commits her: angiv forfatterens e-mail (og navn).",
+      "unknown_notify_service": "Denne notifikationshandling findes ikke.",
+      "export_dir_not_allowed": "Mappen skal ligge i konfigurationsmappen eller i en mappe fra allowlist_external_dirs, uden for skjulte mapper som .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Underret nu"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit og push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Eksportér dashboards"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Mangler"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Status",
+        "state": {
+          "clean": "Opdateret",
+          "dirty": "Ændringer afventer",
+          "ahead": "Push afventer",
+          "error": "Fejl",
+          "behind": "Bagud i forhold til remote",
+          "diverged": "Divergeret"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Gren"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "Remote-URL"
+          },
+          "ahead": {
+            "name": "Commits foran"
+          },
+          "behind": {
+            "name": "Commits bagud"
+          },
+          "changed_count": {
+            "name": "Ændrede filer"
+          },
+          "changed_files": {
+            "name": "Liste over ændrede filer"
+          },
+          "last_error": {
+            "name": "Seneste fejl"
+          },
+          "ai_task": {
+            "name": "AI-opgave"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Ændrede filer"
+      },
+      "git_sync_last_commit": {
+        "name": "Seneste commit",
+        "state_attributes": {
+          "message": {
+            "name": "Besked"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Kort commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Seneste push",
+        "state_attributes": {
+          "message": {
+            "name": "Besked"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Seneste dashboardeksport",
+        "state_attributes": {
+          "files": {
+            "name": "Eksporterede filer"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Gren",
+        "state_attributes": {
+          "remote_url": {
+            "name": "Remote-URL"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Reservebatterier af typen. Lad stå tomt for at stoppe optællingen."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit og push",
+      "description": "Stager alle ændringer, committer med en AI-genereret (eller angivet) besked og pusher til remoten.",
+      "fields": {
+        "message": {
+          "name": "Besked",
+          "description": "Commitbesked. Genereres af AI-opgaven, hvis tom."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Eksportér dashboards",
+      "description": "Kopierer Lovelace-dashboards fra .storage til eksportmappen."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Generér SSH-nøgle",
+      "description": "Opretter SSH-nøgleparret, hvis det mangler, og returnerer den offentlige nøgle, der skal tilføjes som deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Generér commitbesked",
+      "description": "Skriver med AI-opgaven en commitbesked til de aktuelle ændringer uden at committe. Returnerer null, hvis intet er ændret."
+    },
+    "git_sync_get_diff": {
+      "name": "Hent ændringer",
+      "description": "Returnerer de ændringer, et commit ville indeholde, fil for fil, som kortets diff-visning viser dem."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Henter fjernlageret og tager dets nye commits ind: fast-forward, eller de lokale commits rebaset ovenpå (kun med et rent arbejdstræ). En konflikt afbryder rebase."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Reservebatterier at købe: {spares}"
+    },
+    "no_ai_task": {
+      "message": "Der er ikke angivet en AI-opgaveentitet i Git Sync-indstillingerne."
+    },
+    "ai_task_failed": {
+      "message": "AI-opgaven returnerede ingen commitbesked."
+    },
+    "diverged": {
+      "message": "Den lokale branch og {remote} er divergeret ({ahead} lokale commits, {behind} fjerne commits): intet blev committet eller pushet. Se Indstillinger → Reparationer."
+    },
+    "behind_remote": {
+      "message": "{remote} har {behind} nye commits, og Pull før push er slået fra: intet blev committet eller pushet. Se Indstillinger → Reparationer."
+    },
+    "rebase_conflict": {
+      "message": "Committet er i konflikt med de nye commits i {upstream}: rebasen blev afbrudt, og intet blev pushet. Se Indstillinger → Reparationer."
+    },
+    "sensitive_files": {
+      "message": "Afvist: ændringerne omfatter følsomme filer ({files}), som hverken committes eller sendes til AI-opgaven. Føj dem til .gitignore, eller tillad de sporede i Git Sync-indstillingerne."
+    },
+    "export_dir_not_allowed": {
+      "message": "Eksportmappen {path} ligger uden for konfigurationsmappen og allowlist_external_dirs: vælg en anden i Git Sync-indstillingerne."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub er ikke indlæst.",
           "reload_started": "Genindlæser **{title}**: dens genindlæsninger blev nulstillet, og System Hub starter forfra. Dette problem forsvinder, så snart genindlæsningen starter; en fejl står i logfilerne."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync kan ikke pushe {repo}",
+      "description": "Branchen har {ahead} lokale commits, som ikke er på {upstream}, og {upstream} har {behind} commits, som ikke er her. Git Sync fletter ikke selv divergerede historikker, så intet pushes.\n\nFor at løse det skal du åbne en terminal i {repo} og køre:\n\n```\ngit pull --rebase\n```\n\nRet eventuelle konflikter (rediger filerne, `git add` dem, og kør så `git rebase --continue`), og tryk så på **Commit og push** igen. Denne reparation forsvinder ved næste vellykkede push."
+    },
+    "behind_remote": {
+      "title": "Git Sync kan ikke pushe {repo}",
+      "description": "{upstream} har {behind} commits, som ikke er her, og **Pull før push** er slået fra i Git Sync-indstillingerne, så intet pushes. Slå det til, eller kør `git pull --rebase` i en terminal i {repo}. Denne reparation forsvinder ved næste vellykkede push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": ".gitignore i {repo} udelukker ikke hemmelighederne",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Føj de manglende linjer til .gitignore",
+            "description": "Uden disse linjer ville Git Sync committe og pushe adgangskoderne, tokens og godkendelseslageret i Home Assistant:\n\n{lines}\n\nIndsend for at tilføje dem til {repo}/.gitignore. En fil, der allerede spores, bliver ved med at blive sporet: fjern den fra repositoriet med `git rm -r --cached secrets.yaml .storage` (filerne bliver på disken)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Git Sync-repositoriet er ikke indlæst."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (rå kopi)",
+        "yaml": "YAML (kun konfiguration)",
+        "both": "JSON og YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Engelsk",
+        "fr": "Fransk",
+        "de": "Tysk",
+        "es": "Spansk",
+        "sr": "Serbisk (kyrillisk)",
+        "sr-latn": "Serbisk (latinsk)",
+        "it": "Italiensk",
+        "nl": "Nederlandsk",
+        "pt": "Portugisisk (Portugal)",
+        "pl": "Polsk",
+        "ro": "Rumænsk",
+        "da": "Dansk",
+        "sv": "Svensk",
+        "bg": "Bulgarsk",
+        "ru": "Russisk",
+        "uk": "Ukrainsk",
+        "hu": "Ungarsk",
+        "sk": "Slovakisk",
+        "cs": "Tjekkisk",
+        "sl": "Slovensk",
+        "lv": "Lettisk",
+        "el": "Græsk"
       }
     }
   }

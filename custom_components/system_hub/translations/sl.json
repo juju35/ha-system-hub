@@ -8,19 +8,45 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
-          "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka."
+          "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
+          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…)."
+        }
+      },
+      "git_sync_repository": {
+        "title": "Repozitorij Git",
+        "description": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
+        "data": {
+          "repo_path": "Pot do repozitorija",
+          "remote": "Remote",
+          "branch": "Veja",
+          "ssh_key": "Zasebni ključ SSH",
+          "author_name": "Ime avtorja",
+          "author_email": "E-pošta avtorja"
+        },
+        "data_description": {
+          "repo_path": "Mapa, ki vsebuje imenik .git, običajno /config.",
+          "remote": "Git remote, na katerega se izvede push, običajno origin.",
+          "branch": "Ciljna veja na remote. Pustite prazno, da se pošlje trenutna veja.",
+          "ssh_key": "Zasebni ključ za push. Ustvarite ga z dejanjem generate_ssh_key, nato dodajte javni ključ kot deploy key s pravico pisanja.",
+          "author_name": "Neobvezno, nadomesti git user.name / user.email repozitorija.",
+          "author_email": "Neobvezno, nadomesti git user.name / user.email repozitorija."
         }
       }
     },
     "error": {
       "supervisor_not_available": "Supervisor ni na voljo: potreben je Home Assistant OS ali namestitev Supervised.",
-      "marketplace_not_loaded": "Marketplace ni naložen."
+      "marketplace_not_loaded": "Marketplace ni naložen.",
+      "not_a_repository": "Ta mapa ni delovno drevo Gita.",
+      "unknown_remote": "Ta remote v repozitoriju ne obstaja.",
+      "invalid_branch": "Git ne sprejme tega imena veje.",
+      "author_required": "Git ne ve, kdo tukaj podpisuje commite: vnesite e-pošto (in ime) avtorja."
     },
     "abort": {
       "already_configured": "System Hub je že nastavljen.",
@@ -38,7 +64,9 @@
           "watchdog_add_power_cycle": "Watchdog: Dodaj ponovni zagon prek vtičnice",
           "watchdog_remove_power_cycle": "Watchdog: Odstrani ponovne zagone prek vtičnice",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync_repository": "Git Sync: Nastavitve repozitorija",
+          "git_sync": "Git Sync"
         }
       },
       "modules": {
@@ -48,13 +76,15 @@
           "containers": "Containers",
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
-          "batteries": "Batteries"
+          "batteries": "Batteries",
+          "git_sync": "Git Sync"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
-          "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka."
+          "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
+          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…)."
         }
       },
       "containers": {
@@ -149,6 +179,58 @@
           "ignored_entities": "Baterije, ki se nikoli ne spremljajo.",
           "ignored_integrations": "Integracije, katerih baterije se nikoli ne spremljajo (privzeto telefoni in tablice mobilne aplikacije). Vpišite domeno, da dodate integracijo, ki še ni nastavljena."
         }
+      },
+      "git_sync_repository": {
+        "title": "Nastavitve repozitorija",
+        "data": {
+          "repo_path": "Pot do repozitorija",
+          "remote": "Remote",
+          "branch": "Veja",
+          "ssh_key": "Zasebni ključ SSH",
+          "author_name": "Ime avtorja",
+          "author_email": "E-pošta avtorja"
+        },
+        "data_description": {
+          "repo_path": "Mapa, ki vsebuje imenik .git, običajno /config.",
+          "remote": "Git remote, na katerega se izvede push, običajno origin.",
+          "branch": "Ciljna veja na remote. Pustite prazno, da se pošlje trenutna veja.",
+          "ssh_key": "Zasebni ključ za push. Ustvarite ga z dejanjem generate_ssh_key, nato dodajte javni ključ kot deploy key s pravico pisanja.",
+          "author_name": "Neobvezno, nadomesti git user.name / user.email repozitorija.",
+          "author_email": "Neobvezno, nadomesti git user.name / user.email repozitorija."
+        }
+      },
+      "git_sync": {
+        "title": "Git Sync",
+        "description": "Sporočilo commita, urniki, obvestila in izvoz nadzornih plošč.",
+        "data": {
+          "ai_task_entity": "Entiteta opravila AI",
+          "commit_language": "Jezik sporočil commitov",
+          "commit_interval": "Interval samodejnega commita",
+          "status_interval": "Interval osvežitve stanja",
+          "fetch_interval": "Interval preverjanja remote",
+          "pull_before_push": "Pull pred push",
+          "allow_sensitive": "Dovoli sledene občutljive datoteke",
+          "notify_service": "Dejanje obvestila",
+          "notify_image": "URL slike obvestila",
+          "export_enabled": "Dnevni izvoz nadzornih plošč",
+          "export_time": "Čas izvoza",
+          "export_dir": "Mapa za izvoz",
+          "export_format": "Oblika izvoza",
+          "export_before_commit": "Izvozi nadzorne plošče pred vsakim commitom",
+          "commit_before_update": "Commit pred posodobitvami"
+        },
+        "data_description": {
+          "ai_task_entity": "Iz diffa ustvari sporočilo Conventional Commits. Brez nje se uporabi splošno sporočilo.",
+          "commit_interval": "Commit in push vsakih N minut, ko so spremembe. 0 onemogoči.",
+          "fetch_interval": "Fetch iz remote vsakih N minut, da so vidni commiti, poslani od drugod (zaostaja, razhaja se). 0 ga izklopi; pred vsakim push se fetch vseeno izvede.",
+          "pull_before_push": "Ko ima remote nove commite, se pred push nanje izvede rebase (git pull --rebase --autostash). Ob konfliktu se rebase prekine, nič se ne pošlje, popravilo pa pojasni, kaj storiti.",
+          "allow_sensitive": "Commit sprememb občutljivih datotek, ki jih Git že sledi (secrets.yaml, .storage, ključi, zbirka podatkov, dnevniki). Nove občutljive datoteke so vedno zavrnjene.",
+          "notify_service": "Na primer notify.mobile_app_telefon. Pustite prazno za onemogočanje.",
+          "notify_image": "Absolutni URL HTTPS (zahteva ga iOS).",
+          "export_format": "JSON kopira datoteke .storage nespremenjene; YAML ohrani le konfiguracijo nadzorne plošče, ki je v diffih lažje berljiva.",
+          "export_dir": "V mapi konfiguracije (relativna pot se začne tam) ali v mapi iz allowlist_external_dirs.",
+          "commit_before_update": "Ko se namesti posodobitev (Home Assistant, dodatek, integracija), najprej naredi commit in push konfiguracije, da obstaja commit, h kateremu se lahko vrnete. En commit za posodobitve, nameščene skupaj."
+        }
       }
     },
     "error": {
@@ -157,7 +239,13 @@
       "switch_on_device": "Vtičnica ne more biti entiteta same naprave: bila bi nedosegljiva skupaj z njo.",
       "device_without_entities": "Ta naprava razen vtičnice nima entitete za nadzor.",
       "marketplace_not_loaded": "Marketplace ni naložen.",
-      "supervisor_not_available": "Supervisor ni na voljo: potreben je Home Assistant OS ali namestitev Supervised."
+      "supervisor_not_available": "Supervisor ni na voljo: potreben je Home Assistant OS ali namestitev Supervised.",
+      "not_a_repository": "Ta mapa ni delovno drevo Gita.",
+      "unknown_remote": "Ta remote v repozitoriju ne obstaja.",
+      "invalid_branch": "Git ne sprejme tega imena veje.",
+      "author_required": "Git ne ve, kdo tukaj podpisuje commite: vnesite e-pošto (in ime) avtorja.",
+      "unknown_notify_service": "To dejanje obvestila ne obstaja.",
+      "export_dir_not_allowed": "Mapa mora biti v mapi konfiguracije ali v mapi iz allowlist_external_dirs, zunaj skritih map, kot je .storage."
     }
   },
   "entity": {
@@ -170,6 +258,12 @@
       },
       "batteries_notify_now": {
         "name": "Obvesti zdaj"
+      },
+      "git_sync_commit_push": {
+        "name": "Commit in push"
+      },
+      "git_sync_export_dashboards": {
+        "name": "Izvozi nadzorne plošče"
       }
     },
     "sensor": {
@@ -361,6 +455,90 @@
             "name": "Manjka"
           }
         }
+      },
+      "git_sync_status": {
+        "name": "Stanje",
+        "state": {
+          "clean": "Posodobljeno",
+          "dirty": "Spremembe na čakanju",
+          "ahead": "Push na čakanju",
+          "error": "Napaka",
+          "behind": "Zaostaja za remote",
+          "diverged": "Razhaja se"
+        },
+        "state_attributes": {
+          "branch": {
+            "name": "Veja"
+          },
+          "upstream": {
+            "name": "Upstream"
+          },
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "ahead": {
+            "name": "Commiti naprej"
+          },
+          "behind": {
+            "name": "Commiti zadaj"
+          },
+          "changed_count": {
+            "name": "Spremenjene datoteke"
+          },
+          "changed_files": {
+            "name": "Seznam spremenjenih datotek"
+          },
+          "last_error": {
+            "name": "Zadnja napaka"
+          },
+          "ai_task": {
+            "name": "Opravilo AI"
+          }
+        }
+      },
+      "git_sync_changed_files": {
+        "name": "Spremenjene datoteke"
+      },
+      "git_sync_last_commit": {
+        "name": "Zadnji commit",
+        "state_attributes": {
+          "message": {
+            "name": "Sporočilo"
+          },
+          "sha": {
+            "name": "Commit"
+          },
+          "short_sha": {
+            "name": "Kratki commit"
+          }
+        }
+      },
+      "git_sync_last_push": {
+        "name": "Zadnji push",
+        "state_attributes": {
+          "message": {
+            "name": "Sporočilo"
+          }
+        }
+      },
+      "git_sync_last_export": {
+        "name": "Zadnji izvoz nadzornih plošč",
+        "state_attributes": {
+          "files": {
+            "name": "Izvožene datoteke"
+          }
+        }
+      },
+      "git_sync_branch": {
+        "name": "Veja",
+        "state_attributes": {
+          "remote_url": {
+            "name": "URL remote"
+          },
+          "upstream": {
+            "name": "Upstream"
+          }
+        }
       }
     }
   },
@@ -448,6 +626,36 @@
           "description": "Rezervne baterije te vrste. Pustite prazno, da se je ne šteje več."
         }
       }
+    },
+    "git_sync_commit_push": {
+      "name": "Commit in push",
+      "description": "Doda vse spremembe v indeks, izvede commit s sporočilom, ki ga ustvari AI (ali podanim), in push na remote.",
+      "fields": {
+        "message": {
+          "name": "Sporočilo",
+          "description": "Sporočilo commita. Če je prazno, ga ustvari opravilo AI."
+        }
+      }
+    },
+    "git_sync_export_dashboards": {
+      "name": "Izvozi nadzorne plošče",
+      "description": "Kopira nadzorne plošče Lovelace iz .storage v mapo za izvoz."
+    },
+    "git_sync_generate_ssh_key": {
+      "name": "Ustvari ključ SSH",
+      "description": "Ustvari par ključev SSH, če manjka, in vrne javni ključ, ki ga dodate kot deploy key."
+    },
+    "git_sync_generate_message": {
+      "name": "Ustvari sporočilo commita",
+      "description": "Z opravilom AI napiše sporočilo commita za trenutne spremembe, brez commita. Vrne null, če se ni nič spremenilo."
+    },
+    "git_sync_get_diff": {
+      "name": "Pridobi spremembe",
+      "description": "Vrne spremembe, ki bi jih commit vseboval, datoteko po datoteko, kot jih prikazuje pogled razlik kartice."
+    },
+    "git_sync_pull": {
+      "name": "Pull",
+      "description": "Pridobi oddaljeni repozitorij in prevzame njegove nove commite: previjanje naprej ali lokalni commiti, prestavljeni na vrh (le pri čistem delovnem drevesu). Spor prestavljanje prekine."
     }
   },
   "common": {
@@ -564,6 +772,27 @@
     },
     "batteries_spares_short": {
       "message": "Rezervne baterije za nakup: {spares}"
+    },
+    "no_ai_task": {
+      "message": "V možnostih Git Sync ni nastavljena entiteta opravila AI."
+    },
+    "ai_task_failed": {
+      "message": "Opravilo AI ni vrnilo sporočila commita."
+    },
+    "diverged": {
+      "message": "Lokalna veja in {remote} sta se razšli ({ahead} lokalnih commitov, {behind} oddaljenih commitov): nič ni bilo commitano ali poslano. Glej Nastavitve → Popravila."
+    },
+    "behind_remote": {
+      "message": "{remote} ima {behind} novih commitov, Pull pred push pa je izklopljen: nič ni bilo commitano ali poslano. Glej Nastavitve → Popravila."
+    },
+    "rebase_conflict": {
+      "message": "Commit je v konfliktu z novimi commiti {upstream}: rebase je bil prekinjen in nič ni bilo poslano. Glej Nastavitve → Popravila."
+    },
+    "sensitive_files": {
+      "message": "Zavrnjeno: spremembe vsebujejo občutljive datoteke ({files}), ki niso ne commitane ne poslane AI task. Dodaj jih v .gitignore ali dovoli sledene v možnostih Git Sync."
+    },
+    "export_dir_not_allowed": {
+      "message": "Mapa za izvoz {path} je zunaj mape konfiguracije in allowlist_external_dirs: izberite drugo v možnostih Git Sync."
     }
   },
   "issues": {
@@ -579,6 +808,63 @@
           "not_loaded": "System Hub ni naložen.",
           "reload_started": "Ponovno nalaganje **{title}** se je začelo: njena ponovna nalaganja so ponastavljena in System Hub začne znova. Ta težava izgine, takoj ko se nalaganje začne; napaka je v dnevnikih."
         }
+      }
+    },
+    "diverged": {
+      "title": "Git Sync ne more izvesti push za {repo}",
+      "description": "Veja ima {ahead} lokalnih commitov, ki jih ni na {upstream}, {upstream} pa ima {behind} commitov, ki jih tu ni. Git Sync sam ne združuje razhajajočih se zgodovin, zato se nič ne pošlje.\n\nZa rešitev odpri terminal v {repo} in zaženi:\n\n```\ngit pull --rebase\n```\n\nOdpravi morebitne konflikte (uredi datoteke, `git add`, nato `git rebase --continue`) in nato znova pritisni **Commit in push**. To popravilo izgine ob naslednjem uspešnem push."
+    },
+    "behind_remote": {
+      "title": "Git Sync ne more izvesti push za {repo}",
+      "description": "{upstream} ima {behind} commitov, ki jih tu ni, **Pull pred push** pa je izklopljen v možnostih Git Sync, zato se nič ne pošlje. Vklopi ga ali zaženi `git pull --rebase` v terminalu v {repo}. To popravilo izgine ob naslednjem uspešnem push."
+    },
+    "git_sync_gitignore_missing": {
+      "title": ".gitignore v {repo} ne izključuje skrivnosti",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Dodaj manjkajoče vrstice v .gitignore",
+            "description": "Brez teh vrstic bi Git Sync commital in poslal gesla, žetone in shrambo za preverjanje pristnosti Home Assistant:\n\n{lines}\n\nPošlji, da se dodajo v {repo}/.gitignore. Datoteka, ki je že sledena, ostane sledena: odstrani jo iz repozitorija z ukazom `git rm -r --cached secrets.yaml .storage` (datoteke ostanejo na disku)."
+          }
+        },
+        "abort": {
+          "not_loaded": "Repozitorij Git Sync ni naložen."
+        }
+      }
+    }
+  },
+  "selector": {
+    "export_format": {
+      "options": {
+        "json": "JSON (neobdelana kopija)",
+        "yaml": "YAML (samo konfiguracija)",
+        "both": "JSON in YAML"
+      }
+    },
+    "commit_language": {
+      "options": {
+        "en": "Angleščina",
+        "fr": "Francoščina",
+        "de": "Nemščina",
+        "es": "Španščina",
+        "sr": "Srbščina (cirilica)",
+        "sr-latn": "Srbščina (latinica)",
+        "it": "Italijanščina",
+        "nl": "Nizozemščina",
+        "pt": "Portugalščina (Portugalska)",
+        "pl": "Poljščina",
+        "ro": "Romunščina",
+        "da": "Danščina",
+        "sv": "Švedščina",
+        "bg": "Bolgarščina",
+        "ru": "Ruščina",
+        "uk": "Ukrajinščina",
+        "hu": "Madžarščina",
+        "sk": "Slovaščina",
+        "cs": "Češčina",
+        "sl": "Slovenščina",
+        "lv": "Latvijščina",
+        "el": "Grščina"
       }
     }
   }

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import logging
 import os
+import subprocess
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -24,6 +26,15 @@ def auto_enable_custom_integrations(request: pytest.FixtureRequest):
     if "recorder_mock" in request.fixturenames:
         request.getfixturevalue("recorder_mock")
     request.getfixturevalue("enable_custom_integrations")
+    yield
+
+
+@pytest.fixture(autouse=True)
+def allow_tmp_path(request: pytest.FixtureRequest, tmp_path):
+    """Git Sync tests: let the dashboard export write to the test's temporary folder, as allowlist_external_dirs
+    would."""
+    if "git_sync" in request.module.__name__ and "hass" in request.fixturenames:
+        request.getfixturevalue("hass").config.allowlist_external_dirs.add(str(tmp_path))
     yield
 
 
@@ -167,3 +178,67 @@ def add_battery(
         attributes["unit_of_measurement"] = "%"
     hass.states.async_set(entity.entity_id, state, attributes)
     return entity.entity_id
+
+
+def git(cwd: Path, *args: str) -> str:
+    """Run git synchronously in tests."""
+    return subprocess.run(["git", "-C", str(cwd), *args], check=True, capture_output=True, text=True).stdout
+
+
+@pytest.fixture
+def repo(tmp_path: Path) -> Path:
+    """A repository with one commit, tracking a bare remote."""
+    remote = tmp_path / "remote.git"
+    work = tmp_path / "work"
+    subprocess.run(["git", "init", "--bare", "-q", "-b", "main", str(remote)], check=True)
+    subprocess.run(["git", "init", "-q", "-b", "main", str(work)], check=True)
+    git(work, "config", "user.name", "Test")
+    git(work, "config", "user.email", "test@example.com")
+    (work / "configuration.yaml").write_text("default_config:\n", encoding="utf-8")
+    git(work, "add", "-A")
+    git(work, "commit", "-q", "-m", "chore: initial")
+    git(work, "remote", "add", "origin", str(remote))
+    git(work, "push", "-q", "-u", "origin", "main")
+    return work
+
+
+@pytest.fixture
+def fresh_repo(tmp_path: Path) -> Path:
+    """A repository set up as the README says: one commit and a remote, never pushed (no upstream)."""
+    remote = tmp_path / "remote.git"
+    work = tmp_path / "work"
+    subprocess.run(["git", "init", "--bare", "-q", "-b", "main", str(remote)], check=True)
+    subprocess.run(["git", "init", "-q", "-b", "main", str(work)], check=True)
+    git(work, "config", "user.name", "Test")
+    git(work, "config", "user.email", "test@example.com")
+    (work / "configuration.yaml").write_text("default_config:\n", encoding="utf-8")
+    git(work, "add", "-A")
+    git(work, "commit", "-q", "-m", "chore: initial")
+    git(work, "remote", "add", "origin", str(remote))
+    return work
+
+
+def clone(tmp_path: Path, name: str = "other") -> Path:
+    """Another work tree of the bare remote, pushing commits the tested repository does not have yet."""
+    other = tmp_path / name
+    git(tmp_path, "clone", "-q", str(tmp_path / "remote.git"), str(other))
+    git(other, "config", "user.name", "Other")
+    git(other, "config", "user.email", "other@example.com")
+    return other
+
+
+def push_from(other: Path, name: str, content: str) -> None:
+    (other / name).write_text(content, encoding="utf-8")
+    git(other, "add", "-A")
+    git(other, "commit", "-q", "-m", f"chore: {name} from elsewhere")
+    git(other, "push", "-q")
+
+
+def git_sync_entry(*, domain: str = DOMAIN, data: dict | None = None, options: dict | None = None, **kwargs):
+    """A System Hub entry with only the Git Sync module, its repository and options merged as Git Sync had them."""
+    kwargs.pop("unique_id", None)
+    return MockConfigEntry(
+        domain=domain,
+        options={"modules": ["git_sync"], "git_sync": {**(data or {}), **(options or {})}},
+        **kwargs,
+    )
