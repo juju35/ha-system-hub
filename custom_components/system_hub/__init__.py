@@ -45,6 +45,7 @@ from .git_sync.services import async_setup_git_sync_services
 from .marketplace import async_options_changed, async_remove_marketplace, async_setup_marketplace
 from .marketplace.const import SERVICE_CHECK_REPOSITORY, SERVICE_CHECK_UPDATES, SERVICE_INSTALL_UPDATES
 from .marketplace.refresher import MarketplaceNotAvailableError, MarketplaceRefresher
+from .panel import async_register_panel, async_remove_panel
 from .watchdog import async_disable_watchdog, async_remove_watchdog, async_setup_watchdog, async_wait_idle
 from .watchdog.const import ATTR_ENTRY_ID, SERVICE_CHECK, SERVICE_RESET
 from .watchdog.core import IntegrationWatchdog
@@ -299,6 +300,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
         else:
             _LOGGER.warning("Git Sync module turned on without a repository: set it up in Configure → Git Sync")
     entry.runtime_data = data
+    # Added again after a removal (which drops the panel) without a restart: the panel comes back.
+    await async_register_panel(hass)
     _async_remove_disabled(hass, entry, modules)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -339,6 +342,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
     # Assistant 2025.3 it is still registered while this runs.
     if any(e.entry_id != entry.entry_id for e in hass.config_entries.async_entries(DOMAIN)):
         return
+    async_remove_panel(hass)
     await async_remove_watchdog(hass)
     await async_remove_marketplace(hass)
     await async_remove_batteries(hass)
