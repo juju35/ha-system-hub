@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
           "watchdog": "Поново учитава интеграције чији су сви ентитети недоступни.",
-          "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати."
+          "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати.",
+          "batteries": "Обавештава двапут дневно о уређајима чија је батерија остала слаба."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Додај рестарт преко утичнице",
           "watchdog_remove_power_cycle": "Watchdog: Уклони рестарте преко утичнице",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
           "watchdog": "Поново учитава интеграције чији су сви ентитети недоступни.",
-          "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати."
+          "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати.",
+          "batteries": "Обавештава двапут дневно о уређајима чија је батерија остала слаба."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Број сати између две аутоматске провере. 0 искључује аутоматску проверу: користите дугме или акцију.",
           "backup_before_install": "Пре Ажурирај све (или акције без поља „Прво резервна копија“) прави се аутоматска резервна копија Home Assistant-а, са подешавањима из Подешавања > Систем > Резервне копије; ако не успе, ништа се не инсталира."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Праг слабе батерије",
+          "duration": "Слаба најмање",
+          "morning_time": "Јутарње обавештење",
+          "evening_time": "Вечерње обавештење",
+          "notify_services": "Акције обавештавања",
+          "ignored_entities": "Игнорисане батерије",
+          "ignored_integrations": "Игнорисане интеграције"
+        },
+        "data_description": {
+          "threshold": "Батерија се сматра слабом испод овог нивоа.",
+          "duration": "Број сати колико батерија мора бити испод прага пре него што се пошаље обавештење (0: приликом следећег обавештења).",
+          "morning_time": "Прво од два дневна обавештења.",
+          "evening_time": "Друго од два дневна обавештења.",
+          "notify_services": "Пошаљи обавештења путем ових акција (notify.mobile_app_…). Трајно обавештење се увек креира.",
+          "ignored_entities": "Батерије које се никада не надгледају.",
+          "ignored_integrations": "Интеграције чије се батерије никада не надгледају (подразумевано телефони и таблети из мобилне апликације). Унеси домен да додаш интеграцију која још увек није подешена."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Провери ажурирања"
+      },
+      "batteries_notify_now": {
+        "name": "Обавести сада"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Следећа провера"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Слабе батерије",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Недоступно"
+          },
+          "due": {
+            "name": "На реду"
+          },
+          "threshold": {
+            "name": "Праг"
+          },
+          "duration": {
+            "name": "Трајање"
+          },
+          "batteries": {
+            "name": "Батерије"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Последње обавештење",
+        "state_attributes": {
+          "notified": {
+            "name": "Батерије о којима је послато обавештење"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Следећа замена",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Ентитет"
+          },
+          "name": {
+            "name": "Батерија"
+          },
+          "level": {
+            "name": "Ниво"
+          },
+          "days_left": {
+            "name": "Преостали дани"
+          },
+          "forecast_at": {
+            "name": "Прогноза измерена"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Резервне батерије",
+        "state_attributes": {
+          "stock": {
+            "name": "На залихи"
+          },
+          "needed": {
+            "name": "Потребно"
+          },
+          "short": {
+            "name": "Недостаје"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Прво резервна копија",
           "description": "Направи аутоматску резервну копију Home Assistant-а пре инсталирања; ништа се не инсталира ако не успе. Оставите празно да важи опција интеграције."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Обавести о слабим батеријама",
+      "description": "Шаље обавештење одмах, са свим батеријама које су испод прага или недоступне без обзира на трајање, или поруку да ниједна не захтева пажњу."
+    },
+    "batteries_export": {
+      "name": "Извези батерије у CSV",
+      "description": "Уписује сваку праћену батерију (ниво, просторија, слаба, недоступна, за обраду, откад, пражњење по дану, преостали дани, датум замене) у CSV датотеку.",
+      "fields": {
+        "path": {
+          "name": "Датотека",
+          "description": "Путања CSV датотеке; system_hub_batteries.csv у фасцикли конфигурације ако је празно."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Подеси резервне батерије",
+      "description": "Подешава колико резервних батерија неког типа имате; свака уочена замена тог типа их одузима.",
+      "fields": {
+        "battery_type": {
+          "name": "Тип батерије",
+          "description": "Како га назива Battery Notes, без количине: AA, CR2032…"
+        },
+        "count": {
+          "name": "Број",
+          "description": "Резервне батерије тог типа. Оставите празно да се више не броји."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Није могуће очитати контејнере из Supervisor-а: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 слаба батерија"
+    },
+    "batteries_title_many": {
+      "message": "Слабе батерије: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: слаба{type}"
+    },
+    "batteries_none_title": {
+      "message": "Нема батерија за проверу"
+    },
+    "batteries_none": {
+      "message": "Све батерије су изнад {threshold} % и доступне."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: недоступна{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 батерија за проверу"
+    },
+    "batteries_check_many": {
+      "message": "Батерије за проверу: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} је изван дозвољених фасцикли (фасцикла конфигурације или allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} није ЦСВ датотека: извоз пише само ЦСВ датотеке."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} је у скривеној фасцикли: извоз тамо не пише."
+    },
+    "batteries_spares_short": {
+      "message": "Резервне батерије за куповину: {spares}"
     }
   },
   "issues": {

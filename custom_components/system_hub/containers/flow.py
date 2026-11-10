@@ -16,6 +16,7 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
+from ..notify import notify_choices
 from .const import (
     CONF_NOTIFY,
     CONF_NOTIFY_SERVICES,
@@ -28,11 +29,7 @@ from .const import (
 
 def settings_schema(hass: HomeAssistant, current: dict[str, Any]) -> vol.Schema:
     services: list[str] = list(current.get(CONF_NOTIFY_SERVICES, []))
-    options = sorted(
-        {f"notify.{name}" for name in hass.services.async_services_for_domain("notify")}
-        - {"notify.send_message", "notify.persistent_notification"}
-        | set(services)
-    )
+    options = notify_choices(hass, services)
     return vol.Schema(
         {
             vol.Required(

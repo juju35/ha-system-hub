@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
-          "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες."
+          "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες.",
+          "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Προσθήκη επανεκκίνησης μέσω πρίζας",
           "watchdog_remove_power_cycle": "Watchdog: Αφαίρεση επανεκκινήσεων μέσω πρίζας",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
-          "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες."
+          "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες.",
+          "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Ώρες ανάμεσα σε δύο αυτόματους ελέγχους. Το 0 απενεργοποιεί τον αυτόματο έλεγχο: χρησιμοποιήστε το κουμπί ή την ενέργεια.",
           "backup_before_install": "Πριν από την Ενημέρωση όλων (ή την ενέργεια χωρίς backup), δημιουργείται το αυτόματο αντίγραφο ασφαλείας του Home Assistant με τις ρυθμίσεις του στις Ρυθμίσεις > Σύστημα > Αντίγραφα ασφαλείας· αν αποτύχει, δεν εγκαθίσταται τίποτα."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Όριο χαμηλής μπαταρίας",
+          "duration": "Χαμηλή για τουλάχιστον",
+          "morning_time": "Πρωινή ειδοποίηση",
+          "evening_time": "Βραδινή ειδοποίηση",
+          "notify_services": "Ενέργειες ειδοποίησης",
+          "ignored_entities": "Μπαταρίες που αγνοούνται",
+          "ignored_integrations": "Ενσωματώσεις που αγνοούνται"
+        },
+        "data_description": {
+          "threshold": "Κάτω από αυτό το επίπεδο μια μπαταρία θεωρείται χαμηλή.",
+          "duration": "Ώρες που πρέπει μια μπαταρία να έχει παραμείνει κάτω από το όριο πριν συμπεριληφθεί σε ειδοποίηση (0: στην επόμενη ειδοποίηση).",
+          "morning_time": "Η πρώτη από τις δύο ημερήσιες ειδοποιήσεις.",
+          "evening_time": "Η δεύτερη από τις δύο ημερήσιες ειδοποιήσεις.",
+          "notify_services": "Αποστολή των ειδοποιήσεων με αυτές τις ενέργειες (notify.mobile_app_…). Δημιουργείται πάντα μια μόνιμη ειδοποίηση.",
+          "ignored_entities": "Μπαταρίες που δεν παρακολουθούνται ποτέ.",
+          "ignored_integrations": "Ενσωματώσεις των οποίων οι μπαταρίες δεν παρακολουθούνται ποτέ (από προεπιλογή τα τηλέφωνα και τα tablet της εφαρμογής για κινητά). Πληκτρολογήστε ένα domain για να προσθέσετε μια ενσωμάτωση που δεν έχει ρυθμιστεί ακόμα."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Έλεγχος για ενημερώσεις"
+      },
+      "batteries_notify_now": {
+        "name": "Ειδοποίηση τώρα"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Επόμενος έλεγχος"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Χαμηλές μπαταρίες",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Μη διαθέσιμες"
+          },
+          "due": {
+            "name": "Προς ειδοποίηση"
+          },
+          "threshold": {
+            "name": "Όριο"
+          },
+          "duration": {
+            "name": "Διάρκεια"
+          },
+          "batteries": {
+            "name": "Μπαταρίες"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Τελευταία ειδοποίηση",
+        "state_attributes": {
+          "notified": {
+            "name": "Μπαταρίες που ειδοποιήθηκαν"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Επόμενη αντικατάσταση",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Οντότητα"
+          },
+          "name": {
+            "name": "Μπαταρία"
+          },
+          "level": {
+            "name": "Στάθμη"
+          },
+          "days_left": {
+            "name": "Ημέρες που απομένουν"
+          },
+          "forecast_at": {
+            "name": "Πρόβλεψη μετρήθηκε"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Εφεδρικές μπαταρίες",
+        "state_attributes": {
+          "stock": {
+            "name": "Σε απόθεμα"
+          },
+          "needed": {
+            "name": "Απαιτούνται"
+          },
+          "short": {
+            "name": "Λείπουν"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Πρώτα αντίγραφο ασφαλείας",
           "description": "Δημιουργία του αυτόματου αντιγράφου ασφαλείας του Home Assistant πριν από την εγκατάσταση· δεν εγκαθίσταται τίποτα αν αποτύχει. Αφήστε κενό για να ισχύει η επιλογή της ενσωμάτωσης."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Ειδοποίηση για χαμηλές μπαταρίες",
+      "description": "Στέλνει την ειδοποίηση τώρα, με κάθε μπαταρία κάτω από το όριο ή μη διαθέσιμη ανεξάρτητα από τη διάρκεια, ή ένα μήνυμα ότι καμία δεν χρειάζεται προσοχή."
+    },
+    "batteries_export": {
+      "name": "Εξαγωγή μπαταριών σε CSV",
+      "description": "Γράφει κάθε παρακολουθούμενη μπαταρία (στάθμη, δωμάτιο, χαμηλή, μη διαθέσιμη, προς αντιμετώπιση, από πότε, εκφόρτιση ανά ημέρα, ημέρες που απομένουν, ημερομηνία αντικατάστασης) σε αρχείο CSV.",
+      "fields": {
+        "path": {
+          "name": "Αρχείο",
+          "description": "Διαδρομή του αρχείου CSV· system_hub_batteries.csv στον φάκελο ρυθμίσεων αν είναι κενό."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Ορισμός εφεδρικών μπαταριών",
+      "description": "Ορίζει πόσες εφεδρικές μπαταρίες ενός τύπου έχετε· κάθε αλλαγή που εντοπίζεται για τον τύπο τις αφαιρεί.",
+      "fields": {
+        "battery_type": {
+          "name": "Τύπος μπαταρίας",
+          "description": "Όπως τον ονομάζει το Battery Notes, χωρίς ποσότητα: AA, CR2032…"
+        },
+        "count": {
+          "name": "Πλήθος",
+          "description": "Εφεδρικές μπαταρίες του τύπου. Αφήστε κενό για να σταματήσει η καταμέτρηση."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Δεν ήταν δυνατή η ανάγνωση των κοντέινερ από τον Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 χαμηλή μπαταρία"
+    },
+    "batteries_title_many": {
+      "message": "{count} χαμηλές μπαταρίες"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: χαμηλή{type}"
+    },
+    "batteries_none_title": {
+      "message": "Καμία μπαταρία για έλεγχο"
+    },
+    "batteries_none": {
+      "message": "Όλες οι μπαταρίες είναι πάνω από {threshold} % και διαθέσιμες."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: μη διαθέσιμη{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 μπαταρία για έλεγχο"
+    },
+    "batteries_check_many": {
+      "message": "{count} μπαταρίες για έλεγχο"
+    },
+    "batteries_path_not_allowed": {
+      "message": "Το {path} είναι εκτός των επιτρεπόμενων φακέλων (φάκελος ρυθμίσεων ή allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "Το {path} δεν είναι αρχείο CSV (.csv): η εξαγωγή γράφει μόνο αρχεία CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "Το {path} βρίσκεται σε κρυφό φάκελο (όπως .storage): η εξαγωγή δεν γράφει εκεί."
+    },
+    "batteries_spares_short": {
+      "message": "Εφεδρικές μπαταρίες για αγορά: {spares}"
     }
   },
   "issues": {

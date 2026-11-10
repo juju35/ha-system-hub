@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
-          "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin."
+          "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
+          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
           "watchdog_remove_power_cycle": "Watchdog: Odebrat restarty přes zásuvku",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
-          "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin."
+          "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
+          "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Počet hodin mezi dvěma automatickými kontrolami. 0 vypne automatickou kontrolu: použijte tlačítko nebo akci.",
           "backup_before_install": "Před Aktualizovat vše (nebo akcí bez backup) se vytvoří automatická záloha Home Assistant s nastavením z Nastavení > Systém > Zálohy; pokud selže, nic se nenainstaluje."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Práh slabé baterie",
+          "duration": "Slabá alespoň",
+          "morning_time": "Ranní oznámení",
+          "evening_time": "Večerní oznámení",
+          "notify_services": "Akce oznámení",
+          "ignored_entities": "Ignorované baterie",
+          "ignored_integrations": "Ignorované integrace"
+        },
+        "data_description": {
+          "threshold": "Pod touto úrovní je baterie slabá.",
+          "duration": "Počet hodin, po které musí baterie zůstat pod prahem, než na ni přijde upozornění (0: při příštím oznámení).",
+          "morning_time": "První ze dvou denních oznámení.",
+          "evening_time": "Druhé ze dvou denních oznámení.",
+          "notify_services": "Odesílat oznámení pomocí těchto akcí (notify.mobile_app_…). Trvalé oznámení se vytvoří vždy.",
+          "ignored_entities": "Baterie, které se nikdy nesledují.",
+          "ignored_integrations": "Integrace, jejichž baterie se nikdy nesledují (ve výchozím nastavení telefony a tablety mobilní aplikace). Zadejte doménu pro přidání integrace, která ještě není nastavena."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Zkontrolovat aktualizace"
+      },
+      "batteries_notify_now": {
+        "name": "Upozornit nyní"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Další kontrola"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Slabé baterie",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Nedostupné"
+          },
+          "due": {
+            "name": "K oznámení"
+          },
+          "threshold": {
+            "name": "Práh"
+          },
+          "duration": {
+            "name": "Doba trvání"
+          },
+          "batteries": {
+            "name": "Baterie"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Poslední oznámení",
+        "state_attributes": {
+          "notified": {
+            "name": "Oznámené baterie"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Další výměna",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entita"
+          },
+          "name": {
+            "name": "Baterie"
+          },
+          "level": {
+            "name": "Úroveň"
+          },
+          "days_left": {
+            "name": "Zbývající dny"
+          },
+          "forecast_at": {
+            "name": "Prognóza naměřena"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Náhradní baterie",
+        "state_attributes": {
+          "stock": {
+            "name": "Na skladě"
+          },
+          "needed": {
+            "name": "Potřeba"
+          },
+          "short": {
+            "name": "Chybí"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Nejprve záloha",
           "description": "Vytvořit automatickou zálohu Home Assistant před instalací; pokud selže, nic se nenainstaluje. Ponechte prázdné, aby platila možnost integrace."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Upozornit na slabé baterie",
+      "description": "Okamžitě odešle oznámení se všemi bateriemi pod prahem nebo nedostupnými bez ohledu na dobu trvání, nebo zprávu, že žádná nevyžaduje pozornost."
+    },
+    "batteries_export": {
+      "name": "Exportovat baterie do CSV",
+      "description": "Zapíše každou sledovanou baterii (úroveň, místnost, slabá, nedostupná, k řešení, odkdy, vybíjení za den, zbývající dny, datum výměny) do souboru CSV.",
+      "fields": {
+        "path": {
+          "name": "Soubor",
+          "description": "Cesta k souboru CSV; system_hub_batteries.csv v konfigurační složce, pokud je prázdné."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Nastavit náhradní baterie",
+      "description": "Nastaví, kolik náhradních baterií daného typu máte; každá zjištěná výměna tohoto typu je odečte.",
+      "fields": {
+        "battery_type": {
+          "name": "Typ baterie",
+          "description": "Jak ho pojmenovává Battery Notes, bez počtu: AA, CR2032…"
+        },
+        "count": {
+          "name": "Počet",
+          "description": "Náhradní baterie tohoto typu. Ponechte prázdné, aby se přestal počítat."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Kontejnery se nepodařilo načíst ze Supervisoru: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 slabá baterie"
+    },
+    "batteries_title_many": {
+      "message": "Slabé baterie: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: slabá{type}"
+    },
+    "batteries_none_title": {
+      "message": "Žádná baterie ke kontrole"
+    },
+    "batteries_none": {
+      "message": "Všechny baterie jsou nad {threshold} % a dostupné."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: nedostupná{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 baterie ke kontrole"
+    },
+    "batteries_check_many": {
+      "message": "Baterie ke kontrole: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} je mimo povolené složky (konfigurační složka nebo allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} není soubor CSV (.csv): export zapisuje pouze soubory CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} je ve skryté složce (například .storage): export tam nezapisuje."
+    },
+    "batteries_spares_short": {
+      "message": "Náhradní baterie ke koupi: {spares}"
     }
   },
   "issues": {

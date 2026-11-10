@@ -63,7 +63,7 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 
 **Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Containers module needs the Supervisor (Home Assistant OS or a Supervised installation), the Marketplace module Home Assistant's Marketplace.
 
-**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**Containers**, **Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**).
+**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**Containers**, **Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**, **Batteries**).
 
 ### Modules
 
@@ -72,10 +72,11 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 | Containers | on with Home Assistant OS or Supervised | Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU, memory. Monitoring only, nothing is restarted |
 | Watchdog | on | Reloads the integrations whose entities are all unavailable, power cycles devices through their smart plug |
 | Marketplace | on when the Marketplace is loaded | Checks every repository installed from the Marketplace for updates, on the server, and installs them on demand |
+| Batteries | on | Notifies the low batteries twice a day, forecasts the replacements, counts the spare batteries |
 
-A module turned off is not set up: its checks stop, its entities and its device are removed, its actions fail with *The … module is turned off*, and the Watchdog's Repairs issues and notifications are dismissed. Its settings and saved state (the Watchdog's history and reload counts, the Marketplace's last check) are kept, so turning it back on picks up where it left off.
+A module turned off is not set up: its checks stop, its entities and its device are removed, its actions fail with *The … module is turned off*, and the Watchdog's Repairs issues and notifications are dismissed. Its settings and saved state (the Watchdog's history and reload counts, the Marketplace's last check, the Batteries' low-battery times and spare stock) are kept, so turning it back on picks up where it left off.
 
-Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**) holding its entities.
+Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**, **System Hub Batteries**) holding its entities.
 
 ### Diagnostics
 
@@ -350,9 +351,122 @@ actions:
         ({{ trigger.event.data.total }} available)
 ```
 
+## Batteries
+
+Every battery of the house: low batteries notified twice a day, replacement forecast and spare batteries to buy.
+
+| Option | Default | Description |
+|---|---|---|
+| Low battery threshold | `20` % | A battery is low below this level |
+| Low for at least | `24` h | Hours a battery must have stayed below the threshold before it is notified (`0`: at the next notification) |
+| Morning notification | `09:00` | First of the two daily notifications |
+| Evening notification | `19:00` | Second of the two daily notifications |
+| Notify actions | — | Also send the notifications with these actions (`notify.mobile_app_…`); a persistent notification is always created |
+| Ignored batteries | — | Batteries never monitored |
+| Ignored integrations | `mobile_app` | Integrations whose batteries are never monitored |
+
+#### Notifications
+
+At each notification time, the batteries that have been below the threshold for the duration are listed, the lowest first:
+
+```text
+3 low batteries
+• Front door (Entrance): 8 % · CR2032
+• Kitchen leak sensor (Kitchen): 17 % · 2× AAA
+• Smoke detector (Hallway): low
+```
+
+As soon as one of them is unavailable, the title becomes *N batteries to check* and its line says *unavailable*. The battery type ends the line when [Battery Notes](https://github.com/andrew-codechimp/HA-Battery-Notes) knows it (the `battery_type` and `battery_quantity` of the battery, or its device's *Battery type* sensor).
+
+When no battery is due, nothing is sent and the persistent notification is cleared.
+
+#### Entities
+
+| Entity | Description |
+|---|---|
+| `sensor.system_hub_battery_low_batteries` | Number of batteries below the threshold. Attributes: `unavailable` (number of unavailable batteries), `due` (number needing attention for the duration), `threshold`, `duration` (h), `batteries` (every monitored battery: `entity_id`, `device_id`, `name`, `area`, `level`, `icon`, `low`, `alert` (low or unavailable), `due`, `unavailable`, `below_since`, `drain_per_day` (% per day measured on the history, `0` when stable, `null` when unknown), `days_left` (before the threshold, `null` when stable, unknown, or already low or unavailable), `replace_by` (that date), `battery_type` (from Battery Notes, `2× AA`, `null` when unknown)) |
+| `sensor.system_hub_batteries_last_notification` | Time of the last notification; attribute `notified` (number of batteries notified) |
+| `sensor.system_hub_batteries_spare_batteries` | Number of battery types short of spares (`0`: enough). Attributes: `stock` (spares per type counted), `needed` (batteries of that type low, unavailable or forecast to reach the threshold within 30 days, with their quantity: a `2× AA` device needs 2), `short` (the types missing some, and how many). Only the types set with `system_hub.batteries_set_stock` |
+| `sensor.system_hub_batteries_next_replacement` | Date the first battery is forecast to reach the threshold; a battery already low or unavailable comes first (since when it has been). Attributes: `entity_id`, `name`, `level`, `days_left` (`0` for one already low), `forecast_at` (last measure of the drains) |
+| `button.system_hub_batteries_notify_now` | Sends every low battery right away, whatever the duration (or *No low battery*) |
+
+#### Action `system_hub.batteries_notify`
+
+Sends every battery below the threshold right away, whatever the duration, or a *No low battery* message when none is low (the scheduled notifications only list the batteries low for the duration). For example from an automation when you leave on holiday:
+
+```yaml
+action: system_hub.batteries_notify
+```
+
+#### Action `system_hub.batteries_set_stock`
+
+Sets how many spare batteries of a type you keep, by the type Battery Notes gives without the quantity (`AA`, `AAA`, `CR2032`…). Each replacement detected for a battery of that type (a rise of 15 points, the `system_hub_battery_replaced` event) then takes its quantity out of the count, never below 0. Without `count`, the type is no longer counted. When spares are missing, the notification ends with *Spare batteries to buy: 1 AA, 2 CR2032*. Open to every user, like `system_hub.batteries_notify`.
+
+```yaml
+action: system_hub.batteries_set_stock
+data:
+  battery_type: AA
+  count: 8
+```
+
+#### Action `system_hub.batteries_export`
+
+Writes every monitored battery to a CSV file (`entity_id`, `name`, `area`, `level`, `low`, `unavailable`, `due`, `below_since`, `drain_per_day`, `days_left`, `replace_by`, `battery_type` (from Battery Notes)), for a spreadsheet or a report. Administrators only. `path` is optional: `system_hub_batteries.csv` in the configuration folder by default; a relative path is inside the configuration folder, an absolute one must be in the configuration folder or in `allowlist_external_dirs`. The file name must end in `.csv`, and hidden folders such as `.storage` are refused. Returns the path and the number of batteries.
+
+```yaml
+action: system_hub.batteries_export
+data:
+  path: exports/batteries.csv
+response_variable: result  # {"path": "/config/exports/batteries.csv", "batteries": 23}
+```
+
+#### Events
+
+The module fires two events on the Home Assistant bus, on a change only (never for a battery already low at start-up, after a reload or when first found):
+
+| Event | When | Data |
+|---|---|---|
+| `system_hub_battery_low` | A battery goes below the threshold (or a low-battery binary sensor turns `on`); a battery that goes unavailable and comes back still low does not fire it again | `entry_id`, `entity_id`, `device_id`, `name`, `level` (`null` for a binary sensor), `threshold` |
+| `system_hub_battery_replaced` | A battery's level rises by 15 points or more since its last reading (the same rule that restarts the replacement forecast), even with an unavailable gap while the battery was out | `entry_id`, `entity_id`, `device_id`, `name`, `level`, `previous_level` |
+
+For example, a notification on your phone as soon as a battery goes low, and a logbook entry when one is replaced:
+
+```yaml
+automation:
+  - alias: Battery low
+    triggers:
+      - trigger: event
+        event_type: system_hub_battery_low
+    actions:
+      - action: notify.mobile_app_phone
+        data:
+          title: Low battery
+          message: "{{ trigger.event.data.name }}: {{ trigger.event.data.level }} %"
+  - alias: Battery replaced
+    triggers:
+      - trigger: event
+        event_type: system_hub_battery_replaced
+    actions:
+      - action: logbook.log
+        data:
+          name: "{{ trigger.event.data.name }}"
+          message: "battery replaced ({{ trigger.event.data.previous_level }} % → {{ trigger.event.data.level }} %)"
+          entity_id: "{{ trigger.event.data.entity_id }}"
+```
+
+#### How it works
+
+A battery is a `sensor` with the `battery` device class (its level in %) or a `binary_sensor` with the `battery` device class (`on` means low). When a device has both, its level sensor is used. Hidden entities, the ignored batteries and the batteries of the ignored integrations are left out.
+
+When a battery goes below the threshold, System Hub writes down the time. For a battery that is already low when it is first seen (right after turning the module on, say), that time is read from the history, up to 30 days back. It is kept while the battery is unavailable (a dead battery often makes its device unavailable) and across restarts, and forgotten once the battery is back above the threshold (replaced or recharged). A battery is notified once that time is older than the duration.
+
+The list is updated whenever a battery changes, and every 10 minutes.
+
+Once a day (and at start), the drain of each level battery is measured on its recorded history over the last 30 days: a least-squares slope of the level, counted from the last replacement (a rise of 15 points or more), when at least three days and three points are recorded. From that drain and the current level come the days left before the threshold and the replacement date; a stable level (less than 0.05 % a day) gives none. The days left follow the level between two measures.
+
 ## Migrating
 
-System Hub replaces Integration Watchdog and Marketplace Refresh: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in **Configure**. Rename in your automations:
+System Hub replaces Integration Watchdog, Marketplace Refresh and Battery Monitor: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in **Configure**. Rename in your automations:
 
 | Before | System Hub |
 |---|---|
@@ -362,6 +476,9 @@ System Hub replaces Integration Watchdog and Marketplace Refresh: remove them on
 | `marketplace_refresh.check_updates` / `.check_repository` / `.install_updates` | `system_hub.marketplace_check_updates` / `.marketplace_check_repository` / `.marketplace_install_updates` |
 | `marketplace_refresh_updates_found` event | `system_hub_marketplace_updates_found` |
 | `sensor.marketplace_refresh_*`, `button.marketplace_refresh_check_for_updates` | `sensor.system_hub_marketplace_*`, `button.system_hub_marketplace_check_for_updates` |
+| `battery_monitor.notify` / `.set_stock` / `.export` | `system_hub.batteries_notify` / `.batteries_set_stock` / `.batteries_export` |
+| `battery_monitor_low` / `_replaced` events | `system_hub_battery_low` / `system_hub_battery_replaced` |
+| `sensor.battery_monitor_*`, `button.battery_monitor_notify_now` | `sensor.system_hub_batteries_*`, `button.system_hub_batteries_notify_now` |
 
 ## Translations
 

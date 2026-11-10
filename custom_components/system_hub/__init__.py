@@ -13,15 +13,27 @@ from typing import Any
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import ATTR_ENTITY_ID, Platform
-from homeassistant.core import HomeAssistant, ServiceCall
-from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
+from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
+from homeassistant.exceptions import HomeAssistantError, ServiceValidationError, Unauthorized, UnknownUser
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.typing import ConfigType
 
-from .const import CONF_MODULES, DOMAIN, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG, MODULES
+from .batteries import async_disable_batteries, async_remove_batteries, async_setup_batteries
+from .batteries.const import ATTR_BATTERY_TYPE, ATTR_COUNT, ATTR_PATH, SERVICE_EXPORT, SERVICE_NOTIFY, SERVICE_SET_STOCK
+from .batteries.export import async_export
+from .batteries.monitor import BatteryMonitor
+from .const import (
+    CONF_MODULES,
+    DOMAIN,
+    MODULE_BATTERIES,
+    MODULE_CONTAINERS,
+    MODULE_MARKETPLACE,
+    MODULE_WATCHDOG,
+    MODULES,
+)
 from .containers import async_setup_containers
 from .containers.const import SERVICE_REFRESH
 from .containers.monitor import ContainerMonitor
@@ -57,6 +69,7 @@ class SystemHubData:
     containers: ContainerMonitor | None = None
     watchdog: IntegrationWatchdog | None = None
     marketplace: MarketplaceRefresher | None = None
+    batteries: BatteryMonitor | None = None
 
 
 type SystemHubConfigEntry = ConfigEntry[SystemHubData]
@@ -86,6 +99,16 @@ def loaded_monitor(hass: HomeAssistant) -> ContainerMonitor:
             translation_domain=DOMAIN,
             translation_key="module_disabled",
             translation_placeholders={"module": "Containers"},
+        )
+    return monitor
+
+
+def loaded_batteries(hass: HomeAssistant) -> BatteryMonitor:
+    if (monitor := _loaded_data(hass).batteries) is None:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="module_disabled",
+            translation_placeholders={"module": "Batteries"},
         )
     return monitor
 
@@ -197,6 +220,47 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
 
     # Installing code on the server: administrators only, like the Marketplace itself.
     async_register_admin_service(hass, DOMAIN, SERVICE_INSTALL_UPDATES, install_updates, INSTALL_UPDATES_SCHEMA)
+
+    async def batteries_notify(_call: ServiceCall) -> None:
+        await loaded_batteries(hass).async_notify(manual=True)
+
+    # Like the button: any user may ask for the low-battery notification now.
+    hass.services.async_register(DOMAIN, SERVICE_NOTIFY, batteries_notify)
+
+    async def batteries_set_stock(call: ServiceCall) -> None:
+        loaded_batteries(hass).async_set_stock(call.data[ATTR_BATTERY_TYPE], call.data.get(ATTR_COUNT))
+
+    # Counting the spare batteries is household bookkeeping, not configuration: open to every user.
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_SET_STOCK,
+        batteries_set_stock,
+        schema=vol.Schema(
+            {
+                vol.Required(ATTR_BATTERY_TYPE): vol.All(cv.string, vol.Length(min=1, max=40)),
+                vol.Optional(ATTR_COUNT): vol.Any(None, vol.All(vol.Coerce(int), vol.Range(min=0, max=999))),
+            }
+        ),
+    )
+
+    async def batteries_export(call: ServiceCall) -> ServiceResponse:
+        # Writes a file on the server: administrators only (async_register_admin_service takes no
+        # supports_response on the oldest versions supported).
+        if call.context.user_id:
+            user = await hass.auth.async_get_user(call.context.user_id)
+            if user is None:
+                raise UnknownUser(context=call.context)
+            if not user.is_admin:
+                raise Unauthorized(context=call.context)
+        return await async_export(hass, loaded_batteries(hass), call.data.get(ATTR_PATH))
+
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_EXPORT,
+        batteries_export,
+        schema=vol.Schema({vol.Optional(ATTR_PATH): cv.string}),
+        supports_response=SupportsResponse.OPTIONAL,
+    )
     return True
 
 
@@ -213,6 +277,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
         await async_disable_watchdog(hass)
     if MODULE_MARKETPLACE in modules:
         data.marketplace = await async_setup_marketplace(hass, entry, module_options(entry, MODULE_MARKETPLACE))
+    if MODULE_BATTERIES in modules:
+        data.batteries = await async_setup_batteries(hass, entry, module_options(entry, MODULE_BATTERIES))
+    else:
+        async_disable_batteries(hass)
     entry.runtime_data = data
     _async_remove_disabled(hass, entry, modules)
 
@@ -239,6 +307,8 @@ def _async_remove_disabled(hass: HomeAssistant, entry: ConfigEntry, modules: lis
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -> bool:
+    if (batteries := entry.runtime_data.batteries) is not None:
+        await batteries.async_save()
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
@@ -254,6 +324,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
         return
     await async_remove_watchdog(hass)
     await async_remove_marketplace(hass)
+    await async_remove_batteries(hass)
 
 
 async def _async_reload(hass: HomeAssistant, entry: SystemHubConfigEntry) -> None:

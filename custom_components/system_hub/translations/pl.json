@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
-          "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin."
+          "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
+          "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Dodaj restart przez gniazdko",
           "watchdog_remove_power_cycle": "Watchdog: Usuń restarty przez gniazdko",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
-          "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin."
+          "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
+          "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Liczba godzin między dwoma automatycznymi sprawdzeniami. 0 wyłącza automatyczne sprawdzanie: użyj przycisku lub akcji.",
           "backup_before_install": "Przed Aktualizuj wszystko (lub akcją bez backup) utwórz automatyczną kopię zapasową Home Assistant, z jej ustawieniami w Ustawienia > System > Kopie zapasowe; jeśli się nie powiedzie, nic nie zostanie zainstalowane."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Próg słabej baterii",
+          "duration": "Słaba co najmniej przez",
+          "morning_time": "Powiadomienie poranne",
+          "evening_time": "Powiadomienie wieczorne",
+          "notify_services": "Akcje powiadomień",
+          "ignored_entities": "Ignorowane baterie",
+          "ignored_integrations": "Ignorowane integracje"
+        },
+        "data_description": {
+          "threshold": "Poniżej tego poziomu bateria jest słaba.",
+          "duration": "Liczba godzin, przez które bateria musi pozostawać poniżej progu, zanim zostanie zgłoszona (0: przy następnym powiadomieniu).",
+          "morning_time": "Pierwsze z dwóch codziennych powiadomień.",
+          "evening_time": "Drugie z dwóch codziennych powiadomień.",
+          "notify_services": "Wysyłaj powiadomienia za pomocą tych akcji (notify.mobile_app_…). Powiadomienie trwałe jest zawsze tworzone.",
+          "ignored_entities": "Baterie, które nigdy nie są monitorowane.",
+          "ignored_integrations": "Integracje, których baterie nigdy nie są monitorowane (domyślnie telefony i tablety aplikacji mobilnej). Wpisz domenę, aby dodać integrację, która nie jest jeszcze skonfigurowana."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Sprawdź aktualizacje"
+      },
+      "batteries_notify_now": {
+        "name": "Powiadom teraz"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Następne sprawdzenie"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Słabe baterie",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Niedostępne"
+          },
+          "due": {
+            "name": "Do zgłoszenia"
+          },
+          "threshold": {
+            "name": "Próg"
+          },
+          "duration": {
+            "name": "Czas trwania"
+          },
+          "batteries": {
+            "name": "Baterie"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Ostatnie powiadomienie",
+        "state_attributes": {
+          "notified": {
+            "name": "Zgłoszone baterie"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Następna wymiana",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Encja"
+          },
+          "name": {
+            "name": "Bateria"
+          },
+          "level": {
+            "name": "Poziom"
+          },
+          "days_left": {
+            "name": "Pozostałe dni"
+          },
+          "forecast_at": {
+            "name": "Prognoza zmierzona"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Zapasowe baterie",
+        "state_attributes": {
+          "stock": {
+            "name": "Na stanie"
+          },
+          "needed": {
+            "name": "Potrzebne"
+          },
+          "short": {
+            "name": "Brakuje"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Najpierw kopia zapasowa",
           "description": "Utwórz automatyczną kopię zapasową Home Assistant przed instalacją; nic nie zostanie zainstalowane, jeśli się nie powiedzie. Zostaw puste, aby użyć opcji integracji."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Powiadom o słabych bateriach",
+      "description": "Wysyła powiadomienie od razu, ze wszystkimi bateriami poniżej progu lub niedostępnymi niezależnie od czasu trwania, albo wiadomość, że żadna nie wymaga uwagi."
+    },
+    "batteries_export": {
+      "name": "Eksportuj baterie do CSV",
+      "description": "Zapisuje każdą monitorowaną baterię (poziom, pomieszczenie, niski, niedostępna, do obsłużenia, od kiedy, rozładowanie na dzień, pozostałe dni, data wymiany) do pliku CSV.",
+      "fields": {
+        "path": {
+          "name": "Plik",
+          "description": "Ścieżka pliku CSV; system_hub_batteries.csv w folderze konfiguracji, gdy puste."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Ustaw zapasowe baterie",
+      "description": "Określa, ile zapasowych baterii danego typu masz; każda wykryta wymiana tego typu je odejmuje.",
+      "fields": {
+        "battery_type": {
+          "name": "Typ baterii",
+          "description": "Tak jak nazywa go Battery Notes, bez liczby: AA, CR2032…"
+        },
+        "count": {
+          "name": "Liczba",
+          "description": "Zapasowe baterie tego typu. Zostaw puste, aby przestać go liczyć."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Nie udało się odczytać kontenerów z Supervisora: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 słaba bateria"
+    },
+    "batteries_title_many": {
+      "message": "Słabe baterie: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: słaba{type}"
+    },
+    "batteries_none_title": {
+      "message": "Brak baterii do sprawdzenia"
+    },
+    "batteries_none": {
+      "message": "Wszystkie baterie są powyżej {threshold} % i są dostępne."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: niedostępna{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 bateria do sprawdzenia"
+    },
+    "batteries_check_many": {
+      "message": "Baterie do sprawdzenia: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} jest poza dozwolonymi folderami (folder konfiguracji lub allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} nie jest plikiem CSV (.csv): eksport zapisuje tylko pliki CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} znajduje się w ukrytym folderze (np. .storage): eksport tam nie zapisuje."
+    },
+    "batteries_spares_short": {
+      "message": "Zapasowe baterie do kupienia: {spares}"
     }
   },
   "issues": {

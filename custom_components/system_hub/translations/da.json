@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
-          "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time."
+          "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
+          "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Tilføj genstart via stik",
           "watchdog_remove_power_cycle": "Watchdog: Fjern genstarter via stik",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
-          "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time."
+          "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
+          "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Timer mellem to automatiske kontroller. 0 slår den automatiske kontrol fra: brug knappen eller handlingen.",
           "backup_before_install": "Før Opdater alle (eller handlingen uden backup) oprettes Home Assistants automatiske backup med indstillingerne i Indstillinger > System > Backups; mislykkes den, installeres intet."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Tærskel for lavt batteri",
+          "duration": "Lavt i mindst",
+          "morning_time": "Morgennotifikation",
+          "evening_time": "Aftennotifikation",
+          "notify_services": "Notifikationshandlinger",
+          "ignored_entities": "Ignorerede batterier",
+          "ignored_integrations": "Ignorerede integrationer"
+        },
+        "data_description": {
+          "threshold": "Et batteri er lavt under dette niveau.",
+          "duration": "Antal timer et batteri skal have været under tærsklen, før der gives besked om det (0: ved næste notifikation).",
+          "morning_time": "Den første af de to daglige notifikationer.",
+          "evening_time": "Den anden af de to daglige notifikationer.",
+          "notify_services": "Send notifikationerne med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation.",
+          "ignored_entities": "Batterier, der aldrig overvåges.",
+          "ignored_integrations": "Integrationer, hvis batterier aldrig overvåges (som standard telefoner og tablets fra mobilappen). Skriv et domæne for at tilføje en, der endnu ikke er sat op."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Søg efter opdateringer"
+      },
+      "batteries_notify_now": {
+        "name": "Underret nu"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Næste kontrol"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Lave batterier",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Utilgængelige"
+          },
+          "due": {
+            "name": "Skal meldes"
+          },
+          "threshold": {
+            "name": "Tærskel"
+          },
+          "duration": {
+            "name": "Varighed"
+          },
+          "batteries": {
+            "name": "Batterier"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Seneste notifikation",
+        "state_attributes": {
+          "notified": {
+            "name": "Meldte batterier"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Næste udskiftning",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Enhed"
+          },
+          "name": {
+            "name": "Batteri"
+          },
+          "level": {
+            "name": "Niveau"
+          },
+          "days_left": {
+            "name": "Dage tilbage"
+          },
+          "forecast_at": {
+            "name": "Prognose målt"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Reservebatterier",
+        "state_attributes": {
+          "stock": {
+            "name": "På lager"
+          },
+          "needed": {
+            "name": "Nødvendige"
+          },
+          "short": {
+            "name": "Mangler"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Backup først",
           "description": "Opret Home Assistants automatiske backup før installation; intet installeres, hvis den mislykkes. Lad stå tomt for at følge integrationens indstilling."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Giv besked om lave batterier",
+      "description": "Sender notifikationen nu med alle batterier under tærsklen eller utilgængelige uanset varighed, eller en besked om, at intet kræver opmærksomhed."
+    },
+    "batteries_export": {
+      "name": "Eksportér batterier til CSV",
+      "description": "Skriver hvert overvåget batteri (niveau, rum, lavt, utilgængeligt, forfaldent, siden hvornår, afladning pr. dag, dage tilbage, udskiftningsdato) til en CSV-fil.",
+      "fields": {
+        "path": {
+          "name": "Fil",
+          "description": "Sti til CSV-filen; system_hub_batteries.csv i konfigurationsmappen, hvis tom."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Angiv reservebatterier",
+      "description": "Angiver hvor mange reservebatterier af en type du har; hver registreret udskiftning af typen trækkes fra.",
+      "fields": {
+        "battery_type": {
+          "name": "Batteritype",
+          "description": "Som Battery Notes kalder den, uden antal: AA, CR2032…"
+        },
+        "count": {
+          "name": "Antal",
+          "description": "Reservebatterier af typen. Lad stå tomt for at stoppe optællingen."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Kunne ikke aflæse containerne fra Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 lavt batteri"
+    },
+    "batteries_title_many": {
+      "message": "{count} lave batterier"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: lavt{type}"
+    },
+    "batteries_none_title": {
+      "message": "Ingen batterier at tjekke"
+    },
+    "batteries_none": {
+      "message": "Alle batterier er over {threshold} % og tilgængelige."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: utilgængeligt{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 batteri skal tjekkes"
+    },
+    "batteries_check_many": {
+      "message": "{count} batterier skal tjekkes"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} er uden for de tilladte mapper (konfigurationsmappen eller allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} er ikke en CSV-fil (.csv): eksporten skriver kun CSV-filer."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} ligger i en skjult mappe (som .storage): eksporten skriver ikke der."
+    },
+    "batteries_spares_short": {
+      "message": "Reservebatterier at købe: {spares}"
     }
   },
   "issues": {

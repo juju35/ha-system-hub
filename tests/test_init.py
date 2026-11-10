@@ -33,7 +33,7 @@ async def test_flow_with_marketplace(hass: HomeAssistant, fake_marketplace) -> N
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": True})
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == "System Hub"
-    assert result["options"] == {CONF_MODULES: ["watchdog", "marketplace"]}
+    assert result["options"] == {CONF_MODULES: ["watchdog", "marketplace", "batteries"]}
 
     again = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert again["type"] is FlowResultType.ABORT
@@ -44,14 +44,14 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
     """The Marketplace module is off by default without the Marketplace, and can't be turned on."""
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     defaults = {str(key): key.default() for key in result["data_schema"].schema}
-    assert defaults == {"containers": False, "watchdog": True, "marketplace": False}
+    assert defaults == {"containers": False, "watchdog": True, "marketplace": False, "batteries": True}
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {"containers": False, "watchdog": True, "marketplace": True}
     )
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"marketplace": "marketplace_not_loaded"}
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": False})
-    assert result["options"] == {CONF_MODULES: ["watchdog"]}
+    assert result["options"] == {CONF_MODULES: ["watchdog", "batteries"]}
 
 
 async def test_no_module(hass: HomeAssistant) -> None:
@@ -83,6 +83,10 @@ async def test_only_watchdog(hass: HomeAssistant, fake_marketplace) -> None:
         await hass.services.async_call(DOMAIN, "marketplace_check_updates", {}, blocking=True)
     assert err.value.translation_key == "module_disabled"
     assert err.value.translation_placeholders == {"module": "Marketplace"}
+    with pytest.raises(ServiceValidationError) as err:
+        await hass.services.async_call(DOMAIN, "batteries_notify", {}, blocking=True)
+    assert err.value.translation_placeholders == {"module": "Batteries"}
+    assert hass.states.get("sensor.system_hub_batteries_low_batteries") is None
 
 
 async def test_only_marketplace(hass: HomeAssistant, fake_marketplace) -> None:

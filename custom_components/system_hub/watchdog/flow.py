@@ -26,6 +26,7 @@ from homeassistant.helpers.selector import (
 from homeassistant.loader import async_get_integrations
 
 from ..const import DOMAIN
+from ..notify import notify_choices
 from .const import (
     CONF_DELAY,
     CONF_DEVICE,
@@ -105,11 +106,7 @@ async def settings_schema(hass: HomeAssistant, current: dict[str, Any]) -> vol.S
         key=lambda o: o["label"].casefold(),
     )
     notify: list[str] = list(current.get(CONF_NOTIFY, []))
-    notify_options = sorted(
-        {f"notify.{name}" for name in hass.services.async_services_for_domain("notify")}
-        - {"notify.send_message", "notify.persistent_notification"}
-        | set(notify)
-    )
+    notify_options = notify_choices(hass, notify)
     return vol.Schema(
         {
             vol.Required(
