@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 - Unreleased
+## 0.1.0 - 2026-11-11
 
 ### New
 - Repository set up: the System Hub integration (single entry), its CI and its icon.
