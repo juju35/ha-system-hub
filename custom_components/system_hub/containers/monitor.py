@@ -23,6 +23,7 @@ from homeassistant.helpers.translation import async_get_translations
 from homeassistant.util import dt as dt_util
 
 from ..const import DOMAIN
+from ..notify import async_send_notify
 from .const import (
     HISTORY_SPAN,
     HISTORY_STEP,
@@ -234,15 +235,7 @@ class ContainerMonitor:
             persistent_notification.async_create(self.hass, message, title=title, notification_id=notification)
         else:
             persistent_notification.async_dismiss(self.hass, notification)
-        for service in self.notify_services:
-            name = service.removeprefix("notify.")
-            if not self.hass.services.has_service("notify", name):
-                _LOGGER.warning("Notify action notify.%s not found", name)
-                continue
-            try:
-                await self.hass.services.async_call("notify", name, {"title": title, "message": message}, blocking=True)
-            except Exception:  # noqa: BLE001 - a broken notifier must not stop the monitoring
-                _LOGGER.exception("Sending the notification with notify.%s failed", name)
+        await async_send_notify(self.hass, self.notify_services, title, message)
 
     @callback
     def async_dismiss_all(self) -> None:

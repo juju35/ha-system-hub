@@ -43,6 +43,18 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: SystemH
             "error": monitor.error,
             "containers": [c.as_dict() for c in monitor.containers.values()],
         }
+    if (batteries := entry.runtime_data.batteries) is not None:
+        data["batteries"] = {
+            "threshold": batteries.threshold,
+            "duration_hours": batteries.duration.total_seconds() / 3600,
+            "ignored_entities": sorted(batteries.ignored_entities),
+            "ignored_integrations": sorted(batteries.ignored_integrations),
+            "notify_services_count": len(batteries.notify_services),
+            "last_notification": batteries.last_notification.isoformat() if batteries.last_notification else None,
+            "last_notified": batteries.last_notified,
+            "forecast_at": batteries.forecast_at.isoformat() if batteries.forecast_at else None,
+            "batteries": [b.as_dict() for b in batteries.batteries],
+        }
     if (watchdog := entry.runtime_data.watchdog) is not None:
         data |= _watchdog(watchdog)
     if (refresher := entry.runtime_data.marketplace) is not None:

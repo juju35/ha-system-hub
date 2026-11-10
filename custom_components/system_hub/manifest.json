@@ -1,7 +1,7 @@
 {
   "domain": "system_hub",
   "name": "System Hub",
-  "after_dependencies": ["hassio", "systemmonitor"],
+  "after_dependencies": ["hassio", "recorder", "systemmonitor"],
   "codeowners": ["@juju35"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "panel_custom", "persistent_notification"],

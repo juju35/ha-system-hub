@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
           "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
-          "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин."
+          "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
+          "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Додати перезапуск через розетку",
           "watchdog_remove_power_cycle": "Watchdog: Видалити перезапуски через розетку",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
           "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
-          "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин."
+          "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
+          "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Години між двома автоматичними перевірками. 0 вимикає автоматичну перевірку: скористайтеся кнопкою або дією.",
           "backup_before_install": "Перед «Оновити все» (або дією без backup) створюється автоматична резервна копія Home Assistant з налаштуваннями з Налаштування > Система > Резервні копії; якщо не вдалося, нічого не встановлюється."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Поріг розрядженої батареї",
+          "duration": "Розряджена щонайменше",
+          "morning_time": "Ранкове сповіщення",
+          "evening_time": "Вечірнє сповіщення",
+          "notify_services": "Дії сповіщення",
+          "ignored_entities": "Ігноровані батареї",
+          "ignored_integrations": "Ігноровані інтеграції"
+        },
+        "data_description": {
+          "threshold": "Нижче цього рівня батарея вважається розрядженою.",
+          "duration": "Скільки годин батарея має залишатися нижче порогу, перш ніж про неї буде надіслано сповіщення (0: під час наступного сповіщення).",
+          "morning_time": "Перше з двох щоденних сповіщень.",
+          "evening_time": "Друге з двох щоденних сповіщень.",
+          "notify_services": "Надсилати сповіщення за допомогою цих дій (notify.mobile_app_…). Постійне сповіщення створюється завжди.",
+          "ignored_entities": "Батареї, які ніколи не відстежуються.",
+          "ignored_integrations": "Інтеграції, батареї яких ніколи не відстежуються (за замовчуванням телефони й планшети мобільного застосунку). Введіть домен, щоб додати ще не налаштовану інтеграцію."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Перевірити оновлення"
+      },
+      "batteries_notify_now": {
+        "name": "Сповістити зараз"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Наступна перевірка"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Розряджені батареї",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Недоступні"
+          },
+          "due": {
+            "name": "До сповіщення"
+          },
+          "threshold": {
+            "name": "Поріг"
+          },
+          "duration": {
+            "name": "Тривалість"
+          },
+          "batteries": {
+            "name": "Батареї"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Останнє сповіщення",
+        "state_attributes": {
+          "notified": {
+            "name": "Батареї у сповіщенні"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Наступна заміна",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Сутність"
+          },
+          "name": {
+            "name": "Батарея"
+          },
+          "level": {
+            "name": "Рівень"
+          },
+          "days_left": {
+            "name": "Залишилось днів"
+          },
+          "forecast_at": {
+            "name": "Прогноз виміряно"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Запасні батарейки",
+        "state_attributes": {
+          "stock": {
+            "name": "У наявності"
+          },
+          "needed": {
+            "name": "Потрібно"
+          },
+          "short": {
+            "name": "Бракує"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Спершу резервна копія",
           "description": "Створити автоматичну резервну копію Home Assistant перед встановленням; нічого не встановлюється, якщо не вдалося. Залиште порожнім, щоб діяв параметр інтеграції."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Сповістити про розряджені батареї",
+      "description": "Надсилає сповіщення одразу з усіма батареями нижче порогу або недоступними, незалежно від тривалості, або повідомлення, що жодна не потребує уваги."
+    },
+    "batteries_export": {
+      "name": "Експорт батарей у CSV",
+      "description": "Записує кожну відстежувану батарею (рівень, кімната, низький заряд, недоступна, потребує уваги, відколи, розряд за день, залишилось днів, дата заміни) у CSV-файл.",
+      "fields": {
+        "path": {
+          "name": "Файл",
+          "description": "Шлях до CSV-файлу; system_hub_batteries.csv у теці конфігурації, якщо порожньо."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Задати запасні батарейки",
+      "description": "Задає, скільки запасних батарейок певного типу у вас є; кожна виявлена заміна цього типу віднімається.",
+      "fields": {
+        "battery_type": {
+          "name": "Тип батарейки",
+          "description": "Як його називає Battery Notes, без кількості: AA, CR2032…"
+        },
+        "count": {
+          "name": "Кількість",
+          "description": "Запасні батарейки цього типу. Залиште порожнім, щоб припинити облік."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Не вдалося отримати контейнери від Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 розряджена батарея"
+    },
+    "batteries_title_many": {
+      "message": "Розряджені батареї: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: розряджена{type}"
+    },
+    "batteries_none_title": {
+      "message": "Немає батарей для перевірки"
+    },
+    "batteries_none": {
+      "message": "Усі батареї вище {threshold} % і доступні."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: недоступна{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 батарея для перевірки"
+    },
+    "batteries_check_many": {
+      "message": "Батареї для перевірки: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} поза дозволеними теками (тека конфігурації або allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} не є файлом CSV (.csv): експорт записує лише файли CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} знаходиться в прихованій теці (наприклад, .storage): експорт туди не записує."
+    },
+    "batteries_spares_short": {
+      "message": "Купити запасні батарейки: {spares}"
     }
   },
   "issues": {

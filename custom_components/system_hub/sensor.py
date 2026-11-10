@@ -1,4 +1,4 @@
-"""Sensors of the modules: Containers (running, down), Watchdog (unavailable integrations, reloads), Marketplace."""
+"""Sensors of the modules: Containers, Watchdog, Marketplace and Batteries."""
 
 from __future__ import annotations
 
@@ -12,7 +12,8 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from . import SystemHubConfigEntry
-from .const import DOMAIN, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG
+from .batteries.monitor import BatteryMonitor
+from .const import DOMAIN, MODULE_BATTERIES, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG
 from .containers.monitor import ContainerMonitor
 from .entity import SystemHubEntity
 from .marketplace.const import STATE_ERROR, STATE_IDLE, STATE_RUNNING
@@ -45,7 +46,22 @@ async def async_setup_entry(
             MarketplaceStatusSensor(r, entry.entry_id, "status"),
             MarketplaceLastCheckSensor(r, entry.entry_id, "last_check"),
         ]
+    if (b := data.batteries) is not None:
+        entities += [
+            LowBatteriesSensor(b, entry.entry_id, "low_batteries"),
+            LastNotificationSensor(b, entry.entry_id, "last_notification"),
+            NextReplacementSensor(b, entry.entry_id, "next_replacement"),
+            SparesSensor(b, entry.entry_id, "spare_batteries"),
+        ]
     async_add_entities(entities)
+
+
+class BatteriesEntity(SystemHubEntity):
+    """An entity of the Batteries module."""
+
+    def __init__(self, monitor: BatteryMonitor, entry_id: str, key: str) -> None:
+        super().__init__(monitor, entry_id, MODULE_BATTERIES, key)
+        self.monitor = monitor
 
 
 class ContainersEntity(SystemHubEntity):
@@ -269,3 +285,85 @@ class ContainersLastUpdateSensor(ContainersEntity, SensorEntity):
     @property
     def native_value(self) -> datetime | None:
         return self.monitor.last_update
+
+
+class LowBatteriesSensor(BatteriesEntity, SensorEntity):
+    """Number of batteries below the threshold; every monitored battery in the attributes."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    # The list holds every battery and changes with any of them: keep it out of the recorder.
+    _unrecorded_attributes = frozenset({"batteries"})
+
+    @property
+    def native_value(self) -> int:
+        return len(self.monitor.low)
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "unavailable": len(self.monitor.unavailable),
+            "due": len(self.monitor.due),
+            "threshold": self.monitor.threshold,
+            "duration": self.monitor.duration.total_seconds() / 3600,
+            "batteries": [b.as_dict() for b in self.monitor.batteries],
+        }
+
+
+class LastNotificationSensor(BatteriesEntity, SensorEntity):
+    """Time of the last scheduled or requested notification, with the number of batteries notified."""
+
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    @property
+    def native_value(self) -> datetime | None:
+        return self.monitor.last_notification
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {"notified": self.monitor.last_notified}
+
+
+class NextReplacementSensor(BatteriesEntity, SensorEntity):
+    """Date the first battery is forecast to reach the threshold (since when, for one already low or unavailable)."""
+
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+
+    @property
+    def native_value(self) -> datetime | None:
+        battery = self.monitor.next_replacement
+        if battery is None:
+            return None
+        return battery.replace_by or battery.below_since
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        battery = self.monitor.next_replacement
+        return {
+            "entity_id": battery.entity_id if battery else None,
+            "name": battery.name if battery else None,
+            "level": battery.level if battery else None,
+            "days_left": (0 if battery.alert else battery.days_left) if battery else None,
+            "forecast_at": self.monitor.forecast_at.isoformat() if self.monitor.forecast_at else None,
+        }
+
+
+class SparesSensor(BatteriesEntity, SensorEntity):
+    """Number of battery types short of spares; the stock, the batteries needed and those missing per type.
+
+    Needed: the batteries of that type already low or unavailable, or forecast to reach the threshold within
+    STOCK_HORIZON_DAYS. Only the types counted with system_hub.batteries_set_stock.
+    """
+
+    @property
+    def native_value(self) -> int:
+        return sum(1 for v in self.monitor.spares().values() if v["short"])
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        spares = self.monitor.spares()
+        return {
+            "stock": {kind: v["stock"] for kind, v in spares.items()},
+            "needed": {kind: v["needed"] for kind, v in spares.items()},
+            "short": {kind: v["short"] for kind, v in spares.items() if v["short"]},
+        }

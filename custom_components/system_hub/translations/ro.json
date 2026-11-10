@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
-          "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore."
+          "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
+          "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Adaugă o repornire prin priză",
           "watchdog_remove_power_cycle": "Watchdog: Elimină reporniri prin priză",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
-          "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore."
+          "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
+          "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Ore între două verificări automate. 0 dezactivează verificarea automată: folosiți butonul sau acțiunea.",
           "backup_before_install": "Înainte de Actualizează tot (sau de acțiunea fără backup), creează copia de rezervă automată a Home Assistant, cu setările din Setări > Sistem > Copii de rezervă; dacă eșuează, nu se instalează nimic."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Prag de baterie scăzută",
+          "duration": "Descărcată de cel puțin",
+          "morning_time": "Notificarea de dimineață",
+          "evening_time": "Notificarea de seară",
+          "notify_services": "Acțiuni de notificare",
+          "ignored_entities": "Baterii ignorate",
+          "ignored_integrations": "Integrări ignorate"
+        },
+        "data_description": {
+          "threshold": "Sub acest nivel, bateria este considerată scăzută.",
+          "duration": "Numărul de ore în care o baterie trebuie să fi rămas sub prag înainte de a fi notificată (0: la următoarea notificare).",
+          "morning_time": "Prima dintre cele două notificări zilnice.",
+          "evening_time": "A doua dintre cele două notificări zilnice.",
+          "notify_services": "Trimite notificările cu aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna.",
+          "ignored_entities": "Baterii care nu sunt monitorizate niciodată.",
+          "ignored_integrations": "Integrări ale căror baterii nu sunt monitorizate niciodată (implicit telefoanele și tabletele aplicației mobile). Introduceți un domeniu pentru a adăuga unul care nu este încă configurat."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Caută actualizări"
+      },
+      "batteries_notify_now": {
+        "name": "Notifică acum"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Următoarea verificare"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Baterii scăzute",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Indisponibile"
+          },
+          "due": {
+            "name": "De notificat"
+          },
+          "threshold": {
+            "name": "Prag"
+          },
+          "duration": {
+            "name": "Durată"
+          },
+          "batteries": {
+            "name": "Baterii"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Ultima notificare",
+        "state_attributes": {
+          "notified": {
+            "name": "Baterii notificate"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Următoarea înlocuire",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entitate"
+          },
+          "name": {
+            "name": "Baterie"
+          },
+          "level": {
+            "name": "Nivel"
+          },
+          "days_left": {
+            "name": "Zile rămase"
+          },
+          "forecast_at": {
+            "name": "Prognoză măsurată"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Baterii de rezervă",
+        "state_attributes": {
+          "stock": {
+            "name": "În stoc"
+          },
+          "needed": {
+            "name": "Necesare"
+          },
+          "short": {
+            "name": "Lipsă"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Mai întâi copia de rezervă",
           "description": "Creează copia de rezervă automată a Home Assistant înainte de instalare; nu se instalează nimic dacă eșuează. Lasă gol pentru a urma opțiunea integrării."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Notifică bateriile scăzute",
+      "description": "Trimite notificarea acum, cu fiecare baterie sub prag sau indisponibilă indiferent de durată, sau un mesaj că niciuna nu necesită atenție."
+    },
+    "batteries_export": {
+      "name": "Exportă bateriile în CSV",
+      "description": "Scrie fiecare baterie monitorizată (nivel, cameră, scăzută, indisponibilă, de tratat, de când, descărcare pe zi, zile rămase, data înlocuirii) într-un fișier CSV.",
+      "fields": {
+        "path": {
+          "name": "Fișier",
+          "description": "Calea fișierului CSV; system_hub_batteries.csv în dosarul de configurare dacă este gol."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Setează bateriile de rezervă",
+      "description": "Indică câte baterii de rezervă de un tip ai; fiecare înlocuire detectată pentru acel tip le scade.",
+      "fields": {
+        "battery_type": {
+          "name": "Tip de baterie",
+          "description": "Cum îl numește Battery Notes, fără cantitate: AA, CR2032…"
+        },
+        "count": {
+          "name": "Număr",
+          "description": "Baterii de rezervă de acel tip. Lasă gol pentru a nu-l mai număra."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Containerele nu au putut fi citite din Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 baterie scăzută"
+    },
+    "batteries_title_many": {
+      "message": "Baterii scăzute: {count}"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: scăzută{type}"
+    },
+    "batteries_none_title": {
+      "message": "Nicio baterie de verificat"
+    },
+    "batteries_none": {
+      "message": "Toate bateriile sunt peste {threshold} % și disponibile."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: indisponibilă{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 baterie de verificat"
+    },
+    "batteries_check_many": {
+      "message": "Baterii de verificat: {count}"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} este în afara dosarelor permise (dosarul de configurare sau allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} nu este un fișier CSV (.csv): exportul scrie doar fișiere CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} se află într-un dosar ascuns (precum .storage): exportul nu scrie acolo."
+    },
+    "batteries_spares_short": {
+      "message": "Baterii de rezervă de cumpărat: {spares}"
     }
   },
   "issues": {

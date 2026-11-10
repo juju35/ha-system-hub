@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
-          "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours."
+          "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
+          "batteries": "Notifies twice a day the devices whose battery has stayed low."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Add a power cycle",
           "watchdog_remove_power_cycle": "Watchdog: Remove power cycles",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
-          "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours."
+          "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
+          "batteries": "Notifies twice a day the devices whose battery has stayed low."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Hours between two automatic checks. 0 turns the automatic check off: use the button or the action.",
           "backup_before_install": "Before Update all (or the action without backup), create Home Assistant's automatic backup, with its settings in Settings > System > Backups; if it fails, nothing is installed."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Low battery threshold",
+          "duration": "Low for at least",
+          "morning_time": "Morning notification",
+          "evening_time": "Evening notification",
+          "notify_services": "Notify actions",
+          "ignored_entities": "Ignored batteries",
+          "ignored_integrations": "Ignored integrations"
+        },
+        "data_description": {
+          "threshold": "A battery is low below this level.",
+          "duration": "Hours a battery must have stayed below the threshold before it is notified (0: at the next notification).",
+          "morning_time": "First of the two daily notifications.",
+          "evening_time": "Second of the two daily notifications.",
+          "notify_services": "Send the notifications with these actions (notify.mobile_app_…). A persistent notification is always created.",
+          "ignored_entities": "Batteries never monitored.",
+          "ignored_integrations": "Integrations whose batteries are never monitored (phones and tablets of the mobile app by default). Type a domain to add one that isn't set up yet."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Check for updates"
+      },
+      "batteries_notify_now": {
+        "name": "Notify now"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Next check"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Low batteries",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Unavailable"
+          },
+          "due": {
+            "name": "Due"
+          },
+          "threshold": {
+            "name": "Threshold"
+          },
+          "duration": {
+            "name": "Duration"
+          },
+          "batteries": {
+            "name": "Batteries"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Last notification",
+        "state_attributes": {
+          "notified": {
+            "name": "Batteries notified"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Next replacement",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entity"
+          },
+          "name": {
+            "name": "Battery"
+          },
+          "level": {
+            "name": "Level"
+          },
+          "days_left": {
+            "name": "Days left"
+          },
+          "forecast_at": {
+            "name": "Forecast measured"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Spare batteries",
+        "state_attributes": {
+          "stock": {
+            "name": "In stock"
+          },
+          "needed": {
+            "name": "Needed"
+          },
+          "short": {
+            "name": "Missing"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Back up first",
           "description": "Create Home Assistant's automatic backup before installing; nothing is installed if it fails. Leave empty to follow the integration option."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Notify low batteries",
+      "description": "Sends the notification now, with every battery below the threshold or unavailable whatever the duration, or a message saying none needs attention."
+    },
+    "batteries_export": {
+      "name": "Export batteries to CSV",
+      "description": "Writes every monitored battery (level, room, low, unavailable, due, since when, drain per day, days left, replacement date) to a CSV file.",
+      "fields": {
+        "path": {
+          "name": "File",
+          "description": "Path of the CSV file; system_hub_batteries.csv in the configuration folder when empty."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Set spare batteries",
+      "description": "Sets how many spare batteries of a type you have; each replacement detected for that type takes its batteries out of the count.",
+      "fields": {
+        "battery_type": {
+          "name": "Battery type",
+          "description": "As Battery Notes names it, without the quantity: AA, CR2032…"
+        },
+        "count": {
+          "name": "Count",
+          "description": "Spare batteries of that type. Leave empty to stop counting it."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Could not read the containers from the Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 low battery"
+    },
+    "batteries_title_many": {
+      "message": "{count} low batteries"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: low{type}"
+    },
+    "batteries_none_title": {
+      "message": "No battery to check"
+    },
+    "batteries_none": {
+      "message": "Every battery is above {threshold} % and available."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: unavailable{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 battery to check"
+    },
+    "batteries_check_many": {
+      "message": "{count} batteries to check"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} is outside the allowed folders (configuration folder, or allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} is not a CSV file (.csv): the export only writes CSV files."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} is in a hidden folder (such as .storage): the export does not write there."
+    },
+    "batteries_spares_short": {
+      "message": "Spare batteries to buy: {spares}"
     }
   },
   "issues": {

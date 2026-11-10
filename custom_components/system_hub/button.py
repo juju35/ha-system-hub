@@ -1,4 +1,4 @@
-"""Buttons of the modules: run a Watchdog check, start a Marketplace check."""
+"""Buttons of the modules: Watchdog check, Marketplace check, low-battery notification."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import SystemHubConfigEntry
-from .sensor import MarketplaceEntity, WatchdogEntity
+from .sensor import BatteriesEntity, MarketplaceEntity, WatchdogEntity
 
 
 async def async_setup_entry(
@@ -21,6 +21,8 @@ async def async_setup_entry(
         entities.append(WatchdogCheckButton(data.watchdog, entry.entry_id, "check"))
     if data.marketplace is not None:
         entities.append(MarketplaceCheckButton(data.marketplace, entry.entry_id, "check_updates"))
+    if data.batteries is not None:
+        entities.append(BatteriesNotifyButton(data.batteries, entry.entry_id, "notify_now"))
     async_add_entities(entities)
 
 
@@ -46,3 +48,10 @@ class MarketplaceCheckButton(MarketplaceEntity, ButtonEntity):
     async def async_press(self) -> None:
         # MarketplaceNotAvailableError is a HomeAssistantError with a translated message.
         self.refresher.async_start()
+
+
+class BatteriesNotifyButton(BatteriesEntity, ButtonEntity):
+    """Every low battery right away, whatever the duration."""
+
+    async def async_press(self) -> None:
+        await self.monitor.async_notify(manual=True)

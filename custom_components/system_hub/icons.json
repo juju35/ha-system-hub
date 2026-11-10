@@ -6,6 +6,9 @@
       },
       "marketplace_check_updates": {
         "default": "mdi:archive-refresh"
+      },
+      "batteries_notify_now": {
+        "default": "mdi:bell-ring-outline"
       }
     },
     "sensor": {
@@ -39,6 +42,24 @@
       },
       "marketplace_last_check": {
         "default": "mdi:clock-check-outline"
+      },
+      "batteries_low_batteries": {
+        "default": "mdi:battery-alert-variant-outline",
+        "state": {
+          "0": "mdi:battery-check-outline"
+        }
+      },
+      "batteries_last_notification": {
+        "default": "mdi:bell-check-outline"
+      },
+      "batteries_spare_batteries": {
+        "default": "mdi:cart-outline",
+        "state": {
+          "0": "mdi:battery-plus-outline"
+        }
+      },
+      "batteries_next_replacement": {
+        "default": "mdi:calendar-clock"
       }
     }
   },
@@ -60,6 +81,15 @@
     },
     "marketplace_install_updates": {
       "service": "mdi:package-down"
+    },
+    "batteries_notify": {
+      "service": "mdi:bell-ring-outline"
+    },
+    "batteries_set_stock": {
+      "service": "mdi:battery-plus-outline"
+    },
+    "batteries_export": {
+      "service": "mdi:file-delimited-outline"
     }
   }
 }

@@ -72,7 +72,9 @@ def test_translation_parity(language: str):
 
 # Serbian: brands, placeholders and identifiers stay in Latin script in the Cyrillic translation.
 _SR_LATIN_ALLOWED = re.compile(
-    r"System Hub|Watchdog|Marketplace|Containers|Home Assistant|Core|Supervisor|Supervised|OS|CPU|GitHub"
+    r"System Hub|Watchdog|Marketplace|Containers|Batteries|Home Assistant|Core|Supervisor|Supervised"
+    r"|OS|CPU|CSV|GitHub"
+    r"|Battery Notes|AA|CR2032|allowlist_external_dirs|system_hub[\w.]*"
     r"|notify\.mobile_app_|zha|\{\w+\}"
 )
 

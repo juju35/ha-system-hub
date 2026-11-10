@@ -41,3 +41,25 @@ marketplace_install_updates:
     backup:
       selector:
         boolean:
+
+batteries_notify:
+batteries_export:
+  fields:
+    path:
+      example: "/config/system_hub_batteries.csv"
+      selector:
+        text:
+batteries_set_stock:
+  fields:
+    battery_type:
+      required: true
+      example: "AA"
+      selector:
+        text:
+    count:
+      example: 4
+      selector:
+        number:
+          min: 0
+          max: 999
+          mode: box

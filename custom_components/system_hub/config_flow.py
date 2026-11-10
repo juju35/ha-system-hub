@@ -16,10 +16,12 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
+from .batteries import flow as batteries_flow
 from .const import (
     CONF_MODULES,
     DOMAIN,
     MARKETPLACE_DOMAIN,
+    MODULE_BATTERIES,
     MODULE_CONTAINERS,
     MODULE_MARKETPLACE,
     MODULE_WATCHDOG,
@@ -105,6 +107,8 @@ class SystemHubOptionsFlow(OptionsFlow):
                 menu.append("watchdog_remove_power_cycle")
         if MODULE_MARKETPLACE in modules:
             menu.append("marketplace")
+        if MODULE_BATTERIES in modules:
+            menu.append("batteries")
         return self.async_show_menu(step_id="init", menu_options=menu)
 
     async def async_step_modules(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
@@ -200,3 +204,12 @@ class SystemHubOptionsFlow(OptionsFlow):
             return self._save(**{MODULE_MARKETPLACE: marketplace_flow.settings_options(user_input)})
         schema = marketplace_flow.settings_schema(self._module(MODULE_MARKETPLACE))
         return self.async_show_form(step_id="marketplace", data_schema=schema)
+
+    # Batteries
+
+    async def async_step_batteries(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Threshold, duration, notification times and actions, batteries left out."""
+        if user_input is not None:
+            return self._save(**{MODULE_BATTERIES: batteries_flow.settings_options(user_input)})
+        schema = await batteries_flow.settings_schema(self.hass, self._module(MODULE_BATTERIES))
+        return self.async_show_form(step_id="batteries", data_schema=schema)

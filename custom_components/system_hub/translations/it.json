@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitora Home Assistant Core, il Supervisor e gli add-on: stato, versione, CPU e memoria. Solo monitoraggio: nulla viene riavviato.",
           "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
-          "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore."
+          "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore.",
+          "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Aggiungi un riavvio tramite presa",
           "watchdog_remove_power_cycle": "Watchdog: Rimuovi riavvii tramite presa",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Monitora Home Assistant Core, il Supervisor e gli add-on: stato, versione, CPU e memoria. Solo monitoraggio: nulla viene riavviato.",
           "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
-          "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore."
+          "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore.",
+          "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Ore tra due verifiche automatiche. 0 disattiva la verifica automatica: usa il pulsante o l'azione.",
           "backup_before_install": "Prima di Aggiorna tutto (o dell'azione senza backup), crea il backup automatico di Home Assistant, con le sue impostazioni in Impostazioni > Sistema > Backup; se non riesce, non viene installato nulla."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Soglia di batteria scarica",
+          "duration": "Scarica da almeno",
+          "morning_time": "Notifica del mattino",
+          "evening_time": "Notifica della sera",
+          "notify_services": "Azioni di notifica",
+          "ignored_entities": "Batterie ignorate",
+          "ignored_integrations": "Integrazioni ignorate"
+        },
+        "data_description": {
+          "threshold": "Una batteria è scarica sotto questo livello.",
+          "duration": "Ore in cui una batteria deve essere rimasta sotto la soglia prima di essere notificata (0: alla prossima notifica).",
+          "morning_time": "Prima delle due notifiche giornaliere.",
+          "evening_time": "Seconda delle due notifiche giornaliere.",
+          "notify_services": "Invia le notifiche con queste azioni (notify.mobile_app_…). Viene sempre creata una notifica persistente.",
+          "ignored_entities": "Batterie mai monitorate.",
+          "ignored_integrations": "Integrazioni le cui batterie non vengono mai monitorate (per impostazione predefinita telefoni e tablet dell'app mobile). Digita un dominio per aggiungerne una non ancora configurata."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Cerca aggiornamenti"
+      },
+      "batteries_notify_now": {
+        "name": "Notifica ora"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Prossima verifica"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Batterie scariche",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Non disponibili"
+          },
+          "due": {
+            "name": "Da notificare"
+          },
+          "threshold": {
+            "name": "Soglia"
+          },
+          "duration": {
+            "name": "Durata"
+          },
+          "batteries": {
+            "name": "Batterie"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Ultima notifica",
+        "state_attributes": {
+          "notified": {
+            "name": "Batterie notificate"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Prossima sostituzione",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entità"
+          },
+          "name": {
+            "name": "Batteria"
+          },
+          "level": {
+            "name": "Livello"
+          },
+          "days_left": {
+            "name": "Giorni rimanenti"
+          },
+          "forecast_at": {
+            "name": "Previsione misurata"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Batterie di ricambio",
+        "state_attributes": {
+          "stock": {
+            "name": "In magazzino"
+          },
+          "needed": {
+            "name": "Necessarie"
+          },
+          "short": {
+            "name": "Mancanti"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Prima il backup",
           "description": "Crea il backup automatico di Home Assistant prima di installare; non viene installato nulla se non riesce. Lascia vuoto per seguire l'opzione dell'integrazione."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Notifica batterie scariche",
+      "description": "Invia subito la notifica, con tutte le batterie sotto la soglia o non disponibili indipendentemente dalla durata, oppure un messaggio che indica che nessuna richiede attenzione."
+    },
+    "batteries_export": {
+      "name": "Esporta le batterie in CSV",
+      "description": "Scrive ogni batteria monitorata (livello, stanza, scarica, non disponibile, da trattare, da quando, scarica al giorno, giorni rimanenti, data di sostituzione) in un file CSV.",
+      "fields": {
+        "path": {
+          "name": "File",
+          "description": "Percorso del file CSV; system_hub_batteries.csv nella cartella di configurazione se vuoto."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Imposta le batterie di ricambio",
+      "description": "Indica quante batterie di ricambio di un tipo hai; ogni sostituzione rilevata per quel tipo le scala dal conteggio.",
+      "fields": {
+        "battery_type": {
+          "name": "Tipo di batteria",
+          "description": "Come lo chiama Battery Notes, senza quantità: AA, CR2032…"
+        },
+        "count": {
+          "name": "Numero",
+          "description": "Batterie di ricambio di quel tipo. Lascia vuoto per non contarlo più."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Impossibile leggere i container dal Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 batteria scarica"
+    },
+    "batteries_title_many": {
+      "message": "{count} batterie scariche"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: scarica{type}"
+    },
+    "batteries_none_title": {
+      "message": "Nessuna batteria da controllare"
+    },
+    "batteries_none": {
+      "message": "Tutte le batterie sono sopra il {threshold} % e disponibili."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: non disponibile{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 batteria da controllare"
+    },
+    "batteries_check_many": {
+      "message": "{count} batterie da controllare"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} è fuori dalle cartelle consentite (cartella di configurazione o allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} non è un file CSV (.csv): l'esportazione scrive solo file CSV."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} si trova in una cartella nascosta (come .storage): l'esportazione non scrive lì."
+    },
+    "batteries_spares_short": {
+      "message": "Batterie di ricambio da comprare: {spares}"
     }
   },
   "issues": {

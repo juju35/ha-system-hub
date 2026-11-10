@@ -7,12 +7,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
-          "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur."
+          "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
+          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven."
         }
       }
     },
@@ -35,7 +37,8 @@
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Herstart via stekker toevoegen",
           "watchdog_remove_power_cycle": "Watchdog: Herstarts via stekker verwijderen",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         }
       },
       "modules": {
@@ -44,12 +47,14 @@
         "data": {
           "containers": "Containers",
           "watchdog": "Watchdog",
-          "marketplace": "Marketplace"
+          "marketplace": "Marketplace",
+          "batteries": "Batteries"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
-          "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur."
+          "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
+          "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven."
         }
       },
       "containers": {
@@ -123,6 +128,27 @@
           "scan_interval": "Uren tussen twee automatische controles. 0 zet de automatische controle uit: gebruik de knop of de actie.",
           "backup_before_install": "Vóór Alles bijwerken (of de actie zonder backup) de automatische back-up van Home Assistant maken, met de instellingen onder Instellingen > Systeem > Back-ups; mislukt die, dan wordt niets geïnstalleerd."
         }
+      },
+      "batteries": {
+        "title": "Batteries",
+        "data": {
+          "threshold": "Drempel voor bijna lege batterij",
+          "duration": "Minstens zo lang bijna leeg",
+          "morning_time": "Ochtendmelding",
+          "evening_time": "Avondmelding",
+          "notify_services": "Meldingsacties",
+          "ignored_entities": "Genegeerde batterijen",
+          "ignored_integrations": "Genegeerde integraties"
+        },
+        "data_description": {
+          "threshold": "Onder dit niveau is een batterij bijna leeg.",
+          "duration": "Aantal uren dat een batterij onder de drempel moet zijn gebleven voordat ze wordt gemeld (0: bij de volgende melding).",
+          "morning_time": "Eerste van de twee dagelijkse meldingen.",
+          "evening_time": "Tweede van de twee dagelijkse meldingen.",
+          "notify_services": "Verstuur de meldingen met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt.",
+          "ignored_entities": "Batterijen die nooit worden bewaakt.",
+          "ignored_integrations": "Integraties waarvan de batterijen nooit worden bewaakt (standaard telefoons en tablets van de mobiele app). Typ een domein om er een toe te voegen die nog niet is ingesteld."
+        }
       }
     },
     "error": {
@@ -141,6 +167,9 @@
       },
       "marketplace_check_updates": {
         "name": "Controleren op updates"
+      },
+      "batteries_notify_now": {
+        "name": "Nu melden"
       }
     },
     "sensor": {
@@ -270,6 +299,68 @@
             "name": "Volgende controle"
           }
         }
+      },
+      "batteries_low_batteries": {
+        "name": "Bijna lege batterijen",
+        "state_attributes": {
+          "unavailable": {
+            "name": "Niet beschikbaar"
+          },
+          "due": {
+            "name": "Te melden"
+          },
+          "threshold": {
+            "name": "Drempel"
+          },
+          "duration": {
+            "name": "Duur"
+          },
+          "batteries": {
+            "name": "Batterijen"
+          }
+        }
+      },
+      "batteries_last_notification": {
+        "name": "Laatste melding",
+        "state_attributes": {
+          "notified": {
+            "name": "Gemelde batterijen"
+          }
+        }
+      },
+      "batteries_next_replacement": {
+        "name": "Volgende vervanging",
+        "state_attributes": {
+          "entity_id": {
+            "name": "Entiteit"
+          },
+          "name": {
+            "name": "Batterij"
+          },
+          "level": {
+            "name": "Niveau"
+          },
+          "days_left": {
+            "name": "Resterende dagen"
+          },
+          "forecast_at": {
+            "name": "Prognose gemeten"
+          }
+        }
+      },
+      "batteries_spare_batteries": {
+        "name": "Reservebatterijen",
+        "state_attributes": {
+          "stock": {
+            "name": "Op voorraad"
+          },
+          "needed": {
+            "name": "Nodig"
+          },
+          "short": {
+            "name": "Ontbrekend"
+          }
+        }
       }
     }
   },
@@ -327,6 +418,34 @@
         "backup": {
           "name": "Eerst een back-up",
           "description": "De automatische back-up van Home Assistant maken vóór het installeren; mislukt die, dan wordt niets geïnstalleerd. Leeg laten om de optie van de integratie te volgen."
+        }
+      }
+    },
+    "batteries_notify": {
+      "name": "Bijna lege batterijen melden",
+      "description": "Verstuurt nu de melding met alle batterijen die onder de drempel zitten of niet beschikbaar zijn, ongeacht hoe lang al, of anders een bericht dat geen enkele batterij aandacht nodig heeft."
+    },
+    "batteries_export": {
+      "name": "Batterijen exporteren naar CSV",
+      "description": "Schrijft elke bewaakte batterij (niveau, kamer, laag, niet beschikbaar, te behandelen, sinds wanneer, ontlading per dag, resterende dagen, vervangingsdatum) naar een CSV-bestand.",
+      "fields": {
+        "path": {
+          "name": "Bestand",
+          "description": "Pad van het CSV-bestand; system_hub_batteries.csv in de configuratiemap indien leeg."
+        }
+      }
+    },
+    "batteries_set_stock": {
+      "name": "Reservebatterijen instellen",
+      "description": "Stelt in hoeveel reservebatterijen van een type je hebt; elke gedetecteerde vervanging van dat type gaat eraf.",
+      "fields": {
+        "battery_type": {
+          "name": "Batterijtype",
+          "description": "Zoals Battery Notes het noemt, zonder aantal: AA, CR2032…"
+        },
+        "count": {
+          "name": "Aantal",
+          "description": "Reservebatterijen van dat type. Leeg laten om het niet meer te tellen."
         }
       }
     }
@@ -406,6 +525,45 @@
     },
     "containers_read_failed": {
       "message": "Kan de containers niet uitlezen van de Supervisor: {error}"
+    },
+    "batteries_title_one": {
+      "message": "1 bijna lege batterij"
+    },
+    "batteries_title_many": {
+      "message": "{count} bijna lege batterijen"
+    },
+    "batteries_line": {
+      "message": "• {name}{area}: {level} %{type}"
+    },
+    "batteries_line_no_level": {
+      "message": "• {name}{area}: bijna leeg{type}"
+    },
+    "batteries_none_title": {
+      "message": "Geen batterij te controleren"
+    },
+    "batteries_none": {
+      "message": "Alle batterijen zitten boven {threshold} % en zijn beschikbaar."
+    },
+    "batteries_line_unavailable": {
+      "message": "• {name}{area}: niet beschikbaar{type}"
+    },
+    "batteries_check_one": {
+      "message": "1 batterij te controleren"
+    },
+    "batteries_check_many": {
+      "message": "{count} batterijen te controleren"
+    },
+    "batteries_path_not_allowed": {
+      "message": "{path} ligt buiten de toegestane mappen (configuratiemap of allowlist_external_dirs)."
+    },
+    "batteries_path_not_csv": {
+      "message": "{path} is geen CSV-bestand (.csv): de export schrijft alleen CSV-bestanden."
+    },
+    "batteries_path_hidden": {
+      "message": "{path} staat in een verborgen map (zoals .storage): de export schrijft daar niet."
+    },
+    "batteries_spares_short": {
+      "message": "Te kopen reservebatterijen: {spares}"
     }
   },
   "issues": {
