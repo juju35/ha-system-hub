@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Izaberite module koje želite da uključite. Svaki modul se podešava u opcijama.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
+          "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace nije učitan."
+    },
+    "abort": {
+      "already_configured": "System Hub je već podešen.",
+      "single_instance_allowed": "System Hub je već podešen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcije System Hub-a",
+        "menu_options": {
+          "modules": "Moduli",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Dodaj restart preko utičnice",
+          "watchdog_remove_power_cycle": "Watchdog: Ukloni restarte preko utičnice",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduli",
+        "description": "Uključite ili isključite module. Isključen modul zaustavlja svoje provere i njegovi entiteti se uklanjaju; njegova podešavanja se čuvaju.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
+          "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Interval provere",
+          "grace_period": "Period čekanja",
+          "grace_overrides": "Grejs period po integraciji",
+          "max_reloads": "Uzastopna ponovna učitavanja",
+          "ignored_integrations": "Ignorisane integracije",
+          "notify_services": "Akcije obaveštenja",
+          "ignored_entries": "Zanemareni unosi",
+          "pause_entity": "Entitet pauze"
+        },
+        "data_description": {
+          "scan_interval": "Minuti između dve provere.",
+          "grace_period": "Koliko minuta svi entiteti integracije moraju biti nedostupni pre nego što se ona ponovo učita. Tokom tog perioda nakon pokretanja Home Assistant-a ništa se ne učitava ponovo.",
+          "grace_overrides": "Jedan red po integraciji: domen: minuti (zha: 30). Zamenjuje grejs period te integracije i razmake između njenih ponovnih učitavanja; posle pokretanja, globalni grejs period i dalje važi za sve.",
+          "max_reloads": "Broj ponovnih učitavanja integracije koja ostaje nedostupna pre nego što se od nje odustane dok se ne oporavi. Pauza između dva ponovna učitavanja se svaki put udvostručuje: period čekanja, 2 × period čekanja…",
+          "ignored_integrations": "Integracije koje se nikada ne učitavaju ponovo. Unesite domen da biste dodali neku koja još nije podešena.",
+          "notify_services": "Svako obaveštenje pošalji i ovim akcijama (notify.mobile_app_…). Trajno obaveštenje se uvek kreira.",
+          "ignored_entries": "Pojedinačni unosi integracije koji se nikad ne učitavaju ponovo; ostali unosi njihove integracije i dalje se prate (na primer jedna od više kamera).",
+          "pause_entity": "Dok je ovaj entitet uključen (prekidač za održavanje, raspored za noć…), ništa se ne učitava ponovo; provere i dalje navode nedostupne integracije."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Restartuj uređaj preko njegove utičnice",
+        "description": "Kada svi entiteti uređaja ostanu nedostupni, pametna utičnica koja ga napaja se isključuje, pa ponovo uključuje. Ista ograničenja kao za ponovna učitavanja: učitavanja zaredom, čekanje koje se udvostručuje, entitet pauze, ništa tokom perioda odlaganja posle pokretanja.",
+        "data": {
+          "device_id": "Uređaj",
+          "switch": "Pametna utičnica",
+          "delay": "Nedostupan tokom",
+          "off_time": "Isključena tokom"
+        },
+        "data_description": {
+          "device_id": "Uređaj za restart: svi njegovi omogućeni entiteti moraju biti nedostupni.",
+          "switch": "Prekidač koji ga napaja. Isključuje se samo ako je uključen: isključena ili nedostupna utičnica se ne dira.",
+          "delay": "Minuti tokom kojih svi entiteti uređaja moraju biti nedostupni pre isključivanja njegove utičnice. Čekanje između dva restarta se svaki put udvostručuje.",
+          "off_time": "Sekunde tokom kojih utičnica ostaje isključena pre ponovnog uključivanja."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Ukloni restarte preko utičnice",
+        "data": {
+          "power_cycles": "Restarti preko utičnice"
+        },
+        "data_description": {
+          "power_cycles": "Restarti preko utičnice koje treba ukloniti."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Interval provere",
+          "backup_before_install": "Rezervna kopija pre instaliranja ažuriranja"
+        },
+        "data_description": {
+          "scan_interval": "Broj sati između dve automatske provere. 0 isključuje automatsku proveru: koristite dugme ili akciju.",
+          "backup_before_install": "Pre Ažuriraj sve (ili akcije bez backup) pravi se automatska rezervna kopija Home Assistant-a, sa podešavanjima iz Podešavanja > Sistem > Rezervne kopije; ako ne uspe, ništa se ne instalira."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Svaki red mora biti domen: minuti, od 1 do 1440 (zha: 30).",
+      "device_already_cycled": "Ovaj uređaj već ima restart preko utičnice: prvo ga uklonite.",
+      "switch_on_device": "Utičnica ne može biti entitet samog uređaja: bila bi nedostupna zajedno s njim.",
+      "device_without_entities": "Ovaj uređaj nema entitet za praćenje osim utičnice.",
+      "marketplace_not_loaded": "Marketplace nije učitan."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Proveri sada"
+      },
+      "marketplace_check_updates": {
+        "name": "Proveri ažuriranja"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Nedostupne integracije",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integracije"
+          },
+          "ignored": {
+            "name": "Ignorisane"
+          },
+          "max_reloads": {
+            "name": "Maks. ponovnih učitavanja"
+          },
+          "paused": {
+            "name": "Pauzirano"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Poslednje ponovno učitavanje",
+        "state_attributes": {
+          "domain": {
+            "name": "Domen"
+          },
+          "title": {
+            "name": "Naslov"
+          },
+          "entry_id": {
+            "name": "ID unosa"
+          },
+          "success": {
+            "name": "Uspešno"
+          },
+          "reloads": {
+            "name": "Ponovna učitavanja"
+          },
+          "history": {
+            "name": "Istorija"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Poslednja provera"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Ponovna učitavanja za 24 č",
+        "state_attributes": {
+          "failed": {
+            "name": "Neuspela"
+          },
+          "integrations": {
+            "name": "Integracije"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Mirovanje",
+          "running": "Proveravanje",
+          "error": "Greška"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Provereno"
+          },
+          "total": {
+            "name": "Repozitorijumi"
+          },
+          "updates": {
+            "name": "Dostupna ažuriranja"
+          },
+          "failed": {
+            "name": "Neuspešno"
+          },
+          "error": {
+            "name": "Greška"
+          },
+          "checking": {
+            "name": "Proverava se"
+          },
+          "installing": {
+            "name": "Instalira se"
+          },
+          "install_failed": {
+            "name": "Nije moguće instalirati"
+          },
+          "github_connected": {
+            "name": "GitHub povezan"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Poslednja provera",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Interval provere"
+          },
+          "next_check": {
+            "name": "Sledeća provera"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Proveri integracije",
+      "description": "Traži integracije čiji su svi entiteti nedostupni i ponovo učitava one kojima je istekao period čekanja."
+    },
+    "watchdog_reset": {
+      "name": "Resetuj integraciju",
+      "description": "Zaboravlja ponovna učitavanja integracije (napuštene ili ne) i odmah je ponovo učitava.",
+      "fields": {
+        "entry_id": {
+          "name": "Unos integracije",
+          "description": "Unos integracije koji se resetuje i ponovo učitava."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Proveri ažuriranja",
+      "description": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a. Radi u pozadini, osim ako je postavljeno čekanje.",
+      "fields": {
+        "wait": {
+          "name": "Čekaj",
+          "description": "Čekaj da svi repozitorijumi budu provereni pre nego što se akcija završi; akcija tada ne uspeva ako provera nije uspela ili ako neki repozitorijum nije mogao da bude proveren."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Proveri ažuriranja repozitorijuma",
+      "description": "Proverava ažuriranja repozitorijuma iza ovih Marketplace entiteta ažuriranja i čeka rezultat.",
+      "fields": {
+        "entity_id": {
+          "name": "Entiteti ažuriranja",
+          "description": "Marketplace entiteti ažuriranja repozitorijuma koje treba proveriti."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Instaliraj ažuriranja",
+      "description": "Instalira ažuriranja Marketplace repozitorijuma, jedno za drugim, u pozadini, osim ako je postavljeno čekanje. Samo za administratore.",
+      "fields": {
+        "entity_id": {
+          "name": "Entiteti ažuriranja",
+          "description": "Marketplace entiteti ažuriranja koje treba ažurirati; ostavite prazno za svaki repozitorijum sa ažuriranjem."
+        },
+        "wait": {
+          "name": "Čekaj",
+          "description": "Čekaj da sva ažuriranja budu instalirana pre nego što se akcija završi; akcija tada ne uspeva ako neko ažuriranje nije moglo da bude instalirano."
+        },
+        "backup": {
+          "name": "Prvo rezervna kopija",
+          "description": "Napravi automatsku rezervnu kopiju Home Assistant-a pre instaliranja; ništa se ne instalira ako ne uspe. Ostavite prazno da važi opcija integracije."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integracija ponovo učitana",
+    "watchdog_reloaded": "{title} ({domain}) je ponovo učitana: svi njeni entiteti su bili nedostupni od {since}. Ponovno učitavanje {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Ponovno učitavanje integracije nije uspelo",
+    "watchdog_reload_failed": "{title} ({domain}) nije mogla ponovo da se učita: svi njeni entiteti su bili nedostupni od {since}. Ponovno učitavanje {attempt}/{max}, pogledajte zapise.",
+    "watchdog_gave_up_title": "Integracija je i dalje nedostupna",
+    "watchdog_gave_up": "{title} ({domain}) je i dalje nedostupna posle {attempt} ponovnih učitavanja. Neće se ponovo učitavati dok neki od njenih entiteta ne postane dostupan.",
+    "watchdog_power_cycled_title": "Uređaj restartovan",
+    "watchdog_power_cycled": "{title} je restartovan pomoću {switch}: svi njegovi entiteti su bili nedostupni od {since}. Restart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Restart uređaja nije uspeo",
+    "watchdog_power_cycle_failed": "{title} nije mogao da se restartuje pomoću {switch}: svi njegovi entiteti su bili nedostupni od {since}. Restart {attempt}/{max}, pogledajte zapise.",
+    "watchdog_power_cycle_gave_up_title": "Uređaj i dalje nedostupan",
+    "watchdog_power_cycle_gave_up": "{title} je i dalje nedostupan posle {attempt} restarta. {switch} se neće ponovo isključiti dok neki od njegovih entiteta ne bude dostupan."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub nije učitan."
+    },
+    "module_disabled": {
+      "message": "Modul {module} je isključen u opcijama System Hub-a."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Nema unosa integracije {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} nije mogla da se ponovo učita, pogledajte zapise. Njena ponovna učitavanja su resetovana: System Hub počinje iznova."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace nije učitan."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Ova verzija Marketplace-a nije podržana (nedostaje {path}); prijavite problem na {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace je onemogućen ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace je onemogućen."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} nije Marketplace entitet ažuriranja."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} nije repozitorijum preuzet pomoću Marketplace-a."
+    },
+    "marketplace_check_failed": {
+      "message": "Nije moguće proveriti {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Provera je otkazana (System Hub je ponovo učitan ili uklonjen)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Potpuna provera nije uspela: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Ažuriranja se već instaliraju."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Ažuriranja se instaliraju: proverite ažuriranja kada se završe."
+    },
+    "marketplace_install_failed": {
+      "message": "Nije moguće instalirati {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Instalacije su otkazane (System Hub je ponovo učitan ili uklonjen)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Nema dovoljno preostalih GitHub zahteva za proveru svih repozitorijuma ({remaining} preostalo, {needed} potrebno): provera će se ponoviti kada se ograničenje resetuje u {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} je i dalje nedostupna",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) je i dalje nedostupna posle {attempt} ponovnih učitavanja koje je izvršio System Hub. Neće je ponovo učitavati dok neki od njenih entiteta ne bude dostupan.\n\nProverite uređaj ili uslugu na koju se povezuje, kao i zapise. Ovaj problem nestaje kada se integracija oporavi.\n\nPotvrdite da biste sada pokušali ponovo: System Hub zaboravlja njena ponovna učitavanja i ponovo učitava integraciju."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub nije učitan.",
+          "reload_started": "Ponovno učitavanje **{title}** je pokrenuto: njegova ponovna učitavanja su resetovana i System Hub počinje iznova. Ovaj problem nestaje čim učitavanje počne; greška je u zapisima."
+        }
+      }
+    }
+  }
+}

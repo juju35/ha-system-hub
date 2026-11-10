@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Válassza ki a bekapcsolandó modulokat. Minden modult a beállításokban lehet megadni.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
+          "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "A Marketplace nincs betöltve."
+    },
+    "abort": {
+      "already_configured": "Az System Hub már be van állítva.",
+      "single_instance_allowed": "Az System Hub már be van állítva."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "System Hub beállításai",
+        "menu_options": {
+          "modules": "Modulok",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Újraindítás hozzáadása konnektorral",
+          "watchdog_remove_power_cycle": "Watchdog: Konnektoros újraindítások eltávolítása",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Modulok",
+        "description": "Kapcsolja be vagy ki a modulokat. A kikapcsolt modul leállítja az ellenőrzéseit, és az entitásai törlődnek; a beállításai megmaradnak.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
+          "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Ellenőrzési időköz",
+          "grace_period": "Türelmi idő",
+          "grace_overrides": "Türelmi idő integrációnként",
+          "max_reloads": "Egymás utáni újratöltések",
+          "ignored_integrations": "Figyelmen kívül hagyott integrációk",
+          "notify_services": "Értesítési műveletek",
+          "ignored_entries": "Figyelmen kívül hagyott bejegyzések",
+          "pause_entity": "Szüneteltető entitás"
+        },
+        "data_description": {
+          "scan_interval": "Két ellenőrzés között eltelt percek.",
+          "grace_period": "Ennyi percig kell egy integráció minden entitásának elérhetetlennek lennie, mielőtt újratöltődik. A Home Assistant indulása után ennyi ideig semmi sem töltődik újra.",
+          "grace_overrides": "Integrációnként egy sor: tartomány: perc (zha: 30). Ez váltja fel az adott integráció türelmi idejét és az újratöltései közti várakozást; indulás után a globális türelmi idő továbbra is mindegyikre vonatkozik.",
+          "max_reloads": "Egy elérhetetlen maradó integráció újratöltéseinek száma, mielőtt feladja a helyreállásáig. A két újratöltés közötti idő minden alkalommal megduplázódik: türelmi idő, 2 × türelmi idő…",
+          "ignored_integrations": "Soha újra nem töltött integrációk. Írjon be egy tartományt egy még be nem állított integráció hozzáadásához.",
+          "notify_services": "Minden értesítés elküldése ezekkel a műveletekkel is (notify.mobile_app_…). Állandó értesítés mindig létrejön.",
+          "ignored_entries": "Soha újra nem töltött egyes integrációs bejegyzések; integrációjuk többi bejegyzése továbbra is figyelve marad (például több kamera közül egy).",
+          "pause_entity": "Amíg ez az entitás be van kapcsolva (karbantartási input_boolean, éjszakai ütemezés…), semmi sem töltődik újra; az ellenőrzések továbbra is listázzák a nem elérhető integrációkat."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Eszköz újraindítása a konnektorával",
+        "description": "Ha egy eszköz összes entitása elérhetetlen marad, az azt tápláló okoskonnektor kikapcsol, majd újra bekapcsol. Ugyanazok a korlátok, mint az újratöltéseknél: egymás utáni újratöltések, duplázódó várakozás, szüneteltető entitás, semmi a türelmi idő alatt indítás után.",
+        "data": {
+          "device_id": "Eszköz",
+          "switch": "Okoskonnektor",
+          "delay": "Elérhetetlen ennyi ideje",
+          "off_time": "Kikapcsolva ennyi ideig"
+        },
+        "data_description": {
+          "device_id": "Az újraindítandó eszköz: minden engedélyezett entitásának elérhetetlennek kell lennie.",
+          "switch": "Az azt tápláló kapcsoló. Csak bekapcsolt állapotban kapcsol ki: a kikapcsolt vagy elérhetetlen konnektor érintetlen marad.",
+          "delay": "Percek, ameddig az eszköz összes entitásának elérhetetlennek kell lennie, mielőtt a konnektora kikapcsol. A két újraindítás közötti várakozás minden alkalommal duplázódik.",
+          "off_time": "Másodpercek, ameddig a konnektor kikapcsolva marad, mielőtt újra bekapcsol."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Konnektoros újraindítások eltávolítása",
+        "data": {
+          "power_cycles": "Konnektoros újraindítások"
+        },
+        "data_description": {
+          "power_cycles": "Az eltávolítandó konnektoros újraindítások."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Ellenőrzési időköz",
+          "backup_before_install": "Biztonsági mentés a frissítések telepítése előtt"
+        },
+        "data_description": {
+          "scan_interval": "Két automatikus ellenőrzés között eltelt órák száma. A 0 kikapcsolja az automatikus ellenőrzést: használja a gombot vagy a műveletet.",
+          "backup_before_install": "Az Összes frissítése (vagy a backup nélküli művelet) előtt elkészül a Home Assistant automatikus biztonsági mentése a Beállítások > Rendszer > Biztonsági mentések beállításaival; ha nem sikerül, semmi sem települ."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Minden sor tartomány: perc formájú legyen, 1 és 1440 között (zha: 30).",
+      "device_already_cycled": "Ennek az eszköznek már van konnektoros újraindítása: előbb távolítsa el.",
+      "switch_on_device": "A konnektor nem lehet magának az eszköznek az entitása: vele együtt elérhetetlen lenne.",
+      "device_without_entities": "Ennek az eszköznek a konnektoron kívül nincs figyelendő entitása.",
+      "marketplace_not_loaded": "A Marketplace nincs betöltve."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Ellenőrzés most"
+      },
+      "marketplace_check_updates": {
+        "name": "Frissítések keresése"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Nem elérhető integrációk",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrációk"
+          },
+          "ignored": {
+            "name": "Figyelmen kívül hagyva"
+          },
+          "max_reloads": {
+            "name": "Max. újratöltések"
+          },
+          "paused": {
+            "name": "Szüneteltetve"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Utolsó újratöltés",
+        "state_attributes": {
+          "domain": {
+            "name": "Tartomány"
+          },
+          "title": {
+            "name": "Cím"
+          },
+          "entry_id": {
+            "name": "Bejegyzésazonosító"
+          },
+          "success": {
+            "name": "Sikeres"
+          },
+          "reloads": {
+            "name": "Újratöltések"
+          },
+          "history": {
+            "name": "Előzmények"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Utolsó ellenőrzés"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Újratöltések 24 óra alatt",
+        "state_attributes": {
+          "failed": {
+            "name": "Sikertelen"
+          },
+          "integrations": {
+            "name": "Integrációk"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Állapot",
+        "state": {
+          "idle": "Tétlen",
+          "running": "Ellenőrzés",
+          "error": "Hiba"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Ellenőrizve"
+          },
+          "total": {
+            "name": "Tárolók"
+          },
+          "updates": {
+            "name": "Elérhető frissítések"
+          },
+          "failed": {
+            "name": "Sikertelen"
+          },
+          "error": {
+            "name": "Hiba"
+          },
+          "checking": {
+            "name": "Ellenőrzés alatt"
+          },
+          "installing": {
+            "name": "Telepítés alatt"
+          },
+          "install_failed": {
+            "name": "Nem sikerült telepíteni"
+          },
+          "github_connected": {
+            "name": "GitHub csatlakoztatva"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Utolsó ellenőrzés",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Ellenőrzési időköz"
+          },
+          "next_check": {
+            "name": "Következő ellenőrzés"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Integrációk ellenőrzése",
+      "description": "Megkeresi azokat az integrációkat, amelyeknek minden entitása nem elérhető, és újratölti azokat, amelyeknek lejárt a türelmi ideje."
+    },
+    "watchdog_reset": {
+      "name": "Integráció visszaállítása",
+      "description": "Elfelejti egy integráció újratöltéseit (feladott vagy sem), és azonnal újratölti.",
+      "fields": {
+        "entry_id": {
+          "name": "Integrációs bejegyzés",
+          "description": "A visszaállítandó és újratöltendő integrációs bejegyzés."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Frissítések keresése",
+      "description": "Ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. A háttérben fut, hacsak nincs beállítva a wait.",
+      "fields": {
+        "wait": {
+          "name": "Várakozás",
+          "description": "A művelet befejezése előtt megvárja, amíg minden tároló ellenőrzése lezajlik; ekkor a művelet sikertelen, ha az ellenőrzés sikertelen volt, vagy egy tárolót nem sikerült ellenőrizni."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Tároló frissítéseinek keresése",
+      "description": "Ellenőrzi az ezen Marketplace-frissítési entitások mögötti tárolók frissítéseit, és megvárja az eredményt.",
+      "fields": {
+        "entity_id": {
+          "name": "Frissítési entitások",
+          "description": "Az ellenőrizendő tárolók Marketplace-frissítési entitásai."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Frissítések telepítése",
+      "description": "Egymás után telepíti a Marketplace-tárolók frissítéseit, a háttérben, hacsak nincs beállítva a wait. Csak rendszergazdák számára.",
+      "fields": {
+        "entity_id": {
+          "name": "Frissítési entitások",
+          "description": "A frissítendő Marketplace-frissítési entitások; hagyja üresen az összes frissíthető tárolóhoz."
+        },
+        "wait": {
+          "name": "Várakozás",
+          "description": "A művelet befejezése előtt megvárja, amíg minden frissítés települ; ekkor a művelet sikertelen, ha egy frissítést nem sikerült telepíteni."
+        },
+        "backup": {
+          "name": "Előbb biztonsági mentés",
+          "description": "A Home Assistant automatikus biztonsági mentésének elkészítése telepítés előtt; ha nem sikerül, semmi sem települ. Hagyd üresen az integráció beállításának követéséhez."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integráció újratöltve",
+    "watchdog_reloaded": "{title} ({domain}) újratöltve: minden entitása nem volt elérhető {since} óta. Újratöltés: {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Az integráció újratöltése sikertelen",
+    "watchdog_reload_failed": "{title} ({domain}) nem tölthető újra: minden entitása nem volt elérhető {since} óta. Újratöltés: {attempt}/{max}, lásd a naplókat.",
+    "watchdog_gave_up_title": "Az integráció továbbra sem elérhető",
+    "watchdog_gave_up": "{title} ({domain}) {attempt} újratöltés után továbbra sem elérhető. Addig nem töltődik újra, amíg valamelyik entitása elérhetővé nem válik.",
+    "watchdog_power_cycled_title": "Eszköz újraindítva",
+    "watchdog_power_cycled": "{title} újraindult a következővel: {switch}. Minden entitása elérhetetlen volt ekkor óta: {since}. Újraindítás {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Az eszköz újraindítása sikertelen",
+    "watchdog_power_cycle_failed": "{title} nem indítható újra a következővel: {switch}. Minden entitása elérhetetlen volt ekkor óta: {since}. Újraindítás {attempt}/{max}, lásd a naplókat.",
+    "watchdog_power_cycle_gave_up_title": "Az eszköz továbbra is elérhetetlen",
+    "watchdog_power_cycle_gave_up": "{title} {attempt} újraindítás után is elérhetetlen. {switch} nem kapcsol ki újra, amíg valamelyik entitása elérhetővé nem válik."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "A System Hub nincs betöltve."
+    },
+    "module_disabled": {
+      "message": "A(z) {module} modul ki van kapcsolva a System Hub beállításaiban."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Nincs {entry_id} integrációs bejegyzés."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} nem tölthető újra, lásd a naplókat. Az újratöltései visszaállítva: az System Hub elölről kezdi."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "A Marketplace nincs betöltve."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "A Marketplace ezen verziója nem támogatott (hiányzik: {path}); kérjük, nyisson egy hibajegyet itt: {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "A Marketplace le van tiltva ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "A Marketplace le van tiltva."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} nem Marketplace-frissítési entitás."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} nem Marketplace-szel letöltött tároló."
+    },
+    "marketplace_check_failed": {
+      "message": "Nem sikerült ellenőrizni: {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Az ellenőrzés megszakadt (a System Hub újra lett töltve vagy el lett távolítva)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "A teljes ellenőrzés sikertelen: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "A frissítések telepítése már folyamatban van."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Frissítések telepítése folyamatban: a befejezésük után keressen frissítéseket."
+    },
+    "marketplace_install_failed": {
+      "message": "Nem sikerült telepíteni: {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "A telepítések megszakadtak (a System Hub újra lett töltve vagy el lett távolítva)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Nem maradt elég GitHub-kérés az összes tároló ellenőrzéséhez ({remaining} maradt, {needed} kell): az ellenőrzés a korlát {reset}-kor történő visszaállítása után újra lefut."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} továbbra sem érhető el",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) továbbra sem érhető el az System Hub {attempt} újratöltése után, amely addig nem tölti újra, amíg valamelyik entitása elérhetővé nem válik.\n\nEllenőrizd az eszközt vagy szolgáltatást, amelyhez kapcsolódik, és a naplókat. Ez a probléma eltűnik, amint az integráció helyreáll.\n\nKüldd el az újrapróbáláshoz: az System Hub elfelejti az újratöltéseit, és újratölti az integrációt."
+          }
+        },
+        "abort": {
+          "not_loaded": "Az System Hub nincs betöltve.",
+          "reload_started": "**{title}** újratöltése elindult: az újratöltései visszaállítva, az System Hub elölről kezdi. Ez a probléma eltűnik, amint az újratöltés elkezdődik; a hiba a naplókban látható."
+        }
+      }
+    }
+  }
+}

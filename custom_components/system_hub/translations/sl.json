@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Izberite module, ki jih želite vklopiti. Vsak modul se nastavi v možnostih.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
+          "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace ni naložen."
+    },
+    "abort": {
+      "already_configured": "System Hub je že nastavljen.",
+      "single_instance_allowed": "System Hub je že nastavljen."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Možnosti System Hub",
+        "menu_options": {
+          "modules": "Moduli",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Dodaj ponovni zagon prek vtičnice",
+          "watchdog_remove_power_cycle": "Watchdog: Odstrani ponovne zagone prek vtičnice",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduli",
+        "description": "Vklopite ali izklopite module. Izklopljen modul ustavi svoja preverjanja in njegove entitete se odstranijo; njegove nastavitve se ohranijo.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
+          "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Interval preverjanja",
+          "grace_period": "Čakalna doba",
+          "grace_overrides": "Čas mirovanja po integraciji",
+          "max_reloads": "Zaporedna ponovna nalaganja",
+          "ignored_integrations": "Prezrte integracije",
+          "notify_services": "Dejanja obvestil",
+          "ignored_entries": "Prezrti vnosi",
+          "pause_entity": "Entiteta premora"
+        },
+        "data_description": {
+          "scan_interval": "Minute med dvema preverjanjema.",
+          "grace_period": "Minute, ko morajo biti vse entitete integracije nedosegljive, preden se ta ponovno naloži. V tem času po zagonu Home Assistanta se nič ne nalaga ponovno.",
+          "grace_overrides": "Ena vrstica na integracijo: domena: minute (zha: 30). Nadomesti čas mirovanja te integracije in premore med njenimi ponovnimi nalaganji; po zagonu globalni čas mirovanja še vedno velja za vse.",
+          "max_reloads": "Število ponovnih nalaganj integracije, ki ostaja nedosegljiva, preden se jo opusti, dokler si ne opomore. Razmik med dvema ponovnima nalaganjema se vsakič podvoji: čakalna doba, 2 × čakalna doba…",
+          "ignored_integrations": "Integracije, ki se nikoli ne naložijo ponovno. Vnesite domeno, da dodate integracijo, ki še ni nastavljena.",
+          "notify_services": "Vsako obvestilo pošlji tudi s temi dejanji (notify.mobile_app_…). Trajno obvestilo se ustvari vedno.",
+          "ignored_entries": "Posamezni vnosi integracije, ki se nikoli ne naložijo znova; drugi vnosi njihove integracije ostanejo nadzorovani (npr. ena od več kamer).",
+          "pause_entity": "Dokler je ta entiteta vklopljena (input_boolean za vzdrževanje, urnik za noč…), se nič ne naloži znova; preverjanja še vedno navajajo nedosegljive integracije."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Ponovni zagon naprave prek njene vtičnice",
+        "description": "Ko vse entitete naprave ostanejo nedosegljive, se pametna vtičnica, ki jo napaja, izklopi in nato znova vklopi. Enake omejitve kot pri ponovnih nalaganjih: nalaganja zapored, čakanje, ki se podvoji, entiteta premora, nič med obdobjem odloga po zagonu.",
+        "data": {
+          "device_id": "Naprava",
+          "switch": "Pametna vtičnica",
+          "delay": "Nedosegljiva",
+          "off_time": "Izklopljena za"
+        },
+        "data_description": {
+          "device_id": "Naprava za ponovni zagon: vse njene omogočene entitete morajo biti nedosegljive.",
+          "switch": "Stikalo, ki jo napaja. Izklopi se le, če je vklopljeno: izklopljena ali nedosegljiva vtičnica ostane nedotaknjena.",
+          "delay": "Minute, ko morajo biti vse entitete naprave nedosegljive, preden se njena vtičnica izklopi. Čakanje med dvema ponovnima zagonoma se vsakič podvoji.",
+          "off_time": "Sekunde, ko vtičnica ostane izklopljena, preden se znova vklopi."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Odstrani ponovne zagone prek vtičnice",
+        "data": {
+          "power_cycles": "Ponovni zagoni prek vtičnice"
+        },
+        "data_description": {
+          "power_cycles": "Ponovni zagoni prek vtičnice za odstranitev."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Interval preverjanja",
+          "backup_before_install": "Varnostna kopija pred namestitvijo posodobitev"
+        },
+        "data_description": {
+          "scan_interval": "Število ur med dvema samodejnima preverjanjema. 0 izklopi samodejno preverjanje: uporabite gumb ali dejanje.",
+          "backup_before_install": "Pred Posodobi vse (ali dejanjem brez backup) se ustvari samodejna varnostna kopija Home Assistant z nastavitvami v Nastavitve > Sistem > Varnostne kopije; če ne uspe, se nič ne namesti."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Vsaka vrstica mora biti domena: minute, od 1 do 1440 (zha: 30).",
+      "device_already_cycled": "Ta naprava že ima ponovni zagon prek vtičnice: najprej ga odstranite.",
+      "switch_on_device": "Vtičnica ne more biti entiteta same naprave: bila bi nedosegljiva skupaj z njo.",
+      "device_without_entities": "Ta naprava razen vtičnice nima entitete za nadzor.",
+      "marketplace_not_loaded": "Marketplace ni naložen."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Preveri zdaj"
+      },
+      "marketplace_check_updates": {
+        "name": "Preveri posodobitve"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Integracije, ki niso na voljo",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integracije"
+          },
+          "ignored": {
+            "name": "Prezrte"
+          },
+          "max_reloads": {
+            "name": "Največ ponovnih nalaganj"
+          },
+          "paused": {
+            "name": "Zaustavljeno"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Zadnje ponovno nalaganje",
+        "state_attributes": {
+          "domain": {
+            "name": "Domena"
+          },
+          "title": {
+            "name": "Naslov"
+          },
+          "entry_id": {
+            "name": "ID vnosa"
+          },
+          "success": {
+            "name": "Uspeh"
+          },
+          "reloads": {
+            "name": "Ponovna nalaganja"
+          },
+          "history": {
+            "name": "Zgodovina"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Zadnje preverjanje"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Ponovna nalaganja v 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Neuspešna"
+          },
+          "integrations": {
+            "name": "Integracije"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Stanje",
+        "state": {
+          "idle": "Nedejaven",
+          "running": "Preverjanje",
+          "error": "Napaka"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Preverjeno"
+          },
+          "total": {
+            "name": "Repozitoriji"
+          },
+          "updates": {
+            "name": "Razpoložljive posodobitve"
+          },
+          "failed": {
+            "name": "Neuspešno"
+          },
+          "error": {
+            "name": "Napaka"
+          },
+          "checking": {
+            "name": "V preverjanju"
+          },
+          "installing": {
+            "name": "V nameščanju"
+          },
+          "install_failed": {
+            "name": "Ni bilo mogoče namestiti"
+          },
+          "github_connected": {
+            "name": "GitHub povezan"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Zadnje preverjanje",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Interval preverjanja"
+          },
+          "next_check": {
+            "name": "Naslednje preverjanje"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Preveri integracije",
+      "description": "Poišče integracije, katerih nobena entiteta ni na voljo, in ponovno naloži tiste, ki jim je potekla čakalna doba."
+    },
+    "watchdog_reset": {
+      "name": "Ponastavi integracijo",
+      "description": "Pozabi ponovna nalaganja integracije (opuščene ali ne) in jo takoj ponovno naloži.",
+      "fields": {
+        "entry_id": {
+          "name": "Vnos integracije",
+          "description": "Vnos integracije, ki se ponastavi in ponovno naloži."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Preveri posodobitve",
+      "description": "Preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Teče v ozadju, razen če je nastavljen wait.",
+      "fields": {
+        "wait": {
+          "name": "Počakaj",
+          "description": "Počakaj, da so preverjeni vsi repozitoriji, preden se dejanje konča; dejanje nato ne uspe, če preverjanje ni uspelo ali repozitorija ni bilo mogoče preveriti."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Preveri posodobitve repozitorija",
+      "description": "Preveri posodobitve repozitorijev za temi entitetami posodobitev Marketplace in počaka na rezultat.",
+      "fields": {
+        "entity_id": {
+          "name": "Entitete posodobitev",
+          "description": "Entitete posodobitev Marketplace za repozitorije, ki jih je treba preveriti."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Namesti posodobitve",
+      "description": "Namesti posodobitve repozitorijev Marketplace, eno za drugo, v ozadju, razen če je nastavljen wait. Samo za skrbnike.",
+      "fields": {
+        "entity_id": {
+          "name": "Entitete posodobitev",
+          "description": "Entitete posodobitev Marketplace, ki jih je treba posodobiti; pustite prazno za vse repozitorije s posodobitvijo."
+        },
+        "wait": {
+          "name": "Počakaj",
+          "description": "Počakaj, da so nameščene vse posodobitve, preden se dejanje konča; dejanje nato ne uspe, če posodobitve ni bilo mogoče namestiti."
+        },
+        "backup": {
+          "name": "Najprej varnostna kopija",
+          "description": "Ustvari samodejno varnostno kopijo Home Assistant pred namestitvijo; če ne uspe, se nič ne namesti. Pustite prazno, da velja možnost integracije."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integracija ponovno naložena",
+    "watchdog_reloaded": "{title} ({domain}) je bila ponovno naložena: nobena njena entiteta ni bila na voljo od {since}. Ponovno nalaganje {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Ponovno nalaganje integracije ni uspelo",
+    "watchdog_reload_failed": "{title} ({domain}) ni bilo mogoče ponovno naložiti: nobena njena entiteta ni bila na voljo od {since}. Ponovno nalaganje {attempt}/{max}, glejte dnevnike.",
+    "watchdog_gave_up_title": "Integracija še vedno ni na voljo",
+    "watchdog_gave_up": "{title} ({domain}) še vedno ni na voljo. Število ponovnih nalaganj: {attempt}. Ne bo se več nalagala ponovno, dokler ena od njenih entitet ne bo na voljo.",
+    "watchdog_power_cycled_title": "Naprava ponovno zagnana",
+    "watchdog_power_cycled": "{title} je bila ponovno zagnana s {switch}: vse njene entitete so bile nedosegljive od {since}. Ponovni zagon {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Ponovni zagon naprave ni uspel",
+    "watchdog_power_cycle_failed": "{title} ni bilo mogoče ponovno zagnati s {switch}: vse njene entitete so bile nedosegljive od {since}. Ponovni zagon {attempt}/{max}, glejte dnevnike.",
+    "watchdog_power_cycle_gave_up_title": "Naprava je še vedno nedosegljiva",
+    "watchdog_power_cycle_gave_up": "{title} je še vedno nedosegljiva po ponovnih zagonih: {attempt}. {switch} se ne bo več izklopila, dokler ena od njenih entitet ne bo dosegljiva."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub ni naložen."
+    },
+    "module_disabled": {
+      "message": "Modul {module} je izklopljen v možnostih System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Ni vnosa integracije {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} ni bilo mogoče ponovno naložiti, glejte dnevnike. Njena ponovna nalaganja so ponastavljena: System Hub začne znova."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace ni naložen."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Ta različica Marketplace ni podprta (manjka {path}); odprite prijavo težave na {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace je onemogočen ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace je onemogočen."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} ni entiteta posodobitve Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} ni repozitorij, prenesen s Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Ni bilo mogoče preveriti: {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Preverjanje je bilo preklicano (System Hub je bil znova naložen ali odstranjen)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Celotno preverjanje ni uspelo: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Posodobitve se že nameščajo."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Posodobitve se nameščajo: preverite posodobitve, ko bo nameščanje končano."
+    },
+    "marketplace_install_failed": {
+      "message": "Ni bilo mogoče namestiti: {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Nameščanja so bila preklicana (System Hub je bil znova naložen ali odstranjen)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Ni dovolj preostalih zahtev GitHub za preverjanje vseh repozitorijev (preostalo {remaining}, potrebnih {needed}): preverjanje se ponovi po ponastavitvi omejitve ob {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} še vedno ni na voljo",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) še vedno ni na voljo. Število ponovnih nalaganj z System Hub: {attempt}. Ne bo se več nalagala ponovno, dokler ena od njenih entitet ne bo na voljo.\n\nPreverite napravo ali storitev, s katero se povezuje, in dnevnike. Ta težava izgine, ko se integracija obnovi.\n\nPotrdite za ponoven poskus zdaj: System Hub pozabi njena ponovna nalaganja in ponovno naloži integracijo."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub ni naložen.",
+          "reload_started": "Ponovno nalaganje **{title}** se je začelo: njena ponovna nalaganja so ponastavljena in System Hub začne znova. Ta težava izgine, takoj ko se nalaganje začne; napaka je v dnevnikih."
+        }
+      }
+    }
+  }
+}

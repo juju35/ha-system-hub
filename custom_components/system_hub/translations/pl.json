@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Wybierz moduły do włączenia. Każdy moduł konfiguruje się w opcjach.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
+          "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace nie jest załadowany."
+    },
+    "abort": {
+      "already_configured": "System Hub jest już skonfigurowany.",
+      "single_instance_allowed": "System Hub jest już skonfigurowany."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje System Hub",
+        "menu_options": {
+          "modules": "Moduły",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Dodaj restart przez gniazdko",
+          "watchdog_remove_power_cycle": "Watchdog: Usuń restarty przez gniazdko",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduły",
+        "description": "Włącz lub wyłącz moduły. Wyłączony moduł przestaje wykonywać sprawdzenia, a jego encje są usuwane; jego ustawienia zostają zachowane.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
+          "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Interwał sprawdzania",
+          "grace_period": "Okres karencji",
+          "grace_overrides": "Okres karencji dla integracji",
+          "max_reloads": "Ponowne wczytania z rzędu",
+          "ignored_integrations": "Ignorowane integracje",
+          "notify_services": "Akcje powiadomień",
+          "ignored_entries": "Ignorowane wpisy",
+          "pause_entity": "Encja pauzy"
+        },
+        "data_description": {
+          "scan_interval": "Liczba minut między dwoma sprawdzeniami.",
+          "grace_period": "Liczba minut, przez które wszystkie encje integracji muszą być niedostępne, zanim zostanie ona ponownie wczytana. Przez ten czas po uruchomieniu Home Assistant nic nie jest ponownie wczytywane.",
+          "grace_overrides": "Jedna linia na integrację: domena: minuty (zha: 30). Zastępuje okres karencji tej integracji i odstępy między jej przeładowaniami; po uruchomieniu globalny okres karencji nadal obowiązuje wszystkie.",
+          "max_reloads": "Liczba ponownych wczytań integracji, która pozostaje niedostępna, zanim zostanie porzucona do czasu jej przywrócenia. Odstęp między dwoma ponownymi wczytaniami za każdym razem się podwaja: okres karencji, 2 × okres karencji…",
+          "ignored_integrations": "Integracje, które nigdy nie są ponownie wczytywane. Wpisz domenę, aby dodać integrację, która nie jest jeszcze skonfigurowana.",
+          "notify_services": "Wysyłaj też każde powiadomienie za pomocą tych akcji (notify.mobile_app_…). Trwałe powiadomienie jest tworzone zawsze.",
+          "ignored_entries": "Pojedyncze wpisy integracji nigdy nie przeładowywane; pozostałe wpisy ich integracji są nadal pilnowane (np. jedna z kilku kamer).",
+          "pause_entity": "Gdy ta encja jest włączona (input_boolean na czas konserwacji, harmonogram na noc…), nic nie jest przeładowywane; sprawdzenia nadal wymieniają niedostępne integracje."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Restart urządzenia przez jego gniazdko",
+        "description": "Gdy wszystkie encje urządzenia pozostają niedostępne, inteligentne gniazdko, które je zasila, jest wyłączane i ponownie włączane. Te same limity co przy przeładowaniach: przeładowania z rzędu, podwajające się opóźnienie, encja pauzy, nic w okresie karencji po starcie.",
+        "data": {
+          "device_id": "Urządzenie",
+          "switch": "Inteligentne gniazdko",
+          "delay": "Niedostępne przez",
+          "off_time": "Wyłączone przez"
+        },
+        "data_description": {
+          "device_id": "Urządzenie do zrestartowania: wszystkie jego włączone encje muszą być niedostępne.",
+          "switch": "Przełącznik, który je zasila. Wyłączany tylko, gdy jest włączony: wyłączone lub niedostępne gniazdko pozostaje nietknięte.",
+          "delay": "Minuty, przez które wszystkie encje urządzenia muszą być niedostępne, zanim jego gniazdko zostanie wyłączone. Opóźnienie między dwoma restartami za każdym razem się podwaja.",
+          "off_time": "Sekundy, przez które gniazdko pozostaje wyłączone przed ponownym włączeniem."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Usuń restarty przez gniazdko",
+        "data": {
+          "power_cycles": "Restarty przez gniazdko"
+        },
+        "data_description": {
+          "power_cycles": "Restarty przez gniazdko do usunięcia."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Częstotliwość sprawdzania",
+          "backup_before_install": "Kopia zapasowa przed instalacją aktualizacji"
+        },
+        "data_description": {
+          "scan_interval": "Liczba godzin między dwoma automatycznymi sprawdzeniami. 0 wyłącza automatyczne sprawdzanie: użyj przycisku lub akcji.",
+          "backup_before_install": "Przed Aktualizuj wszystko (lub akcją bez backup) utwórz automatyczną kopię zapasową Home Assistant, z jej ustawieniami w Ustawienia > System > Kopie zapasowe; jeśli się nie powiedzie, nic nie zostanie zainstalowane."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Każda linia musi mieć postać domena: minuty, od 1 do 1440 (zha: 30).",
+      "device_already_cycled": "To urządzenie ma już restart przez gniazdko: najpierw go usuń.",
+      "switch_on_device": "Gniazdko nie może być encją samego urządzenia: byłoby niedostępne razem z nim.",
+      "device_without_entities": "To urządzenie nie ma poza gniazdkiem żadnej encji do obserwowania.",
+      "marketplace_not_loaded": "Marketplace nie jest załadowany."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Sprawdź teraz"
+      },
+      "marketplace_check_updates": {
+        "name": "Sprawdź aktualizacje"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Niedostępne integracje",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integracje"
+          },
+          "ignored": {
+            "name": "Ignorowane"
+          },
+          "max_reloads": {
+            "name": "Maksymalna liczba ponownych wczytań"
+          },
+          "paused": {
+            "name": "Wstrzymano"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Ostatnie ponowne wczytanie",
+        "state_attributes": {
+          "domain": {
+            "name": "Domena"
+          },
+          "title": {
+            "name": "Tytuł"
+          },
+          "entry_id": {
+            "name": "ID wpisu"
+          },
+          "success": {
+            "name": "Powodzenie"
+          },
+          "reloads": {
+            "name": "Ponowne wczytania"
+          },
+          "history": {
+            "name": "Historia"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Ostatnie sprawdzenie"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Przeładowania w 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Nieudane"
+          },
+          "integrations": {
+            "name": "Integracje"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Bezczynny",
+          "running": "Sprawdzanie",
+          "error": "Błąd"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Sprawdzone"
+          },
+          "total": {
+            "name": "Repozytoria"
+          },
+          "updates": {
+            "name": "Dostępne aktualizacje"
+          },
+          "failed": {
+            "name": "Nieudane"
+          },
+          "error": {
+            "name": "Błąd"
+          },
+          "checking": {
+            "name": "W trakcie sprawdzania"
+          },
+          "installing": {
+            "name": "W trakcie instalacji"
+          },
+          "install_failed": {
+            "name": "Nie udało się zainstalować"
+          },
+          "github_connected": {
+            "name": "GitHub połączony"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Ostatnie sprawdzenie",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Częstotliwość sprawdzania"
+          },
+          "next_check": {
+            "name": "Następne sprawdzenie"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Sprawdź integracje",
+      "description": "Wyszukuje integracje, których wszystkie encje są niedostępne, i ponownie wczytuje te, których okres karencji minął."
+    },
+    "watchdog_reset": {
+      "name": "Zresetuj integrację",
+      "description": "Zapomina ponowne wczytania integracji (porzuconej lub nie) i od razu wczytuje ją ponownie.",
+      "fields": {
+        "entry_id": {
+          "name": "Wpis integracji",
+          "description": "Wpis integracji do zresetowania i ponownego wczytania."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Sprawdź aktualizacje",
+      "description": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace. Działa w tle, chyba że ustawiono Czekaj.",
+      "fields": {
+        "wait": {
+          "name": "Czekaj",
+          "description": "Czekaj, aż wszystkie repozytoria zostaną sprawdzone, zanim akcja się zakończy; akcja kończy się wtedy błędem, jeśli sprawdzanie się nie powiodło lub nie udało się sprawdzić repozytorium."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Sprawdź aktualizacje repozytorium",
+      "description": "Sprawdza aktualizacje repozytoriów powiązanych z tymi encjami aktualizacji Marketplace i czeka na wynik.",
+      "fields": {
+        "entity_id": {
+          "name": "Encje aktualizacji",
+          "description": "Encje aktualizacji Marketplace repozytoriów do sprawdzenia."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Zainstaluj aktualizacje",
+      "description": "Instaluje aktualizacje repozytoriów Marketplace, jedną po drugiej, w tle, chyba że ustawiono Czekaj. Tylko administratorzy.",
+      "fields": {
+        "entity_id": {
+          "name": "Encje aktualizacji",
+          "description": "Encje aktualizacji Marketplace do zaktualizowania; pozostaw puste dla wszystkich repozytoriów z aktualizacją."
+        },
+        "wait": {
+          "name": "Czekaj",
+          "description": "Czekaj, aż wszystkie aktualizacje zostaną zainstalowane, zanim akcja się zakończy; akcja kończy się wtedy błędem, jeśli nie udało się zainstalować aktualizacji."
+        },
+        "backup": {
+          "name": "Najpierw kopia zapasowa",
+          "description": "Utwórz automatyczną kopię zapasową Home Assistant przed instalacją; nic nie zostanie zainstalowane, jeśli się nie powiedzie. Zostaw puste, aby użyć opcji integracji."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integracja ponownie wczytana",
+    "watchdog_reloaded": "{title} ({domain}) została ponownie wczytana: wszystkie jej encje były niedostępne od {since}. Ponowne wczytanie {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Nie udało się ponownie wczytać integracji",
+    "watchdog_reload_failed": "Nie udało się ponownie wczytać {title} ({domain}): wszystkie jej encje były niedostępne od {since}. Ponowne wczytanie {attempt}/{max}, sprawdź logi.",
+    "watchdog_gave_up_title": "Integracja nadal niedostępna",
+    "watchdog_gave_up": "{title} ({domain}) jest nadal niedostępna. Liczba ponownych wczytań: {attempt}. Nie zostanie ponownie wczytana, dopóki jedna z jej encji nie będzie dostępna.",
+    "watchdog_power_cycled_title": "Urządzenie zrestartowane",
+    "watchdog_power_cycled": "{title} zostało zrestartowane przez {switch}: wszystkie jego encje były niedostępne od {since}. Restart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Restart urządzenia nie powiódł się",
+    "watchdog_power_cycle_failed": "Nie udało się zrestartować {title} przez {switch}: wszystkie jego encje były niedostępne od {since}. Restart {attempt}/{max}, zobacz logi.",
+    "watchdog_power_cycle_gave_up_title": "Urządzenie nadal niedostępne",
+    "watchdog_power_cycle_gave_up": "{title} jest nadal niedostępne po {attempt} restartach. {switch} nie zostanie ponownie wyłączone, dopóki któraś z jego encji nie będzie dostępna."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub nie jest załadowany."
+    },
+    "module_disabled": {
+      "message": "Moduł {module} jest wyłączony w opcjach System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Brak wpisu integracji {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "Nie udało się ponownie wczytać {title}, sprawdź logi. Licznik ponownych wczytań został zresetowany: System Hub zaczyna od nowa."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace nie jest załadowany."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Ta wersja Marketplace nie jest obsługiwana (brak {path}); zgłoś problem na {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace jest wyłączony ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace jest wyłączony."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} nie jest encją aktualizacji Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} nie jest repozytorium pobranym przez Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Nie udało się sprawdzić: {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Sprawdzanie zostało anulowane (System Hub został przeładowany lub usunięty)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Pełne sprawdzanie nie powiodło się: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Aktualizacje są już instalowane."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Trwa instalowanie aktualizacji: sprawdź aktualizacje po jego zakończeniu."
+    },
+    "marketplace_install_failed": {
+      "message": "Nie udało się zainstalować: {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Instalacje zostały anulowane (System Hub został przeładowany lub usunięty)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Za mało pozostałych żądań GitHub, aby sprawdzić wszystkie repozytoria (pozostało {remaining}, potrzeba {needed}): sprawdzenie zostanie powtórzone po zresetowaniu limitu o {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} jest nadal niedostępna",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) jest nadal niedostępna. Liczba ponownych wczytań przez System Hub: {attempt}. Nie zostanie ponownie wczytana, dopóki jedna z jej encji nie będzie dostępna.\n\nSprawdź urządzenie lub usługę, z którą się łączy, oraz logi. Ten problem zniknie, gdy integracja zacznie znów działać.\n\nZatwierdź, aby spróbować ponownie teraz: System Hub zapomina ponowne wczytania i wczytuje integrację ponownie."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub nie jest wczytany.",
+          "reload_started": "Ponowne wczytywanie **{title}**: licznik ponownych wczytań został zresetowany, a System Hub zaczyna od nowa. Ten problem zniknie, gdy tylko wczytywanie się rozpocznie; błąd znajdziesz w logach."
+        }
+      }
+    }
+  }
+}

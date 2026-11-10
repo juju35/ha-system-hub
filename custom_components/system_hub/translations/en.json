@@ -3,11 +3,369 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "System health, Home Assistant containers, Marketplace updates and the integration watchdog in one admin panel."
+        "description": "Choose the modules to turn on. Each module is set up in the options.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Reloads the integrations whose entities are all unavailable.",
+          "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours."
+        }
       }
     },
+    "error": {
+      "marketplace_not_loaded": "The Marketplace is not loaded or is disabled."
+    },
     "abort": {
-      "single_instance_allowed": "System Hub is already set up."
+      "already_configured": "System Hub is already configured.",
+      "single_instance_allowed": "System Hub is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "System Hub options",
+        "menu_options": {
+          "modules": "Modules",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Add a power cycle",
+          "watchdog_remove_power_cycle": "Watchdog: Remove power cycles",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Modules",
+        "description": "Turn modules on or off. A module turned off stops its checks and its entities are removed; its settings are kept.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Reloads the integrations whose entities are all unavailable.",
+          "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Check interval",
+          "grace_period": "Grace period",
+          "grace_overrides": "Grace period per integration",
+          "max_reloads": "Reloads in a row",
+          "ignored_integrations": "Ignored integrations",
+          "notify_services": "Notify actions",
+          "ignored_entries": "Ignored entries",
+          "pause_entity": "Pause entity"
+        },
+        "data_description": {
+          "scan_interval": "Minutes between two checks.",
+          "grace_period": "Minutes every entity of an integration must have been unavailable before it is reloaded. Nothing is reloaded during this time after Home Assistant has started.",
+          "grace_overrides": "One line per integration: domain: minutes (zha: 30). It replaces the grace period for that integration and the delays between its reloads; after a start, the global grace period still applies to all.",
+          "max_reloads": "Reloads of an integration that stays unavailable before giving up on it until it recovers. The delay between two reloads doubles each time: grace period, 2 × grace period…",
+          "ignored_integrations": "Integrations never reloaded. Type a domain to add one that isn't set up yet.",
+          "notify_services": "Also send each notification with these actions (notify.mobile_app_…). A persistent notification is always created.",
+          "ignored_entries": "Single integration entries never reloaded, the other entries of their integration still watched (one camera of several, say).",
+          "pause_entity": "While this entity is on (an input_boolean for maintenance, a schedule for the night…), nothing is reloaded; the checks still list the unavailable integrations."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Power cycle a device",
+        "description": "When all the entities of a device stay unavailable, the smart plug that powers it is switched off, then on again. Same limits as the reloads: reloads in a row, doubling delay, pause entity, nothing during the grace period after a start.",
+        "data": {
+          "device_id": "Device",
+          "switch": "Smart plug",
+          "delay": "Unavailable for",
+          "off_time": "Off for"
+        },
+        "data_description": {
+          "device_id": "The device to restart: all its enabled entities must be unavailable.",
+          "switch": "The switch that powers it. Only switched off when it is on: a plug that is off or unavailable is left alone.",
+          "delay": "Minutes all the device's entities must have been unavailable before its plug is switched off. The delay between two power cycles doubles each time.",
+          "off_time": "Seconds the plug stays off before being switched on again."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Remove power cycles",
+        "data": {
+          "power_cycles": "Power cycles"
+        },
+        "data_description": {
+          "power_cycles": "The power cycles to remove."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Check interval",
+          "backup_before_install": "Back up before installing updates"
+        },
+        "data_description": {
+          "scan_interval": "Hours between two automatic checks. 0 turns the automatic check off: use the button or the action.",
+          "backup_before_install": "Before Update all (or the action without backup), create Home Assistant's automatic backup, with its settings in Settings > System > Backups; if it fails, nothing is installed."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Each line must be domain: minutes, from 1 to 1440 (zha: 30).",
+      "device_already_cycled": "This device already has a power cycle: remove it first.",
+      "switch_on_device": "The plug can't be an entity of the device itself: it would be unavailable with it.",
+      "device_without_entities": "This device has no entity to watch besides the plug.",
+      "marketplace_not_loaded": "The Marketplace is not loaded or is disabled."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Check now"
+      },
+      "marketplace_check_updates": {
+        "name": "Check for updates"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Unavailable integrations",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrations"
+          },
+          "ignored": {
+            "name": "Ignored"
+          },
+          "max_reloads": {
+            "name": "Max reloads"
+          },
+          "paused": {
+            "name": "Paused"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Last reload",
+        "state_attributes": {
+          "domain": {
+            "name": "Domain"
+          },
+          "title": {
+            "name": "Title"
+          },
+          "entry_id": {
+            "name": "Entry ID"
+          },
+          "success": {
+            "name": "Success"
+          },
+          "reloads": {
+            "name": "Reloads"
+          },
+          "history": {
+            "name": "History"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Last check"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Reloads in 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Failed"
+          },
+          "integrations": {
+            "name": "Integrations"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Idle",
+          "running": "Checking",
+          "error": "Error"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Checked"
+          },
+          "total": {
+            "name": "Repositories"
+          },
+          "updates": {
+            "name": "Updates available"
+          },
+          "failed": {
+            "name": "Failed"
+          },
+          "error": {
+            "name": "Error"
+          },
+          "checking": {
+            "name": "Being checked"
+          },
+          "installing": {
+            "name": "Being installed"
+          },
+          "install_failed": {
+            "name": "Could not be installed"
+          },
+          "github_connected": {
+            "name": "GitHub connected"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Last check",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Check interval"
+          },
+          "next_check": {
+            "name": "Next check"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Check integrations",
+      "description": "Looks for the integrations whose entities are all unavailable and reloads those past the grace period."
+    },
+    "watchdog_reset": {
+      "name": "Reset an integration",
+      "description": "Forgets the reloads done on an integration (given up on or not) and reloads it now.",
+      "fields": {
+        "entry_id": {
+          "name": "Integration entry",
+          "description": "The integration entry to reset and reload."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Check for updates",
+      "description": "Checks every repository installed from the Marketplace for updates. Runs in the background unless wait is set.",
+      "fields": {
+        "wait": {
+          "name": "Wait",
+          "description": "Wait until every repository has been checked before the action ends; the action then fails if the check failed or a repository could not be checked."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Check a repository for updates",
+      "description": "Checks the repositories behind these Marketplace update entities for updates, and waits for the result.",
+      "fields": {
+        "entity_id": {
+          "name": "Update entities",
+          "description": "Marketplace update entities of the repositories to check."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Install updates",
+      "description": "Installs the updates of the Marketplace repositories, one after the other, in the background unless wait is set. Administrators only.",
+      "fields": {
+        "entity_id": {
+          "name": "Update entities",
+          "description": "Marketplace update entities to update; leave empty for every repository with an update."
+        },
+        "wait": {
+          "name": "Wait",
+          "description": "Wait until every update has been installed before the action ends; the action then fails if an update could not be installed."
+        },
+        "backup": {
+          "name": "Back up first",
+          "description": "Create Home Assistant's automatic backup before installing; nothing is installed if it fails. Leave empty to follow the integration option."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integration reloaded",
+    "watchdog_reloaded": "{title} ({domain}) was reloaded: all its entities were unavailable since {since}. Reload {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Integration reload failed",
+    "watchdog_reload_failed": "{title} ({domain}) could not be reloaded: all its entities were unavailable since {since}. Reload {attempt}/{max}, see the logs.",
+    "watchdog_gave_up_title": "Integration still unavailable",
+    "watchdog_gave_up": "{title} ({domain}) is still unavailable after {attempt} reloads. It won't be reloaded again until one of its entities is available.",
+    "watchdog_power_cycled_title": "Device power cycled",
+    "watchdog_power_cycled": "{title} was restarted with {switch}: all its entities were unavailable since {since}. Power cycle {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Device power cycle failed",
+    "watchdog_power_cycle_failed": "{title} could not be restarted with {switch}: all its entities were unavailable since {since}. Power cycle {attempt}/{max}, see the logs.",
+    "watchdog_power_cycle_gave_up_title": "Device still unavailable",
+    "watchdog_power_cycle_gave_up": "{title} is still unavailable after {attempt} power cycles. {switch} won't be switched off again until one of its entities is available."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub is not loaded."
+    },
+    "module_disabled": {
+      "message": "The {module} module is turned off in the System Hub options."
+    },
+    "watchdog_unknown_entry": {
+      "message": "No integration entry {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} could not be reloaded, see the logs. Its reloads were reset: System Hub starts over."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "The Marketplace is not loaded."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "This version of the Marketplace is not supported (missing {path}); please open an issue on {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "The Marketplace is disabled ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "The Marketplace is disabled."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} is not a Marketplace update entity."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} is not a repository installed from the Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Could not check {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "The check was cancelled (System Hub was reloaded or removed)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "The full check failed: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Updates are already being installed."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Updates are being installed: check for updates once they are done."
+    },
+    "marketplace_install_failed": {
+      "message": "Could not install {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "The installs were cancelled (System Hub was reloaded or removed)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Not enough GitHub requests left to check every repository ({remaining} left, {needed} needed): the check runs again after the limit resets at {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} is still unavailable",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) is still unavailable after {attempt} reloads by System Hub, which won't reload it again until one of its entities is available.\n\nCheck the device or service it connects to, and the logs. This issue goes away once the integration has recovered.\n\nSubmit to try again now: System Hub forgets its reloads and reloads the integration."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub is not loaded.",
+          "reload_started": "Reloading **{title}**: its reloads were reset and System Hub starts over. This issue goes away as soon as the reload starts; a failure is in the logs."
+        }
+      }
     }
   }
 }
