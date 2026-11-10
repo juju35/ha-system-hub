@@ -11,7 +11,7 @@
 
 Home Assistant integration that brings the care of your Home Assistant system together in one configurable admin panel: system resources, Home Assistant's own containers, Marketplace updates, the integration watchdog, battery levels and Git sync of your configuration. Each feature is a module you can turn on or off.
 
-> **Work in progress.** System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor) and [ha-git-sync](https://github.com/juju35/ha-git-sync). Their features are being brought in; keep using them until the first release.
+> System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor) and [ha-git-sync](https://github.com/juju35/ha-git-sync): see [Migrating](#migrating) to move over.
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="System Hub sidebar panel, System tab" width="800"></p>
 
