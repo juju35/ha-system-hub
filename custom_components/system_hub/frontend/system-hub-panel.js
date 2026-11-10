@@ -763,4 +763,3 @@ class SystemHubPanel extends HTMLElement {
 if (!customElements.get('system-hub-panel')) {
   customElements.define('system-hub-panel', SystemHubPanel);
 }
-
