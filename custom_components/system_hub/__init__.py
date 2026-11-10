@@ -202,8 +202,10 @@ def _async_remove_disabled(hass: HomeAssistant, entry: ConfigEntry, modules: lis
         for item in er.async_entries_for_config_entry(entities, entry.entry_id):
             if item.unique_id.startswith(prefix):
                 entities.async_remove(item.entity_id)
-        if (device := devices.async_get_device(identifiers={(DOMAIN, f"{entry.entry_id}_{module}")})) is not None:
-            devices.async_remove_device(device.id)
+        # Looked up among the entry's devices: async_get_device by identifiers is deprecated from 2026.11.
+        for device in dr.async_entries_for_config_entry(devices, entry.entry_id):
+            if (DOMAIN, f"{entry.entry_id}_{module}") in device.identifiers:
+                devices.async_remove_device(device.id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -> bool:

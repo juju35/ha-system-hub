@@ -117,9 +117,11 @@ async def test_turning_a_module_off_removes_its_entities_and_device(hass: HomeAs
     assert entities.async_get(WATCHDOG_SENSOR) is None
     assert entities.async_get(WATCHDOG_BUTTON) is None
     assert entities.async_get(MARKETPLACE_SENSOR) is not None
-    devices = dr.async_get(hass)
-    assert devices.async_get_device(identifiers={(DOMAIN, f"{entry.entry_id}_watchdog")}) is None
-    assert devices.async_get_device(identifiers={(DOMAIN, f"{entry.entry_id}_marketplace")}) is not None
+    identifiers = {
+        i for d in dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id) for i in d.identifiers
+    }
+    assert (DOMAIN, f"{entry.entry_id}_watchdog") not in identifiers
+    assert (DOMAIN, f"{entry.entry_id}_marketplace") in identifiers
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
     assert result["menu_options"] == ["modules", "marketplace"]
