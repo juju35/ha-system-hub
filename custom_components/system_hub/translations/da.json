@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Vælg de moduler, der skal slås til. Hvert modul indstilles under indstillingerne.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
+          "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace er ikke indlæst."
+    },
+    "abort": {
+      "already_configured": "System Hub er allerede konfigureret.",
+      "single_instance_allowed": "System Hub er allerede konfigureret."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Indstillinger for System Hub",
+        "menu_options": {
+          "modules": "Moduler",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Tilføj genstart via stik",
+          "watchdog_remove_power_cycle": "Watchdog: Fjern genstarter via stik",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduler",
+        "description": "Slå moduler til eller fra. Et modul, der er slået fra, stopper sine kontroller, og dets enheder fjernes; dets indstillinger bevares.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
+          "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Kontrolinterval",
+          "grace_period": "Respitperiode",
+          "grace_overrides": "Henstandsperiode pr. integration",
+          "max_reloads": "Genindlæsninger i træk",
+          "ignored_integrations": "Ignorerede integrationer",
+          "notify_services": "Notifikationshandlinger",
+          "ignored_entries": "Ignorerede poster",
+          "pause_entity": "Pauseentitet"
+        },
+        "data_description": {
+          "scan_interval": "Minutter mellem to kontroller.",
+          "grace_period": "Minutter, som alle enheder i en integration skal have været utilgængelige, før den genindlæses. Intet genindlæses i dette tidsrum, efter at Home Assistant er startet.",
+          "grace_overrides": "Én linje pr. integration: domæne: minutter (zha: 30). Den erstatter henstandsperioden for den integration og ventetiderne mellem dens genindlæsninger; efter en start gælder den globale henstandsperiode stadig for alle.",
+          "max_reloads": "Genindlæsninger af en integration, der forbliver utilgængelig, før den opgives, indtil den kommer sig. Tiden mellem to genindlæsninger fordobles hver gang: respitperiode, 2 × respitperiode…",
+          "ignored_integrations": "Integrationer, der aldrig genindlæses. Skriv et domæne for at tilføje en, der endnu ikke er konfigureret.",
+          "notify_services": "Send også hver notifikation med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation.",
+          "ignored_entries": "Enkelte integrationsposter, der aldrig genindlæses; de andre poster i deres integration overvåges stadig (f.eks. ét af flere kameraer).",
+          "pause_entity": "Så længe denne entitet er tændt (en input_boolean til vedligehold, en tidsplan for natten…), genindlæses intet; tjekkene viser stadig de utilgængelige integrationer."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Genstart en enhed via dens stik",
+        "description": "Når alle en enheds entiteter forbliver utilgængelige, slukkes det smarte stik, der forsyner den, og tændes igen. Samme grænser som for genindlæsninger: genindlæsninger i træk, ventetid der fordobles, pauseentitet, intet i henstandsperioden efter en start.",
+        "data": {
+          "device_id": "Enhed",
+          "switch": "Smart stik",
+          "delay": "Utilgængelig i",
+          "off_time": "Slukket i"
+        },
+        "data_description": {
+          "device_id": "Enheden, der skal genstartes: alle dens aktiverede entiteter skal være utilgængelige.",
+          "switch": "Kontakten, der forsyner den. Slukkes kun, når den er tændt: et stik, der er slukket eller utilgængeligt, røres ikke.",
+          "delay": "Minutter, alle enhedens entiteter skal have været utilgængelige, før dens stik slukkes. Ventetiden mellem to genstarter fordobles hver gang.",
+          "off_time": "Sekunder, stikket forbliver slukket, før det tændes igen."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Fjern genstarter via stik",
+        "data": {
+          "power_cycles": "Genstarter via stik"
+        },
+        "data_description": {
+          "power_cycles": "De genstarter via stik, der skal fjernes."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Kontrolinterval",
+          "backup_before_install": "Tag backup før installation af opdateringer"
+        },
+        "data_description": {
+          "scan_interval": "Timer mellem to automatiske kontroller. 0 slår den automatiske kontrol fra: brug knappen eller handlingen.",
+          "backup_before_install": "Før Opdater alle (eller handlingen uden backup) oprettes Home Assistants automatiske backup med indstillingerne i Indstillinger > System > Backups; mislykkes den, installeres intet."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Hver linje skal være domæne: minutter, fra 1 til 1440 (zha: 30).",
+      "device_already_cycled": "Denne enhed har allerede en genstart via stik: fjern den først.",
+      "switch_on_device": "Stikket kan ikke være en entitet i selve enheden: det ville være utilgængeligt sammen med den.",
+      "device_without_entities": "Denne enhed har ingen entitet at overvåge ud over stikket.",
+      "marketplace_not_loaded": "Marketplace er ikke indlæst."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Kontrollér nu"
+      },
+      "marketplace_check_updates": {
+        "name": "Søg efter opdateringer"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Utilgængelige integrationer",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrationer"
+          },
+          "ignored": {
+            "name": "Ignorerede"
+          },
+          "max_reloads": {
+            "name": "Maks. genindlæsninger"
+          },
+          "paused": {
+            "name": "På pause"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Seneste genindlæsning",
+        "state_attributes": {
+          "domain": {
+            "name": "Domæne"
+          },
+          "title": {
+            "name": "Titel"
+          },
+          "entry_id": {
+            "name": "Post-ID"
+          },
+          "success": {
+            "name": "Lykkedes"
+          },
+          "reloads": {
+            "name": "Genindlæsninger"
+          },
+          "history": {
+            "name": "Historik"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Seneste kontrol"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Genindlæsninger på 24 t",
+        "state_attributes": {
+          "failed": {
+            "name": "Mislykkede"
+          },
+          "integrations": {
+            "name": "Integrationer"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Inaktiv",
+          "running": "Kontrollerer",
+          "error": "Fejl"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Kontrolleret"
+          },
+          "total": {
+            "name": "Repositories"
+          },
+          "updates": {
+            "name": "Tilgængelige opdateringer"
+          },
+          "failed": {
+            "name": "Mislykkede"
+          },
+          "error": {
+            "name": "Fejl"
+          },
+          "checking": {
+            "name": "Kontrolleres"
+          },
+          "installing": {
+            "name": "Installeres"
+          },
+          "install_failed": {
+            "name": "Kunne ikke installeres"
+          },
+          "github_connected": {
+            "name": "GitHub forbundet"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Seneste kontrol",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Kontrolinterval"
+          },
+          "next_check": {
+            "name": "Næste kontrol"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Kontrollér integrationer",
+      "description": "Finder de integrationer, hvis enheder alle er utilgængelige, og genindlæser dem, hvis respitperiode er udløbet."
+    },
+    "watchdog_reset": {
+      "name": "Nulstil en integration",
+      "description": "Glemmer genindlæsningerne af en integration (opgivet eller ej) og genindlæser den nu.",
+      "fields": {
+        "entry_id": {
+          "name": "Integrationspost",
+          "description": "Integrationsposten, der skal nulstilles og genindlæses."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Søg efter opdateringer",
+      "description": "Søger efter opdateringer til alle repositories, der er downloadet med Marketplace. Kører i baggrunden, medmindre wait er angivet.",
+      "fields": {
+        "wait": {
+          "name": "Vent",
+          "description": "Vent, til alle repositories er kontrolleret, før handlingen afsluttes; handlingen mislykkes så, hvis kontrollen mislykkedes, eller et repository ikke kunne kontrolleres."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Søg efter opdateringer til et repository",
+      "description": "Søger efter opdateringer til de repositories, der ligger bag disse Marketplace-opdateringsentiteter, og venter på resultatet.",
+      "fields": {
+        "entity_id": {
+          "name": "Opdateringsentiteter",
+          "description": "Marketplace-opdateringsentiteter for de repositories, der skal kontrolleres."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Installer opdateringer",
+      "description": "Installerer opdateringerne til Marketplace-repositories én ad gangen, i baggrunden, medmindre wait er angivet. Kun administratorer.",
+      "fields": {
+        "entity_id": {
+          "name": "Opdateringsentiteter",
+          "description": "Marketplace-opdateringsentiteter, der skal opdateres; lad stå tomt for alle repositories med en opdatering."
+        },
+        "wait": {
+          "name": "Vent",
+          "description": "Vent, til alle opdateringer er installeret, før handlingen afsluttes; handlingen mislykkes så, hvis en opdatering ikke kunne installeres."
+        },
+        "backup": {
+          "name": "Backup først",
+          "description": "Opret Home Assistants automatiske backup før installation; intet installeres, hvis den mislykkes. Lad stå tomt for at følge integrationens indstilling."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integration genindlæst",
+    "watchdog_reloaded": "{title} ({domain}) blev genindlæst: alle dens enheder havde været utilgængelige siden {since}. Genindlæsning {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Genindlæsning af integration mislykkedes",
+    "watchdog_reload_failed": "{title} ({domain}) kunne ikke genindlæses: alle dens enheder havde været utilgængelige siden {since}. Genindlæsning {attempt}/{max}, se loggene.",
+    "watchdog_gave_up_title": "Integration stadig utilgængelig",
+    "watchdog_gave_up": "{title} ({domain}) er stadig utilgængelig efter {attempt} genindlæsninger. Den genindlæses ikke igen, før en af dens enheder er tilgængelig.",
+    "watchdog_power_cycled_title": "Enhed genstartet",
+    "watchdog_power_cycled": "{title} blev genstartet med {switch}: alle dens entiteter var utilgængelige siden {since}. Genstart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Genstart af enhed mislykkedes",
+    "watchdog_power_cycle_failed": "{title} kunne ikke genstartes med {switch}: alle dens entiteter var utilgængelige siden {since}. Genstart {attempt}/{max}, se logfilerne.",
+    "watchdog_power_cycle_gave_up_title": "Enhed stadig utilgængelig",
+    "watchdog_power_cycle_gave_up": "{title} er stadig utilgængelig efter {attempt} genstarter. {switch} slukkes ikke igen, før en af dens entiteter er tilgængelig."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub er ikke indlæst."
+    },
+    "module_disabled": {
+      "message": "Modulet {module} er slået fra i System Hubs indstillinger."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Ingen integrationspost {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} kunne ikke genindlæses, se logfilerne. Dens genindlæsninger blev nulstillet: System Hub starter forfra."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace er ikke indlæst."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Denne version af Marketplace understøttes ikke ({path} mangler); opret venligst et issue på {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace er deaktiveret ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace er deaktiveret."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} er ikke en Marketplace-opdateringsentitet."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} er ikke et repository downloadet med Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Kunne ikke kontrollere {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Kontrollen blev annulleret (System Hub blev genindlæst eller fjernet)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Den fulde kontrol mislykkedes: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Der installeres allerede opdateringer."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Der installeres opdateringer: søg efter opdateringer, når de er færdige."
+    },
+    "marketplace_install_failed": {
+      "message": "Kunne ikke installere {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Installationerne blev annulleret (System Hub blev genindlæst eller fjernet)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Ikke nok GitHub-forespørgsler tilbage til at tjekke alle repositories ({remaining} tilbage, {needed} nødvendige): tjekket kører igen, når grænsen nulstilles kl. {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} er stadig utilgængelig",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) er stadig utilgængelig efter {attempt} genindlæsninger fra System Hub, som ikke genindlæser den igen, før en af dens enheder er tilgængelig.\n\nTjek den enhed eller tjeneste, den forbinder til, og logfilerne. Dette problem forsvinder, når integrationen virker igen.\n\nIndsend for at prøve igen nu: System Hub glemmer dens genindlæsninger og genindlæser integrationen."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub er ikke indlæst.",
+          "reload_started": "Genindlæser **{title}**: dens genindlæsninger blev nulstillet, og System Hub starter forfra. Dette problem forsvinder, så snart genindlæsningen starter; en fejl står i logfilerne."
+        }
+      }
+    }
+  }
+}

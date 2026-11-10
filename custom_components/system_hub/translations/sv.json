@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Välj vilka moduler som ska aktiveras. Varje modul ställs in under alternativen.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
+          "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace är inte inläst."
+    },
+    "abort": {
+      "already_configured": "System Hub är redan konfigurerad.",
+      "single_instance_allowed": "System Hub är redan konfigurerad."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Alternativ för System Hub",
+        "menu_options": {
+          "modules": "Moduler",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Lägg till omstart via uttag",
+          "watchdog_remove_power_cycle": "Watchdog: Ta bort omstarter via uttag",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduler",
+        "description": "Aktivera eller inaktivera moduler. En inaktiverad modul slutar med sina kontroller och dess entiteter tas bort; dess inställningar sparas.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
+          "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Kontrollintervall",
+          "grace_period": "Respittid",
+          "grace_overrides": "Respittid per integration",
+          "max_reloads": "Omladdningar i rad",
+          "ignored_integrations": "Ignorerade integrationer",
+          "notify_services": "Aviseringsåtgärder",
+          "ignored_entries": "Ignorerade poster",
+          "pause_entity": "Pausentitet"
+        },
+        "data_description": {
+          "scan_interval": "Minuter mellan två kontroller.",
+          "grace_period": "Minuter som alla entiteter i en integration måste ha varit otillgängliga innan den laddas om. Ingenting laddas om under denna tid efter att Home Assistant har startat.",
+          "grace_overrides": "En rad per integration: domän: minuter (zha: 30). Den ersätter respittiden för den integrationen och väntetiderna mellan dess omladdningar; efter en start gäller den globala respittiden fortfarande för alla.",
+          "max_reloads": "Omladdningar av en integration som förblir otillgänglig innan den överges tills den återhämtar sig. Tiden mellan två omladdningar fördubblas varje gång: respittid, 2 × respittid…",
+          "ignored_integrations": "Integrationer som aldrig laddas om. Skriv en domän för att lägga till en som inte är konfigurerad än.",
+          "notify_services": "Skicka även varje avisering med dessa åtgärder (notify.mobile_app_…). En beständig avisering skapas alltid.",
+          "ignored_entries": "Enskilda integrationsposter som aldrig laddas om; integrationens övriga poster bevakas fortfarande (t.ex. en av flera kameror).",
+          "pause_entity": "Så länge denna entitet är på (en input_boolean för underhåll, ett schema för natten…) laddas inget om; kontrollerna listar fortfarande de otillgängliga integrationerna."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Starta om en enhet via dess uttag",
+        "description": "När alla en enhets entiteter förblir otillgängliga stängs det smarta uttaget som driver den av och slås sedan på igen. Samma gränser som för omladdningar: omladdningar i rad, väntetid som fördubblas, pausentitet, inget under respitperioden efter en start.",
+        "data": {
+          "device_id": "Enhet",
+          "switch": "Smart uttag",
+          "delay": "Otillgänglig i",
+          "off_time": "Avstängt i"
+        },
+        "data_description": {
+          "device_id": "Enheten som ska startas om: alla dess aktiverade entiteter måste vara otillgängliga.",
+          "switch": "Brytaren som driver den. Stängs bara av när den är på: ett uttag som är av eller otillgängligt lämnas orört.",
+          "delay": "Minuter som alla enhetens entiteter måste ha varit otillgängliga innan dess uttag stängs av. Väntetiden mellan två omstarter fördubblas varje gång.",
+          "off_time": "Sekunder som uttaget förblir avstängt innan det slås på igen."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Ta bort omstarter via uttag",
+        "data": {
+          "power_cycles": "Omstarter via uttag"
+        },
+        "data_description": {
+          "power_cycles": "Omstarterna via uttag som ska tas bort."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Kontrollintervall",
+          "backup_before_install": "Säkerhetskopiera före installation av uppdateringar"
+        },
+        "data_description": {
+          "scan_interval": "Timmar mellan två automatiska kontroller. 0 stänger av den automatiska kontrollen: använd knappen eller åtgärden.",
+          "backup_before_install": "Före Uppdatera alla (eller åtgärden utan backup) skapas Home Assistants automatiska säkerhetskopia med inställningarna i Inställningar > System > Säkerhetskopior; misslyckas den installeras inget."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Varje rad måste vara domän: minuter, från 1 till 1440 (zha: 30).",
+      "device_already_cycled": "Den här enheten har redan en omstart via uttag: ta bort den först.",
+      "switch_on_device": "Uttaget kan inte vara en entitet i själva enheten: det skulle vara otillgängligt tillsammans med den.",
+      "device_without_entities": "Den här enheten har ingen entitet att övervaka förutom uttaget.",
+      "marketplace_not_loaded": "Marketplace är inte inläst."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Kontrollera nu"
+      },
+      "marketplace_check_updates": {
+        "name": "Sök efter uppdateringar"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Otillgängliga integrationer",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrationer"
+          },
+          "ignored": {
+            "name": "Ignorerade"
+          },
+          "max_reloads": {
+            "name": "Max antal omladdningar"
+          },
+          "paused": {
+            "name": "Pausad"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Senaste omladdning",
+        "state_attributes": {
+          "domain": {
+            "name": "Domän"
+          },
+          "title": {
+            "name": "Titel"
+          },
+          "entry_id": {
+            "name": "Post-ID"
+          },
+          "success": {
+            "name": "Lyckades"
+          },
+          "reloads": {
+            "name": "Omladdningar"
+          },
+          "history": {
+            "name": "Historik"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Senaste kontroll"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Omladdningar på 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Misslyckade"
+          },
+          "integrations": {
+            "name": "Integrationer"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Status",
+        "state": {
+          "idle": "Inaktiv",
+          "running": "Kontrollerar",
+          "error": "Fel"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Kontrollerade"
+          },
+          "total": {
+            "name": "Repositorier"
+          },
+          "updates": {
+            "name": "Tillgängliga uppdateringar"
+          },
+          "failed": {
+            "name": "Misslyckade"
+          },
+          "error": {
+            "name": "Fel"
+          },
+          "checking": {
+            "name": "Kontrolleras"
+          },
+          "installing": {
+            "name": "Installeras"
+          },
+          "install_failed": {
+            "name": "Kunde inte installeras"
+          },
+          "github_connected": {
+            "name": "GitHub ansluten"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Senaste kontroll",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Kontrollintervall"
+          },
+          "next_check": {
+            "name": "Nästa kontroll"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Kontrollera integrationer",
+      "description": "Söker efter integrationer vars entiteter alla är otillgängliga och laddar om dem vars respittid har löpt ut."
+    },
+    "watchdog_reset": {
+      "name": "Återställ en integration",
+      "description": "Glömmer omladdningarna av en integration (uppgiven eller inte) och laddar om den nu.",
+      "fields": {
+        "entry_id": {
+          "name": "Integrationspost",
+          "description": "Integrationsposten som ska återställas och laddas om."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Sök efter uppdateringar",
+      "description": "Söker efter uppdateringar för alla repositorier som laddats ned med Marketplace. Körs i bakgrunden om inte wait är angivet.",
+      "fields": {
+        "wait": {
+          "name": "Vänta",
+          "description": "Vänta tills alla repositorier har kontrollerats innan åtgärden avslutas; åtgärden misslyckas då om kontrollen misslyckades eller om ett repositorium inte kunde kontrolleras."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Sök efter uppdateringar för ett repositorium",
+      "description": "Söker efter uppdateringar för repositorierna bakom dessa Marketplace-uppdateringsentiteter och väntar på resultatet.",
+      "fields": {
+        "entity_id": {
+          "name": "Uppdateringsentiteter",
+          "description": "Marketplace-uppdateringsentiteter för de repositorier som ska kontrolleras."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Installera uppdateringar",
+      "description": "Installerar uppdateringarna för Marketplace-repositorierna, en i taget, i bakgrunden om inte wait är angivet. Endast administratörer.",
+      "fields": {
+        "entity_id": {
+          "name": "Uppdateringsentiteter",
+          "description": "Marketplace-uppdateringsentiteter som ska uppdateras; lämna tomt för alla repositorier med en uppdatering."
+        },
+        "wait": {
+          "name": "Vänta",
+          "description": "Vänta tills alla uppdateringar har installerats innan åtgärden avslutas; åtgärden misslyckas då om en uppdatering inte kunde installeras."
+        },
+        "backup": {
+          "name": "Säkerhetskopiera först",
+          "description": "Skapa Home Assistants automatiska säkerhetskopia före installationen; inget installeras om den misslyckas. Lämna tomt för att följa integrationens alternativ."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integration omladdad",
+    "watchdog_reloaded": "{title} ({domain}) laddades om: alla dess entiteter hade varit otillgängliga sedan {since}. Omladdning {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Omladdning av integration misslyckades",
+    "watchdog_reload_failed": "{title} ({domain}) kunde inte laddas om: alla dess entiteter hade varit otillgängliga sedan {since}. Omladdning {attempt}/{max}, se loggarna.",
+    "watchdog_gave_up_title": "Integration fortfarande otillgänglig",
+    "watchdog_gave_up": "{title} ({domain}) är fortfarande otillgänglig efter {attempt} omladdningar. Den laddas inte om igen förrän någon av dess entiteter är tillgänglig.",
+    "watchdog_power_cycled_title": "Enhet omstartad",
+    "watchdog_power_cycled": "{title} startades om med {switch}: alla dess entiteter var otillgängliga sedan {since}. Omstart {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Omstart av enhet misslyckades",
+    "watchdog_power_cycle_failed": "{title} kunde inte startas om med {switch}: alla dess entiteter var otillgängliga sedan {since}. Omstart {attempt}/{max}, se loggarna.",
+    "watchdog_power_cycle_gave_up_title": "Enhet fortfarande otillgänglig",
+    "watchdog_power_cycle_gave_up": "{title} är fortfarande otillgänglig efter {attempt} omstarter. {switch} stängs inte av igen förrän en av dess entiteter är tillgänglig."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub är inte inläst."
+    },
+    "module_disabled": {
+      "message": "Modulen {module} är inaktiverad i alternativen för System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Ingen integrationspost {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} kunde inte laddas om, se loggarna. Dess omladdningar har återställts: System Hub börjar om."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace är inte inläst."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Den här versionen av Marketplace stöds inte ({path} saknas); öppna ett ärende på {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace är inaktiverat ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace är inaktiverat."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} är inte en Marketplace-uppdateringsentitet."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} är inte ett repositorium som laddats ned med Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Kunde inte kontrollera {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Kontrollen avbröts (System Hub lästes in på nytt eller togs bort)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Den fullständiga kontrollen misslyckades: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Uppdateringar installeras redan."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Uppdateringar installeras: sök efter uppdateringar när de är klara."
+    },
+    "marketplace_install_failed": {
+      "message": "Kunde inte installera {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Installationerna avbröts (System Hub lästes in på nytt eller togs bort)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Inte tillräckligt med GitHub-förfrågningar kvar för att kontrollera alla repositories ({remaining} kvar, {needed} behövs): kontrollen körs igen när gränsen återställs kl. {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} är fortfarande otillgänglig",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) är fortfarande otillgänglig efter {attempt} omladdningar av System Hub, som inte laddar om den igen förrän en av dess entiteter är tillgänglig.\n\nKontrollera enheten eller tjänsten den ansluter till, och loggarna. Det här problemet försvinner när integrationen har återhämtat sig.\n\nSkicka för att försöka igen nu: System Hub glömmer dess omladdningar och laddar om integrationen."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub är inte inläst.",
+          "reload_started": "Laddar om **{title}**: dess omladdningar har återställts och System Hub börjar om. Det här problemet försvinner så snart omladdningen startar; ett fel finns i loggarna."
+        }
+      }
+    }
+  }
+}

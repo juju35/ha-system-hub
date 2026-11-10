@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Scegli i moduli da attivare. Ogni modulo si configura nelle opzioni.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
+          "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace non è caricato."
+    },
+    "abort": {
+      "already_configured": "System Hub è già configurato.",
+      "single_instance_allowed": "System Hub è già configurato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni di System Hub",
+        "menu_options": {
+          "modules": "Moduli",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Aggiungi un riavvio tramite presa",
+          "watchdog_remove_power_cycle": "Watchdog: Rimuovi riavvii tramite presa",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduli",
+        "description": "Attiva o disattiva i moduli. Un modulo disattivato interrompe i suoi controlli e le sue entità vengono rimosse; le sue impostazioni vengono conservate.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
+          "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Intervallo di controllo",
+          "grace_period": "Periodo di tolleranza",
+          "grace_overrides": "Periodo di tolleranza per integrazione",
+          "max_reloads": "Ricaricamenti consecutivi",
+          "ignored_integrations": "Integrazioni ignorate",
+          "notify_services": "Azioni di notifica",
+          "ignored_entries": "Voci ignorate",
+          "pause_entity": "Entità di pausa"
+        },
+        "data_description": {
+          "scan_interval": "Minuti tra due controlli.",
+          "grace_period": "Minuti durante i quali tutte le entità di un'integrazione devono essere non disponibili prima che venga ricaricata. Durante questo periodo, dopo l'avvio di Home Assistant, non viene ricaricato nulla.",
+          "grace_overrides": "Una riga per integrazione: dominio: minuti (zha: 30). Sostituisce il periodo di tolleranza di quell'integrazione e le attese tra i suoi ricaricamenti; dopo un avvio, il periodo di tolleranza globale vale comunque per tutte.",
+          "max_reloads": "Ricaricamenti di un'integrazione che resta non disponibile prima di rinunciare finché non torna disponibile. L'attesa tra due ricaricamenti raddoppia ogni volta: periodo di tolleranza, 2 × periodo di tolleranza…",
+          "ignored_integrations": "Integrazioni mai ricaricate. Digita un dominio per aggiungerne una non ancora configurata.",
+          "notify_services": "Invia ogni notifica anche con queste azioni (notify.mobile_app_…). Viene sempre creata una notifica persistente.",
+          "ignored_entries": "Singole voci di integrazione mai ricaricate; le altre voci della loro integrazione restano sorvegliate (una telecamera tra tante, ad esempio).",
+          "pause_entity": "Finché questa entità è accesa (un input_boolean di manutenzione, una pianificazione per la notte…), non si ricarica nulla; i controlli elencano comunque le integrazioni non disponibili."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Riavvia un dispositivo tramite la sua presa",
+        "description": "Quando tutte le entità di un dispositivo restano non disponibili, la presa smart che lo alimenta viene spenta e poi riaccesa. Stessi limiti dei ricaricamenti: ricaricamenti di fila, attesa che raddoppia, entità di pausa, niente durante il periodo di tolleranza dopo un avvio.",
+        "data": {
+          "device_id": "Dispositivo",
+          "switch": "Presa smart",
+          "delay": "Non disponibile da",
+          "off_time": "Spenta per"
+        },
+        "data_description": {
+          "device_id": "Il dispositivo da riavviare: tutte le sue entità attive devono essere non disponibili.",
+          "switch": "L'interruttore che lo alimenta. Spento solo se è acceso: una presa spenta o non disponibile non viene toccata.",
+          "delay": "Minuti in cui tutte le entità del dispositivo devono essere non disponibili prima di spegnere la sua presa. L'attesa tra due riavvii raddoppia ogni volta.",
+          "off_time": "Secondi in cui la presa resta spenta prima di essere riaccesa."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Rimuovi riavvii tramite presa",
+        "data": {
+          "power_cycles": "Riavvii tramite presa"
+        },
+        "data_description": {
+          "power_cycles": "I riavvii tramite presa da rimuovere."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Intervallo di verifica",
+          "backup_before_install": "Backup prima di installare gli aggiornamenti"
+        },
+        "data_description": {
+          "scan_interval": "Ore tra due verifiche automatiche. 0 disattiva la verifica automatica: usa il pulsante o l'azione.",
+          "backup_before_install": "Prima di Aggiorna tutto (o dell'azione senza backup), crea il backup automatico di Home Assistant, con le sue impostazioni in Impostazioni > Sistema > Backup; se non riesce, non viene installato nulla."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Ogni riga deve essere dominio: minuti, da 1 a 1440 (zha: 30).",
+      "device_already_cycled": "Questo dispositivo ha già un riavvio tramite presa: rimuovilo prima.",
+      "switch_on_device": "La presa non può essere un'entità del dispositivo stesso: sarebbe non disponibile con esso.",
+      "device_without_entities": "Questo dispositivo non ha entità da sorvegliare oltre alla presa.",
+      "marketplace_not_loaded": "Marketplace non è caricato."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Controlla ora"
+      },
+      "marketplace_check_updates": {
+        "name": "Cerca aggiornamenti"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Integrazioni non disponibili",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrazioni"
+          },
+          "ignored": {
+            "name": "Ignorate"
+          },
+          "max_reloads": {
+            "name": "Ricaricamenti massimi"
+          },
+          "paused": {
+            "name": "In pausa"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Ultimo ricaricamento",
+        "state_attributes": {
+          "domain": {
+            "name": "Dominio"
+          },
+          "title": {
+            "name": "Titolo"
+          },
+          "entry_id": {
+            "name": "ID della voce"
+          },
+          "success": {
+            "name": "Riuscito"
+          },
+          "reloads": {
+            "name": "Ricaricamenti"
+          },
+          "history": {
+            "name": "Cronologia"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Ultimo controllo"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Ricaricamenti in 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Non riusciti"
+          },
+          "integrations": {
+            "name": "Integrazioni"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Stato",
+        "state": {
+          "idle": "Inattivo",
+          "running": "Verifica in corso",
+          "error": "Errore"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Verificati"
+          },
+          "total": {
+            "name": "Repository"
+          },
+          "updates": {
+            "name": "Aggiornamenti disponibili"
+          },
+          "failed": {
+            "name": "Non riusciti"
+          },
+          "error": {
+            "name": "Errore"
+          },
+          "checking": {
+            "name": "In verifica"
+          },
+          "installing": {
+            "name": "In installazione"
+          },
+          "install_failed": {
+            "name": "Impossibile installare"
+          },
+          "github_connected": {
+            "name": "GitHub connesso"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Ultima verifica",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Intervallo di verifica"
+          },
+          "next_check": {
+            "name": "Prossima verifica"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Controlla le integrazioni",
+      "description": "Cerca le integrazioni le cui entità sono tutte non disponibili e ricarica quelle il cui periodo di tolleranza è trascorso."
+    },
+    "watchdog_reset": {
+      "name": "Reimposta un'integrazione",
+      "description": "Dimentica i ricaricamenti fatti su un'integrazione (abbandonata o no) e la ricarica subito.",
+      "fields": {
+        "entry_id": {
+          "name": "Voce dell'integrazione",
+          "description": "La voce dell'integrazione da reimpostare e ricaricare."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Cerca aggiornamenti",
+      "description": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace. Viene eseguita in background, a meno che non sia impostato Attendi.",
+      "fields": {
+        "wait": {
+          "name": "Attendi",
+          "description": "Attendi che tutti i repository siano stati verificati prima che l'azione termini; l'azione fallisce allora se la verifica non è riuscita o se un repository non è stato verificato."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Cerca aggiornamenti di un repository",
+      "description": "Cerca gli aggiornamenti dei repository collegati a queste entità di aggiornamento Marketplace e attende il risultato.",
+      "fields": {
+        "entity_id": {
+          "name": "Entità di aggiornamento",
+          "description": "Entità di aggiornamento Marketplace dei repository da verificare."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Installa aggiornamenti",
+      "description": "Installa gli aggiornamenti dei repository Marketplace, uno dopo l'altro, in background a meno che non sia impostato Attendi. Solo amministratori.",
+      "fields": {
+        "entity_id": {
+          "name": "Entità di aggiornamento",
+          "description": "Entità di aggiornamento Marketplace da aggiornare; lascia vuoto per tutti i repository con un aggiornamento."
+        },
+        "wait": {
+          "name": "Attendi",
+          "description": "Attendi che tutti gli aggiornamenti siano stati installati prima che l'azione termini; l'azione fallisce allora se un aggiornamento non è stato installato."
+        },
+        "backup": {
+          "name": "Prima il backup",
+          "description": "Crea il backup automatico di Home Assistant prima di installare; non viene installato nulla se non riesce. Lascia vuoto per seguire l'opzione dell'integrazione."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integrazione ricaricata",
+    "watchdog_reloaded": "{title} ({domain}) è stata ricaricata: tutte le sue entità erano non disponibili da {since}. Ricaricamento {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Ricaricamento di un'integrazione non riuscito",
+    "watchdog_reload_failed": "{title} ({domain}) non è stata ricaricata: tutte le sue entità erano non disponibili da {since}. Ricaricamento {attempt}/{max}, vedi i log.",
+    "watchdog_gave_up_title": "Integrazione ancora non disponibile",
+    "watchdog_gave_up": "{title} ({domain}) è ancora non disponibile dopo {attempt} ricaricamenti. Non verrà più ricaricata finché una delle sue entità non sarà disponibile.",
+    "watchdog_power_cycled_title": "Dispositivo riavviato",
+    "watchdog_power_cycled": "{title} è stato riavviato con {switch}: tutte le sue entità erano non disponibili dalle {since}. Riavvio {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Riavvio del dispositivo non riuscito",
+    "watchdog_power_cycle_failed": "{title} non è stato riavviato con {switch}: tutte le sue entità erano non disponibili dalle {since}. Riavvio {attempt}/{max}, vedi i log.",
+    "watchdog_power_cycle_gave_up_title": "Dispositivo ancora non disponibile",
+    "watchdog_power_cycle_gave_up": "{title} è ancora non disponibile dopo {attempt} riavvii. {switch} non verrà più spenta finché una delle sue entità non sarà disponibile."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub non è caricato."
+    },
+    "module_disabled": {
+      "message": "Il modulo {module} è disattivato nelle opzioni di System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Nessuna voce di integrazione {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "Impossibile ricaricare {title}, vedi i log. I suoi ricaricamenti sono stati reimpostati: System Hub ricomincia."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace non è caricato."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Questa versione di Marketplace non è supportata ({path} mancante); apri una segnalazione su {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace è disattivato ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace è disattivato."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} non è un'entità di aggiornamento Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} non è un repository scaricato con Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Impossibile verificare {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "La verifica è stata annullata (System Hub è stato ricaricato o rimosso)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "La verifica completa non è riuscita: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Gli aggiornamenti sono già in fase di installazione."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Gli aggiornamenti sono in fase di installazione: avvia la verifica quando sono terminati."
+    },
+    "marketplace_install_failed": {
+      "message": "Impossibile installare {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Le installazioni sono state annullate (System Hub è stato ricaricato o rimosso)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Non restano abbastanza richieste GitHub per controllare tutti i repository ({remaining} rimaste, {needed} necessarie): il controllo riprenderà dopo l'azzeramento del limite alle {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} è ancora non disponibile",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) è ancora non disponibile dopo {attempt} ricaricamenti di System Hub, che non la ricaricherà più finché una delle sue entità non sarà disponibile.\n\nControlla il dispositivo o il servizio a cui si collega, e i log. Questo problema scompare quando l'integrazione si ripristina.\n\nConferma per riprovare ora: System Hub dimentica i suoi ricaricamenti e ricarica l'integrazione."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub non è caricato.",
+          "reload_started": "Ricaricamento di **{title}** avviato: i suoi ricaricamenti sono stati reimpostati e System Hub ricomincia. Questo problema scompare non appena inizia il ricaricamento; un errore compare nei log."
+        }
+      }
+    }
+  }
+}

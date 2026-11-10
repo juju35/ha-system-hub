@@ -3,11 +3,369 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Santé du système, conteneurs de Home Assistant, mises à jour du Marketplace et surveillance des intégrations dans un seul panneau d'administration."
+        "description": "Choisissez les modules à activer. Chaque module se règle dans les options.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
+          "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures."
+        }
       }
     },
+    "error": {
+      "marketplace_not_loaded": "Le Marketplace n'est pas chargé ou est désactivé."
+    },
     "abort": {
+      "already_configured": "System Hub est déjà configuré.",
       "single_instance_allowed": "System Hub est déjà configuré."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options de System Hub",
+        "menu_options": {
+          "modules": "Modules",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog : Ajouter un redémarrage par prise",
+          "watchdog_remove_power_cycle": "Watchdog : Retirer des redémarrages par prise",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Modules",
+        "description": "Activez ou désactivez les modules. Un module désactivé arrête ses vérifications et ses entités sont supprimées ; ses réglages sont conservés.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
+          "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Intervalle de vérification",
+          "grace_period": "Délai de grâce",
+          "grace_overrides": "Délai de grâce par intégration",
+          "max_reloads": "Rechargements successifs",
+          "ignored_integrations": "Intégrations ignorées",
+          "notify_services": "Actions de notification",
+          "ignored_entries": "Entrées ignorées",
+          "pause_entity": "Entité de pause"
+        },
+        "data_description": {
+          "scan_interval": "Minutes entre deux vérifications.",
+          "grace_period": "Minutes pendant lesquelles toutes les entités d'une intégration doivent être indisponibles avant qu'elle soit rechargée. Rien n'est rechargé pendant ce délai après le démarrage de Home Assistant.",
+          "grace_overrides": "Une ligne par intégration : domaine: minutes (zha: 30). Il remplace le délai de grâce de cette intégration et les délais entre ses rechargements ; après un démarrage, le délai de grâce global s'applique toujours à toutes.",
+          "max_reloads": "Rechargements d'une intégration qui reste indisponible avant d'abandonner jusqu'à ce qu'elle revienne. Le délai entre deux rechargements double à chaque fois : délai de grâce, 2 × délai de grâce…",
+          "ignored_integrations": "Intégrations jamais rechargées. Saisissez un domaine pour en ajouter une qui n'est pas encore configurée.",
+          "notify_services": "Envoyer aussi chaque notification avec ces actions (notify.mobile_app_…). Une notification persistante est toujours créée.",
+          "ignored_entries": "Entrées d'intégration jamais rechargées, les autres entrées de leur intégration restant surveillées (une caméra parmi plusieurs, par exemple).",
+          "pause_entity": "Tant que cette entité est allumée (un input_boolean de maintenance, un planning pour la nuit…), rien n'est rechargé ; les vérifications listent toujours les intégrations indisponibles."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Redémarrer un appareil par sa prise",
+        "description": "Quand toutes les entités d'un appareil restent indisponibles, la prise connectée qui l'alimente est éteinte puis rallumée. Mêmes limites que les rechargements : rechargements d'affilée, délai qui double, entité de pause, rien pendant le délai de grâce après un démarrage.",
+        "data": {
+          "device_id": "Appareil",
+          "switch": "Prise connectée",
+          "delay": "Indisponible depuis",
+          "off_time": "Éteinte pendant"
+        },
+        "data_description": {
+          "device_id": "L'appareil à redémarrer : toutes ses entités actives doivent être indisponibles.",
+          "switch": "Le switch qui l'alimente. Éteint seulement s'il est allumé : une prise éteinte ou indisponible n'est pas touchée.",
+          "delay": "Minutes pendant lesquelles toutes les entités de l'appareil doivent être indisponibles avant d'éteindre sa prise. Le délai entre deux redémarrages double à chaque fois.",
+          "off_time": "Secondes pendant lesquelles la prise reste éteinte avant d'être rallumée."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Retirer des redémarrages par prise",
+        "data": {
+          "power_cycles": "Redémarrages par prise"
+        },
+        "data_description": {
+          "power_cycles": "Les redémarrages par prise à retirer."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Fréquence de vérification",
+          "backup_before_install": "Sauvegarder avant d'installer les mises à jour"
+        },
+        "data_description": {
+          "scan_interval": "Heures entre deux vérifications automatiques. 0 désactive la vérification automatique : utilisez le bouton ou l'action.",
+          "backup_before_install": "Avant Tout mettre à jour (ou l'action sans backup), créer la sauvegarde automatique de Home Assistant, avec ses réglages de Paramètres > Système > Sauvegardes ; si elle échoue, rien n'est installé."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Chaque ligne doit être domaine: minutes, de 1 à 1440 (zha: 30).",
+      "device_already_cycled": "Cet appareil a déjà un redémarrage par prise : retirez-le d'abord.",
+      "switch_on_device": "La prise ne peut pas être une entité de l'appareil lui-même : elle serait indisponible avec lui.",
+      "device_without_entities": "Cet appareil n'a aucune entité à surveiller en dehors de la prise.",
+      "marketplace_not_loaded": "Le Marketplace n'est pas chargé ou est désactivé."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Vérifier maintenant"
+      },
+      "marketplace_check_updates": {
+        "name": "Rechercher les mises à jour"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Intégrations indisponibles",
+        "state_attributes": {
+          "integrations": {
+            "name": "Intégrations"
+          },
+          "ignored": {
+            "name": "Ignorées"
+          },
+          "max_reloads": {
+            "name": "Rechargements max"
+          },
+          "paused": {
+            "name": "En pause"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Dernier rechargement",
+        "state_attributes": {
+          "domain": {
+            "name": "Domaine"
+          },
+          "title": {
+            "name": "Titre"
+          },
+          "entry_id": {
+            "name": "ID de l'entrée"
+          },
+          "success": {
+            "name": "Réussi"
+          },
+          "reloads": {
+            "name": "Rechargements"
+          },
+          "history": {
+            "name": "Historique"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Dernière vérification"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Rechargements sur 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Échecs"
+          },
+          "integrations": {
+            "name": "Intégrations"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Statut",
+        "state": {
+          "idle": "En attente",
+          "running": "Recherche en cours",
+          "error": "Erreur"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Vérifiés"
+          },
+          "total": {
+            "name": "Dépôts"
+          },
+          "updates": {
+            "name": "Mises à jour disponibles"
+          },
+          "failed": {
+            "name": "En échec"
+          },
+          "error": {
+            "name": "Erreur"
+          },
+          "checking": {
+            "name": "En cours de vérification"
+          },
+          "installing": {
+            "name": "En cours d’installation"
+          },
+          "install_failed": {
+            "name": "Installation impossible"
+          },
+          "github_connected": {
+            "name": "GitHub connecté"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Dernière vérification",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Intervalle de vérification"
+          },
+          "next_check": {
+            "name": "Prochaine vérification"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Vérifier les intégrations",
+      "description": "Recherche les intégrations dont toutes les entités sont indisponibles et recharge celles dont le délai de grâce est écoulé."
+    },
+    "watchdog_reset": {
+      "name": "Réinitialiser une intégration",
+      "description": "Oublie les rechargements faits sur une intégration (abandonnée ou non) et la recharge immédiatement.",
+      "fields": {
+        "entry_id": {
+          "name": "Entrée d'intégration",
+          "description": "L'entrée d'intégration à réinitialiser et recharger."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Rechercher les mises à jour",
+      "description": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace. S'exécute en arrière-plan, sauf si attendre est activé.",
+      "fields": {
+        "wait": {
+          "name": "Attendre",
+          "description": "Attendre que tous les dépôts soient vérifiés avant la fin de l'action ; l'action échoue alors si la vérification a échoué ou si un dépôt n'a pas pu être vérifié."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Rechercher les mises à jour d'un dépôt",
+      "description": "Recherche les mises à jour des dépôts liés à ces entités de mise à jour du Marketplace, et attend le résultat.",
+      "fields": {
+        "entity_id": {
+          "name": "Entités de mise à jour",
+          "description": "Entités de mise à jour du Marketplace des dépôts à vérifier."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Installer les mises à jour",
+      "description": "Installe les mises à jour des dépôts du Marketplace, l’une après l’autre, en arrière-plan sauf si « Attendre » est activé. Administrateurs uniquement.",
+      "fields": {
+        "entity_id": {
+          "name": "Entités de mise à jour",
+          "description": "Entités de mise à jour du Marketplace à mettre à jour ; laisser vide pour tous les dépôts avec une mise à jour."
+        },
+        "wait": {
+          "name": "Attendre",
+          "description": "Attendre que toutes les mises à jour soient installées avant la fin de l’action ; l’action échoue alors si une mise à jour n’a pas pu être installée."
+        },
+        "backup": {
+          "name": "Sauvegarder d'abord",
+          "description": "Créer la sauvegarde automatique de Home Assistant avant d'installer ; rien n'est installé si elle échoue. Laisser vide pour suivre l'option de l'intégration."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Intégration rechargée",
+    "watchdog_reloaded": "{title} ({domain}) a été rechargée : toutes ses entités étaient indisponibles depuis {since}. Rechargement {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Échec du rechargement d'une intégration",
+    "watchdog_reload_failed": "{title} ({domain}) n'a pas pu être rechargée : toutes ses entités étaient indisponibles depuis {since}. Rechargement {attempt}/{max}, voir les journaux.",
+    "watchdog_gave_up_title": "Intégration toujours indisponible",
+    "watchdog_gave_up": "{title} ({domain}) est toujours indisponible après {attempt} rechargements. Elle ne sera plus rechargée tant qu'aucune de ses entités ne sera disponible.",
+    "watchdog_power_cycled_title": "Appareil redémarré",
+    "watchdog_power_cycled": "{title} a été redémarré avec {switch} : toutes ses entités étaient indisponibles depuis {since}. Redémarrage {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Échec du redémarrage de l'appareil",
+    "watchdog_power_cycle_failed": "{title} n'a pas pu être redémarré avec {switch} : toutes ses entités étaient indisponibles depuis {since}. Redémarrage {attempt}/{max}, voir les journaux.",
+    "watchdog_power_cycle_gave_up_title": "Appareil toujours indisponible",
+    "watchdog_power_cycle_gave_up": "{title} est toujours indisponible après {attempt} redémarrages. {switch} ne sera plus éteinte tant qu'aucune de ses entités n'est disponible."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub n'est pas chargé."
+    },
+    "module_disabled": {
+      "message": "Le module {module} est désactivé dans les options de System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Aucune entrée d'intégration {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} n'a pas pu être rechargée, voir les journaux. Ses rechargements ont été réinitialisés : System Hub recommence."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Le Marketplace n'est pas chargé."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Cette version du Marketplace n'est pas prise en charge ({path} manquant) ; merci d'ouvrir un ticket sur {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Le Marketplace est désactivé ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Le Marketplace est désactivé."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} n'est pas une entité de mise à jour du Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} n'est pas un dépôt installé depuis le Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Impossible de vérifier {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "La vérification a été annulée (System Hub a été rechargé ou supprimé)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "La vérification complète a échoué : {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Des mises à jour sont déjà en cours d’installation."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Des mises à jour sont en cours d’installation : lancez la vérification une fois qu’elles sont terminées."
+    },
+    "marketplace_install_failed": {
+      "message": "Impossible d’installer {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Les installations ont été annulées (System Hub a été rechargé ou supprimé)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Pas assez de requêtes GitHub restantes pour vérifier tous les dépôts ({remaining} restantes, {needed} nécessaires) : la vérification reprendra après la remise à zéro de la limite à {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} est toujours indisponible",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) est toujours indisponible après {attempt} rechargements par System Hub, qui ne la rechargera plus tant qu'aucune de ses entités n'est disponible.\n\nVérifiez l'appareil ou le service auquel elle se connecte, ainsi que les journaux. Ce problème disparaît une fois l'intégration rétablie.\n\nValidez pour réessayer maintenant : System Hub oublie ses rechargements et recharge l'intégration."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub n'est pas chargé.",
+          "reload_started": "Rechargement de **{title}** lancé : ses rechargements ont été réinitialisés et System Hub recommence. Ce problème disparaît dès le début du rechargement ; un échec figure dans les journaux."
+        }
+      }
     }
   }
 }

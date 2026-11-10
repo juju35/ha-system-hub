@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
+          "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace nav ielādēts."
+    },
+    "abort": {
+      "already_configured": "System Hub jau ir konfigurēts.",
+      "single_instance_allowed": "System Hub jau ir konfigurēts."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "System Hub opcijas",
+        "menu_options": {
+          "modules": "Moduļi",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Pievienot restartēšanu ar kontaktligzdu",
+          "watchdog_remove_power_cycle": "Watchdog: Noņemt restartēšanas ar kontaktligzdu",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Moduļi",
+        "description": "Ieslēdziet vai izslēdziet moduļus. Izslēgts modulis pārtrauc pārbaudes, un tā entītijas tiek noņemtas; tā iestatījumi tiek saglabāti.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
+          "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Pārbaudes intervāls",
+          "grace_period": "Nogaidīšanas laiks",
+          "grace_overrides": "Labvēlības periods katrai integrācijai",
+          "max_reloads": "Pārlādes pēc kārtas",
+          "ignored_integrations": "Ignorētās integrācijas",
+          "notify_services": "Paziņojumu darbības",
+          "ignored_entries": "Ignorētie ieraksti",
+          "pause_entity": "Pauzes entītija"
+        },
+        "data_description": {
+          "scan_interval": "Minūtes starp divām pārbaudēm.",
+          "grace_period": "Minūtes, cik ilgi visām integrācijas vienībām jābūt nepieejamām, pirms tā tiek pārlādēta. Šajā laikā pēc Home Assistant palaišanas nekas netiek pārlādēts.",
+          "grace_overrides": "Viena rinda katrai integrācijai: domēns: minūtes (zha: 30). Tas aizstāj šīs integrācijas labvēlības periodu un pauzes starp tās pārlādēm; pēc starta globālais labvēlības periods joprojām attiecas uz visām.",
+          "max_reloads": "Nepieejamas integrācijas pārlāžu skaits, pirms no tās tiek atteikts līdz tās atjaunošanai. Laiks starp divām pārlādēm katru reizi dubultojas: nogaidīšanas laiks, 2 × nogaidīšanas laiks…",
+          "ignored_integrations": "Integrācijas, kas nekad netiek pārlādētas. Ierakstiet domēnu, lai pievienotu integrāciju, kas vēl nav iestatīta.",
+          "notify_services": "Sūtīt katru paziņojumu arī ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr.",
+          "ignored_entries": "Atsevišķi integrācijas ieraksti, kas nekad netiek pārlādēti; pārējie to integrācijas ieraksti joprojām tiek uzraudzīti (piem., viena no vairākām kamerām).",
+          "pause_entity": "Kamēr šī entītija ir ieslēgta (input_boolean apkopei, grafiks naktij…), nekas netiek pārlādēts; pārbaudes joprojām uzskaita nepieejamās integrācijas."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Restartēt ierīci ar tās kontaktligzdu",
+        "description": "Kad visas ierīces entītijas paliek nepieejamas, viedā kontaktligzda, kas to baro, tiek izslēgta un pēc tam atkal ieslēgta. Tie paši ierobežojumi kā pārlādēm: pārlādes pēc kārtas, gaidīšana, kas dubultojas, pauzes entītija, nekas labvēlības periodā pēc palaišanas.",
+        "data": {
+          "device_id": "Ierīce",
+          "switch": "Viedā kontaktligzda",
+          "delay": "Nepieejama",
+          "off_time": "Izslēgta uz"
+        },
+        "data_description": {
+          "device_id": "Restartējamā ierīce: visām tās iespējotajām entītijām jābūt nepieejamām.",
+          "switch": "Slēdzis, kas to baro. Tiek izslēgts tikai tad, ja ir ieslēgts: izslēgta vai nepieejama kontaktligzda netiek aiztikta.",
+          "delay": "Minūtes, cik ilgi visām ierīces entītijām jābūt nepieejamām, pirms tās kontaktligzda tiek izslēgta. Gaidīšana starp divām restartēšanām katru reizi dubultojas.",
+          "off_time": "Sekundes, cik ilgi kontaktligzda paliek izslēgta, pirms tiek atkal ieslēgta."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Noņemt restartēšanas ar kontaktligzdu",
+        "data": {
+          "power_cycles": "Restartēšanas ar kontaktligzdu"
+        },
+        "data_description": {
+          "power_cycles": "Noņemamās restartēšanas ar kontaktligzdu."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Pārbaudes intervāls",
+          "backup_before_install": "Rezerves kopija pirms atjauninājumu instalēšanas"
+        },
+        "data_description": {
+          "scan_interval": "Stundas starp divām automātiskām pārbaudēm. 0 izslēdz automātisko pārbaudi: izmantojiet pogu vai darbību.",
+          "backup_before_install": "Pirms «Atjaunināt visu» (vai darbības bez backup) tiek izveidota Home Assistant automātiskā rezerves kopija ar iestatījumiem sadaļā Iestatījumi > Sistēma > Rezerves kopijas; ja tā neizdodas, nekas netiek instalēts."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Katrai rindai jābūt domēns: minūtes, no 1 līdz 1440 (zha: 30).",
+      "device_already_cycled": "Šai ierīcei jau ir restartēšana ar kontaktligzdu: vispirms noņemiet to.",
+      "switch_on_device": "Kontaktligzda nevar būt pašas ierīces entītija: tā būtu nepieejama kopā ar to.",
+      "device_without_entities": "Šai ierīcei nav uzraugāmas entītijas, izņemot kontaktligzdu.",
+      "marketplace_not_loaded": "Marketplace nav ielādēts."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Pārbaudīt tagad"
+      },
+      "marketplace_check_updates": {
+        "name": "Meklēt atjauninājumus"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Nepieejamās integrācijas",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrācijas"
+          },
+          "ignored": {
+            "name": "Ignorētās"
+          },
+          "max_reloads": {
+            "name": "Maks. pārlādes"
+          },
+          "paused": {
+            "name": "Apturēts"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Pēdējā pārlāde",
+        "state_attributes": {
+          "domain": {
+            "name": "Domēns"
+          },
+          "title": {
+            "name": "Nosaukums"
+          },
+          "entry_id": {
+            "name": "Ieraksta ID"
+          },
+          "success": {
+            "name": "Veiksmīgi"
+          },
+          "reloads": {
+            "name": "Pārlādes"
+          },
+          "history": {
+            "name": "Vēsture"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Pēdējā pārbaude"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Pārlādes 24 h laikā",
+        "state_attributes": {
+          "failed": {
+            "name": "Neizdevušās"
+          },
+          "integrations": {
+            "name": "Integrācijas"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Statuss",
+        "state": {
+          "idle": "Dīkstāvē",
+          "running": "Notiek pārbaude",
+          "error": "Kļūda"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Pārbaudīti"
+          },
+          "total": {
+            "name": "Repozitoriji"
+          },
+          "updates": {
+            "name": "Pieejamie atjauninājumi"
+          },
+          "failed": {
+            "name": "Neizdevās"
+          },
+          "error": {
+            "name": "Kļūda"
+          },
+          "checking": {
+            "name": "Tiek pārbaudīti"
+          },
+          "installing": {
+            "name": "Tiek instalēti"
+          },
+          "install_failed": {
+            "name": "Neizdevās instalēt"
+          },
+          "github_connected": {
+            "name": "GitHub pievienots"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Pēdējā pārbaude",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Pārbaudes intervāls"
+          },
+          "next_check": {
+            "name": "Nākamā pārbaude"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Pārbaudīt integrācijas",
+      "description": "Meklē integrācijas, kuru visas vienības nav pieejamas, un pārlādē tās, kurām beidzies nogaidīšanas laiks."
+    },
+    "watchdog_reset": {
+      "name": "Atiestatīt integrāciju",
+      "description": "Aizmirst integrācijas pārlādes (atmestas vai nē) un uzreiz to pārlādē.",
+      "fields": {
+        "entry_id": {
+          "name": "Integrācijas ieraksts",
+          "description": "Integrācijas ieraksts, ko atiestatīt un pārlādēt."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Meklēt atjauninājumus",
+      "description": "Pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Darbojas fonā, ja vien nav iestatīts wait.",
+      "fields": {
+        "wait": {
+          "name": "Gaidīt",
+          "description": "Pirms darbības beigām gaidīt, līdz visi repozitoriji ir pārbaudīti; darbība tad neizdodas, ja pārbaude neizdevās vai kādu repozitoriju neizdevās pārbaudīt."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Meklēt repozitorija atjauninājumus",
+      "description": "Pārbauda atjauninājumus repozitorijiem, kas atbilst šīm Marketplace atjauninājumu vienībām, un gaida rezultātu.",
+      "fields": {
+        "entity_id": {
+          "name": "Atjauninājumu vienības",
+          "description": "Pārbaudāmo repozitoriju Marketplace atjauninājumu vienības."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Instalēt atjauninājumus",
+      "description": "Instalē Marketplace repozitoriju atjauninājumus vienu pēc otra, fonā, ja vien nav iestatīts wait. Tikai administratoriem.",
+      "fields": {
+        "entity_id": {
+          "name": "Atjauninājumu vienības",
+          "description": "Atjaunināmās Marketplace atjauninājumu vienības; atstājiet tukšu visiem repozitorijiem, kuriem ir atjauninājums."
+        },
+        "wait": {
+          "name": "Gaidīt",
+          "description": "Pirms darbības beigām gaidīt, līdz visi atjauninājumi ir instalēti; darbība tad neizdodas, ja kādu atjauninājumu neizdevās instalēt."
+        },
+        "backup": {
+          "name": "Vispirms rezerves kopija",
+          "description": "Izveidot Home Assistant automātisko rezerves kopiju pirms instalēšanas; ja tā neizdodas, nekas netiek instalēts. Atstājiet tukšu, lai izmantotu integrācijas opciju."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integrācija pārlādēta",
+    "watchdog_reloaded": "{title} ({domain}) tika pārlādēta: visas tās vienības nebija pieejamas kopš {since}. Pārlāde {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Integrācijas pārlāde neizdevās",
+    "watchdog_reload_failed": "{title} ({domain}) neizdevās pārlādēt: visas tās vienības nebija pieejamas kopš {since}. Pārlāde {attempt}/{max}, skatiet žurnālus.",
+    "watchdog_gave_up_title": "Integrācija joprojām nav pieejama",
+    "watchdog_gave_up": "{title} ({domain}) joprojām nav pieejama. Veiktās pārlādes: {attempt}. Tā netiks pārlādēta, kamēr kāda no tās vienībām nebūs pieejama.",
+    "watchdog_power_cycled_title": "Ierīce restartēta",
+    "watchdog_power_cycled": "{title} tika restartēta ar {switch}: visas tās entītijas bija nepieejamas kopš {since}. Restartēšana {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Ierīces restartēšana neizdevās",
+    "watchdog_power_cycle_failed": "{title} neizdevās restartēt ar {switch}: visas tās entītijas bija nepieejamas kopš {since}. Restartēšana {attempt}/{max}, skatiet žurnālus.",
+    "watchdog_power_cycle_gave_up_title": "Ierīce joprojām nepieejama",
+    "watchdog_power_cycle_gave_up": "{title} joprojām ir nepieejama pēc restartēšanām: {attempt}. {switch} vairs netiks izslēgta, līdz kāda no tās entītijām būs pieejama."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub nav ielādēts."
+    },
+    "module_disabled": {
+      "message": "Modulis {module} ir izslēgts System Hub opcijās."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Nav integrācijas ieraksta {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} neizdevās pārlādēt, skatiet žurnālus. Tās pārlādes ir atiestatītas: System Hub sāk no jauna."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace nav ielādēts."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Šī Marketplace versija netiek atbalstīta (trūkst {path}); lūdzu, izveidojiet problēmas pieteikumu vietnē {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace ir atspējots ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace ir atspējots."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} nav Marketplace atjauninājuma vienība."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} nav ar Marketplace lejupielādēts repozitorijs."
+    },
+    "marketplace_check_failed": {
+      "message": "Neizdevās pārbaudīt {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Pārbaude tika atcelta (System Hub tika atkārtoti ielādēts vai noņemts)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Pilnā pārbaude neizdevās: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Atjauninājumi jau tiek instalēti."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Tiek instalēti atjauninājumi: meklējiet atjauninājumus, kad tie būs pabeigti."
+    },
+    "marketplace_install_failed": {
+      "message": "Neizdevās instalēt {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Instalēšana tika atcelta (System Hub tika atkārtoti ielādēts vai noņemts)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Nepietiek atlikušo GitHub pieprasījumu visu repozitoriju pārbaudei (atlikuši {remaining}, vajag {needed}): pārbaude atkārtosies pēc limita atiestatīšanas plkst. {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} joprojām nav pieejama",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) joprojām nav pieejama. System Hub veiktās pārlādes: {attempt}. Tā netiks pārlādēta, kamēr kāda no tās vienībām nebūs pieejama.\n\nPārbaudiet ierīci vai pakalpojumu, ar ko tā savienojas, un žurnālus. Šī problēma pazudīs, tiklīdz integrācija atjaunosies.\n\nIesniedziet, lai mēģinātu vēlreiz tagad: System Hub aizmirst tās pārlādes un pārlādē integrāciju."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub nav ielādēts.",
+          "reload_started": "**{title}** pārlāde ir sākta: tās pārlādes ir atiestatītas, un System Hub sāk no jauna. Šī problēma pazūd, tiklīdz sākas pārlāde; kļūda ir redzama žurnālos."
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,371 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "System Hub",
+        "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
+          "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore."
+        }
+      }
+    },
+    "error": {
+      "marketplace_not_loaded": "Marketplace nu este încărcat."
+    },
+    "abort": {
+      "already_configured": "System Hub este deja configurat.",
+      "single_instance_allowed": "System Hub este deja configurat."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni System Hub",
+        "menu_options": {
+          "modules": "Module",
+          "watchdog": "Watchdog",
+          "watchdog_add_power_cycle": "Watchdog: Adaugă o repornire prin priză",
+          "watchdog_remove_power_cycle": "Watchdog: Elimină reporniri prin priză",
+          "marketplace": "Marketplace"
+        }
+      },
+      "modules": {
+        "title": "Module",
+        "description": "Activați sau dezactivați modulele. Un modul dezactivat își oprește verificările, iar entitățile sale sunt eliminate; setările sale sunt păstrate.",
+        "data": {
+          "watchdog": "Watchdog",
+          "marketplace": "Marketplace"
+        },
+        "data_description": {
+          "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
+          "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore."
+        }
+      },
+      "watchdog": {
+        "title": "Watchdog",
+        "data": {
+          "scan_interval": "Interval de verificare",
+          "grace_period": "Perioadă de grație",
+          "grace_overrides": "Perioadă de grație pe integrare",
+          "max_reloads": "Reîncărcări consecutive",
+          "ignored_integrations": "Integrări ignorate",
+          "notify_services": "Acțiuni de notificare",
+          "ignored_entries": "Intrări ignorate",
+          "pause_entity": "Entitate de pauză"
+        },
+        "data_description": {
+          "scan_interval": "Minute între două verificări.",
+          "grace_period": "Minute în care toate entitățile unei integrări trebuie să fi fost indisponibile înainte ca aceasta să fie reîncărcată. Nimic nu este reîncărcat în acest interval după pornirea Home Assistant.",
+          "grace_overrides": "O linie pe integrare: domeniu: minute (zha: 30). Înlocuiește perioada de grație a acelei integrări și intervalele dintre reîncărcările ei; după o pornire, perioada de grație globală se aplică în continuare tuturor.",
+          "max_reloads": "Reîncărcări ale unei integrări care rămâne indisponibilă înainte de a renunța la ea până când își revine. Intervalul dintre două reîncărcări se dublează de fiecare dată: perioada de grație, 2 × perioada de grație…",
+          "ignored_integrations": "Integrări care nu sunt reîncărcate niciodată. Introduceți un domeniu pentru a adăuga una care nu este încă configurată.",
+          "notify_services": "Trimite fiecare notificare și prin aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna.",
+          "ignored_entries": "Intrări de integrare care nu sunt reîncărcate niciodată; celelalte intrări ale integrării lor rămân supravegheate (o cameră dintre mai multe, de exemplu).",
+          "pause_entity": "Cât timp această entitate este pornită (un input_boolean pentru mentenanță, un program pentru noapte…), nu se reîncarcă nimic; verificările listează în continuare integrările indisponibile."
+        }
+      },
+      "watchdog_add_power_cycle": {
+        "title": "Repornește un dispozitiv prin priza sa",
+        "description": "Când toate entitățile unui dispozitiv rămân indisponibile, priza inteligentă care îl alimentează este oprită, apoi pornită din nou. Aceleași limite ca la reîncărcări: reîncărcări la rând, așteptare care se dublează, entitate de pauză, nimic în perioada de grație după o pornire.",
+        "data": {
+          "device_id": "Dispozitiv",
+          "switch": "Priză inteligentă",
+          "delay": "Indisponibil timp de",
+          "off_time": "Oprită timp de"
+        },
+        "data_description": {
+          "device_id": "Dispozitivul de repornit: toate entitățile sale activate trebuie să fie indisponibile.",
+          "switch": "Comutatorul care îl alimentează. Oprit doar dacă este pornit: o priză oprită sau indisponibilă nu este atinsă.",
+          "delay": "Minute în care toate entitățile dispozitivului trebuie să fie indisponibile înainte de oprirea prizei sale. Așteptarea dintre două reporniri se dublează de fiecare dată.",
+          "off_time": "Secunde în care priza rămâne oprită înainte de a fi pornită din nou."
+        }
+      },
+      "watchdog_remove_power_cycle": {
+        "title": "Elimină reporniri prin priză",
+        "data": {
+          "power_cycles": "Reporniri prin priză"
+        },
+        "data_description": {
+          "power_cycles": "Repornirile prin priză de eliminat."
+        }
+      },
+      "marketplace": {
+        "title": "Marketplace",
+        "data": {
+          "scan_interval": "Interval de verificare",
+          "backup_before_install": "Copie de rezervă înainte de instalarea actualizărilor"
+        },
+        "data_description": {
+          "scan_interval": "Ore între două verificări automate. 0 dezactivează verificarea automată: folosiți butonul sau acțiunea.",
+          "backup_before_install": "Înainte de Actualizează tot (sau de acțiunea fără backup), creează copia de rezervă automată a Home Assistant, cu setările din Setări > Sistem > Copii de rezervă; dacă eșuează, nu se instalează nimic."
+        }
+      }
+    },
+    "error": {
+      "invalid_overrides": "Fiecare linie trebuie să fie domeniu: minute, de la 1 la 1440 (zha: 30).",
+      "device_already_cycled": "Acest dispozitiv are deja o repornire prin priză: elimin-o mai întâi.",
+      "switch_on_device": "Priza nu poate fi o entitate a dispozitivului însuși: ar fi indisponibilă odată cu el.",
+      "device_without_entities": "Acest dispozitiv nu are nicio entitate de supravegheat în afară de priză.",
+      "marketplace_not_loaded": "Marketplace nu este încărcat."
+    }
+  },
+  "entity": {
+    "button": {
+      "watchdog_check": {
+        "name": "Verifică acum"
+      },
+      "marketplace_check_updates": {
+        "name": "Caută actualizări"
+      }
+    },
+    "sensor": {
+      "watchdog_unavailable": {
+        "name": "Integrări indisponibile",
+        "state_attributes": {
+          "integrations": {
+            "name": "Integrări"
+          },
+          "ignored": {
+            "name": "Ignorate"
+          },
+          "max_reloads": {
+            "name": "Reîncărcări maxime"
+          },
+          "paused": {
+            "name": "În pauză"
+          }
+        }
+      },
+      "watchdog_last_reload": {
+        "name": "Ultima reîncărcare",
+        "state_attributes": {
+          "domain": {
+            "name": "Domeniu"
+          },
+          "title": {
+            "name": "Titlu"
+          },
+          "entry_id": {
+            "name": "ID intrare"
+          },
+          "success": {
+            "name": "Reușită"
+          },
+          "reloads": {
+            "name": "Reîncărcări"
+          },
+          "history": {
+            "name": "Istoric"
+          }
+        }
+      },
+      "watchdog_last_check": {
+        "name": "Ultima verificare"
+      },
+      "watchdog_reloads_24h": {
+        "name": "Reîncărcări în 24 h",
+        "state_attributes": {
+          "failed": {
+            "name": "Eșuate"
+          },
+          "integrations": {
+            "name": "Integrări"
+          }
+        }
+      },
+      "marketplace_status": {
+        "name": "Stare",
+        "state": {
+          "idle": "Inactiv",
+          "running": "Se verifică",
+          "error": "Eroare"
+        },
+        "state_attributes": {
+          "done": {
+            "name": "Verificate"
+          },
+          "total": {
+            "name": "Depozite"
+          },
+          "updates": {
+            "name": "Actualizări disponibile"
+          },
+          "failed": {
+            "name": "Eșuate"
+          },
+          "error": {
+            "name": "Eroare"
+          },
+          "checking": {
+            "name": "În curs de verificare"
+          },
+          "installing": {
+            "name": "În curs de instalare"
+          },
+          "install_failed": {
+            "name": "Nu au putut fi instalate"
+          },
+          "github_connected": {
+            "name": "GitHub conectat"
+          }
+        }
+      },
+      "marketplace_last_check": {
+        "name": "Ultima verificare",
+        "state_attributes": {
+          "scan_interval": {
+            "name": "Interval de verificare"
+          },
+          "next_check": {
+            "name": "Următoarea verificare"
+          }
+        }
+      }
+    }
+  },
+  "services": {
+    "watchdog_check": {
+      "name": "Verifică integrările",
+      "description": "Caută integrările ale căror entități sunt toate indisponibile și le reîncarcă pe cele care au depășit perioada de grație."
+    },
+    "watchdog_reset": {
+      "name": "Resetează o integrare",
+      "description": "Uită reîncărcările făcute pentru o integrare (abandonată sau nu) și o reîncarcă imediat.",
+      "fields": {
+        "entry_id": {
+          "name": "Intrare de integrare",
+          "description": "Intrarea de integrare de resetat și reîncărcat."
+        }
+      }
+    },
+    "marketplace_check_updates": {
+      "name": "Caută actualizări",
+      "description": "Verifică dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Rulează în fundal, cu excepția cazului în care este setat «wait».",
+      "fields": {
+        "wait": {
+          "name": "Așteaptă",
+          "description": "Așteaptă până când toate depozitele au fost verificate înainte de încheierea acțiunii; acțiunea eșuează apoi dacă verificarea a eșuat sau dacă un depozit nu a putut fi verificat."
+        }
+      }
+    },
+    "marketplace_check_repository": {
+      "name": "Caută actualizări pentru un depozit",
+      "description": "Verifică dacă există actualizări pentru depozitele din spatele acestor entități de actualizare Marketplace și așteaptă rezultatul.",
+      "fields": {
+        "entity_id": {
+          "name": "Entități de actualizare",
+          "description": "Entitățile de actualizare Marketplace ale depozitelor de verificat."
+        }
+      }
+    },
+    "marketplace_install_updates": {
+      "name": "Instalează actualizările",
+      "description": "Instalează actualizările depozitelor Marketplace, una după alta, în fundal, cu excepția cazului în care este setat «wait». Doar pentru administratori.",
+      "fields": {
+        "entity_id": {
+          "name": "Entități de actualizare",
+          "description": "Entitățile de actualizare Marketplace de actualizat; lăsați gol pentru toate depozitele care au o actualizare."
+        },
+        "wait": {
+          "name": "Așteaptă",
+          "description": "Așteaptă până când toate actualizările au fost instalate înainte de încheierea acțiunii; acțiunea eșuează apoi dacă o actualizare nu a putut fi instalată."
+        },
+        "backup": {
+          "name": "Mai întâi copia de rezervă",
+          "description": "Creează copia de rezervă automată a Home Assistant înainte de instalare; nu se instalează nimic dacă eșuează. Lasă gol pentru a urma opțiunea integrării."
+        }
+      }
+    }
+  },
+  "common": {
+    "watchdog_reloaded_title": "Integrare reîncărcată",
+    "watchdog_reloaded": "{title} ({domain}) a fost reîncărcată: toate entitățile sale erau indisponibile din {since}. Reîncărcarea {attempt}/{max}.",
+    "watchdog_reload_failed_title": "Reîncărcarea integrării a eșuat",
+    "watchdog_reload_failed": "{title} ({domain}) nu a putut fi reîncărcată: toate entitățile sale erau indisponibile din {since}. Reîncărcarea {attempt}/{max}, consultați jurnalele.",
+    "watchdog_gave_up_title": "Integrare încă indisponibilă",
+    "watchdog_gave_up": "{title} ({domain}) este încă indisponibilă. Reîncărcări efectuate: {attempt}. Nu va mai fi reîncărcată până când una dintre entitățile sale nu devine disponibilă.",
+    "watchdog_power_cycled_title": "Dispozitiv repornit",
+    "watchdog_power_cycled": "{title} a fost repornit cu {switch}: toate entitățile sale erau indisponibile din {since}. Repornirea {attempt}/{max}.",
+    "watchdog_power_cycle_failed_title": "Repornirea dispozitivului a eșuat",
+    "watchdog_power_cycle_failed": "{title} nu a putut fi repornit cu {switch}: toate entitățile sale erau indisponibile din {since}. Repornirea {attempt}/{max}, vezi jurnalele.",
+    "watchdog_power_cycle_gave_up_title": "Dispozitiv încă indisponibil",
+    "watchdog_power_cycle_gave_up": "{title} este încă indisponibil după {attempt} reporniri. {switch} nu va mai fi oprită până când una dintre entitățile sale nu este disponibilă."
+  },
+  "exceptions": {
+    "not_loaded": {
+      "message": "System Hub nu este încărcat."
+    },
+    "module_disabled": {
+      "message": "Modulul {module} este dezactivat în opțiunile System Hub."
+    },
+    "watchdog_unknown_entry": {
+      "message": "Nu există intrarea de integrare {entry_id}."
+    },
+    "watchdog_reload_failed": {
+      "message": "{title} nu a putut fi reîncărcată, consultați jurnalele. Reîncărcările sale au fost resetate: System Hub o ia de la capăt."
+    },
+    "marketplace_marketplace_not_loaded": {
+      "message": "Marketplace nu este încărcat."
+    },
+    "marketplace_marketplace_not_supported": {
+      "message": "Această versiune de Marketplace nu este acceptată (lipsește {path}); vă rugăm să deschideți un tichet pe {issues}."
+    },
+    "marketplace_marketplace_disabled": {
+      "message": "Marketplace este dezactivat ({reason})."
+    },
+    "marketplace_marketplace_disabled_unknown": {
+      "message": "Marketplace este dezactivat."
+    },
+    "marketplace_not_marketplace_update_entity": {
+      "message": "{entity_id} nu este o entitate de actualizare Marketplace."
+    },
+    "marketplace_not_installed": {
+      "message": "{entity_id} nu este un depozit descărcat cu Marketplace."
+    },
+    "marketplace_check_failed": {
+      "message": "Nu s-a putut verifica {failed}."
+    },
+    "marketplace_check_cancelled": {
+      "message": "Verificarea a fost anulată (System Hub a fost reîncărcat sau eliminat)."
+    },
+    "marketplace_full_check_failed": {
+      "message": "Verificarea completă a eșuat: {error}"
+    },
+    "marketplace_install_running": {
+      "message": "Actualizările se instalează deja."
+    },
+    "marketplace_check_while_installing": {
+      "message": "Se instalează actualizări: căutați actualizări după ce s-au terminat."
+    },
+    "marketplace_install_failed": {
+      "message": "Nu s-a putut instala {failed}."
+    },
+    "marketplace_install_cancelled": {
+      "message": "Instalările au fost anulate (System Hub a fost reîncărcat sau eliminat)."
+    },
+    "marketplace_rate_limit_low": {
+      "message": "Nu au rămas destule cereri GitHub pentru a verifica toate depozitele ({remaining} rămase, {needed} necesare): verificarea se reia după resetarea limitei la {reset}."
+    }
+  },
+  "issues": {
+    "watchdog_gave_up": {
+      "title": "{title} este încă indisponibilă",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "description": "**{title}** ({domain}) este încă indisponibilă. Reîncărcări efectuate de System Hub: {attempt}. Nu va mai fi reîncărcată până când una dintre entitățile sale nu devine disponibilă.\n\nVerificați dispozitivul sau serviciul la care se conectează, precum și jurnalele. Această problemă dispare după ce integrarea își revine.\n\nTrimiteți pentru a reîncerca acum: System Hub uită reîncărcările și reîncarcă integrarea."
+          }
+        },
+        "abort": {
+          "not_loaded": "System Hub nu este încărcat.",
+          "reload_started": "Reîncărcarea **{title}** a pornit: reîncărcările sale au fost resetate și System Hub o ia de la capăt. Această problemă dispare de îndată ce începe reîncărcarea; un eșec apare în jurnale."
+        }
+      }
+    }
+  }
+}
