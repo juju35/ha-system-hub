@@ -969,7 +969,18 @@
         "ago_d": "−{n} n",
         "now": "most",
         "chart_empty": "Még nincs előzmény",
-        "disk": "Lemez"
+        "disk": "Lemez",
+        "to_check": "{n} ellenőrizendő",
+        "count_one": "1 elem",
+        "count_many": "{n} elem",
+        "cells_one": "1 elem",
+        "cells_many": "{n} elem",
+        "to_replace": "Cserélendő",
+        "nothing_to_replace": "Nincs mit cserélni",
+        "next_replacement": "Következő csere",
+        "hours": "{n} ó",
+        "low_for": "{d} óta gyenge",
+        "unavailable_for": "{d} óta nem elérhető"
       }
     }
   }

@@ -529,6 +529,47 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
     .grow { flex:1; }
+    .bsheet { padding:14px 16px 16px; }
+    .btop { display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; margin-bottom:16px; }
+    .btabs { display:inline-flex; gap:4px; padding:3px; border-radius:12px; background:var(--secondary-background-color, rgba(128,128,128,.1)); }
+    .btab { border:0; background:none; cursor:pointer; font:inherit; padding:6px 14px; border-radius:9px; font-size:13px; font-weight:500; color:var(--secondary-text-color); }
+    .btab.on { background:color-mix(in srgb, var(--primary-color) 15%, transparent); color:color-mix(in srgb, var(--primary-color) 40%, var(--primary-text-color)); }
+    .bline { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12px; color:var(--secondary-text-color); }
+    .rlabel { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.04em; --mdc-icon-size:16px; }
+    .buy { padding:2px 9px; border-radius:999px; color:var(--primary-text-color); background:color-mix(in srgb, var(--tone-warn) 16%, transparent); }
+    .buy b { color:color-mix(in srgb, var(--tone-warn) 40%, var(--primary-text-color)); }
+    .buy.unknown { background:color-mix(in srgb, var(--secondary-text-color) 18%, transparent); }
+    .buy.unknown b { color:var(--secondary-text-color); }
+    .none { color:color-mix(in srgb, var(--tone-good) 40%, var(--primary-text-color)); font-weight:500; }
+    .nextb { border:0; cursor:pointer; font:inherit; font-size:12px; padding:2px 9px; border-radius:999px; color:var(--primary-text-color); background:color-mix(in srgb, var(--primary-color) 12%, transparent); }
+    .nextb b { font-weight:500; }
+    .bgroups { columns:3 300px; column-gap:28px; }
+    .bgroup { break-inside:avoid; display:flex; flex-direction:column; gap:6px; margin-bottom:20px; }
+    .bgroups.flat { columns:auto; }
+    .bgroups.flat .glist { grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+    .ghead { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; --mdc-icon-size:18px; }
+    .ghead ha-icon { color:var(--secondary-text-color); }
+    .gname { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gchip { font-size:11px; padding:1px 8px; border-radius:999px; color:color-mix(in srgb, var(--tone-warn) 40%, var(--primary-text-color)); background:color-mix(in srgb, var(--tone-warn) 14%, transparent); }
+    .gcount { font-size:11px; font-weight:400; color:var(--secondary-text-color); }
+    .glist { display:grid; gap:6px; }
+    .brow { --t:var(--tone-good); --tt:color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); border:0; font:inherit; color:inherit; text-align:left; cursor:pointer;
+            min-width:0; display:flex; align-items:center; gap:8px; padding:5px 10px 5px 5px; border-radius:10px; background:var(--secondary-background-color, rgba(127,127,127,.08)); }
+    .brow.warn { --t:var(--tone-warn); }
+    .brow.alert { --t:var(--tone-bad); }
+    .brow.warn, .brow.alert { background:color-mix(in srgb, var(--t) 12%, var(--secondary-background-color, transparent)); }
+    .brow:hover { filter:brightness(.97); }
+    .brow .ic { flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:var(--t); background:color-mix(in srgb, var(--t) 18%, transparent); --mdc-icon-size:16px; }
+    .brow.due .ic { animation:sh-blink 1.5s ease-in-out infinite; }
+    .brow .txt { flex:1; display:flex; flex-direction:column; min-width:0; }
+    .brow .name { font-size:13px; font-weight:500; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brow .sub { font-size:11px; line-height:1.25; color:var(--secondary-text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brow.warn .sub, .brow.alert .sub, .brow.warn .lvl, .brow.alert .lvl { color:var(--tt); }
+    .brow .lvl { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; }
+    .track { width:44px; height:4px; border-radius:2px; overflow:hidden; background:color-mix(in srgb, var(--secondary-text-color) 22%, transparent); }
+    .bar { display:block; height:100%; border-radius:2px; background:var(--t); }
+    @keyframes sh-blink { 0%, 100% { opacity:1 } 50% { opacity:.35 } }
+    @media (prefers-reduced-motion: reduce) { .brow.due .ic { animation:none; } }
     .segs { display:inline-flex; border-radius:8px; overflow:hidden; background:var(--secondary-background-color, rgba(127,127,127,.12)); }
     .seg { display:inline-flex; align-items:center; gap:6px; border:0; background:none; cursor:pointer; font:inherit; font-size:13px;
            padding:7px 12px; color:var(--secondary-text-color); --mdc-icon-size:16px; }
@@ -1172,49 +1213,107 @@ class SystemHubPanel extends HTMLElement {
       <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>`;
   }
 
-  // Batteries: by level (the ones in error first), or in groups by room, by battery type or by replacement date (as the
-  // Battery Monitor full screen view)
+  // Batteries: as the Battery Monitor full screen view — the views, what to replace and the next replacement, then the
+  // batteries in groups (by room, by battery type, by replacement date) laid out in columns, or one list by level
   _batteries() {
     var data = this._state.batteries || {};
     var view = this._battView || 'level';
+    var all = data.batteries || [];
+    // "Hide the batteries that are fine" (Configure → Batteries): only the low and unavailable ones
+    var list = data.hide_ok ? all.filter((b) => b.low || b.unavailable) : all;
     var tiles = [
       this._tile('mdi:battery-alert-variant-outline', `<b>${data.low ?? 0}</b>`, this._t('low'), data.low ? 'warn' : 'good'),
       this._tile('mdi:battery-unknown', `<b>${data.unavailable ?? 0}</b>`, this._t('unavailable'), data.unavailable ? 'bad' : 'good'),
       this._tile('mdi:bell-check-outline', shEsc(this._ago(data.last_notification)), this._entityName('sensor', 'batteries_last_notification'), ''),
     ];
     var views = [
-      ['level', 'mdi:sort-ascending', 'by_level'],
-      ['room', 'mdi:sofa-outline', 'by_room'],
-      ['type', 'mdi:battery-outline', 'by_type'],
-      ['forecast', 'mdi:calendar-clock', 'by_forecast'],
+      ['level', 'by_level'],
+      ['room', 'by_room'],
+      ['type', 'by_type'],
+      ['forecast', 'by_forecast'],
     ]
-      .map(
-        ([key, icon, label]) =>
-          `<button class="seg${key === view ? ' active' : ''}" data-action="batt_view" data-view="${key}" aria-pressed="${key === view}"><ha-icon icon="${icon}"></ha-icon>${shEsc(this._t(label))}</button>`,
-      )
+      .map(([key, label]) => `<button class="btab${key === view ? ' on' : ''}" data-action="batt_view" data-view="${key}" aria-pressed="${key === view}">${shEsc(this._t(label))}</button>`)
       .join('');
-    var list = data.batteries || [];
-    var groups = list.length
-      ? this._battGroups(list, view)
-          .map(
-            (g) => `<ha-card class="list">${g.name ? `<div class="lhead"><ha-icon icon="${g.icon}"></ha-icon><span class="lname">${shEsc(g.name)}</span><span class="muted">${g.items.length}</span></div>` : ''}
-            ${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</ha-card>`,
-          )
-          .join('')
-      : `<ha-card class="list"><div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div></ha-card>`;
+    var groups = this._battGroups(list, view)
+      .map((g) => {
+        var alerts = g.items.filter(({ b }) => b.low || b.unavailable).length;
+        var head = g.name
+          ? `<div class="ghead"><ha-icon icon="${g.icon}"></ha-icon><span class="gname">${shEsc(g.name)}</span>
+            ${alerts ? `<span class="gchip">${shEsc(this._t('to_check', { n: alerts }))}</span>` : ''}
+            <span class="gcount">${shEsc(this._battCount(g))}</span></div>`
+          : '';
+        return `<section class="bgroup">${head}<div class="glist">${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</div></section>`;
+      })
+      .join('');
+    var body = list.length
+      ? `<div class="bgroups${view === 'level' ? ' flat' : ''}">${groups}</div>`
+      : `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
+    var buy = this._battToReplace(all);
+    var next = this._battNext(all);
     return `<div class="tiles">${tiles.join('')}</div>
-      <div class="actions">${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'))}${this._message('batteries_notify')}
-      <span class="grow"></span><div class="segs" role="group">${views}</div></div>
-      ${groups}`;
+      <ha-card class="bsheet">
+        <div class="btop">
+          <div class="btabs" role="group">${views}</div>
+          <div class="bline"><span class="rlabel"><ha-icon icon="mdi:cart-outline"></ha-icon>${shEsc(this._t('to_replace'))}</span>${buy || `<span class="none">${shEsc(this._t('nothing_to_replace'))}</span>`}</div>
+          ${next}
+          <span class="grow"></span>
+          ${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'), { quiet: true })}${this._message('batteries_notify')}
+        </div>
+        ${body}
+      </ha-card>`;
   }
 
+  // One battery as in the Battery Monitor card: its icon in a coloured bubble, its name, what it is and since when it
+  // needs attention, its level over a small bar; a low or unavailable one is tinted
   _battRow(b, context) {
-    var tone = b.unavailable ? 'bad' : b.low ? 'warn' : 'good';
+    var kind = b.unavailable || b.due ? 'alert' : b.low ? 'warn' : 'ok';
     var level = shNum(b.level);
-    return `<div class="item link ${tone}" data-more="${shEsc(b.entity_id)}"><ha-icon icon="${shEsc(b.icon || 'mdi:battery')}"></ha-icon>
-      <div class="who"><div class="n">${shEsc(b.name)}</div>${context ? `<div class="s">${shEsc(context)}</div>` : ''}</div>
-      <div class="side"><span>${b.unavailable ? shEsc(this._t('unavailable')) : level === null ? shEsc(this._t('low')) : `${Math.round(level)} %`}</span>
-      ${level === null ? '' : `<div class="meter"><span style="width:${Math.min(level, 100)}%"></span></div>`}</div></div>`;
+    var value = b.unavailable ? this._t('unavailable') : level === null ? this._t('low') : `${Math.round(level)} %`;
+    var since = b.below_since ? this._battSince(b.below_since, b.unavailable ? 'unavailable_for' : 'low_for') : '';
+    var sub = [context, since].filter(Boolean).join(' · ');
+    var bar = level === null ? '' : `<span class="track"><span class="bar" style="width:${Math.max(2, Math.min(100, level))}%"></span></span>`;
+    return `<button class="brow ${kind}${b.due ? ' due' : ''}" data-more="${shEsc(b.entity_id)}" title="${shEsc(b.name)} — ${shEsc(value)}">
+      <span class="ic"><ha-icon icon="${shEsc(b.icon || 'mdi:battery')}"></ha-icon></span>
+      <span class="txt"><span class="name">${shEsc(b.name)}</span>${sub ? `<span class="sub">${shEsc(sub)}</span>` : ''}</span>
+      <span class="lvl">${shEsc(value)}${bar}</span></button>`;
+  }
+
+  // "low for 3 d": "< 1 h" the first hour, hours up to two days, days beyond
+  _battSince(iso, key) {
+    var h = Math.max(0, (Date.now() - new Date(iso).getTime()) / 3600000);
+    var d = h < 1 ? this._t('hours', { n: '< 1' }) : h < 48 ? this._t('hours', { n: Math.floor(h) }) : this._t('days', { n: Math.floor(h / 24) });
+    return this._t(key, { d });
+  }
+
+  _battCount(g) {
+    var n = g.cells ?? g.items.length;
+    if (g.cells != null) return this._t(n === 1 ? 'cells_one' : 'cells_many', { n });
+    return this._t(n === 1 ? 'count_one' : 'count_many', { n });
+  }
+
+  // What to buy: the types of the batteries needing attention, with how many of each
+  _battToReplace(list) {
+    var need = new Map();
+    list
+      .filter((b) => b.low || b.unavailable)
+      .forEach((b) => {
+        var m = /^(\d+)\s*[×x]\s*(.+)$/i.exec(b.battery_type || '');
+        var key = m ? m[2] : b.battery_type || '';
+        need.set(key, (need.get(key) || 0) + (m ? Number(m[1]) : 1));
+      });
+    return [...need.entries()]
+      .sort((a, b) => !a[0] - !b[0] || b[1] - a[1])
+      .map(([type, n]) => `<span class="buy${type ? '' : ' unknown'}"><b>${n}×</b> ${shEsc(type ? this._battTypeName(type) : this._t('unknown_type'))}</span>`)
+      .join('');
+  }
+
+  // The next battery to replace by its forecast, with its date
+  _battNext(list) {
+    var next = list.filter((b) => !b.low && !b.unavailable && Number.isInteger(b.days_left)).sort((a, b) => a.days_left - b.days_left)[0];
+    if (!next) return '';
+    var when = next.replace_by ? this._battDate(next.replace_by) : this._t('forecast', { d: this._t('days', { n: next.days_left }) });
+    return `<div class="bline"><span class="rlabel"><ha-icon icon="mdi:calendar-clock"></ha-icon>${shEsc(this._t('next_replacement'))}</span>
+      <button class="nextb" data-more="${shEsc(next.entity_id)}"><b>${shEsc(next.name)}</b> · ${shEsc(when)}</button></div>`;
   }
 
   // "2× AA" → AA; a built-in rechargeable battery is its own type
@@ -1249,8 +1348,11 @@ class SystemHubPanel extends HTMLElement {
     [...list].sort(byLevel).forEach((b) => {
       var key = view === 'room' ? b.area || '' : this._battType(b);
       if (!map.has(key)) map.set(key, []);
-      var context = view === 'room' ? this._battTypeName(b.battery_type || '') : b.area || '';
-      map.get(key).push({ b, context });
+      var m = /^(\d+)\s*[×x]/.exec(b.battery_type || '');
+      var cells = m ? Number(m[1]) : 1;
+      var count = view === 'type' && b.battery_type && b.battery_type !== 'rechargeable' ? this._t(cells === 1 ? 'cells_one' : 'cells_many', { n: cells }) : '';
+      var context = view === 'room' ? this._battTypeName(b.battery_type || '') : [b.area, count].filter(Boolean).join(' · ');
+      map.get(key).push({ b, context, cells });
     });
     return [...map.entries()]
       .map(([key, items]) => ({
@@ -1258,6 +1360,8 @@ class SystemHubPanel extends HTMLElement {
         items,
         name: key ? (view === 'type' ? this._battTypeName(key) : key) : this._t(view === 'room' ? 'no_area' : 'unknown_type'),
         icon: view === 'room' ? 'mdi:sofa-outline' : key ? 'mdi:battery-outline' : 'mdi:battery-unknown',
+        // By type, the batteries of that type in all (a remote with 2 AAA counts 2)
+        cells: view === 'type' && key && key !== 'rechargeable' ? items.reduce((n, x) => n + x.cells, 0) : null,
       }))
       .sort((a, b) => !a.key - !b.key || (view === 'type' ? b.items.length - a.items.length : 0) || a.name.localeCompare(b.name));
   }

@@ -969,7 +969,18 @@
         "ago_d": "−{n} T",
         "now": "jetzt",
         "chart_empty": "Noch kein Verlauf",
-        "disk": "Datenträger"
+        "disk": "Datenträger",
+        "to_check": "{n} zu prüfen",
+        "count_one": "1 Batterie",
+        "count_many": "{n} Batterien",
+        "cells_one": "1 Batterie",
+        "cells_many": "{n} Batterien",
+        "to_replace": "Zu ersetzen",
+        "nothing_to_replace": "Nichts zu ersetzen",
+        "next_replacement": "Nächster Austausch",
+        "hours": "{n} h",
+        "low_for": "schwach seit {d}",
+        "unavailable_for": "nicht verfügbar seit {d}"
       }
     }
   }

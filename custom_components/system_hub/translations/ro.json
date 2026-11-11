@@ -969,7 +969,18 @@
         "ago_d": "−{n} z",
         "now": "acum",
         "chart_empty": "Încă nu există istoric",
-        "disk": "Disc"
+        "disk": "Disc",
+        "to_check": "De verificat: {n}",
+        "count_one": "1 baterie",
+        "count_many": "Baterii: {n}",
+        "cells_one": "1 baterie",
+        "cells_many": "Baterii: {n}",
+        "to_replace": "De înlocuit",
+        "nothing_to_replace": "Nimic de înlocuit",
+        "next_replacement": "Următoarea înlocuire",
+        "hours": "{n} h",
+        "low_for": "scăzută de {d}",
+        "unavailable_for": "indisponibilă de {d}"
       }
     }
   }

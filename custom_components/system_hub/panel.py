@@ -176,6 +176,7 @@ def _marketplace(refresher: Any) -> dict[str, Any]:
 def _batteries(monitor: Any) -> dict[str, Any]:
     return {
         "threshold": monitor.threshold,
+        "hide_ok": monitor.hide_ok,
         "low": len(monitor.low),
         "unavailable": len(monitor.unavailable),
         "batteries": [b.as_dict() for b in monitor.batteries],

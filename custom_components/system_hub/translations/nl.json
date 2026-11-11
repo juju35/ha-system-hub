@@ -969,7 +969,18 @@
         "ago_d": "−{n} d",
         "now": "nu",
         "chart_empty": "Nog geen geschiedenis",
-        "disk": "Schijf"
+        "disk": "Schijf",
+        "to_check": "{n} te controleren",
+        "count_one": "1 batterij",
+        "count_many": "{n} batterijen",
+        "cells_one": "1 batterij",
+        "cells_many": "{n} batterijen",
+        "to_replace": "Te vervangen",
+        "nothing_to_replace": "Niets te vervangen",
+        "next_replacement": "Volgende vervanging",
+        "hours": "{n} u",
+        "low_for": "al {d} laag",
+        "unavailable_for": "al {d} niet beschikbaar"
       }
     }
   }

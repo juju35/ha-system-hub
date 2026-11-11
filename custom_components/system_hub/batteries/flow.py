@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Final
 
 import voluptuous as vol
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.selector import (
+    BooleanSelector,
     EntityFilterSelectorConfig,
     EntitySelector,
     EntitySelectorConfig,
@@ -24,8 +26,12 @@ from homeassistant.loader import async_get_integrations
 
 from ..notify import notify_choices
 from .const import (
+    BATTERY_TYPE_CHOICES,
+    CONF_BATTERY_MODELS,
+    CONF_BATTERY_TYPES,
     CONF_DURATION,
     CONF_EVENING,
+    CONF_HIDE_OK,
     CONF_IGNORED_ENTITIES,
     CONF_IGNORED_INTEGRATIONS,
     CONF_MORNING,
@@ -37,10 +43,12 @@ from .const import (
     DEFAULT_MORNING,
     DEFAULT_THRESHOLD,
     MAX_DURATION,
+    MAX_QUANTITY,
     MAX_THRESHOLD,
     MIN_DURATION,
     MIN_THRESHOLD,
 )
+from .monitor import battery_type, split_type
 
 
 def _multi(options: list[Any]) -> SelectSelector:
@@ -95,6 +103,7 @@ async def settings_schema(hass: HomeAssistant, current: dict[str, Any]) -> vol.S
                 )
             ),
             vol.Optional(CONF_IGNORED_INTEGRATIONS, default=ignored): _multi(integration_options),
+            vol.Optional(CONF_HIDE_OK, default=bool(current.get(CONF_HIDE_OK, False))): BooleanSelector(),
         }
     )
 
@@ -119,4 +128,99 @@ def settings_options(user_input: dict[str, Any]) -> dict[str, Any]:
         CONF_IGNORED_INTEGRATIONS: sorted(
             {d.strip() for d in user_input.get(CONF_IGNORED_INTEGRATIONS, []) if d.strip()}
         ),
+        CONF_HIDE_OK: bool(user_input.get(CONF_HIDE_OK, False)),
     }
+
+
+# ── Battery types ───────────────────────────────────────────────────────────
+
+CONF_SET: Final = "set"
+CONF_BATTERY: Final = "battery"
+CONF_TYPE: Final = "type"
+CONF_QUANTITY: Final = "quantity"
+CONF_WHOLE_MODEL: Final = "whole_model"
+
+
+def _entity_name(hass: HomeAssistant, entity_id: str) -> str:
+    entry = er.async_get(hass).async_get(entity_id)
+    device = dr.async_get(hass).async_get(entry.device_id) if entry and entry.device_id else None
+    if device:
+        return device.name_by_user or device.name or entity_id
+    state = hass.states.get(entity_id)
+    return state.name if state else entity_id
+
+
+def types_set(hass: HomeAssistant, current: dict[str, Any]) -> list[SelectOptionDict]:
+    """The types already set, one choice each: "battery:<entity ID>" or "model:<model>"."""
+    types = current.get(CONF_BATTERY_TYPES) or {}
+    models = current.get(CONF_BATTERY_MODELS) or {}
+    choices = [
+        SelectOptionDict(value=f"model:{model}", label=f"{model} — {kind}") for model, kind in sorted(models.items())
+    ]
+    choices += [
+        SelectOptionDict(value=f"battery:{entity_id}", label=f"{_entity_name(hass, entity_id)} — {kind}")
+        for entity_id, kind in sorted(types.items(), key=lambda item: _entity_name(hass, item[0]).casefold())
+    ]
+    return choices
+
+
+def types_schema(hass: HomeAssistant, current: dict[str, Any]) -> vol.Schema:
+    """The types set (unticked: removed), and one more to set for a battery or for every device of its model."""
+    choices = types_set(hass, current)
+    fields: dict[Any, Any] = {}
+    if choices:
+        fields[vol.Optional(CONF_SET, default=[c["value"] for c in choices])] = SelectSelector(
+            SelectSelectorConfig(options=choices, multiple=True, mode=SelectSelectorMode.LIST)
+        )
+    fields[vol.Optional(CONF_BATTERY)] = EntitySelector(
+        EntitySelectorConfig(
+            filter=[
+                EntityFilterSelectorConfig(domain="sensor", device_class="battery"),
+                EntityFilterSelectorConfig(domain="binary_sensor", device_class="battery"),
+            ]
+        )
+    )
+    fields[vol.Optional(CONF_TYPE)] = SelectSelector(
+        SelectSelectorConfig(
+            options=BATTERY_TYPE_CHOICES,
+            custom_value=True,
+            mode=SelectSelectorMode.DROPDOWN,
+            translation_key="battery_type",
+        )
+    )
+    fields[vol.Optional(CONF_QUANTITY, default=1)] = NumberSelector(
+        NumberSelectorConfig(min=1, max=MAX_QUANTITY, step=1, mode=NumberSelectorMode.BOX)
+    )
+    fields[vol.Optional(CONF_WHOLE_MODEL, default=False)] = BooleanSelector()
+    return vol.Schema(fields)
+
+
+def types_options(
+    hass: HomeAssistant, current: dict[str, Any], user_input: dict[str, Any]
+) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
+    """The types kept and the one added: (per battery, per model, errors)."""
+    kept = set(user_input.get(CONF_SET, []))
+    types = {k: v for k, v in (current.get(CONF_BATTERY_TYPES) or {}).items() if f"battery:{k}" in kept}
+    models = {k: v for k, v in (current.get(CONF_BATTERY_MODELS) or {}).items() if f"model:{k}" in kept}
+    entity_id = user_input.get(CONF_BATTERY)
+    kind = str(user_input.get(CONF_TYPE) or "").strip()
+    if not entity_id and not kind:
+        return types, models, {}
+    if not entity_id:
+        return types, models, {CONF_BATTERY: "battery_required"}
+    if not kind:
+        return types, models, {CONF_TYPE: "type_required"}
+    # "2× AA" typed in the type wins over the quantity field; a built-in rechargeable battery has no count.
+    parsed = split_type(kind)
+    count, name = parsed if parsed and parsed[0] > 1 else (int(user_input.get(CONF_QUANTITY) or 1), kind)
+    value = name if name == "rechargeable" else battery_type(name, count)
+    if user_input.get(CONF_WHOLE_MODEL):
+        entry = er.async_get(hass).async_get(entity_id)
+        device = dr.async_get(hass).async_get(entry.device_id) if entry and entry.device_id else None
+        model = str(device.model or "").strip() if device else ""
+        if not model:
+            return types, models, {CONF_WHOLE_MODEL: "no_model"}
+        models[model] = value
+    else:
+        types[entity_id] = value
+    return types, models, {}

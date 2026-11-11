@@ -969,7 +969,18 @@
         "ago_d": "−{n} д",
         "now": "сейчас",
         "chart_empty": "Истории пока нет",
-        "disk": "Диск"
+        "disk": "Диск",
+        "to_check": "Проверить: {n}",
+        "count_one": "1 батарея",
+        "count_many": "Батареи: {n}",
+        "cells_one": "1 батарейка",
+        "cells_many": "Батарейки: {n}",
+        "to_replace": "Заменить",
+        "nothing_to_replace": "Нечего заменять",
+        "next_replacement": "Следующая замена",
+        "hours": "{n} ч",
+        "low_for": "разряжена {d}",
+        "unavailable_for": "недоступна {d}"
       }
     }
   }

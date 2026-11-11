@@ -969,7 +969,18 @@
         "ago_d": "−{n} d",
         "now": "zdaj",
         "chart_empty": "Zgodovine še ni",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "Za preverjanje: {n}",
+        "count_one": "1 baterija",
+        "count_many": "Baterije: {n}",
+        "cells_one": "1 baterija",
+        "cells_many": "Baterije: {n}",
+        "to_replace": "Za zamenjavo",
+        "nothing_to_replace": "Nič za zamenjavo",
+        "next_replacement": "Naslednja zamenjava",
+        "hours": "{n} h",
+        "low_for": "šibka že {d}",
+        "unavailable_for": "ni na voljo že {d}"
       }
     }
   }

@@ -969,7 +969,18 @@
         "ago_d": "−{n} d",
         "now": "nyní",
         "chart_empty": "Zatím bez historie",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "Ke kontrole: {n}",
+        "count_one": "1 baterie",
+        "count_many": "Baterie: {n}",
+        "cells_one": "1 baterie",
+        "cells_many": "Baterie: {n}",
+        "to_replace": "K výměně",
+        "nothing_to_replace": "Nic k výměně",
+        "next_replacement": "Další výměna",
+        "hours": "{n} h",
+        "low_for": "slabá již {d}",
+        "unavailable_for": "nedostupná již {d}"
       }
     }
   }

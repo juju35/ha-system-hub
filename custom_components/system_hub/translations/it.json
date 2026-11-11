@@ -969,7 +969,18 @@
         "ago_d": "−{n} g",
         "now": "ora",
         "chart_empty": "Ancora nessuno storico",
-        "disk": "Disco"
+        "disk": "Disco",
+        "to_check": "{n} da controllare",
+        "count_one": "1 batteria",
+        "count_many": "{n} batterie",
+        "cells_one": "1 pila",
+        "cells_many": "{n} pile",
+        "to_replace": "Da sostituire",
+        "nothing_to_replace": "Niente da sostituire",
+        "next_replacement": "Prossima sostituzione",
+        "hours": "{n} h",
+        "low_for": "scarica da {d}",
+        "unavailable_for": "non disponibile da {d}"
       }
     }
   }

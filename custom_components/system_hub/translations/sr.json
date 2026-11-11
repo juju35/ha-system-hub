@@ -969,7 +969,18 @@
         "ago_d": "−{n} д",
         "now": "сада",
         "chart_empty": "Још нема историје",
-        "disk": "Диск"
+        "disk": "Диск",
+        "to_check": "{n} за проверу",
+        "count_one": "1 батерија",
+        "count_many": "Батерија: {n}",
+        "cells_one": "1 комад",
+        "cells_many": "{n} комада",
+        "to_replace": "За замену",
+        "nothing_to_replace": "Ништа за замену",
+        "next_replacement": "Следећа замена",
+        "hours": "{n} h",
+        "low_for": "слаба већ {d}",
+        "unavailable_for": "недоступна већ {d}"
       }
     }
   }

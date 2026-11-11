@@ -969,7 +969,18 @@
         "ago_d": "−{n} d",
         "now": "tagad",
         "chart_empty": "Vēstures vēl nav",
-        "disk": "Disks"
+        "disk": "Disks",
+        "to_check": "Jāpārbauda: {n}",
+        "count_one": "1 baterija",
+        "count_many": "Baterijas: {n}",
+        "cells_one": "1 baterija",
+        "cells_many": "Baterijas: {n}",
+        "to_replace": "Jānomaina",
+        "nothing_to_replace": "Nav ko nomainīt",
+        "next_replacement": "Nākamā nomaiņa",
+        "hours": "{n} h",
+        "low_for": "izlādēta {d}",
+        "unavailable_for": "nav pieejama {d}"
       }
     }
   }

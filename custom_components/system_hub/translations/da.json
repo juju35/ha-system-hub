@@ -969,7 +969,18 @@
         "ago_d": "−{n} d",
         "now": "nu",
         "chart_empty": "Ingen historik endnu",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "{n} skal tjekkes",
+        "count_one": "1 batteri",
+        "count_many": "{n} batterier",
+        "cells_one": "1 batteri",
+        "cells_many": "{n} batterier",
+        "to_replace": "Skal udskiftes",
+        "nothing_to_replace": "Intet at udskifte",
+        "next_replacement": "Næste udskiftning",
+        "hours": "{n} t",
+        "low_for": "lavt i {d}",
+        "unavailable_for": "utilgængeligt i {d}"
       }
     }
   }

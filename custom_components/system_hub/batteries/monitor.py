@@ -237,6 +237,8 @@ class BatteryMonitor:
         ignored_entities: Iterable[str] = (),
         ignored_integrations: Iterable[str] = (),
         entry_id: str | None = None,
+        battery_types: dict[str, str] | None = None,
+        battery_models: dict[str, str] | None = None,
     ) -> None:
         self.hass = hass
         self.entry_id = entry_id
@@ -245,6 +247,10 @@ class BatteryMonitor:
         self.notify_services = list(notify_services)
         self.ignored_entities = set(ignored_entities)
         self.ignored_integrations = set(ignored_integrations)
+        # Types set by hand: per battery, then per device model, before Battery Notes.
+        self.battery_types = dict(battery_types or {})
+        self.battery_models = dict(battery_models or {})
+        self.hide_ok = False
         self.batteries: list[Battery] = []
         self.last_notification: datetime | None = None
         self.last_notified: int | None = None
@@ -476,8 +482,14 @@ class BatteryMonitor:
             else:
                 self._below_since.pop(state.entity_id, None)
             since = self._below_since.get(state.entity_id)
-            # Battery Notes: the battery's own type attributes, else its device's *Battery type* sensor.
-            kind = battery_type(state.attributes.get("battery_type"), state.attributes.get("battery_quantity"))
+            # Set by hand for this battery or its model, else Battery Notes: the battery's own type attributes, else its
+            # device's *Battery type* sensor.
+            model = str(device.model or "").strip() if device else ""
+            kind = battery_type(
+                self.battery_types.get(state.entity_id) or (self.battery_models.get(model) if model else None)
+            )
+            if kind is None:
+                kind = battery_type(state.attributes.get("battery_type"), state.attributes.get("battery_quantity"))
             if kind is None and (type_state := _type_sensor(self.hass, entities, battery_device_id)) is not None:
                 kind = battery_type(type_state.state, type_state.attributes.get("battery_quantity"))
             area_id = (entry.area_id if entry else None) or (device.area_id if device else None)

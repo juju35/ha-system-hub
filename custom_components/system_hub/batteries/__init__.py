@@ -15,8 +15,11 @@ from homeassistant.util import dt as dt_util
 
 from ..const import DOMAIN
 from .const import (
+    CONF_BATTERY_MODELS,
+    CONF_BATTERY_TYPES,
     CONF_DURATION,
     CONF_EVENING,
+    CONF_HIDE_OK,
     CONF_IGNORED_ENTITIES,
     CONF_IGNORED_INTEGRATIONS,
     CONF_MORNING,
@@ -45,7 +48,10 @@ async def async_setup_batteries(hass: HomeAssistant, entry: ConfigEntry, options
         options.get(CONF_IGNORED_ENTITIES, []),
         options.get(CONF_IGNORED_INTEGRATIONS, DEFAULT_IGNORED_INTEGRATIONS),
         entry.entry_id,
+        options.get(CONF_BATTERY_TYPES) or {},
+        options.get(CONF_BATTERY_MODELS) or {},
     )
+    monitor.hide_ok = bool(options.get(CONF_HIDE_OK, False))
     await monitor.async_load()
     entry.async_on_unload(monitor.async_listen())
 

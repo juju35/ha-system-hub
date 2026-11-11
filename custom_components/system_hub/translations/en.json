@@ -969,7 +969,18 @@
         "ago_d": "−{n} d",
         "now": "now",
         "chart_empty": "No history yet",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "{n} to check",
+        "count_one": "1 battery",
+        "count_many": "{n} batteries",
+        "cells_one": "1 battery",
+        "cells_many": "{n} batteries",
+        "to_replace": "To replace",
+        "nothing_to_replace": "Nothing to replace",
+        "next_replacement": "Next replacement",
+        "hours": "{n} h",
+        "low_for": "low for {d}",
+        "unavailable_for": "unavailable for {d}"
       }
     }
   }
