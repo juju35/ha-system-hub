@@ -929,6 +929,7 @@
         "git_needs_repo": "Vispirms iestatiet repozitoriju sadaļā Konfigurēt → Moduļi.",
         "done": "Gatavs",
         "failed": "Neizdevās: {error}",
+        "by_level": "Pēc līmeņa",
         "by_room": "Pa telpām",
         "by_type": "Pa veidiem",
         "by_forecast": "Pēc nomaiņas datuma",

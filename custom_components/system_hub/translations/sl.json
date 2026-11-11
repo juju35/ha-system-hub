@@ -929,6 +929,7 @@
         "git_needs_repo": "Najprej nastavite repozitorij v Konfiguriraj → Moduli.",
         "done": "Končano",
         "failed": "Ni uspelo: {error}",
+        "by_level": "Po ravni",
         "by_room": "Po prostorih",
         "by_type": "Po vrsti",
         "by_forecast": "Po datumu zamenjave",

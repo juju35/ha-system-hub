@@ -929,6 +929,7 @@
         "git_needs_repo": "Konfigurera först förrådet under Konfigurera → Moduler.",
         "done": "Klart",
         "failed": "Misslyckades: {error}",
+        "by_level": "Efter nivå",
         "by_room": "Per rum",
         "by_type": "Per batterityp",
         "by_forecast": "Efter bytesdatum",

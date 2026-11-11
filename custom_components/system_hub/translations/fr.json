@@ -929,6 +929,7 @@
         "git_needs_repo": "Configurez d'abord le dépôt dans Configurer → Modules.",
         "done": "Terminé",
         "failed": "Échec : {error}",
+        "by_level": "Par niveau",
         "by_room": "Par pièce",
         "by_type": "Par type de pile",
         "by_forecast": "Par date de remplacement",

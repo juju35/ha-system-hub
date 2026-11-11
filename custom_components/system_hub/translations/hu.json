@@ -929,6 +929,7 @@
         "git_needs_repo": "Először állítsd be a tárolót a Konfigurálás → Modulok alatt.",
         "done": "Kész",
         "failed": "Sikertelen: {error}",
+        "by_level": "Szint szerint",
         "by_room": "Helyiségenként",
         "by_type": "Típusonként",
         "by_forecast": "Csere dátuma szerint",

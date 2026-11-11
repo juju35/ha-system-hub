@@ -929,6 +929,7 @@
         "git_needs_repo": "Configura prima il repository in Configura → Moduli.",
         "done": "Fatto",
         "failed": "Errore: {error}",
+        "by_level": "Per livello",
         "by_room": "Per stanza",
         "by_type": "Per tipo di batteria",
         "by_forecast": "Per data di sostituzione",

@@ -431,7 +431,7 @@ SHOTS = [
     ),
     *(
         {"file": f"panel-batteries-{view}{suffix}", "theme": theme, "tab": "batteries", "view": view}
-        for view in ("type", "forecast")
+        for view in ("room", "type", "forecast")
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},

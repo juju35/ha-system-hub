@@ -171,6 +171,7 @@ test('batteries tab: by room, by battery type, by replacement date', () => {
   };
   const p = panel(state, 'batteries');
   const names = (view) => JSON.parse(JSON.stringify(p._battGroups(state.batteries.batteries, view).map((g) => [g.name, g.items.map((x) => x.b.name)])));
+  assert.deepEqual(names('level'), [['', ['Door', 'Remote', 'Window', 'Lamp']]]);
   assert.deepEqual(names('room'), [
     ['Entrance', ['Door']],
     ['Kitchen', ['Remote', 'Window']],

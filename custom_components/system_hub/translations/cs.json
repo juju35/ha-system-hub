@@ -929,6 +929,7 @@
         "git_needs_repo": "Nejprve nastavte repozitář v Konfigurovat → Moduly.",
         "done": "Hotovo",
         "failed": "Selhalo: {error}",
+        "by_level": "Podle úrovně",
         "by_room": "Podle místnosti",
         "by_type": "Podle typu",
         "by_forecast": "Podle data výměny",

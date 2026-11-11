@@ -475,9 +475,9 @@ class SystemHubPanel extends HTMLElement {
     this._draft = {};
     this._localize = null;
     try {
-      this._battView = localStorage.getItem('system_hub_batteries_view') || 'room';
+      this._battView = localStorage.getItem('system_hub_batteries_view') || 'level';
     } catch (_err) {
-      this._battView = 'room';
+      this._battView = 'level';
     }
   }
 
@@ -901,16 +901,18 @@ class SystemHubPanel extends HTMLElement {
       <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>`;
   }
 
-  // Batteries: in groups by room, by battery type or by replacement date (as the Battery Monitor full screen view)
+  // Batteries: by level (the ones in error first), or in groups by room, by battery type or by replacement date (as the
+  // Battery Monitor full screen view)
   _batteries() {
     var data = this._state.batteries || {};
-    var view = this._battView || 'room';
+    var view = this._battView || 'level';
     var tiles = [
       this._tile('mdi:battery-alert-variant-outline', `<b>${data.low ?? 0}</b>`, this._t('low'), data.low ? 'warn' : 'good'),
       this._tile('mdi:battery-unknown', `<b>${data.unavailable ?? 0}</b>`, this._t('unavailable'), data.unavailable ? 'bad' : 'good'),
       this._tile('mdi:bell-check-outline', shEsc(this._ago(data.last_notification)), this._entityName('sensor', 'batteries_last_notification'), ''),
     ];
     var views = [
+      ['level', 'mdi:sort-ascending', 'by_level'],
       ['room', 'mdi:sofa-outline', 'by_room'],
       ['type', 'mdi:battery-outline', 'by_type'],
       ['forecast', 'mdi:calendar-clock', 'by_forecast'],
@@ -924,7 +926,7 @@ class SystemHubPanel extends HTMLElement {
     var groups = list.length
       ? this._battGroups(list, view)
           .map(
-            (g) => `<ha-card class="list"><div class="lhead"><ha-icon icon="${g.icon}"></ha-icon><span class="lname">${shEsc(g.name)}</span><span class="muted">${g.items.length}</span></div>
+            (g) => `<ha-card class="list">${g.name ? `<div class="lhead"><ha-icon icon="${g.icon}"></ha-icon><span class="lname">${shEsc(g.name)}</span><span class="muted">${g.items.length}</span></div>` : ''}
             ${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</ha-card>`,
           )
           .join('')
@@ -961,6 +963,17 @@ class SystemHubPanel extends HTMLElement {
     var rank = (b) => (b.unavailable ? 0 : b.alert || b.low ? 1 : 2);
     var byLevel = (a, b) => rank(a) - rank(b) || (a.level ?? 101) - (b.level ?? 101) || a.name.localeCompare(b.name);
     if (view === 'forecast') return this._battForecast(list);
+    // By level: one list, the batteries in error (unavailable) first, then the lowest
+    if (view === 'level') {
+      return [
+        {
+          key: '',
+          name: '',
+          icon: '',
+          items: [...list].sort(byLevel).map((b) => ({ b, context: [b.area, this._battTypeName(b.battery_type || '')].filter(Boolean).join(' · ') })),
+        },
+      ];
+    }
     var map = new Map();
     [...list].sort(byLevel).forEach((b) => {
       var key = view === 'room' ? b.area || '' : this._battType(b);

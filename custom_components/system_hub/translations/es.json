@@ -929,6 +929,7 @@
         "git_needs_repo": "Configura primero el repositorio en Configurar → Módulos.",
         "done": "Hecho",
         "failed": "Error: {error}",
+        "by_level": "Por nivel",
         "by_room": "Por habitación",
         "by_type": "Por tipo de pila",
         "by_forecast": "Por fecha de cambio",

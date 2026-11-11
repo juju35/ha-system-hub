@@ -929,6 +929,7 @@
         "git_needs_repo": "Richte zuerst das Repository unter Konfigurieren → Module ein.",
         "done": "Erledigt",
         "failed": "Fehlgeschlagen: {error}",
+        "by_level": "Nach Ladestand",
         "by_room": "Nach Raum",
         "by_type": "Nach Batterietyp",
         "by_forecast": "Nach Austauschdatum",

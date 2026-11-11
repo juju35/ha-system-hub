@@ -929,6 +929,7 @@
         "git_needs_repo": "Prvo podesite repozitorijum u Konfiguriši → Moduli.",
         "done": "Gotovo",
         "failed": "Neuspeh: {error}",
+        "by_level": "Po nivou",
         "by_room": "Po prostoriji",
         "by_type": "Po tipu baterije",
         "by_forecast": "Po datumu zamene",

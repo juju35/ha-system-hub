@@ -929,6 +929,7 @@
         "git_needs_repo": "Set up the repository first in Configure → Modules.",
         "done": "Done",
         "failed": "Failed: {error}",
+        "by_level": "By level",
         "by_room": "By room",
         "by_type": "By battery type",
         "by_forecast": "By replacement date",

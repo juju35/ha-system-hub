@@ -929,6 +929,7 @@
         "git_needs_repo": "Najpierw skonfiguruj repozytorium w Konfiguruj → Moduły.",
         "done": "Gotowe",
         "failed": "Błąd: {error}",
+        "by_level": "Według poziomu",
         "by_room": "Pomieszczenia",
         "by_type": "Typy baterii",
         "by_forecast": "Według daty wymiany",

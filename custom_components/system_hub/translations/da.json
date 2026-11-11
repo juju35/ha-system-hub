@@ -929,6 +929,7 @@
         "git_needs_repo": "Opsæt først repositoriet under Konfigurer → Moduler.",
         "done": "Færdig",
         "failed": "Mislykkedes: {error}",
+        "by_level": "Efter niveau",
         "by_room": "Efter rum",
         "by_type": "Efter batteritype",
         "by_forecast": "Efter udskiftningsdato",

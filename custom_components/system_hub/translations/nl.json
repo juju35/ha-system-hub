@@ -929,6 +929,7 @@
         "git_needs_repo": "Stel eerst de repository in via Configureren → Modules.",
         "done": "Klaar",
         "failed": "Mislukt: {error}",
+        "by_level": "Op niveau",
         "by_room": "Per ruimte",
         "by_type": "Per batterijtype",
         "by_forecast": "Op vervangdatum",

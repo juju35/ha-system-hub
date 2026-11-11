@@ -96,7 +96,7 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 | Containers | Running and stopped containers, last read; every container with its state, version and update, CPU, RAM and the last 24 hours of CPU; **Refresh** |
 | Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the recent reloads and power cycles |
 | Marketplace | Updates available, last and next check (progress while it runs); **Check for updates**, **Update all** (asked first) |
-| Batteries | Low and unavailable batteries, last notification; every battery **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); **Notify now** |
+| Batteries | Low and unavailable batteries, last notification; every battery **by level** (the ones in error first, then the lowest), **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); **Notify now** |
 | Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
 | Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
 
@@ -116,10 +116,11 @@ Every tab, light and dark themes:
 | Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync.png" alt="sidebar panel, Git Sync tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-dark.png" alt="sidebar panel, Git Sync tab, dark theme" width="400"> |
 | Settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings.png" alt="sidebar panel, Settings tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings-dark.png" alt="sidebar panel, Settings tab, dark theme" width="400"> |
 
-Batteries by type and by replacement date, and the Git Sync diff viewer:
+Batteries by room, by type and by replacement date, and the Git Sync diff viewer:
 
 | View | Light | Dark |
 |---|---|---|
+| By room | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-room.png" alt="Batteries tab by room" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-room-dark.png" alt="Batteries tab by room, dark theme" width="400"> |
 | By battery type | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-type.png" alt="Batteries tab by battery type" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-type-dark.png" alt="Batteries tab by battery type, dark theme" width="400"> |
 | By replacement date | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-forecast.png" alt="Batteries tab by replacement date" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-forecast-dark.png" alt="Batteries tab by replacement date, dark theme" width="400"> |
 | View changes | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-diff.png" alt="Git Sync diff viewer" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-diff-dark.png" alt="Git Sync diff viewer, dark theme" width="400"> |

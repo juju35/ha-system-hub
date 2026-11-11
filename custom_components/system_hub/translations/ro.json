@@ -929,6 +929,7 @@
         "git_needs_repo": "Configurați mai întâi depozitul în Configurare → Module.",
         "done": "Gata",
         "failed": "Eșuat: {error}",
+        "by_level": "După nivel",
         "by_room": "Pe camere",
         "by_type": "Pe tipuri",
         "by_forecast": "După data înlocuirii",

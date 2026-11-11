@@ -929,6 +929,7 @@
         "git_needs_repo": "Najprv nastavte repozitár v Konfigurovať → Moduly.",
         "done": "Hotovo",
         "failed": "Zlyhalo: {error}",
+        "by_level": "Podľa úrovne",
         "by_room": "Podľa miestnosti",
         "by_type": "Podľa typu",
         "by_forecast": "Podľa dátumu výmeny",
