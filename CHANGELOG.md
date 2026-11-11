@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### New
+- **Automation Monitor cards** (`custom:automation-monitor-card`, `custom:automation-monitor-mini-card`) served by System Hub, as the System Monitor cards: [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) is archived. Remove its dashboard resource so the cards are not registered twice.
+
 ## 1.1.1 - 2026-11-11
 
 ### Changed

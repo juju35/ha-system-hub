@@ -23,6 +23,10 @@ Home Assistant integration that brings the care of your Home Assistant system to
 |---|---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="Battery Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Git Sync card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="260"> |
 
+| Automation Monitor | | |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor.png" alt="Automation Monitor card" width="260"> | | |
+
 The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section shows its mini card, its states and its dark theme.
 
 ## Features
@@ -190,6 +194,7 @@ System Hub also serves the cards of the integrations it replaces, with the same 
 | [Battery Monitor](#battery-monitor-card) | `custom:battery-monitor-card`, `custom:battery-monitor-mini-card` | [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor)'s cards |
 | [Git Sync](#git-sync-card) | `custom:git-sync-card`, `custom:git-sync-mini-card` | [ha-git-sync](https://github.com/juju35/ha-git-sync)'s cards |
 | [Orphan Entities](#cards) | `custom:orphan-entities-card`, `custom:orphan-entities-mini-card` | [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities)'s cards |
+| [Automation Monitor](#automation-monitor-cards) | `custom:automation-monitor-card`, `custom:automation-monitor-mini-card` | [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) |
 
 ## System Monitor cards
 
@@ -979,7 +984,51 @@ A battery due for replacement blinks its icon (honours `prefers-reduced-motion`)
 
 ## Automations
 
-Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor card](https://github.com/juju35/ha-automation-monitor-card) does: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no settings and no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
+Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor cards](#automation-monitor-cards) do: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no settings and no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
+
+
+### Automation Monitor cards
+
+Two Lovelace cards for the same integration, served by System Hub (formerly [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card)): the full **Automation Monitor Card** (`custom:automation-monitor-card`) and the compact **Automation Monitor Mini Card** (`custom:automation-monitor-mini-card`). They work with or without the Automations module: the sensors of Automation Monitor are found by the entity registry, whatever their language or entity ids.
+
+- Overall status: all good, the number of problems, or "Sensor unavailable" when a sensor of the integration cannot be read
+- Counters of failed automations and unavailable linked entities; a list is only shown when it has something to show
+- Failed automations: name, time of the last failure, error message, failed step and consecutive failures, with **Trace**, **Edit** and **Clear** (or **Clear all**, with confirmation: `automation_monitor.reset`)
+- Unavailable linked entities: name, entity id, how long it has been unavailable and the automations, scripts and scenes that use it (click one to open its editor)
+- **Refresh** in the header of both cards (`automation_monitor.rebuild_linked_entities`); the mini card's detail button switches to the full card and back
+- Lists folded by default (click a section title), cut to `max_items` with a "Show more" button; the action buttons are for administrators only
+- Visual editor for both cards
+
+```yaml
+type: custom:automation-monitor-card
+```
+
+| Option | Card | Default | Description |
+|---|---|---|---|
+| `title` | both | `Automation Monitor` | Card title |
+| `show_failed` | both | `true` | Failed automations (counter and list) |
+| `show_linked` | both | `true` | Unavailable linked entities (counter and list) |
+| `expand_failed` | full | `false` | Failed automations expanded when the card loads |
+| `expand_linked` | full | `false` | Unavailable linked entities expanded when the card loads |
+| `show_details` | full | `true` | Error message of each failed automation |
+| `show_controls` | full | `true` | Clear and Clear all buttons (administrators only, like the Trace and Edit links and the Refresh button) |
+| `max_items` | full | `5` | Items shown per list before the "Show more" button |
+| `hide_when_ok` | both | `false` | Hide the card while all is good. Never hidden while a sensor can't be read, nor while the dashboard is being edited |
+| `zoom` | mini | `true` | Detail button at the top right: switches to the full card and back (`false` removes it) |
+| `exclude_devices` | both | — | Devices to ignore (ids or names): their unavailable linked entities and failed automations are left out of the lists, counters and status |
+| `exclude_entities` | both | — | Entities to ignore: entity ids or patterns with `*` and `?` (`automation.test_*`), case-insensitive |
+| `failed_entity` | both | Auto | Failed automations sensor, only needed if it can't be found automatically |
+| `linked_entity` | both | Auto | Unavailable linked entities sensor, only needed if it can't be found automatically |
+| `language` | both | Auto | Force a language (`en`, `fr`, `de`…); auto-detected from Home Assistant |
+
+| Automation Monitor Card | Light | Dark |
+|---|---|---|
+| Lists folded | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor.png" alt="automation-monitor-card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-dark.png" alt="automation-monitor-card, dark theme" width="300"> |
+| Lists unfolded | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-open.png" alt="automation-monitor-card unfolded" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-open-dark.png" alt="automation-monitor-card unfolded, dark theme" width="300"> |
+| All good | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-ok.png" alt="automation-monitor-card, all good" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-ok-dark.png" alt="automation-monitor-card, all good, dark theme" width="300"> |
+| Mini card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-mini.png" alt="automation-monitor-mini-card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-mini-dark.png" alt="automation-monitor-mini-card, dark theme" width="300"> |
+| Mini card, all good | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-mini-ok.png" alt="automation-monitor-mini-card, all good" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-mini-ok-dark.png" alt="automation-monitor-mini-card, all good, dark theme" width="300"> |
+| Mini card zoomed in | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-mini-zoom.png" alt="automation-monitor-mini-card zoomed in" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor-mini-zoom-dark.png" alt="automation-monitor-mini-card zoomed in, dark theme" width="300"> |
 
 ## Git Sync
 
@@ -1317,7 +1366,7 @@ Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are 
 
 ## Migrating
 
-System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities, and the System Monitor cards of [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card). These repositories are archived: remove the integrations and their card resources once System Hub is set up, so that nothing runs twice. While one of them is still set up next to System Hub, it raises a repair in **Settings → Repairs**.
+System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities, the System Monitor cards of [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card) and the Automation Monitor cards of [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) (same card types). These repositories are archived: remove the integrations and their card resources once System Hub is set up, so that nothing runs twice. While one of them is still set up next to System Hub, it raises a repair in **Settings → Repairs**.
 
 A module turned on for the first time takes over the settings of the integration it replaces: Watchdog (with its ignored integrations and power cycles), Marketplace Refresh, Battery Monitor and Orphan Entities (with its ignored integrations and entities). For Git Sync, the repository form is filled with the standalone integration's repository, remote, SSH key and author, and its schedule, export and notification settings are kept (the repository of the configuration folder when it had several). Battery Monitor's battery types set in its cards and its spare batteries are imported with **Settings → Batteries → Import from Battery Monitor**. Rename in your automations:
 
