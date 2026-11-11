@@ -31,6 +31,10 @@ jobs:
     # Debian 12 rather than the Ubuntu runner: its apt mirrors (deb.debian.org) instead of Ubuntu's archives, which the
     # runners sometimes cannot resolve.
     container: node:22-bookworm
+    # The container's default shell is sh: bash for pipefail and the scripts
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
