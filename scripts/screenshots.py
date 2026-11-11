@@ -483,7 +483,7 @@ def mock_state():
         "loaded": True,
         "entry_id": "system_hub",
         "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
-        "tabs": ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
+        "tabs": ["status", "system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
         # The Orphans tab: the counts with the state, the whole list from its own command
         **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
         "git_sync_configured": True,
@@ -870,12 +870,13 @@ ORPHANS_CONFIRM = """async () => {
 # Opens the diff viewer from the Git Sync tab.
 OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
-TABS = ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans", "settings"]
+TABS = ["status", "system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans", "settings"]
 SHOTS = [
     *(
         {"file": f"panel-{tab.replace('_', '-')}{suffix}", "theme": theme, "tab": tab}
         for tab in TABS
         for theme, suffix in (("light", ""), ("dark", "-dark"))
+        if tab != "status"
     ),
     *(
         {"file": f"panel-batteries-{view}{suffix}", "theme": theme, "tab": "batteries", "view": view}
@@ -886,6 +887,9 @@ SHOTS = [
     {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
+    # The Status tab with every area, Automation Monitor's included
+    {"file": "panel-status", "theme": "light", "tab": "status", "automations": True},
+    {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True},
     {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
     {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},

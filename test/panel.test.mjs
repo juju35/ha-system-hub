@@ -47,7 +47,8 @@ function panel(state, tab) {
   p._hass = { language: 'en', localize };
   p._localize = localize;
   p._state = state;
-  if (tab) p._tab = tab;
+  // The tab shown: the System tab unless a test picks another (the panel opens on the first tab)
+  p._tab = tab || 'system';
   return p;
 }
 
@@ -743,4 +744,44 @@ test('git sync tab: the count of changed files always; more than 5 folded until 
   many = p._content();
   assert.match(many, /f6\.yaml/);
   assert.match(many, /aria-expanded="true"/);
+});
+
+test('status tab: a score, one tile per area in the order of the tabs, each opening its tab', () => {
+  const state = {
+    loaded: true,
+    modules: ['watchdog', 'batteries', 'git_sync', 'orphans', 'containers', 'marketplace'],
+    tabs: ['status', 'batteries', 'system', 'watchdog', 'git_sync', 'containers', 'marketplace', 'orphans'],
+    thresholds: { cpu: [70, 90], ram: [70, 90], disk: [80, 90], temperature: [70, 85], swap: [50, 80] },
+    system: [
+      { key: 'processor_use', entity_id: 'sensor.cpu', name: 'CPU', state: '14' },
+      { key: 'memory_use_percent', entity_id: 'sensor.ram', name: 'RAM', state: '48' },
+      { key: 'disk_use_percent', entity_id: 'sensor.disk', name: 'Disk', state: '93' },
+      { key: 'process', entity_id: 'binary_sensor.process_frigate', name: 'Process frigate', state: 'off' },
+    ],
+    updates: [{ key: 'core', state: 'on', installed: '2026.11.0', latest: '2026.11.1' }],
+    watchdog: { unavailable: [{ title: 'Printer', gave_up: true }], max_reloads: 5 },
+    batteries: { low: 1, unavailable: 0, batteries: [{ name: 'Door', level: '8', low: true }] },
+    git_sync: { available: true, branch: 'main', changed: 0, ahead: 0, behind: 0 },
+    orphans: { total: 0, devices: 0 },
+    containers: { containers: [{ name: 'Core', container: 'homeassistant', state: 'started' }] },
+    marketplace: { state: 'idle', list: [{ title: 'Mushroom', latest: 'v5.0.0' }] },
+  };
+  const p = panel(state, 'status');
+  assert.deepEqual([...p._tabs()].slice(0, 2), ['status', 'batteries']);
+  const html = p._content();
+  const order = [...html.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['batteries', 'system', 'watchdog', 'git_sync', 'containers', 'marketplace', 'orphans']);
+  // Batteries to watch, the disk above its red threshold, a given-up integration and a process stopped: needing action
+  assert.match(html, /sttile warn" data-action="st_open" data-tab="batteries"/);
+  assert.match(html, /sttile bad" data-action="st_open" data-tab="system"/);
+  assert.match(html, /High: Disk/);
+  assert.match(html, /sttile bad" data-action="st_open" data-tab="containers"[\s\S]*?1 stopped/);
+  assert.match(html, /sttile warn" data-action="st_open" data-tab="marketplace"[\s\S]*?2 available/);
+  assert.match(html, /sttile good" data-action="st_open" data-tab="git_sync"/);
+  // 100 − 3 × 15 − 2 × 5
+  assert.match(html, /<b>45<\/b>/);
+  assert.match(html, /5 points to check/);
+  p._render = () => {};
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'st_open', tab: 'watchdog' } } : null) } });
+  assert.equal(p._tab, 'watchdog');
 });

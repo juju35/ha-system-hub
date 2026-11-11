@@ -102,6 +102,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     assert result["loaded"] is True
     assert result["modules"] == ["watchdog", "batteries"]
     assert result["tabs"] == [
+        "status",
         "system",
         "containers",
         "watchdog",
@@ -183,6 +184,7 @@ async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
     await hass.async_block_till_done()
     assert entry.options[CONF_MODULES] == ["watchdog", "batteries"]
     assert entry.options["tabs"] == [
+        "status",
         "batteries",
         "system",
         "containers",
@@ -206,6 +208,7 @@ async def test_git_sync_needs_its_repository(hass: HomeAssistant, hass_ws_client
 
 def test_tab_order() -> None:
     assert tab_order({}) == [
+        "status",
         "system",
         "containers",
         "watchdog",
@@ -215,7 +218,9 @@ def test_tab_order() -> None:
         "automations",
         "orphans",
     ]
+    # An order saved before the Status tab: it comes first
     assert tab_order({"tabs": ["git_sync", "unknown", "git_sync", "system"]}) == [
+        "status",
         "git_sync",
         "system",
         "containers",
@@ -225,6 +230,8 @@ def test_tab_order() -> None:
         "automations",
         "orphans",
     ]
+    # Moved by hand: kept where it is
+    assert tab_order({"tabs": ["system", "status"]})[:2] == ["system", "status"]
 
 
 async def test_system_thresholds_step(hass: HomeAssistant, hass_ws_client) -> None:

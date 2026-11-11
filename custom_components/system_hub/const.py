@@ -30,6 +30,7 @@ MODULES: Final = (
 
 # Panel: the order of its tabs (the System tab and the modules; Settings always comes last).
 CONF_TABS: Final = "tabs"
+TAB_STATUS: Final = "status"
 TAB_SYSTEM: Final = "system"
 # The System tab's thresholds (orange, red) in %, °C for the temperature, in the options under "system".
 CONF_SYSTEM: Final = "system"

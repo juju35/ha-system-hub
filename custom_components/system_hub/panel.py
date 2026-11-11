@@ -31,6 +31,7 @@ from .const import (
     MODULES,
     PANEL_PATH,
     SOURCE_PANEL,
+    TAB_STATUS,
     TAB_SYSTEM,
 )
 from .orphans import panel as orphans_panel
@@ -41,7 +42,7 @@ MODULE = "system-hub-panel.js"
 ELEMENT = "system-hub-panel"
 PANEL_ICON = "mdi:home-analytics"
 TITLE = "System Hub"
-TABS = (TAB_SYSTEM, *MODULES)
+TABS = (TAB_STATUS, TAB_SYSTEM, *MODULES)
 
 # System Monitor sensors shown in the System tab, by translation key; per-disk and per-interface ones carry their
 # mount point or interface in their name.
@@ -122,10 +123,13 @@ def async_remove_panel(hass: HomeAssistant) -> None:
 
 
 def tab_order(options: dict[str, Any]) -> list[str]:
-    """The tabs in the order chosen, every known tab once (new ones at the end); Settings is always last."""
+    """The tabs in the order chosen, every known tab once (new ones at the end, Status first); Settings last."""
     chosen = options.get(CONF_TABS)
     order = [t for t in chosen if t in TABS] if isinstance(chosen, list) else []
     order = list(dict.fromkeys(order))
+    # The Status tab, new in an order saved before it: first, as for a new install
+    if order and TAB_STATUS not in order:
+        order.insert(0, TAB_STATUS)
     return [*order, *(t for t in TABS if t not in order)]
 
 
