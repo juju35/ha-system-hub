@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Última falha",
         "unsaved": "Alterações não guardadas",
         "discard": "Descartar",
-        "containers": "Contentores"
+        "containers": "Contentores",
+        "tab_containers": "Contentores e processos"
       }
     },
     "battery_type": {

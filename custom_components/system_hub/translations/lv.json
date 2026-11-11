@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Pēdējā kļūme",
         "unsaved": "Nesaglabātas izmaiņas",
         "discard": "Atmest",
-        "containers": "Konteineri"
+        "containers": "Konteineri",
+        "tab_containers": "Konteineri un procesi"
       }
     },
     "battery_type": {

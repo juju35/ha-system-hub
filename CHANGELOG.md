@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Improved
+- **Containers & process** (the Containers tab, renamed): the processes System Monitor watches are listed below the containers, and no longer in the System tab while this tab is shown.
+
 ## 0.5.0 - 2026-11-11
 
 ### Improved

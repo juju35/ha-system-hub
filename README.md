@@ -397,7 +397,7 @@ Regional variants fall back to the base language (`it-IT` → `it`, `nl-BE` → 
 
 ## Containers
 
-Home Assistant's own Docker containers, read from the Supervisor: **Home Assistant Core** (`homeassistant`), the **Supervisor** (`hassio_supervisor`), its **plugins** (`hassio_audio`, `hassio_cli`, `hassio_dns`, `hassio_multicast`, `hassio_observer`) and every **add-on** (`app_<slug>`, `addon_<slug>` before Supervisor 2026.07.4). **Monitoring only**: the module never starts, stops or restarts anything. The panel's **Containers** tab lists them as Docker does, with their image.
+Home Assistant's own Docker containers, read from the Supervisor: **Home Assistant Core** (`homeassistant`), the **Supervisor** (`hassio_supervisor`), its **plugins** (`hassio_audio`, `hassio_cli`, `hassio_dns`, `hassio_multicast`, `hassio_observer`) and every **add-on** (`app_<slug>`, `addon_<slug>` before Supervisor 2026.07.4). **Monitoring only**: the module never starts, stops or restarts anything. The panel's **Containers & process** tab lists them as Docker does, with their image, and below them the processes System Monitor watches.
 
 | Option | Default | Description |
 |---|---|---|

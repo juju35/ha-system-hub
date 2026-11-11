@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Последен неуспех",
         "unsaved": "Незапазени промени",
         "discard": "Отхвърляне",
-        "containers": "Контейнери"
+        "containers": "Контейнери",
+        "tab_containers": "Контейнери и процеси"
       }
     },
     "battery_type": {

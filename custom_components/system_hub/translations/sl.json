@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Zadnja napaka",
         "unsaved": "Neshranjene spremembe",
         "discard": "Zavrzi",
-        "containers": "Vsebniki"
+        "containers": "Vsebniki",
+        "tab_containers": "Vsebniki in procesi"
       }
     },
     "battery_type": {

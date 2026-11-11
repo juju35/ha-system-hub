@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Senaste felet",
         "unsaved": "Osparade ändringar",
         "discard": "Ignorera",
-        "containers": "Containrar"
+        "containers": "Containrar",
+        "tab_containers": "Containrar och processer"
       }
     },
     "battery_type": {

@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Остання помилка",
         "unsaved": "Незбережені зміни",
         "discard": "Скасувати",
-        "containers": "Контейнери"
+        "containers": "Контейнери",
+        "tab_containers": "Контейнери та процеси"
       }
     },
     "battery_type": {
