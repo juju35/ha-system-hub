@@ -37,6 +37,14 @@ var SH_MODULE_NAMES = {
 // Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
 var SH_AUTO_MAX = 5;
 
+// A selector finding the same button or row again once the panel is drawn anew (null when nothing names it)
+function shFocusSelector(el) {
+  var attrs = ['data-action', 'data-more', 'data-entity', 'data-act', 'data-tab-move', 'data-dir', 'data-view', 'data-chart', 'data-hours', 'data-kind'];
+  var esc = (v) => (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, '\\$&'));
+  var parts = attrs.filter((a) => el.hasAttribute?.(a)).map((a) => `[${a}="${esc(el.getAttribute(a))}"]`);
+  return parts.length ? parts.join('') : null;
+}
+
 function shEsc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 }
@@ -557,6 +565,18 @@ class SystemHubPanel extends HTMLElement {
     .act:hover:not([disabled]) { background:color-mix(in srgb, var(--primary-color) 22%, transparent); }
     .act.quiet { color:var(--primary-text-color); background:var(--secondary-background-color, rgba(127,127,127,.12)); }
     .act[disabled] { opacity:.5; cursor:default; }
+    .act[aria-busy="true"] { opacity:.8; cursor:progress; }
+    .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
+    .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
+    .spin { animation:sh-spin 1s linear infinite; }
+    .loading { display:flex; align-items:center; gap:10px; color:var(--secondary-text-color); --mdc-icon-size:20px; }
+    .loading ha-icon { color:var(--primary-color); }
+    .loading.small { font-size:12px; gap:6px; --mdc-icon-size:16px; }
+    .savebar { position:sticky; bottom:12px; z-index:2; display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 14px;
+               border-radius:12px; background:var(--sh-card, var(--card-background-color, #fff)); box-shadow:0 4px 16px rgba(0,0,0,.18);
+               border:1px solid color-mix(in srgb, var(--primary-color) 40%, transparent); }
+    .savebar .grow { font-size:14px; font-weight:500; }
+    [data-more]:focus-visible, .tilelink:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
     .msg { font-size:12px; color:var(--secondary-text-color); overflow-wrap:anywhere; }
     .msg.bad, .msg.good { color:var(--tone-text); }
     .box { display:flex; align-items:center; flex:1; min-width:200px; border-radius:8px; border:1px solid var(--divider-color, rgba(127,127,127,.3));
@@ -602,7 +622,7 @@ class SystemHubPanel extends HTMLElement {
     .notes { display:flex; flex-direction:column; gap:4px; }
     @keyframes sh-spin { to { transform:rotate(360deg) } }
     @keyframes sh-slide { 0% { transform:translateX(-100%) } 100% { transform:translateX(340%) } }
-    @media (prefers-reduced-motion: reduce) { .phead ha-icon, .pbar.busy > span { animation:none; } }
+    @media (prefers-reduced-motion: reduce) { .phead ha-icon, .pbar.busy > span, .spin { animation:none; } }
     .bsheet { padding:14px 16px 16px; }
     .btop { display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; margin-bottom:16px; }
     .btabs { display:inline-flex; gap:4px; padding:3px; border-radius:12px; background:var(--secondary-background-color, rgba(128,128,128,.1)); }
@@ -888,6 +908,12 @@ class SystemHubPanel extends HTMLElement {
       ev.preventDefault();
     });
     root.querySelector('main').addEventListener('click', (ev) => this._onClick(ev));
+    root.querySelector('main').addEventListener('keydown', (ev) => {
+      if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches?.('[role="button"][data-more]')) {
+        ev.preventDefault();
+        this._onClick(ev);
+      }
+    });
     root.querySelector('main').addEventListener('input', (ev) => {
       if (ev.target.dataset?.draft) this._draft[ev.target.dataset.draft] = ev.target.value;
       // The Orphans search and filters narrow the list as they change
@@ -914,11 +940,20 @@ class SystemHubPanel extends HTMLElement {
     var main = root.querySelector('main');
     var active = root.activeElement;
     var focusKey = active?.dataset?.draft;
+    // The button or row with the focus keeps it through the refresh every few seconds
+    var focusSel = !focusKey && active && main.contains(active) ? shFocusSelector(active) : null;
     main.innerHTML = this._content();
+    // Rows and tiles that open the entity's dialog: reached and opened from the keyboard too
+    main.querySelectorAll('[data-more]:not(button):not(a)').forEach((el) => {
+      el.tabIndex = 0;
+      el.setAttribute('role', 'button');
+    });
     if (focusKey) {
       var field = main.querySelector(`[data-draft="${focusKey}"]`);
       field?.focus();
       field?.setSelectionRange?.(field.value.length, field.value.length);
+    } else if (focusSel) {
+      main.querySelector(focusSel)?.focus?.({ preventScroll: true });
     }
   }
 
@@ -927,7 +962,7 @@ class SystemHubPanel extends HTMLElement {
       return `<ha-card class="note error" role="alert">${shEsc(this._t('load_failed', { error: this._error }))}
         <button class="act" data-action="reload"><ha-icon icon="mdi:refresh"></ha-icon>${shEsc(this._t('refresh'))}</button></ha-card>`;
     }
-    if (this._state === null) return `<ha-card class="note" aria-busy="true">${shEsc(this._t('loading'))}</ha-card>`;
+    if (this._state === null) return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
     if (!this._state.loaded) return `<ha-card class="note">${shEsc(this._t('not_loaded'))}</ha-card>`;
     var html = {
       system: () => this._system(),
@@ -948,13 +983,30 @@ class SystemHubPanel extends HTMLElement {
     return m ? `<span class="msg ${m.tone || ''}" role="status">${shEsc(m.text)}</span>` : '';
   }
 
+  // A button; while its action runs (opts.busy, else this._busy[action]) a spinner replaces its icon and it is disabled
   _button(action, icon, label, opts = {}) {
-    var busy = this._busy[action];
+    var busy = 'busy' in opts ? Boolean(opts.busy) : Boolean(this._busy[action]);
     var attrs = Object.entries(opts.data || {})
       .map(([k, v]) => ` data-${k}="${shEsc(v)}"`)
       .join('');
-    return `<button class="act${opts.quiet ? ' quiet' : ''}" data-action="${action}"${attrs}${busy || opts.disabled ? ' disabled' : ''}>
-      <ha-icon icon="${busy ? 'mdi:loading' : icon}"></ha-icon>${shEsc(label)}</button>`;
+    var cls = `act${opts.quiet ? ' quiet' : ''}${opts.danger ? ' danger' : ''}`;
+    return `<button class="${cls}" data-action="${action}"${attrs}${busy || opts.disabled ? ' disabled' : ''}${busy ? ' aria-busy="true"' : ''}>
+      <ha-icon${busy ? ' class="spin"' : ''} icon="${busy ? 'mdi:loading' : icon}"></ha-icon>${shEsc(label)}</button>`;
+  }
+
+  // The module settings (Configure), at the end of a tab's buttons
+  _configure() {
+    return `<span class="grow"></span><a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('configure'))}</a>`;
+  }
+
+  // Something being read: a spinner and what it is
+  _spinner(text, small = false) {
+    return `<div class="loading${small ? ' small' : ''}" role="status" aria-busy="true"><ha-icon class="spin" icon="mdi:loading"></ha-icon>${shEsc(text)}</div>`;
+  }
+
+  // A short message in Home Assistant's own toast
+  _toast(message) {
+    this.dispatchEvent(new CustomEvent('hass-notification', { detail: { message }, bubbles: true, composed: true }));
   }
 
   _tile(icon, value, label, tone, opts = {}) {
@@ -975,6 +1027,21 @@ class SystemHubPanel extends HTMLElement {
       });
     } catch (_err) {
       return date.toISOString();
+    }
+  }
+
+  // A time near now in words ("5 minutes ago", "in 3 hours"), the date beyond a week; _ago gives the date and time
+  _rel(iso) {
+    var date = new Date(iso);
+    if (!iso || Number.isNaN(date.getTime())) return this._t('never');
+    var secs = (date.getTime() - Date.now()) / 1000;
+    var abs = Math.abs(secs);
+    if (abs >= 7 * 86400) return this._ago(iso);
+    var [value, unit] = abs < 45 ? [0, 'second'] : abs < 3600 ? [secs / 60, 'minute'] : abs < 48 * 3600 ? [secs / 3600, 'hour'] : [secs / 86400, 'day'];
+    try {
+      return new Intl.RelativeTimeFormat(this._hass?.locale?.language || this._hass?.language || undefined, { numeric: 'auto' }).format(Math.round(value), unit);
+    } catch (_err) {
+      return this._ago(iso);
     }
   }
 
@@ -1090,13 +1157,13 @@ class SystemHubPanel extends HTMLElement {
       var tone = failed || age === null || age > 7 ? 'bad' : age > 2 ? 'warn' : 'good';
       var running = manager && manager.state !== 'idle';
       tiles.push(
-        this._tile('mdi:backup-restore', shEsc(Number.isNaN(okAt) ? this._t('never') : this._ago(lastOk.state)), failed ? this._t('backup_failed') : this._t('last_backup'), tone, {
+        this._tile('mdi:backup-restore', shEsc(Number.isNaN(okAt) ? this._t('never') : this._rel(lastOk.state)), failed ? this._t('backup_failed') : this._t('last_backup'), tone, {
           entity: (lastOk || lastTry).entity_id,
         }),
       );
       if (nextBackup || running) {
         tiles.push(
-          this._tile('mdi:calendar-clock', shEsc(running ? this._t('backing_up') : this._ago(nextBackup.state)), this._t('next_backup'), running ? 'warn' : '', {
+          this._tile('mdi:calendar-clock', shEsc(running ? this._t('backing_up') : this._rel(nextBackup.state)), this._t('next_backup'), running ? 'warn' : '', {
             entity: (nextBackup || manager).entity_id,
           }),
         );
@@ -1228,7 +1295,7 @@ class SystemHubPanel extends HTMLElement {
       <div class="chead"><span class="ctitle">${shEsc(title)}</span><div class="segs" role="group">${periods}</div></div>
       <div class="plot" style="height:${h}px"><span class="ymax">${shEsc(top)}</span>
         <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><g class="grid">${grid}</g>${plot}</svg>
-        ${data === null ? `<span class="cnote">${shEsc(this._t('loading'))}</span>` : empty ? `<span class="cnote">${shEsc(this._t('chart_empty'))}</span>` : ''}</div>
+        ${data === null ? `<span class="cnote">${this._spinner(this._t('loading'), true)}</span>` : empty ? `<span class="cnote">${shEsc(this._t('chart_empty'))}</span>` : ''}</div>
       <div class="xaxis">${axis}</div>
       <div class="legend">${lines.map(([s, label, color]) => `<span class="lg link" data-more="${shEsc(s.entity_id)}"><i style="background:${color}"></i>${shEsc(label)}</span>`).join('')}</div>
     </ha-card>`;
@@ -1305,7 +1372,7 @@ class SystemHubPanel extends HTMLElement {
     var tiles = [
       this._tile('mdi:docker', `<b>${running}</b>/ ${list.length}`, this._t('running'), down.length ? 'warn' : 'good'),
       this._tile('mdi:alert-circle-outline', `<b>${down.length}</b>`, this._t('down'), down.length ? 'bad' : 'good'),
-      this._tile('mdi:clock-check-outline', shEsc(this._ago(data.last_update)), this._t('last_check'), data.error ? 'bad' : ''),
+      this._tile('mdi:clock-check-outline', shEsc(this._rel(data.last_update)), this._t('last_check'), data.error ? 'bad' : ''),
     ];
     var order = { core: 0, supervisor: 1, addon: 2 };
     var rows = [...list]
@@ -1333,7 +1400,7 @@ class SystemHubPanel extends HTMLElement {
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>
       <div class="actions">${this._button('containers_refresh', 'mdi:refresh', this._serviceName('containers_refresh'))}${this._message('containers_refresh')}
-      ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}</div>
+      ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}${this._configure()}</div>
       <ha-card class="list">${rows || `<div class="empty"><ha-icon icon="mdi:docker"></ha-icon>${shEsc(this._t('no_containers'))}</div>`}</ha-card>`;
   }
 
@@ -1346,7 +1413,7 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:puzzle-remove-outline', `<b>${unavailable.length}</b>`, this._entityName('sensor', 'watchdog_unavailable'), unavailable.length ? 'warn' : 'good'),
       this._tile('mdi:cancel', `<b>${gaveUp.length}</b>`, this._t('gave_up'), gaveUp.length ? 'bad' : 'good'),
       this._tile('mdi:restart', `<b>${data.reloads ?? 0}</b>`, this._l(`component.${SH_DOMAIN}.entity.sensor.watchdog_last_reload.state_attributes.reloads.name`) || 'Reloads', ''),
-      this._tile('mdi:clock-check-outline', shEsc(data.running ? '…' : this._ago(data.last_check)), this._t('last_check'), data.paused ? 'warn' : ''),
+      this._tile('mdi:clock-check-outline', shEsc(data.running ? '…' : this._rel(data.last_check)), this._t('last_check'), data.paused ? 'warn' : ''),
     ];
     var rows = unavailable
       .map(
@@ -1363,12 +1430,12 @@ class SystemHubPanel extends HTMLElement {
         var icon = h.kind.startsWith('power_cycle') ? 'mdi:power-plug-outline' : 'mdi:restart';
         return `<div class="item ${bad ? 'bad' : 'good'}"><ha-icon icon="${icon}"></ha-icon>
           <div class="who"><div class="n">${shEsc(h.title)}</div><div class="s">${shEsc(h.domain)} · ${shEsc(h.kind.replaceAll('_', ' '))}</div></div>
-          <div class="side muted">${shEsc(this._ago(h.at))}</div></div>`;
+          <div class="side muted">${shEsc(this._rel(h.at))}</div></div>`;
       })
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>
-      <div class="actions">${this._button('watchdog_check', 'mdi:shield-search', this._entityName('button', 'watchdog_check'), { disabled: data.running })}
-      ${data.paused ? `<span class="pill warn">${shEsc(this._t('paused'))}</span>` : ''}${this._message('watchdog_check')}${this._message('watchdog_reset')}</div>
+      <div class="actions">${this._button('watchdog_check', 'mdi:shield-search', this._entityName('button', 'watchdog_check'), { busy: data.running || this._busy.watchdog_check })}
+      ${data.paused ? `<span class="pill warn">${shEsc(this._t('paused'))}</span>` : ''}${this._message('watchdog_check')}${this._message('watchdog_reset')}${this._configure()}</div>
       <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('all_available'))}</div>`}</ha-card>
       ${this._powerCycles(data)}
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:history"></ha-icon><span class="lname">${shEsc(this._t('history'))}</span></div>
@@ -1409,11 +1476,11 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:package-up', `<b>${data.updates ?? 0}</b>`, this._t('updates'), data.updates ? 'warn' : 'good'),
       this._tile(
         'mdi:archive-sync',
-        shEsc(this._ago(data.last_check)),
+        shEsc(this._rel(data.last_check)),
         this._t('last_check'),
         data.state === 'error' ? 'bad' : '',
       ),
-      this._tile('mdi:calendar-clock', shEsc(data.scan_interval ? this._ago(data.next_due) : '—'), this._t('next_check'), ''),
+      this._tile('mdi:calendar-clock', shEsc(data.scan_interval ? this._rel(data.next_due) : '—'), this._t('next_check'), ''),
     ];
     var confirm = this._confirm === 'install'
       ? `<div class="confirm" role="alertdialog">${shEsc(this._t('confirm_install'))}
@@ -1432,11 +1499,12 @@ class SystemHubPanel extends HTMLElement {
     ].filter(Boolean);
     return `<div class="tiles">${tiles.join('')}</div>${running ? this._progress(data) : ''}${confirm}
       <div class="actions">${this._button('marketplace_check_updates', 'mdi:archive-refresh', this._entityName('button', 'marketplace_check_updates'), {
-        disabled: running || data.installing_updates,
+        disabled: data.installing_updates,
+        busy: running || this._busy.marketplace_check_updates,
       })}
-      ${pending.length ? this._button('confirm_install', 'mdi:package-down', this._t('install_all'), { quiet: true, disabled: running || data.installing_updates }) : ''}
+      ${pending.length ? this._button('confirm_install', 'mdi:package-down', this._t('install_all'), { quiet: true, disabled: running, busy: data.installing_updates || this._busy.marketplace_install_updates }) : ''}
       ${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}
-      ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}</div>
+      ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}${this._configure()}</div>
       <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>
       ${
         failed && !running
@@ -1487,7 +1555,7 @@ class SystemHubPanel extends HTMLElement {
     var tiles = [
       this._tile('mdi:battery-alert-variant-outline', `<b>${data.low ?? 0}</b>`, this._t('low'), data.low ? 'warn' : 'good'),
       this._tile('mdi:battery-unknown', `<b>${data.unavailable ?? 0}</b>`, this._t('unavailable'), data.unavailable ? 'bad' : 'good'),
-      this._tile('mdi:bell-check-outline', shEsc(this._ago(data.last_notification)), this._entityName('sensor', 'batteries_last_notification'), ''),
+      this._tile('mdi:bell-check-outline', shEsc(this._rel(data.last_notification)), this._entityName('sensor', 'batteries_last_notification'), ''),
     ];
     var views = [
       ['level', 'by_level'],
@@ -1757,8 +1825,8 @@ class SystemHubPanel extends HTMLElement {
     var tiles = [
       this._tile('mdi:source-branch', `<b>${shEsc(data.branch || '—')}</b>`, this._l(`component.${SH_DOMAIN}.entity.sensor.git_sync_status.state.${data.status}`) || data.status, tone),
       this._tile('mdi:file-document-edit-outline', `<b>${data.changed ?? 0}</b>`, this._entityName('sensor', 'git_sync_changed_files'), data.changed ? 'warn' : 'good'),
-      this._tile('mdi:source-commit', shEsc(commit ? this._ago(new Date(commit.timestamp * 1000).toISOString()) : this._t('never')), commit ? commit.message : this._entityName('sensor', 'git_sync_last_commit'), ''),
-      this._tile('mdi:cloud-check-outline', shEsc(this._ago(data.last_push)), this._entityName('sensor', 'git_sync_last_push'), ''),
+      this._tile('mdi:source-commit', shEsc(commit ? this._rel(new Date(commit.timestamp * 1000).toISOString()) : this._t('never')), commit ? commit.message : this._entityName('sensor', 'git_sync_last_commit'), ''),
+      this._tile('mdi:cloud-check-outline', shEsc(this._rel(data.last_push)), this._entityName('sensor', 'git_sync_last_push'), ''),
     ];
     var sync = [data.ahead ? this._t('ahead', { n: data.ahead }) : '', data.behind ? this._t('behind', { n: data.behind }) : ''].filter(Boolean).join(' · ');
     var files = (data.files || [])
@@ -1771,7 +1839,7 @@ class SystemHubPanel extends HTMLElement {
         ${this._button('git_sync_diff', 'mdi:file-compare', this._t('diff'), { quiet: true, disabled: !data.changed && !data.ahead })}
         ${this._button('git_sync_pull', 'mdi:source-pull', this._serviceName('git_sync_pull'), { quiet: true })}
         ${this._button('git_sync_export_dashboards', 'mdi:export', this._entityName('button', 'git_sync_export_dashboards'), { quiet: true })}
-        ${sync ? `<span class="pill warn">${shEsc(sync)}</span>` : ''}${this._message('git_sync')}</div>
+        ${sync ? `<span class="pill warn">${shEsc(sync)}</span>` : ''}${this._message('git_sync')}${this._configure()}</div>
         ${data.last_error ? `<span class="msg bad">${shEsc(data.last_error)}</span>` : ''}
         ${data.remote_url ? `<span class="msg"><code>${shEsc(data.remote_url)}</code></span>` : ''}</ha-card>
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:file-multiple-outline"></ha-icon><span class="lname">${shEsc(this._t('changed'))}</span></div>
@@ -1802,9 +1870,14 @@ class SystemHubPanel extends HTMLElement {
     var changed = Boolean(this._draft.modules || this._draft.tabs);
     return `<ha-card class="block"><h2>${shEsc(this._t('modules'))}</h2><span class="msg">${shEsc(this._t('modules_hint'))}</span>${moduleRows}</ha-card>
       <ha-card class="block"><h2>${shEsc(this._t('tabs'))}</h2>${tabRows}</ha-card>
-      <div class="actions">${this._button('save', 'mdi:content-save-outline', this._t('save'), { disabled: !changed })}
-      <a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('configure'))}</a>
-      ${this._message('save')}</div>`;
+      ${
+        changed || this._busy.save
+          ? `<div class="savebar" role="region" aria-label="${shEsc(this._t('unsaved'))}"><span class="grow">${shEsc(this._t('unsaved'))}</span>
+          ${this._button('discard', 'mdi:undo', this._t('discard'), { quiet: true, disabled: this._busy.save })}
+          ${this._button('save', 'mdi:content-save-outline', this._t('save'))}</div>`
+          : ''
+      }
+      <div class="actions">${this._message('save')}${this._configure()}</div>`;
   }
 
   _onClick(ev) {
@@ -1871,9 +1944,16 @@ class SystemHubPanel extends HTMLElement {
       var count = String(this._draft.stock_count ?? '').trim();
       var data = { battery_type: type };
       if (count !== '') data.count = Math.max(0, Math.round(Number(count)));
-      return this._run('batteries_set_stock', 'batteries_set_stock', data, () => {
-        this._stockForm = false;
-      });
+      return this._run(
+        'batteries_set_stock',
+        'batteries_set_stock',
+        data,
+        () => {
+          this._stockForm = false;
+        },
+        SH_DOMAIN,
+        action,
+      );
     }
     if (action === 'batt_view') {
       this._battView = button.dataset.view;
@@ -1885,8 +1965,13 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'save') return this._save();
+    if (action === 'discard') {
+      this._draft.modules = null;
+      this._draft.tabs = null;
+      return this._render();
+    }
     if (action.startsWith('auto_')) return this._autoAction(action, button);
-    if (action.startsWith('watchdog_reset:')) return this._run('watchdog_reset', 'watchdog_reset', { entry_id: action.split(':')[1] });
+    if (action.startsWith('watchdog_reset:')) return this._run('watchdog_reset', 'watchdog_reset', { entry_id: action.split(':')[1] }, null, SH_DOMAIN, action);
     if (action === 'git_sync_generate_message') return this._generate();
     if (action === 'git_sync_diff') return this._openDiff();
     if (action === 'git_sync_commit_push') {
@@ -1895,7 +1980,7 @@ class SystemHubPanel extends HTMLElement {
         this._draft.message = '';
       });
     }
-    if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', {});
+    if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', {}, null, SH_DOMAIN, action);
     if (action === 'marketplace_install_updates') {
       this._confirm = null;
       return this._run(action, action, {});
@@ -1903,19 +1988,22 @@ class SystemHubPanel extends HTMLElement {
     return this._run(action, action, {});
   }
 
-  async _run(service, messageKey, data, done, domain = SH_DOMAIN) {
-    this._busy[service] = true;
+  // An action: its button spins (busyKey, the clicked button's action) until the state is read again; done in a toast, a
+  // failure next to the buttons
+  async _run(service, messageKey, data, done, domain = SH_DOMAIN, busyKey = service) {
+    this._busy[busyKey] = true;
     delete this._messages[messageKey];
     this._render();
     try {
       await this._hass.callService(domain, service, data);
-      this._messages[messageKey] = { text: this._t('done'), tone: 'good' };
+      this._toast(this._t('done'));
       done?.();
     } catch (err) {
       this._messages[messageKey] = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
     }
-    delete this._busy[service];
     await this._load();
+    delete this._busy[busyKey];
+    this._render();
   }
 
   // Automations: what Automation Monitor reports (its sensors, read on the server), as in the Automation Monitor card
@@ -1939,7 +2027,7 @@ class SystemHubPanel extends HTMLElement {
         entity: data.linked_entity,
         title: data.linked_na ? naTitle : '',
       }),
-      this._tile('mdi:clock-alert-outline', shEsc(failures.length ? this._ago(failures[0].last_error_time) : '—'), this._t('auto_last_failure'), ''),
+      this._tile('mdi:clock-alert-outline', shEsc(failures.length ? this._rel(failures[0].last_error_time) : '—'), this._t('auto_last_failure'), ''),
       this._tile('mdi:robot-outline', `<b>${data.automations ?? 0}</b>`, SH_MODULE_NAMES.automations, ''),
     ];
     var confirm = '';
@@ -1948,13 +2036,13 @@ class SystemHubPanel extends HTMLElement {
       var entity = all ? '' : this._confirm.slice('auto_clear:'.length);
       var name = failures.find((f) => f.entity_id === entity)?.name || entity;
       confirm = `<div class="confirm" role="alertdialog">${shEsc(all ? this._t('auto_confirm_clear_all') : this._t('auto_confirm_clear', { name }))}
-        ${this._button(all ? 'auto_clear_all_ok' : 'auto_clear_ok', 'mdi:notification-clear-all', this._t(all ? 'auto_clear_all' : 'auto_clear'), { data: { entity } })}
+        ${this._button(all ? 'auto_clear_all_ok' : 'auto_clear_ok', 'mdi:notification-clear-all', this._t(all ? 'auto_clear_all' : 'auto_clear'), { data: { entity }, danger: true })}
         ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`;
     }
     var both = data.failed_na && data.linked_na;
     return `<div class="tiles">${tiles.join('')}</div>${confirm}
       <div class="actions"><span title="${shEsc(this._t('auto_rebuild_title'))}">${this._button('auto_rebuild', 'mdi:refresh', this._t('auto_rebuild'))}</span>
-      ${failures.length ? this._button('auto_clear_all', 'mdi:notification-clear-all', this._t('auto_clear_all'), { quiet: true }) : ''}
+      ${failures.length ? this._button('auto_clear_all', 'mdi:notification-clear-all', this._t('auto_clear_all'), { quiet: true, busy: this._busy.auto_clear_all }) : ''}
       ${this._message('auto')}${both ? `<span class="msg bad">${shEsc(this._t('auto_unavailable'))}</span>` : ''}</div>
       ${this._autoSection('failed', 'mdi:robot-confused-outline', this._t('auto_failed'), failures, (f) => this._autoFailure(f))}
       ${this._autoSection('linked', 'mdi:link-variant-off', this._t('auto_linked'), linked, (e) => this._autoLinked(e))}`;
@@ -1986,14 +2074,14 @@ class SystemHubPanel extends HTMLElement {
     var links = [
       f.trace ? `<a class="act quiet" href="${shEsc(f.trace)}"><ha-icon icon="mdi:chart-timeline-variant"></ha-icon>${shEsc(this._t('auto_trace'))}</a>` : '',
       f.edit ? `<a class="act quiet" href="${shEsc(f.edit)}"><ha-icon icon="mdi:pencil"></ha-icon>${shEsc(this._t('auto_edit'))}</a>` : '',
-      this._button('auto_clear', 'mdi:restore', this._t('auto_clear'), { quiet: true, data: { entity: f.entity_id } }),
+      this._button('auto_clear', 'mdi:restore', this._t('auto_clear'), { quiet: true, data: { entity: f.entity_id }, busy: this._busy[`auto_clear:${f.entity_id}`] }),
     ].join('');
     return `<div class="item bad link" data-more="${shEsc(f.entity_id)}"><ha-icon icon="mdi:robot-confused-outline"></ha-icon>
       <div class="who"><div class="n">${shEsc(f.name)}</div><div class="s">${shEsc(f.entity_id)}</div>
         ${f.error_message ? `<div class="s wrap"><code>${shEsc(f.error_message)}</code></div>` : ''}
         ${tags ? `<div class="s wrap">${tags}</div>` : ''}
         <div class="actions">${links}</div></div>
-      <div class="side muted">${shEsc(this._ago(f.last_error_time))}</div></div>`;
+      <div class="side muted">${shEsc(this._rel(f.last_error_time))}</div></div>`;
   }
 
   _autoLinked(e) {
@@ -2025,9 +2113,9 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     this._confirm = null;
-    if (name === 'auto_clear_ok') return this._run('reset', 'auto', { entity_id: button.dataset.entity }, null, 'automation_monitor');
-    if (name === 'auto_clear_all_ok') return this._run('reset', 'auto', {}, null, 'automation_monitor');
-    if (name === 'auto_rebuild') return this._run('rebuild_linked_entities', 'auto', {}, null, 'automation_monitor');
+    if (name === 'auto_clear_ok') return this._run('reset', 'auto', { entity_id: button.dataset.entity }, null, 'automation_monitor', `auto_clear:${button.dataset.entity}`);
+    if (name === 'auto_clear_all_ok') return this._run('reset', 'auto', {}, null, 'automation_monitor', 'auto_clear_all');
+    if (name === 'auto_rebuild') return this._run('rebuild_linked_entities', 'auto', {}, null, 'automation_monitor', 'auto_rebuild');
   }
 
   // The changes a commit would include, in the full screen diff viewer
@@ -2071,18 +2159,20 @@ class SystemHubPanel extends HTMLElement {
     var msg = { type: 'system_hub/update_settings' };
     if (this._draft.modules) msg.modules = this._draft.modules;
     if (this._draft.tabs) msg.tabs = this._draft.tabs;
+    delete this._messages.save;
     try {
       await this._hass.callWS(msg);
+      // The entry reloads with the new modules: the button spins until they are read
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       this._draft.modules = null;
       this._draft.tabs = null;
-      this._messages.save = { text: this._t('saved'), tone: 'good' };
+      await this._load();
+      this._toast(this._t('saved'));
     } catch (err) {
       var text = err?.code === 'git_sync_needs_repository' ? this._t('git_needs_repo') : this._t('failed', { error: err?.message || String(err) });
       this._messages.save = { text, tone: 'bad' };
     }
     delete this._busy.save;
-    // The entry reloads with the new modules: read them once it has
-    setTimeout(() => this._load(), 1500);
     this._render();
   }
 }
@@ -2201,7 +2291,7 @@ var SH_ORPHANS_METHODS = {
     var label = kind.startsWith('ignore') ? this._t('orph_ignore') : warn ? this._t('orph_remove_anyway') : this._t('orph_remove');
     return `<div class="confirm" role="alertdialog"><div class="who"><div class="n">${shEsc(title)}</div>
         ${text ? `<div class="s">${shEsc(this._t(text))}</div>` : ''}${warn ? `<div class="s warn-text">${shEsc(warn)}</div>` : ''}</div>
-      ${this._button('orph_do', kind.startsWith('ignore') ? 'mdi:eye-off-outline' : 'mdi:delete-outline', label)}
+      ${this._button('orph_do', kind.startsWith('ignore') ? 'mdi:eye-off-outline' : 'mdi:delete-outline', label, { danger: !kind.startsWith('ignore') })}
       ${this._button('orph_cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`;
   },
 
@@ -2234,8 +2324,8 @@ var SH_ORPHANS_METHODS = {
     var used = targets.filter((d) => d.used_by?.length).length;
     var confirm = o.confirm === 'remove_devices' || o.confirm === 'ignore_devices' ? this._orphConfirm(o.confirm, targets.length, used) : '';
     var bar = `<div class="obar">${o.dsel.size ? `<span>${shEsc(this._orphN('orph_selected', o.dsel.size))}</span>` : ''}
-      ${this._button('orph_confirm', 'mdi:delete-outline', this._t('orph_remove_devices'), { data: { act: 'remove_devices' }, disabled: this._busy.orph })}
-      ${this._button('orph_confirm', 'mdi:eye-off-outline', this._t('orph_ignore'), { quiet: true, data: { act: 'ignore_devices' }, disabled: !o.dsel.size || this._busy.orph })}
+      ${this._button('orph_confirm', 'mdi:delete-outline', this._t('orph_remove_devices'), { data: { act: 'remove_devices' }, disabled: this._busy.orph, busy: this._busy.orph === 'remove_devices', danger: true })}
+      ${this._button('orph_confirm', 'mdi:eye-off-outline', this._t('orph_ignore'), { quiet: true, data: { act: 'ignore_devices' }, disabled: !o.dsel.size || this._busy.orph, busy: this._busy.orph === 'ignore_devices' })}
       ${o.dsel.size ? this._button('orph_dclear', 'mdi:close', this._t('orph_clear'), { quiet: true }) : ''}</div>`;
     return `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:devices"></ha-icon><span class="lname">${shEsc(this._t('orph_devices_title'))}</span>
         <span class="muted">${devices.length}</span></div>
@@ -2258,16 +2348,16 @@ var SH_ORPHANS_METHODS = {
       ...SH_ORPH_REASONS.map((r) => this._orphTile(r, counts[r] ?? 0, f.reason === r)),
       this._tile('mdi:devices', `<b>${summary.devices ?? devices.length}</b>`, this._t('orph_devices_title'), summary.devices ? 'bad' : 'good'),
       this._tile('mdi:delete-sweep-outline', `<b>${summary.removed ?? 0}</b>`, this._t('orph_stat_removed'), '', { title: this._t('orph_stat_removed_hint') }),
-      this._tile('mdi:clock-check-outline', shEsc(summary.last_scan ? this._ago(summary.last_scan) : this._t('orph_never_scanned')), this._entityName('sensor', 'orphans_last_scan'), ''),
+      this._tile('mdi:clock-check-outline', shEsc(summary.last_scan ? this._rel(summary.last_scan) : this._t('orph_never_scanned')), this._entityName('sensor', 'orphans_last_scan'), ''),
     ];
-    var waiting = summary.next_scan ? `<span class="pill warn">${shEsc(this._t('orph_waiting'))} · ${shEsc(this._ago(summary.next_scan))}</span>` : '';
+    var waiting = summary.next_scan ? `<span class="pill warn">${shEsc(this._t('orph_waiting'))} · ${shEsc(this._rel(summary.next_scan))}</span>` : '';
     var actions = `<div class="actions">${this._button('orphans_scan', 'mdi:magnify-scan', this._entityName('button', 'orphans_scan'))}
       ${waiting}${summary.ignored ? `<span class="pill">${shEsc(this._t('orph_stat_ignored'))} ${summary.ignored}</span>` : ''}
       ${this._message('orphans_scan')}${this._message('orphans')}
-      <span class="grow"></span><a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('configure'))}</a></div>`;
+      ${this._configure()}</div>`;
     if (!o.data) {
-      var note = o.error ? this._t('failed', { error: o.error }) : this._t('loading');
-      return `<div class="tiles">${tiles.join('')}</div>${actions}<ha-card class="note">${shEsc(note)}</ha-card>`;
+      var note = o.error ? shEsc(this._t('failed', { error: o.error })) : this._spinner(this._t('loading'));
+      return `<div class="tiles">${tiles.join('')}</div>${actions}<ha-card class="note">${note}</ha-card>`;
     }
     var platforms = [...new Set(entities.map((e) => e.platform))].sort((a, b) => (names[a] || a).localeCompare(names[b] || b));
     var matches = shOrphFilter(entities, f, names);
@@ -2285,8 +2375,8 @@ var SH_ORPHANS_METHODS = {
     var unselected = matches.filter((e) => !o.sel.has(e.entity_id)).length;
     var bar = o.sel.size
       ? `<div class="obar"><span>${shEsc(this._orphN('orph_selected', o.sel.size))}</span>
-          ${this._button('orph_confirm', 'mdi:delete-outline', this._t('orph_remove'), { data: { act: 'remove' }, disabled: this._busy.orph })}
-          ${this._button('orph_confirm', 'mdi:eye-off-outline', this._t('orph_ignore'), { quiet: true, data: { act: 'ignore' }, disabled: this._busy.orph })}
+          ${this._button('orph_confirm', 'mdi:delete-outline', this._t('orph_remove'), { data: { act: 'remove' }, disabled: this._busy.orph, busy: this._busy.orph === 'remove', danger: true })}
+          ${this._button('orph_confirm', 'mdi:eye-off-outline', this._t('orph_ignore'), { quiet: true, data: { act: 'ignore' }, disabled: this._busy.orph, busy: this._busy.orph === 'ignore' })}
           ${unselected ? this._button('orph_select_all', 'mdi:checkbox-multiple-marked-outline', this._t('orph_select_all', { n: matches.length }), { quiet: true }) : ''}
           ${this._button('orph_clear', 'mdi:close', this._t('orph_clear'), { quiet: true })}</div>`
       : matches.length
@@ -2357,7 +2447,7 @@ var SH_ORPHANS_METHODS = {
     o.confirm = null;
     var entities = [...o.sel];
     var devices = [...o.dsel];
-    this._busy.orph = true;
+    this._busy.orph = act;
     delete this._messages.orphans;
     this._render();
     try {
@@ -2382,12 +2472,13 @@ var SH_ORPHANS_METHODS = {
         text = this._t('orph_devices_ignored', { n: devices.length });
         o.dsel.clear();
       }
-      if (text) this._messages.orphans = { text, tone: 'good' };
+      if (text) this._toast(text);
     } catch (err) {
       this._messages.orphans = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
     }
-    delete this._busy.orph;
     await this._load();
+    delete this._busy.orph;
+    this._render();
   },
 };
 

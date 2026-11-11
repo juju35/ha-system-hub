@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Alle mislukte automatiseringen wissen? Ze worden bij de volgende fout opnieuw gemeld.",
         "auto_show_more": "Nog {n} tonen",
         "auto_show_less": "Minder tonen",
-        "auto_last_failure": "Laatste fout"
+        "auto_last_failure": "Laatste fout",
+        "unsaved": "Niet-opgeslagen wijzigingen",
+        "discard": "Verwerpen"
       }
     },
     "battery_type": {

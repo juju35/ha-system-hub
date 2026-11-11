@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Törlöd az összes sikertelen automatizálást? A következő hibánál újra megjelennek.",
         "auto_show_more": "Még {n} megjelenítése",
         "auto_show_less": "Kevesebb",
-        "auto_last_failure": "Utolsó hiba"
+        "auto_last_failure": "Utolsó hiba",
+        "unsaved": "Nem mentett módosítások",
+        "discard": "Elvetés"
       }
     },
     "battery_type": {

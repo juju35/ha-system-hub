@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Obrisati sve neuspele automatizacije? Biće ponovo prijavljene pri sledećem neuspehu.",
         "auto_show_more": "Prikaži još {n}",
         "auto_show_less": "Prikaži manje",
-        "auto_last_failure": "Poslednji neuspeh"
+        "auto_last_failure": "Poslednji neuspeh",
+        "unsaved": "Nesačuvane izmene",
+        "discard": "Odbaci"
       }
     },
     "battery_type": {

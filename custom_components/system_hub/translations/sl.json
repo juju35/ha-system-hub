@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Počistim vse neuspešne avtomatizacije? Ob naslednji napaki bodo znova prijavljene.",
         "auto_show_more": "Pokaži še {n}",
         "auto_show_less": "Pokaži manj",
-        "auto_last_failure": "Zadnja napaka"
+        "auto_last_failure": "Zadnja napaka",
+        "unsaved": "Neshranjene spremembe",
+        "discard": "Zavrzi"
       }
     },
     "battery_type": {

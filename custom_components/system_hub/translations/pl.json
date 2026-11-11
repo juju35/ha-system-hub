@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Wyczyścić wszystkie nieudane automatyzacje? Zostaną ponownie zgłoszone przy następnym błędzie.",
         "auto_show_more": "Pokaż więcej ({n})",
         "auto_show_less": "Pokaż mniej",
-        "auto_last_failure": "Ostatni błąd"
+        "auto_last_failure": "Ostatni błąd",
+        "unsaved": "Niezapisane zmiany",
+        "discard": "Odrzuć"
       }
     },
     "battery_type": {

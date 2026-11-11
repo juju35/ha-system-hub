@@ -9,12 +9,22 @@ const card = readFileSync(new URL('../custom_components/system_hub/frontend/card
 const en = JSON.parse(readFileSync(new URL('../custom_components/system_hub/translations/en.json', import.meta.url), 'utf8'));
 const context = {
   HTMLElement: class {
+    // The events the panel sends (hass-notification: its toasts)
+    dispatchEvent(ev) {
+      this.events = [...(this.events || []), ev];
+    }
     attachShadow() {
       this.shadowRoot = { querySelector: () => null };
       return this.shadowRoot;
     }
   },
   customElements: { get: () => undefined, define() {} },
+  CustomEvent: class {
+    constructor(type, init = {}) {
+      this.type = type;
+      this.detail = init.detail;
+    }
+  },
   document: { hidden: false },
   setInterval: () => 0,
   clearInterval() {},
@@ -176,7 +186,7 @@ test('orphans tab: select one by one or every match, remove after a confirmation
     service_data: { entities: ['light.hallway', 'sensor.hallway_temperature'] },
     return_response: true,
   });
-  assert.equal(p._messages.orphans.text, '2 entities removed');
+  assert.equal(p.events.at(-1).detail.message, '2 entities removed');
   assert.equal(p._orph().sel.size, 0);
   // The list is read again after the action
   assert.ok(calls.some((c) => c[0] === 'ws' && c[1].type === 'system_hub/orphans'));
@@ -189,7 +199,7 @@ test('orphans tab: ignore the selection; remove or ignore the orphan devices', a
   assert.match(p._content(), /Ignore 1 entity\?/);
   await p._orphRun('ignore');
   assert.deepEqual(JSON.parse(JSON.stringify(calls.find((c) => c[0] === 'service'))), ['service', 'system_hub', 'orphans_ignore', { entities: ['sensor.garage_door'] }]);
-  assert.equal(p._messages.orphans.text, '1 entity ignored');
+  assert.equal(p.events.at(-1).detail.message, '1 entity ignored');
 
   // No device selected: Remove devices takes every orphan device, Ignore needs a selection
   assert.match(p._content(), /data-action="orph_confirm" data-act="ignore_devices" disabled/);

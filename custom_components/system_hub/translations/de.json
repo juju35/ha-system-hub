@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Alle fehlgeschlagenen Automatisierungen löschen? Sie werden beim nächsten Fehlschlag erneut gemeldet.",
         "auto_show_more": "{n} weitere anzeigen",
         "auto_show_less": "Weniger anzeigen",
-        "auto_last_failure": "Letzter Fehler"
+        "auto_last_failure": "Letzter Fehler",
+        "unsaved": "Ungespeicherte Änderungen",
+        "discard": "Verwerfen"
       }
     },
     "battery_type": {
