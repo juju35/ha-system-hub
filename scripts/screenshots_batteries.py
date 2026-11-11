@@ -19,6 +19,8 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 # The stand-ins for Home Assistant's elements and the pixel compare are those of the panel screenshots.
+from screenshot_cards import COMMON, THEMES
+
 from screenshots import HA_ELEMENTS as HUB_ELEMENTS
 from screenshots import pixels
 
@@ -26,32 +28,6 @@ ROOT = Path(__file__).resolve().parent.parent
 CARD_JS = (ROOT / "custom_components/system_hub/frontend/cards/battery-monitor-card.js").read_text()
 NOW = "2026-10-24T09:00:00+02:00"
 WIDTH = 460
-
-THEMES = {
-    "light": {
-        "--primary-background-color": "#e8eaed",
-        "--secondary-background-color": "#ececec",
-        "--card-background-color": "#ffffff",
-        "--primary-text-color": "#212121",
-        "--secondary-text-color": "#727272",
-        "--divider-color": "rgba(0,0,0,.12)",
-    },
-    "dark": {
-        "--primary-background-color": "#111111",
-        "--secondary-background-color": "#282828",
-        "--card-background-color": "#1c1c1c",
-        "--primary-text-color": "#e1e1e1",
-        "--secondary-text-color": "#9b9b9b",
-        "--divider-color": "rgba(225,225,225,.12)",
-    },
-}
-COMMON = {
-    "--primary-color": "#03a9f4",
-    "--success-color": "#43a047",
-    "--warning-color": "#ffa600",
-    "--error-color": "#db4437",
-    "--text-primary-color": "#ffffff",
-}
 
 # Material Design Icons paths used by the card (from @mdi/js).
 ICONS = {

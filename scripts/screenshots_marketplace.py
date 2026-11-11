@@ -9,7 +9,7 @@ Every capture keeps a 16 px frame of the theme background around the card, and i
 import os
 from datetime import timedelta
 
-from screenshot_cards import CARDS, NOW, ROOT, ha_elements, page_html, save
+from screenshot_cards import CARDS, NOW, ha_elements, open_card_page, shoot
 
 CARD_JS = (CARDS / "marketplace-refresh-card.js").read_text()
 WIDTH = 460
@@ -108,21 +108,10 @@ def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for shot in SHOTS:
-            page = browser.new_page(device_scale_factor=2, viewport={"width": 1000, "height": 1600})
-            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
-            # No repository picture: the generic icon, the same on every machine.
-            page.route("https://brands.home-assistant.io/**", lambda route: route.abort())
-            page.clock.set_fixed_time(NOW.isoformat())
-            page.set_content(page_html(shot["theme"], WIDTH))
-            page.add_script_tag(content=HA_ELEMENTS)
-            page.add_script_tag(content=CARD_JS)
+            page = open_card_page(browser, shot["file"], shot["theme"], WIDTH, HA_ELEMENTS, CARD_JS)
             page.evaluate(MOUNT, [mock_hass(*shot["hass"]), shot["theme"] == "dark"])
             page.wait_for_timeout(400)
-            box = page.locator("#root").bounding_box()
-            clip = {"x": 0, "y": 0, "width": WIDTH + 32, "height": int(box["height"] + 0.999) + 32}
-            png = page.screenshot(clip=clip, animations="disabled")
-            save(ROOT / "screenshots" / f"{shot['file']}.png", png)
-            page.close()
+            shoot(page, shot["file"], WIDTH)
         browser.close()
 
 
