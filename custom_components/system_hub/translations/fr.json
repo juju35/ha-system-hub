@@ -334,8 +334,7 @@
       "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange."
     },
     "abort": {
-      "nothing_to_import": "Rien à importer depuis Battery Monitor.",
-      "use_panel": "Les réglages de System Hub sont dans son panneau : [ouvrir l'onglet Settings]({url})."
+      "nothing_to_import": "Rien à importer depuis Battery Monitor."
     }
   },
   "entity": {

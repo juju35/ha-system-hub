@@ -334,8 +334,7 @@
       "critical_below_warning": "Rdeči prag mora biti nad oranžnim."
     },
     "abort": {
-      "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz.",
-      "use_panel": "Nastavitve System Hub so na njegovi plošči: [odpri zavihek Settings]({url})."
+      "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
     }
   },
   "entity": {

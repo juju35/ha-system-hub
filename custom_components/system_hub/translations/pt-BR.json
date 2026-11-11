@@ -334,8 +334,7 @@
       "critical_below_warning": "O limite vermelho precisa estar acima do laranja."
     },
     "abort": {
-      "nothing_to_import": "Nada para importar do Battery Monitor.",
-      "use_panel": "As configurações do System Hub estão no painel dele: [abrir a aba Settings]({url})."
+      "nothing_to_import": "Nada para importar do Battery Monitor."
     }
   },
   "entity": {

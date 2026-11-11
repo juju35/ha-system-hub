@@ -334,8 +334,7 @@
       "critical_below_warning": "Próg czerwony musi być wyższy niż pomarańczowy."
     },
     "abort": {
-      "nothing_to_import": "Nic do zaimportowania z Battery Monitor.",
-      "use_panel": "Ustawienia System Hub znajdują się w jego panelu: [otwórz kartę Settings]({url})."
+      "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
     }
   },
   "entity": {

@@ -334,8 +334,7 @@
       "critical_below_warning": "Червоний поріг має бути вищим за помаранчевий."
     },
     "abort": {
-      "nothing_to_import": "Нічого імпортувати з Battery Monitor.",
-      "use_panel": "Налаштування System Hub знаходяться на його панелі: [відкрити вкладку Settings]({url})."
+      "nothing_to_import": "Нічого імпортувати з Battery Monitor."
     }
   },
   "entity": {

@@ -334,8 +334,7 @@
       "critical_below_warning": "La soglia rossa deve essere sopra quella arancione."
     },
     "abort": {
-      "nothing_to_import": "Niente da importare da Battery Monitor.",
-      "use_panel": "Le impostazioni di System Hub sono nel suo pannello: [apri la scheda Settings]({url})."
+      "nothing_to_import": "Niente da importare da Battery Monitor."
     }
   },
   "entity": {

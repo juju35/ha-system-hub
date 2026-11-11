@@ -334,8 +334,7 @@
       "critical_below_warning": "El umbral rojo debe estar por encima del naranja."
     },
     "abort": {
-      "nothing_to_import": "Nada que importar desde Battery Monitor.",
-      "use_panel": "Los ajustes de System Hub están en su panel: [abrir la pestaña Settings]({url})."
+      "nothing_to_import": "Nada que importar desde Battery Monitor."
     }
   },
   "entity": {

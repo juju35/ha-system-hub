@@ -334,8 +334,7 @@
       "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā."
     },
     "abort": {
-      "nothing_to_import": "No Battery Monitor nav ko importēt.",
-      "use_panel": "System Hub iestatījumi ir tā panelī: [atvērt cilni Settings]({url})."
+      "nothing_to_import": "No Battery Monitor nav ko importēt."
     }
   },
   "entity": {

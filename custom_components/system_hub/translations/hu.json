@@ -334,8 +334,7 @@
       "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie."
     },
     "abort": {
-      "nothing_to_import": "Nincs mit importálni a Battery Monitorból.",
-      "use_panel": "A System Hub beállításai a paneljén vannak: [a Settings lap megnyitása]({url})."
+      "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
     }
   },
   "entity": {

@@ -334,8 +334,7 @@
       "critical_below_warning": "Червеният праг трябва да е над оранжевия."
     },
     "abort": {
-      "nothing_to_import": "Няма какво да се импортира от Battery Monitor.",
-      "use_panel": "Настройките на System Hub са в неговия панел: [отваряне на раздела Settings]({url})."
+      "nothing_to_import": "Няма какво да се импортира от Battery Monitor."
     }
   },
   "entity": {

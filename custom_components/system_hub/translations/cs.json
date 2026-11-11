@@ -334,8 +334,7 @@
       "critical_below_warning": "Červený práh musí být nad oranžovým."
     },
     "abort": {
-      "nothing_to_import": "Z Battery Monitor není co importovat.",
-      "use_panel": "Nastavení System Hub jsou v jeho panelu: [otevřít kartu Settings]({url})."
+      "nothing_to_import": "Z Battery Monitor není co importovat."
     }
   },
   "entity": {

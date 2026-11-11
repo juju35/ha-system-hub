@@ -301,8 +301,8 @@ async def test_marketplace_updates_for_the_panel(hass: HomeAssistant) -> None:
     }
 
 
-async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: HomeAssistant, hass_ws_client) -> None:
-    """Configure on the integration's page only links to the Settings tab; the tab starts the same flow."""
+async def test_configure_and_the_panel_drive_the_same_flow(hass: HomeAssistant, hass_ws_client) -> None:
+    """Configure on the integration's page and the Settings tab start the same options flow."""
     from homeassistant.data_entry_flow import FlowResultType  # noqa: PLC0415
     from pytest_homeassistant_custom_component.common import MockConfigEntry  # noqa: PLC0415
 
@@ -313,14 +313,14 @@ async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: 
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    # No Configure on the integration's page: the devices link to the Settings tab
-    assert entry.supports_options is False
+    # Configure on the integration's page: the same menu as the Settings tab
+    assert entry.supports_options is True
     # As the frontend starts it, with or without show_advanced_options (Home Assistant 2026.11 no longer sends it)
     for context in ({"show_advanced_options": False}, {}):
         result = await hass.config_entries.options.async_init(entry.entry_id, context=context)
-        assert result["type"] is FlowResultType.ABORT
-        assert result["reason"] == "use_panel"
-    assert result["description_placeholders"] == {"url": "/system-hub/settings"}
+        assert result["type"] is FlowResultType.MENU
+        assert result["menu_options"][:2] == ["modules", "system"]
+        hass.config_entries.options.async_abort(result["flow_id"])
 
     client = await hass_ws_client(hass)
     await client.send_json_auto_id({"type": "system_hub/options_flow"})

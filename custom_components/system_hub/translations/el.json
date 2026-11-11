@@ -334,8 +334,7 @@
       "critical_below_warning": "Το κόκκινο όριο πρέπει να είναι πάνω από το πορτοκαλί."
     },
     "abort": {
-      "nothing_to_import": "Τίποτα για εισαγωγή από το Battery Monitor.",
-      "use_panel": "Οι ρυθμίσεις του System Hub βρίσκονται στον πίνακά του: [άνοιγμα της καρτέλας Settings]({url})."
+      "nothing_to_import": "Τίποτα για εισαγωγή από το Battery Monitor."
     }
   },
   "entity": {

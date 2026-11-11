@@ -334,8 +334,7 @@
       "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange."
     },
     "abort": {
-      "nothing_to_import": "Inget att importera från Battery Monitor.",
-      "use_panel": "System Hubs inställningar finns i dess panel: [öppna fliken Settings]({url})."
+      "nothing_to_import": "Inget att importera från Battery Monitor."
     }
   },
   "entity": {

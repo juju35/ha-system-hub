@@ -334,8 +334,7 @@
       "critical_below_warning": "Црвени праг мора бити изнад наранџастог."
     },
     "abort": {
-      "nothing_to_import": "Нема шта да се увезе из Battery Monitor.",
-      "use_panel": "Подешавања System Hub су у његовом панелу: [отвори картицу Settings]({url})."
+      "nothing_to_import": "Нема шта да се увезе из Battery Monitor."
     }
   },
   "entity": {

@@ -334,8 +334,7 @@
       "critical_below_warning": "Красный порог должен быть выше оранжевого."
     },
     "abort": {
-      "nothing_to_import": "Нечего импортировать из Battery Monitor.",
-      "use_panel": "Настройки System Hub находятся на его панели: [открыть вкладку Settings]({url})."
+      "nothing_to_import": "Нечего импортировать из Battery Monitor."
     }
   },
   "entity": {

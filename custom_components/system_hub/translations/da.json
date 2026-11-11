@@ -334,8 +334,7 @@
       "critical_below_warning": "Den røde tærskel skal ligge over den orange."
     },
     "abort": {
-      "nothing_to_import": "Intet at importere fra Battery Monitor.",
-      "use_panel": "System Hubs indstillinger er i dets panel: [åbn fanen Settings]({url})."
+      "nothing_to_import": "Intet at importere fra Battery Monitor."
     }
   },
   "entity": {

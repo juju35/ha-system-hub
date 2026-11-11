@@ -334,8 +334,7 @@
       "critical_below_warning": "Der rote Schwellenwert muss über dem orangen liegen."
     },
     "abort": {
-      "nothing_to_import": "Nichts aus Battery Monitor zu importieren.",
-      "use_panel": "Die Einstellungen von System Hub befinden sich in seinem Panel: [Tab „Settings“ öffnen]({url})."
+      "nothing_to_import": "Nichts aus Battery Monitor zu importieren."
     }
   },
   "entity": {

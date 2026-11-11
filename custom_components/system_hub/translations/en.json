@@ -334,8 +334,7 @@
       "critical_below_warning": "The red threshold must be above the orange one."
     },
     "abort": {
-      "nothing_to_import": "Nothing to import from Battery Monitor.",
-      "use_panel": "System Hub's settings are in its panel: [open the Settings tab]({url})."
+      "nothing_to_import": "Nothing to import from Battery Monitor."
     }
   },
   "entity": {
