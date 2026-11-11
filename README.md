@@ -296,6 +296,17 @@ swap_warning: 50
 swap_critical: 80
 backup_warning: 2
 backup_critical: 7
+entities:
+  processor_temperature: sensor.cpu_temperature
+  disks:
+    /mnt/hdd1: sensor.nas_volume_1_usage
+    /mnt/hdd2:
+      use: sensor.nas_volume_2_used
+      free: sensor.nas_volume_2_free
+  interfaces:
+    lan:
+      in: sensor.router_download
+      out: sensor.router_upload
 ```
 
 ```yaml
@@ -330,7 +341,18 @@ cpu_critical: 90
 | `temp_warning` / `temp_critical` | full, mini | `75` / `90` | CPU temperature (°C, whatever the unit of the sensor) from which the gauge turns orange / red |
 | `swap_warning` / `swap_critical` | full | `50` / `80` | Swap usage (%) from which the swap bar turns orange / red |
 | `backup_warning` / `backup_critical` | full, mini | `2` / `7` | Days since the last successful automatic backup from which the backup turns orange / red (red also when the last attempt failed, or there was never one) |
+| `entities` | full, mini | — | Sensors of your choice, instead of or next to System Monitor's (see below) |
 | `language` | all | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
+
+#### Sensors of your choice
+
+The cards find the System Monitor sensors by themselves. `entities` sets others, for a value System Monitor does not give (the disks of a NAS, a temperature from another integration) or a sensor of your own. A sensor set here replaces the one found for the same value, disk or interface; the others are added. Without System Monitor at all, the cards show the sensors set here.
+
+| Key | Value |
+|---|---|
+| `processor_use`, `processor_temperature`, `memory_use_percent`, `memory_use`, `memory_free`, `swap_use_percent`, `swap_use`, `swap_free`, `load_1m`, `load_5m`, `load_15m`, `last_boot` | A sensor id. The CPU, temperature, RAM, swap and last boot sensors can be picked in the visual editor too, under **Sensors of your choice** |
+| `disks` | One entry per disk, by the name to show (a mount point, `HDD 1`…): a usage sensor in %, or `use`, `free` and `use_percent` sensors |
+| `interfaces` | One entry per network interface, by its name: `in` and `out` rate sensors, and `ipv4` for its address |
 
 ### Screenshots
 
