@@ -25,6 +25,7 @@ from homeassistant.helpers.selector import (
 from homeassistant.loader import async_get_integrations
 
 from ..notify import notify_choices
+from ..registry_compat import device_attr
 from .const import (
     BATTERY_TYPE_CHOICES,
     CONF_BATTERY_MODELS,
@@ -216,8 +217,9 @@ def types_options(
     value = name if name == "rechargeable" else battery_type(name, count)
     if user_input.get(CONF_WHOLE_MODEL):
         entry = er.async_get(hass).async_get(entity_id)
-        device = dr.async_get(hass).async_get(entry.device_id) if entry and entry.device_id else None
-        model = str(device.model or "").strip() if device else ""
+        devices = dr.async_get(hass)
+        device = devices.async_get(entry.device_id) if entry and entry.device_id else None
+        model = str(device_attr(devices, device, "model") or "").strip()
         if not model:
             return types, models, {CONF_WHOLE_MODEL: "no_model"}
         models[model] = value
