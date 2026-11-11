@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.0 - 2026-11-11
 
 ### Improved
 - **Containers tab**: the real Docker containers, by their name (`homeassistant`, `hassio_supervisor`, `app_<slug>`…) with their image and tag, the Supervisor's plugins too (audio, cli, dns, multicast, observer, down when they stop), the update available in a badge.
