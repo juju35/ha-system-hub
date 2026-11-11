@@ -1285,7 +1285,8 @@
         "mk_patch": "oprava",
         "gh_connected": "GitHub připojen",
         "gh_not_connected": "Žádný účet GitHub není připojen",
-        "gh_retry": "limit vyčerpán, další pokus {when}"
+        "gh_retry": "limit vyčerpán, další pokus {when}",
+        "tab_containers": "Kontejnery a procesy"
       }
     },
     "battery_type": {

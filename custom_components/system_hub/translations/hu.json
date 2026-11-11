@@ -1285,7 +1285,8 @@
         "mk_patch": "javítás",
         "gh_connected": "GitHub csatlakoztatva",
         "gh_not_connected": "Nincs csatlakoztatott GitHub-fiók",
-        "gh_retry": "korlát elérve, következő próbálkozás: {when}"
+        "gh_retry": "korlát elérve, következő próbálkozás: {when}",
+        "tab_containers": "Konténerek és folyamatok"
       }
     },
     "battery_type": {

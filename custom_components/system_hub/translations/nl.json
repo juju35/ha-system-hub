@@ -1285,7 +1285,8 @@
         "mk_patch": "patch",
         "gh_connected": "GitHub verbonden",
         "gh_not_connected": "Geen GitHub-account verbonden",
-        "gh_retry": "limiet bereikt, volgende poging {when}"
+        "gh_retry": "limiet bereikt, volgende poging {when}",
+        "tab_containers": "Containers en processen"
       }
     },
     "battery_type": {

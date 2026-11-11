@@ -1285,7 +1285,8 @@
         "mk_patch": "патч",
         "gh_connected": "GitHub подключён",
         "gh_not_connected": "Аккаунт GitHub не подключён",
-        "gh_retry": "лимит исчерпан, следующая попытка {when}"
+        "gh_retry": "лимит исчерпан, следующая попытка {when}",
+        "tab_containers": "Контейнеры и процессы"
       }
     },
     "battery_type": {

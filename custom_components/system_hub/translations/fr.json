@@ -1285,7 +1285,8 @@
         "mk_patch": "correctif",
         "gh_connected": "GitHub connecté",
         "gh_not_connected": "Aucun compte GitHub connecté",
-        "gh_retry": "limite atteinte, nouvel essai {when}"
+        "gh_retry": "limite atteinte, nouvel essai {when}",
+        "tab_containers": "Containers & process"
       }
     },
     "battery_type": {

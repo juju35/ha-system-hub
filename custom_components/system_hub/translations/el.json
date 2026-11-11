@@ -1285,7 +1285,8 @@
         "mk_patch": "διόρθωση",
         "gh_connected": "GitHub συνδεδεμένο",
         "gh_not_connected": "Κανένας λογαριασμός GitHub",
-        "gh_retry": "όριο, νέα προσπάθεια {when}"
+        "gh_retry": "όριο, νέα προσπάθεια {when}",
+        "tab_containers": "Κοντέινερ και διεργασίες"
       }
     },
     "battery_type": {

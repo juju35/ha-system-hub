@@ -1285,7 +1285,8 @@
         "mk_patch": "popravek",
         "gh_connected": "GitHub povezan",
         "gh_not_connected": "Noben račun GitHub ni povezan",
-        "gh_retry": "omejitev dosežena, naslednji poskus {when}"
+        "gh_retry": "omejitev dosežena, naslednji poskus {when}",
+        "tab_containers": "Vsebniki in procesi"
       }
     },
     "battery_type": {

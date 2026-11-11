@@ -1285,7 +1285,8 @@
         "mk_patch": "корекция",
         "gh_connected": "GitHub е свързан",
         "gh_not_connected": "Няма свързан акаунт в GitHub",
-        "gh_retry": "лимитът е достигнат, нов опит {when}"
+        "gh_retry": "лимитът е достигнат, нов опит {when}",
+        "tab_containers": "Контейнери и процеси"
       }
     },
     "battery_type": {

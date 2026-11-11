@@ -911,6 +911,7 @@ class SystemHubPanel extends HTMLElement {
 
   _tabName(tab) {
     if (tab === 'system' || tab === 'settings') return this._t(tab);
+    if (tab === 'containers') return this._t('tab_containers');
     return SH_MODULE_NAMES[tab] || tab;
   }
 
@@ -1263,8 +1264,8 @@ class SystemHubPanel extends HTMLElement {
           })
           .join('')}</ha-card>`
       : '';
-    // The processes System Monitor watches: the stopped ones first
-    var procList = this._processList();
+    // With the Containers tab, the processes are listed there, next to the containers
+    var procList = this._tabs().includes('containers') ? '' : this._processList();
     var lists = [diskList, procList].filter(Boolean);
     return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
@@ -1461,7 +1462,8 @@ class SystemHubPanel extends HTMLElement {
       <div class="actions">${this._button('containers_refresh', 'mdi:refresh', this._serviceName('containers_refresh'))}${this._message('containers_refresh')}
       ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}${this._configure()}</div>
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:docker"></ha-icon><span class="lname">${shEsc(this._t('containers'))}</span><span class="muted">${running}/${list.length}</span></div>
-      ${rows || `<div class="empty"><ha-icon icon="mdi:docker"></ha-icon>${shEsc(this._t('no_containers'))}</div>`}</ha-card>`;
+      ${rows || `<div class="empty"><ha-icon icon="mdi:docker"></ha-icon>${shEsc(this._t('no_containers'))}</div>`}</ha-card>
+      ${this._processList()}`;
   }
 
   // Watchdog: the unavailable integrations and the recent reloads

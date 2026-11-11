@@ -1285,7 +1285,8 @@
         "mk_patch": "исправка",
         "gh_connected": "GitHub повезан",
         "gh_not_connected": "Ниједан GitHub налог није повезан",
-        "gh_retry": "ограничење достигнуто, нови покушај {when}"
+        "gh_retry": "ограничење достигнуто, нови покушај {when}",
+        "tab_containers": "Контејнери и процеси"
       }
     },
     "battery_type": {

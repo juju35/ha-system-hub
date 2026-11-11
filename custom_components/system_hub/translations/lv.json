@@ -1285,7 +1285,8 @@
         "mk_patch": "labojums",
         "gh_connected": "GitHub pievienots",
         "gh_not_connected": "Nav pievienota GitHub konta",
-        "gh_retry": "limits sasniegts, nākamais mēģinājums {when}"
+        "gh_retry": "limits sasniegts, nākamais mēģinājums {when}",
+        "tab_containers": "Konteineri un procesi"
       }
     },
     "battery_type": {
