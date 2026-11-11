@@ -31,6 +31,7 @@ from homeassistant.util import dt as dt_util
 
 from ..const import DOMAIN
 from ..notify import async_send_notify
+from ..registry_compat import device_attr
 from .const import (
     EVENT_LOW,
     EVENT_REPLACED,
@@ -484,7 +485,7 @@ class BatteryMonitor:
             since = self._below_since.get(state.entity_id)
             # Set by hand for this battery or its model, else Battery Notes: the battery's own type attributes, else its
             # device's *Battery type* sensor.
-            model = str(device.model or "").strip() if device else ""
+            model = str(device_attr(devices, device, "model") or "").strip()
             kind = battery_type(
                 self.battery_types.get(state.entity_id) or (self.battery_models.get(model) if model else None)
             )

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.2 - 2026-11-11
+
+### Fixed
+- **Batteries** and **Orphans**: no more deprecation warning `accesses ChildDeviceEntry.model` / `.manufacturer` in the log (it would fail from Home Assistant 2027.9) for a battery or an orphan on a sub-device: the model and manufacturer are read from its parent device (reported on juju35/ha-smart-comfort#58 by @FredM67).
+
 ## 1.0.1 - 2026-11-11
 
 ### Fixed
