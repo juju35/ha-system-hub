@@ -13,7 +13,7 @@ Home Assistant integration that brings the care of your Home Assistant system to
 
 > System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor), [ha-git-sync](https://github.com/juju35/ha-git-sync) and [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities): see [Migrating](#migrating) to move over.
 
-<p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="System Hub sidebar panel, System tab" width="800"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-status.png" alt="System Hub sidebar panel, Status tab" width="800"></p>
 
 | System Monitor | Watchdog | Marketplace Refresh |
 |---|---|---|

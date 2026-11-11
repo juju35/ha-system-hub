@@ -3,6 +3,7 @@
 ## 1.1.1 - 2026-11-11
 
 ### Changed
+- **README**: the Status tab as the main screenshot.
 - **Processes that may be stopped**: chosen in **Settings → Containers & process ⚙**, with the processes they concern, instead of the System settings. Those saved there by 1.0.3 still apply, and move once the Containers & process settings are saved.
 
 ## 1.1.0 - 2026-11-11
