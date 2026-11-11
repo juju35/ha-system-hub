@@ -296,7 +296,11 @@
           "temperature_warning": "Температура: наранџасто од",
           "temperature_critical": "Температура: црвено од",
           "swap_warning": "Swap: наранџасто од",
-          "swap_critical": "Swap: црвено од"
+          "swap_critical": "Swap: црвено од",
+          "stoppable_processes": "Процеси који могу бити заустављени"
+        },
+        "data_description": {
+          "stoppable_processes": "Процеси System Monitor-а који могу бити заустављени: не рачунају се као проблем на картици Статус, приказују се сиво."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Искључени",
         "tab_default": "подразумевана",
         "drag": "Помери",
-        "st_hint": "Стање инстанце на први поглед"
+        "st_hint": "Стање инстанце на први поглед",
+        "stopped_allowed": "Заустављен (дозвољено)"
       }
     },
     "battery_type": {

@@ -296,7 +296,11 @@
           "temperature_warning": "Hőmérséklet: narancs ettől",
           "temperature_critical": "Hőmérséklet: piros ettől",
           "swap_warning": "Swap: narancs ettől",
-          "swap_critical": "Swap: piros ettől"
+          "swap_critical": "Swap: piros ettől",
+          "stoppable_processes": "Leállítható folyamatok"
+        },
+        "data_description": {
+          "stoppable_processes": "System Monitor folyamatok, amelyek leállhatnak: az Állapot lapon nem számítanak hibának, szürkén jelennek meg."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Kikapcsolva",
         "tab_default": "alapértelmezett",
         "drag": "Áthelyezés",
-        "st_hint": "A példány állapota egy pillantással"
+        "st_hint": "A példány állapota egy pillantással",
+        "stopped_allowed": "Leállítva (engedélyezett)"
       }
     },
     "battery_type": {

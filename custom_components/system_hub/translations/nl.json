@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatuur: oranje vanaf",
           "temperature_critical": "Temperatuur: rood vanaf",
           "swap_warning": "Swap: oranje vanaf",
-          "swap_critical": "Swap: rood vanaf"
+          "swap_critical": "Swap: rood vanaf",
+          "stoppable_processes": "Processen die gestopt mogen zijn"
+        },
+        "data_description": {
+          "stoppable_processes": "System Monitor-processen die gestopt mogen zijn: geen probleem op het tabblad Status, grijs weergegeven."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Uitgeschakeld",
         "tab_default": "standaard",
         "drag": "Verplaatsen",
-        "st_hint": "De gezondheid van de instantie in één oogopslag"
+        "st_hint": "De gezondheid van de instantie in één oogopslag",
+        "stopped_allowed": "Gestopt (toegestaan)"
       }
     },
     "battery_type": {

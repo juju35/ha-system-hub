@@ -296,7 +296,11 @@
           "temperature_warning": "Temperature: orange from",
           "temperature_critical": "Temperature: red from",
           "swap_warning": "Swap: orange from",
-          "swap_critical": "Swap: red from"
+          "swap_critical": "Swap: red from",
+          "stoppable_processes": "Processes that may be stopped"
+        },
+        "data_description": {
+          "stoppable_processes": "System Monitor processes that may be stopped: not counted as a problem on the Status tab, shown in grey."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Disabled",
         "tab_default": "default",
         "drag": "Move",
-        "st_hint": "The health of the instance at a glance"
+        "st_hint": "The health of the instance at a glance",
+        "stopped_allowed": "Stopped (allowed)"
       }
     },
     "battery_type": {

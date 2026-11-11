@@ -61,3 +61,37 @@ test("mini card: no stopped item nor red icon when every process runs, an unknow
     assert.doesNotMatch(html, /<span class="logo crit"/);
   }
 });
+
+test("cards: a process that may be stopped (System Hub's System settings) is grey, no alert", async () => {
+  const el = mini();
+  el._sig = ["x"];
+  let asked = null;
+  el._hass.callWS = async (msg) => {
+    asked = msg;
+    return [Z2M];
+  };
+  el._maybeRender = () => {};
+  el._loadStoppable();
+  await new Promise((r) => setImmediate(r));
+  assert.equal(asked.type, "system_hub/stoppable_processes");
+  assert.equal(el._sig, null);
+  const html = el._render();
+  assert.equal(stoppedItem(html), undefined);
+  assert.doesNotMatch(html, /<span class="logo crit"/);
+  // Its chip in the full card's list: grey
+  const full = new lib.SystemMonitorCard();
+  full._hass = el._hass;
+  full._config = {};
+  full._stoppable = new Set([Z2M]);
+  full._procsOpen = true;
+  const list = full._render();
+  assert.match(list, new RegExp(`chip clickable muted" data-entity="${Z2M}"`));
+  // Without System Hub (the command fails): none, the stopped process stays red
+  const other = mini();
+  other._hass.callWS = async () => {
+    throw new Error("unknown command");
+  };
+  other._loadStoppable();
+  await new Promise((r) => setImmediate(r));
+  assert.ok(stoppedItem(other._render()));
+});

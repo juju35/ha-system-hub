@@ -296,7 +296,11 @@
           "temperature_warning": "Température: orange dès",
           "temperature_critical": "Température: rouge dès",
           "swap_warning": "Swap: orange dès",
-          "swap_critical": "Swap: rouge dès"
+          "swap_critical": "Swap: rouge dès",
+          "stoppable_processes": "Processus pouvant être arrêtés"
+        },
+        "data_description": {
+          "stoppable_processes": "Processus de System Monitor qui peuvent être à l'arrêt : ils ne comptent pas comme un problème dans l'onglet Statut et s'affichent en gris."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Désactivés",
         "tab_default": "par défaut",
         "drag": "Déplacer",
-        "st_hint": "La santé de l'instance en un coup d'œil"
+        "st_hint": "La santé de l'instance en un coup d'œil",
+        "stopped_allowed": "Arrêté (autorisé)"
       }
     },
     "battery_type": {

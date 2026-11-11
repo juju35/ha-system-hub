@@ -10,6 +10,8 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.selector import (
     BooleanSelector,
+    EntitySelector,
+    EntitySelectorConfig,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -25,6 +27,7 @@ from .batteries import importer as batteries_importer
 from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
 from .const import (
     CONF_MODULES,
+    CONF_STOPPABLE_PROCESSES,
     CONF_SYSTEM,
     DEFAULT_THRESHOLDS,
     DOMAIN,
@@ -181,10 +184,14 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_show_menu(step_id="init", menu_options=menu)
 
     async def async_step_system(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """The System tab's thresholds: orange from the first value, red from the second."""
+        """The System tab's thresholds (orange from the first value, red from the second) and the processes that may be
+        stopped."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            values = {key: int(value) for key, value in user_input.items()}
+            values: dict[str, Any] = {
+                key: int(value) for key, value in user_input.items() if key != CONF_STOPPABLE_PROCESSES
+            }
+            values[CONF_STOPPABLE_PROCESSES] = list(user_input.get(CONF_STOPPABLE_PROCESSES) or [])
             for key in DEFAULT_THRESHOLDS:
                 if values[f"{key}_warning"] >= values[f"{key}_critical"]:
                     errors[f"{key}_critical"] = "critical_below_warning"
@@ -205,6 +212,10 @@ class SystemHubOptionsFlow(OptionsFlow):
             )
             fields[vol.Required(f"{key}_warning", default=current.get(f"{key}_warning", warn))] = number
             fields[vol.Required(f"{key}_critical", default=current.get(f"{key}_critical", crit))] = number
+        # The processes System Monitor watches that may be stopped: no stopped status, no alert for them
+        fields[vol.Optional(CONF_STOPPABLE_PROCESSES, default=list(current.get(CONF_STOPPABLE_PROCESSES) or []))] = (
+            EntitySelector(EntitySelectorConfig(domain="binary_sensor", integration="systemmonitor", multiple=True))
+        )
         schema = vol.Schema(fields)
         if user_input:
             schema = self.add_suggested_values_to_schema(schema, user_input)

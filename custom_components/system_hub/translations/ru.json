@@ -296,7 +296,11 @@
           "temperature_warning": "Температура: оранжевый от",
           "temperature_critical": "Температура: красный от",
           "swap_warning": "Swap: оранжевый от",
-          "swap_critical": "Swap: красный от"
+          "swap_critical": "Swap: красный от",
+          "stoppable_processes": "Процессы, которые могут быть остановлены"
+        },
+        "data_description": {
+          "stoppable_processes": "Процессы System Monitor, которые могут быть остановлены: не считаются проблемой на вкладке Статус и показываются серым."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Отключены",
         "tab_default": "по умолчанию",
         "drag": "Переместить",
-        "st_hint": "Состояние экземпляра с первого взгляда"
+        "st_hint": "Состояние экземпляра с первого взгляда",
+        "stopped_allowed": "Остановлен (допустимо)"
       }
     },
     "battery_type": {

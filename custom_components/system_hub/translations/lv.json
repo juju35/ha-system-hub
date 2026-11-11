@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatūra: oranžs no",
           "temperature_critical": "Temperatūra: sarkans no",
           "swap_warning": "Swap: oranžs no",
-          "swap_critical": "Swap: sarkans no"
+          "swap_critical": "Swap: sarkans no",
+          "stoppable_processes": "Procesi, kas drīkst būt apturēti"
+        },
+        "data_description": {
+          "stoppable_processes": "System Monitor procesi, kas drīkst būt apturēti: cilnē Statuss netiek uzskatīti par problēmu, tiek rādīti pelēkā krāsā."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Izslēgti",
         "tab_default": "noklusējuma",
         "drag": "Pārvietot",
-        "st_hint": "Instances stāvoklis vienā mirklī"
+        "st_hint": "Instances stāvoklis vienā mirklī",
+        "stopped_allowed": "Apturēts (atļauts)"
       }
     },
     "battery_type": {

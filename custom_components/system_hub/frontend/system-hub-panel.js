@@ -11,7 +11,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.0.2';
+var SYSTEM_HUB_PANEL_VERSION = '1.0.3';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -628,6 +628,8 @@ class SystemHubPanel extends HTMLElement {
     .stnum { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
     .stnum b { font-size:46px; font-weight:300; line-height:1; }
     .stnum span { font-size:12px; color:var(--secondary-text-color); margin-top:4px; }
+    .stbadge { width:64px; height:64px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center; --mdc-icon-size:36px;
+               color:var(--tone); background:color-mix(in srgb, var(--tone) 16%, transparent); }
     .sthero .who { flex:1; min-width:220px; }
     .sttitle { font-size:24px; font-weight:500; }
     .sthero .s { font-size:14px; margin:6px 0 12px; white-space:normal; }
@@ -647,7 +649,8 @@ class SystemHubPanel extends HTMLElement {
     .stval { position:relative; font-size:19px; font-weight:500; }
     .stdet { position:relative; font-size:12px; color:var(--secondary-text-color); line-height:1.4;
              display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    @media (max-width:600px) { .sthero { gap:16px; padding:16px; } .stscore { width:130px; height:130px; } .stnum b { font-size:36px; } }
+    @media (max-width:600px) { .sthero { gap:16px; padding:16px; } .stscore { width:130px; height:130px; } .stnum b { font-size:36px; }
+      .stbadge { width:48px; height:48px; --mdc-icon-size:28px; } }
     .cfg { gap:0; }
     .cfg h2 { margin-bottom:4px; }
     .cfgrow { padding:6px 0; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); }
@@ -1382,18 +1385,22 @@ class SystemHubPanel extends HTMLElement {
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
   }
 
-  // The processes System Monitor watches: the stopped ones first
+  // The processes System Monitor watches: the stopped ones first (those that may be stopped after them, in grey)
   _processList() {
-    var procs = (this._state.system || []).filter((x) => x.key === 'process').sort((a, b) => (a.state === 'on') - (b.state === 'on') || a.name.localeCompare(b.name));
-    var stopped = procs.filter((p) => p.state !== 'on').length;
+    var rank = (p) => (p.state === 'on' ? 2 : p.stoppable ? 1 : 0);
+    var procs = (this._state.system || []).filter((x) => x.key === 'process').sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+    var stopped = procs.filter((p) => p.state !== 'on' && !p.stoppable).length;
     var procList = procs.length
       ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:application-cog-outline"></ha-icon><span class="lname">${shEsc(this._t('processes'))}</span>
         ${stopped ? `<span class="pill bad">${shEsc(`${stopped} ${this._t('stopped')}`)}</span>` : `<span class="pill good">${shEsc(this._t('running'))}</span>`}</div>
         ${procs
           .map((p) => {
             var on = p.state === 'on';
-            return `<div class="item link ${on ? 'good' : 'bad'}" data-more="${shEsc(p.entity_id)}"><ha-icon icon="mdi:cog${on ? '' : '-off'}-outline"></ha-icon>
-              <div class="who"><div class="n">${shEsc(shProcess(p))}</div></div><span class="pill ${on ? 'good' : 'bad'}">${shEsc(this._t(on ? 'running' : 'stopped'))}</span></div>`;
+            // Stopped, as allowed in the System settings: no alert
+            var tone = on ? 'good' : p.stoppable ? 'idle' : 'bad';
+            var label = on ? this._t('running') : p.stoppable ? this._t('stopped_allowed') : this._t('stopped');
+            return `<div class="item link ${tone}" data-more="${shEsc(p.entity_id)}"><ha-icon icon="mdi:cog${on ? '' : '-off'}-outline"></ha-icon>
+              <div class="who"><div class="n">${shEsc(shProcess(p))}</div></div><span class="pill ${tone}">${shEsc(label)}</span></div>`;
           })
           .join('')}</ha-card>`
       : '';
@@ -3082,6 +3089,9 @@ Object.assign(SystemHubPanel.prototype, SH_SETTINGS_METHODS);
 // it says in a few words, its details; a click opens its tab. Worked out here from what the panel already reads.
 var SH_STATUS_WEIGHTS = { bad: 15, warn: 5, info: 1, good: 0 };
 
+// The icon beside the score, with the colour of the ring: the home in good health, to watch, or with a problem
+var SH_STATUS_HOMES = { good: 'mdi:home-heart', warn: 'mdi:home-alert', bad: 'mdi:home-remove' };
+
 var SH_STATUS_METHODS = {
   // One area: [tone, value, details] or null when there is nothing to show (module off, nothing read yet)
   _stArea(tab) {
@@ -3112,7 +3122,8 @@ var SH_STATUS_METHODS = {
       var list = data.containers || [];
       var down = list.filter((c) => c.down);
       var procs = (s.system || []).filter((x) => x.key === 'process');
-      var stopped = procs.filter((p) => p.state !== 'on');
+      // The processes that may be stopped (System settings) are no problem
+      var stopped = procs.filter((p) => p.state !== 'on' && !p.stoppable);
       var images = list.filter((c) => c.update_available);
       var running = list.filter((c) => c.state === 'started' || c.state === 'startup').length;
       var problems = down.length + stopped.length;
@@ -3225,6 +3236,7 @@ var SH_STATUS_METHODS = {
         <circle cx="100" cy="100" r="${r}" class="sttrack"></circle>
         <circle cx="100" cy="100" r="${r}" class="starc" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - score / 100)}" transform="rotate(-90 100 100)"></circle></svg>
         <div class="stnum"><b>${score}</b><span>${shEsc(this._t('st_score'))}</span></div></div>
+      <div class="stbadge" aria-hidden="true"><ha-icon icon="${SH_STATUS_HOMES[ringTone]}"></ha-icon></div>
       <div class="who"><div class="sttitle">${shEsc(points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good'))}</div>
         ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}<div class="stpills">${pills}</div></div></ha-card>`;
     var tiles = areas

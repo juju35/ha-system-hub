@@ -296,7 +296,11 @@
           "temperature_warning": "Температура: оранжево от",
           "temperature_critical": "Температура: червено от",
           "swap_warning": "Swap: оранжево от",
-          "swap_critical": "Swap: червено от"
+          "swap_critical": "Swap: червено от",
+          "stoppable_processes": "Процеси, които може да са спрени"
+        },
+        "data_description": {
+          "stoppable_processes": "Процеси на System Monitor, които може да са спрени: не се броят за проблем в раздела Статус и се показват в сиво."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Изключени",
         "tab_default": "по подразбиране",
         "drag": "Преместване",
-        "st_hint": "Състоянието на инстанцията с един поглед"
+        "st_hint": "Състоянието на инстанцията с един поглед",
+        "stopped_allowed": "Спрян (позволено)"
       }
     },
     "battery_type": {
