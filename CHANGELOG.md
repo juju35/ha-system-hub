@@ -1,12 +1,16 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 - 2026-11-11
+
+What the integrations System Hub replaces could do and System Hub could not yet.
+
+### New
+- **Git Sync, several repositories**, as the former Git Sync integration had one entry per repository: **Settings → Git Sync ⚙ → Add a repository**, **Another repository** (its repository settings, then its own options) and **Remove repositories**. Each further repository has its own device (**System Hub Git Sync (folder)**), entities named after its folder, repairs and saved state; the first one keeps the module's entities. The actions take an optional `repository` (path or id): without it, commit and push, pull and the export run on every repository, the others on the first one; the response keeps the first repository's result at its top and lists each one's in `results`. The panel's **Git Sync** tab has a chip per repository and the **Status** tab shows the one most in need of action; the card's actions run on the repository it shows. Turned on next to the former Git Sync, the module takes over every one of its repositories, not only the configuration folder's.
+- **Automations**: settings to leave devices and entities out, as the Automation Monitor cards' `exclude_devices` and `exclude_entities`: **Ignored devices** (their unavailable linked entities and the failed automations attached to them) and **Ignored entities** (entity ids, or patterns with `*` and `?`, case-insensitive). They are left out of the tab, its counts and the Status tab; while some failures are left out, **Clear all** clears only the ones listed. In **Settings → Automations ⚙** or with ⚙ in the tab.
+- **Configure** on the integration's page opens System Hub's settings as a menu, the same as the panel's **Settings** tab (it only pointed to the panel before).
 
 ### Improved
 - **Home Assistant 2024.12 or newer**, as the integrations System Hub replaces, instead of 2026.11: only the **Marketplace** module needs 2026.11 (it is not offered without the Marketplace). Before 2026.11, System Hub is added as a custom repository of HACS. A CI job runs the tests on Home Assistant 2024.12.
-
-### New
-- **Automations**: settings to leave devices and entities out (see 1.3.0).
 
 ## 1.2.0 - 2026-11-11
 
