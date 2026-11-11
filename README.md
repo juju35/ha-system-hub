@@ -82,6 +82,22 @@ A module turned off is not set up: its checks stop, its entities and its device 
 
 Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**, **System Hub Batteries**, **System Hub Git Sync**) holding its entities.
 
+#### Module settings
+
+The **Configure** forms, also opened by **Module settings** in the panel's Settings tab:
+
+| Form | Light | Dark |
+|---|---|---|
+| Menu | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-menu.png" alt="Configure, Menu" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-menu-dark.png" alt="Configure, Menu, dark theme" width="300"> |
+| Modules | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-modules.png" alt="Configure, Modules" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-modules-dark.png" alt="Configure, Modules, dark theme" width="300"> |
+| Containers | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers.png" alt="Configure, Containers" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers-dark.png" alt="Configure, Containers, dark theme" width="300"> |
+| Watchdog | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog.png" alt="Configure, Watchdog" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-dark.png" alt="Configure, Watchdog, dark theme" width="300"> |
+| Watchdog: Add a power cycle | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle.png" alt="Configure, Watchdog: Add a power cycle" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle-dark.png" alt="Configure, Watchdog: Add a power cycle, dark theme" width="300"> |
+| Marketplace | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace.png" alt="Configure, Marketplace" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace-dark.png" alt="Configure, Marketplace, dark theme" width="300"> |
+| Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries.png" alt="Configure, Batteries" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-dark.png" alt="Configure, Batteries, dark theme" width="300"> |
+| Git Sync: Repository settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository.png" alt="Configure, Git Sync: Repository settings" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository-dark.png" alt="Configure, Git Sync: Repository settings, dark theme" width="300"> |
+| Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync.png" alt="Configure, Git Sync" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-dark.png" alt="Configure, Git Sync, dark theme" width="300"> |
+
 ### Diagnostics
 
 **Settings → Devices & services → System Hub → ⋮ → Download diagnostics** gives the options, the modules turned on and the state of each one. Integration titles (often an e-mail address or a host), notify actions and tokens are redacted; domains and entry ids are kept.
