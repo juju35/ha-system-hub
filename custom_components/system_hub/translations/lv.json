@@ -1290,7 +1290,8 @@
         "tab_containers": "Konteineri un procesi",
         "settings_system": "System sliekšņi",
         "settings_system_hint": "Kad CPU, RAM, disks, temperatūra un swap kļūst oranži un sarkani",
-        "settings_unavailable": "Šos iestatījumus šeit nevar parādīt: atveriet Konfigurēt"
+        "settings_unavailable": "Šos iestatījumus šeit nevar parādīt: atveriet Konfigurēt",
+        "gh_requests": "Atlikušie pieprasījumi: {n}"
       }
     },
     "battery_type": {

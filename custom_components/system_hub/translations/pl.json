@@ -1290,7 +1290,8 @@
         "tab_containers": "Kontenery i procesy",
         "settings_system": "Progi System",
         "settings_system_hint": "Kiedy CPU, RAM, dysk, temperatura i swap zmieniają kolor na pomarańczowy i czerwony",
-        "settings_unavailable": "Tych ustawień nie można tu pokazać: otwórz Konfiguruj"
+        "settings_unavailable": "Tych ustawień nie można tu pokazać: otwórz Konfiguruj",
+        "gh_requests": "Pozostało zapytań: {n}"
       }
     },
     "battery_type": {

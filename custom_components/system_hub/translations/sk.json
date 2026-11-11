@@ -1290,7 +1290,8 @@
         "tab_containers": "Kontajnery a procesy",
         "settings_system": "Prahy System",
         "settings_system_hint": "Kedy CPU, RAM, disk, teplota a swap zoranžovejú a sčervenajú",
-        "settings_unavailable": "Tieto nastavenia sa tu nedajú zobraziť: otvorte Konfigurovať"
+        "settings_unavailable": "Tieto nastavenia sa tu nedajú zobraziť: otvorte Konfigurovať",
+        "gh_requests": "Zostáva požiadaviek: {n}"
       }
     },
     "battery_type": {

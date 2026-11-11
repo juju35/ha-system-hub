@@ -1290,7 +1290,8 @@
         "tab_containers": "Containers & process",
         "settings_system": "Seuils System",
         "settings_system_hint": "Quand le CPU, la RAM, le disque, la température et le swap passent à l'orange et au rouge",
-        "settings_unavailable": "Ces réglages ne peuvent pas s'afficher ici : ouvrez Configurer"
+        "settings_unavailable": "Ces réglages ne peuvent pas s'afficher ici : ouvrez Configurer",
+        "gh_requests": "{n} requêtes restantes"
       }
     },
     "battery_type": {

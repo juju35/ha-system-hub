@@ -1290,7 +1290,8 @@
         "tab_containers": "Containers & process",
         "settings_system": "System thresholds",
         "settings_system_hint": "When the CPU, RAM, disk, temperature and swap turn orange and red",
-        "settings_unavailable": "These settings can't be shown here: open Configure"
+        "settings_unavailable": "These settings can't be shown here: open Configure",
+        "gh_requests": "{n} requests left"
       }
     },
     "battery_type": {

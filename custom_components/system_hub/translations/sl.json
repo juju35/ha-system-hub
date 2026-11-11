@@ -1290,7 +1290,8 @@
         "tab_containers": "Vsebniki in procesi",
         "settings_system": "Pragovi System",
         "settings_system_hint": "Kdaj CPU, RAM, disk, temperatura in swap postanejo oranžni in rdeči",
-        "settings_unavailable": "Teh nastavitev ni mogoče prikazati tukaj: odprite Konfiguriraj"
+        "settings_unavailable": "Teh nastavitev ni mogoče prikazati tukaj: odprite Konfiguriraj",
+        "gh_requests": "Preostalih zahtev: {n}"
       }
     },
     "battery_type": {

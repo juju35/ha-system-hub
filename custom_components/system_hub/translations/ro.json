@@ -1290,7 +1290,8 @@
         "tab_containers": "Containere și procese",
         "settings_system": "Praguri System",
         "settings_system_hint": "Când CPU, RAM, discul, temperatura și swap-ul devin portocalii și roșii",
-        "settings_unavailable": "Aceste setări nu pot fi afișate aici: deschideți Configurare"
+        "settings_unavailable": "Aceste setări nu pot fi afișate aici: deschideți Configurare",
+        "gh_requests": "{n} cereri rămase"
       }
     },
     "battery_type": {

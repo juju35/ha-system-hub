@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- **Marketplace tab on a phone**: the settings button sits in the header's corner instead of overflowing it, the GitHub icon stays next to its line, and "GitHub" is no longer written twice ("GitHub connected · 3555 requests left").
+
 ## 0.5.3 - 2026-11-11
 
 ### Fixed

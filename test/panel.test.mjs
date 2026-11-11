@@ -636,7 +636,7 @@ test('marketplace tab: a card per update with the size of the change, its notes,
   p._render = () => {};
   let html = p._content();
   assert.match(html, /2 updates available/);
-  assert.match(html, /GitHub connected · GitHub: 4812 requests left/);
+  assert.match(html, /GitHub connected · 4812 requests left/);
   assert.match(html, /limit reached, next try in 2 hours/);
   assert.match(html, /class="pill bad">major/);
   assert.match(html, /class="pill good">patch/);

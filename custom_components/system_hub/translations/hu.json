@@ -1290,7 +1290,8 @@
         "tab_containers": "Konténerek és folyamatok",
         "settings_system": "System küszöbök",
         "settings_system_hint": "Mikor vált a CPU, a RAM, a lemez, a hőmérséklet és a swap narancsra és pirosra",
-        "settings_unavailable": "Ezek a beállítások itt nem jeleníthetők meg: nyissa meg a Konfigurálást"
+        "settings_unavailable": "Ezek a beállítások itt nem jeleníthetők meg: nyissa meg a Konfigurálást",
+        "gh_requests": "{n} kérés maradt"
       }
     },
     "battery_type": {

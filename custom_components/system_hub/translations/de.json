@@ -1290,7 +1290,8 @@
         "tab_containers": "Container und Prozesse",
         "settings_system": "System-Schwellenwerte",
         "settings_system_hint": "Wann CPU, RAM, Datenträger, Temperatur und Swap orange und rot werden",
-        "settings_unavailable": "Diese Einstellungen können hier nicht angezeigt werden: Konfigurieren öffnen"
+        "settings_unavailable": "Diese Einstellungen können hier nicht angezeigt werden: Konfigurieren öffnen",
+        "gh_requests": "{n} Anfragen übrig"
       }
     },
     "battery_type": {
