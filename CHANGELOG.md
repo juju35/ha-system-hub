@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.0 - 2026-11-11
 
 ### New
 - **Status tab**, the first tab: the health of the instance at a glance. A score out of 100 in a ring (100, less 15 per area needing action, 5 per area to watch, 1 per area with something to know), the points to check by level, the Home Assistant version and uptime; then one tile per area in the order of the tabs (System, Containers & process, Updates, Watchdog, Automations, Batteries, Git Sync, Orphans), each with its level, a few words, its details, and opening its tab. An order of the tabs saved before puts it first.
