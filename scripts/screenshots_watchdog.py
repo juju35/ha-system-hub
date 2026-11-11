@@ -15,6 +15,8 @@ from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
+from screenshots import HA_ELEMENTS as HUB_ELEMENTS
+
 ROOT = Path(__file__).resolve().parent.parent
 CARD_JS = (ROOT / "custom_components/system_hub/frontend/cards/integration-watchdog-card.js").read_text()
 # Material Design Icons paths used by the card (from @mdi/js).
@@ -51,31 +53,8 @@ COMMON = {
     "--text-primary-color": "#ffffff",
 }
 
-# Minimal stand-ins for Home Assistant's <ha-card> and <ha-icon>.
-HA_ELEMENTS = (
-    "const ICONS = "
-    + json.dumps(ICONS)
-    + ";"
-    + """
-customElements.define("ha-card", class extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" }).innerHTML =
-      "<style>:host{display:block;background:var(--card-background-color);border-radius:12px;" +
-      "border:1px solid var(--divider-color);color:var(--primary-text-color);overflow:hidden}</style><slot></slot>";
-  }
-});
-customElements.define("ha-icon", class extends HTMLElement {
-  static get observedAttributes() { return ["icon"]; }
-  connectedCallback() { this._draw(); }
-  attributeChangedCallback() { this._draw(); }
-  _draw() {
-    const path = ICONS[(this.getAttribute("icon") || "").replace("mdi:", "")] || "";
-    this.style.display = "inline-flex";
-    this.innerHTML = '<svg viewBox="0 0 24 24" style="width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px);fill:currentColor"><path d="' + path + '"/></svg>';
-  }
-});"""
-)
+# The stand-ins for Home Assistant's elements are those of the panel screenshots, with the card's icons added.
+HA_ELEMENTS = HUB_ELEMENTS + "\nObject.assign(ICONS, " + json.dumps(ICONS) + ");"
 
 # The System Hub Watchdog module's entities.
 UNAVAILABLE = "sensor.system_hub_watchdog_unavailable_integrations"
@@ -177,11 +156,14 @@ SHOTS = [
 
 def page_html(theme, width, padding=16):
     variables = "".join(f"{k}:{v};" for k, v in {**THEMES[theme], **COMMON}.items())
-    return f"""<!doctype html><html><head><meta charset="utf-8"><style>
-:root {{ {variables} }}
-body {{ margin: 0; padding: {padding}px; background: var(--primary-background-color);
-       font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; width: {width}px; }}
-</style></head><body><div id="root"></div></body></html>"""
+    body = (
+        f"margin:0;padding:{padding}px;background:var(--primary-background-color);width:{width}px;"
+        'font-family:Roboto,"Segoe UI",Helvetica,Arial,sans-serif'
+    )
+    return (
+        f'<!doctype html><html><head><meta charset="utf-8"><style>:root{{{variables}}} body{{{body}}}</style>'
+        '</head><body><div id="root"></div></body></html>'
+    )
 
 
 MOUNT = """([hass, dark, card, zoom]) => {
