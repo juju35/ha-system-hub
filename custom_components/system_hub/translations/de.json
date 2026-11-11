@@ -10,6 +10,7 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
+          "orphans": "Orphans",
           "automations": "Automations"
         },
         "data_description": {
@@ -18,6 +19,7 @@
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
           "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist.",
           "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird.",
+          "orphans": "Listet die Entitäten auf, die ihre Integration nicht mehr bereitstellt, damit du sie gesammelt entfernen kannst.",
           "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten."
         }
       },
@@ -71,6 +73,7 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batterien: Batterietypen",
           "batteries_import": "Batterien: Aus Battery Monitor importieren",
+          "orphans": "Orphans",
           "system": "System: Schwellenwerte"
         }
       },
@@ -261,6 +264,25 @@
         "title": "Aus Battery Monitor importieren",
         "description": "In Battery Monitor gefunden: {settings} Einstellungen, {types} in seinen Karten festgelegte Batterietypen und {stock} Typen von Ersatzbatterien. Absenden, um sie in System Hub zu übernehmen: seine Einstellungen ersetzen die des Moduls Batterien, die hier bereits festgelegten Batterietypen bleiben erhalten."
       },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Scanintervall",
+          "grace_period": "Karenzzeit nach dem Start",
+          "stale_hours": "Veraltet nach",
+          "include_unknown": "Unbekannte Entitäten einbeziehen",
+          "ignored_integrations": "Ignorierte Integrationen",
+          "ignored_entities": "Ignorierte Entitäten"
+        },
+        "data_description": {
+          "scan_interval": "Minuten zwischen zwei Scans. Das Entitätsregister wird außerdem einige Sekunden nach jeder Änderung gescannt.",
+          "grace_period": "Minuten nach dem Start von Home Assistant bis zum ersten Scan, während die Integrationen ihre Entitäten einrichten.",
+          "stale_hours": "Stunden, die eine noch von ihrer Integration bereitgestellte Entität nicht verfügbar (oder unbekannt) gewesen sein muss, um aufgelistet zu werden. 0 listet nur die nicht mehr bereitgestellten Entitäten auf.",
+          "include_unknown": "Auch die Entitäten auflisten, die so lange unbekannt sind. Tasten, Szenen und Ereignisse, die von Natur aus unbekannt sind, werden nie aufgelistet.",
+          "ignored_integrations": "Integrationen, deren Entitäten nie aufgelistet werden. Gib eine Domain ein, um eine nicht aufgeführte hinzuzufügen.",
+          "ignored_entities": "Entitäten (Entitäts-IDs) und Geräte (Geräte-IDs), die nie aufgelistet werden. Die Karte fügt sie hier mit ihrer Schaltfläche „Ignorieren“ hinzu."
+        }
+      },
       "system": {
         "title": "System: Schwellenwerte",
         "description": "Der Tab System färbt einen Wert ab dem ersten Schwellenwert orange und ab dem zweiten rot.",
@@ -316,6 +338,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Dashboards exportieren"
+      },
+      "orphans_scan": {
+        "name": "Jetzt scannen"
       }
     },
     "sensor": {
@@ -591,6 +616,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Verwaiste Entitäten",
+        "state_attributes": {
+          "entities": {
+            "name": "Entitäten"
+          },
+          "counts": {
+            "name": "Anzahlen"
+          },
+          "removed": {
+            "name": "Entfernt"
+          },
+          "stale_hours": {
+            "name": "Veraltet nach"
+          },
+          "include_unknown": {
+            "name": "Unbekannte einbeziehen"
+          },
+          "ignored_integrations": {
+            "name": "Ignorierte Integrationen"
+          },
+          "ignored_entities": {
+            "name": "Ignorierte Entitäten"
+          },
+          "devices": {
+            "name": "Geräte"
+          },
+          "truncated": {
+            "name": "Nicht in der Liste"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Letzter Scan"
       }
     }
   },
@@ -708,6 +768,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Holt das Remote und übernimmt seine neuen Commits: Fast-Forward, oder die lokalen Commits werden darauf rebased (nur bei sauberem Arbeitsverzeichnis). Ein Konflikt bricht den Rebase ab."
+    },
+    "orphans_scan": {
+      "name": "Nach verwaisten Entitäten scannen",
+      "description": "Durchsucht das Entitätsregister nach den Entitäten, die ihre Integration nicht mehr bereitstellt."
+    },
+    "orphans_remove": {
+      "name": "Verwaiste Entitäten entfernen",
+      "description": "Entfernt vom letzten Scan aufgelistete Entitäten aus dem Entitätsregister.",
+      "fields": {
+        "entities": {
+          "name": "Entitäten",
+          "description": "Zu entfernende Entitäts-IDs. Jede muss in der Liste der verwaisten Entitäten stehen."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Entitäten ignorieren",
+      "description": "Fügt Entitäten oder Geräte den ignorierten hinzu: Sie werden nicht mehr aufgelistet.",
+      "fields": {
+        "entities": {
+          "name": "Entitäten",
+          "description": "Zu ignorierende Entitäts-IDs."
+        },
+        "devices": {
+          "name": "Geräte",
+          "description": "Zu ignorierende Geräte-IDs (verwaiste Geräte)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Verwaiste Geräte entfernen",
+      "description": "Entfernt Geräte, deren Integrationseinträge alle entfernt wurden, samt ihren Entitäten. Nur die Geräte der Liste der letzten Prüfung.",
+      "fields": {
+        "devices": {
+          "name": "Geräte",
+          "description": "Geräte-IDs aus dem Attribut devices des Waisen-Sensors. Leer lassen für alle verwaisten Geräte des letzten Scans."
+        }
+      }
     }
   },
   "common": {
@@ -845,6 +943,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Der Exportordner {path} liegt außerhalb des Konfigurationsordners und von allowlist_external_dirs: Wähle in den Git-Sync-Optionen einen anderen."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant startet noch: Scan erneut starten, sobald es läuft."
+    },
+    "orphans_no_entities": {
+      "message": "Keine Entität zum Entfernen."
+    },
+    "orphans_too_many": {
+      "message": "Höchstens {max} Entitäten auf einmal."
+    },
+    "orphans_not_orphan": {
+      "message": "Nicht in der Liste der verwaisten Entitäten: {entities}. Erneut scannen und noch einmal versuchen."
+    },
+    "orphans_not_registered": {
+      "message": "Nicht im Entitätsregister: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Kein Gerät angegeben."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Keine verwaisten Geräte (zuerst prüfen): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Nicht in der Geräteregistrierung: {devices}."
     }
   },
   "issues": {
@@ -1061,6 +1183,73 @@
         "open_device": "Gerät",
         "pc_none": "Noch kein Neustart per Steckdose: einen in Konfigurieren → Watchdog: Neustart per Steckdose hinzufügen anlegen.",
         "pc_configure": "In Konfigurieren hinzufügen oder entfernen",
+        "orph_reason_entry_removed": "Integration entfernt",
+        "orph_reason_integration_missing": "Integration nicht geladen",
+        "orph_reason_not_provided": "Nicht bereitgestellt",
+        "orph_reason_unavailable": "Nicht verfügbar",
+        "orph_reason_unknown": "Unbekannt",
+        "orph_search": "Suchen",
+        "orph_all_integrations": "Alle Integrationen",
+        "orph_list_title": "Verwaiste Entitäten",
+        "orph_no_match": "Keine Entität entspricht den Filtern",
+        "orph_empty": "Jede Entität wird von ihrer Integration bereitgestellt",
+        "orph_for": "seit {d}",
+        "orph_disabled": "deaktiviert",
+        "orph_select_all": "Die {n} angezeigten auswählen",
+        "orph_show_all": "Alle anzeigen ({n})",
+        "orph_selected_one": "{n} ausgewählt",
+        "orph_selected_many": "{n} ausgewählt",
+        "orph_remove": "Entfernen",
+        "orph_ignore": "Ignorieren",
+        "orph_clear": "Auswahl aufheben",
+        "orph_confirm_remove_one": "{n} Entität aus dem Entitätsregister entfernen?",
+        "orph_confirm_remove_many": "{n} Entitäten aus dem Entitätsregister entfernen?",
+        "orph_confirm_remove_text": "Ihr Verlauf bleibt in der Datenbank. Eine noch von ihrer Integration bereitgestellte Entität kommt zurück, wenn die Integration sie erneut erstellt.",
+        "orph_confirm_ignore_one": "{n} Entität ignorieren?",
+        "orph_confirm_ignore_many": "{n} Entitäten ignorieren?",
+        "orph_confirm_ignore_text": "Sie werden nicht mehr aufgelistet. Entferne sie in den Optionen der Integration aus den ignorierten Entitäten.",
+        "orph_used_by": "Verwendet von {n}",
+        "orph_ref_automation": "Automatisierung",
+        "orph_ref_script": "Skript",
+        "orph_ref_scene": "Szene",
+        "orph_ref_group": "Gruppe",
+        "orph_ref_dashboard": "Dashboard",
+        "orph_confirm_used_one": "{n} ausgewählte Entität wird noch verwendet: Was sie nutzt, funktioniert danach womöglich nicht mehr.",
+        "orph_confirm_used_many": "{n} ausgewählte Entitäten werden noch verwendet: Was sie nutzt, funktioniert danach womöglich nicht mehr.",
+        "orph_remove_anyway": "Trotzdem entfernen",
+        "orph_and_more": "und {n} weitere",
+        "orph_removed_one": "{n} Entität entfernt",
+        "orph_removed_many": "{n} Entitäten entfernt",
+        "orph_devices_title": "Verwaiste Geräte",
+        "orph_devices_hint": "Ihre Integration wurde entfernt: nichts stellt sie mehr bereit",
+        "orph_remove_devices": "Geräte entfernen",
+        "orph_confirm_devices": "Verwaiste Geräte entfernen?",
+        "orph_confirm_devices_text": "Sie verlassen die Geräteregistrierung mit ihren Entitäten. Ihr Verlauf bleibt in der Datenbank.",
+        "orph_devices_removed": "Verwaiste Geräte entfernt: {n}",
+        "orph_confirm_ignore_devices": "Ausgewählte Geräte ignorieren?",
+        "orph_devices_ignored": "Verwaiste Geräte ignoriert: {n}",
+        "orph_kept": "Behalten, nicht mehr verwaist: {n}",
+        "orph_dev_entities": "Entitäten: {n}",
+        "orph_ignored_one": "{n} Entität ignoriert",
+        "orph_ignored_many": "{n} Entitäten ignoriert",
+        "orph_waiting": "Warten auf den ersten Scan",
+        "orph_never_scanned": "Noch nicht gescannt",
+        "orph_stat_removed": "Entfernt",
+        "orph_stat_removed_hint": "Seit dem Start von Home Assistant",
+        "orph_stat_ignored": "Ignoriert",
+        "orph_all": "Alle",
+        "orph_confirm_devices_used": "Geräte, die noch von Automationen oder Skripten verwendet werden: {n}. Diese funktionieren danach womöglich nicht mehr.",
+        "network_total": "Empfangen / gesendet",
+        "update_to": "Update auf {versions}",
+        "up_to_date": "Aktuell",
+        "export_csv": "Als CSV exportieren",
+        "spares": "Vorrat",
+        "to_buy": "{n} kaufen",
+        "set_stock": "Vorrat festlegen",
+        "stock_type": "Batterietyp",
+        "stock_count": "Anzahl",
+        "search_batteries": "Suchen: Name, Raum, Typ",
+        "no_match": "Keine Batterie passt",
         "auto_failed": "Fehlgeschlagene Automatisierungen",
         "auto_linked": "Nicht verfügbare verknüpfte Entitäten",
         "auto_sensor_unavailable": "Sensor nicht verfügbar",
@@ -1080,18 +1269,7 @@
         "auto_confirm_clear_all": "Alle fehlgeschlagenen Automatisierungen löschen? Sie werden beim nächsten Fehlschlag erneut gemeldet.",
         "auto_show_more": "{n} weitere anzeigen",
         "auto_show_less": "Weniger anzeigen",
-        "auto_last_failure": "Letzter Fehler",
-        "network_total": "Empfangen / gesendet",
-        "update_to": "Update auf {versions}",
-        "up_to_date": "Aktuell",
-        "export_csv": "Als CSV exportieren",
-        "spares": "Vorrat",
-        "to_buy": "{n} kaufen",
-        "set_stock": "Vorrat festlegen",
-        "stock_type": "Batterietyp",
-        "stock_count": "Anzahl",
-        "search_batteries": "Suchen: Name, Raum, Typ",
-        "no_match": "Keine Batterie passt"
+        "auto_last_failure": "Letzter Fehler"
       }
     },
     "battery_type": {

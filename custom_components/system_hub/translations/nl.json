@@ -10,6 +10,7 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
+          "orphans": "Orphans",
           "automations": "Automations"
         },
         "data_description": {
@@ -18,6 +19,7 @@
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
+          "orphans": "Toont de entiteiten die hun integratie niet meer levert, zodat je ze in één keer kunt verwijderen.",
           "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
         }
       },
@@ -71,6 +73,7 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batterijen: batterijtypen",
           "batteries_import": "Batterijen: importeren uit Battery Monitor",
+          "orphans": "Orphans",
           "system": "Systeem: drempels"
         }
       },
@@ -261,6 +264,25 @@
         "title": "Importeren uit Battery Monitor",
         "description": "Gevonden in Battery Monitor: {settings} instellingen, {types} batterijtypen ingesteld in zijn kaarten en {stock} typen reservebatterijen. Verzend om ze over te nemen in System Hub: zijn instellingen vervangen die van de module Batterijen, de hier al ingestelde batterijtypen blijven behouden."
       },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Scaninterval",
+          "grace_period": "Wachttijd na het opstarten",
+          "stale_hours": "Verouderd na",
+          "include_unknown": "Onbekende entiteiten opnemen",
+          "ignored_integrations": "Genegeerde integraties",
+          "ignored_entities": "Genegeerde entiteiten"
+        },
+        "data_description": {
+          "scan_interval": "Minuten tussen twee scans. Het entiteitenregister wordt ook enkele seconden na elke wijziging gescand.",
+          "grace_period": "Minuten na het opstarten van Home Assistant vóór de eerste scan, terwijl de integraties hun entiteiten instellen.",
+          "stale_hours": "Uren dat een entiteit die nog door haar integratie wordt geleverd niet beschikbaar (of onbekend) moet zijn geweest om te worden getoond. 0 toont alleen de entiteiten die niet meer worden geleverd.",
+          "include_unknown": "Toon ook de entiteiten die even lang onbekend zijn. Knoppen, scènes en gebeurtenissen, die van nature onbekend zijn, worden nooit getoond.",
+          "ignored_integrations": "Integraties waarvan de entiteiten nooit worden getoond. Typ een domein om er een toe te voegen die niet in de lijst staat.",
+          "ignored_entities": "Entiteiten (entiteit-ID's) en apparaten (apparaat-ID's) die nooit worden getoond. De kaart voegt ze hier toe met de knop Negeren."
+        }
+      },
       "system": {
         "title": "Systeem: drempels",
         "description": "Het tabblad Systeem kleurt een waarde oranje vanaf de eerste drempel en rood vanaf de tweede.",
@@ -316,6 +338,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Dashboards exporteren"
+      },
+      "orphans_scan": {
+        "name": "Nu scannen"
       }
     },
     "sensor": {
@@ -591,6 +616,41 @@
             "name": "Remote branch"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Verweesde entiteiten",
+        "state_attributes": {
+          "entities": {
+            "name": "Entiteiten"
+          },
+          "counts": {
+            "name": "Aantallen"
+          },
+          "removed": {
+            "name": "Verwijderd"
+          },
+          "stale_hours": {
+            "name": "Verouderd na"
+          },
+          "include_unknown": {
+            "name": "Onbekende opnemen"
+          },
+          "ignored_integrations": {
+            "name": "Genegeerde integraties"
+          },
+          "ignored_entities": {
+            "name": "Genegeerde entiteiten"
+          },
+          "devices": {
+            "name": "Apparaten"
+          },
+          "truncated": {
+            "name": "Buiten de lijst"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Laatste scan"
       }
     }
   },
@@ -708,6 +768,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Haalt de remote op en neemt de nieuwe commits over: fast-forward, of de lokale commits erbovenop gerebased (alleen bij een schone werkmap). Een conflict breekt de rebase af."
+    },
+    "orphans_scan": {
+      "name": "Scannen op verweesde entiteiten",
+      "description": "Doorzoekt het entiteitenregister op entiteiten die hun integratie niet meer levert."
+    },
+    "orphans_remove": {
+      "name": "Verweesde entiteiten verwijderen",
+      "description": "Verwijdert de entiteiten die de laatste scan heeft gevonden uit het entiteitenregister.",
+      "fields": {
+        "entities": {
+          "name": "Entiteiten",
+          "description": "Entiteit-ID's om te verwijderen. Elk ervan moet in de lijst met verweesde entiteiten staan."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Entiteiten negeren",
+      "description": "Voegt entiteiten of apparaten toe aan de genegeerde: ze worden niet meer getoond.",
+      "fields": {
+        "entities": {
+          "name": "Entiteiten",
+          "description": "Entiteit-ID's om te negeren."
+        },
+        "devices": {
+          "name": "Apparaten",
+          "description": "Te negeren apparaat-ID's (verweesde apparaten)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Verweesde apparaten verwijderen",
+      "description": "Verwijdert apparaten waarvan alle integratie-items zijn verwijderd, met hun entiteiten. Alleen de apparaten uit de lijst van de laatste scan.",
+      "fields": {
+        "devices": {
+          "name": "Apparaten",
+          "description": "Apparaat-ID's uit het attribuut devices van de wezensensor. Leeg laten voor alle verweesde apparaten van de laatste scan."
+        }
+      }
     }
   },
   "common": {
@@ -845,6 +943,30 @@
     },
     "export_dir_not_allowed": {
       "message": "De exportmap {path} ligt buiten de configuratiemap en allowlist_external_dirs: kies een andere in de opties van Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant is nog aan het opstarten: scan opnieuw zodra het draait."
+    },
+    "orphans_no_entities": {
+      "message": "Geen entiteit om te verwijderen."
+    },
+    "orphans_too_many": {
+      "message": "Maximaal {max} entiteiten tegelijk."
+    },
+    "orphans_not_orphan": {
+      "message": "Niet in de lijst met verweesde entiteiten: {entities}. Scan opnieuw en probeer het nog eens."
+    },
+    "orphans_not_registered": {
+      "message": "Niet in het entiteitenregister: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Geen apparaat opgegeven."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Geen verweesde apparaten (eerst scannen): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Niet in het apparaatregister: {devices}."
     }
   },
   "issues": {
@@ -1061,6 +1183,73 @@
         "open_device": "Apparaat",
         "pc_none": "Nog geen herstart via stekker: voeg er een toe via Configureren → Watchdog: herstart via stekker toevoegen.",
         "pc_configure": "Toevoegen of verwijderen in Configureren",
+        "orph_reason_entry_removed": "Integratie verwijderd",
+        "orph_reason_integration_missing": "Integratie niet geladen",
+        "orph_reason_not_provided": "Niet geleverd",
+        "orph_reason_unavailable": "Niet beschikbaar",
+        "orph_reason_unknown": "Onbekend",
+        "orph_search": "Zoeken",
+        "orph_all_integrations": "Alle integraties",
+        "orph_list_title": "Verweesde entiteiten",
+        "orph_no_match": "Geen entiteit komt overeen met de filters",
+        "orph_empty": "Elke entiteit wordt door haar integratie geleverd",
+        "orph_for": "al {d}",
+        "orph_disabled": "uitgeschakeld",
+        "orph_select_all": "De {n} getoonde selecteren",
+        "orph_show_all": "Alles tonen ({n})",
+        "orph_selected_one": "{n} geselecteerd",
+        "orph_selected_many": "{n} geselecteerd",
+        "orph_remove": "Verwijderen",
+        "orph_ignore": "Negeren",
+        "orph_clear": "Selectie wissen",
+        "orph_confirm_remove_one": "{n} entiteit uit het entiteitenregister verwijderen?",
+        "orph_confirm_remove_many": "{n} entiteiten uit het entiteitenregister verwijderen?",
+        "orph_confirm_remove_text": "Hun geschiedenis blijft in de database. Een entiteit die nog door haar integratie wordt geleverd, komt terug als de integratie haar opnieuw aanmaakt.",
+        "orph_confirm_ignore_one": "{n} entiteit negeren?",
+        "orph_confirm_ignore_many": "{n} entiteiten negeren?",
+        "orph_confirm_ignore_text": "Ze worden niet meer getoond. Verwijder ze uit de genegeerde entiteiten in de opties van de integratie.",
+        "orph_used_by": "Gebruikt door {n}",
+        "orph_ref_automation": "Automatisering",
+        "orph_ref_script": "Script",
+        "orph_ref_scene": "Scène",
+        "orph_ref_group": "Groep",
+        "orph_ref_dashboard": "Dashboard",
+        "orph_confirm_used_one": "{n} geselecteerde entiteit is nog in gebruik: wat haar gebruikt, kan stoppen met werken.",
+        "orph_confirm_used_many": "{n} geselecteerde entiteiten zijn nog in gebruik: wat ze gebruikt, kan stoppen met werken.",
+        "orph_remove_anyway": "Toch verwijderen",
+        "orph_and_more": "en nog {n}",
+        "orph_removed_one": "{n} entiteit verwijderd",
+        "orph_removed_many": "{n} entiteiten verwijderd",
+        "orph_devices_title": "Verweesde apparaten",
+        "orph_devices_hint": "Hun integratie is verwijderd: niets levert ze nog",
+        "orph_remove_devices": "Apparaten verwijderen",
+        "orph_confirm_devices": "De verweesde apparaten verwijderen?",
+        "orph_confirm_devices_text": "Ze verdwijnen met hun entiteiten uit het apparaatregister. Hun geschiedenis blijft in de database.",
+        "orph_devices_removed": "Verweesde apparaten verwijderd: {n}",
+        "orph_confirm_ignore_devices": "De geselecteerde apparaten negeren?",
+        "orph_devices_ignored": "Verweesde apparaten genegeerd: {n}",
+        "orph_kept": "Behouden, niet meer verweesd: {n}",
+        "orph_dev_entities": "Entiteiten: {n}",
+        "orph_ignored_one": "{n} entiteit genegeerd",
+        "orph_ignored_many": "{n} entiteiten genegeerd",
+        "orph_waiting": "Wachten op de eerste scan",
+        "orph_never_scanned": "Nog niet gescand",
+        "orph_stat_removed": "Verwijderd",
+        "orph_stat_removed_hint": "Sinds Home Assistant is gestart",
+        "orph_stat_ignored": "Genegeerd",
+        "orph_all": "Alle",
+        "orph_confirm_devices_used": "Apparaten nog in gebruik door automatiseringen of scripts: {n}. Die kunnen stoppen met werken.",
+        "network_total": "Ontvangen / verzonden",
+        "update_to": "Bijwerken naar {versions}",
+        "up_to_date": "Bijgewerkt",
+        "export_csv": "CSV exporteren",
+        "spares": "Voorraad",
+        "to_buy": "{n} te kopen",
+        "set_stock": "Voorraad instellen",
+        "stock_type": "Batterijtype",
+        "stock_count": "Aantal",
+        "search_batteries": "Zoeken: naam, ruimte, type",
+        "no_match": "Geen batterij komt overeen",
         "auto_failed": "Mislukte automatiseringen",
         "auto_linked": "Niet-beschikbare gekoppelde entiteiten",
         "auto_sensor_unavailable": "Sensor niet beschikbaar",
@@ -1080,18 +1269,7 @@
         "auto_confirm_clear_all": "Alle mislukte automatiseringen wissen? Ze worden bij de volgende fout opnieuw gemeld.",
         "auto_show_more": "Nog {n} tonen",
         "auto_show_less": "Minder tonen",
-        "auto_last_failure": "Laatste fout",
-        "network_total": "Ontvangen / verzonden",
-        "update_to": "Bijwerken naar {versions}",
-        "up_to_date": "Bijgewerkt",
-        "export_csv": "CSV exporteren",
-        "spares": "Voorraad",
-        "to_buy": "{n} te kopen",
-        "set_stock": "Voorraad instellen",
-        "stock_type": "Batterijtype",
-        "stock_count": "Aantal",
-        "search_batteries": "Zoeken: naam, ruimte, type",
-        "no_match": "Geen batterij komt overeen"
+        "auto_last_failure": "Laatste fout"
       }
     },
     "battery_type": {

@@ -109,6 +109,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
         "batteries",
         "git_sync",
         "automations",
+        "orphans",
     ]
     keys = {s["key"]: s for s in result["system"]}
     assert set(keys) == {
@@ -189,6 +190,7 @@ async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
         "marketplace",
         "git_sync",
         "automations",
+        "orphans",
     ]
     assert entry.runtime_data.batteries is not None
 
@@ -203,7 +205,16 @@ async def test_git_sync_needs_its_repository(hass: HomeAssistant, hass_ws_client
 
 
 def test_tab_order() -> None:
-    assert tab_order({}) == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "automations"]
+    assert tab_order({}) == [
+        "system",
+        "containers",
+        "watchdog",
+        "marketplace",
+        "batteries",
+        "git_sync",
+        "automations",
+        "orphans",
+    ]
     assert tab_order({"tabs": ["git_sync", "unknown", "git_sync", "system"]}) == [
         "git_sync",
         "system",
@@ -212,6 +223,7 @@ def test_tab_order() -> None:
         "marketplace",
         "batteries",
         "automations",
+        "orphans",
     ]
 
 

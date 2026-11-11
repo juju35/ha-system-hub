@@ -10,6 +10,7 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
+          "orphans": "Orphans",
           "automations": "Automations"
         },
         "data_description": {
@@ -18,6 +19,7 @@
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
           "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
+          "orphans": "Viser de entiteter, som deres integration ikke længere leverer, så du kan fjerne dem samlet.",
           "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder."
         }
       },
@@ -71,6 +73,7 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importér fra Battery Monitor",
+          "orphans": "Orphans",
           "system": "System: tærskler"
         }
       },
@@ -261,6 +264,25 @@
         "title": "Importér fra Battery Monitor",
         "description": "Fundet i Battery Monitor: {settings} indstillinger, {types} batterityper angivet i dets kort og {stock} typer reservebatterier. Indsend for at hente dem ind i System Hub: dets indstillinger erstatter Batterier-modulets, og de batterityper, der allerede er angivet her, bevares."
       },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Scanningsinterval",
+          "grace_period": "Ventetid efter opstart",
+          "stale_hours": "Forældet efter",
+          "include_unknown": "Medtag ukendte entiteter",
+          "ignored_integrations": "Ignorerede integrationer",
+          "ignored_entities": "Ignorerede entiteter"
+        },
+        "data_description": {
+          "scan_interval": "Minutter mellem to scanninger. Entitetsregistret scannes også et par sekunder efter hver ændring.",
+          "grace_period": "Minutter efter Home Assistants opstart før den første scanning, mens integrationerne opretter deres entiteter.",
+          "stale_hours": "Timer, en entitet, der stadig leveres af sin integration, skal have været utilgængelig (eller ukendt) for at blive vist. 0 viser kun de entiteter, der ikke længere leveres.",
+          "include_unknown": "Vis også de entiteter, der har været ukendte lige så længe. Knapper, scener og hændelser, der er ukendte af natur, vises aldrig.",
+          "ignored_integrations": "Integrationer, hvis entiteter aldrig vises. Skriv et domæne for at tilføje en, der ikke er på listen.",
+          "ignored_entities": "Entiteter (entitets-id'er) og enheder (enheds-id'er), der aldrig vises. Kortet tilføjer dem her med sin Ignorer-knap."
+        }
+      },
       "system": {
         "title": "System: tærskler",
         "description": "Fanen System farver en værdi orange fra den første tærskel og rød fra den anden.",
@@ -316,6 +338,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Eksportér dashboards"
+      },
+      "orphans_scan": {
+        "name": "Scan nu"
       }
     },
     "sensor": {
@@ -591,6 +616,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Forældreløse entiteter",
+        "state_attributes": {
+          "entities": {
+            "name": "Entiteter"
+          },
+          "counts": {
+            "name": "Antal"
+          },
+          "removed": {
+            "name": "Fjernet"
+          },
+          "stale_hours": {
+            "name": "Forældet efter"
+          },
+          "include_unknown": {
+            "name": "Medtag ukendte"
+          },
+          "ignored_integrations": {
+            "name": "Ignorerede integrationer"
+          },
+          "ignored_entities": {
+            "name": "Ignorerede entiteter"
+          },
+          "devices": {
+            "name": "Enheder"
+          },
+          "truncated": {
+            "name": "Uden for listen"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Seneste scanning"
       }
     }
   },
@@ -708,6 +768,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Henter fjernlageret og tager dets nye commits ind: fast-forward, eller de lokale commits rebaset ovenpå (kun med et rent arbejdstræ). En konflikt afbryder rebase."
+    },
+    "orphans_scan": {
+      "name": "Scan efter forældreløse entiteter",
+      "description": "Gennemsøger entitetsregistret efter de entiteter, som deres integration ikke længere leverer."
+    },
+    "orphans_remove": {
+      "name": "Fjern forældreløse entiteter",
+      "description": "Fjerner entiteter, der er fundet ved den seneste scanning, fra entitetsregistret.",
+      "fields": {
+        "entities": {
+          "name": "Entiteter",
+          "description": "Entitets-ID'er, der skal fjernes. Hver af dem skal være på listen over forældreløse entiteter."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorer entiteter",
+      "description": "Føjer entiteter eller enheder til de ignorerede: de vises ikke længere.",
+      "fields": {
+        "entities": {
+          "name": "Entiteter",
+          "description": "Entitets-ID'er, der skal ignoreres."
+        },
+        "devices": {
+          "name": "Enheder",
+          "description": "Enheds-id'er, der skal ignoreres (forældreløse enheder)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Fjern forældreløse enheder",
+      "description": "Fjerner enheder, hvis integrationsposter alle er fjernet, sammen med deres entiteter. Kun enhederne på listen fra den seneste scanning.",
+      "fields": {
+        "devices": {
+          "name": "Enheder",
+          "description": "Enheds-id'er fra attributten devices på sensoren for forældreløse. Lad stå tom for alle forældreløse enheder fra den seneste scanning."
+        }
+      }
     }
   },
   "common": {
@@ -845,6 +943,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Eksportmappen {path} ligger uden for konfigurationsmappen og allowlist_external_dirs: vælg en anden i Git Sync-indstillingerne."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant starter stadig: scan igen, når det kører."
+    },
+    "orphans_no_entities": {
+      "message": "Ingen entiteter at fjerne."
+    },
+    "orphans_too_many": {
+      "message": "Højst {max} entiteter ad gangen."
+    },
+    "orphans_not_orphan": {
+      "message": "Ikke på listen over forældreløse entiteter: {entities}. Scan igen, og prøv igen."
+    },
+    "orphans_not_registered": {
+      "message": "Ikke i entitetsregistret: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Ingen enhed angivet."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Ikke forældreløse enheder (scan først): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Ikke i enhedsregistret: {devices}."
     }
   },
   "issues": {
@@ -1061,6 +1183,73 @@
         "open_device": "Enhed",
         "pc_none": "Ingen genstart via stik endnu: tilføj en i Konfigurer → Watchdog: tilføj en genstart via stik.",
         "pc_configure": "Tilføj eller fjern i Konfigurer",
+        "orph_reason_entry_removed": "Integration fjernet",
+        "orph_reason_integration_missing": "Integration ikke indlæst",
+        "orph_reason_not_provided": "Leveres ikke",
+        "orph_reason_unavailable": "Utilgængelig",
+        "orph_reason_unknown": "Ukendt",
+        "orph_search": "Søg",
+        "orph_all_integrations": "Alle integrationer",
+        "orph_list_title": "Forældreløse entiteter",
+        "orph_no_match": "Ingen entiteter matcher filtrene",
+        "orph_empty": "Alle entiteter leveres af deres integration",
+        "orph_for": "i {d}",
+        "orph_disabled": "deaktiveret",
+        "orph_select_all": "Vælg de {n} viste",
+        "orph_show_all": "Vis alle ({n})",
+        "orph_selected_one": "{n} valgt",
+        "orph_selected_many": "{n} valgt",
+        "orph_remove": "Fjern",
+        "orph_ignore": "Ignorer",
+        "orph_clear": "Ryd valget",
+        "orph_confirm_remove_one": "Fjern {n} entitet fra entitetsregistret?",
+        "orph_confirm_remove_many": "Fjern {n} entiteter fra entitetsregistret?",
+        "orph_confirm_remove_text": "Deres historik bliver i databasen. En entitet, der stadig leveres af sin integration, kommer tilbage, hvis integrationen opretter den igen.",
+        "orph_confirm_ignore_one": "Ignorer {n} entitet?",
+        "orph_confirm_ignore_many": "Ignorer {n} entiteter?",
+        "orph_confirm_ignore_text": "De vises ikke længere. Fjern dem fra de ignorerede entiteter i integrationens indstillinger.",
+        "orph_used_by": "Bruges af {n}",
+        "orph_ref_automation": "Automatisering",
+        "orph_ref_script": "Script",
+        "orph_ref_scene": "Scene",
+        "orph_ref_group": "Gruppe",
+        "orph_ref_dashboard": "Dashboard",
+        "orph_confirm_used_one": "{n} valgt entitet er stadig i brug: det, der bruger den, kan holde op med at virke.",
+        "orph_confirm_used_many": "{n} valgte entiteter er stadig i brug: det, der bruger dem, kan holde op med at virke.",
+        "orph_remove_anyway": "Fjern alligevel",
+        "orph_and_more": "og {n} til",
+        "orph_removed_one": "{n} entitet fjernet",
+        "orph_removed_many": "{n} entiteter fjernet",
+        "orph_devices_title": "Forældreløse enheder",
+        "orph_devices_hint": "Deres integration blev fjernet: intet leverer dem længere",
+        "orph_remove_devices": "Fjern enheder",
+        "orph_confirm_devices": "Fjern de forældreløse enheder?",
+        "orph_confirm_devices_text": "De forlader enhedsregistret sammen med deres entiteter. Deres historik bliver i databasen.",
+        "orph_devices_removed": "Forældreløse enheder fjernet: {n}",
+        "orph_confirm_ignore_devices": "Ignorer de valgte enheder?",
+        "orph_devices_ignored": "Forældreløse enheder ignoreret: {n}",
+        "orph_kept": "Beholdt, ikke længere forældreløse: {n}",
+        "orph_dev_entities": "Entiteter: {n}",
+        "orph_ignored_one": "{n} entitet ignoreret",
+        "orph_ignored_many": "{n} entiteter ignoreret",
+        "orph_waiting": "Venter på den første scanning",
+        "orph_never_scanned": "Ikke scannet endnu",
+        "orph_stat_removed": "Fjernet",
+        "orph_stat_removed_hint": "Siden Home Assistant startede",
+        "orph_stat_ignored": "Ignoreret",
+        "orph_all": "Alle",
+        "orph_confirm_devices_used": "Enheder, der stadig bruges af automatiseringer eller scripts: {n}. De kan holde op med at virke.",
+        "network_total": "Modtaget / sendt",
+        "update_to": "Opdater til {versions}",
+        "up_to_date": "Opdateret",
+        "export_csv": "Eksportér CSV",
+        "spares": "Lager",
+        "to_buy": "{n} at købe",
+        "set_stock": "Angiv lager",
+        "stock_type": "Batteritype",
+        "stock_count": "Antal",
+        "search_batteries": "Søg: navn, rum, type",
+        "no_match": "Intet batteri passer",
         "auto_failed": "Mislykkede automatiseringer",
         "auto_linked": "Utilgængelige tilknyttede entiteter",
         "auto_sensor_unavailable": "Sensor utilgængelig",
@@ -1080,18 +1269,7 @@
         "auto_confirm_clear_all": "Ryd alle mislykkede automatiseringer? De bliver rapporteret igen ved næste fejl.",
         "auto_show_more": "Vis {n} flere",
         "auto_show_less": "Vis færre",
-        "auto_last_failure": "Seneste fejl",
-        "network_total": "Modtaget / sendt",
-        "update_to": "Opdater til {versions}",
-        "up_to_date": "Opdateret",
-        "export_csv": "Eksportér CSV",
-        "spares": "Lager",
-        "to_buy": "{n} at købe",
-        "set_stock": "Angiv lager",
-        "stock_type": "Batteritype",
-        "stock_count": "Antal",
-        "search_batteries": "Søg: navn, rum, type",
-        "no_match": "Intet batteri passer"
+        "auto_last_failure": "Seneste fejl"
       }
     },
     "battery_type": {

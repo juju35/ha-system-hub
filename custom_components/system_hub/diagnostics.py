@@ -12,6 +12,7 @@ from . import SystemHubConfigEntry, enabled_modules
 from .git_sync.const import CONF_AUTHOR_EMAIL, CONF_AUTHOR_NAME, CONF_SSH_KEY
 from .git_sync.git import redact_credentials, redact_url
 from .marketplace import refresher as refresher_module
+from .orphans.entities import orphans_list
 from .watchdog.const import CONF_NOTIFY
 
 # Entry titles often hold an e-mail address, a user name or a host (one per account or device), and notify
@@ -37,6 +38,11 @@ TO_REDACT = {
     "secret",
     "private_key",
     "public_key",
+    # Orphans: the config entry titles of the orphans, and what vehicles and parcels are often named by.
+    "entry_title",
+    "plate",
+    "tracking_number",
+    "vin",
 }
 
 
@@ -84,6 +90,8 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: SystemH
         data |= _watchdog(watchdog)
     if (refresher := entry.runtime_data.marketplace) is not None:
         data |= _marketplace(hass, refresher)
+    if (scanner := entry.runtime_data.orphans) is not None:
+        data["orphans"] = _orphans(scanner)
     return async_redact_data(data, TO_REDACT)
 
 
@@ -148,4 +156,17 @@ def _marketplace(hass: HomeAssistant, refresher: Any) -> dict[str, Any]:
             "disabled_reason": str(reason) if (reason := getattr(system, "disabled_reason", None)) else None,
             "installed": len(getattr(repositories, "list_installed", None) or []),
         },
+    }
+
+
+def _orphans(scanner: Any) -> dict[str, Any]:
+    """The last scan; config entry titles (often an account or a host) are redacted with "entry_title"."""
+    return {
+        "ready": scanner.ready,
+        "started_at": scanner.started_at.isoformat() if scanner.started_at else None,
+        "next_scan": scanner.next_scan.isoformat() if scanner.next_scan else None,
+        "last_scan": scanner.last_scan.isoformat() if scanner.last_scan else None,
+        "removed": scanner.removed,
+        "counts": scanner.counts(),
+        **{k: v for k, v in orphans_list(scanner).items() if k in ("entities", "devices")},
     }

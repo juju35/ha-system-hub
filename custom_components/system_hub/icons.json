@@ -15,6 +15,9 @@
       },
       "git_sync_export_dashboards": {
         "default": "mdi:export"
+      },
+      "orphans_scan": {
+        "default": "mdi:magnify-scan"
       }
     },
     "sensor": {
@@ -90,6 +93,12 @@
       },
       "git_sync_branch": {
         "default": "mdi:source-branch"
+      },
+      "orphans_orphans": {
+        "default": "mdi:ghost-outline"
+      },
+      "orphans_last_scan": {
+        "default": "mdi:clock-check-outline"
       }
     }
   },
@@ -138,6 +147,18 @@
     },
     "git_sync_get_diff": {
       "service": "mdi:file-compare"
+    },
+    "orphans_scan": {
+      "service": "mdi:magnify-scan"
+    },
+    "orphans_remove": {
+      "service": "mdi:broom"
+    },
+    "orphans_ignore": {
+      "service": "mdi:eye-off-outline"
+    },
+    "orphans_remove_devices": {
+      "service": "mdi:devices"
     }
   }
 }

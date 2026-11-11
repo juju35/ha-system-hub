@@ -17,6 +17,7 @@ MODULE_BATTERIES: Final = "batteries"
 MODULE_GIT_SYNC: Final = "git_sync"
 # Shows what Automation Monitor reports; no entities of its own.
 MODULE_AUTOMATIONS: Final = "automations"
+MODULE_ORPHANS: Final = "orphans"
 MODULES: Final = (
     MODULE_CONTAINERS,
     MODULE_WATCHDOG,
@@ -24,6 +25,7 @@ MODULES: Final = (
     MODULE_BATTERIES,
     MODULE_GIT_SYNC,
     MODULE_AUTOMATIONS,
+    MODULE_ORPHANS,
 )
 
 # Panel: the order of its tabs (the System tab and the modules; Settings always comes last).

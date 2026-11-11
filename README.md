@@ -9,9 +9,9 @@
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/custom_components/system_hub/brand/icon.png" alt="System Hub" width="120"></p>
 
-Home Assistant integration that brings the care of your Home Assistant system together in one configurable admin panel: system resources, Home Assistant's own containers, Marketplace updates, the integration watchdog, battery levels and Git sync of your configuration. Each feature is a module you can turn on or off.
+Home Assistant integration that brings the care of your Home Assistant system together in one configurable admin panel: system resources, Home Assistant's own containers, Marketplace updates, the integration watchdog, battery levels, Git sync of your configuration and orphaned entities. Each feature is a module you can turn on or off.
 
-> System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor) and [ha-git-sync](https://github.com/juju35/ha-git-sync): see [Migrating](#migrating) to move over.
+> System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor), [ha-git-sync](https://github.com/juju35/ha-git-sync) and [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities): see [Migrating](#migrating) to move over.
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="System Hub sidebar panel, System tab" width="800"></p>
 
@@ -24,7 +24,8 @@ Home Assistant integration that brings the care of your Home Assistant system to
 - **Batteries**: battery levels of every device, low-battery notifications.
 - **Git sync**: commit and push your configuration and export the dashboards to a Git repository.
 - **Automations**: the failed automations and the unavailable entities they use, as reported by [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor), with their trace and editor.
-- **Modules**: Containers, Marketplace, Watchdog, Batteries and Git sync can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
+- **Orphans**: the entities their integration no longer provides and the devices left behind, with what still uses them, removed or ignored in bulk.
+- **Modules**: Containers, Marketplace, Watchdog, Batteries, Git sync, Automations and Orphans can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
 - **Admin panel**: one sidebar panel with the System tab and a tab per module turned on, which you can order.
 
 ## Supported integrations
@@ -68,7 +69,7 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 
 **Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Containers module needs the Supervisor (Home Assistant OS or a Supervised installation), the Marketplace module Home Assistant's Marketplace.
 
-**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**System: thresholds** always, then **Containers**, **Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**, **Batteries**, **Git Sync: Repository settings**, **Git Sync**).
+**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**System: thresholds** always, then **Containers**, **Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**, **Batteries**, **Git Sync: Repository settings**, **Git Sync**, **Orphans**).
 
 ### Modules
 
@@ -80,10 +81,11 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 | Batteries | on | Notifies the low batteries twice a day, forecasts the replacements, counts the spare batteries |
 | Git Sync | off (needs a repository) | Commits and pushes the configuration to Git with AI commit messages, exports the dashboards |
 | Automations | on when Automation Monitor is loaded | Shows the failed automations and the unavailable linked entities reported by Automation Monitor; no entities of its own |
+| Orphans | on | Lists the entities their integration no longer provides and the orphan devices, with what still uses them; removes or ignores them in bulk |
 
 A module turned off is not set up: its checks stop, its entities and its device are removed, its actions fail with *The … module is turned off*, and the Watchdog's Repairs issues and notifications are dismissed. Its settings and saved state (the Watchdog's history and reload counts, the Marketplace's last check, the Batteries' low-battery times and spare stock) are kept, so turning it back on picks up where it left off.
 
-Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**, **System Hub Batteries**, **System Hub Git Sync**) holding its entities.
+Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**, **System Hub Batteries**, **System Hub Git Sync**, **System Hub Orphans**) holding its entities.
 
 #### Module settings
 
@@ -120,6 +122,7 @@ The **Configure** forms, also opened by **Module settings** in the panel's Setti
 | Batteries | Low and unavailable batteries, last notification; every battery **by level** (the ones in error first, then the lowest), **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); a search by name, room or type; the spare batteries by type (in stock, to buy for the batteries low or due within 30 days), a click sets a type's stock; **Export CSV**; **Notify now** |
 | Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
 | Automations | Failed automations, unavailable linked entities, last failure; each failure with its error, failed step and failures in a row, **Trace**, **Edit**, **Clear**; each unavailable entity with the automations, scripts and scenes using it; **Clear all** (asked first), **Refresh** (rebuilds the list of linked entities); lists folded from their title, 5 items then **Show more** |
+| Orphans | A counter per reason (a click filters on it), orphan devices, removed since start, last scan; **Scan now**; the orphaned entities with a search, integration and reason filters, what uses each (with links); tick them one by one or every match, then **Remove** or **Ignore** (asked first); the orphan devices, removed or ignored the same way |
 | Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
 
 Git Sync can't be turned on from the panel the first time: its repository is checked in **Configure → Modules**.
@@ -137,9 +140,10 @@ Every tab, light and dark themes:
 | Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries.png" alt="sidebar panel, Batteries tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-dark.png" alt="sidebar panel, Batteries tab, dark theme" width="400"> |
 | Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync.png" alt="sidebar panel, Git Sync tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-dark.png" alt="sidebar panel, Git Sync tab, dark theme" width="400"> |
 | Automations | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-automations.png" alt="sidebar panel, Automations tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-automations-dark.png" alt="sidebar panel, Automations tab, dark theme" width="400"> |
+| Orphans | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-orphans.png" alt="sidebar panel, Orphans tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-orphans-dark.png" alt="sidebar panel, Orphans tab, dark theme" width="400"> |
 | Settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings.png" alt="sidebar panel, Settings tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings-dark.png" alt="sidebar panel, Settings tab, dark theme" width="400"> |
 
-The Marketplace check running, the batteries by room, by type and by replacement date, and the Git Sync diff viewer:
+The Marketplace check running, the batteries by room, by type and by replacement date, the Git Sync diff viewer and the Orphans removal asked first:
 
 | View | Light | Dark |
 |---|---|---|
@@ -148,6 +152,7 @@ The Marketplace check running, the batteries by room, by type and by replacement
 | By battery type | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-type.png" alt="Batteries tab by battery type" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-type-dark.png" alt="Batteries tab by battery type, dark theme" width="400"> |
 | By replacement date | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-forecast.png" alt="Batteries tab by replacement date" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-forecast-dark.png" alt="Batteries tab by replacement date, dark theme" width="400"> |
 | View changes | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-diff.png" alt="Git Sync diff viewer" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-diff-dark.png" alt="Git Sync diff viewer, dark theme" width="400"> |
+| Orphans, Remove asked first | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-orphans-confirm.png" alt="Orphans tab asking to confirm a removal" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-orphans-confirm-dark.png" alt="Orphans tab asking to confirm a removal, dark theme" width="400"> |
 
 On a phone:
 
@@ -718,9 +723,84 @@ The module raises these issues in **Settings → System → Repairs**:
 | Cannot push (behind) | The remote has new commits and *Pull before push* is off | Turn the option on, or run `git pull --rebase`. Removed by the next successful push |
 | `.gitignore` does not exclude secrets | The repository holds a `configuration.yaml` and its `.gitignore` lets `secrets.yaml` or `.storage/` be committed | **Fix** shows the lines to add and appends them to `.gitignore` once confirmed (repairs are for administrators only). A file already tracked stays tracked: `git rm -r --cached secrets.yaml .storage` removes it from the repository, not from the disk |
 
+## Orphans
+
+Lists the entities their integration no longer provides, so that you can remove them in bulk, and the devices left behind by a removed integration. Formerly [Orphan Entities](https://github.com/juju35/ha-orphan-entities).
+
+The entity registry is scanned every 15 minutes (**Scan interval**), and a few seconds after it changes (an entity added or removed, an integration set up or removed). Nothing is scanned while Home Assistant is starting, nor during the **Grace period after startup** (10 minutes), while the integrations set up their entities; **Scan now** (the button, the action or the panel) scans at once, even within the grace period.
+
+| Reason | Listed when | Colour |
+|---|---|---|
+| Integration removed | Its config entry no longer exists (listed even when disabled) | red |
+| Integration not loaded | A YAML platform that is no longer loaded | red |
+| Not provided | Its integration is loaded but no longer creates it (restored placeholder, or no state) | red |
+| Unavailable | Still provided, but unavailable for longer than **Stale after** (24 hours; 0 never lists it) | orange |
+| Unknown | Still provided, but unknown for that long (**Include unknown entities**); buttons, scenes, events and the like, unknown by design, never are | orange |
+
+Entities of a disabled or failing integration are not listed: they come back with it (that is the Watchdog module's job), nor are disabled entities other than those of a removed integration. **Ignored integrations** and **Ignored entities** (entity IDs and device IDs, which **Ignore** adds) are never listed.
+
+**Used by**: each orphan comes with what still uses it — automations, scripts, scenes, groups (old-style groups and group helpers) and dashboards in storage mode — each with a link to its editor; the dashboards are read once, then again only when one is saved. Removing an entity still in use asks you to confirm it.
+
+**Orphan devices**: devices whose integration entries were all removed. **Remove devices** removes them from the device registry with their entities; the automations and scripts still using a device (device triggers, conditions, actions) are listed.
+
+Every removal checks each entity (or device) again first: one that is no longer orphaned since the scan (its integration came back, it is available again) is kept and returned as `skipped`. Only what the last scan listed can be removed. The history stays in the database; an entity still provided by its integration comes back if the integration creates it again.
+
+### Panel
+
+The **Orphans** tab: a counter per reason (a click filters on it), the orphan devices, the entities removed since Home Assistant started and the last scan; **Scan now**; the list with a search (name, entity ID, integration, device, config entry), an integration filter and a reason filter; tick entities one by one or **Select** every match, then **Remove** or **Ignore** them, once confirmed; each row shows what uses it, with links; the orphan devices below, removed or ignored the same way. The whole list is read from the `system_hub/orphans` WebSocket command, not from the sensor's attributes.
+
+### Cards
+
+The Orphan Entities card and mini card are served by System Hub (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and use the Orphans module's entities and actions.
+
+| Card | Light | Dark |
+|---|---|---|
+| Card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-dark.png" alt="Orphan Entities card, dark theme" width="300"> |
+| Remove, confirmed | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-confirm.png" alt="Orphan Entities card asking to confirm" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-confirm-dark.png" alt="Orphan Entities card asking to confirm, dark theme" width="300"> |
+| Orphan devices | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-devices.png" alt="Orphan Entities card, orphan devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-devices-dark.png" alt="Orphan Entities card, orphan devices, dark theme" width="300"> |
+| Mini card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini.png" alt="Orphan Entities mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-dark.png" alt="Orphan Entities mini card, dark theme" width="300"> |
+
+#### Entities
+
+| Entity | Description |
+|---|---|
+| `sensor.system_hub_orphans_orphaned_entities` | Number of orphaned entities; attributes `entities` (each with `entity_id`, `name`, `platform`, `reason`, `since`, `entry_title`, `device`, `disabled`, `used_by`), `devices`, `counts` by reason, `removed`, `truncated` and `devices_truncated` (the attributes list at most 250 of each), `next_scan`, the ignored integrations and entities |
+| `sensor.system_hub_orphans_last_scan` | End of the last scan |
+| `button.system_hub_orphans_scan_now` | Scans now, even within the grace period |
+
+#### Action `system_hub.orphans_scan`
+
+Scans now. Fails while Home Assistant is starting. Administrators only.
+
+#### Action `system_hub.orphans_remove`
+
+Removes entities listed by the last scan from the entity registry, at most 1000 at a time; refuses the whole request if one is not listed. Returns `removed` and `skipped` (no longer orphaned, kept). Administrators only.
+
+```yaml
+action: system_hub.orphans_remove
+data:
+  entities:
+    - sensor.old_temperature
+```
+
+#### Action `system_hub.orphans_remove_devices`
+
+Removes orphan devices of the last scan with their entities; without `devices`, every orphan device of the last scan. Returns `removed`, `skipped` and the `entities` removed with them. Administrators only.
+
+#### Action `system_hub.orphans_ignore`
+
+Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are dropped from the list at once and saved in **Configure → Orphans** (System Hub is not reloaded for it). Administrators only.
+
+#### Events
+
+| Event | Fired when | Data |
+|---|---|---|
+| `system_hub_orphans_removed` | Entities were removed (by `orphans_remove`, or with their devices) | `entities` |
+| `system_hub_orphans_devices_removed` | Orphan devices were removed | `devices` |
+
 ## Migrating
 
-System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor and Git Sync: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in **Configure**. Rename in your automations:
+System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in **Configure**. Rename in your automations:
 
 | Before | System Hub |
 |---|---|
@@ -736,6 +816,11 @@ System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor a
 | `git_sync.commit_push` / `.pull` / `.generate_message` / `.get_diff` / `.export_dashboards` / `.generate_ssh_key` | `system_hub.git_sync_commit_push` / `.git_sync_pull` / … (no `config_entry_id`: one repository; responses without the `results` list) |
 | `git_sync_committed` / `git_sync_exported` events | `system_hub_git_committed` / `system_hub_dashboards_exported` |
 | `sensor.git_sync_<repo>_*`, `button.git_sync_<repo>_*` | `sensor.system_hub_git_sync_*`, `button.system_hub_git_sync_*` |
+| `orphan_entities.scan` / `.remove` / `.remove_devices` / `.ignore` | `system_hub.orphans_scan` / `.orphans_remove` / `.orphans_remove_devices` / `.orphans_ignore` |
+| `orphan_entities_removed` / `_devices_removed` events | `system_hub_orphans_removed` / `system_hub_orphans_devices_removed` |
+| `sensor.orphan_entities_*`, `button.orphan_entities_scan_now` | `sensor.system_hub_orphans_*`, `button.system_hub_orphans_scan_now` |
+
+[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards keep their names (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and are now served by System Hub; once Orphan Entities is removed, point a card's `entity` (if set) to `sensor.system_hub_orphans_orphaned_entities`. Its ignored integrations and entities are not imported: set them again in **Configure → Orphans**.
 
 ## Translations
 

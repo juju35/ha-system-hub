@@ -34,6 +34,7 @@ from .const import (
     MODULE_CONTAINERS,
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
+    MODULE_ORPHANS,
     MODULE_WATCHDOG,
     MODULES,
 )
@@ -43,6 +44,7 @@ from .git_sync import configured as git_sync_configured
 from .git_sync import flow as git_sync_flow
 from .git_sync.const import CONF_REPO_PATH
 from .marketplace import flow as marketplace_flow
+from .orphans import flow as orphans_flow
 from .watchdog import flow as watchdog_flow
 from .watchdog.const import CONF_DELAY, CONF_DEVICE, CONF_OFF_TIME, CONF_POWER_CYCLES, CONF_SWITCH
 
@@ -161,6 +163,8 @@ class SystemHubOptionsFlow(OptionsFlow):
                 menu.append("batteries_import")
         if MODULE_GIT_SYNC in modules:
             menu += ["git_sync_repository", "git_sync"]
+        if MODULE_ORPHANS in modules:
+            menu.append("orphans")
         return self.async_show_menu(step_id="init", menu_options=menu)
 
     async def async_step_system(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
@@ -373,3 +377,12 @@ class SystemHubOptionsFlow(OptionsFlow):
             data_schema=self.add_suggested_values_to_schema(schema, user_input) if user_input else schema,
             errors=errors,
         )
+
+    # Orphans
+
+    async def async_step_orphans(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Scan interval, grace period after a start, stale entities, integrations and entities ignored."""
+        if user_input is not None:
+            return self._save(**{MODULE_ORPHANS: orphans_flow.settings_options(user_input)})
+        schema = await orphans_flow.settings_schema(self.hass, self._module(MODULE_ORPHANS))
+        return self.async_show_form(step_id="orphans", data_schema=schema)

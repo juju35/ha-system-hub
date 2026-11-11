@@ -34,6 +34,7 @@ from .const import (
     MODULE_CONTAINERS,
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
+    MODULE_ORPHANS,
     MODULE_WATCHDOG,
     MODULES,
 )
@@ -46,6 +47,9 @@ from .git_sync.services import async_setup_git_sync_services
 from .marketplace import async_options_changed, async_remove_marketplace, async_setup_marketplace
 from .marketplace.const import SERVICE_CHECK_REPOSITORY, SERVICE_CHECK_UPDATES, SERVICE_INSTALL_UPDATES
 from .marketplace.refresher import MarketplaceNotAvailableError, MarketplaceRefresher
+from .orphans import async_setup_orphans
+from .orphans.scanner import OrphanScanner
+from .orphans.services import NO_RELOAD_KEY, async_setup_orphans_services
 from .panel import async_register_panel, async_remove_panel
 from .watchdog import async_disable_watchdog, async_remove_watchdog, async_setup_watchdog, async_wait_idle
 from .watchdog.const import ATTR_ENTRY_ID, SERVICE_CHECK, SERVICE_RESET
@@ -78,6 +82,7 @@ class SystemHubData:
     marketplace: MarketplaceRefresher | None = None
     batteries: BatteryMonitor | None = None
     git_sync: GitSyncCoordinator | None = None
+    orphans: OrphanScanner | None = None
 
 
 type SystemHubConfigEntry = ConfigEntry[SystemHubData]
@@ -129,6 +134,20 @@ def loaded_git_sync(hass: HomeAssistant) -> GitSyncCoordinator:
             translation_placeholders={"module": "Git Sync"},
         )
     return coordinator
+
+
+def loaded_orphans(hass: HomeAssistant) -> tuple[ConfigEntry, OrphanScanner]:
+    """The loaded entry and its orphans scanner, for the Orphans actions."""
+    entry = next((e for e in hass.config_entries.async_entries(DOMAIN) if e.state is ConfigEntryState.LOADED), None)
+    if entry is None:
+        raise ServiceValidationError(translation_domain=DOMAIN, translation_key="not_loaded")
+    if (scanner := entry.runtime_data.orphans) is None:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="module_disabled",
+            translation_placeholders={"module": "Orphans"},
+        )
+    return entry, scanner
 
 
 def loaded_watchdog(hass: HomeAssistant) -> IntegrationWatchdog:
@@ -283,6 +302,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     )
 
     async_setup_git_sync_services(hass, lambda: loaded_git_sync(hass))
+    async_setup_orphans_services(hass, lambda: loaded_orphans(hass))
     return True
 
 
@@ -309,6 +329,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
             data.git_sync = await async_setup_git_sync(hass, entry, settings)
         else:
             _LOGGER.warning("Git Sync module turned on without a repository: set it up in Configure → Git Sync")
+    if MODULE_ORPHANS in modules:
+        data.orphans = await async_setup_orphans(hass, entry, module_options(entry, MODULE_ORPHANS))
     entry.runtime_data = data
     # Added again after a removal (which drops the panel and the cards) without a restart: they come back.
     await async_register_panel(hass)
@@ -364,6 +386,9 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
 
 async def _async_reload(hass: HomeAssistant, entry: SystemHubConfigEntry) -> None:
     """Reload with the new options."""
+    # Ignored from the Orphans module (panel, card, action): already applied, no reload needed.
+    if hass.data.get(DOMAIN, {}).pop(NO_RELOAD_KEY, None) == entry.options:
+        return
     if (refresher := entry.runtime_data.marketplace) is not None:
         await async_options_changed(refresher, module_options(entry, MODULE_MARKETPLACE))
     await hass.config_entries.async_reload(entry.entry_id)

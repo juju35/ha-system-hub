@@ -16,6 +16,7 @@ DEVICE_NAMES = {
     "marketplace": "System Hub Marketplace",
     "batteries": "System Hub Batteries",
     "git_sync": "System Hub Git Sync",
+    "orphans": "System Hub Orphans",
 }
 
 

@@ -80,3 +80,33 @@ git_sync_generate_message:
 git_sync_get_diff:
 
 git_sync_pull:
+
+orphans_scan:
+orphans_remove:
+  fields:
+    entities:
+      required: true
+      example: "sensor.old_temperature"
+      selector:
+        text:
+          multiple: true
+orphans_ignore:
+  fields:
+    entities:
+      example: "sensor.kept_on_purpose"
+      selector:
+        text:
+          multiple: true
+    devices:
+      example: "3b1f0c2e9d8a4f6b"
+      selector:
+        text:
+          multiple: true
+orphans_remove_devices:
+  fields:
+    devices:
+      required: false
+      example: "3b1f0c2e9d8a4f6b"
+      selector:
+        text:
+          multiple: true

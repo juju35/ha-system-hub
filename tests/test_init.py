@@ -33,7 +33,7 @@ async def test_flow_with_marketplace(hass: HomeAssistant, fake_marketplace) -> N
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": True})
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert result["title"] == "System Hub"
-    assert result["options"] == {CONF_MODULES: ["watchdog", "marketplace", "batteries"]}
+    assert result["options"] == {CONF_MODULES: ["watchdog", "marketplace", "batteries", "orphans"]}
 
     again = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     assert again["type"] is FlowResultType.ABORT
@@ -51,6 +51,7 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
         "batteries": True,
         "git_sync": False,
         "automations": False,
+        "orphans": True,
     }
     result = await hass.config_entries.flow.async_configure(
         result["flow_id"], {"containers": False, "watchdog": True, "marketplace": True}
@@ -58,7 +59,7 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
     assert result["type"] is FlowResultType.FORM
     assert result["errors"] == {"marketplace": "marketplace_not_loaded"}
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": False})
-    assert result["options"] == {CONF_MODULES: ["watchdog", "batteries"]}
+    assert result["options"] == {CONF_MODULES: ["watchdog", "batteries", "orphans"]}
 
 
 async def test_no_module(hass: HomeAssistant) -> None:

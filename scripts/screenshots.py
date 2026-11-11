@@ -124,6 +124,119 @@ CONTAINERS = [
 ]
 
 
+def _orphan(entity_id, name, platform, reason, since, **extra):
+    return {
+        "entity_id": entity_id,
+        "name": name,
+        "platform": platform,
+        "reason": reason,
+        "since": since,
+        "entry_id": None,
+        "entry_title": None,
+        "device": None,
+        "disabled": False,
+        "used_by": [],
+        **extra,
+    }
+
+
+def mock_orphans():
+    """What system_hub/orphans answers: the orphan entities of each kind, two still used, one orphan device."""
+    used = [
+        {
+            "type": "automation",
+            "id": "automation.porch_at_sunset",
+            "name": "Porch light at sunset",
+            "path": "/config/automation/edit/17",
+        },
+        {"type": "dashboard", "id": "lovelace", "name": "Overview", "path": "/lovelace"},
+    ]
+    entities = [
+        _orphan(
+            "sensor.old_hub_temperature",
+            "Old hub temperature",
+            "acme_hub",
+            "entry_removed",
+            "2026-10-28T10:00:00+01:00",
+            device="Old hub",
+            entry_title="Acme hub",
+        ),
+        _orphan(
+            "binary_sensor.old_hub_motion",
+            "Old hub motion",
+            "acme_hub",
+            "entry_removed",
+            "2026-10-28T10:00:00+01:00",
+            device="Old hub",
+            disabled=True,
+        ),
+        _orphan("switch.pool_pump", "Pool pump", "pool_controller", "integration_missing", "2026-11-02T18:40:00+01:00"),
+        _orphan(
+            "light.porch",
+            "Porch light",
+            "hue",
+            "not_provided",
+            "2026-11-06T07:15:00+01:00",
+            device="Porch",
+            used_by=used,
+        ),
+        _orphan(
+            "sensor.porch_light_power",
+            "Porch light power",
+            "hue",
+            "not_provided",
+            "2026-11-06T07:15:00+01:00",
+            device="Porch",
+        ),
+        _orphan(
+            "sensor.garage_door_battery",
+            "Garage door battery",
+            "zha",
+            "unavailable",
+            "2026-11-07T22:05:00+01:00",
+            device="Garage door",
+            used_by=used[:1],
+        ),
+        _orphan(
+            "sensor.weather_station_uv", "Weather station UV", "weather_station", "unknown", "2026-11-04T12:00:00+01:00"
+        ),
+    ]
+    counts = {
+        r: sum(e["reason"] == r for e in entities)
+        for r in ("entry_removed", "integration_missing", "not_provided", "unavailable", "unknown")
+    }
+    devices = [
+        {
+            "device_id": "a1b2c3",
+            "name": "Old hub",
+            "manufacturer": "Acme",
+            "model": "Hub H1",
+            "entities": 2,
+            "since": "2026-10-28T10:00:00+01:00",
+            "used_by": [],
+        },
+    ]
+    summary = {
+        "total": len(entities),
+        "counts": counts,
+        "devices": len(devices),
+        "removed": 12,
+        "ignored": 3,
+        "last_scan": "2026-11-10T08:45:00+01:00",
+        "next_scan": None,
+        "stale_hours": 24,
+    }
+    integrations = {"hue": "Philips Hue", "zha": "Zigbee Home Automation"}
+    return summary, {
+        **summary,
+        "entities": entities,
+        "devices": devices,
+        "truncated": 0,
+        "devices_truncated": 0,
+        "integrations": integrations,
+    }
+
+
 def mock_state():
     """What system_hub/state answers: every module turned on, with neutral data."""
     system = [
@@ -230,8 +343,10 @@ def mock_state():
     return {
         "loaded": True,
         "entry_id": "system_hub",
-        "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync"],
-        "tabs": ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync"],
+        "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
+        "tabs": ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
+        # The Orphans tab: the counts with the state, the whole list from its own command
+        **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
         "git_sync_configured": True,
         "updates": [
             {
@@ -558,7 +673,9 @@ MOUNT = """([state, strings, tab, narrow, view]) => {
         callWS: async (msg) =>
             msg.type === "system_hub/state"
                 ? state
-                : msg.service === "git_sync_get_diff"
+                : msg.type === "system_hub/orphans"
+                  ? state.orphans_list
+                  : msg.service === "git_sync_get_diff"
                   ? { response: state.git_sync_diff }
                   : msg.type === "history/history_during_period"
                     ? history(msg)
@@ -570,10 +687,17 @@ MOUNT = """([state, strings, tab, narrow, view]) => {
     document.getElementById("root").appendChild(el);
 }"""
 
+# Orphans tab: two entities ticked, then Remove asks first (one of them is still used).
+ORPHANS_CONFIRM = """async () => {
+    const root = document.querySelector("system-hub-panel").shadowRoot;
+    for (const id of ["light.porch", "sensor.porch_light_power"]) root.querySelector(`[data-orph-sel="${id}"]`).click();
+    root.querySelector('[data-action="orph_confirm"][data-act="remove"]').click();
+}"""
+
 # Opens the diff viewer from the Git Sync tab.
 OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
-TABS = ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "settings"]
+TABS = ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans", "settings"]
 SHOTS = [
     *(
         {"file": f"panel-{tab.replace('_', '-')}{suffix}", "theme": theme, "tab": tab}
@@ -591,6 +715,8 @@ SHOTS = [
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
     {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
+    {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},
+    {"file": "panel-orphans-confirm-dark", "theme": "dark", "tab": "orphans", "orphans_confirm": True},
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
@@ -761,6 +887,9 @@ def main():
             shown = automations_state(shown) if shot.get("automations") else shown
             page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
             page.wait_for_timeout(400)
+            if shot.get("orphans_confirm"):
+                page.evaluate(ORPHANS_CONFIRM)
+                page.wait_for_timeout(200)
             if shot.get("diff"):
                 # The viewer covers the window: the capture is the window.
                 page.set_viewport_size({"width": width, "height": 760})

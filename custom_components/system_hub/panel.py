@@ -31,6 +31,7 @@ from .const import (
     MODULES,
     TAB_SYSTEM,
 )
+from .orphans import panel as orphans_panel
 
 STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
@@ -85,6 +86,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         await hass.http.async_register_static_paths([StaticPathConfig(STATIC_URL, str(FRONTEND_DIR), True)])
         websocket_api.async_register_command(hass, ws_state)
         websocket_api.async_register_command(hass, ws_update_settings)
+        websocket_api.async_register_command(hass, orphans_panel.ws_orphans)
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         return
@@ -352,6 +354,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["git_sync"] = _git_sync(data.git_sync)
     if MODULE_AUTOMATIONS in result["modules"]:
         result["automations"] = automations.state(hass)
+    if data.orphans is not None:
+        result["orphans"] = orphans_panel.summary(data.orphans)
     connection.send_result(msg["id"], result)
 
 

@@ -10,6 +10,7 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
+          "orphans": "Orphans",
           "automations": "Automations"
         },
         "data_description": {
@@ -18,6 +19,7 @@
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
           "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
+          "orphans": "Lists the entities that their integration no longer provides, so that you can remove them in bulk.",
           "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
         }
       },
@@ -71,6 +73,7 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batteries: Battery types",
           "batteries_import": "Batteries: Import from Battery Monitor",
+          "orphans": "Orphans",
           "system": "System: thresholds"
         }
       },
@@ -261,6 +264,25 @@
         "title": "Import from Battery Monitor",
         "description": "Found in Battery Monitor: {settings} settings, {types} battery types set in its cards and {stock} types of spare batteries. Submit to bring them into System Hub: its settings replace those of the Batteries module, and the battery types already set here are kept."
       },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Scan interval",
+          "grace_period": "Grace period after startup",
+          "stale_hours": "Stale after",
+          "include_unknown": "Include unknown entities",
+          "ignored_integrations": "Ignored integrations",
+          "ignored_entities": "Ignored entities"
+        },
+        "data_description": {
+          "scan_interval": "Minutes between two scans. The entity registry is also scanned a few seconds after it changes.",
+          "grace_period": "Minutes after Home Assistant has started before the first scan, while the integrations set up their entities.",
+          "stale_hours": "Hours an entity still provided by its integration must have been unavailable (or unknown) to be listed. 0 lists only the entities no longer provided.",
+          "include_unknown": "Also list the entities unknown for that long. Buttons, scenes and events, unknown by design, are never listed.",
+          "ignored_integrations": "Integrations whose entities are never listed. Type a domain to add one that isn't listed.",
+          "ignored_entities": "Entities (entity IDs) and devices (device IDs) never listed. The card adds them here with its Ignore button."
+        }
+      },
       "system": {
         "title": "System: thresholds",
         "description": "The System tab turns a value orange from the first threshold and red from the second.",
@@ -316,6 +338,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Export dashboards"
+      },
+      "orphans_scan": {
+        "name": "Scan now"
       }
     },
     "sensor": {
@@ -591,6 +616,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Orphaned entities",
+        "state_attributes": {
+          "entities": {
+            "name": "Entities"
+          },
+          "counts": {
+            "name": "Counts"
+          },
+          "removed": {
+            "name": "Removed"
+          },
+          "stale_hours": {
+            "name": "Stale after"
+          },
+          "include_unknown": {
+            "name": "Include unknown"
+          },
+          "ignored_integrations": {
+            "name": "Ignored integrations"
+          },
+          "ignored_entities": {
+            "name": "Ignored entities"
+          },
+          "devices": {
+            "name": "Devices"
+          },
+          "truncated": {
+            "name": "Left out of the list"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Last scan"
       }
     }
   },
@@ -708,6 +768,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Fetches the remote and brings in its new commits: a fast-forward, or the local commits rebased on top of them (only on a clean work tree). A conflict aborts the rebase."
+    },
+    "orphans_scan": {
+      "name": "Scan for orphaned entities",
+      "description": "Scans the entity registry for the entities their integration no longer provides."
+    },
+    "orphans_remove": {
+      "name": "Remove orphaned entities",
+      "description": "Removes entities listed by the last scan from the entity registry.",
+      "fields": {
+        "entities": {
+          "name": "Entities",
+          "description": "Entity IDs to remove. Each one must be in the list of orphaned entities."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignore entities",
+      "description": "Adds entities or devices to the ignored ones: they are no longer listed.",
+      "fields": {
+        "entities": {
+          "name": "Entities",
+          "description": "Entity IDs to ignore."
+        },
+        "devices": {
+          "name": "Devices",
+          "description": "Device IDs to ignore (orphan devices)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Remove orphan devices",
+      "description": "Removes devices whose integration entries were all removed, with their entities. Only the devices of the last scan's list.",
+      "fields": {
+        "devices": {
+          "name": "Devices",
+          "description": "Device IDs from the devices attribute of the orphans sensor. Leave empty for every orphan device of the last scan."
+        }
+      }
     }
   },
   "common": {
@@ -845,6 +943,30 @@
     },
     "export_dir_not_allowed": {
       "message": "The export folder {path} is outside the configuration folder and allowlist_external_dirs: choose another one in the Git Sync options."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant is still starting: scan again once it is up."
+    },
+    "orphans_no_entities": {
+      "message": "No entity to remove."
+    },
+    "orphans_too_many": {
+      "message": "At most {max} entities at a time."
+    },
+    "orphans_not_orphan": {
+      "message": "Not in the list of orphaned entities: {entities}. Scan again and retry."
+    },
+    "orphans_not_registered": {
+      "message": "Not in the entity registry: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "No device given."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Not orphan devices (scan first): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Not in the device registry: {devices}."
     }
   },
   "issues": {
@@ -1061,6 +1183,73 @@
         "open_device": "Device",
         "pc_none": "No power cycle yet: add one in Configure → Watchdog: Add a power cycle.",
         "pc_configure": "Add or remove in Configure",
+        "orph_reason_entry_removed": "Integration removed",
+        "orph_reason_integration_missing": "Integration not loaded",
+        "orph_reason_not_provided": "Not provided",
+        "orph_reason_unavailable": "Unavailable",
+        "orph_reason_unknown": "Unknown",
+        "orph_search": "Search",
+        "orph_all_integrations": "All integrations",
+        "orph_list_title": "Orphaned entities",
+        "orph_no_match": "No entity matches the filters",
+        "orph_empty": "Every entity is provided by its integration",
+        "orph_for": "for {d}",
+        "orph_disabled": "disabled",
+        "orph_select_all": "Select the {n} shown",
+        "orph_show_all": "Show all ({n})",
+        "orph_selected_one": "{n} selected",
+        "orph_selected_many": "{n} selected",
+        "orph_remove": "Remove",
+        "orph_ignore": "Ignore",
+        "orph_clear": "Clear the selection",
+        "orph_confirm_remove_one": "Remove {n} entity from the entity registry?",
+        "orph_confirm_remove_many": "Remove {n} entities from the entity registry?",
+        "orph_confirm_remove_text": "Their history stays in the database. An entity still provided by its integration comes back if the integration creates it again.",
+        "orph_confirm_ignore_one": "Ignore {n} entity?",
+        "orph_confirm_ignore_many": "Ignore {n} entities?",
+        "orph_confirm_ignore_text": "They are no longer listed. Remove them from the ignored entities in the integration options.",
+        "orph_used_by": "Used by {n}",
+        "orph_ref_automation": "Automation",
+        "orph_ref_script": "Script",
+        "orph_ref_scene": "Scene",
+        "orph_ref_group": "Group",
+        "orph_ref_dashboard": "Dashboard",
+        "orph_confirm_used_one": "{n} selected entity is still in use: what uses it may stop working.",
+        "orph_confirm_used_many": "{n} selected entities are still in use: what uses them may stop working.",
+        "orph_remove_anyway": "Remove anyway",
+        "orph_and_more": "and {n} more",
+        "orph_removed_one": "{n} entity removed",
+        "orph_removed_many": "{n} entities removed",
+        "orph_devices_title": "Orphan devices",
+        "orph_devices_hint": "Their integration was removed: nothing provides them any more",
+        "orph_remove_devices": "Remove devices",
+        "orph_confirm_devices": "Remove the orphan devices?",
+        "orph_confirm_devices_text": "They leave the device registry with their entities. Their history stays in the database.",
+        "orph_devices_removed": "Orphan devices removed: {n}",
+        "orph_confirm_ignore_devices": "Ignore the selected devices?",
+        "orph_devices_ignored": "Orphan devices ignored: {n}",
+        "orph_kept": "Kept, no longer orphaned: {n}",
+        "orph_dev_entities": "Entities: {n}",
+        "orph_ignored_one": "{n} entity ignored",
+        "orph_ignored_many": "{n} entities ignored",
+        "orph_waiting": "Waiting for the first scan",
+        "orph_never_scanned": "Not scanned yet",
+        "orph_stat_removed": "Removed",
+        "orph_stat_removed_hint": "Since Home Assistant started",
+        "orph_stat_ignored": "Ignored",
+        "orph_all": "All",
+        "orph_confirm_devices_used": "Devices still used by automations or scripts: {n}. They may stop working.",
+        "network_total": "Received / sent",
+        "update_to": "Update to {versions}",
+        "up_to_date": "Up to date",
+        "export_csv": "Export CSV",
+        "spares": "Spares",
+        "to_buy": "{n} to buy",
+        "set_stock": "Set the stock",
+        "stock_type": "Battery type",
+        "stock_count": "Count",
+        "search_batteries": "Search: name, room, type",
+        "no_match": "No battery matches",
         "auto_failed": "Failed automations",
         "auto_linked": "Unavailable linked entities",
         "auto_sensor_unavailable": "Sensor unavailable",
@@ -1080,18 +1269,7 @@
         "auto_confirm_clear_all": "Clear all failed automations? They will be reported again on their next failure.",
         "auto_show_more": "Show {n} more",
         "auto_show_less": "Show less",
-        "auto_last_failure": "Last failure",
-        "network_total": "Received / sent",
-        "update_to": "Update to {versions}",
-        "up_to_date": "Up to date",
-        "export_csv": "Export CSV",
-        "spares": "Spares",
-        "to_buy": "{n} to buy",
-        "set_stock": "Set the stock",
-        "stock_type": "Battery type",
-        "stock_count": "Count",
-        "search_batteries": "Search: name, room, type",
-        "no_match": "No battery matches"
+        "auto_last_failure": "Last failure"
       }
     },
     "battery_type": {

@@ -10,6 +10,7 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
+          "orphans": "Orphans",
           "automations": "Automations"
         },
         "data_description": {
@@ -18,6 +19,7 @@
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
           "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
+          "orphans": "Zobrazuje entity, které jejich integrace již neposkytuje, abyste je mohli hromadně odebrat.",
           "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit."
         }
       },
@@ -71,6 +73,7 @@
           "git_sync": "Git Sync",
           "batteries_types": "Baterie: typy baterií",
           "batteries_import": "Baterie: import z Battery Monitor",
+          "orphans": "Orphans",
           "system": "Systém: prahy"
         }
       },
@@ -261,6 +264,25 @@
         "title": "Import z Battery Monitor",
         "description": "Nalezeno v Battery Monitor: nastavení: {settings}, typy baterií nastavené v jeho kartách: {types}, typy náhradních baterií: {stock}. Odesláním je převezmete do System Hub: jeho nastavení nahradí nastavení modulu Baterie a typy baterií již nastavené zde zůstanou zachovány."
       },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Interval skenování",
+          "grace_period": "Čekací doba po spuštění",
+          "stale_hours": "Zastaralá po",
+          "include_unknown": "Zahrnout neznámé entity",
+          "ignored_integrations": "Ignorované integrace",
+          "ignored_entities": "Ignorované entity"
+        },
+        "data_description": {
+          "scan_interval": "Minuty mezi dvěma skenováními. Registr entit se skenuje také několik sekund po každé změně.",
+          "grace_period": "Minuty po spuštění Home Assistant před prvním skenováním, než integrace vytvoří své entity.",
+          "stale_hours": "Počet hodin, po které musí být entita stále poskytovaná svou integrací nedostupná (nebo neznámá), aby byla zobrazena. 0 zobrazí pouze entity, které se již neposkytují.",
+          "include_unknown": "Zobrazit také entity, které jsou stejně dlouho neznámé. Tlačítka, scény a události, které jsou ze své podstaty neznámé, se nikdy nezobrazují.",
+          "ignored_integrations": "Integrace, jejichž entity se nikdy nezobrazují. Zadejte doménu a přidejte integraci, která není v seznamu.",
+          "ignored_entities": "Entity (ID entit) a zařízení (ID zařízení), která se nikdy nezobrazují. Karta je sem přidává tlačítkem Ignorovat."
+        }
+      },
       "system": {
         "title": "Systém: prahy",
         "description": "Karta Systém obarví hodnotu oranžově od prvního prahu a červeně od druhého.",
@@ -316,6 +338,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Exportovat dashboardy"
+      },
+      "orphans_scan": {
+        "name": "Skenovat nyní"
       }
     },
     "sensor": {
@@ -591,6 +616,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Osiřelé entity",
+        "state_attributes": {
+          "entities": {
+            "name": "Entity"
+          },
+          "counts": {
+            "name": "Počty"
+          },
+          "removed": {
+            "name": "Odebrané"
+          },
+          "stale_hours": {
+            "name": "Zastaralá po"
+          },
+          "include_unknown": {
+            "name": "Zahrnout neznámé"
+          },
+          "ignored_integrations": {
+            "name": "Ignorované integrace"
+          },
+          "ignored_entities": {
+            "name": "Ignorované entity"
+          },
+          "devices": {
+            "name": "Zařízení"
+          },
+          "truncated": {
+            "name": "Mimo seznam"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Poslední skenování"
       }
     }
   },
@@ -708,6 +768,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Načte vzdálený repozitář a převezme jeho nové commity: posun vpřed, nebo lokální commity přesunuté navrch (jen při čistém pracovním stromu). Konflikt přesun zruší."
+    },
+    "orphans_scan": {
+      "name": "Vyhledat osiřelé entity",
+      "description": "Vyhledá v registru entit entity, které jejich integrace již neposkytuje."
+    },
+    "orphans_remove": {
+      "name": "Odebrat osiřelé entity",
+      "description": "Odebere z registru entit entity zobrazené posledním skenováním.",
+      "fields": {
+        "entities": {
+          "name": "Entity",
+          "description": "ID entit k odebrání. Každá musí být v seznamu osiřelých entit."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorovat entity",
+      "description": "Přidá entity nebo zařízení mezi ignorované: už se nezobrazují.",
+      "fields": {
+        "entities": {
+          "name": "Entity",
+          "description": "ID entit k ignorování."
+        },
+        "devices": {
+          "name": "Zařízení",
+          "description": "ID zařízení k ignorování (osiřelá zařízení)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Odebrat osiřelá zařízení",
+      "description": "Odebere zařízení, jejichž všechny položky integrace byly odebrány, i s jejich entitami. Pouze zařízení ze seznamu posledního skenování.",
+      "fields": {
+        "devices": {
+          "name": "Zařízení",
+          "description": "ID zařízení z atributu devices senzoru osiřelých. Ponechte prázdné pro všechna osiřelá zařízení z poslední kontroly."
+        }
+      }
     }
   },
   "common": {
@@ -845,6 +943,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Složka exportu {path} je mimo složku konfigurace a allowlist_external_dirs: vyberte jinou v možnostech Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant se stále spouští: po spuštění skenování spusťte znovu."
+    },
+    "orphans_no_entities": {
+      "message": "Žádná entita k odebrání."
+    },
+    "orphans_too_many": {
+      "message": "Najednou nejvýše {max} entit."
+    },
+    "orphans_not_orphan": {
+      "message": "Nejsou v seznamu osiřelých entit: {entities}. Skenujte znovu a zkuste to znovu."
+    },
+    "orphans_not_registered": {
+      "message": "Nejsou v registru entit: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Nebylo zadáno žádné zařízení."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Nejsou to osiřelá zařízení (nejprve skenujte): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Není v registru zařízení: {devices}."
     }
   },
   "issues": {
@@ -1061,6 +1183,73 @@
         "open_device": "Zařízení",
         "pc_none": "Zatím žádný restart přes zásuvku: přidejte ho v Konfigurovat → Watchdog: přidat restart přes zásuvku.",
         "pc_configure": "Přidat nebo odebrat v Konfigurovat",
+        "orph_reason_entry_removed": "Integrace odebrána",
+        "orph_reason_integration_missing": "Integrace nenačtena",
+        "orph_reason_not_provided": "Neposkytována",
+        "orph_reason_unavailable": "Nedostupná",
+        "orph_reason_unknown": "Neznámá",
+        "orph_search": "Hledat",
+        "orph_all_integrations": "Všechny integrace",
+        "orph_list_title": "Osiřelé entity",
+        "orph_no_match": "Filtrům neodpovídá žádná entita",
+        "orph_empty": "Každou entitu poskytuje její integrace",
+        "orph_for": "již {d}",
+        "orph_disabled": "zakázaná",
+        "orph_select_all": "Vybrat zobrazené ({n})",
+        "orph_show_all": "Zobrazit vše ({n})",
+        "orph_selected_one": "{n} vybraná",
+        "orph_selected_many": "{n} vybraných",
+        "orph_remove": "Odebrat",
+        "orph_ignore": "Ignorovat",
+        "orph_clear": "Zrušit výběr",
+        "orph_confirm_remove_one": "Odebrat {n} entitu z registru entit?",
+        "orph_confirm_remove_many": "Odebrat {n} entit z registru entit?",
+        "orph_confirm_remove_text": "Jejich historie zůstává v databázi. Entita, kterou její integrace stále poskytuje, se vrátí, pokud ji integrace znovu vytvoří.",
+        "orph_confirm_ignore_one": "Ignorovat {n} entitu?",
+        "orph_confirm_ignore_many": "Ignorovat {n} entit?",
+        "orph_confirm_ignore_text": "Již nebudou zobrazeny. Odeberte je z ignorovaných entit v možnostech integrace.",
+        "orph_used_by": "Používá ji: {n}",
+        "orph_ref_automation": "Automatizace",
+        "orph_ref_script": "Skript",
+        "orph_ref_scene": "Scéna",
+        "orph_ref_group": "Skupina",
+        "orph_ref_dashboard": "Ovládací panel",
+        "orph_confirm_used_one": "{n} vybraná entita se stále používá: to, co ji používá, může přestat fungovat.",
+        "orph_confirm_used_many": "{n} vybraných entit se stále používá: to, co je používá, může přestat fungovat.",
+        "orph_remove_anyway": "Přesto odebrat",
+        "orph_and_more": "a další ({n})",
+        "orph_removed_one": "Odebrána {n} entita",
+        "orph_removed_many": "Odebráno {n} entit",
+        "orph_devices_title": "Osiřelá zařízení",
+        "orph_devices_hint": "Jejich integrace byla odebrána: nic je už neposkytuje",
+        "orph_remove_devices": "Odebrat zařízení",
+        "orph_confirm_devices": "Odebrat osiřelá zařízení?",
+        "orph_confirm_devices_text": "Odejdou z registru zařízení i s entitami. Jejich historie zůstane v databázi.",
+        "orph_devices_removed": "Odebraná osiřelá zařízení: {n}",
+        "orph_confirm_ignore_devices": "Ignorovat vybraná zařízení?",
+        "orph_devices_ignored": "Ignorovaná osiřelá zařízení: {n}",
+        "orph_kept": "Ponecháno, už nejsou osiřelé: {n}",
+        "orph_dev_entities": "Entity: {n}",
+        "orph_ignored_one": "Ignorována {n} entita",
+        "orph_ignored_many": "Ignorováno {n} entit",
+        "orph_waiting": "Čeká se na první skenování",
+        "orph_never_scanned": "Zatím neskenováno",
+        "orph_stat_removed": "Odebrané",
+        "orph_stat_removed_hint": "Od spuštění Home Assistant",
+        "orph_stat_ignored": "Ignorované",
+        "orph_all": "Všechny",
+        "orph_confirm_devices_used": "Zařízení stále používaná automatizacemi nebo skripty: {n}. Ty mohou přestat fungovat.",
+        "network_total": "Přijato / odesláno",
+        "update_to": "Aktualizovat na {versions}",
+        "up_to_date": "Aktuální",
+        "export_csv": "Exportovat CSV",
+        "spares": "Zásoba",
+        "to_buy": "{n} koupit",
+        "set_stock": "Nastavit zásobu",
+        "stock_type": "Typ baterie",
+        "stock_count": "Počet",
+        "search_batteries": "Hledat: název, místnost, typ",
+        "no_match": "Žádná baterie neodpovídá",
         "auto_failed": "Neúspěšné automatizace",
         "auto_linked": "Nedostupné propojené entity",
         "auto_sensor_unavailable": "Senzor nedostupný",
@@ -1080,18 +1269,7 @@
         "auto_confirm_clear_all": "Vymazat všechny neúspěšné automatizace? Při dalším selhání budou znovu nahlášeny.",
         "auto_show_more": "Zobrazit další ({n})",
         "auto_show_less": "Zobrazit méně",
-        "auto_last_failure": "Poslední selhání",
-        "network_total": "Přijato / odesláno",
-        "update_to": "Aktualizovat na {versions}",
-        "up_to_date": "Aktuální",
-        "export_csv": "Exportovat CSV",
-        "spares": "Zásoba",
-        "to_buy": "{n} koupit",
-        "set_stock": "Nastavit zásobu",
-        "stock_type": "Typ baterie",
-        "stock_count": "Počet",
-        "search_batteries": "Hledat: název, místnost, typ",
-        "no_match": "Žádná baterie neodpovídá"
+        "auto_last_failure": "Poslední selhání"
       }
     },
     "battery_type": {

@@ -28,7 +28,14 @@ from custom_components.system_hub.git_sync.const import (
 
 from .conftest import git, git_sync_entry
 
-ONLY_GIT_SYNC = {"containers": False, "watchdog": False, "marketplace": False, "batteries": False, "git_sync": True}
+ONLY_GIT_SYNC = {
+    "containers": False,
+    "watchdog": False,
+    "marketplace": False,
+    "batteries": False,
+    "git_sync": True,
+    "orphans": False,
+}
 
 
 def _repository(repo: Path, **extra) -> dict:

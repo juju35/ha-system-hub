@@ -10,6 +10,7 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
+          "orphans": "Orphans",
           "automations": "Automations"
         },
         "data_description": {
@@ -18,6 +19,7 @@
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
           "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
+          "orphans": "Muestra las entidades que su integración ya no proporciona, para que puedas eliminarlas en bloque.",
           "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias."
         }
       },
@@ -71,6 +73,7 @@
           "git_sync": "Git Sync",
           "batteries_types": "Baterías: tipos de pila",
           "batteries_import": "Baterías: importar desde Battery Monitor",
+          "orphans": "Orphans",
           "system": "Sistema: umbrales"
         }
       },
@@ -261,6 +264,25 @@
         "title": "Importar desde Battery Monitor",
         "description": "Encontrado en Battery Monitor: {settings} ajustes, {types} tipos de pila definidos en sus tarjetas y {stock} tipos de pilas de repuesto. Envía para traerlos a System Hub: sus ajustes sustituyen a los del módulo Baterías y se conservan los tipos de pila ya definidos aquí."
       },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Intervalo de escaneo",
+          "grace_period": "Periodo de gracia tras el inicio",
+          "stale_hours": "Obsoleta tras",
+          "include_unknown": "Incluir entidades desconocidas",
+          "ignored_integrations": "Integraciones ignoradas",
+          "ignored_entities": "Entidades ignoradas"
+        },
+        "data_description": {
+          "scan_interval": "Minutos entre dos escaneos. El registro de entidades también se escanea unos segundos después de cada cambio.",
+          "grace_period": "Minutos tras el inicio de Home Assistant antes del primer escaneo, mientras las integraciones configuran sus entidades.",
+          "stale_hours": "Horas que una entidad aún proporcionada por su integración debe haber estado no disponible (o desconocida) para aparecer en la lista. 0 muestra solo las entidades que ya no se proporcionan.",
+          "include_unknown": "Mostrar también las entidades desconocidas durante ese tiempo. Los botones, escenas y eventos, desconocidos por naturaleza, nunca se muestran.",
+          "ignored_integrations": "Integraciones cuyas entidades nunca se muestran. Escribe un dominio para añadir una que no esté en la lista.",
+          "ignored_entities": "Entidades (ID de entidad) y dispositivos (ID de dispositivo) que nunca se muestran. La tarjeta los añade aquí con su botón Ignorar."
+        }
+      },
       "system": {
         "title": "Sistema: umbrales",
         "description": "La pestaña Sistema pone un valor en naranja desde el primer umbral y en rojo desde el segundo.",
@@ -316,6 +338,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Exportar paneles"
+      },
+      "orphans_scan": {
+        "name": "Escanear ahora"
       }
     },
     "sensor": {
@@ -591,6 +616,41 @@
             "name": "Rama remota"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Entidades huérfanas",
+        "state_attributes": {
+          "entities": {
+            "name": "Entidades"
+          },
+          "counts": {
+            "name": "Recuentos"
+          },
+          "removed": {
+            "name": "Eliminadas"
+          },
+          "stale_hours": {
+            "name": "Obsoleta tras"
+          },
+          "include_unknown": {
+            "name": "Incluir desconocidas"
+          },
+          "ignored_integrations": {
+            "name": "Integraciones ignoradas"
+          },
+          "ignored_entities": {
+            "name": "Entidades ignoradas"
+          },
+          "devices": {
+            "name": "Dispositivos"
+          },
+          "truncated": {
+            "name": "Fuera de la lista"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Último escaneo"
       }
     }
   },
@@ -708,6 +768,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Obtiene el remoto e incorpora sus nuevos commits: avance rápido, o los commits locales rebasados encima (solo con el árbol de trabajo limpio). Un conflicto cancela el rebase."
+    },
+    "orphans_scan": {
+      "name": "Buscar entidades huérfanas",
+      "description": "Busca en el registro de entidades las entidades que su integración ya no proporciona."
+    },
+    "orphans_remove": {
+      "name": "Eliminar entidades huérfanas",
+      "description": "Elimina del registro de entidades las entidades listadas por el último escaneo.",
+      "fields": {
+        "entities": {
+          "name": "Entidades",
+          "description": "ID de las entidades que se eliminarán. Cada una debe estar en la lista de entidades huérfanas."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorar entidades",
+      "description": "Añade entidades o dispositivos a los ignorados: dejan de mostrarse.",
+      "fields": {
+        "entities": {
+          "name": "Entidades",
+          "description": "ID de las entidades que se ignorarán."
+        },
+        "devices": {
+          "name": "Dispositivos",
+          "description": "ID de los dispositivos que ignorar (dispositivos huérfanos)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Eliminar dispositivos huérfanos",
+      "description": "Elimina los dispositivos cuyas entradas de integración se eliminaron todas, con sus entidades. Solo los dispositivos de la lista del último análisis.",
+      "fields": {
+        "devices": {
+          "name": "Dispositivos",
+          "description": "ID de dispositivos del atributo devices del sensor de huérfanos. Déjelo vacío para todos los dispositivos huérfanos del último análisis."
+        }
+      }
     }
   },
   "common": {
@@ -845,6 +943,30 @@
     },
     "export_dir_not_allowed": {
       "message": "La carpeta de exportación {path} está fuera de la carpeta de configuración y de allowlist_external_dirs: elige otra en las opciones de Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant todavía está arrancando: vuelve a escanear cuando esté listo."
+    },
+    "orphans_no_entities": {
+      "message": "No hay ninguna entidad que eliminar."
+    },
+    "orphans_too_many": {
+      "message": "Como máximo {max} entidades a la vez."
+    },
+    "orphans_not_orphan": {
+      "message": "No están en la lista de entidades huérfanas: {entities}. Vuelve a escanear e inténtalo de nuevo."
+    },
+    "orphans_not_registered": {
+      "message": "No están en el registro de entidades: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "No se indicó ningún dispositivo."
+    },
+    "orphans_not_orphan_device": {
+      "message": "No son dispositivos huérfanos (analice primero): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "No está en el registro de dispositivos: {devices}."
     }
   },
   "issues": {
@@ -1061,6 +1183,73 @@
         "open_device": "Dispositivo",
         "pc_none": "Aún no hay reinicios por enchufe: añade uno en Configurar → Watchdog: añadir un reinicio por enchufe.",
         "pc_configure": "Añadir o quitar en Configurar",
+        "orph_reason_entry_removed": "Integración eliminada",
+        "orph_reason_integration_missing": "Integración no cargada",
+        "orph_reason_not_provided": "No proporcionada",
+        "orph_reason_unavailable": "No disponible",
+        "orph_reason_unknown": "Desconocida",
+        "orph_search": "Buscar",
+        "orph_all_integrations": "Todas las integraciones",
+        "orph_list_title": "Entidades huérfanas",
+        "orph_no_match": "Ninguna entidad coincide con los filtros",
+        "orph_empty": "Todas las entidades las proporciona su integración",
+        "orph_for": "desde hace {d}",
+        "orph_disabled": "deshabilitada",
+        "orph_select_all": "Seleccionar las {n} mostradas",
+        "orph_show_all": "Mostrar todas ({n})",
+        "orph_selected_one": "{n} seleccionada",
+        "orph_selected_many": "{n} seleccionadas",
+        "orph_remove": "Eliminar",
+        "orph_ignore": "Ignorar",
+        "orph_clear": "Borrar la selección",
+        "orph_confirm_remove_one": "¿Eliminar {n} entidad del registro de entidades?",
+        "orph_confirm_remove_many": "¿Eliminar {n} entidades del registro de entidades?",
+        "orph_confirm_remove_text": "Su historial permanece en la base de datos. Una entidad aún proporcionada por su integración vuelve si la integración la crea de nuevo.",
+        "orph_confirm_ignore_one": "¿Ignorar {n} entidad?",
+        "orph_confirm_ignore_many": "¿Ignorar {n} entidades?",
+        "orph_confirm_ignore_text": "Dejan de mostrarse. Quítalas de las entidades ignoradas en las opciones de la integración.",
+        "orph_used_by": "Usada por {n}",
+        "orph_ref_automation": "Automatización",
+        "orph_ref_script": "Script",
+        "orph_ref_scene": "Escena",
+        "orph_ref_group": "Grupo",
+        "orph_ref_dashboard": "Panel",
+        "orph_confirm_used_one": "{n} entidad seleccionada aún está en uso: lo que la usa puede dejar de funcionar.",
+        "orph_confirm_used_many": "{n} entidades seleccionadas aún están en uso: lo que las usa puede dejar de funcionar.",
+        "orph_remove_anyway": "Eliminar de todos modos",
+        "orph_and_more": "y {n} más",
+        "orph_removed_one": "{n} entidad eliminada",
+        "orph_removed_many": "{n} entidades eliminadas",
+        "orph_devices_title": "Dispositivos huérfanos",
+        "orph_devices_hint": "Su integración se eliminó: ya nada los proporciona",
+        "orph_remove_devices": "Eliminar dispositivos",
+        "orph_confirm_devices": "¿Eliminar los dispositivos huérfanos?",
+        "orph_confirm_devices_text": "Salen del registro de dispositivos con sus entidades. Su historial permanece en la base de datos.",
+        "orph_devices_removed": "Dispositivos huérfanos eliminados: {n}",
+        "orph_confirm_ignore_devices": "¿Ignorar los dispositivos seleccionados?",
+        "orph_devices_ignored": "Dispositivos huérfanos ignorados: {n}",
+        "orph_kept": "Conservadas, ya no huérfanas: {n}",
+        "orph_dev_entities": "Entidades: {n}",
+        "orph_ignored_one": "{n} entidad ignorada",
+        "orph_ignored_many": "{n} entidades ignoradas",
+        "orph_waiting": "Esperando el primer escaneo",
+        "orph_never_scanned": "Aún sin escanear",
+        "orph_stat_removed": "Eliminadas",
+        "orph_stat_removed_hint": "Desde que se inició Home Assistant",
+        "orph_stat_ignored": "Ignoradas",
+        "orph_all": "Todas",
+        "orph_confirm_devices_used": "Dispositivos aún usados por automatizaciones o scripts: {n}. Estos pueden dejar de funcionar.",
+        "network_total": "Recibido / enviado",
+        "update_to": "Actualizar a {versions}",
+        "up_to_date": "Actualizado",
+        "export_csv": "Exportar CSV",
+        "spares": "Reserva",
+        "to_buy": "{n} por comprar",
+        "set_stock": "Ajustar el stock",
+        "stock_type": "Tipo de pila",
+        "stock_count": "Cantidad",
+        "search_batteries": "Buscar: nombre, habitación, tipo",
+        "no_match": "Ninguna pila coincide",
         "auto_failed": "Automatizaciones fallidas",
         "auto_linked": "Entidades vinculadas no disponibles",
         "auto_sensor_unavailable": "Sensor no disponible",
@@ -1080,18 +1269,7 @@
         "auto_confirm_clear_all": "¿Borrar todas las automatizaciones fallidas? Se volverán a notificar en su próximo fallo.",
         "auto_show_more": "Mostrar {n} más",
         "auto_show_less": "Mostrar menos",
-        "auto_last_failure": "Último fallo",
-        "network_total": "Recibido / enviado",
-        "update_to": "Actualizar a {versions}",
-        "up_to_date": "Actualizado",
-        "export_csv": "Exportar CSV",
-        "spares": "Reserva",
-        "to_buy": "{n} por comprar",
-        "set_stock": "Ajustar el stock",
-        "stock_type": "Tipo de pila",
-        "stock_count": "Cantidad",
-        "search_batteries": "Buscar: nombre, habitación, tipo",
-        "no_match": "Ninguna pila coincide"
+        "auto_last_failure": "Último fallo"
       }
     },
     "battery_type": {
