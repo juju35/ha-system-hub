@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Τελευταία αποτυχία",
         "unsaved": "Μη αποθηκευμένες αλλαγές",
         "discard": "Απόρριψη",
-        "containers": "Κοντέινερ"
+        "containers": "Κοντέινερ",
+        "mk_title": "{n} διαθέσιμες ενημερώσεις",
+        "mk_title_one": "1 διαθέσιμη ενημέρωση",
+        "mk_checked": "Ελέγχθηκε {when}",
+        "mk_next": "επόμενος έλεγχος {when}",
+        "mk_failed": "{n} δεν ελέγχθηκαν",
+        "mk_notes": "Σημειώσεις έκδοσης",
+        "mk_install": "Ενημέρωση",
+        "mk_major": "κύρια",
+        "mk_minor": "δευτερεύουσα",
+        "mk_patch": "διόρθωση",
+        "gh_connected": "GitHub συνδεδεμένο",
+        "gh_not_connected": "Κανένας λογαριασμός GitHub",
+        "gh_retry": "όριο, νέα προσπάθεια {when}"
       }
     },
     "battery_type": {

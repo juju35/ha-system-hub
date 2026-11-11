@@ -262,8 +262,34 @@ def _watchdog(hass: HomeAssistant, watchdog: Any) -> dict[str, Any]:
     }
 
 
+def _marketplace_updates(hass: HomeAssistant, installing: list[str]) -> list[dict[str, Any]]:
+    """The Marketplace's update entities with an update: versions, release, picture, and whether it is installing."""
+    updates = []
+    for entry in er.async_get(hass).entities.values():
+        if entry.platform != "marketplace" or entry.domain != "update":
+            continue
+        state = hass.states.get(entry.entity_id)
+        if state is None or state.state != "on":
+            continue
+        attrs = state.attributes
+        updates.append(
+            {
+                "entity_id": entry.entity_id,
+                "title": attrs.get("title") or state.name,
+                "installed": attrs.get("installed_version"),
+                "latest": attrs.get("latest_version"),
+                "release_url": attrs.get("release_url"),
+                "release_summary": attrs.get("release_summary"),
+                "picture": attrs.get("entity_picture"),
+                "installing": bool(attrs.get("in_progress")) or entry.entity_id in installing,
+            }
+        )
+    return sorted(updates, key=lambda u: str(u["title"]).lower())
+
+
 def _marketplace(refresher: Any) -> dict[str, Any]:
     return {
+        "list": _marketplace_updates(refresher.hass, list(refresher.installing)),
         "state": refresher.state,
         "done": refresher.done,
         "total": refresher.total,

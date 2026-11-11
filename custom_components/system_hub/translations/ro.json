@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Ultimul eșec",
         "unsaved": "Modificări nesalvate",
         "discard": "Renunță",
-        "containers": "Containere"
+        "containers": "Containere",
+        "mk_title": "{n} actualizări disponibile",
+        "mk_title_one": "1 actualizare disponibilă",
+        "mk_checked": "Verificat {when}",
+        "mk_next": "următoarea verificare {when}",
+        "mk_failed": "{n} nu au putut fi verificate",
+        "mk_notes": "Note de lansare",
+        "mk_install": "Actualizează",
+        "mk_major": "majoră",
+        "mk_minor": "minoră",
+        "mk_patch": "corecție",
+        "gh_connected": "GitHub conectat",
+        "gh_not_connected": "Niciun cont GitHub conectat",
+        "gh_retry": "limită atinsă, nouă încercare {when}"
       }
     },
     "battery_type": {

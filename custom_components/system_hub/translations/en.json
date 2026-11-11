@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Last failure",
         "unsaved": "Unsaved changes",
         "discard": "Discard",
-        "containers": "Containers"
+        "containers": "Containers",
+        "mk_title": "{n} updates available",
+        "mk_title_one": "1 update available",
+        "mk_checked": "Checked {when}",
+        "mk_next": "next check {when}",
+        "mk_failed": "{n} could not be checked",
+        "mk_notes": "Release notes",
+        "mk_install": "Update",
+        "mk_major": "major",
+        "mk_minor": "minor",
+        "mk_patch": "patch",
+        "gh_connected": "GitHub connected",
+        "gh_not_connected": "No GitHub account connected",
+        "gh_retry": "limit reached, next try {when}"
       }
     },
     "battery_type": {

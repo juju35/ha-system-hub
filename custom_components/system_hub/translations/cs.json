@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Poslední selhání",
         "unsaved": "Neuložené změny",
         "discard": "Zahodit",
-        "containers": "Kontejnery"
+        "containers": "Kontejnery",
+        "mk_title": "Dostupné aktualizace: {n}",
+        "mk_title_one": "Dostupná 1 aktualizace",
+        "mk_checked": "Zkontrolováno {when}",
+        "mk_next": "další kontrola {when}",
+        "mk_failed": "Nelze zkontrolovat: {n}",
+        "mk_notes": "Poznámky k vydání",
+        "mk_install": "Aktualizovat",
+        "mk_major": "hlavní",
+        "mk_minor": "vedlejší",
+        "mk_patch": "oprava",
+        "gh_connected": "GitHub připojen",
+        "gh_not_connected": "Žádný účet GitHub není připojen",
+        "gh_retry": "limit vyčerpán, další pokus {when}"
       }
     },
     "battery_type": {

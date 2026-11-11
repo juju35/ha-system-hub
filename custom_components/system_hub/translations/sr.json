@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Последњи неуспех",
         "unsaved": "Несачуване измене",
         "discard": "Одбаци",
-        "containers": "Контејнери"
+        "containers": "Контејнери",
+        "mk_title": "Доступних ажурирања: {n}",
+        "mk_title_one": "Доступно 1 ажурирање",
+        "mk_checked": "Проверено {when}",
+        "mk_next": "следећа провера {when}",
+        "mk_failed": "Није могуће проверити: {n}",
+        "mk_notes": "Белешке о издању",
+        "mk_install": "Ажурирај",
+        "mk_major": "главно",
+        "mk_minor": "мање",
+        "mk_patch": "исправка",
+        "gh_connected": "GitHub повезан",
+        "gh_not_connected": "Ниједан GitHub налог није повезан",
+        "gh_retry": "ограничење достигнуто, нови покушај {when}"
       }
     },
     "battery_type": {

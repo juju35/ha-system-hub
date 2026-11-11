@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Laatste fout",
         "unsaved": "Niet-opgeslagen wijzigingen",
         "discard": "Verwerpen",
-        "containers": "Containers"
+        "containers": "Containers",
+        "mk_title": "{n} updates beschikbaar",
+        "mk_title_one": "1 update beschikbaar",
+        "mk_checked": "Gecontroleerd {when}",
+        "mk_next": "volgende controle {when}",
+        "mk_failed": "{n} konden niet worden gecontroleerd",
+        "mk_notes": "Release-opmerkingen",
+        "mk_install": "Bijwerken",
+        "mk_major": "major",
+        "mk_minor": "minor",
+        "mk_patch": "patch",
+        "gh_connected": "GitHub verbonden",
+        "gh_not_connected": "Geen GitHub-account verbonden",
+        "gh_retry": "limiet bereikt, volgende poging {when}"
       }
     },
     "battery_type": {

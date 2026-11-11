@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Improved
+- **Marketplace tab**: a card per update, as in the Marketplace Refresh card: its logo, installed → latest version with the size of the change (major, minor, patch), the start of its release notes, **Release notes** and its own **Update** (spinning while it installs); a header with the check, the repositories that could not be checked and GitHub (account, requests left, next try after the limit); the repositories that could not be checked link to GitHub.
+
 ## 0.5.0 - 2026-11-11
 
 ### Improved

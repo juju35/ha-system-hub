@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Utolsó hiba",
         "unsaved": "Nem mentett módosítások",
         "discard": "Elvetés",
-        "containers": "Konténerek"
+        "containers": "Konténerek",
+        "mk_title": "{n} frissítés érhető el",
+        "mk_title_one": "1 frissítés érhető el",
+        "mk_checked": "Ellenőrizve: {when}",
+        "mk_next": "következő ellenőrzés: {when}",
+        "mk_failed": "{n} nem ellenőrizhető",
+        "mk_notes": "Kiadási megjegyzések",
+        "mk_install": "Frissítés",
+        "mk_major": "fő",
+        "mk_minor": "kisebb",
+        "mk_patch": "javítás",
+        "gh_connected": "GitHub csatlakoztatva",
+        "gh_not_connected": "Nincs csatlakoztatott GitHub-fiók",
+        "gh_retry": "korlát elérve, következő próbálkozás: {when}"
       }
     },
     "battery_type": {

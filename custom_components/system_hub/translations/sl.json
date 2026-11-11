@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Zadnja napaka",
         "unsaved": "Neshranjene spremembe",
         "discard": "Zavrzi",
-        "containers": "Vsebniki"
+        "containers": "Vsebniki",
+        "mk_title": "Na voljo posodobitev: {n}",
+        "mk_title_one": "Na voljo 1 posodobitev",
+        "mk_checked": "Preverjeno {when}",
+        "mk_next": "naslednje preverjanje {when}",
+        "mk_failed": "Ni bilo mogoče preveriti: {n}",
+        "mk_notes": "Opombe ob izdaji",
+        "mk_install": "Posodobi",
+        "mk_major": "večja",
+        "mk_minor": "manjša",
+        "mk_patch": "popravek",
+        "gh_connected": "GitHub povezan",
+        "gh_not_connected": "Noben račun GitHub ni povezan",
+        "gh_retry": "omejitev dosežena, naslednji poskus {when}"
       }
     },
     "battery_type": {

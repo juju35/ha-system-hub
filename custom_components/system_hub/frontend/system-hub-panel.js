@@ -37,6 +37,37 @@ var SH_MODULE_NAMES = {
 // Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
 var SH_AUTO_MAX = 5;
 
+// The size of an update from its versions (v1.2.3 → v1.3.0: minor); null when they are not numbers
+function shChange(from, to) {
+  var parse = (v) => String(v || '').replace(/^v/i, '').split(/[.+-]/).slice(0, 3).map(Number);
+  var a = parse(from);
+  var b = parse(to);
+  if (a.length < 2 || b.length < 2 || [...a, ...b].some((x) => Number.isNaN(x))) return null;
+  if (b[0] !== a[0]) return 'major';
+  if (b[1] !== a[1]) return 'minor';
+  return 'patch';
+}
+
+// The start of release notes in plain text: Markdown and HTML left out, about 160 characters
+function shExcerpt(text) {
+  var plain = String(text || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/^\s{0,3}(#{1,6}|[-*+]|\d+\.)\s+/gm, '')
+    .replace(/[`*_>~]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return plain.length > 160 ? `${plain.slice(0, 157).trimEnd()}…` : plain;
+}
+
+// A hue of its own for a name, for the initials that stand in for a missing logo
+function shHue(name) {
+  var h = 0;
+  for (var c of String(name || '')) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return `hsl(${h} 55% 48%)`;
+}
+
 // A selector finding the same button or row again once the panel is drawn anew (null when nothing names it)
 function shFocusSelector(el) {
   var attrs = ['data-action', 'data-more', 'data-entity', 'data-act', 'data-tab-move', 'data-dir', 'data-view', 'data-chart', 'data-hours', 'data-kind'];
@@ -569,6 +600,24 @@ class SystemHubPanel extends HTMLElement {
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
     .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
     .spin { animation:sh-spin 1s linear infinite; }
+    .mkhead { display:flex; align-items:center; gap:14px; padding:14px 16px; flex-wrap:wrap; }
+    .mkhead .who { flex:1; min-width:220px; }
+    .mkhead .who .n { font-size:16px; font-weight:500; }
+    .mkhead .actions { flex:none; }
+    .mkgh { display:flex; align-items:center; gap:4px; --mdc-icon-size:14px; flex-wrap:wrap; }
+    .mkgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; }
+    .mkcard { padding:14px; display:flex; flex-direction:column; gap:10px; cursor:pointer; }
+    .mktop { display:flex; align-items:center; gap:12px; min-width:0; }
+    .mktop .who { flex:1; min-width:0; }
+    .mktop .who .n { font-weight:500; }
+    .mklogo { width:40px; height:40px; border-radius:10px; flex:none; object-fit:contain; display:flex; align-items:center; justify-content:center;
+              color:#fff; font-weight:600; font-size:18px; background:var(--logo, var(--primary-color)); }
+    img.mklogo { background:var(--secondary-background-color, rgba(127,127,127,.08)); }
+    .mkver { display:flex; align-items:center; gap:8px; font-family:var(--sh-mono, monospace); font-size:14px; --mdc-icon-size:18px; }
+    .mkver ha-icon { color:var(--primary-color); }
+    .mkver b { font-size:15px; }
+    .mknotes { font-size:13px; color:var(--secondary-text-color); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; }
+    .mkcard .actions { margin-top:auto; }
     .pill > ha-icon { --mdc-icon-size:14px; vertical-align:-2px; margin-right:2px; }
     .loading { display:flex; align-items:center; gap:10px; color:var(--secondary-text-color); --mdc-icon-size:20px; }
     .loading ha-icon { color:var(--primary-color); }
@@ -1478,51 +1527,97 @@ class SystemHubPanel extends HTMLElement {
       ${rows || `<div class="empty">${shEsc(this._t('pc_none'))}</div>`}</ha-card>`;
   }
 
-  // Marketplace: the server-side check and the updates found
+  // Marketplace: a header with the check (when, next, GitHub's account and quota) and the buttons, the check's
+  // progress while it runs, then a card per update (logo, installed → latest with the size of the change, the start
+  // of the release notes, Release notes and Update), and the repositories that could not be checked
   _marketplace() {
     var data = this._state.marketplace || {};
     var running = data.state === 'running';
-    var pending = data.pending || [];
-    var tiles = [
-      this._tile('mdi:package-up', `<b>${data.updates ?? 0}</b>`, this._t('updates'), data.updates ? 'warn' : 'good'),
-      this._tile(
-        'mdi:archive-sync',
-        shEsc(this._rel(data.last_check)),
-        this._t('last_check'),
-        data.state === 'error' ? 'bad' : '',
-      ),
-      this._tile('mdi:calendar-clock', shEsc(data.scan_interval ? this._rel(data.next_due) : '—'), this._t('next_check'), ''),
-    ];
+    var list = data.list || [];
+    var n = list.length || data.updates || 0;
+    var failedNames = data.failed || [];
+    var installing = data.installing_updates || this._busy.marketplace_install_updates;
+    var title = n ? this._t(n === 1 ? 'mk_title_one' : 'mk_title', { n }) : running ? this._t('checking') : this._t('no_updates');
+    var tone = data.state === 'error' ? 'bad' : n || failedNames.length ? 'warn' : 'good';
+    var meta = [
+      data.last_check ? this._t('mk_checked', { when: this._rel(data.last_check) }) : '',
+      data.scan_interval && data.next_due ? this._t('mk_next', { when: this._rel(data.next_due) }) : '',
+      failedNames.length && !running ? this._t('mk_failed', { n: failedNames.length }) : '',
+    ].filter(Boolean);
+    // GitHub: the account connected to the Marketplace, the requests left, when it tries again after the limit
+    var retry = data.retry_after && new Date(data.retry_after) > new Date() ? this._t('gh_retry', { when: this._rel(data.retry_after) }) : '';
+    var github = [
+      data.github_connected === false ? this._t('gh_not_connected') : data.github_connected ? this._t('gh_connected') : '',
+      Number.isInteger(data.rate_limit_remaining) ? this._t('rate_limit', { n: data.rate_limit_remaining }) : '',
+      data.not_checked ? this._t('not_checked', { n: data.not_checked }) : '',
+    ].filter(Boolean);
     var confirm = this._confirm === 'install'
       ? `<div class="confirm" role="alertdialog">${shEsc(this._t('confirm_install'))}
           ${this._button('marketplace_install_updates', 'mdi:package-down', this._t('install_all'))}
           ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
       : '';
-    var rows = pending
-      .map((name) => `<div class="item warn"><ha-icon icon="mdi:package-up"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div></div></div>`)
-      .join('');
-    var failed = (data.failed || [])
-      .map((name) => `<div class="item bad"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div></div></div>`)
-      .join('');
-    var notes = [
-      data.not_checked ? this._t('not_checked', { n: data.not_checked }) : '',
-      Number.isInteger(data.rate_limit_remaining) ? this._t('rate_limit', { n: data.rate_limit_remaining }) : '',
-    ].filter(Boolean);
-    return `<div class="tiles">${tiles.join('')}</div>${running ? this._progress(data) : ''}${confirm}
+    var header = `<ha-card class="mkhead ${tone}"><div class="avatar"><ha-icon icon="${running ? 'mdi:archive-sync' : n ? 'mdi:archive-alert-outline' : 'mdi:archive-check-outline'}"></ha-icon></div>
+      <div class="who"><div class="n">${shEsc(title)}</div>
+        ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}
+        ${github.length || retry ? `<div class="s mkgh"><ha-icon icon="mdi:github"></ha-icon>${shEsc(github.join(' · '))}${retry ? `<span class="warn-text">${github.length ? ' · ' : ''}${shEsc(retry)}</span>` : ''}</div>` : ''}
+        ${data.error ? `<div class="s warn-text">${shEsc(data.error)}</div>` : ''}</div>
       <div class="actions">${this._button('marketplace_check_updates', 'mdi:archive-refresh', this._entityName('button', 'marketplace_check_updates'), {
+        quiet: Boolean(n),
         disabled: data.installing_updates,
         busy: running || this._busy.marketplace_check_updates,
       })}
-      ${pending.length ? this._button('confirm_install', 'mdi:package-down', this._t('install_all'), { quiet: true, disabled: running, busy: data.installing_updates || this._busy.marketplace_install_updates }) : ''}
-      ${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}
-      ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}${this._configure()}</div>
-      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>
-      ${
-        failed && !running
-          ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><span class="lname">${shEsc(this._t('could_not_check'))}</span><span class="muted">${(data.failed || []).length}</span></div>${failed}</ha-card>`
-          : ''
-      }
-      ${notes.length ? `<div class="notes">${notes.map((n) => `<span class="msg">${shEsc(n)}</span>`).join('')}</div>` : ''}`;
+      ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t('install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
+      <a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></a></div></ha-card>`;
+    var cards = list.map((u) => this._mkCard(u)).join('');
+    var failed = failedNames
+      .map(
+        (name) => `<div class="item warn"><ha-icon icon="mdi:alert-outline"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div><div class="s">${shEsc(this._t('could_not_check'))}</div></div>
+        ${name.includes('/') ? `<a class="act quiet" href="https://github.com/${shEsc(name)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:open-in-new"></ha-icon>GitHub</a>` : ''}</div>`,
+      )
+      .join('');
+    if (list.length) this._mkFetchNotes(list);
+    return `${header}${running ? this._progress(data) : ''}${confirm}
+      ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
+      ${cards ? `<div class="mkgrid">${cards}</div>` : n || running ? '' : `<ha-card class="list"><div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div></ha-card>`}
+      ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
+  }
+
+  // One update: its logo (else its initial), the versions and the size of the change, the start of its release notes
+  _mkCard(u) {
+    var change = shChange(u.installed, u.latest);
+    var busy = u.installing || this._busy[`mk_install:${u.entity_id}`];
+    var notes = u.release_summary || this._mkNotes?.[`${u.entity_id}@${u.latest}`];
+    var logo = u.picture
+      ? `<img class="mklogo" src="${shEsc(u.picture)}" alt="" loading="lazy">`
+      : `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
+    var link = u.release_url
+      ? `<a class="act quiet" href="${shEsc(u.release_url)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</a>`
+      : `<button class="act quiet" data-more="${shEsc(u.entity_id)}"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</button>`;
+    return `<ha-card class="mkcard link" data-more="${shEsc(u.entity_id)}">
+      <div class="mktop">${logo}<div class="who"><div class="n">${shEsc(u.title)}</div><div class="s">${shEsc(u.entity_id)}</div></div>
+        ${change ? `<span class="pill ${change === 'major' ? 'bad' : change === 'minor' ? 'warn' : 'good'}">${shEsc(this._t(`mk_${change}`))}</span>` : ''}</div>
+      <div class="mkver"><span class="muted">${shEsc(u.installed || '—')}</span><ha-icon icon="mdi:arrow-right"></ha-icon><b>${shEsc(u.latest || '—')}</b></div>
+      ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
+      <div class="actions">${link}<span class="grow"></span>
+        ${this._button('mk_install', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy, disabled: this._state.marketplace?.installing_updates })}</div></ha-card>`;
+  }
+
+  // The release notes of each update, read once per version (Home Assistant's update/release_notes): their start
+  _mkFetchNotes(list) {
+    this._mkNotes ??= {};
+    for (const u of list) {
+      // One key per update: kept for its own answer
+      const key = `${u.entity_id}@${u.latest}`;
+      if (u.release_summary || key in this._mkNotes || !this._hass?.callWS) continue;
+      this._mkNotes[key] = null;
+      this._hass
+        .callWS({ type: 'update/release_notes', entity_id: u.entity_id })
+        .then((text) => {
+          this._mkNotes[key] = shExcerpt(text);
+          if (this._tab === 'marketplace') this._render();
+        })
+        .catch(() => {});
+    }
   }
 
   // The check running: a bar of the repositories checked, the share done, the time left at the pace so far, the
@@ -1901,8 +1996,10 @@ class SystemHubPanel extends HTMLElement {
       window.dispatchEvent(new CustomEvent('location-changed', { detail: { replace: false } }));
       return;
     }
+    // A row or a button that opens its entity's dialog; a button or a link inside such a row does its own thing
     var more = ev.target.closest?.('[data-more]');
-    if (more && !ev.target.closest('button, a, input')) {
+    var control = ev.target.closest?.('button, a, input, select');
+    if (more && (!control || control.hasAttribute('data-more'))) {
       this.dispatchEvent(new CustomEvent('hass-more-info', { detail: { entityId: more.dataset.more }, bubbles: true, composed: true }));
       return;
     }
@@ -1992,7 +2089,11 @@ class SystemHubPanel extends HTMLElement {
       });
     }
     if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', {}, null, SH_DOMAIN, action);
-    if (action === 'marketplace_install_updates') {
+    if (action === 'mk_install') {
+      var target = button.dataset.entity;
+      return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target] }, null, SH_DOMAIN, `mk_install:${target}`);
+    }
+        if (action === 'marketplace_install_updates') {
       this._confirm = null;
       return this._run(action, action, {});
     }

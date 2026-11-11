@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Ostatni błąd",
         "unsaved": "Niezapisane zmiany",
         "discard": "Odrzuć",
-        "containers": "Kontenery"
+        "containers": "Kontenery",
+        "mk_title": "Dostępne aktualizacje: {n}",
+        "mk_title_one": "Dostępna 1 aktualizacja",
+        "mk_checked": "Sprawdzono {when}",
+        "mk_next": "następne sprawdzenie {when}",
+        "mk_failed": "Nie udało się sprawdzić: {n}",
+        "mk_notes": "Informacje o wydaniu",
+        "mk_install": "Aktualizuj",
+        "mk_major": "główna",
+        "mk_minor": "drobna",
+        "mk_patch": "poprawka",
+        "gh_connected": "GitHub połączony",
+        "gh_not_connected": "Brak połączonego konta GitHub",
+        "gh_retry": "limit osiągnięty, kolejna próba {when}"
       }
     },
     "battery_type": {

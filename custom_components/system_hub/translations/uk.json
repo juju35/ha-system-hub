@@ -1272,7 +1272,20 @@
         "auto_last_failure": "Остання помилка",
         "unsaved": "Незбережені зміни",
         "discard": "Скасувати",
-        "containers": "Контейнери"
+        "containers": "Контейнери",
+        "mk_title": "Доступно оновлень: {n}",
+        "mk_title_one": "Доступне 1 оновлення",
+        "mk_checked": "Перевірено {when}",
+        "mk_next": "наступна перевірка {when}",
+        "mk_failed": "Не вдалося перевірити: {n}",
+        "mk_notes": "Примітки до випуску",
+        "mk_install": "Оновити",
+        "mk_major": "мажорне",
+        "mk_minor": "мінорне",
+        "mk_patch": "патч",
+        "gh_connected": "GitHub підключено",
+        "gh_not_connected": "Обліковий запис GitHub не підключено",
+        "gh_retry": "ліміт вичерпано, наступна спроба {when}"
       }
     },
     "battery_type": {
