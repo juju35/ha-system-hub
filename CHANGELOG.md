@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.5.4 - 2026-11-11
 
 ### Improved
 - **Configure opens the panel**: on the integration's page, Configure no longer shows the menu of forms but a link to the panel's Settings tab, where every module's settings are (the same forms). The devices' **Visit** link opens it too. Turning Git Sync on without a repository opens its form in the Settings tab.
