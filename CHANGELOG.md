@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.0.3 - 2026-11-11
 
 ### New
 - **Status tab**: a Home Assistant home beside the score, with the colour of the ring: `home-heart` from 80, `home-alert` from 50, `home-remove` below.
