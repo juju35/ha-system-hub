@@ -10,9 +10,10 @@ on:
 
 # Protected main is never pushed to: the job commits the refreshed screenshots
 # back onto the pull request's own branch, so they land through the normal merge.
-# A push made with GITHUB_TOKEN does not trigger pull_request workflows, but it may
-# start workflow_dispatch ones: after pushing, the job re-runs the PR checks on the
-# screenshot commit itself (hence actions: write).
+# A push made with GITHUB_TOKEN starts pull_request workflows that then wait for an
+# approval: the commit says [skip ci] so none is started, and the job re-runs the PR
+# checks on the screenshot commit itself as workflow_dispatch runs (hence actions: write),
+# which [skip ci] does not stop.
 permissions:
   contents: write
   actions: write
@@ -87,7 +88,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add screenshots
-          git commit -m "chore: refresh screenshots"
+          git commit -m "chore: refresh screenshots [skip ci]"
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
       - name: Re-run checks on the screenshot commit
