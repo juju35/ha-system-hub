@@ -1027,7 +1027,18 @@
         "next_backup": "Prochaine sauvegarde",
         "backing_up": "Sauvegarde en cours…",
         "backup_failed": "Dernière sauvegarde en échec",
-        "processes": "Processus"
+        "processes": "Processus",
+        "power_cycles": "Redémarrages par prise",
+        "pc_line": "indisponible depuis {delay} min · éteinte {off} s",
+        "pc_count": "redémarrages : {n}/{max}",
+        "pc_available": "Disponible",
+        "pc_unavailable": "Indisponible",
+        "plug_off": "Prise éteinte : pas touchée",
+        "plug_unavailable": "Prise indisponible",
+        "unknown_device": "Appareil supprimé",
+        "open_device": "Appareil",
+        "pc_none": "Aucun redémarrage par prise : ajoutez-en un dans Configurer → Watchdog : ajouter un redémarrage par prise.",
+        "pc_configure": "Ajouter ou retirer dans Configurer"
       }
     },
     "battery_type": {

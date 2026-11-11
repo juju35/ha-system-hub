@@ -1027,7 +1027,18 @@
         "next_backup": "Nākamā rezerves kopija",
         "backing_up": "Notiek dublēšana…",
         "backup_failed": "Pēdējā rezerves kopija neizdevās",
-        "processes": "Procesi"
+        "processes": "Procesi",
+        "power_cycles": "Restartēšanas ar kontaktligzdu",
+        "pc_line": "nepieejama {delay} min · izslēgta {off} s",
+        "pc_count": "restartēšanas: {n}/{max}",
+        "pc_available": "Pieejama",
+        "pc_unavailable": "Nepieejama",
+        "plug_off": "Kontaktligzda izslēgta: netiek aiztikta",
+        "plug_unavailable": "Kontaktligzda nepieejama",
+        "unknown_device": "Ierīce noņemta",
+        "open_device": "Ierīce",
+        "pc_none": "Vēl nav restartēšanas ar kontaktligzdu: pievienojiet to sadaļā Konfigurēt → Watchdog: pievienot restartēšanu ar kontaktligzdu.",
+        "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt"
       }
     },
     "battery_type": {

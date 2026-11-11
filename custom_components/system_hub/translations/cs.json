@@ -1027,7 +1027,18 @@
         "next_backup": "Další záloha",
         "backing_up": "Zálohuje se…",
         "backup_failed": "Poslední záloha selhala",
-        "processes": "Procesy"
+        "processes": "Procesy",
+        "power_cycles": "Restarty přes zásuvku",
+        "pc_line": "nedostupné {delay} min · vypnutá {off} s",
+        "pc_count": "restarty: {n}/{max}",
+        "pc_available": "Dostupné",
+        "pc_unavailable": "Nedostupné",
+        "plug_off": "Zásuvka vypnutá: nedotčená",
+        "plug_unavailable": "Zásuvka nedostupná",
+        "unknown_device": "Zařízení odebráno",
+        "open_device": "Zařízení",
+        "pc_none": "Zatím žádný restart přes zásuvku: přidejte ho v Konfigurovat → Watchdog: přidat restart přes zásuvku.",
+        "pc_configure": "Přidat nebo odebrat v Konfigurovat"
       }
     },
     "battery_type": {

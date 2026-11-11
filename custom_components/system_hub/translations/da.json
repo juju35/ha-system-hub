@@ -1027,7 +1027,18 @@
         "next_backup": "Næste backup",
         "backing_up": "Laver backup…",
         "backup_failed": "Seneste backup mislykkedes",
-        "processes": "Processer"
+        "processes": "Processer",
+        "power_cycles": "Genstarter via stik",
+        "pc_line": "utilgængelig {delay} min · slukket {off} s",
+        "pc_count": "genstarter: {n}/{max}",
+        "pc_available": "Tilgængelig",
+        "pc_unavailable": "Utilgængelig",
+        "plug_off": "Stik slukket: røres ikke",
+        "plug_unavailable": "Stik utilgængeligt",
+        "unknown_device": "Enhed fjernet",
+        "open_device": "Enhed",
+        "pc_none": "Ingen genstart via stik endnu: tilføj en i Konfigurer → Watchdog: tilføj en genstart via stik.",
+        "pc_configure": "Tilføj eller fjern i Konfigurer"
       }
     },
     "battery_type": {

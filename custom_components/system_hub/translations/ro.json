@@ -1027,7 +1027,18 @@
         "next_backup": "Următoarea copie de rezervă",
         "backing_up": "Se face copia…",
         "backup_failed": "Ultima copie de rezervă a eșuat",
-        "processes": "Procese"
+        "processes": "Procese",
+        "power_cycles": "Reporniri prin priză",
+        "pc_line": "indisponibil {delay} min · oprită {off} s",
+        "pc_count": "reporniri: {n}/{max}",
+        "pc_available": "Disponibil",
+        "pc_unavailable": "Indisponibil",
+        "plug_off": "Priză oprită: neatinsă",
+        "plug_unavailable": "Priză indisponibilă",
+        "unknown_device": "Dispozitiv eliminat",
+        "open_device": "Dispozitiv",
+        "pc_none": "Încă nicio repornire prin priză: adăugați una în Configurare → Watchdog: adăugați o repornire prin priză.",
+        "pc_configure": "Adăugați sau eliminați în Configurare"
       }
     },
     "battery_type": {

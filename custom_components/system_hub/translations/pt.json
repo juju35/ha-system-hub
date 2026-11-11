@@ -1027,7 +1027,18 @@
         "next_backup": "Próxima cópia de segurança",
         "backing_up": "A criar cópia…",
         "backup_failed": "A última cópia de segurança falhou",
-        "processes": "Processos"
+        "processes": "Processos",
+        "power_cycles": "Reinícios por tomada",
+        "pc_line": "indisponível {delay} min · desligada {off} s",
+        "pc_count": "reinícios: {n}/{max}",
+        "pc_available": "Disponível",
+        "pc_unavailable": "Indisponível",
+        "plug_off": "Tomada desligada: não é tocada",
+        "plug_unavailable": "Tomada indisponível",
+        "unknown_device": "Dispositivo removido",
+        "open_device": "Dispositivo",
+        "pc_none": "Ainda sem reinícios por tomada: adicione um em Configurar → Watchdog: adicionar um reinício por tomada.",
+        "pc_configure": "Adicionar ou remover em Configurar"
       }
     },
     "battery_type": {

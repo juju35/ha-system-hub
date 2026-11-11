@@ -1027,7 +1027,18 @@
         "next_backup": "Következő biztonsági mentés",
         "backing_up": "Mentés folyamatban…",
         "backup_failed": "Az utolsó biztonsági mentés sikertelen",
-        "processes": "Folyamatok"
+        "processes": "Folyamatok",
+        "power_cycles": "Konnektoros újraindítások",
+        "pc_line": "elérhetetlen {delay} perc · kikapcsolva {off} mp",
+        "pc_count": "újraindítások: {n}/{max}",
+        "pc_available": "Elérhető",
+        "pc_unavailable": "Elérhetetlen",
+        "plug_off": "Konnektor kikapcsolva: érintetlen",
+        "plug_unavailable": "Konnektor elérhetetlen",
+        "unknown_device": "Eszköz eltávolítva",
+        "open_device": "Eszköz",
+        "pc_none": "Még nincs aljzatos újraindítás: adjon hozzá egyet: Konfigurálás → Watchdog: aljzatos újraindítás hozzáadása.",
+        "pc_configure": "Hozzáadás vagy eltávolítás a Konfigurálásban"
       }
     },
     "battery_type": {

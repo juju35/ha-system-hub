@@ -3,6 +3,14 @@
 ## Unreleased
 
 ### New
+- **Watchdog tab**: the power cycles set up, as in the Integration Watchdog panel: each device with its room, its plug and the plug's state, the delays, available or unavailable, the power cycles in a row, a link to the device; **Add or remove in Configure**.
+
+### Fixed
+- **Batteries tab**: each room has its own icon (the one set in its area), as in the Battery Monitor card.
+
+## Unreleased
+
+### New
 - **Battery types** in **Configure → Batteries: Battery types**: the type and number of batteries of a battery, or of every device of its model, as in the Battery Monitor card; they come before Battery Notes. Untick one to remove it.
 - **Import from Battery Monitor** in **Configure → Batteries: Import from Battery Monitor** (shown when Battery Monitor left something): its settings, the battery types set in its cards and its spare batteries.
 - **Hide the batteries that are fine** in **Configure → Batteries**: the panel shows only the low and unavailable ones.

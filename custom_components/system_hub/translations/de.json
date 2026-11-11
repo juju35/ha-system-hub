@@ -1027,7 +1027,18 @@
         "next_backup": "Nächste Sicherung",
         "backing_up": "Sicherung läuft…",
         "backup_failed": "Letzte Sicherung fehlgeschlagen",
-        "processes": "Prozesse"
+        "processes": "Prozesse",
+        "power_cycles": "Neustarts per Steckdose",
+        "pc_line": "{delay} min nicht verfügbar · {off} s aus",
+        "pc_count": "Neustarts: {n}/{max}",
+        "pc_available": "Verfügbar",
+        "pc_unavailable": "Nicht verfügbar",
+        "plug_off": "Steckdose aus: unberührt",
+        "plug_unavailable": "Steckdose nicht verfügbar",
+        "unknown_device": "Gerät entfernt",
+        "open_device": "Gerät",
+        "pc_none": "Noch kein Neustart per Steckdose: einen in Konfigurieren → Watchdog: Neustart per Steckdose hinzufügen anlegen.",
+        "pc_configure": "In Konfigurieren hinzufügen oder entfernen"
       }
     },
     "battery_type": {

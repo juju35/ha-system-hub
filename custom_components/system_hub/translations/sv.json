@@ -1027,7 +1027,18 @@
         "next_backup": "Nästa säkerhetskopia",
         "backing_up": "Säkerhetskopierar…",
         "backup_failed": "Senaste säkerhetskopian misslyckades",
-        "processes": "Processer"
+        "processes": "Processer",
+        "power_cycles": "Omstarter via uttag",
+        "pc_line": "otillgänglig {delay} min · av {off} s",
+        "pc_count": "omstarter: {n}/{max}",
+        "pc_available": "Tillgänglig",
+        "pc_unavailable": "Otillgänglig",
+        "plug_off": "Uttag av: lämnas orört",
+        "plug_unavailable": "Uttag otillgängligt",
+        "unknown_device": "Enhet borttagen",
+        "open_device": "Enhet",
+        "pc_none": "Ingen omstart via uttag ännu: lägg till en i Konfigurera → Watchdog: lägg till en omstart via uttag.",
+        "pc_configure": "Lägg till eller ta bort i Konfigurera"
       }
     },
     "battery_type": {

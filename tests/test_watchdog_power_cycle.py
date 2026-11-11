@@ -14,6 +14,7 @@ from homeassistant.core import HomeAssistant, ServiceCall
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
+from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry, async_capture_events
 
 from custom_components.system_hub.const import DOMAIN
@@ -308,3 +309,21 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
     await hass.async_block_till_done()
     assert CONF_POWER_CYCLES not in entry.options["watchdog"]
     assert entry.options["watchdog"][CONF_MAX_RELOADS] == 3
+
+
+async def test_power_cycles_in_the_panel(hass: HomeAssistant, plug: list[str], hass_ws_client) -> None:
+    """The panel lists each power cycle: the device, the plug and its state, the delays, available or not."""
+    assert await async_setup_component(hass, "frontend", {})
+    device_id = _device(hass, ["unavailable"])
+    await _setup(hass, device_id)
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "system_hub/state"})
+    [cycle] = (await client.receive_json())["result"]["watchdog"]["power_cycles"]
+    assert cycle["device_name"] == "Internet box"
+    assert cycle["switch"] == PLUG
+    assert cycle["switch_name"] == "Box plug"
+    assert cycle["switch_state"] == STATE_ON
+    assert cycle["delay"] == 10
+    assert cycle["off_time"] == 20
+    assert cycle["unavailable"] is True
+    assert cycle["count"] == 0
