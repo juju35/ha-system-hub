@@ -1289,7 +1289,8 @@
         "tab_containers": "Contenedores y procesos",
         "settings_system": "Umbrales de System",
         "settings_system_hint": "Cuándo CPU, RAM, disco, temperatura y swap pasan a naranja y rojo",
-        "settings_unavailable": "Estos ajustes no se pueden mostrar aquí: abre Configurar"
+        "settings_unavailable": "Estos ajustes no se pueden mostrar aquí: abre Configurar",
+        "gh_requests": "{n} solicitudes restantes"
       }
     },
     "battery_type": {

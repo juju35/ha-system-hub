@@ -1289,7 +1289,8 @@
         "tab_containers": "Κοντέινερ και διεργασίες",
         "settings_system": "Όρια System",
         "settings_system_hint": "Πότε CPU, RAM, δίσκος, θερμοκρασία και swap γίνονται πορτοκαλί και κόκκινα",
-        "settings_unavailable": "Αυτές οι ρυθμίσεις δεν εμφανίζονται εδώ: ανοίξτε τη Διαμόρφωση"
+        "settings_unavailable": "Αυτές οι ρυθμίσεις δεν εμφανίζονται εδώ: ανοίξτε τη Διαμόρφωση",
+        "gh_requests": "{n} αιτήματα απομένουν"
       }
     },
     "battery_type": {
