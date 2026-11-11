@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.0 - 2026-11-11
+
+### New
+- A module turned on for the first time takes over the settings of the standalone integration it replaces, so that nothing has to be set again ([#49](https://github.com/juju35/ha-system-hub/issues/49), thanks @FredM67): Watchdog (ignored integrations, power cycles…), Marketplace Refresh, Battery Monitor and Orphan Entities (ignored integrations and entities). Git Sync's repository form is filled with the standalone integration's repository, remote, SSH key and author, and its schedule, export and notification settings are kept (the configuration folder's repository when it had several). A module already set keeps its settings.
+
+### Improved
+- **README**, *Migrating*: the standalone repositories are archived, raise a repair while they run next to System Hub, and their settings are taken over.
+
 ## 1.0.3 - 2026-11-11
 
 ### New

@@ -1316,7 +1316,9 @@ Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are 
 
 ## Migrating
 
-System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in the panel's **Settings** tab. Rename in your automations:
+System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities, and the System Monitor cards of [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card). These repositories are archived: remove the integrations and their card resources once System Hub is set up, so that nothing runs twice. While one of them is still set up next to System Hub, it raises a repair in **Settings → Repairs**.
+
+A module turned on for the first time takes over the settings of the integration it replaces: Watchdog (with its ignored integrations and power cycles), Marketplace Refresh, Battery Monitor and Orphan Entities (with its ignored integrations and entities). For Git Sync, the repository form is filled with the standalone integration's repository, remote, SSH key and author, and its schedule, export and notification settings are kept (the repository of the configuration folder when it had several). Battery Monitor's battery types set in its cards and its spare batteries are imported with **Settings → Batteries → Import from Battery Monitor**. Rename in your automations:
 
 | Before | System Hub |
 |---|---|
@@ -1336,7 +1338,7 @@ System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, 
 | `orphan_entities_removed` / `_devices_removed` events | `system_hub_orphans_removed` / `system_hub_orphans_devices_removed` |
 | `sensor.orphan_entities_*`, `button.orphan_entities_scan_now` | `sensor.system_hub_orphans_*`, `button.system_hub_orphans_scan_now` |
 
-[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards keep their names (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and are now served by System Hub; once Orphan Entities is removed, point a card's `entity` (if set) to `sensor.system_hub_orphans_orphaned_entities`. Its ignored integrations and entities are not imported: set them again in **Settings → Orphans ⚙**.
+[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards keep their names (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and are now served by System Hub; once Orphan Entities is removed, point a card's `entity` (if set) to `sensor.system_hub_orphans_orphaned_entities`. Its ignored integrations and entities are taken over when the Orphans module is turned on.
 
 ## Translations
 
