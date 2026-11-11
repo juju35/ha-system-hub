@@ -823,3 +823,14 @@ test('load: the words of the error, and what is shown kept while the connection 
   assert.equal(shown._state.loaded, true);
   assert.equal(renders, 0);
 });
+
+test('tabs: none before the state is read, then the first of the configured order (Status)', () => {
+  const p = panel(null);
+  p._tab = null;
+  assert.deepEqual([...p._tabs()], []);
+  p._state = { loaded: true, modules: ['watchdog'], tabs: ['status', 'system', 'watchdog'] };
+  assert.deepEqual([...p._tabs()], ['status', 'system', 'watchdog', 'settings']);
+  // What _render does with no tab picked yet
+  if (!p._tabs().includes(p._tab)) p._tab = p._tabs()[0];
+  assert.equal(p._tab, 'status');
+});

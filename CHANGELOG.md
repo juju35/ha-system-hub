@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- **Panel**: it opened on the System tab instead of the first tab of the order (Status): the tab was picked before the order was read. Every tab is now in the address, the first one too, so the panel's bare address always opens the first tab.
+
 ## 1.0.0 - 2026-11-11
 
 ### New

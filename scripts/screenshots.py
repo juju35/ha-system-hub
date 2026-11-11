@@ -891,7 +891,7 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
     const el = document.createElement("system-hub-panel");
     el.panel = { url_path: "system-hub", config: {} };
     el.narrow = narrow;
-    el.route = { path: tab === "system" ? "" : `/${tab}` };
+    el.route = { path: `/${tab}` };
     el.hass = {
         language: "en",
         locale: { language: "en" },
