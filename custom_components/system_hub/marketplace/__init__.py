@@ -35,7 +35,10 @@ async def async_setup_marketplace(
     async def read_github(_now: Any = None) -> None:
         await refresher.async_read_github()
 
-    entry.async_on_unload(async_at_started(hass, lambda _hass: entry.async_create_task(hass, read_github())))
+    async def at_started(_hass: HomeAssistant) -> None:
+        await refresher.async_read_github()
+
+    entry.async_on_unload(async_at_started(hass, at_started))
     entry.async_on_unload(async_track_time_interval(hass, read_github, GITHUB_INTERVAL))
     if refresher.scan_interval > 0:
         _async_schedule(hass, entry, refresher, timedelta(hours=refresher.scan_interval))
