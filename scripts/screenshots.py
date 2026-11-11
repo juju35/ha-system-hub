@@ -570,11 +570,25 @@ def checking_state(state):
     return {**state, "marketplace": running}
 
 
-def page_html(theme, width):
+def open_page(browser, name, viewport, html):
+    """A new page at the frozen clock, Paris time, with `html` in it; page errors are printed."""
+    page = browser.new_page(
+        device_scale_factor=2,
+        viewport={"width": viewport[0], "height": viewport[1]},
+        timezone_id="Europe/Paris",
+        locale="en-US",
+    )
+    page.on("pageerror", lambda err: print(f"{name}: page error: {err}"))
+    page.clock.set_fixed_time(NOW)
+    page.set_content(html)
+    return page
+
+
+def page_html(theme, width, padding=0):
     variables = "".join(f"{k}:{v};" for k, v in {**THEMES[theme], **COMMON}.items())
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
 :root {{ {variables} }}
-body {{ margin: 0; background: var(--primary-background-color); color: var(--primary-text-color);
+body {{ margin: 0; padding: {padding}px; background: var(--primary-background-color); color: var(--primary-text-color);
        font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; width: {width}px; }}
 </style></head><body><div id="root"></div></body></html>"""
 
@@ -629,15 +643,7 @@ def main():
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for shot in SHOTS:
             width, height = PHONE if shot.get("phone") else (WIDTH, 900)
-            page = browser.new_page(
-                device_scale_factor=2,
-                viewport={"width": width, "height": height},
-                timezone_id="Europe/Paris",
-                locale="en-US",
-            )
-            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
-            page.clock.set_fixed_time(NOW)
-            page.set_content(page_html(shot["theme"], width))
+            page = open_page(browser, shot["file"], (width, height), page_html(shot["theme"], width))
             page.add_script_tag(content=HA_ELEMENTS)
             page.add_script_tag(content=PANEL_JS)
             shown = checking_state(state) if shot.get("checking") else state
