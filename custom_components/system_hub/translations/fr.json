@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
-          "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…)."
+          "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
+          "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
-          "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…)."
+          "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
+          "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Appareil supprimé",
         "open_device": "Appareil",
         "pc_none": "Aucun redémarrage par prise : ajoutez-en un dans Configurer → Watchdog : ajouter un redémarrage par prise.",
-        "pc_configure": "Ajouter ou retirer dans Configurer"
+        "pc_configure": "Ajouter ou retirer dans Configurer",
+        "auto_failed": "Automatisations en échec",
+        "auto_linked": "Entités liées indisponibles",
+        "auto_sensor_unavailable": "Capteur indisponible",
+        "auto_unavailable": "Les capteurs d'Automation Monitor sont indisponibles.",
+        "auto_not_found": "Automation Monitor introuvable. L'intégration Automation Monitor est-elle installée ?",
+        "auto_all_ok": "Tout va bien",
+        "auto_step": "Étape",
+        "auto_streak": "{n} échecs consécutifs",
+        "auto_used_by": "Utilisée par",
+        "auto_trace": "Trace",
+        "auto_edit": "Modifier",
+        "auto_clear": "Effacer",
+        "auto_clear_all": "Tout effacer",
+        "auto_rebuild": "Actualiser",
+        "auto_rebuild_title": "Reconstruire la liste des entités utilisées par les automatisations, scripts et scènes",
+        "auto_confirm_clear": "Effacer l'échec de {name} ? Il sera de nouveau signalé au prochain échec.",
+        "auto_confirm_clear_all": "Effacer toutes les automatisations en échec ? Elles seront de nouveau signalées au prochain échec.",
+        "auto_show_more": "Afficher {n} de plus",
+        "auto_show_less": "Afficher moins",
+        "auto_last_failure": "Dernier échec"
       }
     },
     "battery_type": {

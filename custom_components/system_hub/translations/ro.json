@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
-          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…)."
+          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
+          "automations": "Afișează automatizările eșuate și entitățile indisponibile raportate de integrarea Automation Monitor (instalată separat). Fără entități proprii."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
-          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…)."
+          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
+          "automations": "Afișează automatizările eșuate și entitățile indisponibile raportate de integrarea Automation Monitor (instalată separat). Fără entități proprii."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Dispozitiv eliminat",
         "open_device": "Dispozitiv",
         "pc_none": "Încă nicio repornire prin priză: adăugați una în Configurare → Watchdog: adăugați o repornire prin priză.",
-        "pc_configure": "Adăugați sau eliminați în Configurare"
+        "pc_configure": "Adăugați sau eliminați în Configurare",
+        "auto_failed": "Automatizări eșuate",
+        "auto_linked": "Entități legate indisponibile",
+        "auto_sensor_unavailable": "Senzor indisponibil",
+        "auto_unavailable": "Senzorii Automation Monitor sunt indisponibili.",
+        "auto_not_found": "Automation Monitor nu a fost găsit. Integrarea Automation Monitor este instalată?",
+        "auto_all_ok": "Totul în regulă",
+        "auto_step": "Pas",
+        "auto_streak": "{n} eșecuri consecutive",
+        "auto_used_by": "Folosită de",
+        "auto_trace": "Urmărire",
+        "auto_edit": "Editează",
+        "auto_clear": "Șterge",
+        "auto_clear_all": "Șterge tot",
+        "auto_rebuild": "Reîmprospătează",
+        "auto_rebuild_title": "Reconstruiește lista entităților folosite de automatizări, scripturi și scene",
+        "auto_confirm_clear": "Ștergi eșecul pentru {name}? Va fi raportat din nou la următorul eșec.",
+        "auto_confirm_clear_all": "Ștergi toate automatizările eșuate? Vor fi raportate din nou la următorul eșec.",
+        "auto_show_more": "Afișează încă {n}",
+        "auto_show_less": "Afișează mai puțin",
+        "auto_last_failure": "Ultimul eșec"
       }
     },
     "battery_type": {

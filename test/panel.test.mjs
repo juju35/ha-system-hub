@@ -338,8 +338,85 @@ test('git sync tab: commit form, or the repository to set up', () => {
 
 test('settings tab: every module with its switch, the tabs to order', () => {
   const html = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings')._content();
-  for (const m of ['containers', 'watchdog', 'marketplace', 'batteries', 'git_sync']) assert.match(html, new RegExp(`data-module="${m}"`));
+  for (const m of ['containers', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations']) assert.match(html, new RegExp(`data-module="${m}"`));
   assert.match(html, /data-module="watchdog" checked/);
   assert.match(html, /data-tab-move="system" data-dir="-1"[^>]*disabled/);
   assert.match(html, /data-action="save" disabled/);
+});
+
+test('automations tab: failures and unavailable linked entities from Automation Monitor, or how to add it', () => {
+  const failures = Array.from({ length: 7 }, (_v, i) => ({
+    entity_id: `automation.a${i}`,
+    name: `Automation ${i}`,
+    last_error_time: '2026-11-10T08:00:00+00:00',
+    error_message: i ? null : 'Entity <light.hall> is unavailable',
+    error_step: i ? null : 'action/0',
+    consecutive_failures: i ? 1 : 3,
+    trace: i ? null : '/config/automation/trace/1',
+    edit: '/config/automation/edit/1',
+  }));
+  const state = {
+    loaded: true,
+    modules: ['automations'],
+    tabs: ['system', 'automations'],
+    automations: {
+      available: true,
+      failed_entity: 'sensor.failed_automations',
+      linked_entity: 'sensor.linked_entities_unavailable',
+      failed_na: false,
+      linked_na: true,
+      automations: 12,
+      failures,
+      linked: [{ entity_id: 'light.hall', name: 'Hall', unavailable_since: null, used_by: [{ entity_id: 'script.x', name: 'X', edit: '/config/script/edit/x' }] }],
+    },
+  };
+  const p = panel(state, 'automations');
+  assert.deepEqual([...p._tabs()], ['system', 'automations', 'settings']);
+  const html = p._content();
+  assert.match(html, /Failed automations/);
+  assert.match(html, /&#60;light.hall&#62;/);
+  assert.match(html, /action\/0/);
+  assert.match(html, /3 failures in a row/);
+  assert.match(html, /href="\/config\/automation\/trace\/1"/);
+  assert.match(html, /data-action="auto_clear_all"/);
+  assert.match(html, /data-action="auto_rebuild"/);
+  // 5 shown, then "Show 2 more"; the unreadable sensor is a dash, not 0
+  assert.equal((html.match(/data-action="auto_clear" /g) || []).length, 5);
+  assert.match(html, /Show 2 more/);
+  assert.match(html, /<b>—<\/b>/);
+  assert.match(html, /Used by/);
+  p._render = () => {};
+  p._autoAction('auto_more:failed', {});
+  assert.equal((p._content().match(/data-action="auto_clear" /g) || []).length, 7);
+  p._autoAction('auto_fold:failed', {});
+  assert.doesNotMatch(p._content(), /data-action="auto_clear" /);
+
+  const none = panel({ ...state, automations: { available: false, loaded: false } }, 'automations')._content();
+  assert.match(none, /Automation Monitor not found/);
+  assert.match(none, /href="\/config\/integrations\/dashboard\/add\?domain=automation_monitor"/);
+});
+
+test('automations tab: Clear asks first, then calls Automation Monitor', async () => {
+  const calls = [];
+  const p = panel(
+    { loaded: true, modules: ['automations'], tabs: ['automations'], automations: { available: true, failures: [{ entity_id: 'automation.a', name: 'A' }], linked: [] } },
+    'automations',
+  );
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._hass.callWS = async () => p._state;
+  p._render = () => {};
+  p._autoAction('auto_clear', { dataset: { entity: 'automation.a' } });
+  assert.equal(calls.length, 0);
+  assert.match(p._content(), /Clear the failure of A\?/);
+  await p._autoAction('auto_clear_ok', { dataset: { entity: 'automation.a' } });
+  p._autoAction('auto_clear_all', { dataset: {} });
+  assert.match(p._content(), /Clear all failed automations\?/);
+  await p._autoAction('auto_clear_all_ok', { dataset: {} });
+  await p._autoAction('auto_rebuild', { dataset: {} });
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [
+    ['automation_monitor', 'reset', { entity_id: 'automation.a' }],
+    ['automation_monitor', 'reset', {}],
+    ['automation_monitor', 'rebuild_linked_entities', {}],
+  ]);
+  assert.equal(p._confirm, null);
 });

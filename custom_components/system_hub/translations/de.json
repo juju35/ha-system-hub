@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
           "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
           "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist.",
-          "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird."
+          "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird.",
+          "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
           "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
           "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist.",
-          "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird."
+          "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird.",
+          "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Gerät entfernt",
         "open_device": "Gerät",
         "pc_none": "Noch kein Neustart per Steckdose: einen in Konfigurieren → Watchdog: Neustart per Steckdose hinzufügen anlegen.",
-        "pc_configure": "In Konfigurieren hinzufügen oder entfernen"
+        "pc_configure": "In Konfigurieren hinzufügen oder entfernen",
+        "auto_failed": "Fehlgeschlagene Automatisierungen",
+        "auto_linked": "Nicht verfügbare verknüpfte Entitäten",
+        "auto_sensor_unavailable": "Sensor nicht verfügbar",
+        "auto_unavailable": "Die Sensoren von Automation Monitor sind nicht verfügbar.",
+        "auto_not_found": "Automation Monitor nicht gefunden. Ist die Automation-Monitor-Integration installiert?",
+        "auto_all_ok": "Alles in Ordnung",
+        "auto_step": "Schritt",
+        "auto_streak": "{n} Fehler in Folge",
+        "auto_used_by": "Verwendet von",
+        "auto_trace": "Trace",
+        "auto_edit": "Bearbeiten",
+        "auto_clear": "Löschen",
+        "auto_clear_all": "Alle löschen",
+        "auto_rebuild": "Aktualisieren",
+        "auto_rebuild_title": "Liste der von Automatisierungen, Skripten und Szenen verwendeten Entitäten neu erstellen",
+        "auto_confirm_clear": "Fehler von {name} löschen? Er wird beim nächsten Fehlschlag erneut gemeldet.",
+        "auto_confirm_clear_all": "Alle fehlgeschlagenen Automatisierungen löschen? Sie werden beim nächsten Fehlschlag erneut gemeldet.",
+        "auto_show_more": "{n} weitere anzeigen",
+        "auto_show_less": "Weniger anzeigen",
+        "auto_last_failure": "Letzter Fehler"
       }
     },
     "battery_type": {

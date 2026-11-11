@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### New
+- **Automations module and tab**: the failed automations and the unavailable linked entities reported by Automation Monitor, as in the Automation Monitor card: last failure, error, failed step and failures in a row, **Trace** and **Edit**, the automations, scripts and scenes using each entity, **Clear** and **Clear all** (asked first), **Refresh**, folded lists and **Show more**. On by default when Automation Monitor is loaded; no entities of its own; without Automation Monitor the tab links to adding it.
+
 ## 0.3.0 - 2026-11-11
 
 ### New

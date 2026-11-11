@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
-          "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
+          "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
-          "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
+          "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Enhed fjernet",
         "open_device": "Enhed",
         "pc_none": "Ingen genstart via stik endnu: tilføj en i Konfigurer → Watchdog: tilføj en genstart via stik.",
-        "pc_configure": "Tilføj eller fjern i Konfigurer"
+        "pc_configure": "Tilføj eller fjern i Konfigurer",
+        "auto_failed": "Mislykkede automatiseringer",
+        "auto_linked": "Utilgængelige tilknyttede entiteter",
+        "auto_sensor_unavailable": "Sensor utilgængelig",
+        "auto_unavailable": "Automation Monitor-sensorerne er utilgængelige.",
+        "auto_not_found": "Automation Monitor blev ikke fundet. Er Automation Monitor-integrationen installeret?",
+        "auto_all_ok": "Alt er i orden",
+        "auto_step": "Trin",
+        "auto_streak": "{n} fejl i træk",
+        "auto_used_by": "Bruges af",
+        "auto_trace": "Sporing",
+        "auto_edit": "Rediger",
+        "auto_clear": "Ryd",
+        "auto_clear_all": "Ryd alle",
+        "auto_rebuild": "Opdater",
+        "auto_rebuild_title": "Genopbyg listen over entiteter, der bruges af automatiseringer, scripts og scener",
+        "auto_confirm_clear": "Ryd fejlen for {name}? Den bliver rapporteret igen ved næste fejl.",
+        "auto_confirm_clear_all": "Ryd alle mislykkede automatiseringer? De bliver rapporteret igen ved næste fejl.",
+        "auto_show_more": "Vis {n} flere",
+        "auto_show_less": "Vis færre",
+        "auto_last_failure": "Seneste fejl"
       }
     },
     "battery_type": {

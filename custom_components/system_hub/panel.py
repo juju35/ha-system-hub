@@ -19,7 +19,8 @@ from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from .const import CONF_MODULES, CONF_TABS, DOMAIN, MODULE_GIT_SYNC, MODULES, TAB_SYSTEM
+from . import automations
+from .const import CONF_MODULES, CONF_TABS, DOMAIN, MODULE_AUTOMATIONS, MODULE_GIT_SYNC, MODULES, TAB_SYSTEM
 
 STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
@@ -304,6 +305,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["batteries"] = _batteries(data.batteries)
     if data.git_sync is not None:
         result["git_sync"] = _git_sync(data.git_sync)
+    if MODULE_AUTOMATIONS in result["modules"]:
+        result["automations"] = automations.state(hass)
     connection.send_result(msg["id"], result)
 
 

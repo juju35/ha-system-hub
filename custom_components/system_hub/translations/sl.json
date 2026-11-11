@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
-          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…)."
+          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
+          "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
-          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…)."
+          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
+          "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Naprava odstranjena",
         "open_device": "Naprava",
         "pc_none": "Še ni ponovnega zagona prek vtičnice: dodajte ga v Konfiguriraj → Watchdog: dodaj ponovni zagon prek vtičnice.",
-        "pc_configure": "Dodaj ali odstrani v Konfiguriraj"
+        "pc_configure": "Dodaj ali odstrani v Konfiguriraj",
+        "auto_failed": "Neuspešne avtomatizacije",
+        "auto_linked": "Nedosegljive povezane entitete",
+        "auto_sensor_unavailable": "Senzor ni na voljo",
+        "auto_unavailable": "Senzorji Automation Monitor niso na voljo.",
+        "auto_not_found": "Automation Monitor ni bil najden. Ali je integracija Automation Monitor nameščena?",
+        "auto_all_ok": "Vse je v redu",
+        "auto_step": "Korak",
+        "auto_streak": "Zaporedne napake: {n}",
+        "auto_used_by": "Uporabljeno v",
+        "auto_trace": "Sled",
+        "auto_edit": "Uredi",
+        "auto_clear": "Počisti",
+        "auto_clear_all": "Počisti vse",
+        "auto_rebuild": "Osveži",
+        "auto_rebuild_title": "Znova sestavi seznam entitet, ki jih uporabljajo avtomatizacije, skripte in scene",
+        "auto_confirm_clear": "Počistim napako za {name}? Ob naslednji napaki bo znova prijavljena.",
+        "auto_confirm_clear_all": "Počistim vse neuspešne avtomatizacije? Ob naslednji napaki bodo znova prijavljene.",
+        "auto_show_more": "Pokaži še {n}",
+        "auto_show_less": "Pokaži manj",
+        "auto_last_failure": "Zadnja napaka"
       }
     },
     "battery_type": {

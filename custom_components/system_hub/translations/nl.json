@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
-          "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…)."
+          "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
+          "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
-          "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…)."
+          "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
+          "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Apparaat verwijderd",
         "open_device": "Apparaat",
         "pc_none": "Nog geen herstart via stekker: voeg er een toe via Configureren → Watchdog: herstart via stekker toevoegen.",
-        "pc_configure": "Toevoegen of verwijderen in Configureren"
+        "pc_configure": "Toevoegen of verwijderen in Configureren",
+        "auto_failed": "Mislukte automatiseringen",
+        "auto_linked": "Niet-beschikbare gekoppelde entiteiten",
+        "auto_sensor_unavailable": "Sensor niet beschikbaar",
+        "auto_unavailable": "De sensoren van Automation Monitor zijn niet beschikbaar.",
+        "auto_not_found": "Automation Monitor niet gevonden. Is de Automation Monitor-integratie geïnstalleerd?",
+        "auto_all_ok": "Alles in orde",
+        "auto_step": "Stap",
+        "auto_streak": "{n} keer achter elkaar mislukt",
+        "auto_used_by": "Gebruikt door",
+        "auto_trace": "Trace",
+        "auto_edit": "Bewerken",
+        "auto_clear": "Wissen",
+        "auto_clear_all": "Alles wissen",
+        "auto_rebuild": "Vernieuwen",
+        "auto_rebuild_title": "De lijst van entiteiten die door automatiseringen, scripts en scènes worden gebruikt opnieuw opbouwen",
+        "auto_confirm_clear": "De fout van {name} wissen? Deze wordt bij de volgende fout opnieuw gemeld.",
+        "auto_confirm_clear_all": "Alle mislukte automatiseringen wissen? Ze worden bij de volgende fout opnieuw gemeld.",
+        "auto_show_more": "Nog {n} tonen",
+        "auto_show_less": "Minder tonen",
+        "auto_last_failure": "Laatste fout"
       }
     },
     "battery_type": {

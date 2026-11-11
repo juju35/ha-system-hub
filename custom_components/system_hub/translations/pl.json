@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
-          "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…)."
+          "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
+          "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji."
         }
       },
       "git_sync_repository": {
@@ -79,14 +81,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
-          "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…)."
+          "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
+          "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji."
         }
       },
       "containers": {
@@ -1038,7 +1042,27 @@
         "unknown_device": "Urządzenie usunięte",
         "open_device": "Urządzenie",
         "pc_none": "Brak restartów przez gniazdko: dodaj w Konfiguruj → Watchdog: dodaj restart przez gniazdko.",
-        "pc_configure": "Dodaj lub usuń w Konfiguruj"
+        "pc_configure": "Dodaj lub usuń w Konfiguruj",
+        "auto_failed": "Nieudane automatyzacje",
+        "auto_linked": "Niedostępne powiązane encje",
+        "auto_sensor_unavailable": "Czujnik niedostępny",
+        "auto_unavailable": "Sensory Automation Monitor są niedostępne.",
+        "auto_not_found": "Nie znaleziono Automation Monitor. Czy integracja Automation Monitor jest zainstalowana?",
+        "auto_all_ok": "Wszystko OK",
+        "auto_step": "Krok",
+        "auto_streak": "Błędy z rzędu: {n}",
+        "auto_used_by": "Używana przez",
+        "auto_trace": "Ślad",
+        "auto_edit": "Edytuj",
+        "auto_clear": "Wyczyść",
+        "auto_clear_all": "Wyczyść wszystko",
+        "auto_rebuild": "Odśwież",
+        "auto_rebuild_title": "Odbuduj listę encji używanych przez automatyzacje, skrypty i sceny",
+        "auto_confirm_clear": "Wyczyścić błąd {name}? Zostanie ponownie zgłoszony przy następnym błędzie.",
+        "auto_confirm_clear_all": "Wyczyścić wszystkie nieudane automatyzacje? Zostaną ponownie zgłoszone przy następnym błędzie.",
+        "auto_show_more": "Pokaż więcej ({n})",
+        "auto_show_less": "Pokaż mniej",
+        "auto_last_failure": "Ostatni błąd"
       }
     },
     "battery_type": {
