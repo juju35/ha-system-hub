@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
           "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
           "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
           "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою.",
-          "git_sync": "Тека Home Assistant під керуванням Git, що надсилається до remote (GitHub, Gitea…)."
+          "git_sync": "Тека Home Assistant під керуванням Git, що надсилається до remote (GitHub, Gitea…).",
+          "orphans": "Показує сутності, які їхня інтеграція більше не надає, щоб їх можна було видалити масово."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Налаштування репозиторію",
           "git_sync": "Git Sync",
           "batteries_types": "Батареї: типи батарей",
-          "batteries_import": "Батареї: імпорт із Battery Monitor"
+          "batteries_import": "Батареї: імпорт із Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Імпорт із Battery Monitor",
         "description": "Знайдено в Battery Monitor: налаштувань — {settings}, типів батарей, заданих у його картках, — {types}, типів запасних батарей — {stock}. Надішліть, щоб перенести їх у System Hub: його налаштування замінять налаштування модуля «Батареї», а вже задані тут типи батарей збережуться."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Інтервал сканування",
+          "grace_period": "Затримка після запуску",
+          "stale_hours": "Застаріла через",
+          "include_unknown": "Включати невідомі сутності",
+          "ignored_integrations": "Ігноровані інтеграції",
+          "ignored_entities": "Ігноровані сутності"
+        },
+        "data_description": {
+          "scan_interval": "Хвилини між двома скануваннями. Реєстр сутностей також сканується через кілька секунд після кожної зміни.",
+          "grace_period": "Хвилини після запуску Home Assistant до першого сканування, поки інтеграції створюють свої сутності.",
+          "stale_hours": "Скільки годин сутність, яку її інтеграція все ще надає, має бути недоступною (або невідомою), щоб потрапити до списку. 0 — лише сутності, які більше не надаються.",
+          "include_unknown": "Також показувати сутності, невідомі стільки ж часу. Кнопки, сцени та події, невідомі за своєю природою, ніколи не показуються.",
+          "ignored_integrations": "Інтеграції, сутності яких ніколи не показуються. Введіть домен, щоб додати інтеграцію, якої немає в списку.",
+          "ignored_entities": "Сутності (ID сутностей) і пристрої (ID пристроїв), які ніколи не показуються. Картка додає їх сюди кнопкою «Ігнорувати»."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Експортувати панелі"
+      },
+      "orphans_scan": {
+        "name": "Сканувати зараз"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Осиротілі сутності",
+        "state_attributes": {
+          "entities": {
+            "name": "Сутності"
+          },
+          "counts": {
+            "name": "Кількість"
+          },
+          "removed": {
+            "name": "Видалені"
+          },
+          "stale_hours": {
+            "name": "Застаріла через"
+          },
+          "include_unknown": {
+            "name": "Включати невідомі"
+          },
+          "ignored_integrations": {
+            "name": "Ігноровані інтеграції"
+          },
+          "ignored_entities": {
+            "name": "Ігноровані сутності"
+          },
+          "devices": {
+            "name": "Пристрої"
+          },
+          "truncated": {
+            "name": "Поза списком"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Останнє сканування"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Отримує віддалений репозиторій і забирає його нові commit-и: перемотування вперед або локальні commit-и, перенесені поверх (лише за чистого робочого дерева). Конфлікт скасовує перенесення."
+    },
+    "orphans_scan": {
+      "name": "Пошук осиротілих сутностей",
+      "description": "Шукає в реєстрі сутностей ті, які їхня інтеграція більше не надає."
+    },
+    "orphans_remove": {
+      "name": "Видалити осиротілі сутності",
+      "description": "Видаляє з реєстру сутностей сутності, знайдені останнім скануванням.",
+      "fields": {
+        "entities": {
+          "name": "Сутності",
+          "description": "ID сутностей для видалення. Кожна має бути в списку осиротілих сутностей."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ігнорувати сутності",
+      "description": "Додає сутності або пристрої до ігнорованих: вони більше не показуються.",
+      "fields": {
+        "entities": {
+          "name": "Сутності",
+          "description": "ID сутностей для ігнорування."
+        },
+        "devices": {
+          "name": "Пристрої",
+          "description": "ID пристроїв для ігнорування (осиротілі пристрої)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Видалити осиротілі пристрої",
+      "description": "Видаляє пристрої, усі записи інтеграції яких видалено, разом з їхніми сутностями. Лише пристрої зі списку останнього сканування.",
+      "fields": {
+        "devices": {
+          "name": "Пристрої",
+          "description": "ID пристроїв з атрибута devices датчика сиріт. Залиште порожнім для всіх осиротілих пристроїв останнього сканування."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Тека експорту {path} поза текою конфігурації та allowlist_external_dirs: виберіть іншу в параметрах Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant ще запускається: повторіть сканування після запуску."
+    },
+    "orphans_no_entities": {
+      "message": "Немає сутностей для видалення."
+    },
+    "orphans_too_many": {
+      "message": "Не більше {max} сутностей за раз."
+    },
+    "orphans_not_orphan": {
+      "message": "Немає в списку осиротілих сутностей: {entities}. Виконайте сканування та спробуйте ще раз."
+    },
+    "orphans_not_registered": {
+      "message": "Немає в реєстрі сутностей: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Пристрій не вказано."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Це не осиротілі пристрої (спершу проскануйте): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Немає в реєстрі пристроїв: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Пристрій видалено",
         "open_device": "Пристрій",
         "pc_none": "Перезапусків через розетку ще немає: додайте в «Налаштувати» → Watchdog: додати перезапуск через розетку.",
-        "pc_configure": "Додати або видалити в «Налаштувати»"
+        "pc_configure": "Додати або видалити в «Налаштувати»",
+        "orph_reason_entry_removed": "Інтеграцію видалено",
+        "orph_reason_integration_missing": "Інтеграцію не завантажено",
+        "orph_reason_not_provided": "Не надається",
+        "orph_reason_unavailable": "Недоступна",
+        "orph_reason_unknown": "Невідома",
+        "orph_search": "Пошук",
+        "orph_all_integrations": "Усі інтеграції",
+        "orph_list_title": "Осиротілі сутності",
+        "orph_no_match": "Жодна сутність не відповідає фільтрам",
+        "orph_empty": "Кожну сутність надає її інтеграція",
+        "orph_for": "уже {d}",
+        "orph_disabled": "вимкнена",
+        "orph_select_all": "Вибрати показані ({n})",
+        "orph_show_all": "Показати всі ({n})",
+        "orph_selected_one": "{n} вибрана",
+        "orph_selected_many": "{n} вибраних",
+        "orph_remove": "Видалити",
+        "orph_ignore": "Ігнорувати",
+        "orph_clear": "Скасувати вибір",
+        "orph_confirm_remove_one": "Видалити {n} сутність з реєстру сутностей?",
+        "orph_confirm_remove_many": "Видалити {n} сутностей з реєстру сутностей?",
+        "orph_confirm_remove_text": "Їхня історія залишається в базі даних. Сутність, яку її інтеграція все ще надає, повернеться, якщо інтеграція створить її знову.",
+        "orph_confirm_ignore_one": "Ігнорувати {n} сутність?",
+        "orph_confirm_ignore_many": "Ігнорувати {n} сутностей?",
+        "orph_confirm_ignore_text": "Вони більше не відображатимуться. Видаліть їх з ігнорованих сутностей у параметрах інтеграції.",
+        "orph_used_by": "Використовується: {n}",
+        "orph_ref_automation": "Автоматизація",
+        "orph_ref_script": "Скрипт",
+        "orph_ref_scene": "Сцена",
+        "orph_ref_group": "Група",
+        "orph_ref_dashboard": "Панель",
+        "orph_confirm_used_one": "{n} вибрана сутність досі використовується: те, що її використовує, може перестати працювати.",
+        "orph_confirm_used_many": "{n} вибраних сутностей досі використовуються: те, що їх використовує, може перестати працювати.",
+        "orph_remove_anyway": "Усе одно видалити",
+        "orph_and_more": "і ще {n}",
+        "orph_removed_one": "Видалено {n} сутність",
+        "orph_removed_many": "Видалено {n} сутностей",
+        "orph_devices_title": "Осиротілі пристрої",
+        "orph_devices_hint": "Їхню інтеграцію видалено: ніщо їх більше не надає",
+        "orph_remove_devices": "Видалити пристрої",
+        "orph_confirm_devices": "Видалити осиротілі пристрої?",
+        "orph_confirm_devices_text": "Вони зникають з реєстру пристроїв разом із сутностями. Їхня історія лишається в базі даних.",
+        "orph_devices_removed": "Видалено осиротілих пристроїв: {n}",
+        "orph_confirm_ignore_devices": "Ігнорувати вибрані пристрої?",
+        "orph_devices_ignored": "Проігноровано осиротілих пристроїв: {n}",
+        "orph_kept": "Залишено, більше не осиротілі: {n}",
+        "orph_dev_entities": "Сутності: {n}",
+        "orph_ignored_one": "Проігноровано {n} сутність",
+        "orph_ignored_many": "Проігноровано {n} сутностей",
+        "orph_waiting": "Очікування першого сканування",
+        "orph_never_scanned": "Ще не скановано",
+        "orph_stat_removed": "Видалені",
+        "orph_stat_removed_hint": "З моменту запуску Home Assistant",
+        "orph_stat_ignored": "Ігноровані",
+        "orph_all": "Усі",
+        "orph_confirm_devices_used": "Пристрої, які досі використовують автоматизації або скрипти: {n}. Вони можуть перестати працювати."
       }
     },
     "battery_type": {

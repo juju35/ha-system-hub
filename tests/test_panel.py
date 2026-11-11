@@ -96,7 +96,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     result = (await client.receive_json())["result"]
     assert result["loaded"] is True
     assert result["modules"] == ["watchdog", "batteries"]
-    assert result["tabs"] == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync"]
+    assert result["tabs"] == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"]
     keys = {s["key"]: s for s in result["system"]}
     assert set(keys) == {
         "processor_use",
@@ -149,7 +149,15 @@ async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
     assert response["success"] is True
     await hass.async_block_till_done()
     assert entry.options[CONF_MODULES] == ["watchdog", "batteries"]
-    assert entry.options["tabs"] == ["batteries", "system", "containers", "watchdog", "marketplace", "git_sync"]
+    assert entry.options["tabs"] == [
+        "batteries",
+        "system",
+        "containers",
+        "watchdog",
+        "marketplace",
+        "git_sync",
+        "orphans",
+    ]
     assert entry.runtime_data.batteries is not None
 
 
@@ -163,7 +171,7 @@ async def test_git_sync_needs_its_repository(hass: HomeAssistant, hass_ws_client
 
 
 def test_tab_order() -> None:
-    assert tab_order({}) == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync"]
+    assert tab_order({}) == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"]
     assert tab_order({"tabs": ["git_sync", "unknown", "git_sync", "system"]}) == [
         "git_sync",
         "system",
@@ -171,4 +179,5 @@ def test_tab_order() -> None:
         "watchdog",
         "marketplace",
         "batteries",
+        "orphans",
     ]

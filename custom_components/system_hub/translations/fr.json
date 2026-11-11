@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
-          "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…)."
+          "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
+          "orphans": "Liste les entités que leur intégration ne fournit plus, pour pouvoir les supprimer en masse."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync : Paramètres du dépôt",
           "git_sync": "Git Sync",
           "batteries_types": "Batteries : types de pile",
-          "batteries_import": "Batteries : importer depuis Battery Monitor"
+          "batteries_import": "Batteries : importer depuis Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Importer depuis Battery Monitor",
         "description": "Trouvé dans Battery Monitor : {settings} réglages, {types} types de pile réglés dans ses cartes et {stock} types de piles de rechange. Validez pour les reprendre dans System Hub : ses réglages remplacent ceux du module Batteries, et les types de pile déjà réglés ici sont conservés."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Intervalle d'analyse",
+          "grace_period": "Délai de grâce après le démarrage",
+          "stale_hours": "Obsolète après",
+          "include_unknown": "Inclure les entités inconnues",
+          "ignored_integrations": "Intégrations ignorées",
+          "ignored_entities": "Entités ignorées"
+        },
+        "data_description": {
+          "scan_interval": "Minutes entre deux analyses. Le registre des entités est aussi analysé quelques secondes après chaque modification.",
+          "grace_period": "Minutes après le démarrage de Home Assistant avant la première analyse, le temps que les intégrations créent leurs entités.",
+          "stale_hours": "Heures pendant lesquelles une entité encore fournie par son intégration doit avoir été indisponible (ou inconnue) pour être listée. 0 ne liste que les entités qui ne sont plus fournies.",
+          "include_unknown": "Lister aussi les entités inconnues depuis aussi longtemps. Les boutons, scènes et événements, inconnus par nature, ne sont jamais listés.",
+          "ignored_integrations": "Intégrations dont les entités ne sont jamais listées. Saisissez un domaine pour en ajouter une qui n'est pas dans la liste.",
+          "ignored_entities": "Entités (ID d'entité) et appareils (ID d'appareil) jamais listés. La carte les ajoute ici avec son bouton Ignorer."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Exporter les dashboards"
+      },
+      "orphans_scan": {
+        "name": "Analyser maintenant"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Branche distante"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Entités orphelines",
+        "state_attributes": {
+          "entities": {
+            "name": "Entités"
+          },
+          "counts": {
+            "name": "Décomptes"
+          },
+          "removed": {
+            "name": "Supprimées"
+          },
+          "stale_hours": {
+            "name": "Obsolète après"
+          },
+          "include_unknown": {
+            "name": "Inclure les inconnues"
+          },
+          "ignored_integrations": {
+            "name": "Intégrations ignorées"
+          },
+          "ignored_entities": {
+            "name": "Entités ignorées"
+          },
+          "devices": {
+            "name": "Appareils"
+          },
+          "truncated": {
+            "name": "Hors de la liste"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Dernière analyse"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Récupère le distant et intègre ses nouveaux commits : avance rapide, ou commits locaux rebasés par-dessus (arbre de travail propre uniquement). Un conflit annule le rebase."
+    },
+    "orphans_scan": {
+      "name": "Rechercher les entités orphelines",
+      "description": "Recherche dans le registre des entités celles que leur intégration ne fournit plus."
+    },
+    "orphans_remove": {
+      "name": "Supprimer les entités orphelines",
+      "description": "Supprime du registre des entités les entités listées par la dernière analyse.",
+      "fields": {
+        "entities": {
+          "name": "Entités",
+          "description": "ID des entités à supprimer. Chacune doit figurer dans la liste des entités orphelines."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorer des entités",
+      "description": "Ajoute des entités ou des appareils aux éléments ignorés : ils ne sont plus listés.",
+      "fields": {
+        "entities": {
+          "name": "Entités",
+          "description": "ID des entités à ignorer."
+        },
+        "devices": {
+          "name": "Appareils",
+          "description": "ID des appareils à ignorer (appareils orphelins)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Supprimer les appareils orphelins",
+      "description": "Supprime les appareils dont toutes les entrées d'intégration ont été supprimées, avec leurs entités. Seulement les appareils de la liste de la dernière analyse.",
+      "fields": {
+        "devices": {
+          "name": "Appareils",
+          "description": "ID d'appareils de l'attribut devices du capteur des orphelins. Laisser vide pour tous les appareils orphelins de la dernière analyse."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Le dossier d'export {path} est hors du dossier de configuration et de allowlist_external_dirs : choisissez-en un autre dans les options de Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant est encore en cours de démarrage : relancez l’analyse une fois démarré."
+    },
+    "orphans_no_entities": {
+      "message": "Aucune entité à supprimer."
+    },
+    "orphans_too_many": {
+      "message": "{max} entités au maximum à la fois."
+    },
+    "orphans_not_orphan": {
+      "message": "Absentes de la liste des entités orphelines : {entities}. Relancez une analyse et réessayez."
+    },
+    "orphans_not_registered": {
+      "message": "Absentes du registre des entités : {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Aucun appareil donné."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Pas des appareils orphelins (lancez une analyse) : {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Absent du registre des appareils : {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Appareil supprimé",
         "open_device": "Appareil",
         "pc_none": "Aucun redémarrage par prise : ajoutez-en un dans Configurer → Watchdog : ajouter un redémarrage par prise.",
-        "pc_configure": "Ajouter ou retirer dans Configurer"
+        "pc_configure": "Ajouter ou retirer dans Configurer",
+        "orph_reason_entry_removed": "Intégration supprimée",
+        "orph_reason_integration_missing": "Intégration non chargée",
+        "orph_reason_not_provided": "Non fournie",
+        "orph_reason_unavailable": "Indisponible",
+        "orph_reason_unknown": "Inconnue",
+        "orph_search": "Rechercher",
+        "orph_all_integrations": "Toutes les intégrations",
+        "orph_list_title": "Entités orphelines",
+        "orph_no_match": "Aucune entité ne correspond aux filtres",
+        "orph_empty": "Chaque entité est fournie par son intégration",
+        "orph_for": "depuis {d}",
+        "orph_disabled": "désactivée",
+        "orph_select_all": "Sélectionner les {n} affichées",
+        "orph_show_all": "Tout afficher ({n})",
+        "orph_selected_one": "{n} sélectionnée",
+        "orph_selected_many": "{n} sélectionnées",
+        "orph_remove": "Supprimer",
+        "orph_ignore": "Ignorer",
+        "orph_clear": "Effacer la sélection",
+        "orph_confirm_remove_one": "Supprimer {n} entité du registre des entités ?",
+        "orph_confirm_remove_many": "Supprimer {n} entités du registre des entités ?",
+        "orph_confirm_remove_text": "Leur historique reste dans la base de données. Une entité encore fournie par son intégration revient si l’intégration la recrée.",
+        "orph_confirm_ignore_one": "Ignorer {n} entité ?",
+        "orph_confirm_ignore_many": "Ignorer {n} entités ?",
+        "orph_confirm_ignore_text": "Elles ne sont plus listées. Retirez-les des entités ignorées dans les options de l’intégration.",
+        "orph_used_by": "Utilisée par {n}",
+        "orph_ref_automation": "Automatisation",
+        "orph_ref_script": "Script",
+        "orph_ref_scene": "Scène",
+        "orph_ref_group": "Groupe",
+        "orph_ref_dashboard": "Tableau de bord",
+        "orph_confirm_used_one": "{n} entité sélectionnée est encore utilisée : ce qui l’utilise risque de ne plus fonctionner.",
+        "orph_confirm_used_many": "{n} entités sélectionnées sont encore utilisées : ce qui les utilise risque de ne plus fonctionner.",
+        "orph_remove_anyway": "Supprimer quand même",
+        "orph_and_more": "et {n} de plus",
+        "orph_removed_one": "{n} entité supprimée",
+        "orph_removed_many": "{n} entités supprimées",
+        "orph_devices_title": "Appareils orphelins",
+        "orph_devices_hint": "Leur intégration a été supprimée : plus rien ne les fournit",
+        "orph_remove_devices": "Supprimer les appareils",
+        "orph_confirm_devices": "Supprimer les appareils orphelins ?",
+        "orph_confirm_devices_text": "Ils quittent le registre des appareils avec leurs entités. Leur historique reste dans la base.",
+        "orph_devices_removed": "Appareils orphelins supprimés : {n}",
+        "orph_confirm_ignore_devices": "Ignorer les appareils sélectionnés ?",
+        "orph_devices_ignored": "Appareils orphelins ignorés : {n}",
+        "orph_kept": "Conservés, plus orphelins : {n}",
+        "orph_dev_entities": "Entités : {n}",
+        "orph_ignored_one": "{n} entité ignorée",
+        "orph_ignored_many": "{n} entités ignorées",
+        "orph_waiting": "En attente de la première analyse",
+        "orph_never_scanned": "Pas encore analysé",
+        "orph_stat_removed": "Supprimées",
+        "orph_stat_removed_hint": "Depuis le démarrage de Home Assistant",
+        "orph_stat_ignored": "Ignorées",
+        "orph_all": "Toutes",
+        "orph_confirm_devices_used": "Appareils encore utilisés par des automatisations ou des scripts : {n}. Ils risquent de ne plus fonctionner."
       }
     },
     "battery_type": {

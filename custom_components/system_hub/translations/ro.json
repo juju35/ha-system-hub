@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
-          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…)."
+          "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
+          "orphans": "Listează entitățile pe care integrarea lor nu le mai furnizează, pentru a le putea elimina în masă."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Setările depozitului",
           "git_sync": "Git Sync",
           "batteries_types": "Baterii: tipuri de baterii",
-          "batteries_import": "Baterii: import din Battery Monitor"
+          "batteries_import": "Baterii: import din Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Import din Battery Monitor",
         "description": "Găsit în Battery Monitor: {settings} setări, {types} tipuri de baterii setate în cardurile sale și {stock} tipuri de baterii de rezervă. Trimiteți pentru a le aduce în System Hub: setările sale le înlocuiesc pe cele ale modulului Baterii, iar tipurile de baterii deja setate aici se păstrează."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Interval de scanare",
+          "grace_period": "Perioadă de grație după pornire",
+          "stale_hours": "Învechită după",
+          "include_unknown": "Include entitățile necunoscute",
+          "ignored_integrations": "Integrări ignorate",
+          "ignored_entities": "Entități ignorate"
+        },
+        "data_description": {
+          "scan_interval": "Minute între două scanări. Registrul entităților este scanat și la câteva secunde după fiecare modificare.",
+          "grace_period": "Minute după pornirea Home Assistant înainte de prima scanare, cât timp integrările își creează entitățile.",
+          "stale_hours": "Ore în care o entitate încă furnizată de integrarea sa trebuie să fi fost indisponibilă (sau necunoscută) pentru a fi listată. 0 listează doar entitățile care nu mai sunt furnizate.",
+          "include_unknown": "Listează și entitățile necunoscute de tot atâta timp. Butoanele, scenele și evenimentele, necunoscute prin natura lor, nu sunt listate niciodată.",
+          "ignored_integrations": "Integrări ale căror entități nu sunt listate niciodată. Tastați un domeniu pentru a adăuga una care nu apare în listă.",
+          "ignored_entities": "Entități (ID-uri de entitate) și dispozitive (ID-uri de dispozitiv) niciodată listate. Cardul le adaugă aici cu butonul Ignoră."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Exportă tablourile de bord"
+      },
+      "orphans_scan": {
+        "name": "Scanează acum"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Ramură upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Entități orfane",
+        "state_attributes": {
+          "entities": {
+            "name": "Entități"
+          },
+          "counts": {
+            "name": "Numărători"
+          },
+          "removed": {
+            "name": "Eliminate"
+          },
+          "stale_hours": {
+            "name": "Învechită după"
+          },
+          "include_unknown": {
+            "name": "Include necunoscutele"
+          },
+          "ignored_integrations": {
+            "name": "Integrări ignorate"
+          },
+          "ignored_entities": {
+            "name": "Entități ignorate"
+          },
+          "devices": {
+            "name": "Dispozitive"
+          },
+          "truncated": {
+            "name": "În afara listei"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Ultima scanare"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Preia depozitul la distanță și integrează commit-urile noi: avans rapid sau commit-urile locale rebazate deasupra (doar cu arborele de lucru curat). Un conflict anulează rebase-ul."
+    },
+    "orphans_scan": {
+      "name": "Scanează entitățile orfane",
+      "description": "Caută în registrul entităților entitățile pe care integrarea lor nu le mai furnizează."
+    },
+    "orphans_remove": {
+      "name": "Elimină entitățile orfane",
+      "description": "Elimină din registrul entităților entitățile listate de ultima scanare.",
+      "fields": {
+        "entities": {
+          "name": "Entități",
+          "description": "ID-urile entităților de eliminat. Fiecare trebuie să fie în lista entităților orfane."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignoră entități",
+      "description": "Adaugă entități sau dispozitive la cele ignorate: nu mai sunt listate.",
+      "fields": {
+        "entities": {
+          "name": "Entități",
+          "description": "ID-urile entităților de ignorat."
+        },
+        "devices": {
+          "name": "Dispozitive",
+          "description": "ID-urile dispozitivelor de ignorat (dispozitive orfane)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Elimină dispozitivele orfane",
+      "description": "Elimină dispozitivele ale căror intrări de integrare au fost toate eliminate, împreună cu entitățile lor. Doar dispozitivele din lista ultimei scanări.",
+      "fields": {
+        "devices": {
+          "name": "Dispozitive",
+          "description": "ID-uri de dispozitive din atributul devices al senzorului de orfane. Lăsați gol pentru toate dispozitivele orfane din ultima scanare."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Dosarul de export {path} este în afara dosarului de configurare și a allowlist_external_dirs: alege altul în opțiunile Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant încă pornește: scanați din nou după ce a pornit."
+    },
+    "orphans_no_entities": {
+      "message": "Nicio entitate de eliminat."
+    },
+    "orphans_too_many": {
+      "message": "Cel mult {max} entități odată."
+    },
+    "orphans_not_orphan": {
+      "message": "Nu sunt în lista entităților orfane: {entities}. Scanați din nou și reîncercați."
+    },
+    "orphans_not_registered": {
+      "message": "Nu sunt în registrul entităților: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Niciun dispozitiv dat."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Nu sunt dispozitive orfane (scanați mai întâi): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Nu se află în registrul de dispozitive: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Dispozitiv eliminat",
         "open_device": "Dispozitiv",
         "pc_none": "Încă nicio repornire prin priză: adăugați una în Configurare → Watchdog: adăugați o repornire prin priză.",
-        "pc_configure": "Adăugați sau eliminați în Configurare"
+        "pc_configure": "Adăugați sau eliminați în Configurare",
+        "orph_reason_entry_removed": "Integrare eliminată",
+        "orph_reason_integration_missing": "Integrare neîncărcată",
+        "orph_reason_not_provided": "Nefurnizată",
+        "orph_reason_unavailable": "Indisponibilă",
+        "orph_reason_unknown": "Necunoscută",
+        "orph_search": "Căutare",
+        "orph_all_integrations": "Toate integrările",
+        "orph_list_title": "Entități orfane",
+        "orph_no_match": "Nicio entitate nu corespunde filtrelor",
+        "orph_empty": "Fiecare entitate este furnizată de integrarea sa",
+        "orph_for": "de {d}",
+        "orph_disabled": "dezactivată",
+        "orph_select_all": "Selectează cele {n} afișate",
+        "orph_show_all": "Afișează tot ({n})",
+        "orph_selected_one": "{n} selectată",
+        "orph_selected_many": "Selectate: {n}",
+        "orph_remove": "Elimină",
+        "orph_ignore": "Ignoră",
+        "orph_clear": "Golește selecția",
+        "orph_confirm_remove_one": "Eliminați {n} entitate din registrul entităților?",
+        "orph_confirm_remove_many": "Eliminați {n} de entități din registrul entităților?",
+        "orph_confirm_remove_text": "Istoricul lor rămâne în baza de date. O entitate încă furnizată de integrarea sa revine dacă integrarea o creează din nou.",
+        "orph_confirm_ignore_one": "Ignorați {n} entitate?",
+        "orph_confirm_ignore_many": "Ignorați {n} de entități?",
+        "orph_confirm_ignore_text": "Nu mai sunt listate. Eliminați-le din entitățile ignorate în opțiunile integrării.",
+        "orph_used_by": "Folosită de {n}",
+        "orph_ref_automation": "Automatizare",
+        "orph_ref_script": "Script",
+        "orph_ref_scene": "Scenă",
+        "orph_ref_group": "Grup",
+        "orph_ref_dashboard": "Tablou de bord",
+        "orph_confirm_used_one": "{n} entitate selectată este încă folosită: ce o folosește poate să nu mai funcționeze.",
+        "orph_confirm_used_many": "{n} de entități selectate sunt încă folosite: ce le folosește poate să nu mai funcționeze.",
+        "orph_remove_anyway": "Eliminați oricum",
+        "orph_and_more": "și încă {n}",
+        "orph_removed_one": "{n} entitate eliminată",
+        "orph_removed_many": "{n} de entități eliminate",
+        "orph_devices_title": "Dispozitive orfane",
+        "orph_devices_hint": "Integrarea lor a fost eliminată: nimic nu le mai furnizează",
+        "orph_remove_devices": "Elimină dispozitivele",
+        "orph_confirm_devices": "Eliminați dispozitivele orfane?",
+        "orph_confirm_devices_text": "Ies din registrul de dispozitive împreună cu entitățile lor. Istoricul rămâne în baza de date.",
+        "orph_devices_removed": "Dispozitive orfane eliminate: {n}",
+        "orph_confirm_ignore_devices": "Ignorați dispozitivele selectate?",
+        "orph_devices_ignored": "Dispozitive orfane ignorate: {n}",
+        "orph_kept": "Păstrate, nu mai sunt orfane: {n}",
+        "orph_dev_entities": "Entități: {n}",
+        "orph_ignored_one": "{n} entitate ignorată",
+        "orph_ignored_many": "{n} de entități ignorate",
+        "orph_waiting": "Se așteaptă prima scanare",
+        "orph_never_scanned": "Nescanat încă",
+        "orph_stat_removed": "Eliminate",
+        "orph_stat_removed_hint": "De la pornirea Home Assistant",
+        "orph_stat_ignored": "Ignorate",
+        "orph_all": "Toate",
+        "orph_confirm_devices_used": "Dispozitive încă folosite de automatizări sau scripturi: {n}. Acestea pot să nu mai funcționeze."
       }
     },
     "battery_type": {

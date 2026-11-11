@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
-          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…)."
+          "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
+          "orphans": "Prikaže entitete, ki jih njihova integracija ne zagotavlja več, da jih lahko odstranite naenkrat."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Nastavitve repozitorija",
           "git_sync": "Git Sync",
           "batteries_types": "Baterije: vrste baterij",
-          "batteries_import": "Baterije: uvoz iz Battery Monitor"
+          "batteries_import": "Baterije: uvoz iz Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Uvoz iz Battery Monitor",
         "description": "Najdeno v Battery Monitor: nastavitve: {settings}, vrste baterij, nastavljene v njegovih karticah: {types}, vrste rezervnih baterij: {stock}. Pošljite, da jih prenesete v System Hub: njegove nastavitve zamenjajo nastavitve modula Baterije, vrste baterij, že nastavljene tukaj, pa ostanejo."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Interval pregleda",
+          "grace_period": "Čakalni čas po zagonu",
+          "stale_hours": "Zastarela po",
+          "include_unknown": "Vključi neznane entitete",
+          "ignored_integrations": "Prezrte integracije",
+          "ignored_entities": "Prezrte entitete"
+        },
+        "data_description": {
+          "scan_interval": "Minute med dvema pregledoma. Register entitet se pregleda tudi nekaj sekund po vsaki spremembi.",
+          "grace_period": "Minute po zagonu Home Assistant pred prvim pregledom, medtem ko integracije ustvarjajo svoje entitete.",
+          "stale_hours": "Ure, ko mora biti entiteta, ki jo njena integracija še zagotavlja, nedosegljiva (ali neznana), da je prikazana. 0 prikaže samo entitete, ki niso več zagotovljene.",
+          "include_unknown": "Prikaži tudi entitete, ki so enako dolgo neznane. Gumbi, scene in dogodki, ki so po naravi neznani, niso nikoli prikazani.",
+          "ignored_integrations": "Integracije, katerih entitete niso nikoli prikazane. Vnesite domeno, da dodate integracijo, ki je ni na seznamu.",
+          "ignored_entities": "Entitete (ID-ji entitet) in naprave (ID-ji naprav), ki niso nikoli prikazane. Kartica jih sem doda z gumbom Prezri."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Izvozi nadzorne plošče"
+      },
+      "orphans_scan": {
+        "name": "Preglej zdaj"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Osirotele entitete",
+        "state_attributes": {
+          "entities": {
+            "name": "Entitete"
+          },
+          "counts": {
+            "name": "Števila"
+          },
+          "removed": {
+            "name": "Odstranjene"
+          },
+          "stale_hours": {
+            "name": "Zastarela po"
+          },
+          "include_unknown": {
+            "name": "Vključi neznane"
+          },
+          "ignored_integrations": {
+            "name": "Prezrte integracije"
+          },
+          "ignored_entities": {
+            "name": "Prezrte entitete"
+          },
+          "devices": {
+            "name": "Naprave"
+          },
+          "truncated": {
+            "name": "Zunaj seznama"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Zadnji pregled"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Pridobi oddaljeni repozitorij in prevzame njegove nove commite: previjanje naprej ali lokalni commiti, prestavljeni na vrh (le pri čistem delovnem drevesu). Spor prestavljanje prekine."
+    },
+    "orphans_scan": {
+      "name": "Poišči osirotele entitete",
+      "description": "V registru entitet poišče entitete, ki jih njihova integracija ne zagotavlja več."
+    },
+    "orphans_remove": {
+      "name": "Odstrani osirotele entitete",
+      "description": "Iz registra entitet odstrani entitete, ki jih je prikazal zadnji pregled.",
+      "fields": {
+        "entities": {
+          "name": "Entitete",
+          "description": "ID-ji entitet za odstranitev. Vsaka mora biti na seznamu osirotelih entitet."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Prezri entitete",
+      "description": "Doda entitete ali naprave med prezrte: niso več prikazane.",
+      "fields": {
+        "entities": {
+          "name": "Entitete",
+          "description": "ID-ji entitet, ki jih želite prezreti."
+        },
+        "devices": {
+          "name": "Naprave",
+          "description": "ID-ji naprav, ki naj se prezrejo (osirotele naprave)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Odstrani osirotele naprave",
+      "description": "Odstrani naprave, katerih vsi vnosi integracije so bili odstranjeni, skupaj z njihovimi entitetami. Samo naprave s seznama zadnjega pregleda.",
+      "fields": {
+        "devices": {
+          "name": "Naprave",
+          "description": "ID-ji naprav iz atributa devices senzorja sirot. Pustite prazno za vse osirotele naprave zadnjega pregleda."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Mapa za izvoz {path} je zunaj mape konfiguracije in allowlist_external_dirs: izberite drugo v možnostih Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant se še zaganja: po zagonu znova zaženite pregled."
+    },
+    "orphans_no_entities": {
+      "message": "Ni entitet za odstranitev."
+    },
+    "orphans_too_many": {
+      "message": "Največ {max} entitet naenkrat."
+    },
+    "orphans_not_orphan": {
+      "message": "Niso na seznamu osirotelih entitet: {entities}. Ponovno preglejte in poskusite znova."
+    },
+    "orphans_not_registered": {
+      "message": "Niso v registru entitet: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Ni podane naprave."
+    },
+    "orphans_not_orphan_device": {
+      "message": "To niso osirotele naprave (najprej preglejte): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Ni v registru naprav: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Naprava odstranjena",
         "open_device": "Naprava",
         "pc_none": "Še ni ponovnega zagona prek vtičnice: dodajte ga v Konfiguriraj → Watchdog: dodaj ponovni zagon prek vtičnice.",
-        "pc_configure": "Dodaj ali odstrani v Konfiguriraj"
+        "pc_configure": "Dodaj ali odstrani v Konfiguriraj",
+        "orph_reason_entry_removed": "Integracija odstranjena",
+        "orph_reason_integration_missing": "Integracija ni naložena",
+        "orph_reason_not_provided": "Ni zagotovljena",
+        "orph_reason_unavailable": "Ni na voljo",
+        "orph_reason_unknown": "Neznana",
+        "orph_search": "Iskanje",
+        "orph_all_integrations": "Vse integracije",
+        "orph_list_title": "Osirotele entitete",
+        "orph_no_match": "Nobena entiteta se ne ujema s filtri",
+        "orph_empty": "Vsako entiteto zagotavlja njena integracija",
+        "orph_for": "že {d}",
+        "orph_disabled": "onemogočena",
+        "orph_select_all": "Izberi prikazane ({n})",
+        "orph_show_all": "Prikaži vse ({n})",
+        "orph_selected_one": "{n} izbrana",
+        "orph_selected_many": "Izbrane: {n}",
+        "orph_remove": "Odstrani",
+        "orph_ignore": "Prezri",
+        "orph_clear": "Počisti izbor",
+        "orph_confirm_remove_one": "Odstranim {n} entiteto iz registra entitet?",
+        "orph_confirm_remove_many": "Odstranim entitete iz registra entitet ({n})?",
+        "orph_confirm_remove_text": "Njihova zgodovina ostane v zbirki podatkov. Entiteta, ki jo njena integracija še zagotavlja, se vrne, če jo integracija znova ustvari.",
+        "orph_confirm_ignore_one": "Prezrem {n} entiteto?",
+        "orph_confirm_ignore_many": "Prezrem entitete ({n})?",
+        "orph_confirm_ignore_text": "Ne bodo več prikazane. Odstranite jih iz prezrtih entitet v možnostih integracije.",
+        "orph_used_by": "Uporablja: {n}",
+        "orph_ref_automation": "Avtomatizacija",
+        "orph_ref_script": "Skripta",
+        "orph_ref_scene": "Scena",
+        "orph_ref_group": "Skupina",
+        "orph_ref_dashboard": "Nadzorna plošča",
+        "orph_confirm_used_one": "{n} izbrana entiteta je še v uporabi: kar jo uporablja, lahko preneha delovati.",
+        "orph_confirm_used_many": "{n} izbranih entitet je še v uporabi: kar jih uporablja, lahko preneha delovati.",
+        "orph_remove_anyway": "Vseeno odstrani",
+        "orph_and_more": "in še {n}",
+        "orph_removed_one": "Odstranjena {n} entiteta",
+        "orph_removed_many": "Odstranjene entitete: {n}",
+        "orph_devices_title": "Osirotele naprave",
+        "orph_devices_hint": "Njihova integracija je bila odstranjena: nič jih več ne zagotavlja",
+        "orph_remove_devices": "Odstrani naprave",
+        "orph_confirm_devices": "Odstranim osirotele naprave?",
+        "orph_confirm_devices_text": "Iz registra naprav odidejo skupaj s svojimi entitetami. Njihova zgodovina ostane v bazi.",
+        "orph_devices_removed": "Odstranjene osirotele naprave: {n}",
+        "orph_confirm_ignore_devices": "Prezrem izbrane naprave?",
+        "orph_devices_ignored": "Prezrte osirotele naprave: {n}",
+        "orph_kept": "Ohranjeno, ni več osirotelo: {n}",
+        "orph_dev_entities": "Entitete: {n}",
+        "orph_ignored_one": "Prezrta {n} entiteta",
+        "orph_ignored_many": "Prezrte entitete: {n}",
+        "orph_waiting": "Čakanje na prvi pregled",
+        "orph_never_scanned": "Še ni pregledano",
+        "orph_stat_removed": "Odstranjene",
+        "orph_stat_removed_hint": "Od zagona Home Assistant",
+        "orph_stat_ignored": "Prezrte",
+        "orph_all": "Vse",
+        "orph_confirm_devices_used": "Naprave, ki jih še uporabljajo avtomatizacije ali skripti: {n}. Ti lahko prenehajo delovati."
       }
     },
     "battery_type": {

@@ -19,6 +19,7 @@ from .entity import SystemHubEntity
 from .git_sync.entities import SENSORS, GitSyncSensor
 from .marketplace.const import STATE_ERROR, STATE_IDLE, STATE_RUNNING
 from .marketplace.refresher import MarketplaceRefresher
+from .orphans import entities as orphans_entities
 from .watchdog.core import IntegrationWatchdog
 
 
@@ -56,6 +57,8 @@ async def async_setup_entry(
         ]
     if (g := data.git_sync) is not None:
         entities += [GitSyncSensor(g, entry.entry_id, description) for description in SENSORS]
+    if (o := data.orphans) is not None:
+        entities += orphans_entities.sensors(o, entry.entry_id)
     async_add_entities(entities)
 
 

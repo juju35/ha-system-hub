@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
-          "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
+          "orphans": "Listar de entiteter som deras integration inte längre tillhandahåller, så att du kan ta bort dem samtidigt."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Inställningar för förrådet",
           "git_sync": "Git Sync",
           "batteries_types": "Batterier: batterityper",
-          "batteries_import": "Batterier: importera från Battery Monitor"
+          "batteries_import": "Batterier: importera från Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Importera från Battery Monitor",
         "description": "Hittat i Battery Monitor: {settings} inställningar, {types} batterityper angivna i dess kort och {stock} typer av reservbatterier. Skicka för att hämta dem till System Hub: dess inställningar ersätter Batterier-modulens och de batterityper som redan angetts här behålls."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Skanningsintervall",
+          "grace_period": "Väntetid efter start",
+          "stale_hours": "Inaktuell efter",
+          "include_unknown": "Inkludera okända entiteter",
+          "ignored_integrations": "Ignorerade integrationer",
+          "ignored_entities": "Ignorerade entiteter"
+        },
+        "data_description": {
+          "scan_interval": "Minuter mellan två skanningar. Entitetsregistret skannas också några sekunder efter varje ändring.",
+          "grace_period": "Minuter efter att Home Assistant har startat innan den första skanningen, medan integrationerna skapar sina entiteter.",
+          "stale_hours": "Timmar som en entitet som fortfarande tillhandahålls av sin integration måste ha varit otillgänglig (eller okänd) för att listas. 0 listar bara de entiteter som inte längre tillhandahålls.",
+          "include_unknown": "Lista även de entiteter som har varit okända lika länge. Knappar, scener och händelser, som är okända till sin natur, listas aldrig.",
+          "ignored_integrations": "Integrationer vars entiteter aldrig listas. Skriv en domän för att lägga till en som inte finns i listan.",
+          "ignored_entities": "Entiteter (entitets-ID) och enheter (enhets-ID) som aldrig listas. Kortet lägger till dem här med sin Ignorera-knapp."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Exportera instrumentpaneler"
+      },
+      "orphans_scan": {
+        "name": "Skanna nu"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Föräldralösa entiteter",
+        "state_attributes": {
+          "entities": {
+            "name": "Entiteter"
+          },
+          "counts": {
+            "name": "Antal"
+          },
+          "removed": {
+            "name": "Borttagna"
+          },
+          "stale_hours": {
+            "name": "Inaktuell efter"
+          },
+          "include_unknown": {
+            "name": "Inkludera okända"
+          },
+          "ignored_integrations": {
+            "name": "Ignorerade integrationer"
+          },
+          "ignored_entities": {
+            "name": "Ignorerade entiteter"
+          },
+          "devices": {
+            "name": "Enheter"
+          },
+          "truncated": {
+            "name": "Utanför listan"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Senaste skanning"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Hämtar fjärrförrådet och tar in dess nya commits: snabbspolning, eller de lokala commits ombaserade ovanpå (bara med ett rent arbetsträd). En konflikt avbryter rebase."
+    },
+    "orphans_scan": {
+      "name": "Sök efter föräldralösa entiteter",
+      "description": "Söker i entitetsregistret efter de entiteter som deras integration inte längre tillhandahåller."
+    },
+    "orphans_remove": {
+      "name": "Ta bort föräldralösa entiteter",
+      "description": "Tar bort entiteter som listats av den senaste skanningen från entitetsregistret.",
+      "fields": {
+        "entities": {
+          "name": "Entiteter",
+          "description": "Entitets-ID:n som ska tas bort. Var och en måste finnas i listan över föräldralösa entiteter."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorera entiteter",
+      "description": "Lägger till entiteter eller enheter bland de ignorerade: de listas inte längre.",
+      "fields": {
+        "entities": {
+          "name": "Entiteter",
+          "description": "Entitets-ID:n som ska ignoreras."
+        },
+        "devices": {
+          "name": "Enheter",
+          "description": "Enhets-ID att ignorera (föräldralösa enheter)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Ta bort föräldralösa enheter",
+      "description": "Tar bort enheter vars integrationsposter alla har tagits bort, med deras entiteter. Bara enheterna i listan från senaste skanningen.",
+      "fields": {
+        "devices": {
+          "name": "Enheter",
+          "description": "Enhets-id:n från attributet devices på sensorn för föräldralösa. Lämna tomt för alla föräldralösa enheter från den senaste skanningen."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Exportmappen {path} ligger utanför konfigurationsmappen och allowlist_external_dirs: välj en annan i Git Sync-alternativen."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant startar fortfarande: skanna igen när det är igång."
+    },
+    "orphans_no_entities": {
+      "message": "Ingen entitet att ta bort."
+    },
+    "orphans_too_many": {
+      "message": "Högst {max} entiteter åt gången."
+    },
+    "orphans_not_orphan": {
+      "message": "Finns inte i listan över föräldralösa entiteter: {entities}. Skanna igen och försök på nytt."
+    },
+    "orphans_not_registered": {
+      "message": "Finns inte i entitetsregistret: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Ingen enhet angiven."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Inte föräldralösa enheter (skanna först): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Finns inte i enhetsregistret: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Enhet borttagen",
         "open_device": "Enhet",
         "pc_none": "Ingen omstart via uttag ännu: lägg till en i Konfigurera → Watchdog: lägg till en omstart via uttag.",
-        "pc_configure": "Lägg till eller ta bort i Konfigurera"
+        "pc_configure": "Lägg till eller ta bort i Konfigurera",
+        "orph_reason_entry_removed": "Integration borttagen",
+        "orph_reason_integration_missing": "Integration inte inläst",
+        "orph_reason_not_provided": "Tillhandahålls inte",
+        "orph_reason_unavailable": "Otillgänglig",
+        "orph_reason_unknown": "Okänd",
+        "orph_search": "Sök",
+        "orph_all_integrations": "Alla integrationer",
+        "orph_list_title": "Föräldralösa entiteter",
+        "orph_no_match": "Inga entiteter matchar filtren",
+        "orph_empty": "Alla entiteter tillhandahålls av sin integration",
+        "orph_for": "i {d}",
+        "orph_disabled": "inaktiverad",
+        "orph_select_all": "Markera de {n} som visas",
+        "orph_show_all": "Visa alla ({n})",
+        "orph_selected_one": "{n} markerad",
+        "orph_selected_many": "{n} markerade",
+        "orph_remove": "Ta bort",
+        "orph_ignore": "Ignorera",
+        "orph_clear": "Rensa markeringen",
+        "orph_confirm_remove_one": "Ta bort {n} entitet från entitetsregistret?",
+        "orph_confirm_remove_many": "Ta bort {n} entiteter från entitetsregistret?",
+        "orph_confirm_remove_text": "Deras historik finns kvar i databasen. En entitet som fortfarande tillhandahålls av sin integration kommer tillbaka om integrationen skapar den igen.",
+        "orph_confirm_ignore_one": "Ignorera {n} entitet?",
+        "orph_confirm_ignore_many": "Ignorera {n} entiteter?",
+        "orph_confirm_ignore_text": "De listas inte längre. Ta bort dem från de ignorerade entiteterna i integrationens alternativ.",
+        "orph_used_by": "Används av {n}",
+        "orph_ref_automation": "Automation",
+        "orph_ref_script": "Skript",
+        "orph_ref_scene": "Scen",
+        "orph_ref_group": "Grupp",
+        "orph_ref_dashboard": "Instrumentpanel",
+        "orph_confirm_used_one": "{n} vald entitet används fortfarande: det som använder den kan sluta fungera.",
+        "orph_confirm_used_many": "{n} valda entiteter används fortfarande: det som använder dem kan sluta fungera.",
+        "orph_remove_anyway": "Ta bort ändå",
+        "orph_and_more": "och {n} till",
+        "orph_removed_one": "{n} entitet borttagen",
+        "orph_removed_many": "{n} entiteter borttagna",
+        "orph_devices_title": "Föräldralösa enheter",
+        "orph_devices_hint": "Deras integration togs bort: inget tillhandahåller dem längre",
+        "orph_remove_devices": "Ta bort enheter",
+        "orph_confirm_devices": "Ta bort de föräldralösa enheterna?",
+        "orph_confirm_devices_text": "De lämnar enhetsregistret med sina entiteter. Deras historik stannar i databasen.",
+        "orph_devices_removed": "Föräldralösa enheter borttagna: {n}",
+        "orph_confirm_ignore_devices": "Ignorera de valda enheterna?",
+        "orph_devices_ignored": "Föräldralösa enheter ignorerade: {n}",
+        "orph_kept": "Behållna, inte längre föräldralösa: {n}",
+        "orph_dev_entities": "Entiteter: {n}",
+        "orph_ignored_one": "{n} entitet ignorerad",
+        "orph_ignored_many": "{n} entiteter ignorerade",
+        "orph_waiting": "Väntar på den första skanningen",
+        "orph_never_scanned": "Inte skannad än",
+        "orph_stat_removed": "Borttagna",
+        "orph_stat_removed_hint": "Sedan Home Assistant startade",
+        "orph_stat_ignored": "Ignorerade",
+        "orph_all": "Alla",
+        "orph_confirm_devices_used": "Enheter som fortfarande används av automatiseringar eller skript: {n}. De kan sluta fungera."
       }
     },
     "battery_type": {

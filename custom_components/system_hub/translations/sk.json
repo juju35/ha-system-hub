@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
-          "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…)."
+          "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
+          "orphans": "Zobrazuje entity, ktoré ich integrácia už neposkytuje, aby ste ich mohli hromadne odstrániť."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Nastavenia repozitára",
           "git_sync": "Git Sync",
           "batteries_types": "Batérie: typy batérií",
-          "batteries_import": "Batérie: import z Battery Monitor"
+          "batteries_import": "Batérie: import z Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Import z Battery Monitor",
         "description": "Nájdené v Battery Monitor: nastavenia: {settings}, typy batérií nastavené v jeho kartách: {types}, typy náhradných batérií: {stock}. Odoslaním ich prenesiete do System Hub: jeho nastavenia nahradia nastavenia modulu Batérie a typy batérií už nastavené tu zostanú zachované."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Interval skenovania",
+          "grace_period": "Čakacia doba po spustení",
+          "stale_hours": "Zastaraná po",
+          "include_unknown": "Zahrnúť neznáme entity",
+          "ignored_integrations": "Ignorované integrácie",
+          "ignored_entities": "Ignorované entity"
+        },
+        "data_description": {
+          "scan_interval": "Minúty medzi dvoma skenovaniami. Register entít sa skenuje aj niekoľko sekúnd po každej zmene.",
+          "grace_period": "Minúty po spustení Home Assistant pred prvým skenovaním, kým integrácie vytvárajú svoje entity.",
+          "stale_hours": "Počet hodín, počas ktorých musí byť entita stále poskytovaná svojou integráciou nedostupná (alebo neznáma), aby bola zobrazená. 0 zobrazí len entity, ktoré sa už neposkytujú.",
+          "include_unknown": "Zobraziť aj entity, ktoré sú rovnako dlho neznáme. Tlačidlá, scény a udalosti, ktoré sú zo svojej podstaty neznáme, sa nikdy nezobrazujú.",
+          "ignored_integrations": "Integrácie, ktorých entity sa nikdy nezobrazujú. Zadajte doménu a pridajte integráciu, ktorá nie je v zozname.",
+          "ignored_entities": "Entity (ID entít) a zariadenia (ID zariadení), ktoré sa nikdy nezobrazujú. Karta ich sem pridáva tlačidlom Ignorovať."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Exportovať dashboardy"
+      },
+      "orphans_scan": {
+        "name": "Skenovať teraz"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Osirotené entity",
+        "state_attributes": {
+          "entities": {
+            "name": "Entity"
+          },
+          "counts": {
+            "name": "Počty"
+          },
+          "removed": {
+            "name": "Odstránené"
+          },
+          "stale_hours": {
+            "name": "Zastaraná po"
+          },
+          "include_unknown": {
+            "name": "Zahrnúť neznáme"
+          },
+          "ignored_integrations": {
+            "name": "Ignorované integrácie"
+          },
+          "ignored_entities": {
+            "name": "Ignorované entity"
+          },
+          "devices": {
+            "name": "Zariadenia"
+          },
+          "truncated": {
+            "name": "Mimo zoznamu"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Posledné skenovanie"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Načíta vzdialený repozitár a prevezme jeho nové commity: posun dopredu alebo lokálne commity presunuté navrch (len pri čistom pracovnom strome). Konflikt presun zruší."
+    },
+    "orphans_scan": {
+      "name": "Vyhľadať osirotené entity",
+      "description": "Vyhľadá v registri entít entity, ktoré ich integrácia už neposkytuje."
+    },
+    "orphans_remove": {
+      "name": "Odstrániť osirotené entity",
+      "description": "Odstráni z registra entít entity zobrazené posledným skenovaním.",
+      "fields": {
+        "entities": {
+          "name": "Entity",
+          "description": "ID entít na odstránenie. Každá musí byť v zozname osirotených entít."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorovať entity",
+      "description": "Pridá entity alebo zariadenia medzi ignorované: už sa nezobrazujú.",
+      "fields": {
+        "entities": {
+          "name": "Entity",
+          "description": "ID entít na ignorovanie."
+        },
+        "devices": {
+          "name": "Zariadenia",
+          "description": "ID zariadení na ignorovanie (osirelé zariadenia)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Odstrániť osirotené zariadenia",
+      "description": "Odstráni zariadenia, ktorých všetky položky integrácie boli odstránené, aj s ich entitami. Iba zariadenia zo zoznamu posledného skenovania.",
+      "fields": {
+        "devices": {
+          "name": "Zariadenia",
+          "description": "ID zariadení z atribútu devices senzora osirotených. Ponechajte prázdne pre všetky osirotené zariadenia z poslednej kontroly."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Priečinok exportu {path} je mimo priečinka konfigurácie a allowlist_external_dirs: vyberte iný v možnostiach Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant sa ešte spúšťa: po spustení spustite skenovanie znova."
+    },
+    "orphans_no_entities": {
+      "message": "Žiadna entita na odstránenie."
+    },
+    "orphans_too_many": {
+      "message": "Naraz najviac {max} entít."
+    },
+    "orphans_not_orphan": {
+      "message": "Nie sú v zozname osirotených entít: {entities}. Skenujte znova a skúste to znova."
+    },
+    "orphans_not_registered": {
+      "message": "Nie sú v registri entít: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Nebolo zadané žiadne zariadenie."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Nie sú to osirotené zariadenia (najprv skenujte): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Nie je v registri zariadení: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Zariadenie odstránené",
         "open_device": "Zariadenie",
         "pc_none": "Zatiaľ žiadny reštart cez zásuvku: pridajte ho v Konfigurovať → Watchdog: pridať reštart cez zásuvku.",
-        "pc_configure": "Pridať alebo odstrániť v Konfigurovať"
+        "pc_configure": "Pridať alebo odstrániť v Konfigurovať",
+        "orph_reason_entry_removed": "Integrácia odstránená",
+        "orph_reason_integration_missing": "Integrácia nenačítaná",
+        "orph_reason_not_provided": "Neposkytovaná",
+        "orph_reason_unavailable": "Nedostupná",
+        "orph_reason_unknown": "Neznáma",
+        "orph_search": "Hľadať",
+        "orph_all_integrations": "Všetky integrácie",
+        "orph_list_title": "Osirotené entity",
+        "orph_no_match": "Filtrom nezodpovedá žiadna entita",
+        "orph_empty": "Každú entitu poskytuje jej integrácia",
+        "orph_for": "už {d}",
+        "orph_disabled": "zakázaná",
+        "orph_select_all": "Vybrať zobrazené ({n})",
+        "orph_show_all": "Zobraziť všetky ({n})",
+        "orph_selected_one": "{n} vybraná",
+        "orph_selected_many": "{n} vybraných",
+        "orph_remove": "Odstrániť",
+        "orph_ignore": "Ignorovať",
+        "orph_clear": "Zrušiť výber",
+        "orph_confirm_remove_one": "Odstrániť {n} entitu z registra entít?",
+        "orph_confirm_remove_many": "Odstrániť {n} entít z registra entít?",
+        "orph_confirm_remove_text": "Ich história zostáva v databáze. Entita, ktorú jej integrácia stále poskytuje, sa vráti, ak ju integrácia znova vytvorí.",
+        "orph_confirm_ignore_one": "Ignorovať {n} entitu?",
+        "orph_confirm_ignore_many": "Ignorovať {n} entít?",
+        "orph_confirm_ignore_text": "Už sa nebudú zobrazovať. Odstráňte ich z ignorovaných entít v možnostiach integrácie.",
+        "orph_used_by": "Používa ju: {n}",
+        "orph_ref_automation": "Automatizácia",
+        "orph_ref_script": "Skript",
+        "orph_ref_scene": "Scéna",
+        "orph_ref_group": "Skupina",
+        "orph_ref_dashboard": "Ovládací panel",
+        "orph_confirm_used_one": "{n} vybraná entita sa stále používa: to, čo ju používa, môže prestať fungovať.",
+        "orph_confirm_used_many": "{n} vybraných entít sa stále používa: to, čo ich používa, môže prestať fungovať.",
+        "orph_remove_anyway": "Napriek tomu odstrániť",
+        "orph_and_more": "a ďalšie ({n})",
+        "orph_removed_one": "Odstránená {n} entita",
+        "orph_removed_many": "Odstránených {n} entít",
+        "orph_devices_title": "Osirotené zariadenia",
+        "orph_devices_hint": "Ich integrácia bola odstránená: nič ich už neposkytuje",
+        "orph_remove_devices": "Odstrániť zariadenia",
+        "orph_confirm_devices": "Odstrániť osirotené zariadenia?",
+        "orph_confirm_devices_text": "Odídu z registra zariadení spolu s entitami. Ich história zostane v databáze.",
+        "orph_devices_removed": "Odstránené osirotené zariadenia: {n}",
+        "orph_confirm_ignore_devices": "Ignorovať vybrané zariadenia?",
+        "orph_devices_ignored": "Ignorované osirelé zariadenia: {n}",
+        "orph_kept": "Ponechané, už nie sú osirotené: {n}",
+        "orph_dev_entities": "Entity: {n}",
+        "orph_ignored_one": "Ignorovaná {n} entita",
+        "orph_ignored_many": "Ignorovaných {n} entít",
+        "orph_waiting": "Čaká sa na prvé skenovanie",
+        "orph_never_scanned": "Ešte neskenované",
+        "orph_stat_removed": "Odstránené",
+        "orph_stat_removed_hint": "Od spustenia Home Assistant",
+        "orph_stat_ignored": "Ignorované",
+        "orph_all": "Všetky",
+        "orph_confirm_devices_used": "Zariadenia stále používané automatizáciami alebo skriptmi: {n}. Môžu prestať fungovať."
       }
     },
     "battery_type": {

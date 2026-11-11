@@ -71,6 +71,13 @@ jobs:
             echo "::error::screenshots failed: $(tail -c 1200 /tmp/screenshots.log | tr -d '\r' | tr '\n' ' ')"
             exit 1
           }
+      - name: Render the Orphan Entities card screenshots
+        run: |
+          set -o pipefail
+          python scripts/screenshots_orphans.py 2>&1 | tee /tmp/screenshots-orphans.log || {
+            echo "::error::card screenshots failed: $(tail -c 1200 /tmp/screenshots-orphans.log | tr -d '\r' | tr '\n' ' ')"
+            exit 1
+          }
       # Only same-repo pull requests get the refreshed screenshots committed back:
       # fork PRs have a read-only token and manual runs must never push.
       - name: Commit refreshed screenshots

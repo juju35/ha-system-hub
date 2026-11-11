@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
-          "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…)."
+          "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
+          "orphans": "Listázza azokat az entitásokat, amelyeket az integrációjuk már nem biztosít, hogy egyszerre eltávolíthassa őket."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Tároló beállításai",
           "git_sync": "Git Sync",
           "batteries_types": "Elemek: elemtípusok",
-          "batteries_import": "Elemek: importálás a Battery Monitorból"
+          "batteries_import": "Elemek: importálás a Battery Monitorból",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Importálás a Battery Monitorból",
         "description": "A Battery Monitorban találtak: {settings} beállítás, {types} kártyáiban beállított elemtípus és {stock} tartalékelem-típus. Küldje el, hogy átkerüljenek a System Hubba: beállításai felváltják az Elemek modul beállításait, az itt már beállított elemtípusok megmaradnak."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Vizsgálati időköz",
+          "grace_period": "Türelmi idő indulás után",
+          "stale_hours": "Elavult ennyi idő után",
+          "include_unknown": "Ismeretlen entitások is",
+          "ignored_integrations": "Figyelmen kívül hagyott integrációk",
+          "ignored_entities": "Figyelmen kívül hagyott entitások"
+        },
+        "data_description": {
+          "scan_interval": "Két vizsgálat között eltelt percek. Az entitásnyilvántartás minden változás után néhány másodperccel is vizsgálatra kerül.",
+          "grace_period": "A Home Assistant indulása utáni percek az első vizsgálat előtt, amíg az integrációk létrehozzák az entitásaikat.",
+          "stale_hours": "Ennyi órán át kell nem elérhetőnek (vagy ismeretlennek) lennie egy integrációja által még biztosított entitásnak ahhoz, hogy listázva legyen. 0 esetén csak a már nem biztosított entitások jelennek meg.",
+          "include_unknown": "Az ugyanennyi ideje ismeretlen entitások listázása is. A gombok, jelenetek és események, amelyek természetüknél fogva ismeretlenek, soha nem jelennek meg.",
+          "ignored_integrations": "Integrációk, amelyek entitásai soha nem jelennek meg. Írjon be egy domaint, hogy hozzáadjon egy olyat, amely nincs a listában.",
+          "ignored_entities": "Soha nem listázott entitások (entitásazonosítók) és eszközök (eszközazonosítók). A kártya Mellőzés gombjával ide veszi fel őket."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Irányítópultok exportálása"
+      },
+      "orphans_scan": {
+        "name": "Vizsgálat most"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Árva entitások",
+        "state_attributes": {
+          "entities": {
+            "name": "Entitások"
+          },
+          "counts": {
+            "name": "Darabszámok"
+          },
+          "removed": {
+            "name": "Eltávolítva"
+          },
+          "stale_hours": {
+            "name": "Elavult ennyi idő után"
+          },
+          "include_unknown": {
+            "name": "Ismeretlenek is"
+          },
+          "ignored_integrations": {
+            "name": "Figyelmen kívül hagyott integrációk"
+          },
+          "ignored_entities": {
+            "name": "Figyelmen kívül hagyott entitások"
+          },
+          "devices": {
+            "name": "Eszközök"
+          },
+          "truncated": {
+            "name": "Listán kívül"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Utolsó vizsgálat"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Lekéri a távoli tárolót, és átveszi az új commitjait: előrepörgetés, vagy a helyi commitok áthelyezése föléjük (csak tiszta munkakönyvtárnál). Ütközés esetén az áthelyezés megszakad."
+    },
+    "orphans_scan": {
+      "name": "Árva entitások keresése",
+      "description": "Megkeresi az entitásnyilvántartásban azokat az entitásokat, amelyeket az integrációjuk már nem biztosít."
+    },
+    "orphans_remove": {
+      "name": "Árva entitások eltávolítása",
+      "description": "Eltávolítja az entitásnyilvántartásból az utolsó vizsgálat által listázott entitásokat.",
+      "fields": {
+        "entities": {
+          "name": "Entitások",
+          "description": "Az eltávolítandó entitások azonosítói. Mindegyiknek szerepelnie kell az árva entitások listájában."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Entitások figyelmen kívül hagyása",
+      "description": "Entitásokat vagy eszközöket ad a figyelmen kívül hagyottakhoz: többé nem jelennek meg.",
+      "fields": {
+        "entities": {
+          "name": "Entitások",
+          "description": "A figyelmen kívül hagyandó entitások azonosítói."
+        },
+        "devices": {
+          "name": "Eszközök",
+          "description": "Figyelmen kívül hagyandó eszközazonosítók (árva eszközök)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Árva eszközök eltávolítása",
+      "description": "Eltávolítja azokat az eszközöket, amelyek összes integrációs bejegyzését eltávolították, az entitásaikkal együtt. Csak a legutóbbi vizsgálat listájának eszközeit.",
+      "fields": {
+        "devices": {
+          "name": "Eszközök",
+          "description": "Eszközazonosítók az árva-érzékelő devices attribútumából. Hagyja üresen a legutóbbi vizsgálat összes árva eszközéhez."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "A(z) {path} exportmappa a konfigurációs mappán és az allowlist_external_dirs mappáin kívül van: válassz másikat a Git Sync beállításaiban."
+    },
+    "orphans_starting": {
+      "message": "A Home Assistant még indul: indítsa újra a vizsgálatot, ha elindult."
+    },
+    "orphans_no_entities": {
+      "message": "Nincs eltávolítandó entitás."
+    },
+    "orphans_too_many": {
+      "message": "Egyszerre legfeljebb {max} entitás."
+    },
+    "orphans_not_orphan": {
+      "message": "Nem szerepelnek az árva entitások listájában: {entities}. Vizsgáljon újra, és próbálja meg ismét."
+    },
+    "orphans_not_registered": {
+      "message": "Nem szerepelnek az entitásnyilvántartásban: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Nincs megadva eszköz."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Nem árva eszközök (először futtasson vizsgálatot): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Nincs az eszköznyilvántartásban: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Eszköz eltávolítva",
         "open_device": "Eszköz",
         "pc_none": "Még nincs aljzatos újraindítás: adjon hozzá egyet: Konfigurálás → Watchdog: aljzatos újraindítás hozzáadása.",
-        "pc_configure": "Hozzáadás vagy eltávolítás a Konfigurálásban"
+        "pc_configure": "Hozzáadás vagy eltávolítás a Konfigurálásban",
+        "orph_reason_entry_removed": "Integráció eltávolítva",
+        "orph_reason_integration_missing": "Integráció nincs betöltve",
+        "orph_reason_not_provided": "Nincs biztosítva",
+        "orph_reason_unavailable": "Nem elérhető",
+        "orph_reason_unknown": "Ismeretlen",
+        "orph_search": "Keresés",
+        "orph_all_integrations": "Minden integráció",
+        "orph_list_title": "Árva entitások",
+        "orph_no_match": "Egyetlen entitás sem felel meg a szűrőknek",
+        "orph_empty": "Minden entitást biztosít az integrációja",
+        "orph_for": "{d} óta",
+        "orph_disabled": "letiltva",
+        "orph_select_all": "A megjelenített {n} kijelölése",
+        "orph_show_all": "Összes megjelenítése ({n})",
+        "orph_selected_one": "{n} kijelölve",
+        "orph_selected_many": "{n} kijelölve",
+        "orph_remove": "Eltávolítás",
+        "orph_ignore": "Mellőzés",
+        "orph_clear": "Kijelölés törlése",
+        "orph_confirm_remove_one": "{n} entitás eltávolítása az entitásnyilvántartásból?",
+        "orph_confirm_remove_many": "{n} entitás eltávolítása az entitásnyilvántartásból?",
+        "orph_confirm_remove_text": "Az előzményeik az adatbázisban maradnak. Az integrációja által még biztosított entitás visszatér, ha az integráció újra létrehozza.",
+        "orph_confirm_ignore_one": "{n} entitás figyelmen kívül hagyása?",
+        "orph_confirm_ignore_many": "{n} entitás figyelmen kívül hagyása?",
+        "orph_confirm_ignore_text": "Többé nem jelennek meg a listában. Az integráció beállításaiban távolíthatja el őket a figyelmen kívül hagyott entitások közül.",
+        "orph_used_by": "Használja: {n}",
+        "orph_ref_automation": "Automatizálás",
+        "orph_ref_script": "Szkript",
+        "orph_ref_scene": "Jelenet",
+        "orph_ref_group": "Csoport",
+        "orph_ref_dashboard": "Irányítópult",
+        "orph_confirm_used_one": "{n} kijelölt entitás még használatban van: ami használja, leállhat.",
+        "orph_confirm_used_many": "{n} kijelölt entitás még használatban van: ami használja őket, leállhat.",
+        "orph_remove_anyway": "Eltávolítás mégis",
+        "orph_and_more": "és még {n}",
+        "orph_removed_one": "{n} entitás eltávolítva",
+        "orph_removed_many": "{n} entitás eltávolítva",
+        "orph_devices_title": "Árva eszközök",
+        "orph_devices_hint": "Az integrációjukat eltávolították: már semmi sem biztosítja őket",
+        "orph_remove_devices": "Eszközök eltávolítása",
+        "orph_confirm_devices": "Eltávolítja az árva eszközöket?",
+        "orph_confirm_devices_text": "Entitásaikkal együtt kikerülnek az eszköznyilvántartásból. Az előzményeik az adatbázisban maradnak.",
+        "orph_devices_removed": "Eltávolított árva eszközök: {n}",
+        "orph_confirm_ignore_devices": "Figyelmen kívül hagyja a kijelölt eszközöket?",
+        "orph_devices_ignored": "Figyelmen kívül hagyott árva eszközök: {n}",
+        "orph_kept": "Megtartva, már nem árva: {n}",
+        "orph_dev_entities": "Entitások: {n}",
+        "orph_ignored_one": "{n} entitás figyelmen kívül hagyva",
+        "orph_ignored_many": "{n} entitás figyelmen kívül hagyva",
+        "orph_waiting": "Várakozás az első vizsgálatra",
+        "orph_never_scanned": "Még nem volt vizsgálat",
+        "orph_stat_removed": "Eltávolítva",
+        "orph_stat_removed_hint": "A Home Assistant indulása óta",
+        "orph_stat_ignored": "Mellőzve",
+        "orph_all": "Mind",
+        "orph_confirm_devices_used": "Automatizálások vagy szkriptek által még használt eszközök: {n}. Ezek leállhatnak."
       }
     },
     "battery_type": {

@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
-          "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…)."
+          "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
+          "orphans": "Wyświetla encje, których ich integracja już nie dostarcza, aby można je było usunąć zbiorczo."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Ustawienia repozytorium",
           "git_sync": "Git Sync",
           "batteries_types": "Baterie: typy baterii",
-          "batteries_import": "Baterie: import z Battery Monitor"
+          "batteries_import": "Baterie: import z Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Import z Battery Monitor",
         "description": "Znaleziono w Battery Monitor: {settings} ustawień, {types} typów baterii ustawionych w jego kartach i {stock} typów baterii zapasowych. Zatwierdź, aby przenieść je do System Hub: jego ustawienia zastąpią ustawienia modułu Baterie, a typy baterii już ustawione tutaj zostaną zachowane."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Interwał skanowania",
+          "grace_period": "Okres karencji po uruchomieniu",
+          "stale_hours": "Nieaktualna po",
+          "include_unknown": "Uwzględniaj nieznane encje",
+          "ignored_integrations": "Ignorowane integracje",
+          "ignored_entities": "Ignorowane encje"
+        },
+        "data_description": {
+          "scan_interval": "Minuty między dwoma skanowaniami. Rejestr encji jest też skanowany kilka sekund po każdej zmianie.",
+          "grace_period": "Minuty od uruchomienia Home Assistant do pierwszego skanowania, gdy integracje konfigurują swoje encje.",
+          "stale_hours": "Liczba godzin, przez które encja nadal dostarczana przez swoją integrację musi być niedostępna (lub nieznana), aby została wyświetlona. 0 wyświetla tylko encje, które nie są już dostarczane.",
+          "include_unknown": "Wyświetlaj też encje nieznane przez ten sam czas. Przyciski, sceny i zdarzenia, z natury nieznane, nigdy nie są wyświetlane.",
+          "ignored_integrations": "Integracje, których encje nigdy nie są wyświetlane. Wpisz domenę, aby dodać integrację, której nie ma na liście.",
+          "ignored_entities": "Encje (ID encji) i urządzenia (ID urządzeń), które nigdy nie są wyświetlane. Karta dodaje je tutaj przyciskiem Ignoruj."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Eksportuj dashboardy"
+      },
+      "orphans_scan": {
+        "name": "Skanuj teraz"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Gałąź zdalna"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Osierocone encje",
+        "state_attributes": {
+          "entities": {
+            "name": "Encje"
+          },
+          "counts": {
+            "name": "Liczniki"
+          },
+          "removed": {
+            "name": "Usunięte"
+          },
+          "stale_hours": {
+            "name": "Nieaktualna po"
+          },
+          "include_unknown": {
+            "name": "Uwzględniaj nieznane"
+          },
+          "ignored_integrations": {
+            "name": "Ignorowane integracje"
+          },
+          "ignored_entities": {
+            "name": "Ignorowane encje"
+          },
+          "devices": {
+            "name": "Urządzenia"
+          },
+          "truncated": {
+            "name": "Poza listą"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Ostatnie skanowanie"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Pobiera zdalne repozytorium i dołącza jego nowe commity: przewinięcie do przodu albo lokalne commity przeniesione na wierzch (tylko przy czystym drzewie roboczym). Konflikt przerywa rebase."
+    },
+    "orphans_scan": {
+      "name": "Skanuj w poszukiwaniu osieroconych encji",
+      "description": "Przeszukuje rejestr encji w poszukiwaniu encji, których ich integracja już nie dostarcza."
+    },
+    "orphans_remove": {
+      "name": "Usuń osierocone encje",
+      "description": "Usuwa z rejestru encji encje wyświetlone przez ostatnie skanowanie.",
+      "fields": {
+        "entities": {
+          "name": "Encje",
+          "description": "Identyfikatory encji do usunięcia. Każda musi znajdować się na liście osieroconych encji."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignoruj encje",
+      "description": "Dodaje encje lub urządzenia do ignorowanych: nie są już wyświetlane.",
+      "fields": {
+        "entities": {
+          "name": "Encje",
+          "description": "Identyfikatory encji do zignorowania."
+        },
+        "devices": {
+          "name": "Urządzenia",
+          "description": "ID urządzeń do zignorowania (osierocone urządzenia)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Usuń osierocone urządzenia",
+      "description": "Usuwa urządzenia, których wszystkie wpisy integracji zostały usunięte, razem z ich encjami. Tylko urządzenia z listy ostatniego skanowania.",
+      "fields": {
+        "devices": {
+          "name": "Urządzenia",
+          "description": "Identyfikatory urządzeń z atrybutu devices czujnika sierot. Pozostaw puste dla wszystkich osieroconych urządzeń z ostatniego skanowania."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Folder eksportu {path} jest poza folderem konfiguracji i allowlist_external_dirs: wybierz inny w opcjach Git Sync."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant wciąż się uruchamia: skanuj ponownie, gdy będzie gotowy."
+    },
+    "orphans_no_entities": {
+      "message": "Brak encji do usunięcia."
+    },
+    "orphans_too_many": {
+      "message": "Maksymalnie {max} encji naraz."
+    },
+    "orphans_not_orphan": {
+      "message": "Nie ma na liście osieroconych encji: {entities}. Przeskanuj ponownie i spróbuj jeszcze raz."
+    },
+    "orphans_not_registered": {
+      "message": "Nie ma w rejestrze encji: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Nie podano urządzenia."
+    },
+    "orphans_not_orphan_device": {
+      "message": "To nie są osierocone urządzenia (najpierw przeskanuj): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Brak w rejestrze urządzeń: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Urządzenie usunięte",
         "open_device": "Urządzenie",
         "pc_none": "Brak restartów przez gniazdko: dodaj w Konfiguruj → Watchdog: dodaj restart przez gniazdko.",
-        "pc_configure": "Dodaj lub usuń w Konfiguruj"
+        "pc_configure": "Dodaj lub usuń w Konfiguruj",
+        "orph_reason_entry_removed": "Integracja usunięta",
+        "orph_reason_integration_missing": "Integracja niewczytana",
+        "orph_reason_not_provided": "Niedostarczona",
+        "orph_reason_unavailable": "Niedostępna",
+        "orph_reason_unknown": "Nieznana",
+        "orph_search": "Szukaj",
+        "orph_all_integrations": "Wszystkie integracje",
+        "orph_list_title": "Osierocone encje",
+        "orph_no_match": "Żadna encja nie pasuje do filtrów",
+        "orph_empty": "Każda encja jest dostarczana przez swoją integrację",
+        "orph_for": "od {d}",
+        "orph_disabled": "wyłączona",
+        "orph_select_all": "Zaznacz wyświetlane ({n})",
+        "orph_show_all": "Pokaż wszystkie ({n})",
+        "orph_selected_one": "{n} zaznaczona",
+        "orph_selected_many": "{n} zaznaczonych",
+        "orph_remove": "Usuń",
+        "orph_ignore": "Ignoruj",
+        "orph_clear": "Wyczyść zaznaczenie",
+        "orph_confirm_remove_one": "Usunąć {n} encję z rejestru encji?",
+        "orph_confirm_remove_many": "Usunąć {n} encji z rejestru encji?",
+        "orph_confirm_remove_text": "Ich historia pozostaje w bazie danych. Encja nadal dostarczana przez swoją integrację powróci, jeśli integracja utworzy ją ponownie.",
+        "orph_confirm_ignore_one": "Zignorować {n} encję?",
+        "orph_confirm_ignore_many": "Zignorować {n} encji?",
+        "orph_confirm_ignore_text": "Nie będą już wyświetlane. Usuń je z ignorowanych encji w opcjach integracji.",
+        "orph_used_by": "Używana przez {n}",
+        "orph_ref_automation": "Automatyzacja",
+        "orph_ref_script": "Skrypt",
+        "orph_ref_scene": "Scena",
+        "orph_ref_group": "Grupa",
+        "orph_ref_dashboard": "Dashboard",
+        "orph_confirm_used_one": "{n} zaznaczona encja jest nadal używana: to, co jej używa, może przestać działać.",
+        "orph_confirm_used_many": "{n} zaznaczonych encji jest nadal używanych: to, co ich używa, może przestać działać.",
+        "orph_remove_anyway": "Usuń mimo to",
+        "orph_and_more": "i {n} więcej",
+        "orph_removed_one": "Usunięto {n} encję",
+        "orph_removed_many": "Usunięto {n} encji",
+        "orph_devices_title": "Osierocone urządzenia",
+        "orph_devices_hint": "Ich integracja została usunięta: nic ich już nie dostarcza",
+        "orph_remove_devices": "Usuń urządzenia",
+        "orph_confirm_devices": "Usunąć osierocone urządzenia?",
+        "orph_confirm_devices_text": "Znikają z rejestru urządzeń razem z encjami. Ich historia zostaje w bazie danych.",
+        "orph_devices_removed": "Usunięte osierocone urządzenia: {n}",
+        "orph_confirm_ignore_devices": "Zignorować wybrane urządzenia?",
+        "orph_devices_ignored": "Zignorowane osierocone urządzenia: {n}",
+        "orph_kept": "Zachowane, już nie osierocone: {n}",
+        "orph_dev_entities": "Encje: {n}",
+        "orph_ignored_one": "Zignorowano {n} encję",
+        "orph_ignored_many": "Zignorowano {n} encji",
+        "orph_waiting": "Oczekiwanie na pierwsze skanowanie",
+        "orph_never_scanned": "Jeszcze nie przeskanowano",
+        "orph_stat_removed": "Usunięte",
+        "orph_stat_removed_hint": "Od uruchomienia Home Assistant",
+        "orph_stat_ignored": "Ignorowane",
+        "orph_all": "Wszystkie",
+        "orph_confirm_devices_used": "Urządzenia nadal używane przez automatyzacje lub skrypty: {n}. Mogą one przestać działać."
       }
     },
     "battery_type": {

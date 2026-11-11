@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
           "watchdog": "Поново учитава интеграције чији су сви ентитети недоступни.",
           "marketplace": "Проверава ажурирања за сваки репозиторијум преузет помоћу Marketplace-а, на серверу. Сам Marketplace проверава прилагођене репозиторијуме само на сваких 48 сати.",
           "batteries": "Обавештава двапут дневно о уређајима чија је батерија остала слаба.",
-          "git_sync": "Фасцикла Home Assistant-а верзионисана помоћу Git-а и push-ована на удаљени репозиторијум (GitHub, Gitea…)."
+          "git_sync": "Фасцикла Home Assistant-а верзионисана помоћу Git-а и push-ована на удаљени репозиторијум (GitHub, Gitea…).",
+          "orphans": "Приказује ентитете које њихова интеграција више не обезбеђује, како бисте могли да их уклоните одједном."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Подешавања репозиторијума",
           "git_sync": "Git Sync",
           "batteries_types": "Батерије: типови батерија",
-          "batteries_import": "Батерије: увоз из Battery Monitor"
+          "batteries_import": "Батерије: увоз из Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Увоз из Battery Monitor",
         "description": "Пронађено у Battery Monitor: подешавања: {settings}, типови батерија подешени у његовим картицама: {types}, типови резервних батерија: {stock}. Пошаљите да бисте их пренели у System Hub: његова подешавања замењују подешавања модула Батерије, а типови батерија већ подешени овде се задржавају."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Интервал скенирања",
+          "grace_period": "Период чекања након покретања",
+          "stale_hours": "Застарео након",
+          "include_unknown": "Укључи непознате ентитете",
+          "ignored_integrations": "Игнорисане интеграције",
+          "ignored_entities": "Игнорисани ентитети"
+        },
+        "data_description": {
+          "scan_interval": "Минути између два скенирања. Регистар ентитета се скенира и неколико секунди након сваке измене.",
+          "grace_period": "Минути након покретања Home Assistant-а пре првог скенирања, док интеграције подешавају своје ентитете.",
+          "stale_hours": "Број сати током којих ентитет који његова интеграција још обезбеђује мора бити недоступан (или непознат) да би био приказан. 0 приказује само ентитете који се више не обезбеђују.",
+          "include_unknown": "Прикажи и ентитете који су толико дуго непознати. Дугмад, сцене и догађаји, непознати по природи, никада се не приказују.",
+          "ignored_integrations": "Интеграције чији се ентитети никада не приказују. Унесите домен да бисте додали неку која није на листи.",
+          "ignored_entities": "Ентитети (ИД ентитета) и уређаји (ИД уређаја) који се никад не приказују. Картица их овде додаје својим дугметом Игнориши."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Извези контролне табле"
+      },
+      "orphans_scan": {
+        "name": "Скенирај сада"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Праћена грана"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Осироћени ентитети",
+        "state_attributes": {
+          "entities": {
+            "name": "Ентитети"
+          },
+          "counts": {
+            "name": "Бројеви"
+          },
+          "removed": {
+            "name": "Уклоњени"
+          },
+          "stale_hours": {
+            "name": "Застарео након"
+          },
+          "include_unknown": {
+            "name": "Укључи непознате"
+          },
+          "ignored_integrations": {
+            "name": "Игнорисане интеграције"
+          },
+          "ignored_entities": {
+            "name": "Игнорисани ентитети"
+          },
+          "devices": {
+            "name": "Уређаји"
+          },
+          "truncated": {
+            "name": "Ван листе"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Последње скенирање"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Преузима удаљени репозиторијум и уноси његове нове commit-ове: премотавање унапред или локални commit-ови премештени преко њих (само уз чисто радно стабло). Сукоб прекида премештање."
+    },
+    "orphans_scan": {
+      "name": "Скенирај осироћене ентитете",
+      "description": "Претражује регистар ентитета у потрази за ентитетима које њихова интеграција више не обезбеђује."
+    },
+    "orphans_remove": {
+      "name": "Уклони осироћене ентитете",
+      "description": "Уклања из регистра ентитета ентитете које је приказало последње скенирање.",
+      "fields": {
+        "entities": {
+          "name": "Ентитети",
+          "description": "ИД-ови ентитета за уклањање. Сваки мора бити на листи осироћених ентитета."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Игнориши ентитете",
+      "description": "Додаје ентитете или уређаје у игнорисане: више се не приказују.",
+      "fields": {
+        "entities": {
+          "name": "Ентитети",
+          "description": "ИД-ови ентитета за игнорисање."
+        },
+        "devices": {
+          "name": "Уређаји",
+          "description": "ИД уређаја за игнорисање (напуштени уређаји)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Уклони напуштене уређаје",
+      "description": "Уклања уређаје чији су сви уноси интеграције уклоњени, заједно са њиховим ентитетима. Само уређаје са листе последњег скенирања.",
+      "fields": {
+        "devices": {
+          "name": "Уређаји",
+          "description": "Идентификатори уређаја из атрибута уређаја сензора напуштених. Оставите празно за све напуштене уређаје последњег скенирања."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Фасцикла за извоз {path} је ван фасцикле конфигурације и allowlist_external_dirs: изаберите другу у опцијама Git Sync-а."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant се још покреће: скенирајте поново када буде спреман."
+    },
+    "orphans_no_entities": {
+      "message": "Нема ентитета за уклањање."
+    },
+    "orphans_too_many": {
+      "message": "Највише {max} ентитета одједном."
+    },
+    "orphans_not_orphan": {
+      "message": "Нису на листи осироћених ентитета: {entities}. Скенирајте поново и покушајте опет."
+    },
+    "orphans_not_registered": {
+      "message": "Нису у регистру ентитета: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Није задат ниједан уређај."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Нису напуштени уређаји (прво скенирајте): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Нема у регистру уређаја: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Уређај уклоњен",
         "open_device": "Уређај",
         "pc_none": "Још нема поновног покретања преко утичнице: додајте га у Конфигуриши → Watchdog: додај поновно покретање преко утичнице.",
-        "pc_configure": "Додај или уклони у Конфигуриши"
+        "pc_configure": "Додај или уклони у Конфигуриши",
+        "orph_reason_entry_removed": "Интеграција уклоњена",
+        "orph_reason_integration_missing": "Интеграција није учитана",
+        "orph_reason_not_provided": "Није обезбеђен",
+        "orph_reason_unavailable": "Недоступан",
+        "orph_reason_unknown": "Непознат",
+        "orph_search": "Претрага",
+        "orph_all_integrations": "Све интеграције",
+        "orph_list_title": "Осироћени ентитети",
+        "orph_no_match": "Ниједан ентитет не одговара филтерима",
+        "orph_empty": "Сваки ентитет обезбеђује његова интеграција",
+        "orph_for": "већ {d}",
+        "orph_disabled": "онемогућен",
+        "orph_select_all": "Изабери приказане ({n})",
+        "orph_show_all": "Прикажи све ({n})",
+        "orph_selected_one": "{n} изабран",
+        "orph_selected_many": "{n} изабраних",
+        "orph_remove": "Уклони",
+        "orph_ignore": "Игнориши",
+        "orph_clear": "Обриши избор",
+        "orph_confirm_remove_one": "Уклонити {n} ентитет из регистра ентитета?",
+        "orph_confirm_remove_many": "Уклонити {n} ентитета из регистра ентитета?",
+        "orph_confirm_remove_text": "Њихова историја остаје у бази података. Ентитет који његова интеграција још обезбеђује враћа се ако га интеграција поново направи.",
+        "orph_confirm_ignore_one": "Игнорисати {n} ентитет?",
+        "orph_confirm_ignore_many": "Игнорисати {n} ентитета?",
+        "orph_confirm_ignore_text": "Више се не приказују. Уклоните их из игнорисаних ентитета у опцијама интеграције.",
+        "orph_used_by": "Користе га: {n}",
+        "orph_ref_automation": "Аутоматизација",
+        "orph_ref_script": "Скрипта",
+        "orph_ref_scene": "Сцена",
+        "orph_ref_group": "Група",
+        "orph_ref_dashboard": "Контролна табла",
+        "orph_confirm_used_one": "{n} изабрани ентитет се још користи: оно што га користи може престати да ради.",
+        "orph_confirm_used_many": "{n} изабраних ентитета се још користи: оно што их користи може престати да ради.",
+        "orph_remove_anyway": "Ипак уклони",
+        "orph_and_more": "и још {n}",
+        "orph_removed_one": "{n} ентитет уклоњен",
+        "orph_removed_many": "{n} ентитета уклоњено",
+        "orph_devices_title": "Напуштени уређаји",
+        "orph_devices_hint": "Њихова интеграција је уклоњена: више их ништа не пружа",
+        "orph_remove_devices": "Уклони уређаје",
+        "orph_confirm_devices": "Уклонити напуштене уређаје?",
+        "orph_confirm_devices_text": "Напуштају регистар уређаја заједно са својим ентитетима. Њихова историја остаје у бази.",
+        "orph_devices_removed": "Уклоњени напуштени уређаји: {n}",
+        "orph_confirm_ignore_devices": "Игнорисати изабране уређаје?",
+        "orph_devices_ignored": "Игнорисани напуштени уређаји: {n}",
+        "orph_kept": "Задржано, више није напуштено: {n}",
+        "orph_dev_entities": "Ентитети: {n}",
+        "orph_ignored_one": "{n} ентитет игнорисан",
+        "orph_ignored_many": "{n} ентитета игнорисано",
+        "orph_waiting": "Чека се прво скенирање",
+        "orph_never_scanned": "Још није скенирано",
+        "orph_stat_removed": "Уклоњени",
+        "orph_stat_removed_hint": "Од покретања Home Assistant-а",
+        "orph_stat_ignored": "Игнорисани",
+        "orph_all": "Сви",
+        "orph_confirm_devices_used": "Уређаји које још користе аутоматизације или скрипте: {n}. Оне могу престати да раде."
       }
     },
     "battery_type": {

@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "orphans": "Orphans"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
-          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
+          "orphans": "Parāda vienības, ko to integrācija vairs nenodrošina, lai tās varētu noņemt vienlaikus."
         }
       },
       "git_sync_repository": {
@@ -68,7 +70,8 @@
           "git_sync_repository": "Git Sync: Repozitorija iestatījumi",
           "git_sync": "Git Sync",
           "batteries_types": "Baterijas: bateriju veidi",
-          "batteries_import": "Baterijas: importēt no Battery Monitor"
+          "batteries_import": "Baterijas: importēt no Battery Monitor",
+          "orphans": "Orphans"
         }
       },
       "modules": {
@@ -255,6 +258,25 @@
       "batteries_import": {
         "title": "Importēt no Battery Monitor",
         "description": "Atrasts Battery Monitor: iestatījumi: {settings}, tā kartītēs iestatītie bateriju veidi: {types}, rezerves bateriju veidi: {stock}. Iesniedziet, lai tos pārņemtu System Hub: tā iestatījumi aizstāj moduļa Baterijas iestatījumus, bet šeit jau iestatītie bateriju veidi tiek saglabāti."
+      },
+      "orphans": {
+        "title": "Orphans",
+        "data": {
+          "scan_interval": "Skenēšanas intervāls",
+          "grace_period": "Nogaidīšanas laiks pēc palaišanas",
+          "stale_hours": "Novecojusi pēc",
+          "include_unknown": "Iekļaut nezināmas vienības",
+          "ignored_integrations": "Ignorētās integrācijas",
+          "ignored_entities": "Ignorētās vienības"
+        },
+        "data_description": {
+          "scan_interval": "Minūtes starp divām skenēšanām. Vienību reģistrs tiek skenēts arī dažas sekundes pēc katras izmaiņas.",
+          "grace_period": "Minūtes pēc Home Assistant palaišanas līdz pirmajai skenēšanai, kamēr integrācijas izveido savas vienības.",
+          "stale_hours": "Stundas, cik ilgi vienībai, ko tās integrācija joprojām nodrošina, jābūt nepieejamai (vai nezināmai), lai tā tiktu parādīta. 0 parāda tikai vienības, kas vairs netiek nodrošinātas.",
+          "include_unknown": "Rādīt arī vienības, kas tikpat ilgi ir nezināmas. Pogas, ainas un notikumi, kas pēc būtības ir nezināmi, nekad netiek rādīti.",
+          "ignored_integrations": "Integrācijas, kuru vienības nekad netiek rādītas. Ievadiet domēnu, lai pievienotu integrāciju, kuras nav sarakstā.",
+          "ignored_entities": "Vienības (vienību ID) un ierīces (ierīču ID), kas nekad netiek uzskaitītas. Kartīte tās šeit pievieno ar pogu Ignorēt."
+        }
       }
     },
     "error": {
@@ -294,6 +316,9 @@
       },
       "git_sync_export_dashboards": {
         "name": "Eksportēt paneļus"
+      },
+      "orphans_scan": {
+        "name": "Skenēt tagad"
       }
     },
     "sensor": {
@@ -569,6 +594,41 @@
             "name": "Upstream"
           }
         }
+      },
+      "orphans_orphans": {
+        "name": "Pamestas vienības",
+        "state_attributes": {
+          "entities": {
+            "name": "Vienības"
+          },
+          "counts": {
+            "name": "Skaits"
+          },
+          "removed": {
+            "name": "Noņemtas"
+          },
+          "stale_hours": {
+            "name": "Novecojusi pēc"
+          },
+          "include_unknown": {
+            "name": "Iekļaut nezināmās"
+          },
+          "ignored_integrations": {
+            "name": "Ignorētās integrācijas"
+          },
+          "ignored_entities": {
+            "name": "Ignorētās vienības"
+          },
+          "devices": {
+            "name": "Ierīces"
+          },
+          "truncated": {
+            "name": "Ārpus saraksta"
+          }
+        }
+      },
+      "orphans_last_scan": {
+        "name": "Pēdējā skenēšana"
       }
     }
   },
@@ -686,6 +746,44 @@
     "git_sync_pull": {
       "name": "Pull",
       "description": "Ielādē attālo repozitoriju un pārņem tā jaunos commit: pārtīšana uz priekšu vai lokālie commit, pārbāzēti virs tiem (tikai ar tīru darba koku). Konflikts pārbāzēšanu atceļ."
+    },
+    "orphans_scan": {
+      "name": "Meklēt pamestas vienības",
+      "description": "Meklē vienību reģistrā vienības, ko to integrācija vairs nenodrošina."
+    },
+    "orphans_remove": {
+      "name": "Noņemt pamestas vienības",
+      "description": "Noņem no vienību reģistra vienības, ko parādīja pēdējā skenēšana.",
+      "fields": {
+        "entities": {
+          "name": "Vienības",
+          "description": "Noņemamo vienību ID. Katrai jābūt pamesto vienību sarakstā."
+        }
+      }
+    },
+    "orphans_ignore": {
+      "name": "Ignorēt vienības",
+      "description": "Pievieno vienības vai ierīces ignorētajām: tās vairs netiek uzskaitītas.",
+      "fields": {
+        "entities": {
+          "name": "Vienības",
+          "description": "Ignorējamo vienību ID."
+        },
+        "devices": {
+          "name": "Ierīces",
+          "description": "Ignorējamo ierīču ID (bāreņu ierīces)."
+        }
+      }
+    },
+    "orphans_remove_devices": {
+      "name": "Noņemt bāreņu ierīces",
+      "description": "Noņem ierīces, kuru visi integrācijas ieraksti ir noņemti, kopā ar to entītijām. Tikai ierīces no pēdējās skenēšanas saraksta.",
+      "fields": {
+        "devices": {
+          "name": "Ierīces",
+          "description": "Ierīču ID no bāreņu sensora atribūta devices. Atstājiet tukšu visām pēdējās skenēšanas bāreņu ierīcēm."
+        }
+      }
     }
   },
   "common": {
@@ -823,6 +921,30 @@
     },
     "export_dir_not_allowed": {
       "message": "Eksporta mape {path} ir ārpus konfigurācijas mapes un allowlist_external_dirs: izvēlieties citu Git Sync opcijās."
+    },
+    "orphans_starting": {
+      "message": "Home Assistant vēl startē: pēc startēšanas skenējiet vēlreiz."
+    },
+    "orphans_no_entities": {
+      "message": "Nav noņemamu vienību."
+    },
+    "orphans_too_many": {
+      "message": "Vienlaikus ne vairāk kā {max} vienības."
+    },
+    "orphans_not_orphan": {
+      "message": "Nav pamesto vienību sarakstā: {entities}. Skenējiet vēlreiz un mēģiniet vēlreiz."
+    },
+    "orphans_not_registered": {
+      "message": "Nav vienību reģistrā: {entities}."
+    },
+    "orphans_no_devices": {
+      "message": "Nav norādīta neviena ierīce."
+    },
+    "orphans_not_orphan_device": {
+      "message": "Nav bāreņu ierīces (vispirms skenējiet): {devices}"
+    },
+    "orphans_device_not_registered": {
+      "message": "Nav ierīču reģistrā: {devices}."
     }
   },
   "issues": {
@@ -1038,7 +1160,63 @@
         "unknown_device": "Ierīce noņemta",
         "open_device": "Ierīce",
         "pc_none": "Vēl nav restartēšanas ar kontaktligzdu: pievienojiet to sadaļā Konfigurēt → Watchdog: pievienot restartēšanu ar kontaktligzdu.",
-        "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt"
+        "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt",
+        "orph_reason_entry_removed": "Integrācija noņemta",
+        "orph_reason_integration_missing": "Integrācija nav ielādēta",
+        "orph_reason_not_provided": "Netiek nodrošināta",
+        "orph_reason_unavailable": "Nav pieejama",
+        "orph_reason_unknown": "Nezināma",
+        "orph_search": "Meklēt",
+        "orph_all_integrations": "Visas integrācijas",
+        "orph_list_title": "Pamestas vienības",
+        "orph_no_match": "Filtriem neatbilst neviena vienība",
+        "orph_empty": "Katru vienību nodrošina tās integrācija",
+        "orph_for": "jau {d}",
+        "orph_disabled": "atspējota",
+        "orph_select_all": "Atlasīt parādītās ({n})",
+        "orph_show_all": "Rādīt visas ({n})",
+        "orph_selected_one": "{n} atlasīta",
+        "orph_selected_many": "{n} atlasītas",
+        "orph_remove": "Noņemt",
+        "orph_ignore": "Ignorēt",
+        "orph_clear": "Notīrīt atlasi",
+        "orph_confirm_remove_one": "Noņemt {n} vienību no vienību reģistra?",
+        "orph_confirm_remove_many": "Noņemt {n} vienības no vienību reģistra?",
+        "orph_confirm_remove_text": "To vēsture paliek datubāzē. Vienība, ko tās integrācija joprojām nodrošina, atgriežas, ja integrācija to izveido no jauna.",
+        "orph_confirm_ignore_one": "Ignorēt {n} vienību?",
+        "orph_confirm_ignore_many": "Ignorēt {n} vienības?",
+        "orph_confirm_ignore_text": "Tās vairs netiek rādītas. Noņemiet tās no ignorētajām vienībām integrācijas opcijās.",
+        "orph_used_by": "Izmanto: {n}",
+        "orph_ref_automation": "Automatizācija",
+        "orph_ref_script": "Skripts",
+        "orph_ref_scene": "Aina",
+        "orph_ref_group": "Grupa",
+        "orph_ref_dashboard": "Informācijas panelis",
+        "orph_confirm_used_one": "{n} atlasītā entītija joprojām tiek izmantota: tas, kas to izmanto, var pārstāt darboties.",
+        "orph_confirm_used_many": "{n} atlasītās entītijas joprojām tiek izmantotas: tas, kas tās izmanto, var pārstāt darboties.",
+        "orph_remove_anyway": "Tomēr noņemt",
+        "orph_and_more": "un vēl {n}",
+        "orph_removed_one": "{n} vienība noņemta",
+        "orph_removed_many": "{n} vienības noņemtas",
+        "orph_devices_title": "Bāreņu ierīces",
+        "orph_devices_hint": "To integrācija tika noņemta: tās vairs nekas nenodrošina",
+        "orph_remove_devices": "Noņemt ierīces",
+        "orph_confirm_devices": "Noņemt bāreņu ierīces?",
+        "orph_confirm_devices_text": "Tās pazūd no ierīču reģistra kopā ar entītijām. To vēsture paliek datubāzē.",
+        "orph_devices_removed": "Noņemtās bāreņu ierīces: {n}",
+        "orph_confirm_ignore_devices": "Ignorēt atlasītās ierīces?",
+        "orph_devices_ignored": "Ignorētas bāreņu ierīces: {n}",
+        "orph_kept": "Saglabātas, vairs nav bāreņi: {n}",
+        "orph_dev_entities": "Entītijas: {n}",
+        "orph_ignored_one": "{n} vienība ignorēta",
+        "orph_ignored_many": "{n} vienības ignorētas",
+        "orph_waiting": "Gaida pirmo skenēšanu",
+        "orph_never_scanned": "Vēl nav skenēts",
+        "orph_stat_removed": "Noņemtas",
+        "orph_stat_removed_hint": "Kopš Home Assistant palaišanas",
+        "orph_stat_ignored": "Ignorētas",
+        "orph_all": "Visas",
+        "orph_confirm_devices_used": "Ierīces, ko joprojām izmanto automatizācijas vai skripti: {n}. Tie var pārstāt darboties."
       }
     },
     "battery_type": {
