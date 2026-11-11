@@ -1019,7 +1019,15 @@
         "not_checked": "{n} Repositorys nicht geprüft: Kein GitHub-Konto ist mit dem Marketplace verbunden",
         "rate_limit": "GitHub: noch {n} Anfragen",
         "sec": "{n} s",
-        "min": "{n} min"
+        "min": "{n} min",
+        "uptime_for": "Laufzeit",
+        "ip_address": "IP-Adresse",
+        "database": "Datenbank",
+        "last_backup": "Letzte Sicherung",
+        "next_backup": "Nächste Sicherung",
+        "backing_up": "Sicherung läuft…",
+        "backup_failed": "Letzte Sicherung fehlgeschlagen",
+        "processes": "Prozesse"
       }
     },
     "battery_type": {

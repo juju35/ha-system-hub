@@ -1019,7 +1019,15 @@
         "not_checked": "Не перевірено репозиторіїв: {n} — до Marketplace не підключено обліковий запис GitHub",
         "rate_limit": "GitHub: залишилося запитів: {n}",
         "sec": "{n} с",
-        "min": "{n} хв"
+        "min": "{n} хв",
+        "uptime_for": "Час роботи",
+        "ip_address": "IP-адреса",
+        "database": "База даних",
+        "last_backup": "Остання резервна копія",
+        "next_backup": "Наступна резервна копія",
+        "backing_up": "Триває резервне копіювання…",
+        "backup_failed": "Остання резервна копія не вдалася",
+        "processes": "Процеси"
       }
     },
     "battery_type": {

@@ -453,6 +453,13 @@ function shMount(sensor) {
   return m ? m[1] : sensor.name;
 }
 
+// "System Monitor Process python3" → "python3"
+function shProcess(sensor) {
+  var name = String(sensor.name || '');
+  var i = name.toLowerCase().lastIndexOf('process ');
+  return i < 0 ? name : name.slice(i + 8);
+}
+
 function shIface(sensor) {
   return String(sensor.name || '').split(' ').pop();
 }
@@ -529,6 +536,7 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
     .grow { flex:1; }
+    .mono { font-family:var(--code-font-family, monospace); font-size:15px; }
     .progress { padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
     .phead { display:flex; align-items:center; gap:10px; --mdc-icon-size:20px; color:var(--primary-color); }
     .phead ha-icon { animation:sh-spin 2s linear infinite; }
@@ -886,7 +894,7 @@ class SystemHubPanel extends HTMLElement {
   }
 
   _tile(icon, value, label, tone, opts = {}) {
-    return `<ha-card class="tile ${tone || ''}${opts.entity ? ' link' : ''}"${opts.entity ? ` data-more="${shEsc(opts.entity)}"` : ''}>
+    return `<ha-card class="tile ${tone || ''}${opts.entity ? ' link' : ''}"${opts.entity ? ` data-more="${shEsc(opts.entity)}"` : ''}${opts.title ? ` title="${shEsc(opts.title)}"` : ''}>
       ${opts.spark || ''}<div class="avatar"><ha-icon icon="${icon}"></ha-icon></div>
       <div class="who"><div class="n">${value}</div><div class="s">${shEsc(label)}</div></div></ha-card>`;
   }
@@ -940,10 +948,16 @@ class SystemHubPanel extends HTMLElement {
     var ringHist = this._history(ringDefs.map(([s]) => s.entity_id), 24);
     var rings = ringDefs.map(([s, label, color, unit]) => this._ring(s, label, color, unit, ringHist?.[s.entity_id])).join('');
     var tiles = [];
+    // Swap: its percentage, else worked out from the swap used and free (the percentage sensor is off by default)
     var swap = one('swap_use_percent');
-    if (swap) {
-      var v = shNum(swap.state);
-      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%`, this._t('swap'), shTone(v), { entity: swap.entity_id }));
+    var swapUse = one('swap_use');
+    var swapFree = one('swap_free');
+    if (swap || swapUse) {
+      var used = shNum(swapUse?.state);
+      var free = shNum(swapFree?.state);
+      var v = swap ? shNum(swap.state) : used !== null && free !== null && used + free > 0 ? (used * 100) / (used + free) : null;
+      var size = used === null ? '' : ` <span class="more">${shEsc(`${used} ${swapUse.unit || ''}`.trim())}</span>`;
+      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%${size}`, this._t('swap'), shTone(v, 50, 80), { entity: (swap || swapUse).entity_id }));
     }
     var loads = ['load_1m', 'load_5m', 'load_15m'].map(one).filter(Boolean);
     if (loads.length) {
@@ -953,8 +967,47 @@ class SystemHubPanel extends HTMLElement {
         }),
       );
     }
+    // Uptime: how long since the last boot (the date in the tile's title)
     var boot = one('last_boot');
-    if (boot) tiles.push(this._tile('mdi:clock-start', shEsc(this._day(boot.state)), this._t('uptime'), '', { entity: boot.entity_id }));
+    if (boot) {
+      var bootAt = Date.parse(boot.state);
+      var up = Number.isNaN(bootAt) ? '—' : this._uptime(Date.now() - bootAt);
+      tiles.push(this._tile('mdi:clock-start', up, this._t('uptime_for'), '', { entity: boot.entity_id, title: this._day(boot.state) }));
+    }
+    var ip = one('ipv4_address');
+    if (ip) tiles.push(this._tile('mdi:ip-network-outline', `<span class="mono">${shEsc(ip.state)}</span>`, this._t('ip_address'), '', { entity: ip.entity_id }));
+    // The recorder's database, from the File Size integration
+    var db = one('database_size');
+    if (db) {
+      var mb = shNum(db.state);
+      tiles.push(this._tile('mdi:database-outline', mb === null ? '—' : `<b>${mb < 10 ? mb.toFixed(1) : Math.round(mb)}</b>${shEsc(db.unit || 'MB')}`, this._t('database'), '', { entity: db.entity_id }));
+    }
+    // Automatic backups (the Backup integration): the last one, orange after 2 days, red after 7 or when the last attempt
+    // failed; the next one, or "Backing up…"
+    var lastOk = one('backup_last_successful_automatic_backup');
+    var lastTry = one('backup_last_attempted_automatic_backup');
+    var nextBackup = one('backup_next_scheduled_automatic_backup');
+    var manager = one('backup_backup_manager_state');
+    if (lastOk || nextBackup) {
+      var okAt = Date.parse(lastOk?.state);
+      var tryAt = Date.parse(lastTry?.state);
+      var failed = !Number.isNaN(tryAt) && (Number.isNaN(okAt) || tryAt > okAt + 60000);
+      var age = Number.isNaN(okAt) ? null : (Date.now() - okAt) / 86400000;
+      var tone = failed || age === null || age > 7 ? 'bad' : age > 2 ? 'warn' : 'good';
+      var running = manager && manager.state !== 'idle';
+      tiles.push(
+        this._tile('mdi:backup-restore', shEsc(Number.isNaN(okAt) ? this._t('never') : this._ago(lastOk.state)), failed ? this._t('backup_failed') : this._t('last_backup'), tone, {
+          entity: (lastOk || lastTry).entity_id,
+        }),
+      );
+      if (nextBackup || running) {
+        tiles.push(
+          this._tile('mdi:calendar-clock', shEsc(running ? this._t('backing_up') : this._ago(nextBackup.state)), this._t('next_backup'), running ? 'warn' : '', {
+            entity: (nextBackup || manager).entity_id,
+          }),
+        );
+      }
+    }
     var unit = (rx[0] || txs[0])?.unit || 'MB/s';
     var rate = (list) => {
       var v = list.reduce((sum, s) => sum + (shNum(s.state) || 0), 0);
@@ -999,8 +1052,34 @@ class SystemHubPanel extends HTMLElement {
           })
           .join('')}</ha-card>`
       : '';
+    // The processes System Monitor watches: the stopped ones first
+    var procs = all('process').sort((a, b) => (a.state === 'on') - (b.state === 'on') || a.name.localeCompare(b.name));
+    var stopped = procs.filter((p) => p.state !== 'on').length;
+    var procList = procs.length
+      ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:application-cog-outline"></ha-icon><span class="lname">${shEsc(this._t('processes'))}</span>
+        ${stopped ? `<span class="pill bad">${shEsc(`${stopped} ${this._t('stopped')}`)}</span>` : `<span class="pill good">${shEsc(this._t('running'))}</span>`}</div>
+        ${procs
+          .map((p) => {
+            var on = p.state === 'on';
+            return `<div class="item link ${on ? 'good' : 'bad'}" data-more="${shEsc(p.entity_id)}"><ha-icon icon="mdi:cog${on ? '' : '-off'}-outline"></ha-icon>
+              <div class="who"><div class="n">${shEsc(shProcess(p))}</div></div><span class="pill ${on ? 'good' : 'bad'}">${shEsc(this._t(on ? 'running' : 'stopped'))}</span></div>`;
+          })
+          .join('')}</ha-card>`
+      : '';
+    var lists = [diskList, procList].filter(Boolean);
     return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
-      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${diskList}`;
+      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
+  }
+
+  // "8 d 4 h", "5 h 12 min", "35 min"
+  _uptime(ms) {
+    var min = Math.max(0, Math.floor(ms / 60000));
+    var d = Math.floor(min / 1440);
+    var h = Math.floor((min % 1440) / 60);
+    var m = min % 60;
+    if (d) return `<b>${d}</b>${shEsc(this._t('days', { n: '' }).trim())} <b>${h}</b>${shEsc(this._t('hours', { n: '' }).trim())}`;
+    if (h) return `<b>${h}</b>${shEsc(this._t('hours', { n: '' }).trim())} <b>${m}</b>${shEsc(this._t('min', { n: '' }).trim())}`;
+    return `<b>${m}</b>${shEsc(this._t('min', { n: '' }).trim())}`;
   }
 
   // A ring: the value now over its scale (0-100, 0-100 °C for a temperature), the last 24 hours drawn behind it

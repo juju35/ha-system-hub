@@ -1019,7 +1019,15 @@
         "not_checked": "{n} repositories ikke kontrolleret: ingen GitHub-konto er forbundet til Marketplace",
         "rate_limit": "GitHub: {n} forespørgsler tilbage",
         "sec": "{n} s",
-        "min": "{n} min"
+        "min": "{n} min",
+        "uptime_for": "Oppetid",
+        "ip_address": "IP-adresse",
+        "database": "Database",
+        "last_backup": "Seneste backup",
+        "next_backup": "Næste backup",
+        "backing_up": "Laver backup…",
+        "backup_failed": "Seneste backup mislykkedes",
+        "processes": "Processer"
       }
     },
     "battery_type": {

@@ -1019,7 +1019,15 @@
         "not_checked": "Непроверени хранилища: {n} — няма свързан акаунт в GitHub към Marketplace",
         "rate_limit": "GitHub: остават заявки: {n}",
         "sec": "{n} с",
-        "min": "{n} мин"
+        "min": "{n} мин",
+        "uptime_for": "Време на работа",
+        "ip_address": "IP адрес",
+        "database": "База данни",
+        "last_backup": "Последно резервно копие",
+        "next_backup": "Следващо резервно копие",
+        "backing_up": "Създава се копие…",
+        "backup_failed": "Последното резервно копие е неуспешно",
+        "processes": "Процеси"
       }
     },
     "battery_type": {

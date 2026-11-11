@@ -37,6 +37,9 @@ SYSTEM_KEYS = (
     "memory_use",
     "memory_free",
     "swap_use_percent",
+    "swap_use",
+    "swap_free",
+    "ipv4_address",
     "load_1m",
     "load_5m",
     "load_15m",
@@ -111,17 +114,42 @@ def _entry(hass: HomeAssistant) -> Any | None:
     return next((e for e in hass.config_entries.async_entries(DOMAIN) if e.state is ConfigEntryState.LOADED), None)
 
 
+# Home Assistant's own backups (the Backup integration's sensors), by translation key.
+BACKUP_KEYS = (
+    "last_successful_automatic_backup",
+    "last_attempted_automatic_backup",
+    "next_scheduled_automatic_backup",
+    "backup_manager_state",
+)
+
+
+def _key(hass: HomeAssistant, item: er.RegistryEntry) -> str | None:
+    """What the System tab shows an entity as: System Monitor sensor or process, backup sensor, database size."""
+    if item.platform == "systemmonitor":
+        if item.domain == "binary_sensor":
+            return "process" if item.translation_key == "process" else None
+        key = item.translation_key or ("last_boot" if item.original_device_class == "timestamp" else None)
+        key = "last_boot" if key == "uptime" else key
+        return key if key in SYSTEM_KEYS else None
+    if item.platform == "backup" and item.translation_key in BACKUP_KEYS:
+        return f"backup_{item.translation_key}"
+    # The File Size integration on the recorder's database (home-assistant_v2.db)
+    if item.platform == "filesize" and item.translation_key == "size" and item.config_entry_id:
+        entry = hass.config_entries.async_get_entry(item.config_entry_id)
+        if entry and str(entry.data.get("file_path", "")).endswith(".db"):
+            return "database_size"
+    return None
+
+
 def _system(hass: HomeAssistant) -> list[dict[str, Any]]:
-    """The System Monitor sensors: key, entity id, name, state, unit and device class."""
+    """System Monitor sensors and processes, backups, database size: key, entity id, name, state, unit."""
     registry = er.async_get(hass)
     sensors = []
     for item in sorted(registry.entities.values(), key=lambda e: e.entity_id):
-        if item.platform != "systemmonitor" or item.disabled_by or item.hidden_by:
+        if item.disabled_by or item.hidden_by or item.platform not in ("systemmonitor", "backup", "filesize"):
             continue
-        key = item.translation_key or ("last_boot" if item.original_device_class == "timestamp" else None)
-        if key == "uptime":
-            key = "last_boot"
-        if key not in SYSTEM_KEYS or (state := hass.states.get(item.entity_id)) is None:
+        key = _key(hass, item)
+        if key is None or (state := hass.states.get(item.entity_id)) is None:
             continue
         sensors.append(
             {

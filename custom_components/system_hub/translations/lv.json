@@ -1019,7 +1019,15 @@
         "not_checked": "Nepārbaudīti repozitoriji: {n} — Marketplace nav pievienots GitHub konts",
         "rate_limit": "GitHub: atlikuši pieprasījumi: {n}",
         "sec": "{n} s",
-        "min": "{n} min"
+        "min": "{n} min",
+        "uptime_for": "Darbības laiks",
+        "ip_address": "IP adrese",
+        "database": "Datubāze",
+        "last_backup": "Pēdējā rezerves kopija",
+        "next_backup": "Nākamā rezerves kopija",
+        "backing_up": "Notiek dublēšana…",
+        "backup_failed": "Pēdējā rezerves kopija neizdevās",
+        "processes": "Procesi"
       }
     },
     "battery_type": {

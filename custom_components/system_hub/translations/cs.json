@@ -1019,7 +1019,15 @@
         "not_checked": "Nezkontrolované repozitáře: {n} — k Marketplace není připojen žádný účet GitHub",
         "rate_limit": "GitHub: zbývající požadavky: {n}",
         "sec": "{n} s",
-        "min": "{n} min"
+        "min": "{n} min",
+        "uptime_for": "Doba provozu",
+        "ip_address": "IP adresa",
+        "database": "Databáze",
+        "last_backup": "Poslední záloha",
+        "next_backup": "Další záloha",
+        "backing_up": "Zálohuje se…",
+        "backup_failed": "Poslední záloha selhala",
+        "processes": "Procesy"
       }
     },
     "battery_type": {

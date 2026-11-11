@@ -1019,7 +1019,15 @@
         "not_checked": "{n} tároló nincs ellenőrizve: nincs GitHub-fiók csatlakoztatva a Marketplace-hez",
         "rate_limit": "GitHub: {n} kérés maradt",
         "sec": "{n} mp",
-        "min": "{n} perc"
+        "min": "{n} perc",
+        "uptime_for": "Üzemidő",
+        "ip_address": "IP-cím",
+        "database": "Adatbázis",
+        "last_backup": "Utolsó biztonsági mentés",
+        "next_backup": "Következő biztonsági mentés",
+        "backing_up": "Mentés folyamatban…",
+        "backup_failed": "Az utolsó biztonsági mentés sikertelen",
+        "processes": "Folyamatok"
       }
     },
     "battery_type": {

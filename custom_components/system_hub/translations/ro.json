@@ -1019,7 +1019,15 @@
         "not_checked": "{n} depozite neverificate: niciun cont GitHub nu este conectat la Marketplace",
         "rate_limit": "GitHub: {n} cereri rămase",
         "sec": "{n} s",
-        "min": "{n} min"
+        "min": "{n} min",
+        "uptime_for": "Timp de funcționare",
+        "ip_address": "Adresă IP",
+        "database": "Bază de date",
+        "last_backup": "Ultima copie de rezervă",
+        "next_backup": "Următoarea copie de rezervă",
+        "backing_up": "Se face copia…",
+        "backup_failed": "Ultima copie de rezervă a eșuat",
+        "processes": "Procese"
       }
     },
     "battery_type": {

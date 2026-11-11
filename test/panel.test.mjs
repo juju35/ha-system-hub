@@ -238,6 +238,32 @@ test('batteries tab: what to replace, and the fine batteries hidden when asked',
   assert.match(panel(state, 'batteries')._content(), /class="brow ok" data-more="sensor.c"/);
 });
 
+test('system tab: swap from its use and free, uptime, IP address, database, backups, processes', () => {
+  const now = Date.now();
+  const html = panel({
+    loaded: true,
+    modules: [],
+    tabs: ['system'],
+    system: [
+      { key: 'swap_use', entity_id: 'sensor.su', name: 'Swap use', state: '256', unit: 'MiB' },
+      { key: 'swap_free', entity_id: 'sensor.sf', name: 'Swap free', state: '768', unit: 'MiB' },
+      { key: 'last_boot', entity_id: 'sensor.boot', name: 'Last boot', state: new Date(now - (2 * 24 + 3) * 3600000).toISOString() },
+      { key: 'ipv4_address', entity_id: 'sensor.ip', name: 'IPv4 address eth0', state: '192.168.1.2' },
+      { key: 'database_size', entity_id: 'sensor.db', name: 'DB size', state: '612.4', unit: 'MB' },
+      { key: 'backup_last_successful_automatic_backup', entity_id: 'sensor.ok', name: 'Last ok', state: new Date(now - 10 * 86400000).toISOString() },
+      { key: 'process', entity_id: 'binary_sensor.p1', name: 'System Monitor Process frigate', state: 'off' },
+      { key: 'process', entity_id: 'binary_sensor.p2', name: 'System Monitor Process mosquitto', state: 'on' },
+    ],
+  })._content();
+  assert.match(html, /<b>25<\/b>%/);
+  assert.match(html, /<b>2<\/b>d <b>3<\/b>h/);
+  assert.match(html, /192\.168\.1\.2/);
+  assert.match(html, /<b>612<\/b>MB/);
+  assert.match(html, /tile bad link" data-more="sensor.ok"/);
+  assert.ok(html.indexOf('frigate') < html.indexOf('mosquitto'));
+  assert.match(html, /1 Stopped/);
+});
+
 test('marketplace tab: the progress of a check running', () => {
   const started = new Date(Date.now() - 40000).toISOString();
   const html = panel(

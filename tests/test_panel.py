@@ -44,6 +44,24 @@ def _system_monitor(hass: HomeAssistant) -> None:
             translation_key=key,
         )
         hass.states.async_set(item.entity_id, state, {"unit_of_measurement": unit} if unit else {})
+    process = registry.async_get_or_create(
+        "binary_sensor", "systemmonitor", "process_python3", config_entry=entry, translation_key="process"
+    )
+    hass.states.async_set(process.entity_id, "on")
+    backup = registry.async_get_or_create(
+        "sensor", "backup", "last_ok", translation_key="last_successful_automatic_backup"
+    )
+    hass.states.async_set(backup.entity_id, "2026-11-10T04:45:00+00:00")
+    files = MockConfigEntry(domain="filesize", data={"file_path": "/config/home-assistant_v2.db"})
+    files.add_to_hass(hass)
+    for key, path_entry in (("size", files),):
+        db = registry.async_get_or_create("sensor", "filesize", "db", config_entry=path_entry, translation_key=key)
+        hass.states.async_set(db.entity_id, "612.4", {"unit_of_measurement": "MB"})
+    # A File Size sensor of another file is not the database
+    other = MockConfigEntry(domain="filesize", data={"file_path": "/config/home-assistant.log"})
+    other.add_to_hass(hass)
+    log = registry.async_get_or_create("sensor", "filesize", "log", config_entry=other, translation_key="size")
+    hass.states.async_set(log.entity_id, "2.1")
 
 
 async def test_panel_is_registered_for_administrators(hass: HomeAssistant) -> None:
@@ -80,8 +98,17 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     assert result["modules"] == ["watchdog", "batteries"]
     assert result["tabs"] == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync"]
     keys = {s["key"]: s for s in result["system"]}
-    # Only the sensors the System tab shows: not the IP address
-    assert set(keys) == {"processor_use", "memory_use_percent", "disk_use_percent", "throughput_network_in"}
+    assert set(keys) == {
+        "processor_use",
+        "memory_use_percent",
+        "disk_use_percent",
+        "throughput_network_in",
+        "ipv4_address",
+        "process",
+        "backup_last_successful_automatic_backup",
+        "database_size",
+    }
+    assert keys["process"]["state"] == "on"
     assert keys["memory_use_percent"]["state"] == "48.5"
     assert keys["memory_use_percent"]["unit"] == "%"
     assert result["watchdog"]["unavailable"] == []

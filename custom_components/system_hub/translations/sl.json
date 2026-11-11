@@ -1019,7 +1019,15 @@
         "not_checked": "Nepreverjeni repozitoriji: {n} — z Marketplace ni povezan noben račun GitHub",
         "rate_limit": "GitHub: preostale zahteve: {n}",
         "sec": "{n} s",
-        "min": "{n} min"
+        "min": "{n} min",
+        "uptime_for": "Čas delovanja",
+        "ip_address": "Naslov IP",
+        "database": "Baza podatkov",
+        "last_backup": "Zadnja varnostna kopija",
+        "next_backup": "Naslednja varnostna kopija",
+        "backing_up": "Varnostno kopiranje…",
+        "backup_failed": "Zadnja varnostna kopija ni uspela",
+        "processes": "Procesi"
       }
     },
     "battery_type": {
