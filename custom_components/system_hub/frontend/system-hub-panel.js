@@ -11,7 +11,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '0.6.0';
+var SYSTEM_HUB_PANEL_VERSION = '0.5.2';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 var SH_MODULE_ICONS = {
