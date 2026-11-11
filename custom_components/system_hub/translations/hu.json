@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub csatlakoztatva",
         "gh_not_connected": "Nincs csatlakoztatott GitHub-fiók",
         "gh_retry": "korlát elérve, következő próbálkozás: {when}",
-        "tab_containers": "Konténerek és folyamatok"
+        "tab_containers": "Konténerek és folyamatok",
+        "settings_system": "System küszöbök",
+        "settings_system_hint": "Mikor vált a CPU, a RAM, a lemez, a hőmérséklet és a swap narancsra és pirosra",
+        "settings_unavailable": "Ezek a beállítások itt nem jeleníthetők meg: nyissa meg a Konfigurálást"
       }
     },
     "battery_type": {

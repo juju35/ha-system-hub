@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub pievienots",
         "gh_not_connected": "Nav pievienota GitHub konta",
         "gh_retry": "limits sasniegts, nākamais mēģinājums {when}",
-        "tab_containers": "Konteineri un procesi"
+        "tab_containers": "Konteineri un procesi",
+        "settings_system": "System sliekšņi",
+        "settings_system_hint": "Kad CPU, RAM, disks, temperatūra un swap kļūst oranži un sarkani",
+        "settings_unavailable": "Šos iestatījumus šeit nevar parādīt: atveriet Konfigurēt"
       }
     },
     "battery_type": {

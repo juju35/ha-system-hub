@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub verbonden",
         "gh_not_connected": "Geen GitHub-account verbonden",
         "gh_retry": "limiet bereikt, volgende poging {when}",
-        "tab_containers": "Containers en processen"
+        "tab_containers": "Containers en processen",
+        "settings_system": "System-drempels",
+        "settings_system_hint": "Wanneer CPU, RAM, schijf, temperatuur en swap oranje en rood worden",
+        "settings_unavailable": "Deze instellingen kunnen hier niet worden getoond: open Configureren"
       }
     },
     "battery_type": {

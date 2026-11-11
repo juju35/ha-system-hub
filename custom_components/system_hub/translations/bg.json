@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub е свързан",
         "gh_not_connected": "Няма свързан акаунт в GitHub",
         "gh_retry": "лимитът е достигнат, нов опит {when}",
-        "tab_containers": "Контейнери и процеси"
+        "tab_containers": "Контейнери и процеси",
+        "settings_system": "Прагове на System",
+        "settings_system_hint": "Кога CPU, RAM, диск, температура и swap стават оранжеви и червени",
+        "settings_unavailable": "Тези настройки не могат да се покажат тук: отворете Конфигуриране"
       }
     },
     "battery_type": {

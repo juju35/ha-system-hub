@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+### Improved
+- **Module settings in the panel**: the Settings tab lists every module (and the System thresholds) with its switch; opening one shows its settings in place, with its further steps (power cycles, battery types, the import from Battery Monitor, the Git repository). They are System Hub's own Configure forms, driven through Home Assistant's flow API: same fields, same checks and errors. **Module settings** in a module's tab opens its section.
+
+### Fixed
+- The module descriptions and the forms' labels are read from Home Assistant's latest translations: the descriptions were missing from the Settings tab.
+
 ## 0.5.1 - 2026-11-11
 
 ### Improved

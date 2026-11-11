@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub anslutet",
         "gh_not_connected": "Inget GitHub-konto anslutet",
         "gh_retry": "gränsen nådd, nytt försök {when}",
-        "tab_containers": "Containrar och processer"
+        "tab_containers": "Containrar och processer",
+        "settings_system": "System-trösklar",
+        "settings_system_hint": "När CPU, RAM, disk, temperatur och swap blir orange och röda",
+        "settings_unavailable": "De här inställningarna kan inte visas här: öppna Konfigurera"
       }
     },
     "battery_type": {

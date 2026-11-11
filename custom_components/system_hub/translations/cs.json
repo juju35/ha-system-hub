@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub připojen",
         "gh_not_connected": "Žádný účet GitHub není připojen",
         "gh_retry": "limit vyčerpán, další pokus {when}",
-        "tab_containers": "Kontejnery a procesy"
+        "tab_containers": "Kontejnery a procesy",
+        "settings_system": "Prahy System",
+        "settings_system_hint": "Kdy CPU, RAM, disk, teplota a swap zoranžoví a zčervenají",
+        "settings_unavailable": "Tato nastavení zde nelze zobrazit: otevřete Konfigurovat"
       }
     },
     "battery_type": {
