@@ -1383,6 +1383,8 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:clock-check-outline', shEsc(this._rel(data.last_update)), this._t('last_check'), data.error ? 'bad' : ''),
     ];
     var order = { core: 0, supervisor: 1, plugin: 2, addon: 3 };
+    // Core, the Supervisor and the add-ons have their own icon; the others (the plugins), Docker's
+    var icons = { core: 'mdi:home-assistant', supervisor: 'mdi:shield-home-outline', addon: 'mdi:puzzle-outline' };
     var rows = [...list]
       .sort((a, b) => (b.down ? 1 : 0) - (a.down ? 1 : 0) || order[a.kind] - order[b.kind] || (a.container || a.name).localeCompare(b.container || b.name))
       .map((c) => {
@@ -1394,7 +1396,7 @@ class SystemHubPanel extends HTMLElement {
         // As Docker lists it: the container's name, then what it is and its image (or its version)
         var sub = [c.container ? c.name : this._t(c.kind), c.image || c.version].filter(Boolean);
         var update = c.update_available ? `<span class="pill warn" title="${shEsc(this._t('update', { version: c.version_latest }))}"><ha-icon icon="mdi:arrow-up-circle-outline"></ha-icon>${shEsc(c.version_latest || '')}</span>` : '';
-        return `<div class="item ${tone}"><ha-icon icon="mdi:docker"></ha-icon>
+        return `<div class="item ${tone}"><ha-icon icon="${icons[c.kind] || 'mdi:docker'}"></ha-icon>
           <div class="who"><div class="n">${shEsc(c.container || c.name)}</div><div class="s" title="${shEsc(sub.join(' · '))}">${shEsc(sub.join(' · '))}</div></div>${update}
           ${spark ? `<div class="trend ${tone}">${spark}</div>` : ''}
           <span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span>
