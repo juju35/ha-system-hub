@@ -584,6 +584,17 @@ class MarketplaceRefresher:
             return False
         return True
 
+    async def async_read_github(self) -> None:
+        """GitHub's account and requests left, read outside a check (after a restart, then now and then): free."""
+        if self.state == STATE_RUNNING:
+            return
+        marketplace = _loaded_marketplace(self.hass)
+        if marketplace is None:
+            return
+        self.github_connected = bool(getattr(marketplace, "github_connected", False))
+        await self.async_read_rate_limit(marketplace)
+        self._notify()
+
     async def async_read_rate_limit(self, marketplace: Any) -> int | None:
         """Read GitHub's rate limit through the Marketplace's client (the request itself costs nothing).
 

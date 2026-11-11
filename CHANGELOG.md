@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- **Marketplace**: GitHub's account and requests left are read as soon as Home Assistant has started and every 15 minutes, not only during a check: after a restart, the panel showed them only after the next check. Up to date, the tab no longer repeats it in an empty list.
+
 ## 0.5.1 - 2026-11-11
 
 ### Improved

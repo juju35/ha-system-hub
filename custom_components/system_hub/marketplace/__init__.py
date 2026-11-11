@@ -8,7 +8,7 @@ from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
-from homeassistant.helpers.event import async_call_later
+from homeassistant.helpers.event import async_call_later, async_track_time_interval
 from homeassistant.helpers.start import async_at_started
 from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
@@ -20,6 +20,8 @@ _LOGGER = logging.getLogger(__name__)
 
 # Delay before trying again a scheduled check that failed or was skipped because the Marketplace couldn't be used.
 RETRY_INTERVAL = timedelta(hours=1)
+# GitHub's account and requests left read again between the checks (the request costs nothing against the limit).
+GITHUB_INTERVAL = timedelta(minutes=15)
 
 
 async def async_setup_marketplace(
@@ -28,6 +30,13 @@ async def async_setup_marketplace(
     """Load the last check and schedule the automatic one."""
     refresher = MarketplaceRefresher(hass, entry, options)
     await refresher.async_load()
+
+    # GitHub's account and requests left are known before the first check after a restart, and kept up to date.
+    async def read_github(_now: Any = None) -> None:
+        await refresher.async_read_github()
+
+    entry.async_on_unload(async_at_started(hass, lambda _hass: entry.async_create_task(hass, read_github())))
+    entry.async_on_unload(async_track_time_interval(hass, read_github, GITHUB_INTERVAL))
     if refresher.scan_interval > 0:
         _async_schedule(hass, entry, refresher, timedelta(hours=refresher.scan_interval))
     return refresher
