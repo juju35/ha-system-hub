@@ -74,7 +74,8 @@
           "batteries_types": "Batteries : types de pile",
           "batteries_import": "Batteries : importer depuis Battery Monitor",
           "orphans": "Orphans",
-          "system": "Système : seuils"
+          "system": "Système : seuils",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rouge dès"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Appareils ignorés",
+          "exclude_entities": "Entités ignorées"
+        },
+        "data_description": {
+          "exclude_devices": "Leurs entités liées indisponibles et les automatisations en échec qui leur sont rattachées sont exclues des listes, des compteurs et du statut.",
+          "exclude_entities": "Identifiants d’entité, ou motifs avec * et ? : les automatisations et entités correspondantes sont exclues des listes, des compteurs et du statut"
+        }
       }
     },
     "error": {

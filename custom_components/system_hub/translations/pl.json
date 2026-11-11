@@ -74,7 +74,8 @@
           "batteries_types": "Baterie: typy baterii",
           "batteries_import": "Baterie: import z Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: progi"
+          "system": "System: progi",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: czerwony od"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorowane urządzenia",
+          "exclude_entities": "Ignorowane encje"
+        },
+        "data_description": {
+          "exclude_devices": "Ich niedostępne powiązane encje i przypisane do nich nieudane automatyzacje są pomijane na listach, w licznikach i statusie.",
+          "exclude_entities": "Identyfikatory encji lub wzorce z * i ?: pasujące automatyzacje i encje są pomijane na listach, w licznikach i statusie"
+        }
       }
     },
     "error": {

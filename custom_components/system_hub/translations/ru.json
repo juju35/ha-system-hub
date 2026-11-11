@@ -74,7 +74,8 @@
           "batteries_types": "Батареи: типы батарей",
           "batteries_import": "Батареи: импорт из Battery Monitor",
           "orphans": "Orphans",
-          "system": "Система: пороги"
+          "system": "Система: пороги",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: красный от"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Игнорируемые устройства",
+          "exclude_entities": "Игнорируемые объекты"
+        },
+        "data_description": {
+          "exclude_devices": "Их недоступные связанные объекты и привязанные к ним неудачные автоматизации исключаются из списков, счётчиков и статуса.",
+          "exclude_entities": "ID объектов или шаблоны с * и ?: подходящие автоматизации и объекты исключаются из списков, счётчиков и статуса"
+        }
       }
     },
     "error": {

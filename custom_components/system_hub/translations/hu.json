@@ -74,7 +74,8 @@
           "batteries_types": "Elemek: elemtípusok",
           "batteries_import": "Elemek: importálás a Battery Monitorból",
           "orphans": "Orphans",
-          "system": "Rendszer: küszöbök"
+          "system": "Rendszer: küszöbök",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: piros ettől"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Figyelmen kívül hagyott eszközök",
+          "exclude_entities": "Figyelmen kívül hagyott entitások"
+        },
+        "data_description": {
+          "exclude_devices": "Az elérhetetlen kapcsolt entitásaik és a hozzájuk tartozó sikertelen automatizálások kimaradnak a listákból, számlálókból és az állapotból.",
+          "exclude_entities": "Entitásazonosítók vagy * és ? karaktert tartalmazó minták: az egyező automatizálások és entitások kimaradnak a listákból, számlálókból és az állapotból"
+        }
       }
     },
     "error": {

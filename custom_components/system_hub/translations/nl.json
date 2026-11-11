@@ -74,7 +74,8 @@
           "batteries_types": "Batterijen: batterijtypen",
           "batteries_import": "Batterijen: importeren uit Battery Monitor",
           "orphans": "Orphans",
-          "system": "Systeem: drempels"
+          "system": "Systeem: drempels",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rood vanaf"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Genegeerde apparaten",
+          "exclude_entities": "Genegeerde entiteiten"
+        },
+        "data_description": {
+          "exclude_devices": "Hun niet-beschikbare gekoppelde entiteiten en de mislukte automatiseringen die erbij horen worden weggelaten uit de lijsten, tellers en status.",
+          "exclude_entities": "Entiteit-ID’s, of patronen met * en ?: overeenkomende automatiseringen en entiteiten worden weggelaten uit de lijsten, tellers en status"
+        }
       }
     },
     "error": {

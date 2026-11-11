@@ -2248,6 +2248,22 @@ class SystemHubPanel extends HTMLElement {
     this._render();
   }
 
+  // The same action once per data, one after the other (an action that takes a single target)
+  async _runEach(service, messageKey, items, domain, busyKey) {
+    this._busy[busyKey] = true;
+    delete this._messages[messageKey];
+    this._render();
+    try {
+      for (var data of items) await this._hass.callService(domain, service, data);
+      this._toast(this._t('done'));
+    } catch (err) {
+      this._messages[messageKey] = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    await this._load();
+    delete this._busy[busyKey];
+    this._render();
+  }
+
   // Automations: what Automation Monitor reports (its sensors, read on the server), as in the Automation Monitor card
   _automations() {
     var data = this._state.automations || {};
@@ -2285,7 +2301,7 @@ class SystemHubPanel extends HTMLElement {
     return `<div class="tiles">${tiles.join('')}</div>${confirm}
       <div class="actions"><span title="${shEsc(this._t('auto_rebuild_title'))}">${this._button('auto_rebuild', 'mdi:refresh', this._t('auto_rebuild'))}</span>
       ${failures.length ? this._button('auto_clear_all', 'mdi:notification-clear-all', this._t('auto_clear_all'), { quiet: true, busy: this._busy.auto_clear_all }) : ''}
-      ${this._message('auto')}${both ? `<span class="msg bad">${shEsc(this._t('auto_unavailable'))}</span>` : ''}</div>
+      ${this._message('auto')}${both ? `<span class="msg bad">${shEsc(this._t('auto_unavailable'))}</span>` : ''}${this._configure()}</div>
       ${this._autoSection('failed', 'mdi:robot-confused-outline', this._t('auto_failed'), failures, (f) => this._autoFailure(f))}
       ${this._autoSection('linked', 'mdi:link-variant-off', this._t('auto_linked'), linked, (e) => this._autoLinked(e))}`;
   }
@@ -2356,7 +2372,13 @@ class SystemHubPanel extends HTMLElement {
     }
     this._confirm = null;
     if (name === 'auto_clear_ok') return this._run('reset', 'auto', { entity_id: button.dataset.entity }, null, 'automation_monitor', `auto_clear:${button.dataset.entity}`);
-    if (name === 'auto_clear_all_ok') return this._run('reset', 'auto', {}, null, 'automation_monitor', 'auto_clear_all');
+    if (name === 'auto_clear_all_ok') {
+      // Failures left out by the settings stay: then only the listed ones are cleared, one call each (the action takes a
+      // single entity_id); otherwise one call clears them all.
+      var auto = this._state.automations || {};
+      if (!auto.failures_hidden) return this._run('reset', 'auto', {}, null, 'automation_monitor', 'auto_clear_all');
+      return this._runEach('reset', 'auto', (auto.failures || []).map((f) => ({ entity_id: f.entity_id })), 'automation_monitor', 'auto_clear_all');
+    }
     if (name === 'auto_rebuild') return this._run('rebuild_linked_entities', 'auto', {}, null, 'automation_monitor', 'auto_rebuild');
   }
 
@@ -2757,6 +2779,7 @@ var SH_SETTINGS_STEPS = {
   marketplace: ['marketplace'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
   git_sync: ['git_sync', 'git_sync_repository'],
+  automations: ['automations'],
   orphans: ['orphans'],
 };
 var SH_SETTINGS_ICONS = { system: 'mdi:chip' };

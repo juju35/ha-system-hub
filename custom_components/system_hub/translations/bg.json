@@ -74,7 +74,8 @@
           "batteries_types": "Батерии: типове батерии",
           "batteries_import": "Батерии: импорт от Battery Monitor",
           "orphans": "Orphans",
-          "system": "Система: прагове"
+          "system": "Система: прагове",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: червено от"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Игнорирани устройства",
+          "exclude_entities": "Игнорирани обекти"
+        },
+        "data_description": {
+          "exclude_devices": "Техните недостъпни свързани обекти и неуспешните автоматизации, свързани с тях, се изключват от списъците, броячите и състоянието.",
+          "exclude_entities": "ID на обекти или шаблони с * и ?: съответстващите автоматизации и обекти се изключват от списъците, броячите и състоянието"
+        }
       }
     },
     "error": {

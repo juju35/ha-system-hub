@@ -74,7 +74,8 @@
           "batteries_types": "Baterías: tipos de pila",
           "batteries_import": "Baterías: importar desde Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistema: umbrales"
+          "system": "Sistema: umbrales",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rojo desde"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Dispositivos ignorados",
+          "exclude_entities": "Entidades ignoradas"
+        },
+        "data_description": {
+          "exclude_devices": "Sus entidades vinculadas no disponibles y las automatizaciones fallidas asociadas a ellos se excluyen de las listas, los contadores y el estado.",
+          "exclude_entities": "IDs de entidad, o patrones con * y ?: las automatizaciones y entidades que coinciden se excluyen de las listas, los contadores y el estado"
+        }
       }
     },
     "error": {

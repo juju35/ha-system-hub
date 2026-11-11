@@ -74,7 +74,8 @@
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importera från Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: tröskelvärden"
+          "system": "System: tröskelvärden",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rött från"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorerade enheter",
+          "exclude_entities": "Ignorerade entiteter"
+        },
+        "data_description": {
+          "exclude_devices": "Deras otillgängliga länkade entiteter och de misslyckade automatiseringar som hör till dem utelämnas från listor, räknare och status.",
+          "exclude_entities": "Entitets-id:n eller mönster med * och ?: matchande automatiseringar och entiteter utelämnas från listor, räknare och status"
+        }
       }
     },
     "error": {

@@ -74,7 +74,8 @@
           "batteries_types": "Batterie: tipi di batteria",
           "batteries_import": "Batterie: importa da Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistema: soglie"
+          "system": "Sistema: soglie",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rosso da"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Dispositivi ignorati",
+          "exclude_entities": "Entità ignorate"
+        },
+        "data_description": {
+          "exclude_devices": "Le loro entità collegate non disponibili e le automazioni fallite associate sono escluse da elenchi, contatori e stato.",
+          "exclude_entities": "ID di entità, o modelli con * e ?: le automazioni e le entità corrispondenti sono escluse da elenchi, contatori e stato"
+        }
       }
     },
     "error": {

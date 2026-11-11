@@ -74,7 +74,8 @@
           "batteries_types": "Batteries: Battery types",
           "batteries_import": "Batteries: Import from Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: thresholds"
+          "system": "System: thresholds",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: red from"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignored devices",
+          "exclude_entities": "Ignored entities"
+        },
+        "data_description": {
+          "exclude_devices": "Their unavailable linked entities and the failed automations attached to them are left out of the lists, counters and status.",
+          "exclude_entities": "Entity ids, or patterns with * and ?: matching automations and entities are left out of the lists, counters and status"
+        }
       }
     },
     "error": {

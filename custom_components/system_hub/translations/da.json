@@ -74,7 +74,8 @@
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importér fra Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: tærskler"
+          "system": "System: tærskler",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rød fra"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorerede enheder",
+          "exclude_entities": "Ignorerede entiteter"
+        },
+        "data_description": {
+          "exclude_devices": "Deres utilgængelige tilknyttede entiteter og de mislykkede automatiseringer, der hører til dem, udelades af lister, tællere og status.",
+          "exclude_entities": "Entitets-id’er eller mønstre med * og ?: matchende automatiseringer og entiteter udelades af lister, tællere og status"
+        }
       }
     },
     "error": {

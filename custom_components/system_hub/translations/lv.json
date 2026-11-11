@@ -74,7 +74,8 @@
           "batteries_types": "Baterijas: bateriju veidi",
           "batteries_import": "Baterijas: importēt no Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistēma: sliekšņi"
+          "system": "Sistēma: sliekšņi",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: sarkans no"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorētās ierīces",
+          "exclude_entities": "Ignorētās vienības"
+        },
+        "data_description": {
+          "exclude_devices": "To nepieejamās saistītās entītijas un tām piesaistītās neizdevušās automatizācijas tiek izlaistas no sarakstiem, skaitītājiem un statusa.",
+          "exclude_entities": "Vienību ID vai šabloni ar * un ?: atbilstošās automatizācijas un vienības netiek iekļautas sarakstos, skaitītājos un statusā"
+        }
       }
     },
     "error": {

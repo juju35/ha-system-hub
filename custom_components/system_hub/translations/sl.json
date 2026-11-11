@@ -74,7 +74,8 @@
           "batteries_types": "Baterije: vrste baterij",
           "batteries_import": "Baterije: uvoz iz Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistem: pragovi"
+          "system": "Sistem: pragovi",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rdeče od"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Prezrte naprave",
+          "exclude_entities": "Prezrte entitete"
+        },
+        "data_description": {
+          "exclude_devices": "Njihove nedosegljive povezane entitete in z njimi povezane neuspešne avtomatizacije so izpuščene iz seznamov, števcev in stanja.",
+          "exclude_entities": "ID-ji entitet ali vzorci z * in ?: ustrezne avtomatizacije in entitete so izpuščene iz seznamov, števcev in stanja"
+        }
       }
     },
     "error": {

@@ -74,7 +74,8 @@
           "batteries_types": "Batterien: Batterietypen",
           "batteries_import": "Batterien: Aus Battery Monitor importieren",
           "orphans": "Orphans",
-          "system": "System: Schwellenwerte"
+          "system": "System: Schwellenwerte",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: rot ab"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorierte Geräte",
+          "exclude_entities": "Ignorierte Entitäten"
+        },
+        "data_description": {
+          "exclude_devices": "Ihre nicht verfügbaren verknüpften Entitäten und die ihnen zugeordneten fehlgeschlagenen Automatisierungen werden aus Listen, Zählern und Status ausgelassen.",
+          "exclude_entities": "Entitäts-IDs oder Muster mit * und ?: passende Automatisierungen und Entitäten werden aus Listen, Zählern und Status ausgelassen"
+        }
       }
     },
     "error": {

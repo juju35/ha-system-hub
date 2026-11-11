@@ -34,12 +34,13 @@ STEPS = (
     "batteries_import",
     "git_sync_repository",
     "git_sync",
+    "automations",
     "orphans",
 )
 
 # A set-up instance, with nothing personal in it
 OPTIONS = {
-    "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
+    "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync", "automations", "orphans"],
     "git_sync": {
         "repo_path": "/config",
         "remote": "origin",

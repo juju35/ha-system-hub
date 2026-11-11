@@ -1,6 +1,7 @@
 """Automations module: what Automation Monitor reports, shown in the panel's Automations tab.
 
-The module has no entity and no settings of its own. It reads the two sensors of the Automation Monitor integration
+The module has no entity of its own; its settings leave devices and entities out, as the card's exclude_devices and
+exclude_entities do. It reads the two sensors of the Automation Monitor integration
 (https://github.com/olli-dot-dev/ha-automation-monitor), found in the entity registry by platform and translation key
 (the default entity ids are a fallback), as the Automation Monitor card does; the tab's buttons call that
 integration's own actions (automation_monitor.reset, automation_monitor.rebuild_linked_entities).
@@ -8,16 +9,59 @@ integration's own actions (automation_monitor.reset, automation_monitor.rebuild_
 
 from __future__ import annotations
 
+import re
+from collections.abc import Callable, Iterable
 from typing import Any, Final
 from urllib.parse import quote
 
 from homeassistant.const import STATE_UNAVAILABLE, STATE_UNKNOWN
 from homeassistant.core import HomeAssistant, State
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
 AUTOMATION_MONITOR: Final = "automation_monitor"
 # The two sensors of Automation Monitor, by translation key.
 KEYS: Final = {"failed": "failed_automations", "linked": "linked_entities_unavailable"}
+# Settings: devices (ids or names) and entities (ids or patterns with * and ?) left out of the lists, counts and status.
+CONF_EXCLUDE_DEVICES: Final = "exclude_devices"
+CONF_EXCLUDE_ENTITIES: Final = "exclude_entities"
+
+
+def _values(value: Any) -> list[str]:
+    items = value if isinstance(value, (list, tuple)) else [value] if value else []
+    return [str(v).strip() for v in items if str(v).strip()]
+
+
+def excluded_devices(hass: HomeAssistant, value: Any) -> set[str]:
+    """The ids of the devices to ignore: given by id, or by name (as the card's YAML allows)."""
+    wanted = _values(value)
+    ids = set(wanted)
+    names = {v.casefold() for v in wanted}
+    if names:
+        registry = dr.async_get(hass)
+        # Iterating the registry gives the device entries since 2026.11 (their ids before): both are handled.
+        for item in list(registry.devices):
+            device = registry.async_get(item) if isinstance(item, str) else item
+            if device is None:
+                continue
+            name = (device.name_by_user or device.name or "").casefold()
+            if name and name in names:
+                ids.add(device.id)
+    return ids
+
+
+def entity_matcher(value: Any) -> Callable[[str], bool] | None:
+    """A test on an entity id: an id listed, or a pattern with * (any characters) and ? (one); case-insensitive."""
+    wanted = [v.lower() for v in _values(value)]
+    if not wanted:
+        return None
+    ids = {v for v in wanted if "*" not in v and "?" not in v}
+    globs = [
+        re.compile("^" + re.escape(v).replace(r"\*", ".*").replace(r"\?", ".") + "$")
+        for v in wanted
+        if "*" in v or "?" in v
+    ]
+    return lambda entity_id: (s := str(entity_id).lower()) in ids or any(g.match(s) for g in globs)
 
 
 def _sensors(hass: HomeAssistant) -> dict[str, str]:
@@ -113,21 +157,47 @@ def _items(state: State | None, attribute: str) -> list[dict[str, Any]]:
     return [item for item in value if isinstance(item, dict) and item.get("entity_id")]
 
 
-def state(hass: HomeAssistant) -> dict[str, Any]:
-    """What the Automations tab shows: Automation Monitor's failed automations and unavailable linked entities."""
+def _device_of(hass: HomeAssistant, item: dict[str, Any]) -> str | None:
+    """The device of an item: the device_id Automation Monitor gives, else the entity registry's."""
+    if item.get("device_id"):
+        return str(item["device_id"])
+    entry = er.async_get(hass).async_get(str(item.get("entity_id", "")))
+    return entry.device_id if entry else None
+
+
+def _kept(
+    hass: HomeAssistant, items: Iterable[dict[str, Any]], devices: set[str], matcher: Callable[[str], bool] | None
+) -> list[dict[str, Any]]:
+    return [
+        item
+        for item in items
+        if not (devices and _device_of(hass, item) in devices) and not (matcher and matcher(item["entity_id"]))
+    ]
+
+
+def state(hass: HomeAssistant, options: dict[str, Any] | None = None) -> dict[str, Any]:
+    """What the Automations tab shows: Automation Monitor's failed automations and unavailable linked entities,
+    without the devices and entities the settings leave out."""
+    options = options or {}
+    devices = excluded_devices(hass, options.get(CONF_EXCLUDE_DEVICES))
+    matcher = entity_matcher(options.get(CONF_EXCLUDE_ENTITIES))
     sensors = _sensors(hass)
     if not sensors:
         return {"available": False, "loaded": AUTOMATION_MONITOR in hass.config.components}
     failed = hass.states.get(sensors.get("failed", ""))
     linked = hass.states.get(sensors.get("linked", ""))
     # Most recent first; an item without a time goes last.
+    all_failures = _items(failed, "automations")
+    kept_failures = _kept(hass, all_failures, devices, matcher)
+    all_linked = _items(linked, "entities")
+    kept_linked = _kept(hass, all_linked, devices, matcher)
     failures = sorted(
-        (_failure(hass, item) for item in _items(failed, "automations")),
+        (_failure(hass, item) for item in kept_failures),
         key=lambda f: str(f["last_error_time"] or ""),
         reverse=True,
     )
     entities = sorted(
-        (_linked(hass, item) for item in _items(linked, "entities")),
+        (_linked(hass, item) for item in kept_linked),
         key=lambda e: str(e["unavailable_since"] or ""),
         reverse=True,
     )
@@ -141,5 +211,8 @@ def state(hass: HomeAssistant) -> dict[str, Any]:
         "linked_na": not _valid(linked),
         "failures": failures,
         "linked": entities,
+        # Left out by the settings: Clear all then clears the failures listed only, one by one.
+        "failures_hidden": len(all_failures) - len(kept_failures),
+        "linked_hidden": len(all_linked) - len(kept_linked),
         "automations": len(hass.states.async_entity_ids("automation")),
     }

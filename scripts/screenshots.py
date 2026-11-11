@@ -999,6 +999,7 @@ SHOTS = [
             ("batteries", "batteries_import"),
             ("git_sync", "git_sync_repository"),
             ("git_sync", "git_sync"),
+            ("automations", "automations"),
             ("orphans", "orphans"),
         )
         for theme, suffix in (("light", ""), ("dark", "-dark"))

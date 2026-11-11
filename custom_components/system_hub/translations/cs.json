@@ -74,7 +74,8 @@
           "batteries_types": "Baterie: typy baterií",
           "batteries_import": "Baterie: import z Battery Monitor",
           "orphans": "Orphans",
-          "system": "Systém: prahy"
+          "system": "Systém: prahy",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: červená od"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorovaná zařízení",
+          "exclude_entities": "Ignorované entity"
+        },
+        "data_description": {
+          "exclude_devices": "Jejich nedostupné propojené entity a k nim přiřazené neúspěšné automatizace se vynechávají ze seznamů, počítadel a stavu.",
+          "exclude_entities": "ID entit nebo vzory s * a ?: odpovídající automatizace a entity jsou vynechány ze seznamů, počítadel a stavu"
+        }
       }
     },
     "error": {

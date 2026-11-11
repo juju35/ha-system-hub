@@ -399,7 +399,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     if data.git_sync is not None:
         result["git_sync"] = _git_sync(data.git_sync)
     if MODULE_AUTOMATIONS in result["modules"]:
-        result["automations"] = automations.state(hass)
+        options = entry.options.get(MODULE_AUTOMATIONS)
+        result["automations"] = automations.state(hass, options if isinstance(options, dict) else None)
     if data.orphans is not None:
         result["orphans"] = orphans_panel.summary(data.orphans)
     connection.send_result(msg["id"], result)

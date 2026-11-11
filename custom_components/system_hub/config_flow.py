@@ -20,6 +20,7 @@ from homeassistant.helpers.selector import (
 )
 
 from .automations import AUTOMATION_MONITOR
+from .automations import flow as automations_flow
 from .batteries import flow as batteries_flow
 from .batteries import importer as batteries_importer
 from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
@@ -211,6 +212,8 @@ class SystemHubOptionsFlow(OptionsFlow):
                 menu.append("batteries_import")
         if MODULE_GIT_SYNC in modules:
             menu += ["git_sync_repository", "git_sync"]
+        if MODULE_AUTOMATIONS in modules:
+            menu.append("automations")
         if MODULE_ORPHANS in modules:
             menu.append("orphans")
         return self.async_show_menu(step_id="init", menu_options=menu)
@@ -435,6 +438,15 @@ class SystemHubOptionsFlow(OptionsFlow):
             data_schema=self.add_suggested_values_to_schema(schema, user_input) if user_input else schema,
             errors=errors,
         )
+
+    # Automations
+
+    async def async_step_automations(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Devices and entities left out of the Automations tab and its status."""
+        if user_input is not None:
+            return self._save(**{MODULE_AUTOMATIONS: automations_flow.settings_options(user_input)})
+        schema = automations_flow.settings_schema(self._module(MODULE_AUTOMATIONS))
+        return self.async_show_form(step_id="automations", data_schema=schema)
 
     # Orphans
 

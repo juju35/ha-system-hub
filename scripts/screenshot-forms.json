@@ -941,6 +941,41 @@
     "errors": {},
     "description_placeholders": {}
   },
+  "automations": {
+    "type": "form",
+    "step_id": "automations",
+    "data_schema": [
+      {
+        "selector": {
+          "device": {
+            "multiple": true
+          }
+        },
+        "name": "exclude_devices",
+        "description": {
+          "suggested_value": []
+        },
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": true,
+            "multiline": false
+          }
+        },
+        "name": "exclude_entities",
+        "description": {
+          "suggested_value": []
+        },
+        "required": false,
+        "optional": true
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
   "orphans": {
     "type": "form",
     "step_id": "orphans",

@@ -123,6 +123,7 @@ Each module's settings, opened in place:
 | Batteries: Import from Battery Monitor | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import.png" alt="Settings tab, Batteries: Import from Battery Monitor" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import-dark.png" alt="Settings tab, Batteries: Import from Battery Monitor, dark theme" width="300"> |
 | Git Sync: Repository settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository.png" alt="Settings tab, Git Sync: Repository settings" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository-dark.png" alt="Settings tab, Git Sync: Repository settings, dark theme" width="300"> |
 | Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync.png" alt="Settings tab, Git Sync" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-dark.png" alt="Settings tab, Git Sync, dark theme" width="300"> |
+| Automations | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-automations.png" alt="Settings tab, Automations" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-automations-dark.png" alt="Settings tab, Automations, dark theme" width="300"> |
 | Orphans | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-orphans.png" alt="Settings tab, Orphans" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-orphans-dark.png" alt="Settings tab, Orphans, dark theme" width="300"> |
 
 ### Diagnostics
@@ -984,8 +985,16 @@ A battery due for replacement blinks its icon (honours `prefers-reduced-motion`)
 
 ## Automations
 
-Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor cards](#automation-monitor-cards) do: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no settings and no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
+Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor cards](#automation-monitor-cards) do: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
 
+Its settings (**Settings → Automations ⚙**, or ⚙ in the tab) leave devices and entities out of the tab, its counts and the Status tab, as the card's `exclude_devices` and `exclude_entities` options do:
+
+| Option | Default | Description |
+|---|---|---|
+| Ignored devices | none | Their unavailable linked entities and the failed automations attached to them (by the device Automation Monitor gives, else the entity registry's) are left out. |
+| Ignored entities | none | Failed automations and unavailable linked entities whose entity id matches: an entity id, or a pattern with `*` (any characters) and `?` (one character), e.g. `automation.test_*`; case-insensitive |
+
+While some failures are left out, **Clear all** clears only the failures listed, one by one.
 
 ### Automation Monitor cards
 

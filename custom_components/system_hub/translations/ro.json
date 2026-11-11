@@ -74,7 +74,8 @@
           "batteries_types": "Baterii: tipuri de baterii",
           "batteries_import": "Baterii: import din Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistem: praguri"
+          "system": "Sistem: praguri",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: roșu de la"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Dispozitive ignorate",
+          "exclude_entities": "Entități ignorate"
+        },
+        "data_description": {
+          "exclude_devices": "Entitățile lor legate indisponibile și automatizările eșuate asociate sunt excluse din liste, contoare și stare.",
+          "exclude_entities": "ID-uri de entitate sau modele cu * și ?: automatizările și entitățile potrivite sunt excluse din liste, contoare și stare"
+        }
       }
     },
     "error": {

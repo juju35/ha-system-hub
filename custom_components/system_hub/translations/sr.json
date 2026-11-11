@@ -74,7 +74,8 @@
           "batteries_types": "Батерије: типови батерија",
           "batteries_import": "Батерије: увоз из Battery Monitor",
           "orphans": "Orphans",
-          "system": "Систем: прагови"
+          "system": "Систем: прагови",
+          "automations": "Automations"
         }
       },
       "modules": {
@@ -301,6 +302,17 @@
           "swap_critical": "Swap: црвено од"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Занемарени уређаји",
+          "exclude_entities": "Занемарени ентитети"
+        },
+        "data_description": {
+          "exclude_devices": "Њихови недоступни повезани ентитети и неуспеле аутоматизације везане за њих изостављају се из листа, бројача и статуса.",
+          "exclude_entities": "ИД-ови ентитета или обрасци са * и ?: одговарајуће аутоматизације и ентитети се изостављају из листа, бројача и статуса"
+        }
       }
     },
     "error": {
