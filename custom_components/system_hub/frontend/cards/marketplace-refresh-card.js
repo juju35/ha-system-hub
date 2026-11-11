@@ -1597,9 +1597,30 @@ class MarketplaceRefreshCard extends HTMLElement {
     return `<div class="section"><div class="shead"><div class="stitle">${hrEsc(this._t(key))}${n}</div>${action}</div><div class="list">${body}</div></div>`;
   }
 
+  // A brand image of Home Assistant (/api/brands/…) needs its access token, read once (brands/access_token)
+  _picture(url) {
+    if (!url) return null;
+    if (!url.startsWith('/api/brands/')) return url;
+    if (this._brandsToken === undefined && this._hass?.callWS) {
+      this._brandsToken = null;
+      this._hass
+        .callWS({ type: 'brands/access_token' })
+        .then((res) => {
+          this._brandsToken = res?.token || '';
+          this._render?.();
+        })
+        .catch(() => {
+          this._brandsToken = '';
+        });
+    }
+    if (!this._brandsToken) return this._brandsToken === '' ? url : null;
+    return `${url}${url.includes('?') ? '&' : '?'}token=${encodeURIComponent(this._brandsToken)}`;
+  }
+
   _updateRow(u, busy = false) {
     const version = u.from && u.to ? this._t('version', { from: u.from, to: u.to }) : u.to || '';
-    const pic = u.picture && !busy ? `<img class="pic" src="${hrEsc(u.picture)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
+    const picture = this._picture(u.picture);
+    const pic = picture && !busy ? `<img class="pic" src="${hrEsc(picture)}" alt="" loading="lazy" referrerpolicy="no-referrer">` : '';
     return `
           <button class="row upd${busy ? ' busy' : ''}" data-id="${hrEsc(u.id)}" title="${hrEsc(u.title)}">
             <span class="ic${pic ? '' : ' nopic'}">${pic}<ha-icon icon="${busy ? 'mdi:progress-download' : 'mdi:package-up'}"></ha-icon></span>

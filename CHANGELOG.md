@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+- **Logos of the Marketplace updates** (panel and Marketplace Refresh card): Home Assistant's brand images (`/api/brands/…`, since 2026.3) need an access token: it is read once (`brands/access_token`) and added; a logo that still doesn't load gives way to the initial. The header's last and next check wrap instead of being cut.
+
 ## 0.5.2 - 2026-11-11
 
 ### Improved
