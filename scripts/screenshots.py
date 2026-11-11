@@ -253,17 +253,122 @@ def mock_state():
                     "alert": low or unavailable,
                     "unavailable": unavailable,
                     "battery_type": kind,
+                    "drain_per_day": drain,
+                    "days_left": int((level - 20) / drain) if drain and level else None,
+                    "replace_by": replace_by,
                 }
-                for i, (name, area, level, icon, low, unavailable, kind) in enumerate(
+                for i, (name, area, level, icon, low, unavailable, kind, drain, replace_by) in enumerate(
                     [
-                        ("Front door", "Entrance", 8, "battery-10", True, False, "CR2032"),
-                        ("Kitchen leak sensor", "Kitchen", 17, "battery-20", True, False, "CR2450"),
-                        ("Smoke detector", "Hallway", None, "battery-alert-variant-outline", False, True, "9V"),
-                        ("Thermostat", "Living room", 54, "battery-50", False, False, "2× AA"),
-                        ("Window sensor", "Bedroom", 71, "battery-70", False, False, "CR2032"),
-                        ("Motion sensor", "Garage", 93, "battery-90", False, False, "CR123A"),
+                        ("Front door", "Entrance", 8, "battery-10", True, False, "CR2032", None, None),
+                        ("Kitchen leak sensor", "Kitchen", 17, "battery-20", True, False, "CR2450", None, None),
+                        (
+                            "Smoke detector",
+                            "Hallway",
+                            None,
+                            "battery-alert-variant-outline",
+                            False,
+                            True,
+                            "9V",
+                            None,
+                            None,
+                        ),
+                        (
+                            "Kitchen remote",
+                            "Kitchen",
+                            31,
+                            "battery-30",
+                            False,
+                            False,
+                            "2× AAA",
+                            0.45,
+                            "2026-12-04T00:00:00+01:00",
+                        ),
+                        (
+                            "Thermostat",
+                            "Living room",
+                            54,
+                            "battery-50",
+                            False,
+                            False,
+                            "2× AA",
+                            0.6,
+                            "2027-01-05T00:00:00+01:00",
+                        ),
+                        (
+                            "Window sensor",
+                            "Bedroom",
+                            71,
+                            "battery-70",
+                            False,
+                            False,
+                            "CR2032",
+                            0.3,
+                            "2027-04-28T00:00:00+01:00",
+                        ),
+                        ("Motion sensor", "Garage", 93, "battery-90", False, False, "CR123A", None, None),
                     ]
                 )
+            ],
+        },
+        "git_sync_diff": {
+            "additions": 9,
+            "deletions": 2,
+            "more_files": 0,
+            "files": [
+                {
+                    "path": "automations.yaml",
+                    "status": "modified",
+                    "old_path": None,
+                    "binary": False,
+                    "additions": 7,
+                    "deletions": 2,
+                    "truncated": 0,
+                    "hunks": [
+                        {
+                            "header": "@@ -12,9 +12,14 @@",
+                            "lines": [
+                                {"kind": "context", "old": 12, "new": 12, "text": "- id: garage_lights"},
+                                {"kind": "context", "old": 13, "new": 13, "text": "  alias: Garage lights"},
+                                {"kind": "del", "old": 14, "new": None, "text": "  triggers:"},
+                                {"kind": "del", "old": 15, "new": None, "text": "    - trigger: state"},
+                                {"kind": "add", "old": None, "new": 14, "text": "  triggers:"},
+                                {"kind": "add", "old": None, "new": 15, "text": "    - trigger: state"},
+                                {
+                                    "kind": "add",
+                                    "old": None,
+                                    "new": 16,
+                                    "text": "      entity_id: binary_sensor.garage_door",
+                                },
+                                {"kind": "add", "old": None, "new": 17, "text": '      to: "on"'},
+                                {"kind": "context", "old": 16, "new": 18, "text": "  actions:"},
+                                {"kind": "add", "old": None, "new": 19, "text": "    - action: light.turn_on"},
+                                {"kind": "add", "old": None, "new": 20, "text": "      target: { area_id: garage }"},
+                                {"kind": "add", "old": None, "new": 21, "text": "      data: { brightness_pct: 80 }"},
+                                {"kind": "context", "old": 17, "new": 22, "text": "  mode: single"},
+                            ],
+                        }
+                    ],
+                },
+                {
+                    "path": "dashboards/home.yaml",
+                    "status": "added",
+                    "old_path": None,
+                    "binary": False,
+                    "additions": 2,
+                    "deletions": 0,
+                    "truncated": 0,
+                    "hunks": [],
+                },
+                {
+                    "path": "scripts.yaml",
+                    "status": "mode",
+                    "old_path": None,
+                    "binary": False,
+                    "additions": 0,
+                    "deletions": 0,
+                    "truncated": 0,
+                    "hunks": [],
+                },
             ],
         },
         "git_sync": {
@@ -285,7 +390,7 @@ def mock_state():
 
 
 # Mounts the panel as Home Assistant does: its strings come from loadBackendTranslation, its data from callWS.
-MOUNT = """([state, strings, tab, narrow]) => {
+MOUNT = """([state, strings, tab, narrow, view]) => {
     const localize = (key, vars) => {
         let text = strings[key];
         if (text === undefined) return "";
@@ -303,10 +408,19 @@ MOUNT = """([state, strings, tab, narrow]) => {
         localize,
         loadBackendTranslation: async () => localize,
         callService: async () => {},
-        callWS: async (msg) => (msg.type === "system_hub/state" ? state : {}),
+        callWS: async (msg) =>
+            msg.type === "system_hub/state"
+                ? state
+                : msg.service === "git_sync_get_diff"
+                  ? { response: state.git_sync_diff }
+                  : {},
     };
+    if (view) el._battView = view;
     document.getElementById("root").appendChild(el);
 }"""
+
+# Opens the diff viewer from the Git Sync tab.
+OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
 TABS = ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "settings"]
 SHOTS = [
@@ -315,6 +429,13 @@ SHOTS = [
         for tab in TABS
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
+    *(
+        {"file": f"panel-batteries-{view}{suffix}", "theme": theme, "tab": "batteries", "view": view}
+        for view in ("room", "type", "forecast")
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
+    {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
+    {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
@@ -390,8 +511,16 @@ def main():
             page.set_content(page_html(shot["theme"], width))
             page.add_script_tag(content=HA_ELEMENTS)
             page.add_script_tag(content=PANEL_JS)
-            page.evaluate(MOUNT, [state, STRINGS, shot["tab"], bool(shot.get("phone"))])
+            page.evaluate(MOUNT, [state, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
             page.wait_for_timeout(400)
+            if shot.get("diff"):
+                # The viewer covers the window: the capture is the window.
+                page.set_viewport_size({"width": width, "height": 760})
+                page.evaluate(OPEN_DIFF)
+                page.wait_for_timeout(400)
+                capture(page, out / f"{shot['file']}.png", animations="disabled")
+                page.close()
+                continue
             box = page.locator("#root").bounding_box()
             clip = {"x": 0, "y": 0, "width": width, "height": max(int(box["height"] + 0.999) + 16, 200)}
             capture(page, out / f"{shot['file']}.png", clip=clip, animations="disabled")
