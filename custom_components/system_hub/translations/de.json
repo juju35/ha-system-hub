@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Aktualisierungsintervall",
           "notify": "Benachrichtigen",
-          "notify_services": "Benachrichtigungsaktionen"
+          "notify_services": "Benachrichtigungsaktionen",
+          "stoppable_processes": "Prozesse, die gestoppt sein dürfen"
         },
         "data_description": {
           "scan_interval": "Sekunden zwischen zwei Abfragen des Supervisors.",
           "notify": "Benachrichtigen, wenn ein Container, der laufen sollte (ein beim Start gestartetes Add-on), stoppt und wenn er wieder läuft.",
-          "notify_services": "Jede Benachrichtigung zusätzlich mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt."
+          "notify_services": "Jede Benachrichtigung zusätzlich mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt.",
+          "stoppable_processes": "System-Monitor-Prozesse, die gestoppt sein dürfen: kein Problem im Status-Tab, grau angezeigt."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatur: orange ab",
           "temperature_critical": "Temperatur: rot ab",
           "swap_warning": "Swap: orange ab",
-          "swap_critical": "Swap: rot ab",
-          "stoppable_processes": "Prozesse, die gestoppt sein dürfen"
+          "swap_critical": "Swap: rot ab"
         },
-        "data_description": {
-          "stoppable_processes": "System-Monitor-Prozesse, die gestoppt sein dürfen: kein Problem im Status-Tab, grau angezeigt."
-        }
+        "data_description": {}
       }
     },
     "error": {

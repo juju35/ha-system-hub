@@ -9,6 +9,7 @@ from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.system_hub.config_flow import SystemHubOptionsFlow
 from custom_components.system_hub.const import CONF_MODULES, DOMAIN
 from custom_components.system_hub.panel import PANEL_PATH, tab_order
 
@@ -331,22 +332,13 @@ async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: 
 
 
 async def test_processes_that_may_be_stopped(hass: HomeAssistant, hass_ws_client, hass_read_only_access_token) -> None:
-    """Chosen in the System settings: flagged in the panel's state and read by the cards of any user."""
+    """Chosen in the Containers & process settings (in the System settings in 1.0.3, still read until saved there):
+    flagged in the panel's state and read by the cards of any user."""
     _system_monitor(hass)
     process = "binary_sensor.systemmonitor_process_python3"
     assert hass.states.get(process) is not None
-    entry = await _setup(hass, [])
-    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
-    result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "system"})
-    levels = (("cpu", 70), ("ram", 70), ("disk", 80), ("temperature", 70), ("swap", 50))
-    values = {f"{key}_{level}": v for key, base in levels for level, v in (("warning", base), ("critical", base + 10))}
-    result = await hass.config_entries.options.async_configure(
-        result["flow_id"], {**values, "stoppable_processes": [process]}
-    )
-    assert result["type"] is FlowResultType.CREATE_ENTRY
-    await hass.async_block_till_done()
-    assert entry.options["system"]["stoppable_processes"] == [process]
-    assert entry.options["system"]["cpu_warning"] == 70
+    # Saved in the System settings by 1.0.3
+    entry = await _setup(hass, [], system={"cpu_warning": 70, "stoppable_processes": [process]})
     client = await hass_ws_client(hass)
     await client.send_json_auto_id({"type": "system_hub/state"})
     system = (await client.receive_json())["result"]["system"]
@@ -355,3 +347,21 @@ async def test_processes_that_may_be_stopped(hass: HomeAssistant, hass_ws_client
     user = await hass_ws_client(hass, hass_read_only_access_token)
     await user.send_json_auto_id({"type": "system_hub/stoppable_processes"})
     assert (await user.receive_json())["result"] == [process]
+    # The Containers & process settings show them, and keep them once saved: the copy in the System settings goes
+    flow = SystemHubOptionsFlow()
+    flow.hass = hass
+    flow.handler = entry.entry_id
+    flow.flow_id = "test"
+    flow.context = {"source": "system_hub_panel"}
+    form = await flow.async_step_containers()
+    shown = {str(k): k.default() for k in form["data_schema"].schema if hasattr(k, "default")}
+    assert shown["stoppable_processes"] == [process]
+    result = await flow.async_step_containers(
+        {"scan_interval": 30, "notify": True, "notify_services": [], "stoppable_processes": [process]}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    assert result["data"]["containers"]["stoppable_processes"] == [process]
+    assert result["data"]["system"] == {"cpu_warning": 70}
+    # The System settings no longer ask for them
+    form = await flow.async_step_system()
+    assert "stoppable_processes" not in {str(k) for k in form["data_schema"].schema}

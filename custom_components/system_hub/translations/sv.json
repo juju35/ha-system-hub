@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Uppdateringsintervall",
           "notify": "Meddela",
-          "notify_services": "Aviseringsåtgärder"
+          "notify_services": "Aviseringsåtgärder",
+          "stoppable_processes": "Processer som får vara stoppade"
         },
         "data_description": {
           "scan_interval": "Sekunder mellan två avläsningar av Supervisor.",
           "notify": "Meddela när en container som borde köra (ett tillägg som startas vid uppstart) stoppar, och när den är tillbaka.",
-          "notify_services": "Skicka även varje avisering med dessa åtgärder (notify.mobile_app_…). En beständig avisering skapas alltid."
+          "notify_services": "Skicka även varje avisering med dessa åtgärder (notify.mobile_app_…). En beständig avisering skapas alltid.",
+          "stoppable_processes": "System Monitor-processer som får vara stoppade: räknas inte som ett problem på fliken Status och visas i grått."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatur: orange från",
           "temperature_critical": "Temperatur: rött från",
           "swap_warning": "Swap: orange från",
-          "swap_critical": "Swap: rött från",
-          "stoppable_processes": "Processer som får vara stoppade"
+          "swap_critical": "Swap: rött från"
         },
-        "data_description": {
-          "stoppable_processes": "System Monitor-processer som får vara stoppade: räknas inte som ett problem på fliken Status och visas i grått."
-        }
+        "data_description": {}
       }
     },
     "error": {

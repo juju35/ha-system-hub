@@ -142,22 +142,6 @@
         "name": "swap_critical",
         "required": true,
         "default": 80
-      },
-      {
-        "selector": {
-          "entity": {
-            "domain": [
-              "binary_sensor"
-            ],
-            "integration": "systemmonitor",
-            "multiple": true,
-            "reorder": false
-          }
-        },
-        "name": "stoppable_processes",
-        "required": false,
-        "optional": true,
-        "default": []
       }
     ],
     "errors": {},
@@ -200,6 +184,22 @@
           }
         },
         "name": "notify_services",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "entity": {
+            "domain": [
+              "binary_sensor"
+            ],
+            "integration": "systemmonitor",
+            "multiple": true,
+            "reorder": false
+          }
+        },
+        "name": "stoppable_processes",
         "required": false,
         "optional": true,
         "default": []

@@ -10,8 +10,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.selector import (
     BooleanSelector,
-    EntitySelector,
-    EntitySelectorConfig,
     NumberSelector,
     NumberSelectorConfig,
     NumberSelectorMode,
@@ -44,6 +42,7 @@ from .const import (
     SOURCE_PANEL,
 )
 from .containers import flow as containers_flow
+from .containers.flow import stoppable_processes
 from .containers.monitor import supervisor_available
 from .git_sync import configured as git_sync_configured
 from .git_sync import flow as git_sync_flow
@@ -217,19 +216,17 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_show_menu(step_id="init", menu_options=menu)
 
     async def async_step_system(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """The System tab's thresholds (orange from the first value, red from the second) and the processes that may be
-        stopped."""
+        """The System tab's thresholds: orange from the first value, red from the second."""
         errors: dict[str, str] = {}
         if user_input is not None:
-            values: dict[str, Any] = {
-                key: int(value) for key, value in user_input.items() if key != CONF_STOPPABLE_PROCESSES
-            }
-            values[CONF_STOPPABLE_PROCESSES] = list(user_input.get(CONF_STOPPABLE_PROCESSES) or [])
+            values = {key: int(value) for key, value in user_input.items()}
             for key in DEFAULT_THRESHOLDS:
                 if values[f"{key}_warning"] >= values[f"{key}_critical"]:
                     errors[f"{key}_critical"] = "critical_below_warning"
             if not errors:
-                return self._save(**{CONF_SYSTEM: values})
+                # The processes that may be stopped, chosen here in 1.0.3, are kept until saved in Containers & process
+                legacy = self._module(CONF_SYSTEM).get(CONF_STOPPABLE_PROCESSES)
+                return self._save(**{CONF_SYSTEM: values | ({CONF_STOPPABLE_PROCESSES: legacy} if legacy else {})})
         current = self._module(CONF_SYSTEM)
         fields: dict[Any, Any] = {}
         for key, (warn, crit) in DEFAULT_THRESHOLDS.items():
@@ -245,10 +242,6 @@ class SystemHubOptionsFlow(OptionsFlow):
             )
             fields[vol.Required(f"{key}_warning", default=current.get(f"{key}_warning", warn))] = number
             fields[vol.Required(f"{key}_critical", default=current.get(f"{key}_critical", crit))] = number
-        # The processes System Monitor watches that may be stopped: no stopped status, no alert for them
-        fields[vol.Optional(CONF_STOPPABLE_PROCESSES, default=list(current.get(CONF_STOPPABLE_PROCESSES) or []))] = (
-            EntitySelector(EntitySelectorConfig(domain="binary_sensor", integration="systemmonitor", multiple=True))
-        )
         schema = vol.Schema(fields)
         if user_input:
             schema = self.add_suggested_values_to_schema(schema, user_input)
@@ -276,8 +269,12 @@ class SystemHubOptionsFlow(OptionsFlow):
     async def async_step_containers(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Refresh interval and notifications."""
         if user_input is not None:
-            return self._save(**{MODULE_CONTAINERS: containers_flow.settings_options(user_input)})
-        schema = containers_flow.settings_schema(self.hass, self._module(MODULE_CONTAINERS))
+            # The processes that may be stopped live here now: the copy saved in the System settings in 1.0.3 goes
+            system = {k: v for k, v in self._module(CONF_SYSTEM).items() if k != CONF_STOPPABLE_PROCESSES}
+            return self._save(**{MODULE_CONTAINERS: containers_flow.settings_options(user_input), CONF_SYSTEM: system})
+        schema = containers_flow.settings_schema(
+            self.hass, self._module(MODULE_CONTAINERS), stoppable_processes(self.config_entry.options)
+        )
         return self.async_show_form(step_id="containers", data_schema=schema)
 
     # Watchdog

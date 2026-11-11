@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Intervalo de actualización",
           "notify": "Notificar",
-          "notify_services": "Acciones de notificación"
+          "notify_services": "Acciones de notificación",
+          "stoppable_processes": "Procesos que pueden estar detenidos"
         },
         "data_description": {
           "scan_interval": "Segundos entre dos lecturas del Supervisor.",
           "notify": "Notificar cuando un contenedor que debería funcionar (un complemento iniciado al arrancar) se detiene, y cuando vuelve.",
-          "notify_services": "Enviar también cada notificación con estas acciones (notify.mobile_app_…). Siempre se crea una notificación persistente."
+          "notify_services": "Enviar también cada notificación con estas acciones (notify.mobile_app_…). Siempre se crea una notificación persistente.",
+          "stoppable_processes": "Procesos de System Monitor que pueden estar detenidos: no cuentan como problema en la pestaña Estado y se muestran en gris."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatura: naranja desde",
           "temperature_critical": "Temperatura: rojo desde",
           "swap_warning": "Swap: naranja desde",
-          "swap_critical": "Swap: rojo desde",
-          "stoppable_processes": "Procesos que pueden estar detenidos"
+          "swap_critical": "Swap: rojo desde"
         },
-        "data_description": {
-          "stoppable_processes": "Procesos de System Monitor que pueden estar detenidos: no cuentan como problema en la pestaña Estado y se muestran en gris."
-        }
+        "data_description": {}
       }
     },
     "error": {

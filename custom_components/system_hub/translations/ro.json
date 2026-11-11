@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Interval de reîmprospătare",
           "notify": "Notifică",
-          "notify_services": "Acțiuni de notificare"
+          "notify_services": "Acțiuni de notificare",
+          "stoppable_processes": "Procese care pot fi oprite"
         },
         "data_description": {
           "scan_interval": "Secunde între două citiri ale Supervisor.",
           "notify": "Notifică atunci când un container care ar trebui să ruleze (un add-on pornit la boot) se oprește și când revine.",
-          "notify_services": "Trimite fiecare notificare și prin aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna."
+          "notify_services": "Trimite fiecare notificare și prin aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna.",
+          "stoppable_processes": "Procese System Monitor care pot fi oprite: nu contează ca problemă în fila Stare și apar cu gri."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatură: portocaliu de la",
           "temperature_critical": "Temperatură: roșu de la",
           "swap_warning": "Swap: portocaliu de la",
-          "swap_critical": "Swap: roșu de la",
-          "stoppable_processes": "Procese care pot fi oprite"
+          "swap_critical": "Swap: roșu de la"
         },
-        "data_description": {
-          "stoppable_processes": "Procese System Monitor care pot fi oprite: nu contează ca problemă în fila Stare și apar cu gri."
-        }
+        "data_description": {}
       }
     },
     "error": {

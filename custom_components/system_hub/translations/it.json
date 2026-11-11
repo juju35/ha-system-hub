@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Intervallo di aggiornamento",
           "notify": "Notifica",
-          "notify_services": "Azioni di notifica"
+          "notify_services": "Azioni di notifica",
+          "stoppable_processes": "Processi che possono essere arrestati"
         },
         "data_description": {
           "scan_interval": "Secondi tra due letture del Supervisor.",
           "notify": "Notifica quando un container che dovrebbe essere attivo (un add-on avviato all'avvio) si ferma e quando torna.",
-          "notify_services": "Invia ogni notifica anche con queste azioni (notify.mobile_app_…). Viene sempre creata una notifica persistente."
+          "notify_services": "Invia ogni notifica anche con queste azioni (notify.mobile_app_…). Viene sempre creata una notifica persistente.",
+          "stoppable_processes": "Processi di System Monitor che possono essere arrestati: non contano come problema nella scheda Stato e appaiono in grigio."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatura: arancione da",
           "temperature_critical": "Temperatura: rosso da",
           "swap_warning": "Swap: arancione da",
-          "swap_critical": "Swap: rosso da",
-          "stoppable_processes": "Processi che possono essere arrestati"
+          "swap_critical": "Swap: rosso da"
         },
-        "data_description": {
-          "stoppable_processes": "Processi di System Monitor che possono essere arrestati: non contano come problema nella scheda Stato e appaiono in grigio."
-        }
+        "data_description": {}
       }
     },
     "error": {

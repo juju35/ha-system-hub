@@ -22,7 +22,6 @@ from homeassistant.helpers import entity_registry as er
 from . import automations
 from .const import (
     CONF_MODULES,
-    CONF_STOPPABLE_PROCESSES,
     CONF_SYSTEM,
     CONF_TABS,
     DEFAULT_THRESHOLDS,
@@ -35,6 +34,7 @@ from .const import (
     TAB_STATUS,
     TAB_SYSTEM,
 )
+from .containers.flow import stoppable_processes
 from .orphans import panel as orphans_panel
 
 STATIC_URL = f"/{DOMAIN}_static"
@@ -173,12 +173,6 @@ def thresholds(options: dict[str, Any]) -> dict[str, list[int]]:
     for key, (warn, crit) in DEFAULT_THRESHOLDS.items():
         result[key] = [int(chosen.get(f"{key}_warning", warn)), int(chosen.get(f"{key}_critical", crit))]
     return result
-
-
-def stoppable_processes(options: dict[str, Any]) -> set[str]:
-    """The processes that may be stopped, chosen in the System settings."""
-    chosen = options.get(CONF_SYSTEM) if isinstance(options.get(CONF_SYSTEM), dict) else {}
-    return {str(e) for e in chosen.get(CONF_STOPPABLE_PROCESSES) or []}
 
 
 def _updates(hass: HomeAssistant) -> list[dict[str, Any]]:
