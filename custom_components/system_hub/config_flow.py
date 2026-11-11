@@ -17,6 +17,8 @@ from homeassistant.helpers.selector import (
 )
 
 from .batteries import flow as batteries_flow
+from .batteries import importer as batteries_importer
+from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
 from .const import (
     CONF_MODULES,
     DOMAIN,
@@ -145,7 +147,9 @@ class SystemHubOptionsFlow(OptionsFlow):
         if MODULE_MARKETPLACE in modules:
             menu.append("marketplace")
         if MODULE_BATTERIES in modules:
-            menu.append("batteries")
+            menu += ["batteries", "batteries_types"]
+            if await batteries_importer.async_find(self.hass):
+                menu.append("batteries_import")
         if MODULE_GIT_SYNC in modules:
             menu += ["git_sync_repository", "git_sync"]
         return self.async_show_menu(step_id="init", menu_options=menu)
@@ -254,9 +258,49 @@ class SystemHubOptionsFlow(OptionsFlow):
     async def async_step_batteries(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Threshold, duration, notification times and actions, batteries left out."""
         if user_input is not None:
-            return self._save(**{MODULE_BATTERIES: batteries_flow.settings_options(user_input)})
+            # The battery types are set in their own step: kept here
+            settings = {**self._module(MODULE_BATTERIES), **batteries_flow.settings_options(user_input)}
+            return self._save(**{MODULE_BATTERIES: settings})
         schema = await batteries_flow.settings_schema(self.hass, self._module(MODULE_BATTERIES))
         return self.async_show_form(step_id="batteries", data_schema=schema)
+
+    async def async_step_batteries_types(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The battery types set by hand (unticked: removed), and one more for a battery or its whole model."""
+        current = self._module(MODULE_BATTERIES)
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            types, models, errors = batteries_flow.types_options(self.hass, current, user_input)
+            if not errors:
+                return self._save(
+                    **{MODULE_BATTERIES: {**current, CONF_BATTERY_TYPES: types, CONF_BATTERY_MODELS: models}}
+                )
+        schema = batteries_flow.types_schema(self.hass, current)
+        if user_input:
+            schema = self.add_suggested_values_to_schema(schema, user_input)
+        return self.async_show_form(step_id="batteries_types", data_schema=schema, errors=errors)
+
+    async def async_step_batteries_import(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Battery Monitor's settings, the battery types of its cards and its spare batteries, brought in."""
+        found = await batteries_importer.async_find(self.hass)
+        if not found:
+            return self.async_abort(reason="nothing_to_import")
+        if user_input is not None:
+            data = getattr(self.config_entry, "runtime_data", None)
+            monitor = data.batteries if data is not None else None
+            if monitor is not None:
+                for kind, count in found.stock.items():
+                    monitor.async_set_stock(kind, count)
+                await monitor.async_save()
+            return self._save(**{MODULE_BATTERIES: batteries_importer.merged(self._module(MODULE_BATTERIES), found)})
+        return self.async_show_form(
+            step_id="batteries_import",
+            data_schema=vol.Schema({}),
+            description_placeholders={
+                "settings": str(len(found.settings)),
+                "types": str(len(found.battery_types) + len(found.battery_models)),
+                "stock": str(len(found.stock)),
+            },
+        )
 
     # Git Sync
 

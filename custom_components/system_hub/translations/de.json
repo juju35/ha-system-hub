@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Repository-Einstellungen",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Batterien: Batterietypen",
+          "batteries_import": "Batterien: Aus Battery Monitor importieren"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Abendliche Benachrichtigung",
           "notify_services": "Benachrichtigungsaktionen",
           "ignored_entities": "Ignorierte Batterien",
-          "ignored_integrations": "Ignorierte Integrationen"
+          "ignored_integrations": "Ignorierte Integrationen",
+          "hide_ok": "Batterien in gutem Zustand ausblenden"
         },
         "data_description": {
           "threshold": "Unter diesem Wert gilt eine Batterie als schwach.",
@@ -177,7 +180,8 @@
           "evening_time": "Zweite der beiden täglichen Benachrichtigungen.",
           "notify_services": "Die Benachrichtigungen mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt.",
           "ignored_entities": "Batterien, die nie überwacht werden.",
-          "ignored_integrations": "Integrationen, deren Batterien nie überwacht werden (standardmäßig Smartphones und Tablets der Companion-App). Gib eine Domain ein, um eine noch nicht eingerichtete hinzuzufügen."
+          "ignored_integrations": "Integrationen, deren Batterien nie überwacht werden (standardmäßig Smartphones und Tablets der Companion-App). Gib eine Domain ein, um eine noch nicht eingerichtete hinzuzufügen.",
+          "hide_ok": "Nur Batterien unter der Schwelle oder nicht verfügbare bleiben sichtbar"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "Im Konfigurationsordner (ein relativer Pfad beginnt dort) oder in einem Ordner von allowlist_external_dirs.",
           "commit_before_update": "Wenn ein Update installiert wird (Home Assistant, ein Add-on, eine Integration), zuerst die Konfiguration committen und pushen, damit es einen Commit zum Zurückgehen gibt. Ein Commit für gemeinsam installierte Updates."
         }
+      },
+      "batteries_types": {
+        "title": "Batterietypen",
+        "description": "Hier festgelegte Typen haben Vorrang vor denen von Battery Notes. Einen Typ abwählen, um ihn zu entfernen, oder unten einen weiteren festlegen.",
+        "data": {
+          "set": "Festgelegte Typen",
+          "battery": "Batterie",
+          "type": "Typ",
+          "quantity": "Anzahl der Batterien",
+          "whole_model": "Für alle Geräte dieses Modells"
+        },
+        "data_description": {
+          "set": "Einen Typ abwählen, um ihn zu entfernen.",
+          "type": "Auswählen oder eingeben (CR2450, 2× AA…).",
+          "whole_model": "Derselbe Typ für alle Geräte des Modells dieser Batterie."
+        }
+      },
+      "batteries_import": {
+        "title": "Aus Battery Monitor importieren",
+        "description": "In Battery Monitor gefunden: {settings} Einstellungen, {types} in seinen Karten festgelegte Batterietypen und {stock} Typen von Ersatzbatterien. Absenden, um sie in System Hub zu übernehmen: seine Einstellungen ersetzen die des Moduls Batterien, die hier bereits festgelegten Batterietypen bleiben erhalten."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git akzeptiert diesen Branch-Namen nicht.",
       "author_required": "Git weiß hier nicht, wer die Commits signiert: Autor-E-Mail (und Namen) angeben.",
       "unknown_notify_service": "Diese Benachrichtigungsaktion existiert nicht.",
-      "export_dir_not_allowed": "Der Ordner muss im Konfigurationsordner oder in einem Ordner von allowlist_external_dirs liegen, außerhalb versteckter Ordner wie .storage."
+      "export_dir_not_allowed": "Der Ordner muss im Konfigurationsordner oder in einem Ordner von allowlist_external_dirs liegen, außerhalb versteckter Ordner wie .storage.",
+      "battery_required": "Batterie auswählen.",
+      "type_required": "Typ auswählen oder eingeben.",
+      "no_model": "Das Gerät dieser Batterie hat kein Modell: den Typ für die Batterie selbst festlegen."
+    },
+    "abort": {
+      "nothing_to_import": "Nichts aus Battery Monitor zu importieren."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} T",
         "now": "jetzt",
         "chart_empty": "Noch kein Verlauf",
-        "disk": "Datenträger"
+        "disk": "Datenträger",
+        "to_check": "{n} zu prüfen",
+        "count_one": "1 Batterie",
+        "count_many": "{n} Batterien",
+        "cells_one": "1 Batterie",
+        "cells_many": "{n} Batterien",
+        "to_replace": "Zu ersetzen",
+        "nothing_to_replace": "Nichts zu ersetzen",
+        "next_replacement": "Nächster Austausch",
+        "hours": "{n} h",
+        "low_for": "schwach seit {d}",
+        "unavailable_for": "nicht verfügbar seit {d}",
+        "unknown_type_hint": "In Konfigurieren → Batterien: Batterietypen festlegen",
+        "checking": "Repositorys werden geprüft…",
+        "remaining": "≈ noch {t}",
+        "failed_count": "{n} fehlgeschlagen",
+        "could_not_check": "Konnten nicht geprüft werden",
+        "not_checked": "{n} Repositorys nicht geprüft: Kein GitHub-Konto ist mit dem Marketplace verbunden",
+        "rate_limit": "GitHub: noch {n} Anfragen",
+        "sec": "{n} s",
+        "min": "{n} min",
+        "uptime_for": "Laufzeit",
+        "ip_address": "IP-Adresse",
+        "database": "Datenbank",
+        "last_backup": "Letzte Sicherung",
+        "next_backup": "Nächste Sicherung",
+        "backing_up": "Sicherung läuft…",
+        "backup_failed": "Letzte Sicherung fehlgeschlagen",
+        "processes": "Prozesse"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Eingebauter Akku"
       }
     }
   }

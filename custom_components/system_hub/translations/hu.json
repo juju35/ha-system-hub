@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Tároló beállításai",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Elemek: elemtípusok",
+          "batteries_import": "Elemek: importálás a Battery Monitorból"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Esti értesítés",
           "notify_services": "Értesítési műveletek",
           "ignored_entities": "Figyelmen kívül hagyott elemek",
-          "ignored_integrations": "Figyelmen kívül hagyott integrációk"
+          "ignored_integrations": "Figyelmen kívül hagyott integrációk",
+          "hide_ok": "A rendben lévő elemek elrejtése"
         },
         "data_description": {
           "threshold": "Ez alatt a szint alatt az elem gyengének számít.",
@@ -177,7 +180,8 @@
           "evening_time": "A két napi értesítés közül a második.",
           "notify_services": "Az értesítések küldése ezekkel a műveletekkel (notify.mobile_app_…). Állandó értesítés mindig létrejön.",
           "ignored_entities": "Soha nem figyelt elemek.",
-          "ignored_integrations": "Integrációk, amelyek elemeit soha nem figyeli (alapértelmezés szerint a mobilalkalmazás telefonjai és táblagépei). Írjon be egy domaint egy még be nem állított integráció hozzáadásához."
+          "ignored_integrations": "Integrációk, amelyek elemeit soha nem figyeli (alapértelmezés szerint a mobilalkalmazás telefonjai és táblagépei). Írjon be egy domaint egy még be nem állított integráció hozzáadásához.",
+          "hide_ok": "Csak a küszöbérték alatti vagy nem elérhető elemek maradnak láthatók"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "A konfigurációs mappában (a relatív útvonal innen indul) vagy az allowlist_external_dirs egyik mappájában.",
           "commit_before_update": "Frissítés telepítésekor (Home Assistant, bővítmény, integráció) előbb commitolja és pusholja a konfigurációt, hogy legyen commit, amelyhez vissza lehet térni. Egy commit az együtt telepített frissítésekhez."
         }
+      },
+      "batteries_types": {
+        "title": "Elemtípusok",
+        "description": "Az itt beállított típusok elsőbbséget élveznek a Battery Notes típusaival szemben. Vegye ki a jelölést egy típusról az eltávolításához, vagy állítson be még egyet lent.",
+        "data": {
+          "set": "Beállított típusok",
+          "battery": "Elem",
+          "type": "Típus",
+          "quantity": "Elemek száma",
+          "whole_model": "A modell összes eszközére"
+        },
+        "data_description": {
+          "set": "Vegye ki a jelölést egy típusról az eltávolításához.",
+          "type": "Válassza ki vagy írja be (CR2450, 2× AA…).",
+          "whole_model": "Ugyanaz a típus ennek az elemnek a modelljéhez tartozó összes eszközre."
+        }
+      },
+      "batteries_import": {
+        "title": "Importálás a Battery Monitorból",
+        "description": "A Battery Monitorban találtak: {settings} beállítás, {types} kártyáiban beállított elemtípus és {stock} tartalékelem-típus. Küldje el, hogy átkerüljenek a System Hubba: beállításai felváltják az Elemek modul beállításait, az itt már beállított elemtípusok megmaradnak."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "A Git nem fogadja el ezt az ágnevet.",
       "author_required": "A Git nem tudja, ki írja alá itt a commitokat: adja meg a szerző e-mail-címét (és nevét).",
       "unknown_notify_service": "Ez az értesítési művelet nem létezik.",
-      "export_dir_not_allowed": "A mappának a konfigurációs mappában vagy az allowlist_external_dirs egyik mappájában kell lennie, rejtett mappákon (például .storage) kívül."
+      "export_dir_not_allowed": "A mappának a konfigurációs mappában vagy az allowlist_external_dirs egyik mappájában kell lennie, rejtett mappákon (például .storage) kívül.",
+      "battery_required": "Válassza ki az elemet.",
+      "type_required": "Válassza ki vagy írja be a típust.",
+      "no_model": "Ennek az elemnek az eszközéhez nincs modell: állítsa be a típust magára az elemre."
+    },
+    "abort": {
+      "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} n",
         "now": "most",
         "chart_empty": "Még nincs előzmény",
-        "disk": "Lemez"
+        "disk": "Lemez",
+        "to_check": "{n} ellenőrizendő",
+        "count_one": "1 elem",
+        "count_many": "{n} elem",
+        "cells_one": "1 elem",
+        "cells_many": "{n} elem",
+        "to_replace": "Cserélendő",
+        "nothing_to_replace": "Nincs mit cserélni",
+        "next_replacement": "Következő csere",
+        "hours": "{n} ó",
+        "low_for": "{d} óta gyenge",
+        "unavailable_for": "{d} óta nem elérhető",
+        "unknown_type_hint": "Állítsa be: Konfigurálás → Elemek: elemtípusok",
+        "checking": "Tárolók ellenőrzése…",
+        "remaining": "≈ {t} van hátra",
+        "failed_count": "{n} sikertelen",
+        "could_not_check": "Nem sikerült ellenőrizni",
+        "not_checked": "{n} tároló nincs ellenőrizve: nincs GitHub-fiók csatlakoztatva a Marketplace-hez",
+        "rate_limit": "GitHub: {n} kérés maradt",
+        "sec": "{n} mp",
+        "min": "{n} perc",
+        "uptime_for": "Üzemidő",
+        "ip_address": "IP-cím",
+        "database": "Adatbázis",
+        "last_backup": "Utolsó biztonsági mentés",
+        "next_backup": "Következő biztonsági mentés",
+        "backing_up": "Mentés folyamatban…",
+        "backup_failed": "Az utolsó biztonsági mentés sikertelen",
+        "processes": "Folyamatok"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Beépített akkumulátor"
       }
     }
   }

@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+### New
+- **Battery types** in **Configure → Batteries: Battery types**: the type and number of batteries of a battery, or of every device of its model, as in the Battery Monitor card; they come before Battery Notes. Untick one to remove it.
+- **Import from Battery Monitor** in **Configure → Batteries: Import from Battery Monitor** (shown when Battery Monitor left something): its settings, the battery types set in its cards and its spare batteries.
+- **Hide the batteries that are fine** in **Configure → Batteries**: the panel shows only the low and unavailable ones.
+- **System tab**: the swap worked out from its use and free when its percentage sensor is off, the uptime as a duration, the IP address, the database size (File Size integration), the last and next automatic backups (Backup integration) and the processes watched by System Monitor.
+- **Marketplace tab**: while a check runs, a progress bar with the share done, the repositories checked, the time left at the pace so far and the failures, read every 2 seconds; afterwards the repositories that could not be checked, those left out without a GitHub account, and GitHub's requests left.
+- **Batteries tab** laid out as the Battery Monitor full screen view: the views as tabs, what to replace and the next replacement, the groups in columns with their batteries to check, compact rows tinted when low or unavailable, how long a battery has been low.
+
+### Documentation
+- Screenshots of every **Configure** form (the **Module settings** button of the panel), light and dark, taken from a running Home Assistant by `scripts/config-screenshots.mjs`.
+
 ## 0.2.0 - 2026-11-11
 
 ### New

@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Ustawienia repozytorium",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Baterie: typy baterii",
+          "batteries_import": "Baterie: import z Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Powiadomienie wieczorne",
           "notify_services": "Akcje powiadomień",
           "ignored_entities": "Ignorowane baterie",
-          "ignored_integrations": "Ignorowane integracje"
+          "ignored_integrations": "Ignorowane integracje",
+          "hide_ok": "Ukryj baterie w dobrym stanie"
         },
         "data_description": {
           "threshold": "Poniżej tego poziomu bateria jest słaba.",
@@ -177,7 +180,8 @@
           "evening_time": "Drugie z dwóch codziennych powiadomień.",
           "notify_services": "Wysyłaj powiadomienia za pomocą tych akcji (notify.mobile_app_…). Powiadomienie trwałe jest zawsze tworzone.",
           "ignored_entities": "Baterie, które nigdy nie są monitorowane.",
-          "ignored_integrations": "Integracje, których baterie nigdy nie są monitorowane (domyślnie telefony i tablety aplikacji mobilnej). Wpisz domenę, aby dodać integrację, która nie jest jeszcze skonfigurowana."
+          "ignored_integrations": "Integracje, których baterie nigdy nie są monitorowane (domyślnie telefony i tablety aplikacji mobilnej). Wpisz domenę, aby dodać integrację, która nie jest jeszcze skonfigurowana.",
+          "hide_ok": "Widoczne pozostają tylko baterie poniżej progu lub niedostępne"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "W folderze konfiguracji (ścieżka względna zaczyna się w nim) lub w folderze z allowlist_external_dirs.",
           "commit_before_update": "Gdy instalowana jest aktualizacja (Home Assistant, dodatek, integracja), najpierw zatwierdź i wypchnij konfigurację, aby mieć commit, do którego można wrócić. Jeden commit dla aktualizacji instalowanych razem."
         }
+      },
+      "batteries_types": {
+        "title": "Typy baterii",
+        "description": "Typy ustawione tutaj mają pierwszeństwo przed typami z Battery Notes. Odznacz typ, aby go usunąć, lub ustaw kolejny poniżej.",
+        "data": {
+          "set": "Ustawione typy",
+          "battery": "Bateria",
+          "type": "Typ",
+          "quantity": "Liczba baterii",
+          "whole_model": "Dla wszystkich urządzeń tego modelu"
+        },
+        "data_description": {
+          "set": "Odznacz typ, aby go usunąć.",
+          "type": "Wybierz lub wpisz (CR2450, 2× AA…).",
+          "whole_model": "Ten sam typ dla wszystkich urządzeń modelu tej baterii."
+        }
+      },
+      "batteries_import": {
+        "title": "Import z Battery Monitor",
+        "description": "Znaleziono w Battery Monitor: {settings} ustawień, {types} typów baterii ustawionych w jego kartach i {stock} typów baterii zapasowych. Zatwierdź, aby przenieść je do System Hub: jego ustawienia zastąpią ustawienia modułu Baterie, a typy baterii już ustawione tutaj zostaną zachowane."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git nie akceptuje tej nazwy gałęzi.",
       "author_required": "Git nie wie, kto podpisuje tu commity: podaj e-mail (oraz imię i nazwisko) autora.",
       "unknown_notify_service": "Ta akcja powiadomienia nie istnieje.",
-      "export_dir_not_allowed": "Folder musi znajdować się w folderze konfiguracji lub w folderze z allowlist_external_dirs, poza folderami ukrytymi, takimi jak .storage."
+      "export_dir_not_allowed": "Folder musi znajdować się w folderze konfiguracji lub w folderze z allowlist_external_dirs, poza folderami ukrytymi, takimi jak .storage.",
+      "battery_required": "Wybierz baterię.",
+      "type_required": "Wybierz lub wpisz typ.",
+      "no_model": "Urządzenie tej baterii nie ma modelu: ustaw typ dla samej baterii."
+    },
+    "abort": {
+      "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} d",
         "now": "teraz",
         "chart_empty": "Brak historii",
-        "disk": "Dysk"
+        "disk": "Dysk",
+        "to_check": "Do sprawdzenia: {n}",
+        "count_one": "1 bateria",
+        "count_many": "Baterie: {n}",
+        "cells_one": "1 bateria",
+        "cells_many": "Baterie: {n}",
+        "to_replace": "Do wymiany",
+        "nothing_to_replace": "Nic do wymiany",
+        "next_replacement": "Następna wymiana",
+        "hours": "{n} h",
+        "low_for": "słaba od {d}",
+        "unavailable_for": "niedostępna od {d}",
+        "unknown_type_hint": "Ustaw w Konfiguruj → Baterie: typy baterii",
+        "checking": "Sprawdzanie repozytoriów…",
+        "remaining": "≈ pozostało {t}",
+        "failed_count": "Niepowodzenia: {n}",
+        "could_not_check": "Nie udało się sprawdzić",
+        "not_checked": "Niesprawdzone repozytoria: {n} — żadne konto GitHub nie jest połączone z Marketplace",
+        "rate_limit": "GitHub: pozostało żądań: {n}",
+        "sec": "{n} s",
+        "min": "{n} min",
+        "uptime_for": "Czas pracy",
+        "ip_address": "Adres IP",
+        "database": "Baza danych",
+        "last_backup": "Ostatnia kopia zapasowa",
+        "next_backup": "Następna kopia zapasowa",
+        "backing_up": "Tworzenie kopii…",
+        "backup_failed": "Ostatnia kopia zapasowa nie powiodła się",
+        "processes": "Procesy"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Wbudowany akumulator"
       }
     }
   }

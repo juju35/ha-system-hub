@@ -453,6 +453,13 @@ function shMount(sensor) {
   return m ? m[1] : sensor.name;
 }
 
+// "System Monitor Process python3" → "python3"
+function shProcess(sensor) {
+  var name = String(sensor.name || '');
+  var i = name.toLowerCase().lastIndexOf('process ');
+  return i < 0 ? name : name.slice(i + 8);
+}
+
 function shIface(sensor) {
   return String(sensor.name || '').split(' ').pop();
 }
@@ -529,6 +536,63 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
     .grow { flex:1; }
+    .mono { font-family:var(--code-font-family, monospace); font-size:15px; }
+    .progress { padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+    .phead { display:flex; align-items:center; gap:10px; --mdc-icon-size:20px; color:var(--primary-color); }
+    .phead ha-icon { animation:sh-spin 2s linear infinite; }
+    .ptitle { flex:1; font-size:15px; font-weight:500; color:var(--primary-text-color); }
+    .ppct { font-size:20px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--primary-text-color); }
+    .pbar { height:8px; border-radius:4px; overflow:hidden; background:color-mix(in srgb, var(--primary-color) 15%, transparent); }
+    .pbar > span { display:block; height:100%; border-radius:4px; background:var(--primary-color); transition:width .6s ease; }
+    .pbar.busy > span { animation:sh-slide 1.4s ease-in-out infinite; }
+    .pmeta { display:flex; flex-wrap:wrap; gap:6px 18px; font-size:13px; color:var(--secondary-text-color); font-variant-numeric:tabular-nums; }
+    .pmeta .bad { color:color-mix(in srgb, var(--tone-bad) 50%, var(--primary-text-color)); }
+    .notes { display:flex; flex-direction:column; gap:4px; }
+    @keyframes sh-spin { to { transform:rotate(360deg) } }
+    @keyframes sh-slide { 0% { transform:translateX(-100%) } 100% { transform:translateX(340%) } }
+    @media (prefers-reduced-motion: reduce) { .phead ha-icon, .pbar.busy > span { animation:none; } }
+    .bsheet { padding:14px 16px 16px; }
+    .btop { display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; margin-bottom:16px; }
+    .btabs { display:inline-flex; gap:4px; padding:3px; border-radius:12px; background:var(--secondary-background-color, rgba(128,128,128,.1)); }
+    .btab { border:0; background:none; cursor:pointer; font:inherit; padding:6px 14px; border-radius:9px; font-size:13px; font-weight:500; color:var(--secondary-text-color); }
+    .btab.on { background:color-mix(in srgb, var(--primary-color) 15%, transparent); color:color-mix(in srgb, var(--primary-color) 40%, var(--primary-text-color)); }
+    .bline { display:flex; flex-wrap:wrap; align-items:center; gap:6px; font-size:12px; color:var(--secondary-text-color); }
+    .rlabel { display:flex; align-items:center; gap:6px; font-size:12px; font-weight:500; text-transform:uppercase; letter-spacing:.04em; --mdc-icon-size:16px; }
+    .buy { padding:2px 9px; border-radius:999px; color:var(--primary-text-color); background:color-mix(in srgb, var(--tone-warn) 16%, transparent); }
+    .buy b { color:color-mix(in srgb, var(--tone-warn) 40%, var(--primary-text-color)); }
+    .buy.unknown { background:color-mix(in srgb, var(--secondary-text-color) 18%, transparent); }
+    .buy.unknown b { color:var(--secondary-text-color); }
+    .none { color:color-mix(in srgb, var(--tone-good) 40%, var(--primary-text-color)); font-weight:500; }
+    .nextb { border:0; cursor:pointer; font:inherit; font-size:12px; padding:2px 9px; border-radius:999px; color:var(--primary-text-color); background:color-mix(in srgb, var(--primary-color) 12%, transparent); }
+    .nextb b { font-weight:500; }
+    .bgroups { columns:3 300px; column-gap:28px; }
+    .bgroup { break-inside:avoid; display:flex; flex-direction:column; gap:6px; margin-bottom:20px; }
+    .bgroups.flat { columns:auto; }
+    .bgroups.flat .glist { grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+    .ghead { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; --mdc-icon-size:18px; }
+    .ghead ha-icon { color:var(--secondary-text-color); }
+    .gname { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .gchip { font-size:11px; padding:1px 8px; border-radius:999px; color:color-mix(in srgb, var(--tone-warn) 40%, var(--primary-text-color)); background:color-mix(in srgb, var(--tone-warn) 14%, transparent); }
+    .gcount { font-size:11px; font-weight:400; color:var(--secondary-text-color); }
+    .glist { display:grid; gap:6px; }
+    .ghint { font-size:11px; color:var(--secondary-text-color); margin-top:-2px; }
+    .brow { --t:var(--tone-good); --tt:color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); border:0; font:inherit; color:inherit; text-align:left; cursor:pointer;
+            min-width:0; display:flex; align-items:center; gap:8px; padding:5px 10px 5px 5px; border-radius:10px; background:var(--secondary-background-color, rgba(127,127,127,.08)); }
+    .brow.warn { --t:var(--tone-warn); }
+    .brow.alert { --t:var(--tone-bad); }
+    .brow.warn, .brow.alert { background:color-mix(in srgb, var(--t) 12%, var(--secondary-background-color, transparent)); }
+    .brow:hover { filter:brightness(.97); }
+    .brow .ic { flex:none; width:28px; height:28px; border-radius:50%; display:grid; place-items:center; color:var(--t); background:color-mix(in srgb, var(--t) 18%, transparent); --mdc-icon-size:16px; }
+    .brow.due .ic { animation:sh-blink 1.5s ease-in-out infinite; }
+    .brow .txt { flex:1; display:flex; flex-direction:column; min-width:0; }
+    .brow .name { font-size:13px; font-weight:500; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brow .sub { font-size:11px; line-height:1.25; color:var(--secondary-text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .brow.warn .sub, .brow.alert .sub, .brow.warn .lvl, .brow.alert .lvl { color:var(--tt); }
+    .brow .lvl { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:3px; font-size:12px; font-weight:500; font-variant-numeric:tabular-nums; }
+    .track { width:44px; height:4px; border-radius:2px; overflow:hidden; background:color-mix(in srgb, var(--secondary-text-color) 22%, transparent); }
+    .bar { display:block; height:100%; border-radius:2px; background:var(--t); }
+    @keyframes sh-blink { 0%, 100% { opacity:1 } 50% { opacity:.35 } }
+    @media (prefers-reduced-motion: reduce) { .brow.due .ic { animation:none; } }
     .segs { display:inline-flex; border-radius:8px; overflow:hidden; background:var(--secondary-background-color, rgba(127,127,127,.12)); }
     .seg { display:inline-flex; align-items:center; gap:6px; border:0; background:none; cursor:pointer; font:inherit; font-size:13px;
            padding:7px 12px; color:var(--secondary-text-color); --mdc-icon-size:16px; }
@@ -650,6 +714,7 @@ class SystemHubPanel extends HTMLElement {
 
   disconnectedCallback() {
     clearInterval(this._timer);
+    clearTimeout(this._fast);
     this._timer = null;
   }
 
@@ -698,6 +763,11 @@ class SystemHubPanel extends HTMLElement {
     try {
       this._state = await this._hass.callWS({ type: 'system_hub/state' });
       this._error = null;
+      // A check running on the Marketplace tab: its progress every 2 seconds rather than every 10
+      clearTimeout(this._fast);
+      if (this._state?.marketplace?.state === 'running' && this._tab === 'marketplace' && this.isConnected) {
+        this._fast = setTimeout(() => this._load(), 2000);
+      }
     } catch (err) {
       this._error = err?.message || String(err);
     }
@@ -824,7 +894,7 @@ class SystemHubPanel extends HTMLElement {
   }
 
   _tile(icon, value, label, tone, opts = {}) {
-    return `<ha-card class="tile ${tone || ''}${opts.entity ? ' link' : ''}"${opts.entity ? ` data-more="${shEsc(opts.entity)}"` : ''}>
+    return `<ha-card class="tile ${tone || ''}${opts.entity ? ' link' : ''}"${opts.entity ? ` data-more="${shEsc(opts.entity)}"` : ''}${opts.title ? ` title="${shEsc(opts.title)}"` : ''}>
       ${opts.spark || ''}<div class="avatar"><ha-icon icon="${icon}"></ha-icon></div>
       <div class="who"><div class="n">${value}</div><div class="s">${shEsc(label)}</div></div></ha-card>`;
   }
@@ -878,10 +948,16 @@ class SystemHubPanel extends HTMLElement {
     var ringHist = this._history(ringDefs.map(([s]) => s.entity_id), 24);
     var rings = ringDefs.map(([s, label, color, unit]) => this._ring(s, label, color, unit, ringHist?.[s.entity_id])).join('');
     var tiles = [];
+    // Swap: its percentage, else worked out from the swap used and free (the percentage sensor is off by default)
     var swap = one('swap_use_percent');
-    if (swap) {
-      var v = shNum(swap.state);
-      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%`, this._t('swap'), shTone(v), { entity: swap.entity_id }));
+    var swapUse = one('swap_use');
+    var swapFree = one('swap_free');
+    if (swap || swapUse) {
+      var used = shNum(swapUse?.state);
+      var free = shNum(swapFree?.state);
+      var v = swap ? shNum(swap.state) : used !== null && free !== null && used + free > 0 ? (used * 100) / (used + free) : null;
+      var size = used === null ? '' : ` <span class="more">${shEsc(`${used} ${swapUse.unit || ''}`.trim())}</span>`;
+      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%${size}`, this._t('swap'), shTone(v, 50, 80), { entity: (swap || swapUse).entity_id }));
     }
     var loads = ['load_1m', 'load_5m', 'load_15m'].map(one).filter(Boolean);
     if (loads.length) {
@@ -891,8 +967,47 @@ class SystemHubPanel extends HTMLElement {
         }),
       );
     }
+    // Uptime: how long since the last boot (the date in the tile's title)
     var boot = one('last_boot');
-    if (boot) tiles.push(this._tile('mdi:clock-start', shEsc(this._day(boot.state)), this._t('uptime'), '', { entity: boot.entity_id }));
+    if (boot) {
+      var bootAt = Date.parse(boot.state);
+      var up = Number.isNaN(bootAt) ? '—' : this._uptime(Date.now() - bootAt);
+      tiles.push(this._tile('mdi:clock-start', up, this._t('uptime_for'), '', { entity: boot.entity_id, title: this._day(boot.state) }));
+    }
+    var ip = one('ipv4_address');
+    if (ip) tiles.push(this._tile('mdi:ip-network-outline', `<span class="mono">${shEsc(ip.state)}</span>`, this._t('ip_address'), '', { entity: ip.entity_id }));
+    // The recorder's database, from the File Size integration
+    var db = one('database_size');
+    if (db) {
+      var mb = shNum(db.state);
+      tiles.push(this._tile('mdi:database-outline', mb === null ? '—' : `<b>${mb < 10 ? mb.toFixed(1) : Math.round(mb)}</b>${shEsc(db.unit || 'MB')}`, this._t('database'), '', { entity: db.entity_id }));
+    }
+    // Automatic backups (the Backup integration): the last one, orange after 2 days, red after 7 or when the last attempt
+    // failed; the next one, or "Backing up…"
+    var lastOk = one('backup_last_successful_automatic_backup');
+    var lastTry = one('backup_last_attempted_automatic_backup');
+    var nextBackup = one('backup_next_scheduled_automatic_backup');
+    var manager = one('backup_backup_manager_state');
+    if (lastOk || nextBackup) {
+      var okAt = Date.parse(lastOk?.state);
+      var tryAt = Date.parse(lastTry?.state);
+      var failed = !Number.isNaN(tryAt) && (Number.isNaN(okAt) || tryAt > okAt + 60000);
+      var age = Number.isNaN(okAt) ? null : (Date.now() - okAt) / 86400000;
+      var tone = failed || age === null || age > 7 ? 'bad' : age > 2 ? 'warn' : 'good';
+      var running = manager && manager.state !== 'idle';
+      tiles.push(
+        this._tile('mdi:backup-restore', shEsc(Number.isNaN(okAt) ? this._t('never') : this._ago(lastOk.state)), failed ? this._t('backup_failed') : this._t('last_backup'), tone, {
+          entity: (lastOk || lastTry).entity_id,
+        }),
+      );
+      if (nextBackup || running) {
+        tiles.push(
+          this._tile('mdi:calendar-clock', shEsc(running ? this._t('backing_up') : this._ago(nextBackup.state)), this._t('next_backup'), running ? 'warn' : '', {
+            entity: (nextBackup || manager).entity_id,
+          }),
+        );
+      }
+    }
     var unit = (rx[0] || txs[0])?.unit || 'MB/s';
     var rate = (list) => {
       var v = list.reduce((sum, s) => sum + (shNum(s.state) || 0), 0);
@@ -937,8 +1052,34 @@ class SystemHubPanel extends HTMLElement {
           })
           .join('')}</ha-card>`
       : '';
+    // The processes System Monitor watches: the stopped ones first
+    var procs = all('process').sort((a, b) => (a.state === 'on') - (b.state === 'on') || a.name.localeCompare(b.name));
+    var stopped = procs.filter((p) => p.state !== 'on').length;
+    var procList = procs.length
+      ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:application-cog-outline"></ha-icon><span class="lname">${shEsc(this._t('processes'))}</span>
+        ${stopped ? `<span class="pill bad">${shEsc(`${stopped} ${this._t('stopped')}`)}</span>` : `<span class="pill good">${shEsc(this._t('running'))}</span>`}</div>
+        ${procs
+          .map((p) => {
+            var on = p.state === 'on';
+            return `<div class="item link ${on ? 'good' : 'bad'}" data-more="${shEsc(p.entity_id)}"><ha-icon icon="mdi:cog${on ? '' : '-off'}-outline"></ha-icon>
+              <div class="who"><div class="n">${shEsc(shProcess(p))}</div></div><span class="pill ${on ? 'good' : 'bad'}">${shEsc(this._t(on ? 'running' : 'stopped'))}</span></div>`;
+          })
+          .join('')}</ha-card>`
+      : '';
+    var lists = [diskList, procList].filter(Boolean);
     return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
-      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${diskList}`;
+      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
+  }
+
+  // "8 d 4 h", "5 h 12 min", "35 min"
+  _uptime(ms) {
+    var min = Math.max(0, Math.floor(ms / 60000));
+    var d = Math.floor(min / 1440);
+    var h = Math.floor((min % 1440) / 60);
+    var m = min % 60;
+    if (d) return `<b>${d}</b>${shEsc(this._t('days', { n: '' }).trim())} <b>${h}</b>${shEsc(this._t('hours', { n: '' }).trim())}`;
+    if (h) return `<b>${h}</b>${shEsc(this._t('hours', { n: '' }).trim())} <b>${m}</b>${shEsc(this._t('min', { n: '' }).trim())}`;
+    return `<b>${m}</b>${shEsc(this._t('min', { n: '' }).trim())}`;
   }
 
   // A ring: the value now over its scale (0-100, 0-100 °C for a temperature), the last 24 hours drawn behind it
@@ -1148,7 +1289,7 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:package-up', `<b>${data.updates ?? 0}</b>`, this._t('updates'), data.updates ? 'warn' : 'good'),
       this._tile(
         'mdi:archive-sync',
-        running ? shEsc(this._t('progress', { done: data.done ?? 0, total: data.total ?? 0 })) : shEsc(this._ago(data.last_check)),
+        shEsc(this._ago(data.last_check)),
         this._t('last_check'),
         data.state === 'error' ? 'bad' : '',
       ),
@@ -1162,59 +1303,157 @@ class SystemHubPanel extends HTMLElement {
     var rows = pending
       .map((name) => `<div class="item warn"><ha-icon icon="mdi:package-up"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div></div></div>`)
       .join('');
-    return `<div class="tiles">${tiles.join('')}</div>${confirm}
+    var failed = (data.failed || [])
+      .map((name) => `<div class="item bad"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div></div></div>`)
+      .join('');
+    var notes = [
+      data.not_checked ? this._t('not_checked', { n: data.not_checked }) : '',
+      Number.isInteger(data.rate_limit_remaining) ? this._t('rate_limit', { n: data.rate_limit_remaining }) : '',
+    ].filter(Boolean);
+    return `<div class="tiles">${tiles.join('')}</div>${running ? this._progress(data) : ''}${confirm}
       <div class="actions">${this._button('marketplace_check_updates', 'mdi:archive-refresh', this._entityName('button', 'marketplace_check_updates'), {
         disabled: running || data.installing_updates,
       })}
       ${pending.length ? this._button('confirm_install', 'mdi:package-down', this._t('install_all'), { quiet: true, disabled: running || data.installing_updates }) : ''}
       ${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}
       ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}</div>
-      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>`;
+      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>
+      ${
+        failed && !running
+          ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><span class="lname">${shEsc(this._t('could_not_check'))}</span><span class="muted">${(data.failed || []).length}</span></div>${failed}</ha-card>`
+          : ''
+      }
+      ${notes.length ? `<div class="notes">${notes.map((n) => `<span class="msg">${shEsc(n)}</span>`).join('')}</div>` : ''}`;
   }
 
-  // Batteries: by level (the ones in error first), or in groups by room, by battery type or by replacement date (as the
-  // Battery Monitor full screen view)
+  // The check running: a bar of the repositories checked, the share done, the time left at the pace so far, the
+  // failures; a moving bar while the list of repositories is still being read
+  _progress(data) {
+    var done = data.done ?? 0;
+    var total = data.total ?? 0;
+    var pct = total ? Math.min(100, Math.round((done * 100) / total)) : null;
+    var meta = [];
+    if (total) meta.push(this._t('progress', { done, total }));
+    var started = data.started_at ? Date.parse(data.started_at) : Number.NaN;
+    if (total && done && done < total && !Number.isNaN(started)) {
+      var left = ((Date.now() - started) / done) * (total - done);
+      meta.push(this._t('remaining', { t: this._duration(left) }));
+    }
+    var fails = (data.failed || []).length;
+    return `<ha-card class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}">
+      <div class="phead"><ha-icon icon="mdi:archive-sync"></ha-icon><span class="ptitle">${shEsc(this._t('checking'))}</span>${pct === null ? '' : `<span class="ppct">${pct} %</span>`}</div>
+      <div class="pbar${pct === null ? ' busy' : ''}"><span style="width:${pct ?? 30}%"></span></div>
+      <div class="pmeta">${meta.map((m) => `<span>${shEsc(m)}</span>`).join('')}${fails ? `<span class="bad">${shEsc(this._t('failed_count', { n: fails }))}</span>` : ''}</div>
+    </ha-card>`;
+  }
+
+  // "45 s", "3 min"
+  _duration(ms) {
+    var s = Math.max(1, Math.round(ms / 1000));
+    return s < 60 ? this._t('sec', { n: s }) : this._t('min', { n: Math.round(s / 60) });
+  }
+
+  // Batteries: as the Battery Monitor full screen view — the views, what to replace and the next replacement, then the
+  // batteries in groups (by room, by battery type, by replacement date) laid out in columns, or one list by level
   _batteries() {
     var data = this._state.batteries || {};
     var view = this._battView || 'level';
+    var all = data.batteries || [];
+    // "Hide the batteries that are fine" (Configure → Batteries): only the low and unavailable ones
+    var list = data.hide_ok ? all.filter((b) => b.low || b.unavailable) : all;
     var tiles = [
       this._tile('mdi:battery-alert-variant-outline', `<b>${data.low ?? 0}</b>`, this._t('low'), data.low ? 'warn' : 'good'),
       this._tile('mdi:battery-unknown', `<b>${data.unavailable ?? 0}</b>`, this._t('unavailable'), data.unavailable ? 'bad' : 'good'),
       this._tile('mdi:bell-check-outline', shEsc(this._ago(data.last_notification)), this._entityName('sensor', 'batteries_last_notification'), ''),
     ];
     var views = [
-      ['level', 'mdi:sort-ascending', 'by_level'],
-      ['room', 'mdi:sofa-outline', 'by_room'],
-      ['type', 'mdi:battery-outline', 'by_type'],
-      ['forecast', 'mdi:calendar-clock', 'by_forecast'],
+      ['level', 'by_level'],
+      ['room', 'by_room'],
+      ['type', 'by_type'],
+      ['forecast', 'by_forecast'],
     ]
-      .map(
-        ([key, icon, label]) =>
-          `<button class="seg${key === view ? ' active' : ''}" data-action="batt_view" data-view="${key}" aria-pressed="${key === view}"><ha-icon icon="${icon}"></ha-icon>${shEsc(this._t(label))}</button>`,
-      )
+      .map(([key, label]) => `<button class="btab${key === view ? ' on' : ''}" data-action="batt_view" data-view="${key}" aria-pressed="${key === view}">${shEsc(this._t(label))}</button>`)
       .join('');
-    var list = data.batteries || [];
-    var groups = list.length
-      ? this._battGroups(list, view)
-          .map(
-            (g) => `<ha-card class="list">${g.name ? `<div class="lhead"><ha-icon icon="${g.icon}"></ha-icon><span class="lname">${shEsc(g.name)}</span><span class="muted">${g.items.length}</span></div>` : ''}
-            ${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</ha-card>`,
-          )
-          .join('')
-      : `<ha-card class="list"><div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div></ha-card>`;
+    var groups = this._battGroups(list, view)
+      .map((g) => {
+        var alerts = g.items.filter(({ b }) => b.low || b.unavailable).length;
+        var head = g.name
+          ? `<div class="ghead"><ha-icon icon="${g.icon}"></ha-icon><span class="gname">${shEsc(g.name)}</span>
+            ${alerts ? `<span class="gchip">${shEsc(this._t('to_check', { n: alerts }))}</span>` : ''}
+            <span class="gcount">${shEsc(this._battCount(g))}</span></div>`
+          : '';
+        return `<section class="bgroup">${head}${g.hint ? `<div class="ghint">${shEsc(g.hint)}</div>` : ''}<div class="glist">${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</div></section>`;
+      })
+      .join('');
+    var body = list.length
+      ? `<div class="bgroups${view === 'level' ? ' flat' : ''}">${groups}</div>`
+      : `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
+    var buy = this._battToReplace(all);
+    var next = this._battNext(all);
     return `<div class="tiles">${tiles.join('')}</div>
-      <div class="actions">${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'))}${this._message('batteries_notify')}
-      <span class="grow"></span><div class="segs" role="group">${views}</div></div>
-      ${groups}`;
+      <ha-card class="bsheet">
+        <div class="btop">
+          <div class="btabs" role="group">${views}</div>
+          <div class="bline"><span class="rlabel"><ha-icon icon="mdi:cart-outline"></ha-icon>${shEsc(this._t('to_replace'))}</span>${buy || `<span class="none">${shEsc(this._t('nothing_to_replace'))}</span>`}</div>
+          ${next}
+          <span class="grow"></span>
+          ${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'), { quiet: true })}${this._message('batteries_notify')}
+        </div>
+        ${body}
+      </ha-card>`;
   }
 
+  // One battery as in the Battery Monitor card: its icon in a coloured bubble, its name, what it is and since when it
+  // needs attention, its level over a small bar; a low or unavailable one is tinted
   _battRow(b, context) {
-    var tone = b.unavailable ? 'bad' : b.low ? 'warn' : 'good';
+    var kind = b.unavailable || b.due ? 'alert' : b.low ? 'warn' : 'ok';
     var level = shNum(b.level);
-    return `<div class="item link ${tone}" data-more="${shEsc(b.entity_id)}"><ha-icon icon="${shEsc(b.icon || 'mdi:battery')}"></ha-icon>
-      <div class="who"><div class="n">${shEsc(b.name)}</div>${context ? `<div class="s">${shEsc(context)}</div>` : ''}</div>
-      <div class="side"><span>${b.unavailable ? shEsc(this._t('unavailable')) : level === null ? shEsc(this._t('low')) : `${Math.round(level)} %`}</span>
-      ${level === null ? '' : `<div class="meter"><span style="width:${Math.min(level, 100)}%"></span></div>`}</div></div>`;
+    var value = b.unavailable ? this._t('unavailable') : level === null ? this._t('low') : `${Math.round(level)} %`;
+    var since = b.below_since ? this._battSince(b.below_since, b.unavailable ? 'unavailable_for' : 'low_for') : '';
+    var sub = [context, since].filter(Boolean).join(' · ');
+    var bar = level === null ? '' : `<span class="track"><span class="bar" style="width:${Math.max(2, Math.min(100, level))}%"></span></span>`;
+    return `<button class="brow ${kind}${b.due ? ' due' : ''}" data-more="${shEsc(b.entity_id)}" title="${shEsc(b.name)} — ${shEsc(value)}">
+      <span class="ic"><ha-icon icon="${shEsc(b.icon || 'mdi:battery')}"></ha-icon></span>
+      <span class="txt"><span class="name">${shEsc(b.name)}</span>${sub ? `<span class="sub">${shEsc(sub)}</span>` : ''}</span>
+      <span class="lvl">${shEsc(value)}${bar}</span></button>`;
+  }
+
+  // "low for 3 d": "< 1 h" the first hour, hours up to two days, days beyond
+  _battSince(iso, key) {
+    var h = Math.max(0, (Date.now() - new Date(iso).getTime()) / 3600000);
+    var d = h < 1 ? this._t('hours', { n: '< 1' }) : h < 48 ? this._t('hours', { n: Math.floor(h) }) : this._t('days', { n: Math.floor(h / 24) });
+    return this._t(key, { d });
+  }
+
+  _battCount(g) {
+    var n = g.cells ?? g.items.length;
+    if (g.cells != null) return this._t(n === 1 ? 'cells_one' : 'cells_many', { n });
+    return this._t(n === 1 ? 'count_one' : 'count_many', { n });
+  }
+
+  // What to buy: the types of the batteries needing attention, with how many of each
+  _battToReplace(list) {
+    var need = new Map();
+    list
+      .filter((b) => b.low || b.unavailable)
+      .forEach((b) => {
+        var m = /^(\d+)\s*[×x]\s*(.+)$/i.exec(b.battery_type || '');
+        var key = m ? m[2] : b.battery_type || '';
+        need.set(key, (need.get(key) || 0) + (m ? Number(m[1]) : 1));
+      });
+    return [...need.entries()]
+      .sort((a, b) => !a[0] - !b[0] || b[1] - a[1])
+      .map(([type, n]) => `<span class="buy${type ? '' : ' unknown'}"><b>${n}×</b> ${shEsc(type ? this._battTypeName(type) : this._t('unknown_type'))}</span>`)
+      .join('');
+  }
+
+  // The next battery to replace by its forecast, with its date
+  _battNext(list) {
+    var next = list.filter((b) => !b.low && !b.unavailable && Number.isInteger(b.days_left)).sort((a, b) => a.days_left - b.days_left)[0];
+    if (!next) return '';
+    var when = next.replace_by ? this._battDate(next.replace_by) : this._t('forecast', { d: this._t('days', { n: next.days_left }) });
+    return `<div class="bline"><span class="rlabel"><ha-icon icon="mdi:calendar-clock"></ha-icon>${shEsc(this._t('next_replacement'))}</span>
+      <button class="nextb" data-more="${shEsc(next.entity_id)}"><b>${shEsc(next.name)}</b> · ${shEsc(when)}</button></div>`;
   }
 
   // "2× AA" → AA; a built-in rechargeable battery is its own type
@@ -1249,8 +1488,11 @@ class SystemHubPanel extends HTMLElement {
     [...list].sort(byLevel).forEach((b) => {
       var key = view === 'room' ? b.area || '' : this._battType(b);
       if (!map.has(key)) map.set(key, []);
-      var context = view === 'room' ? this._battTypeName(b.battery_type || '') : b.area || '';
-      map.get(key).push({ b, context });
+      var m = /^(\d+)\s*[×x]/.exec(b.battery_type || '');
+      var cells = m ? Number(m[1]) : 1;
+      var count = view === 'type' && b.battery_type && b.battery_type !== 'rechargeable' ? this._t(cells === 1 ? 'cells_one' : 'cells_many', { n: cells }) : '';
+      var context = view === 'room' ? this._battTypeName(b.battery_type || '') : [b.area, count].filter(Boolean).join(' · ');
+      map.get(key).push({ b, context, cells });
     });
     return [...map.entries()]
       .map(([key, items]) => ({
@@ -1258,6 +1500,9 @@ class SystemHubPanel extends HTMLElement {
         items,
         name: key ? (view === 'type' ? this._battTypeName(key) : key) : this._t(view === 'room' ? 'no_area' : 'unknown_type'),
         icon: view === 'room' ? 'mdi:sofa-outline' : key ? 'mdi:battery-outline' : 'mdi:battery-unknown',
+        hint: view === 'type' && !key ? this._t('unknown_type_hint') : '',
+        // By type, the batteries of that type in all (a remote with 2 AAA counts 2)
+        cells: view === 'type' && key && key !== 'rechargeable' ? items.reduce((n, x) => n + x.cells, 0) : null,
       }))
       .sort((a, b) => !a.key - !b.key || (view === 'type' ? b.items.length - a.items.length : 0) || a.name.localeCompare(b.name));
   }

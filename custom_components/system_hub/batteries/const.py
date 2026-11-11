@@ -13,6 +13,17 @@ CONF_EVENING: Final = "evening_time"
 CONF_NOTIFY: Final = "notify_services"
 CONF_IGNORED_ENTITIES: Final = "ignored_entities"
 CONF_IGNORED_INTEGRATIONS: Final = "ignored_integrations"
+# Battery types set by hand, as in the Battery Monitor card: per battery (entity ID) and per device model, "2× AA".
+CONF_BATTERY_TYPES: Final = "battery_types"
+CONF_BATTERY_MODELS: Final = "battery_models"
+# The panel shows only the batteries needing attention.
+CONF_HIDE_OK: Final = "hide_ok"
+# The types offered in the forms (any other can be typed); "rechargeable" is a built-in rechargeable battery.
+BATTERY_TYPE_CHOICES: Final = [
+    "CR2032", "CR2450", "CR2477", "CR2016", "CR2025", "CR1632", "CR123A", "CR2",
+    "AA", "AAA", "LR44", "9V", "18650", "ER14505", "rechargeable",
+]  # fmt: skip
+MAX_QUANTITY: Final = 12
 
 # A battery is low below this level (%).
 DEFAULT_THRESHOLD: Final = 20

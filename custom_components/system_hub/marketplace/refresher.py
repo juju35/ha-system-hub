@@ -179,6 +179,8 @@ class MarketplaceRefresher:
         self.error: str | None = None
         self.last_check: datetime | None = None
         self.since: datetime | None = None
+        # When the check running (or the last one) started: the panel's elapsed and remaining times.
+        self.started_at: datetime | None = None
         # When the automatic check is due, as scheduled (an hour after a failed or skipped check), kept across restarts.
         self.next_due: datetime | None = None
         # Whether a GitHub account was connected to the Marketplace at the last check: without one,
@@ -293,6 +295,7 @@ class MarketplaceRefresher:
         self.not_checked = []
         self.error = None
         self._progress_at = 0.0
+        self.started_at = dt_util.utcnow()
         self._notify()
         # Tied to the entry: unloading it (options changed, removed) cancels a check still running.
         self._task = self.entry.async_create_background_task(

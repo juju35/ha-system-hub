@@ -82,6 +82,24 @@ A module turned off is not set up: its checks stop, its entities and its device 
 
 Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**, **System Hub Batteries**, **System Hub Git Sync**) holding its entities.
 
+#### Module settings
+
+The **Configure** forms, also opened by **Module settings** in the panel's Settings tab:
+
+| Form | Light | Dark |
+|---|---|---|
+| Menu | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-menu.png" alt="Configure, Menu" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-menu-dark.png" alt="Configure, Menu, dark theme" width="300"> |
+| Modules | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-modules.png" alt="Configure, Modules" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-modules-dark.png" alt="Configure, Modules, dark theme" width="300"> |
+| Containers | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers.png" alt="Configure, Containers" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers-dark.png" alt="Configure, Containers, dark theme" width="300"> |
+| Watchdog | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog.png" alt="Configure, Watchdog" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-dark.png" alt="Configure, Watchdog, dark theme" width="300"> |
+| Watchdog: Add a power cycle | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle.png" alt="Configure, Watchdog: Add a power cycle" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle-dark.png" alt="Configure, Watchdog: Add a power cycle, dark theme" width="300"> |
+| Marketplace | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace.png" alt="Configure, Marketplace" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace-dark.png" alt="Configure, Marketplace, dark theme" width="300"> |
+| Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries.png" alt="Configure, Batteries" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-dark.png" alt="Configure, Batteries, dark theme" width="300"> |
+| Batteries: Battery types | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-types.png" alt="Configure, Batteries: Battery types" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-types-dark.png" alt="Configure, Batteries: Battery types, dark theme" width="300"> |
+| Batteries: Import from Battery Monitor | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import.png" alt="Configure, Batteries: Import from Battery Monitor" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import-dark.png" alt="Configure, Batteries: Import from Battery Monitor, dark theme" width="300"> |
+| Git Sync: Repository settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository.png" alt="Configure, Git Sync: Repository settings" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository-dark.png" alt="Configure, Git Sync: Repository settings, dark theme" width="300"> |
+| Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync.png" alt="Configure, Git Sync" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-dark.png" alt="Configure, Git Sync, dark theme" width="300"> |
+
 ### Diagnostics
 
 **Settings → Devices & services → System Hub → ⋮ → Download diagnostics** gives the options, the modules turned on and the state of each one. Integration titles (often an e-mail address or a host), notify actions and tokens are redacted; domains and entry ids are kept.
@@ -92,10 +110,10 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 
 | Tab | Content |
 |---|---|
-| System | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap, load, up since, download and upload; history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; every disk, from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
+| System | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap (from its percentage, or its use and free), load, uptime, IP address, download and upload, the database size (the [File Size](https://www.home-assistant.io/integrations/filesize/) integration on `home-assistant_v2.db`), the last and next automatic backups (orange after 2 days, red after 7 or when the last one failed); history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; every disk and the processes System Monitor watches (the stopped ones first), from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
 | Containers | Running and stopped containers, last read; every container with its state, version and update, CPU, RAM and the last 24 hours of CPU; **Refresh** |
 | Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the recent reloads and power cycles |
-| Marketplace | Updates available, last and next check (progress while it runs); **Check for updates**, **Update all** (asked first) |
+| Marketplace | Updates available, last and next check; while a check runs, its progress bar, the share done, the time left and the failures (read every 2 seconds); **Check for updates**, **Update all** (asked first); afterwards the repositories that could not be checked and GitHub's requests left |
 | Batteries | Low and unavailable batteries, last notification; every battery **by level** (the ones in error first, then the lowest), **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); **Notify now** |
 | Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
 | Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
@@ -116,10 +134,11 @@ Every tab, light and dark themes:
 | Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync.png" alt="sidebar panel, Git Sync tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-dark.png" alt="sidebar panel, Git Sync tab, dark theme" width="400"> |
 | Settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings.png" alt="sidebar panel, Settings tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings-dark.png" alt="sidebar panel, Settings tab, dark theme" width="400"> |
 
-Batteries by room, by type and by replacement date, and the Git Sync diff viewer:
+The Marketplace check running, the batteries by room, by type and by replacement date, and the Git Sync diff viewer:
 
 | View | Light | Dark |
 |---|---|---|
+| Marketplace check running | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-marketplace-checking.png" alt="Marketplace tab while a check runs" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-marketplace-checking-dark.png" alt="Marketplace tab while a check runs, dark theme" width="400"> |
 | By room | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-room.png" alt="Batteries tab by room" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-room-dark.png" alt="Batteries tab by room, dark theme" width="400"> |
 | By battery type | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-type.png" alt="Batteries tab by battery type" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-type-dark.png" alt="Batteries tab by battery type, dark theme" width="400"> |
 | By replacement date | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-forecast.png" alt="Batteries tab by replacement date" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-forecast-dark.png" alt="Batteries tab by replacement date, dark theme" width="400"> |

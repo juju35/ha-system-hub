@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Podešavanja repozitorijuma",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Baterije: tipovi baterija",
+          "batteries_import": "Baterije: uvoz iz Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Večernje obaveštenje",
           "notify_services": "Akcije obaveštavanja",
           "ignored_entities": "Ignorisane baterije",
-          "ignored_integrations": "Ignorisane integracije"
+          "ignored_integrations": "Ignorisane integracije",
+          "hide_ok": "Sakrij baterije koje su u redu"
         },
         "data_description": {
           "threshold": "Baterija se smatra slabom ispod ovog nivoa.",
@@ -177,7 +180,8 @@
           "evening_time": "Drugo od dva dnevna obaveštenja.",
           "notify_services": "Pošalji obaveštenja putem ovih akcija (notify.mobile_app_…). Trajno obaveštenje se uvek kreira.",
           "ignored_entities": "Baterije koje se nikada ne nadgledaju.",
-          "ignored_integrations": "Integracije čije se baterije nikada ne nadgledaju (podrazumevano telefoni i tableti iz mobilne aplikacije). Unesi domen da dodaš integraciju koja još uvek nije podešena."
+          "ignored_integrations": "Integracije čije se baterije nikada ne nadgledaju (podrazumevano telefoni i tableti iz mobilne aplikacije). Unesi domen da dodaš integraciju koja još uvek nije podešena.",
+          "hide_ok": "Ostaće vidljive samo baterije ispod praga ili one koje su nedostupne"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "U fascikli konfiguracije (relativna putanja počinje odatle) ili u fascikli iz allowlist_external_dirs.",
           "commit_before_update": "Kada se instalira ažuriranje (Home Assistant, dodatak, integracija), prvo se radi commit i push konfiguracije, da bi postojao commit na koji se možete vratiti. Jedan commit za ažuriranja instalirana zajedno."
         }
+      },
+      "batteries_types": {
+        "title": "Tipovi baterija",
+        "description": "Tipovi podešeni ovde imaju prednost nad tipovima iz Battery Notes. Uklonite oznaku sa tipa da biste ga uklonili ili podesite još jedan ispod.",
+        "data": {
+          "set": "Podešeni tipovi",
+          "battery": "Baterija",
+          "type": "Tip",
+          "quantity": "Broj baterija",
+          "whole_model": "Za sve uređaje njenog modela"
+        },
+        "data_description": {
+          "set": "Uklonite oznaku sa tipa da biste ga uklonili.",
+          "type": "Izaberite ili unesite (CR2450, 2× AA…).",
+          "whole_model": "Isti tip za sve uređaje modela ove baterije."
+        }
+      },
+      "batteries_import": {
+        "title": "Uvoz iz Battery Monitor",
+        "description": "Pronađeno u Battery Monitor: podešavanja: {settings}, tipovi baterija podešeni u njegovim karticama: {types}, tipovi rezervnih baterija: {stock}. Pošaljite da biste ih preneli u System Hub: njegova podešavanja zamenjuju podešavanja modula Baterije, a tipovi baterija već podešeni ovde se zadržavaju."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git ne prihvata ovaj naziv grane.",
       "author_required": "Git ovde ne zna ko potpisuje commit-ove: unesite imejl (i ime) autora.",
       "unknown_notify_service": "Ova radnja obaveštenja ne postoji.",
-      "export_dir_not_allowed": "Fascikla mora biti u fascikli konfiguracije ili u fascikli iz allowlist_external_dirs, van skrivenih fascikli kao što je .storage."
+      "export_dir_not_allowed": "Fascikla mora biti u fascikli konfiguracije ili u fascikli iz allowlist_external_dirs, van skrivenih fascikli kao što je .storage.",
+      "battery_required": "Izaberite bateriju.",
+      "type_required": "Izaberite ili unesite tip.",
+      "no_model": "Uređaj ove baterije nema model: podesite tip za samu bateriju."
+    },
+    "abort": {
+      "nothing_to_import": "Nema šta da se uveze iz Battery Monitor."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} d",
         "now": "sada",
         "chart_empty": "Još nema istorije",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "{n} za proveru",
+        "count_one": "1 baterija",
+        "count_many": "Baterija: {n}",
+        "cells_one": "1 komad",
+        "cells_many": "{n} komada",
+        "to_replace": "Za zamenu",
+        "nothing_to_replace": "Ništa za zamenu",
+        "next_replacement": "Sledeća zamena",
+        "hours": "{n} h",
+        "low_for": "slaba već {d}",
+        "unavailable_for": "nedostupna već {d}",
+        "unknown_type_hint": "Podesite ga u Konfiguriši → Baterije: tipovi baterija",
+        "checking": "Provera repozitorijuma…",
+        "remaining": "≈ preostalo {t}",
+        "failed_count": "Neuspešno: {n}",
+        "could_not_check": "Nije moglo da se proveri",
+        "not_checked": "Neprovereni repozitorijumi: {n} — nijedan GitHub nalog nije povezan sa Marketplace",
+        "rate_limit": "GitHub: preostali zahtevi: {n}",
+        "sec": "{n} s",
+        "min": "{n} min",
+        "uptime_for": "Vreme rada",
+        "ip_address": "IP adresa",
+        "database": "Baza podataka",
+        "last_backup": "Poslednja rezervna kopija",
+        "next_backup": "Sledeća rezervna kopija",
+        "backing_up": "Pravi se kopija…",
+        "backup_failed": "Poslednja rezervna kopija nije uspela",
+        "processes": "Procesi"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Ugrađena punjiva"
       }
     }
   }

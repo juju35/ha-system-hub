@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Indstillinger for repository",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Batterier: batterityper",
+          "batteries_import": "Batterier: importér fra Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Aftennotifikation",
           "notify_services": "Notifikationshandlinger",
           "ignored_entities": "Ignorerede batterier",
-          "ignored_integrations": "Ignorerede integrationer"
+          "ignored_integrations": "Ignorerede integrationer",
+          "hide_ok": "Skjul batterier, der er i orden"
         },
         "data_description": {
           "threshold": "Et batteri er lavt under dette niveau.",
@@ -177,7 +180,8 @@
           "evening_time": "Den anden af de to daglige notifikationer.",
           "notify_services": "Send notifikationerne med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation.",
           "ignored_entities": "Batterier, der aldrig overvåges.",
-          "ignored_integrations": "Integrationer, hvis batterier aldrig overvåges (som standard telefoner og tablets fra mobilappen). Skriv et domæne for at tilføje en, der endnu ikke er sat op."
+          "ignored_integrations": "Integrationer, hvis batterier aldrig overvåges (som standard telefoner og tablets fra mobilappen). Skriv et domæne for at tilføje en, der endnu ikke er sat op.",
+          "hide_ok": "Kun batterier under tærsklen eller utilgængelige forbliver synlige"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "I konfigurationsmappen (en relativ sti starter der) eller i en mappe fra allowlist_external_dirs.",
           "commit_before_update": "Når en opdatering installeres (Home Assistant, en tilføjelse, en integration), commit og push konfigurationen først, så der er et commit at vende tilbage til. Ét commit for opdateringer installeret samlet."
         }
+      },
+      "batteries_types": {
+        "title": "Batterityper",
+        "description": "Typer angivet her går forud for dem fra Battery Notes. Fjern markeringen af en type for at fjerne den, eller angiv en mere nedenfor.",
+        "data": {
+          "set": "Angivne typer",
+          "battery": "Batteri",
+          "type": "Type",
+          "quantity": "Antal batterier",
+          "whole_model": "For alle enheder af dens model"
+        },
+        "data_description": {
+          "set": "Fjern markeringen af en type for at fjerne den.",
+          "type": "Vælg den eller skriv den (CR2450, 2× AA…).",
+          "whole_model": "Samme type for alle enheder af dette batteris model."
+        }
+      },
+      "batteries_import": {
+        "title": "Importér fra Battery Monitor",
+        "description": "Fundet i Battery Monitor: {settings} indstillinger, {types} batterityper angivet i dets kort og {stock} typer reservebatterier. Indsend for at hente dem ind i System Hub: dets indstillinger erstatter Batterier-modulets, og de batterityper, der allerede er angivet her, bevares."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git accepterer ikke dette branch-navn.",
       "author_required": "Git ved ikke, hvem der signerer commits her: angiv forfatterens e-mail (og navn).",
       "unknown_notify_service": "Denne notifikationshandling findes ikke.",
-      "export_dir_not_allowed": "Mappen skal ligge i konfigurationsmappen eller i en mappe fra allowlist_external_dirs, uden for skjulte mapper som .storage."
+      "export_dir_not_allowed": "Mappen skal ligge i konfigurationsmappen eller i en mappe fra allowlist_external_dirs, uden for skjulte mapper som .storage.",
+      "battery_required": "Vælg batteriet.",
+      "type_required": "Vælg eller skriv typen.",
+      "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet."
+    },
+    "abort": {
+      "nothing_to_import": "Intet at importere fra Battery Monitor."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} d",
         "now": "nu",
         "chart_empty": "Ingen historik endnu",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "{n} skal tjekkes",
+        "count_one": "1 batteri",
+        "count_many": "{n} batterier",
+        "cells_one": "1 batteri",
+        "cells_many": "{n} batterier",
+        "to_replace": "Skal udskiftes",
+        "nothing_to_replace": "Intet at udskifte",
+        "next_replacement": "Næste udskiftning",
+        "hours": "{n} t",
+        "low_for": "lavt i {d}",
+        "unavailable_for": "utilgængeligt i {d}",
+        "unknown_type_hint": "Angiv det i Konfigurer → Batterier: batterityper",
+        "checking": "Kontrollerer repositories…",
+        "remaining": "≈ {t} tilbage",
+        "failed_count": "{n} mislykkedes",
+        "could_not_check": "Kunne ikke kontrolleres",
+        "not_checked": "{n} repositories ikke kontrolleret: ingen GitHub-konto er forbundet til Marketplace",
+        "rate_limit": "GitHub: {n} forespørgsler tilbage",
+        "sec": "{n} s",
+        "min": "{n} min",
+        "uptime_for": "Oppetid",
+        "ip_address": "IP-adresse",
+        "database": "Database",
+        "last_backup": "Seneste backup",
+        "next_backup": "Næste backup",
+        "backing_up": "Laver backup…",
+        "backup_failed": "Seneste backup mislykkedes",
+        "processes": "Processer"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Indbygget genopladeligt batteri"
       }
     }
   }

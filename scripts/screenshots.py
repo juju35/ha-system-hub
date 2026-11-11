@@ -143,6 +143,47 @@ def mock_state():
             "0.4",
             "MB/s",
         ),
+        ("ipv4_address", "sensor.system_monitor_ipv4_address_eth0", "IPv4 address eth0", "192.168.1.20", None),
+        ("swap_use", "sensor.system_monitor_swap_use", "Swap use", "131", "MiB"),
+        ("swap_free", "sensor.system_monitor_swap_free", "Swap free", "3965", "MiB"),
+        ("database_size", "sensor.home_assistant_v2_db_size", "home-assistant_v2.db Size", "612.4", "MB"),
+        (
+            "backup_last_successful_automatic_backup",
+            "sensor.backup_last_successful_automatic_backup",
+            "Backup Last successful automatic backup",
+            "2026-11-10T04:45:00+00:00",
+            None,
+        ),
+        (
+            "backup_last_attempted_automatic_backup",
+            "sensor.backup_last_attempted_automatic_backup",
+            "Backup Last attempted automatic backup",
+            "2026-11-10T04:45:00+00:00",
+            None,
+        ),
+        (
+            "backup_next_scheduled_automatic_backup",
+            "sensor.backup_next_scheduled_automatic_backup",
+            "Backup Next scheduled automatic backup",
+            "2026-11-11T04:45:00+00:00",
+            None,
+        ),
+        (
+            "backup_backup_manager_state",
+            "sensor.backup_backup_manager_state",
+            "Backup Backup manager state",
+            "idle",
+            None,
+        ),
+        ("process", "binary_sensor.system_monitor_process_mosquitto", "System Monitor Process mosquitto", "on", None),
+        (
+            "process",
+            "binary_sensor.system_monitor_process_zigbee2mqtt",
+            "System Monitor Process zigbee2mqtt",
+            "on",
+            None,
+        ),
+        ("process", "binary_sensor.system_monitor_process_frigate", "System Monitor Process frigate", "off", None),
         ("disk_use_percent", "sensor.system_monitor_disk_usage", "Disk usage /", "38.4", "%"),
         ("disk_use_percent", "sensor.system_monitor_disk_usage_media", "Disk usage /media", "82.7", "%"),
         ("disk_use_percent", "sensor.system_monitor_disk_usage_backup", "Disk usage /backup", "93.1", "%"),
@@ -464,11 +505,20 @@ SHOTS = [
         for view in ("room", "type", "forecast")
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
+    {"file": "panel-marketplace-checking", "theme": "light", "tab": "marketplace", "checking": True},
+    {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
+
+
+def checking_state(state):
+    """The Marketplace check running: 17 of 42 repositories checked in 40 seconds, one failed."""
+    running = {**state["marketplace"], "state": "running", "done": 17, "total": 42, "failed": ["Weather Radar Card"]}
+    running["started_at"] = "2026-11-10T08:59:20+01:00"
+    return {**state, "marketplace": running}
 
 
 def page_html(theme, width):
@@ -541,7 +591,8 @@ def main():
             page.set_content(page_html(shot["theme"], width))
             page.add_script_tag(content=HA_ELEMENTS)
             page.add_script_tag(content=PANEL_JS)
-            page.evaluate(MOUNT, [state, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
+            shown = checking_state(state) if shot.get("checking") else state
+            page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
             page.wait_for_timeout(400)
             if shot.get("diff"):
                 # The viewer covers the window: the capture is the window.

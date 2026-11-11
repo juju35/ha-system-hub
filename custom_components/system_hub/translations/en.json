@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Repository settings",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Batteries: Battery types",
+          "batteries_import": "Batteries: Import from Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Evening notification",
           "notify_services": "Notify actions",
           "ignored_entities": "Ignored batteries",
-          "ignored_integrations": "Ignored integrations"
+          "ignored_integrations": "Ignored integrations",
+          "hide_ok": "Hide the batteries that are fine"
         },
         "data_description": {
           "threshold": "A battery is low below this level.",
@@ -177,7 +180,8 @@
           "evening_time": "Second of the two daily notifications.",
           "notify_services": "Send the notifications with these actions (notify.mobile_app_…). A persistent notification is always created.",
           "ignored_entities": "Batteries never monitored.",
-          "ignored_integrations": "Integrations whose batteries are never monitored (phones and tablets of the mobile app by default). Type a domain to add one that isn't set up yet."
+          "ignored_integrations": "Integrations whose batteries are never monitored (phones and tablets of the mobile app by default). Type a domain to add one that isn't set up yet.",
+          "hide_ok": "Only the batteries below the threshold or unavailable stay visible"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "Inside the configuration folder (a relative path starts there) or a folder of allowlist_external_dirs.",
           "commit_before_update": "When an update is installed (Home Assistant, an add-on, an integration), commit and push the configuration first, so there is a commit to go back to. One commit for updates installed together."
         }
+      },
+      "batteries_types": {
+        "title": "Battery types",
+        "description": "Types set here come before those of Battery Notes. Untick a type to remove it, or set one more below.",
+        "data": {
+          "set": "Types set",
+          "battery": "Battery",
+          "type": "Type",
+          "quantity": "Number of batteries",
+          "whole_model": "For every device of its model"
+        },
+        "data_description": {
+          "set": "Untick a type to remove it.",
+          "type": "Pick it or type it (CR2450, 2× AA…).",
+          "whole_model": "The same type for all the devices of this battery's model."
+        }
+      },
+      "batteries_import": {
+        "title": "Import from Battery Monitor",
+        "description": "Found in Battery Monitor: {settings} settings, {types} battery types set in its cards and {stock} types of spare batteries. Submit to bring them into System Hub: its settings replace those of the Batteries module, and the battery types already set here are kept."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git does not accept this branch name.",
       "author_required": "Git does not know who signs the commits here: enter the author email (and name).",
       "unknown_notify_service": "This notification action does not exist.",
-      "export_dir_not_allowed": "The folder must be inside the configuration folder or a folder of allowlist_external_dirs, outside hidden folders such as .storage."
+      "export_dir_not_allowed": "The folder must be inside the configuration folder or a folder of allowlist_external_dirs, outside hidden folders such as .storage.",
+      "battery_required": "Choose the battery.",
+      "type_required": "Pick or type the type.",
+      "no_model": "This battery's device has no model: set the type for the battery itself."
+    },
+    "abort": {
+      "nothing_to_import": "Nothing to import from Battery Monitor."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} d",
         "now": "now",
         "chart_empty": "No history yet",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "{n} to check",
+        "count_one": "1 battery",
+        "count_many": "{n} batteries",
+        "cells_one": "1 battery",
+        "cells_many": "{n} batteries",
+        "to_replace": "To replace",
+        "nothing_to_replace": "Nothing to replace",
+        "next_replacement": "Next replacement",
+        "hours": "{n} h",
+        "low_for": "low for {d}",
+        "unavailable_for": "unavailable for {d}",
+        "unknown_type_hint": "Set it in Configure → Batteries: Battery types",
+        "checking": "Checking the repositories…",
+        "remaining": "≈ {t} left",
+        "failed_count": "{n} failed",
+        "could_not_check": "Could not be checked",
+        "not_checked": "{n} repositories not checked: no GitHub account is connected to the Marketplace",
+        "rate_limit": "GitHub: {n} requests left",
+        "sec": "{n} s",
+        "min": "{n} min",
+        "uptime_for": "Uptime",
+        "ip_address": "IP address",
+        "database": "Database",
+        "last_backup": "Last backup",
+        "next_backup": "Next backup",
+        "backing_up": "Backing up…",
+        "backup_failed": "Last backup failed",
+        "processes": "Processes"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Built-in rechargeable"
       }
     }
   }

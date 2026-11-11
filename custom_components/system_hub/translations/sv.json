@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Inställningar för förrådet",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Batterier: batterityper",
+          "batteries_import": "Batterier: importera från Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Kvällsavisering",
           "notify_services": "Aviseringsåtgärder",
           "ignored_entities": "Ignorerade batterier",
-          "ignored_integrations": "Ignorerade integrationer"
+          "ignored_integrations": "Ignorerade integrationer",
+          "hide_ok": "Dölj batterier som är okej"
         },
         "data_description": {
           "threshold": "Ett batteri är lågt under denna nivå.",
@@ -177,7 +180,8 @@
           "evening_time": "Den andra av de två dagliga aviseringarna.",
           "notify_services": "Skicka aviseringarna med dessa åtgärder (notify.mobile_app_…). En beständig avisering skapas alltid.",
           "ignored_entities": "Batterier som aldrig övervakas.",
-          "ignored_integrations": "Integrationer vars batterier aldrig övervakas (som standard telefoner och surfplattor från mobilappen). Skriv en domän för att lägga till en som inte är konfigurerad ännu."
+          "ignored_integrations": "Integrationer vars batterier aldrig övervakas (som standard telefoner och surfplattor från mobilappen). Skriv en domän för att lägga till en som inte är konfigurerad ännu.",
+          "hide_ok": "Endast batterier under tröskeln eller otillgängliga förblir synliga"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "I konfigurationsmappen (en relativ sökväg börjar där) eller i en mapp från allowlist_external_dirs.",
           "commit_before_update": "När en uppdatering installeras (Home Assistant, ett tillägg, en integration), committa och pusha konfigurationen först, så att det finns en commit att gå tillbaka till. En commit för uppdateringar som installeras tillsammans."
         }
+      },
+      "batteries_types": {
+        "title": "Batterityper",
+        "description": "Typer som anges här går före dem från Battery Notes. Avmarkera en typ för att ta bort den, eller ange en till nedan.",
+        "data": {
+          "set": "Angivna typer",
+          "battery": "Batteri",
+          "type": "Typ",
+          "quantity": "Antal batterier",
+          "whole_model": "För alla enheter av dess modell"
+        },
+        "data_description": {
+          "set": "Avmarkera en typ för att ta bort den.",
+          "type": "Välj eller skriv den (CR2450, 2× AA…).",
+          "whole_model": "Samma typ för alla enheter av det här batteriets modell."
+        }
+      },
+      "batteries_import": {
+        "title": "Importera från Battery Monitor",
+        "description": "Hittat i Battery Monitor: {settings} inställningar, {types} batterityper angivna i dess kort och {stock} typer av reservbatterier. Skicka för att hämta dem till System Hub: dess inställningar ersätter Batterier-modulens och de batterityper som redan angetts här behålls."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git godtar inte det här grennamnet.",
       "author_required": "Git vet inte vem som signerar commitarna här: ange författarens e-post (och namn).",
       "unknown_notify_service": "Den här aviseringsåtgärden finns inte.",
-      "export_dir_not_allowed": "Mappen måste ligga i konfigurationsmappen eller i en mapp från allowlist_external_dirs, utanför dolda mappar som .storage."
+      "export_dir_not_allowed": "Mappen måste ligga i konfigurationsmappen eller i en mapp från allowlist_external_dirs, utanför dolda mappar som .storage.",
+      "battery_required": "Välj batteriet.",
+      "type_required": "Välj eller skriv typen.",
+      "no_model": "Det här batteriets enhet har ingen modell: ange typen för själva batteriet."
+    },
+    "abort": {
+      "nothing_to_import": "Inget att importera från Battery Monitor."
     }
   },
   "entity": {
@@ -969,7 +999,40 @@
         "ago_d": "−{n} d",
         "now": "nu",
         "chart_empty": "Ingen historik ännu",
-        "disk": "Disk"
+        "disk": "Disk",
+        "to_check": "{n} att kontrollera",
+        "count_one": "1 batteri",
+        "count_many": "{n} batterier",
+        "cells_one": "1 batteri",
+        "cells_many": "{n} batterier",
+        "to_replace": "Att byta",
+        "nothing_to_replace": "Inget att byta",
+        "next_replacement": "Nästa byte",
+        "hours": "{n} h",
+        "low_for": "lågt i {d}",
+        "unavailable_for": "otillgängligt i {d}",
+        "unknown_type_hint": "Ange det i Konfigurera → Batterier: batterityper",
+        "checking": "Kontrollerar repositories…",
+        "remaining": "≈ {t} kvar",
+        "failed_count": "{n} misslyckades",
+        "could_not_check": "Kunde inte kontrolleras",
+        "not_checked": "{n} repositories inte kontrollerade: inget GitHub-konto är anslutet till Marketplace",
+        "rate_limit": "GitHub: {n} förfrågningar kvar",
+        "sec": "{n} s",
+        "min": "{n} min",
+        "uptime_for": "Drifttid",
+        "ip_address": "IP-adress",
+        "database": "Databas",
+        "last_backup": "Senaste säkerhetskopia",
+        "next_backup": "Nästa säkerhetskopia",
+        "backing_up": "Säkerhetskopierar…",
+        "backup_failed": "Senaste säkerhetskopian misslyckades",
+        "processes": "Processer"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Inbyggt laddningsbart batteri"
       }
     }
   }
