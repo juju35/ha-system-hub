@@ -36,6 +36,8 @@ var SH_MODULE_NAMES = {
 };
 // Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
 var SH_AUTO_MAX = 5;
+// Git Sync tab: the list of changed files is folded beyond this many
+var SH_GIT_FILES_MAX = 5;
 
 // The size of an update from its versions (v1.2.3 → v1.3.0: minor); null when they are not numbers
 function shChange(from, to) {
@@ -1990,9 +1992,16 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:cloud-check-outline', shEsc(this._rel(data.last_push)), this._entityName('sensor', 'git_sync_last_push'), ''),
     ];
     var sync = [data.ahead ? this._t('ahead', { n: data.ahead }) : '', data.behind ? this._t('behind', { n: data.behind }) : ''].filter(Boolean).join(' · ');
-    var files = (data.files || [])
+    // The changed files: their count always; folded beyond SH_GIT_FILES_MAX until opened
+    var list = data.files || [];
+    var count = Math.max(data.changed ?? 0, list.length);
+    var open = this._gitFilesOpen ?? count <= SH_GIT_FILES_MAX;
+    var files = list
       .map((f) => `<div class="item"><ha-icon icon="mdi:file-outline"></ha-icon><div class="who"><div class="n"><code>${shEsc(f)}</code></div></div></div>`)
       .join('');
+    var fold = count
+      ? `<button class="icon-btn" data-action="git_files_fold" aria-expanded="${open}" title="${shEsc(this._t('changed'))}" aria-label="${shEsc(this._t('changed'))}"><ha-icon icon="mdi:chevron-${open ? 'up' : 'down'}"></ha-icon></button>`
+      : '';
     return `<div class="tiles">${tiles.join('')}</div>
       <ha-card class="block"><div class="actions"><label class="box"><input data-draft="message" placeholder="${shEsc(this._t('message'))}" value="${shEsc(this._draft.message || '')}"></label>
         ${data.ai_task ? this._button('git_sync_generate_message', 'mdi:creation-outline', this._t('generate'), { quiet: true }) : ''}</div>
@@ -2003,8 +2012,9 @@ class SystemHubPanel extends HTMLElement {
         ${sync ? `<span class="pill warn">${shEsc(sync)}</span>` : ''}${this._message('git_sync')}${this._configure()}</div>
         ${data.last_error ? `<span class="msg bad">${shEsc(data.last_error)}</span>` : ''}
         ${data.remote_url ? `<span class="msg"><code>${shEsc(data.remote_url)}</code></span>` : ''}</ha-card>
-      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:file-multiple-outline"></ha-icon><span class="lname">${shEsc(this._t('changed'))}</span></div>
-      ${files || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('clean'))}</div>`}</ha-card>`;
+      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:file-multiple-outline"></ha-icon><span class="lname">${shEsc(this._t('changed'))}</span>
+        <span class="muted">${count}</span>${fold}</div>
+      ${count ? (open ? files : '') : `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('clean'))}</div>`}</ha-card>`;
   }
 
   // Settings: the modules turned on, and the order of the tabs
@@ -2083,6 +2093,11 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'batt_csv') return this._battDownload();
+    if (action === 'git_files_fold') {
+      var shownNow = this._gitFilesOpen ?? Math.max(this._state.git_sync?.changed ?? 0, (this._state.git_sync?.files || []).length) <= SH_GIT_FILES_MAX;
+      this._gitFilesOpen = !shownNow;
+      return this._render();
+    }
     if (action === 'stock_edit' || action === 'stock_cancel') {
       this._stockForm = action === 'stock_edit';
       if (this._stockForm) {

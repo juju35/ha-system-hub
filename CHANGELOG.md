@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### Improved
+- **Git Sync tab**: the list of changed files shows their count, and is folded when there are more than 5 (a click opens it).
+
 ## 0.5.4 - 2026-11-11
 
 ### Improved
