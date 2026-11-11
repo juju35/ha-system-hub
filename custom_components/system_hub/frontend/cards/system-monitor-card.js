@@ -117,7 +117,7 @@ const STRINGS = {
     network: "Réseau",
     storage: "Stockage",
     processes: "Processus",
-    uptime: "Allumé depuis",
+    uptime: "Temps de fonctionnement :",
     load: "Charge :",
     download: "Réception",
     upload: "Envoi",
