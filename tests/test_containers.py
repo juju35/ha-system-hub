@@ -265,3 +265,62 @@ async def test_diagnostics(hass: HomeAssistant, supervisor: FakeSupervisor) -> N
     assert diagnostics["modules"] == ["containers"]
     assert len(diagnostics["containers"]["containers"]) == 4
     assert diagnostics["containers"]["error"] is None
+
+
+class RawClient:
+    """The client's plain requests: the plugins and the add-ons' full information."""
+
+    def __init__(self, fake: FakeSupervisor) -> None:
+        self.fake = fake
+
+    async def get(self, uri: str) -> SimpleNamespace:
+        name, _, what = uri.rpartition("/")
+        if name.startswith("addons/"):
+            slug = name.removeprefix("addons/")
+            addon = next(a for a in self.fake.addons if a["slug"] == slug)
+            return SimpleNamespace(data={"boot": addon["boot"], "image": f"ghcr.io/example/{slug}"})
+        if name == "observer" and what == "stats":
+            raise ConnectionError("not running")
+        if what == "info":
+            return SimpleNamespace(
+                data={
+                    "version": "2026.10.0",
+                    "update_available": False,
+                    "image": f"ghcr.io/home-assistant/amd64-hassio-{name}",
+                }
+            )
+        return SimpleNamespace(data=vars(_stats(0.1, 1.0)))
+
+
+@pytest.mark.parametrize(("version", "prefix"), [("2026.11.2", "app"), ("2026.07.4", "app"), ("2026.06.1", "addon")])
+async def test_docker_names_images_and_plugins(
+    hass: HomeAssistant, supervisor: FakeSupervisor, version: str, prefix: str
+) -> None:
+    supervisor.supervisor.info.return_value = SimpleNamespace(
+        version=version, version_latest=version, update_available=False, arch="amd64"
+    )
+    supervisor.homeassistant.info.return_value = SimpleNamespace(
+        version="2026.11.0",
+        version_latest="2026.11.1",
+        update_available=True,
+        image="ghcr.io/home-assistant/qemux86-64-homeassistant",
+    )
+    client = supervisor.client
+    client._client = RawClient(supervisor)
+    with patch("custom_components.system_hub.containers.monitor._client", side_effect=lambda _hass: client):
+        await _setup(hass)
+    by_slug = {c["slug"]: c for c in hass.states.get(RUNNING).attributes["containers"]}
+    assert by_slug["homeassistant"]["container"] == "homeassistant"
+    assert by_slug["homeassistant"]["image"] == "ghcr.io/home-assistant/qemux86-64-homeassistant:2026.11.0"
+    assert by_slug["supervisor"]["container"] == "hassio_supervisor"
+    assert by_slug["supervisor"]["image"] == f"ghcr.io/home-assistant/amd64-hassio-supervisor:{version}"
+    assert by_slug["dns"]["container"] == "hassio_dns"
+    assert by_slug["dns"]["kind"] == "plugin"
+    assert by_slug["dns"]["image"] == "ghcr.io/home-assistant/amd64-hassio-dns:2026.10.0"
+    assert by_slug["dns"]["cpu_percent"] == 0.1
+    # A plugin without statistics is not running: it should, so it is down
+    assert by_slug["observer"]["down"] is True
+    assert by_slug["core_mosquitto"]["container"] == f"{prefix}_core_mosquitto"
+    assert by_slug["core_mosquitto"]["image"] == "ghcr.io/example/core_mosquitto:1.0"
+    assert by_slug["a0d7b954_vscode"]["boot"] == "manual"
+    assert hass.states.get(RUNNING).attributes["total"] == 9

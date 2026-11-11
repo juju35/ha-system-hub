@@ -585,3 +585,33 @@ test('times near now in words, the date beyond a week', () => {
   assert.equal(p._rel(at(-10 * 86400000)), p._ago(at(-10 * 86400000)));
   assert.equal(p._rel(null), 'Never');
 });
+
+test('containers tab: the Docker containers with their image', () => {
+  const state = {
+    loaded: true,
+    modules: ['containers'],
+    tabs: ['system', 'containers'],
+    system: [
+      { key: 'processor_use', entity_id: 'sensor.cpu', name: 'CPU', state: '10', unit: '%' },
+      { key: 'process', entity_id: 'binary_sensor.process_frigate', name: 'Process frigate', state: 'off', attributes: { process: 'frigate' } },
+    ],
+    containers: {
+      containers: [
+        { slug: 'dns', name: 'DNS', kind: 'plugin', state: 'started', container: 'hassio_dns', image: 'ghcr.io/home-assistant/amd64-hassio-dns:2026.10.0' },
+        { slug: 'a0d7b954_vscode', name: 'Studio Code Server', kind: 'addon', state: 'started', container: 'app_a0d7b954_vscode', image: 'ghcr.io/hassio-addons/vscode:7.2.0', update_available: true, version_latest: '7.3.0' },
+        { slug: 'supervisor', name: 'Supervisor', kind: 'supervisor', state: 'started', container: 'hassio_supervisor' },
+      ],
+      history: {},
+    },
+  };
+  const p = panel(state, 'containers');
+  const html = p._content();
+  assert.ok(html.indexOf('hassio_supervisor') < html.indexOf('hassio_dns'));
+  assert.ok(html.indexOf('hassio_dns') < html.indexOf('app_a0d7b954_vscode'));
+  assert.match(html, /Studio Code Server · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
+  assert.match(html, /7\.3\.0/);
+  // The processes stay in the System tab
+  assert.doesNotMatch(html, /binary_sensor\.process_frigate/);
+  p._tab = 'system';
+  assert.match(p._content(), /binary_sensor\.process_frigate/);
+});

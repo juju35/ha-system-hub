@@ -1271,7 +1271,8 @@
         "auto_show_less": "Pokaži manj",
         "auto_last_failure": "Zadnja napaka",
         "unsaved": "Neshranjene spremembe",
-        "discard": "Zavrzi"
+        "discard": "Zavrzi",
+        "containers": "Vsebniki"
       }
     },
     "battery_type": {

@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### Improved
+- **Containers tab**: the real Docker containers, by their name (`homeassistant`, `hassio_supervisor`, `app_<slug>`…) with their image and tag, the Supervisor's plugins too (audio, cli, dns, multicast, observer, down when they stop), the update available in a badge.
 - **Spinners in the panel**: every button spins while its action runs, until the panel has read the result (Try again, Clear, Remove, Ignore, Pull, Export, Write with AI, set the spare batteries…); Check now and Check for updates spin while the check runs on the server, Update all while the updates install; the panel, the charts and the Orphans list show a spinner while they load.
 - **Feedback**: a finished action says so in Home Assistant's toast; a failure stays next to the buttons.
 - **Times in words** in the tiles and the lists ("5 minutes ago", "in 3 hours"), the date beyond a week.

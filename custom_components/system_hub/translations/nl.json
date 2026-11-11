@@ -1271,7 +1271,8 @@
         "auto_show_less": "Minder tonen",
         "auto_last_failure": "Laatste fout",
         "unsaved": "Niet-opgeslagen wijzigingen",
-        "discard": "Verwerpen"
+        "discard": "Verwerpen",
+        "containers": "Containers"
       }
     },
     "battery_type": {

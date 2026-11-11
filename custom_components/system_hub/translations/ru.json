@@ -1271,7 +1271,8 @@
         "auto_show_less": "Показать меньше",
         "auto_last_failure": "Последняя ошибка",
         "unsaved": "Несохранённые изменения",
-        "discard": "Отменить"
+        "discard": "Отменить",
+        "containers": "Контейнеры"
       }
     },
     "battery_type": {

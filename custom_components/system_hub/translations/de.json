@@ -1271,7 +1271,8 @@
         "auto_show_less": "Weniger anzeigen",
         "auto_last_failure": "Letzter Fehler",
         "unsaved": "Ungespeicherte Änderungen",
-        "discard": "Verwerfen"
+        "discard": "Verwerfen",
+        "containers": "Container"
       }
     },
     "battery_type": {

@@ -1271,7 +1271,8 @@
         "auto_show_less": "Vis færre",
         "auto_last_failure": "Seneste fejl",
         "unsaved": "Ikke-gemte ændringer",
-        "discard": "Kassér"
+        "discard": "Kassér",
+        "containers": "Containere"
       }
     },
     "battery_type": {

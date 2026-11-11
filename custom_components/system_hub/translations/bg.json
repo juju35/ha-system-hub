@@ -1271,7 +1271,8 @@
         "auto_show_less": "Покажи по-малко",
         "auto_last_failure": "Последен неуспех",
         "unsaved": "Незапазени промени",
-        "discard": "Отхвърляне"
+        "discard": "Отхвърляне",
+        "containers": "Контейнери"
       }
     },
     "battery_type": {

@@ -1271,7 +1271,8 @@
         "auto_show_less": "Показати менше",
         "auto_last_failure": "Остання помилка",
         "unsaved": "Незбережені зміни",
-        "discard": "Скасувати"
+        "discard": "Скасувати",
+        "containers": "Контейнери"
       }
     },
     "battery_type": {

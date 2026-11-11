@@ -1271,7 +1271,8 @@
         "auto_show_less": "Visa färre",
         "auto_last_failure": "Senaste felet",
         "unsaved": "Osparade ändringar",
-        "discard": "Ignorera"
+        "discard": "Ignorera",
+        "containers": "Containrar"
       }
     },
     "battery_type": {

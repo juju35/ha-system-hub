@@ -17,6 +17,13 @@ CONF_NOTIFY_SERVICES: Final = "notify_services"
 KIND_CORE: Final = "core"
 KIND_SUPERVISOR: Final = "supervisor"
 KIND_ADDON: Final = "addon"
+# The Supervisor's plugins: containers of their own (hassio_audio, hassio_cli…), always running.
+KIND_PLUGIN: Final = "plugin"
+PLUGINS: Final = {"audio": "Audio", "cli": "CLI", "dns": "DNS", "multicast": "Multicast", "observer": "Observer"}
+# Docker names: the add-ons' containers are app_<slug> since Supervisor 2026.07.4, addon_<slug> before.
+CONTAINER_CORE: Final = "homeassistant"
+CONTAINER_PREFIX: Final = "hassio_"
+APP_PREFIX_SINCE: Final = (2026, 7, 4)
 # Slugs of the two containers that are not add-ons.
 SLUG_CORE: Final = "homeassistant"
 SLUG_SUPERVISOR: Final = "supervisor"

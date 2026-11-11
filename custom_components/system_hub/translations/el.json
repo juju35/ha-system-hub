@@ -1271,7 +1271,8 @@
         "auto_show_less": "Εμφάνιση λιγότερων",
         "auto_last_failure": "Τελευταία αποτυχία",
         "unsaved": "Μη αποθηκευμένες αλλαγές",
-        "discard": "Απόρριψη"
+        "discard": "Απόρριψη",
+        "containers": "Κοντέινερ"
       }
     },
     "battery_type": {

@@ -1271,7 +1271,8 @@
         "auto_show_less": "Прикажи мање",
         "auto_last_failure": "Последњи неуспех",
         "unsaved": "Несачуване измене",
-        "discard": "Одбаци"
+        "discard": "Одбаци",
+        "containers": "Контејнери"
       }
     },
     "battery_type": {

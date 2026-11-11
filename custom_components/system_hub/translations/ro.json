@@ -1271,7 +1271,8 @@
         "auto_show_less": "Afișează mai puțin",
         "auto_last_failure": "Ultimul eșec",
         "unsaved": "Modificări nesalvate",
-        "discard": "Renunță"
+        "discard": "Renunță",
+        "containers": "Containere"
       }
     },
     "battery_type": {
