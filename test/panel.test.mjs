@@ -726,3 +726,21 @@ test('marketplace tab: the count is that of the updates waiting now, not of the 
   assert.doesNotMatch(html, /data-action="confirm_install"/);
   assert.match(html, /Everything is up to date/);
 });
+
+test('git sync tab: the count of changed files always; more than 5 folded until opened', () => {
+  const files = Array.from({ length: 7 }, (_v, i) => `f${i}.yaml`);
+  const state = (n) => ({ loaded: true, modules: ['git_sync'], tabs: ['git_sync'], git_sync: { available: true, branch: 'main', status: 'changes', changed: n, files: files.slice(0, n) } });
+  const few = panel(state(3), 'git_sync')._content();
+  assert.match(few, /<span class="muted">3<\/span>/);
+  assert.match(few, /f2\.yaml/);
+  const p = panel(state(7), 'git_sync');
+  p._render = () => {};
+  let many = p._content();
+  assert.match(many, /<span class="muted">7<\/span>/);
+  assert.doesNotMatch(many, /f0\.yaml/);
+  assert.match(many, /data-action="git_files_fold" aria-expanded="false"/);
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'git_files_fold' } } : null) } });
+  many = p._content();
+  assert.match(many, /f6\.yaml/);
+  assert.match(many, /aria-expanded="true"/);
+});
