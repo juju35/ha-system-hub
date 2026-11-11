@@ -13,6 +13,7 @@ SystemHubConfigFlow  # unused class (custom_components/system_hub/config_flow.py
 VERSION  # unused variable (custom_components/system_hub/config_flow.py:80)
 _.async_step_user  # unused method (custom_components/system_hub/config_flow.py:83)
 _.async_get_options_flow  # unused method (custom_components/system_hub/config_flow.py:114)
+_.async_supports_options_flow  # unused method (custom_components/system_hub/config_flow.py:134)
 _.async_step_init  # unused method (custom_components/system_hub/config_flow.py:136)
 _.async_step_modules  # unused method (custom_components/system_hub/config_flow.py:153)
 _.async_step_system  # unused method (custom_components/system_hub/config_flow.py)

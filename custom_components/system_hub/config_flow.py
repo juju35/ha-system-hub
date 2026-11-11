@@ -156,7 +156,7 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_create_entry(data={**self.config_entry.options, CONF_MODULES: self._modules(), **changes})
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        # Configure on the integration's page (Home Assistant's flow API, whatever context it sends): the settings are in
+        # Started anywhere but the panel (Home Assistant's flow API, whatever context it sends): the settings are in
         # the panel's Settings tab, the only one to start this flow, with its own source
         if self.context.get("source") != SOURCE_PANEL:
             return self.async_abort(reason="use_panel", description_placeholders={"url": f"/{PANEL_PATH}/settings"})

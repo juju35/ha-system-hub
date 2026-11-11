@@ -272,8 +272,8 @@
             "options": [],
             "multiple": true,
             "mode": "dropdown",
-            "sort": false,
-            "custom_value": false
+            "custom_value": false,
+            "sort": false
           }
         },
         "name": "ignored_entries",
@@ -592,8 +592,8 @@
             "custom_value": true,
             "mode": "dropdown",
             "translation_key": "battery_type",
-            "sort": false,
-            "multiple": false
+            "multiple": false,
+            "sort": false
           }
         },
         "name": "type",
@@ -645,8 +645,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "repo_path",
@@ -656,8 +656,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "remote",
@@ -667,8 +667,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "branch",
@@ -681,8 +681,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "ssh_key",
@@ -692,8 +692,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "author_name",
@@ -707,8 +707,8 @@
         "selector": {
           "text": {
             "type": "email",
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "author_email",
@@ -769,9 +769,9 @@
             ],
             "translation_key": "commit_language",
             "mode": "dropdown",
-            "sort": false,
             "multiple": false,
-            "custom_value": false
+            "custom_value": false,
+            "sort": false
           }
         },
         "name": "commit_language",
@@ -847,8 +847,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "notify_service",
@@ -859,8 +859,8 @@
         "selector": {
           "text": {
             "type": "url",
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "notify_image",
@@ -886,8 +886,8 @@
       {
         "selector": {
           "text": {
-            "multiple": false,
-            "multiline": false
+            "multiline": false,
+            "multiple": false
           }
         },
         "name": "export_dir",
@@ -904,9 +904,9 @@
             ],
             "translation_key": "export_format",
             "mode": "dropdown",
-            "sort": false,
             "multiple": false,
-            "custom_value": false
+            "custom_value": false,
+            "sort": false
           }
         },
         "name": "export_format",
