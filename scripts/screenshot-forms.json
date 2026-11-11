@@ -1,0 +1,1016 @@
+{
+  "system": {
+    "type": "form",
+    "step_id": "system",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "cpu_warning",
+        "required": true,
+        "default": 70
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "cpu_critical",
+        "required": true,
+        "default": 90
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "ram_warning",
+        "required": true,
+        "default": 70
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "ram_critical",
+        "required": true,
+        "default": 90
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "disk_warning",
+        "required": true,
+        "default": 80
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "disk_critical",
+        "required": true,
+        "default": 90
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 120.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "°C"
+          }
+        },
+        "name": "temperature_warning",
+        "required": true,
+        "default": 70
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 120.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "°C"
+          }
+        },
+        "name": "temperature_critical",
+        "required": true,
+        "default": 85
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "swap_warning",
+        "required": true,
+        "default": 50
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 100.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "swap_critical",
+        "required": true,
+        "default": 80
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "containers": {
+    "type": "form",
+    "step_id": "containers",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 10.0,
+            "max": 3600.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "s"
+          }
+        },
+        "name": "scan_interval",
+        "required": true,
+        "default": 60
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "notify",
+        "required": true,
+        "default": true
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "notify_services",
+        "required": false,
+        "optional": true,
+        "default": []
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "watchdog": {
+    "type": "form",
+    "step_id": "watchdog",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "min"
+          }
+        },
+        "name": "scan_interval",
+        "required": true,
+        "default": 5
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "min"
+          }
+        },
+        "name": "grace_period",
+        "required": true,
+        "default": 15
+      },
+      {
+        "selector": {
+          "text": {
+            "multiline": true,
+            "multiple": false
+          }
+        },
+        "name": "grace_overrides",
+        "description": {
+          "suggested_value": ""
+        },
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 10.0,
+            "step": 1.0,
+            "mode": "box"
+          }
+        },
+        "name": "max_reloads",
+        "required": true,
+        "default": 3
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "ignored_integrations",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "mode": "dropdown",
+            "sort": false,
+            "custom_value": false
+          }
+        },
+        "name": "ignored_entries",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "entity": {
+            "domain": [
+              "input_boolean",
+              "switch",
+              "binary_sensor",
+              "schedule"
+            ],
+            "multiple": false,
+            "reorder": false
+          }
+        },
+        "name": "pause_entity",
+        "description": {
+          "suggested_value": null
+        },
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "notify_services",
+        "required": false,
+        "optional": true,
+        "default": []
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "watchdog_add_power_cycle": {
+    "type": "form",
+    "step_id": "watchdog_add_power_cycle",
+    "data_schema": [
+      {
+        "selector": {
+          "device": {
+            "multiple": false
+          }
+        },
+        "name": "device_id",
+        "required": true
+      },
+      {
+        "selector": {
+          "entity": {
+            "domain": [
+              "switch"
+            ],
+            "multiple": false,
+            "reorder": false
+          }
+        },
+        "name": "switch",
+        "required": true
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "min"
+          }
+        },
+        "name": "delay",
+        "required": true,
+        "default": 10
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 300.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "s"
+          }
+        },
+        "name": "off_time",
+        "required": true,
+        "default": 10
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "marketplace": {
+    "type": "form",
+    "step_id": "marketplace",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 0.0,
+            "max": 168.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "h"
+          }
+        },
+        "name": "scan_interval",
+        "required": true,
+        "default": 24
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "backup_before_install",
+        "required": true,
+        "default": false
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "batteries": {
+    "type": "form",
+    "step_id": "batteries",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 99.0,
+            "step": 1.0,
+            "mode": "slider",
+            "unit_of_measurement": "%"
+          }
+        },
+        "name": "threshold",
+        "required": true,
+        "default": 20
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 0.0,
+            "max": 720.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "h"
+          }
+        },
+        "name": "duration",
+        "required": true,
+        "default": 24
+      },
+      {
+        "selector": {
+          "time": {}
+        },
+        "name": "morning_time",
+        "required": true,
+        "default": "09:00:00"
+      },
+      {
+        "selector": {
+          "time": {}
+        },
+        "name": "evening_time",
+        "required": true,
+        "default": "19:00:00"
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "notify_services",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "entity": {
+            "multiple": true,
+            "filter": [
+              {
+                "domain": [
+                  "sensor"
+                ],
+                "device_class": [
+                  "battery"
+                ]
+              },
+              {
+                "domain": [
+                  "binary_sensor"
+                ],
+                "device_class": [
+                  "battery"
+                ]
+              }
+            ],
+            "reorder": false
+          }
+        },
+        "name": "ignored_entities",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [
+              {
+                "value": "mobile_app",
+                "label": "Mobile App (mobile_app)"
+              }
+            ],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "ignored_integrations",
+        "required": false,
+        "optional": true,
+        "default": [
+          "mobile_app"
+        ]
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "hide_ok",
+        "required": false,
+        "optional": true,
+        "default": false
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "batteries_types": {
+    "type": "form",
+    "step_id": "batteries_types",
+    "data_schema": [
+      {
+        "selector": {
+          "entity": {
+            "filter": [
+              {
+                "domain": [
+                  "sensor"
+                ],
+                "device_class": [
+                  "battery"
+                ]
+              },
+              {
+                "domain": [
+                  "binary_sensor"
+                ],
+                "device_class": [
+                  "battery"
+                ]
+              }
+            ],
+            "multiple": false,
+            "reorder": false
+          }
+        },
+        "name": "battery",
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [
+              "CR2032",
+              "CR2450",
+              "CR2477",
+              "CR2016",
+              "CR2025",
+              "CR1632",
+              "CR123A",
+              "CR2",
+              "AA",
+              "AAA",
+              "LR44",
+              "9V",
+              "18650",
+              "ER14505",
+              "rechargeable"
+            ],
+            "custom_value": true,
+            "mode": "dropdown",
+            "translation_key": "battery_type",
+            "sort": false,
+            "multiple": false
+          }
+        },
+        "name": "type",
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 12.0,
+            "step": 1.0,
+            "mode": "box"
+          }
+        },
+        "name": "quantity",
+        "required": false,
+        "optional": true,
+        "default": 1
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "whole_model",
+        "required": false,
+        "optional": true,
+        "default": false
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "batteries_import": {
+    "type": "form",
+    "step_id": "batteries_import",
+    "data_schema": [],
+    "errors": {},
+    "description_placeholders": {
+      "settings": "1",
+      "types": "3",
+      "stock": "2"
+    }
+  },
+  "git_sync_repository": {
+    "type": "form",
+    "step_id": "git_sync_repository",
+    "data_schema": [
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "repo_path",
+        "required": true,
+        "default": "/config"
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "remote",
+        "required": true,
+        "default": "origin"
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "branch",
+        "description": {
+          "suggested_value": "main"
+        },
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "ssh_key",
+        "required": true,
+        "default": "/config/.ssh/id_ed25519"
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "author_name",
+        "description": {
+          "suggested_value": "Home Assistant"
+        },
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "text": {
+            "type": "email",
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "author_email",
+        "description": {
+          "suggested_value": "home-assistant@example.com"
+        },
+        "required": false,
+        "optional": true
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "git_sync": {
+    "type": "form",
+    "step_id": "git_sync",
+    "data_schema": [
+      {
+        "selector": {
+          "entity": {
+            "domain": [
+              "ai_task"
+            ],
+            "multiple": false,
+            "reorder": false
+          }
+        },
+        "name": "ai_task_entity",
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [
+              "en",
+              "fr",
+              "de",
+              "es",
+              "sr",
+              "sr-latn",
+              "it",
+              "nl",
+              "pt",
+              "pl",
+              "ro",
+              "da",
+              "sv",
+              "bg",
+              "ru",
+              "uk",
+              "hu",
+              "sk",
+              "cs",
+              "sl",
+              "lv",
+              "el"
+            ],
+            "translation_key": "commit_language",
+            "mode": "dropdown",
+            "sort": false,
+            "multiple": false,
+            "custom_value": false
+          }
+        },
+        "name": "commit_language",
+        "required": true,
+        "default": "en"
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 0.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "unit_of_measurement": "min",
+            "mode": "box"
+          }
+        },
+        "name": "commit_interval",
+        "required": true,
+        "default": 60
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 10.0,
+            "max": 3600.0,
+            "step": 1.0,
+            "unit_of_measurement": "s",
+            "mode": "box"
+          }
+        },
+        "name": "status_interval",
+        "required": true,
+        "default": 60
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 0.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "unit_of_measurement": "min",
+            "mode": "box"
+          }
+        },
+        "name": "fetch_interval",
+        "required": true,
+        "default": 15
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "pull_before_push",
+        "required": true,
+        "default": true
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "commit_before_update",
+        "required": true,
+        "default": false
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "allow_sensitive",
+        "required": true,
+        "default": false
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "notify_service",
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "text": {
+            "type": "url",
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "notify_image",
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "export_enabled",
+        "required": true,
+        "default": true
+      },
+      {
+        "selector": {
+          "time": {}
+        },
+        "name": "export_time",
+        "required": true,
+        "default": "08:00:00"
+      },
+      {
+        "selector": {
+          "text": {
+            "multiple": false,
+            "multiline": false
+          }
+        },
+        "name": "export_dir",
+        "required": true,
+        "default": "dashboards_export"
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [
+              "json",
+              "yaml",
+              "both"
+            ],
+            "translation_key": "export_format",
+            "mode": "dropdown",
+            "sort": false,
+            "multiple": false,
+            "custom_value": false
+          }
+        },
+        "name": "export_format",
+        "required": true,
+        "default": "json"
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "export_before_commit",
+        "required": true,
+        "default": false
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
+  "orphans": {
+    "type": "form",
+    "step_id": "orphans",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "min"
+          }
+        },
+        "name": "scan_interval",
+        "required": true,
+        "default": 15
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 0.0,
+            "max": 1440.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "min"
+          }
+        },
+        "name": "grace_period",
+        "required": true,
+        "default": 10
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 0.0,
+            "max": 8760.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "h"
+          }
+        },
+        "name": "stale_hours",
+        "required": true,
+        "default": 24
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "include_unknown",
+        "required": true,
+        "default": true
+      },
+      {
+        "selector": {
+          "select": {
+            "mode": "dropdown",
+            "multiple": true,
+            "custom_value": true,
+            "options": [],
+            "sort": false
+          }
+        },
+        "name": "ignored_integrations",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "select": {
+            "mode": "dropdown",
+            "multiple": true,
+            "custom_value": true,
+            "options": [],
+            "sort": false
+          }
+        },
+        "name": "ignored_entities",
+        "required": false,
+        "optional": true,
+        "default": []
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  }
+}

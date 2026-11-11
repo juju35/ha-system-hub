@@ -7,7 +7,7 @@
 
 ### Improved
 - **Settings tab**: the modules and the tabs in one list, as Home Assistant's sidebar editor. **Enabled** then **Disabled**; each row enabled has a handle ═ to drag it (or ↑ ↓ from it with the keyboard) to set the order of the tabs, the first one opening by default; each module its switch and its settings ⚙ opened in place, the System thresholds in the System row.
-- **README**: the settings described in the panel's Settings tab (the paths through **Configure** replaced); the screenshots of the old Configure forms removed, with their script.
+- **README**: the settings described in the panel's Settings tab (the paths through **Configure** replaced); the screenshots of the old Configure forms replaced by each module's settings opened in the Settings tab, rendered by the CI from the options flow's own forms (`scripts/screenshot-forms.json`, checked against the flow by the tests).
 - **Status tab**: the tiles take the icons of the modules, as in Settings.
 - **README**: every card shown at the top, under the panel, and the Orphan Entities card's other states (selected, used, filtered, no orphan, mini card).
 

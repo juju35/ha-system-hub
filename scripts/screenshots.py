@@ -66,7 +66,7 @@ def _flatten(prefix, value, out):
 # The translations as Home Assistant hands them to the frontend: flat keys under component.system_hub.
 STRINGS = _flatten("component.system_hub", json.loads((COMPONENT / "translations/en.json").read_text("utf-8")), {})
 
-# Minimal stand-ins for Home Assistant's <ha-card>, <ha-icon>, <ha-switch> and <ha-menu-button>.
+# Minimal stand-ins for Home Assistant's <ha-card>, <ha-icon>, <ha-switch>, <ha-menu-button> and <ha-form>.
 HA_ELEMENTS = (
     "const ICONS = "
     + json.dumps(ICONS)
@@ -94,6 +94,70 @@ customElements.define("ha-menu-button", class extends HTMLElement {
   connectedCallback() {
     this.style.cssText = "display:flex;padding:8px;--mdc-icon-size:24px";
     this.innerHTML = '<ha-icon icon="mdi:menu"></ha-icon>';
+  }
+});
+// A stand-in for Home Assistant's <ha-form>, drawn from the serialized schema of a step as the options flow sends it:
+// filled text fields with their label inside, a unit after a number, switches for the booleans, a list for a select
+// in list mode, the helper under each field.
+customElements.define("ha-form", class extends HTMLElement {
+  set schema(v) { this._schema = v; this._queue(); }
+  set data(v) { this._data = v; this._queue(); }
+  set computeLabel(v) { this._label = v; this._queue(); }
+  set computeHelper(v) { this._helper = v; this._queue(); }
+  _queue() { if (!this._q) { this._q = true; queueMicrotask(() => { this._q = false; this._draw(); }); } }
+  connectedCallback() { this._draw(); }
+  _draw() {
+    const esc = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const data = this._data || {};
+    const caret = '<svg viewBox="0 0 24 24"><path d="M7,10L12,15L17,10H7Z"/></svg>';
+    const box = (label, value, after = "") =>
+      '<div class="box"><span class="lab">' + esc(label) + '</span><span class="val' + (value === "" ? " none" : "") + '">' +
+      (value === "" ? "&nbsp;" : esc(value)) + "</span>" + after + "</div>";
+    const field = (f) => {
+      const label = (this._label && this._label(f)) || f.name;
+      const helper = (this._helper && this._helper(f)) || "";
+      const sel = f.selector || {};
+      const kind = Object.keys(sel)[0] || f.type;
+      const cfg = sel[kind] || {};
+      const value = data[f.name];
+      let html;
+      if (kind === "boolean") {
+        html = '<div class="bool"><span class="blab">' + esc(label) + "</span>" + (value ? "<ha-switch checked></ha-switch>" : "<ha-switch></ha-switch>") + "</div>";
+      } else if (kind === "select" && cfg.mode === "list") {
+        const options = (cfg.options || []).map((o) => (typeof o === "object" ? o : { value: o, label: o }));
+        const chosen = [].concat(value ?? []);
+        html = '<div class="list"><span class="blab">' + esc(label) + "</span>" + options.map((o) =>
+          '<span class="opt"><span class="tick' + (chosen.includes(o.value) ? " on" : "") + '"></span>' + esc(o.label) + "</span>").join("") + "</div>";
+      } else if (kind === "select" || kind === "entity" || kind === "device") {
+        const options = (cfg.options || []).map((o) => (typeof o === "object" ? o : { value: o, label: o }));
+        const shown = [].concat(value ?? []).map((v) => options.find((o) => o.value === v)?.label ?? v).join(", ");
+        html = box(label, shown, '<span class="caret">' + caret + "</span>");
+      } else if (kind === "number") {
+        html = box(label, value ?? "", cfg.unit_of_measurement ? '<span class="unit">' + esc(cfg.unit_of_measurement) + "</span>" : "");
+      } else if (kind === "time") {
+        html = box(label, String(value ?? "").slice(0, 5));
+      } else {
+        html = box(label, typeof value === "object" ? JSON.stringify(value) : (value ?? ""));
+      }
+      return '<div class="field">' + html + (helper ? '<div class="help">' + esc(helper) + "</div>" : "") + "</div>";
+    };
+    this.shadowRoot || this.attachShadow({ mode: "open" });
+    this.shadowRoot.innerHTML = "<style>" +
+      ":host{display:flex;flex-direction:column;gap:20px}" +
+      ".box{position:relative;display:flex;align-items:center;min-height:56px;padding:0 12px 0 16px;border-radius:4px 4px 0 0;" +
+      "background:var(--input-fill-color, color-mix(in srgb, var(--primary-text-color) 5%, transparent));" +
+      "border-bottom:1px solid var(--secondary-text-color);box-sizing:border-box}" +
+      ".lab{position:absolute;left:16px;top:8px;font-size:12px;color:var(--secondary-text-color)}" +
+      ".val{flex:1;padding-top:18px;font-size:16px;color:var(--primary-text-color);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}" +
+      ".unit{padding-top:18px;padding-left:8px;color:var(--secondary-text-color)}" +
+      ".caret{display:flex;fill:var(--secondary-text-color)}.caret svg{width:24px;height:24px}" +
+      ".help{font-size:12px;color:var(--secondary-text-color);padding:4px 16px 0;line-height:1.4}" +
+      ".bool{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:40px}" +
+      ".blab{font-size:14px;color:var(--primary-text-color)}" +
+      ".list{display:flex;flex-direction:column;gap:10px}.opt{display:flex;align-items:center;gap:12px;font-size:14px}" +
+      ".tick{width:16px;height:16px;border:2px solid var(--secondary-text-color);border-radius:2px;box-sizing:border-box}" +
+      ".tick.on{background:var(--primary-color);border-color:var(--primary-color)}" +
+      "</style>" + (this._schema || []).map(field).join("");
   }
 });
 customElements.define("ha-switch", class extends HTMLElement {
@@ -791,7 +855,7 @@ def mock_state():
 
 
 # Mounts the panel as Home Assistant does: its strings come from loadBackendTranslation, its data from callWS.
-MOUNT = """([state, strings, tab, narrow, view]) => {
+MOUNT = """([state, strings, tab, narrow, view, forms]) => {
     const localize = (key, vars) => {
         let text = strings[key];
         if (text === undefined) return "";
@@ -843,8 +907,12 @@ MOUNT = """([state, strings, tab, narrow, view]) => {
             garage: { name: "Garage", icon: "mdi:garage" },
         },
         callService: async () => {},
+        // The options flow the Settings tab drives: its menu, then the form of the step asked for
+        callApi: async (method, path, body) => (method === "DELETE" ? {} : body?.next_step_id ? forms[body.next_step_id] : {}),
         callWS: async (msg) =>
-            msg.type === "system_hub/state"
+            msg.type === "system_hub/options_flow"
+                ? { type: "menu", flow_id: "screenshots", menu_options: ["modules", ...Object.keys(forms)] }
+                : msg.type === "system_hub/state"
                 ? state
                 : msg.type === "system_hub/orphans"
                   ? state.orphans_list
@@ -858,6 +926,21 @@ MOUNT = """([state, strings, tab, narrow, view]) => {
     };
     if (view) el._battView = view;
     document.getElementById("root").appendChild(el);
+}"""
+
+# The settings forms, as the options flow sends them (kept up to date by tests/test_screenshot_forms.py)
+FORMS = json.loads((ROOT / "scripts/screenshot-forms.json").read_text(encoding="utf-8"))
+
+# Settings tab: a module's settings opened in place on one of its steps; the box of its row and its form.
+OPEN_FORM = """async ([module, step]) => {
+    const panel = document.querySelector("system-hub-panel");
+    await panel._cfgOpen(module, step);
+    await new Promise((r) => setTimeout(r, 300));
+    const row = panel.shadowRoot.querySelector(`[data-row-tab="${module}"]`);
+    const top = row.getBoundingClientRect();
+    const bottom = row.nextElementSibling.getBoundingClientRect();
+    const card = row.closest("ha-card").getBoundingClientRect();
+    return { x: card.x, y: top.y + scrollY, width: card.width, height: bottom.bottom - top.y + 8 };
 }"""
 
 # Orphans tab: two entities ticked, then Remove asks first (one of them is still used).
@@ -894,6 +977,29 @@ SHOTS = [
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
     {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},
     {"file": "panel-orphans-confirm-dark", "theme": "dark", "tab": "orphans", "orphans_confirm": True},
+    # Each module's settings, opened in place in the Settings tab: config-<step>
+    *(
+        {
+            "file": f"config-{step.replace('_', '-').replace('add-power-cycle', 'power-cycle')}{suffix}",
+            "theme": theme,
+            "tab": "settings",
+            "form": (module, step),
+        }
+        for module, step in (
+            ("system", "system"),
+            ("containers", "containers"),
+            ("watchdog", "watchdog"),
+            ("watchdog", "watchdog_add_power_cycle"),
+            ("marketplace", "marketplace"),
+            ("batteries", "batteries"),
+            ("batteries", "batteries_types"),
+            ("batteries", "batteries_import"),
+            ("git_sync", "git_sync_repository"),
+            ("git_sync", "git_sync"),
+            ("orphans", "orphans"),
+        )
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
@@ -1062,8 +1168,13 @@ def main():
             page.add_script_tag(content=PANEL_JS)
             shown = checking_state(state) if shot.get("checking") else state
             shown = automations_state(shown) if shot.get("automations") else shown
-            page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
+            page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view"), FORMS])
             page.wait_for_timeout(400)
+            if shot.get("form"):
+                clip = page.evaluate(OPEN_FORM, list(shot["form"]))
+                capture(page, out / f"{shot['file']}.png", clip=clip, full_page=True, animations="disabled")
+                page.close()
+                continue
             if shot.get("orphans_confirm"):
                 page.evaluate(ORPHANS_CONFIRM)
                 page.wait_for_timeout(200)

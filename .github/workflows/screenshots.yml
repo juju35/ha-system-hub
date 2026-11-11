@@ -7,6 +7,7 @@ on:
     paths:
       - "custom_components/**/frontend/**"
       - "scripts/**"
+      - "custom_components/**/translations/en.json"
 
 # Protected main is never pushed to: the job commits the refreshed screenshots
 # back onto the pull request's own branch, so they land through the normal merge.
