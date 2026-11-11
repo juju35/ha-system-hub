@@ -21,6 +21,7 @@ var SH_MODULE_ICONS = {
   marketplace: 'mdi:storefront-outline',
   batteries: 'mdi:battery-heart-variant',
   git_sync: 'mdi:source-branch-sync',
+  automations: 'mdi:robot-confused-outline',
   settings: 'mdi:cog-outline',
 };
 var SH_MODULE_NAMES = {
@@ -29,7 +30,10 @@ var SH_MODULE_NAMES = {
   marketplace: 'Marketplace',
   batteries: 'Batteries',
   git_sync: 'Git Sync',
+  automations: 'Automations',
 };
+// Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
+var SH_AUTO_MAX = 5;
 
 function shEsc(value) {
   return String(value ?? '').replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
@@ -653,6 +657,10 @@ class SystemHubPanel extends HTMLElement {
     .confirm { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 14px; border-radius:8px;
                background:color-mix(in srgb, var(--tone-warn) 12%, transparent); }
     code { font-family:var(--code-font-family, monospace); font-size:12px; }
+    .who .s.wrap { white-space:normal; overflow-wrap:anywhere; display:flex; flex-wrap:wrap; align-items:center; gap:4px 6px; margin-top:4px; }
+    a.pill { text-decoration:none; }
+    .item .actions { margin-top:6px; }
+    .more-row { justify-content:center; padding:6px 0; }
     @media (max-width: 600px) {
       main { padding:12px 8px; }
       .tiles { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; }
@@ -896,6 +904,7 @@ class SystemHubPanel extends HTMLElement {
       marketplace: () => this._marketplace(),
       batteries: () => this._batteries(),
       git_sync: () => this._gitSync(),
+      automations: () => this._automations(),
       settings: () => this._settings(),
     }[this._tab];
     return html ? html() : '';
@@ -1842,6 +1851,7 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'save') return this._save();
+    if (action.startsWith('auto_')) return this._autoAction(action, button);
     if (action.startsWith('watchdog_reset:')) return this._run('watchdog_reset', 'watchdog_reset', { entry_id: action.split(':')[1] });
     if (action === 'git_sync_generate_message') return this._generate();
     if (action === 'git_sync_diff') return this._openDiff();
@@ -1859,12 +1869,12 @@ class SystemHubPanel extends HTMLElement {
     return this._run(action, action, {});
   }
 
-  async _run(service, messageKey, data, done) {
+  async _run(service, messageKey, data, done, domain = SH_DOMAIN) {
     this._busy[service] = true;
     delete this._messages[messageKey];
     this._render();
     try {
-      await this._hass.callService(SH_DOMAIN, service, data);
+      await this._hass.callService(domain, service, data);
       this._messages[messageKey] = { text: this._t('done'), tone: 'good' };
       done?.();
     } catch (err) {
@@ -1872,6 +1882,118 @@ class SystemHubPanel extends HTMLElement {
     }
     delete this._busy[service];
     await this._load();
+  }
+
+  // Automations: what Automation Monitor reports (its sensors, read on the server), as in the Automation Monitor card
+  _automations() {
+    var data = this._state.automations || {};
+    if (!data.available) {
+      return `<ha-card class="note">${shEsc(this._t('auto_not_found'))}
+        <a class="act" href="/config/integrations/dashboard/add?domain=automation_monitor"><ha-icon icon="mdi:plus"></ha-icon>Automation Monitor</a></ha-card>`;
+    }
+    var failures = data.failures || [];
+    var linked = data.linked || [];
+    var count = (n, na) => (na ? '<b>—</b>' : `<b>${n}</b>`);
+    var tone = (n, na, bad) => (na ? '' : n ? bad : 'good');
+    var naTitle = this._t('auto_sensor_unavailable');
+    var tiles = [
+      this._tile('mdi:robot-confused-outline', count(failures.length, data.failed_na), this._t('auto_failed'), tone(failures.length, data.failed_na, 'bad'), {
+        entity: data.failed_entity,
+        title: data.failed_na ? naTitle : '',
+      }),
+      this._tile('mdi:link-variant-off', count(linked.length, data.linked_na), this._t('auto_linked'), tone(linked.length, data.linked_na, 'warn'), {
+        entity: data.linked_entity,
+        title: data.linked_na ? naTitle : '',
+      }),
+      this._tile('mdi:clock-alert-outline', shEsc(failures.length ? this._ago(failures[0].last_error_time) : '—'), this._t('auto_last_failure'), ''),
+      this._tile('mdi:robot-outline', `<b>${data.automations ?? 0}</b>`, SH_MODULE_NAMES.automations, ''),
+    ];
+    var confirm = '';
+    if (this._confirm === 'auto_clear_all' || this._confirm?.startsWith?.('auto_clear:')) {
+      var all = this._confirm === 'auto_clear_all';
+      var entity = all ? '' : this._confirm.slice('auto_clear:'.length);
+      var name = failures.find((f) => f.entity_id === entity)?.name || entity;
+      confirm = `<div class="confirm" role="alertdialog">${shEsc(all ? this._t('auto_confirm_clear_all') : this._t('auto_confirm_clear', { name }))}
+        ${this._button(all ? 'auto_clear_all_ok' : 'auto_clear_ok', 'mdi:notification-clear-all', this._t(all ? 'auto_clear_all' : 'auto_clear'), { data: { entity } })}
+        ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`;
+    }
+    var both = data.failed_na && data.linked_na;
+    return `<div class="tiles">${tiles.join('')}</div>${confirm}
+      <div class="actions"><span title="${shEsc(this._t('auto_rebuild_title'))}">${this._button('auto_rebuild', 'mdi:refresh', this._t('auto_rebuild'))}</span>
+      ${failures.length ? this._button('auto_clear_all', 'mdi:notification-clear-all', this._t('auto_clear_all'), { quiet: true }) : ''}
+      ${this._message('auto')}${both ? `<span class="msg bad">${shEsc(this._t('auto_unavailable'))}</span>` : ''}</div>
+      ${this._autoSection('failed', 'mdi:robot-confused-outline', this._t('auto_failed'), failures, (f) => this._autoFailure(f))}
+      ${this._autoSection('linked', 'mdi:link-variant-off', this._t('auto_linked'), linked, (e) => this._autoLinked(e))}`;
+  }
+
+  // A list that folds from its title, cut to SH_AUTO_MAX items with "Show more"
+  _autoSection(key, icon, label, items, row) {
+    this._autoFolds = this._autoFolds || {};
+    this._autoMore = this._autoMore || {};
+    var open = !this._autoFolds[key];
+    var all = this._autoMore[key];
+    var shown = open ? (all ? items : items.slice(0, SH_AUTO_MAX)) : [];
+    var more =
+      open && items.length > SH_AUTO_MAX
+        ? `<div class="actions more-row">${this._button(`auto_more:${key}`, all ? 'mdi:chevron-up' : 'mdi:chevron-down', all ? this._t('auto_show_less') : this._t('auto_show_more', { n: items.length - SH_AUTO_MAX }), { quiet: true })}</div>`
+        : '';
+    var empty = `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('auto_all_ok'))}</div>`;
+    return `<ha-card class="list"><div class="lhead"><ha-icon icon="${icon}"></ha-icon><span class="lname">${shEsc(label)}</span>
+        <span class="muted">${shown.length}/${items.length}</span>
+        <button class="icon-btn" data-action="auto_fold:${key}" aria-expanded="${open}" title="${shEsc(label)}" aria-label="${shEsc(label)}"><ha-icon icon="${open ? 'mdi:chevron-up' : 'mdi:chevron-down'}"></ha-icon></button></div>
+      ${open ? (items.length ? shown.map(row).join('') + more : empty) : ''}</ha-card>`;
+  }
+
+  _autoFailure(f) {
+    var tags = [
+      f.error_step ? `<span class="pill" title="${shEsc(this._t('auto_step'))}">${shEsc(f.error_step)}</span>` : '',
+      f.consecutive_failures > 1 ? `<span class="pill bad">${shEsc(this._t('auto_streak', { n: f.consecutive_failures }))}</span>` : '',
+    ].join('');
+    var links = [
+      f.trace ? `<a class="act quiet" href="${shEsc(f.trace)}"><ha-icon icon="mdi:chart-timeline-variant"></ha-icon>${shEsc(this._t('auto_trace'))}</a>` : '',
+      f.edit ? `<a class="act quiet" href="${shEsc(f.edit)}"><ha-icon icon="mdi:pencil"></ha-icon>${shEsc(this._t('auto_edit'))}</a>` : '',
+      this._button('auto_clear', 'mdi:restore', this._t('auto_clear'), { quiet: true, data: { entity: f.entity_id } }),
+    ].join('');
+    return `<div class="item bad link" data-more="${shEsc(f.entity_id)}"><ha-icon icon="mdi:robot-confused-outline"></ha-icon>
+      <div class="who"><div class="n">${shEsc(f.name)}</div><div class="s">${shEsc(f.entity_id)}</div>
+        ${f.error_message ? `<div class="s wrap"><code>${shEsc(f.error_message)}</code></div>` : ''}
+        ${tags ? `<div class="s wrap">${tags}</div>` : ''}
+        <div class="actions">${links}</div></div>
+      <div class="side muted">${shEsc(this._ago(f.last_error_time))}</div></div>`;
+  }
+
+  _autoLinked(e) {
+    var used = (e.used_by || [])
+      .map((u) =>
+        u.edit
+          ? `<a class="pill" href="${shEsc(u.edit)}" title="${shEsc(u.entity_id)}">${shEsc(u.name)}</a>`
+          : `<span class="pill" title="${shEsc(u.entity_id)}">${shEsc(u.name)}</span>`,
+      )
+      .join(' ');
+    return `<div class="item warn link" data-more="${shEsc(e.entity_id)}"><ha-icon icon="mdi:link-variant-off"></ha-icon>
+      <div class="who"><div class="n">${shEsc(e.name)}</div><div class="s">${shEsc(e.entity_id)} · ${shEsc(this._t('unavailable_since', { date: this._ago(e.unavailable_since) }))}</div>
+        ${used ? `<div class="s wrap">${shEsc(this._t('auto_used_by'))} ${used}</div>` : ''}</div></div>`;
+  }
+
+  // The Automations tab's buttons: Automation Monitor's own actions (Clear asks first), the folds and "Show more"
+  _autoAction(action, button) {
+    var [name, key] = action.split(':');
+    if (name === 'auto_fold') {
+      this._autoFolds = { ...this._autoFolds, [key]: !this._autoFolds?.[key] };
+      return this._render();
+    }
+    if (name === 'auto_more') {
+      this._autoMore = { ...this._autoMore, [key]: !this._autoMore?.[key] };
+      return this._render();
+    }
+    if (name === 'auto_clear' || name === 'auto_clear_all') {
+      this._confirm = name === 'auto_clear_all' ? name : `auto_clear:${button.dataset.entity}`;
+      return this._render();
+    }
+    this._confirm = null;
+    if (name === 'auto_clear_ok') return this._run('reset', 'auto', { entity_id: button.dataset.entity }, null, 'automation_monitor');
+    if (name === 'auto_clear_all_ok') return this._run('reset', 'auto', {}, null, 'automation_monitor');
+    if (name === 'auto_rebuild') return this._run('rebuild_linked_entities', 'auto', {}, null, 'automation_monitor');
   }
 
   // The changes a commit would include, in the full screen diff viewer

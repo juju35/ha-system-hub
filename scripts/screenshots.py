@@ -589,9 +589,89 @@ SHOTS = [
     {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
+    {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
+    {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
+
+
+def automations_state(state):
+    """The Automations module turned on, with what Automation Monitor reports (only in its own screenshots)."""
+    edit = "/config/automation/edit/"
+    trace = "/config/automation/trace/"
+    failures = [
+        {
+            "entity_id": "automation.garage_door_closes_at_night",
+            "name": "Garage door closes at night",
+            "last_error_time": "2026-11-10T08:42:00+01:00",
+            "error_message": "Entity cover.garage_door is unavailable",
+            "error_step": "action/1",
+            "consecutive_failures": 3,
+            "trace": f"{trace}garage_night",
+            "edit": f"{edit}garage_night",
+        },
+        {
+            "entity_id": "automation.morning_heating",
+            "name": "Morning heating",
+            "last_error_time": "2026-11-10T06:30:00+01:00",
+            "error_message": "Template error: float got invalid input 'unknown' when rendering '{{ states.sensor.outdoor | float }}'",
+            "error_step": "condition/0",
+            "consecutive_failures": 1,
+            "trace": f"{trace}morning_heating",
+            "edit": f"{edit}morning_heating",
+        },
+        {
+            "entity_id": "automation.notify_washing_machine_done",
+            "name": "Notify when the washing machine is done",
+            "last_error_time": "2026-11-09T19:12:00+01:00",
+            "error_message": "Action notify.mobile_app_phone not found",
+            "error_step": "action/0",
+            "consecutive_failures": 2,
+            "trace": f"{trace}washing_done",
+            "edit": f"{edit}washing_done",
+        },
+    ]
+    linked = [
+        {
+            "entity_id": "cover.garage_door",
+            "name": "Garage door",
+            "unavailable_since": "2026-11-10T02:15:00+01:00",
+            "used_by": [
+                {
+                    "entity_id": "automation.garage_door_closes_at_night",
+                    "name": "Garage door closes at night",
+                    "edit": f"{edit}garage_night",
+                },
+                {"entity_id": "script.leave_home", "name": "Leave home", "edit": "/config/script/edit/leave_home"},
+            ],
+        },
+        {
+            "entity_id": "sensor.outdoor",
+            "name": "Outdoor temperature",
+            "unavailable_since": "2026-11-09T23:50:00+01:00",
+            "used_by": [
+                {"entity_id": "automation.morning_heating", "name": "Morning heating", "edit": f"{edit}morning_heating"}
+            ],
+        },
+    ]
+    automations = {
+        "available": True,
+        "loaded": True,
+        "failed_entity": "sensor.failed_automations",
+        "linked_entity": "sensor.linked_entities_unavailable",
+        "failed_na": False,
+        "linked_na": False,
+        "failures": failures,
+        "linked": linked,
+        "automations": 48,
+    }
+    return {
+        **state,
+        "modules": [*state["modules"], "automations"],
+        "tabs": [*state["tabs"], "automations"],
+        "automations": automations,
+    }
 
 
 def checking_state(state):
@@ -678,6 +758,7 @@ def main():
             page.add_script_tag(content=HA_ELEMENTS)
             page.add_script_tag(content=PANEL_JS)
             shown = checking_state(state) if shot.get("checking") else state
+            shown = automations_state(shown) if shot.get("automations") else shown
             page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
             page.wait_for_timeout(400)
             if shot.get("diff"):

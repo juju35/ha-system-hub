@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
           "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
           "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов.",
           "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной.",
-          "git_sync": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…)."
+          "git_sync": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…).",
+          "automations": "Показывает неудачные автоматизации и недоступные объекты, о которых сообщает интеграция Automation Monitor (устанавливается отдельно). Собственных объектов нет."
         }
       },
       "git_sync_repository": {
@@ -59,7 +61,6 @@
         "title": "Параметры System Hub",
         "menu_options": {
           "modules": "Модули",
-          "system": "Система: пороги",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Добавить перезапуск через розетку",
@@ -69,7 +70,8 @@
           "git_sync_repository": "Git Sync: Настройки репозитория",
           "git_sync": "Git Sync",
           "batteries_types": "Батареи: типы батарей",
-          "batteries_import": "Батареи: импорт из Battery Monitor"
+          "batteries_import": "Батареи: импорт из Battery Monitor",
+          "system": "Система: пороги"
         }
       },
       "modules": {
@@ -80,14 +82,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
           "watchdog": "Перезагружает интеграции, все объекты которых недоступны.",
           "marketplace": "Проверяет на сервере наличие обновлений для всех репозиториев, загруженных через Marketplace. Сам Marketplace проверяет пользовательские репозитории только раз в 48 часов.",
           "batteries": "Дважды в день уведомляет об устройствах, батарея которых остаётся разряженной.",
-          "git_sync": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…)."
+          "git_sync": "Папка Home Assistant под управлением Git, отправляемая в remote (GitHub, Gitea…).",
+          "automations": "Показывает неудачные автоматизации и недоступные объекты, о которых сообщает интеграция Automation Monitor (устанавливается отдельно). Собственных объектов нет."
         }
       },
       "containers": {
@@ -1057,6 +1061,26 @@
         "open_device": "Устройство",
         "pc_none": "Перезапусков через розетку пока нет: добавьте в «Настроить» → Watchdog: добавить перезапуск через розетку.",
         "pc_configure": "Добавить или удалить в «Настроить»",
+        "auto_failed": "Автоматизации с ошибками",
+        "auto_linked": "Недоступные связанные объекты",
+        "auto_sensor_unavailable": "Датчик недоступен",
+        "auto_unavailable": "Датчики Automation Monitor недоступны.",
+        "auto_not_found": "Automation Monitor не найден. Установлена ли интеграция Automation Monitor?",
+        "auto_all_ok": "Всё в порядке",
+        "auto_step": "Шаг",
+        "auto_streak": "Ошибок подряд: {n}",
+        "auto_used_by": "Используется в",
+        "auto_trace": "След",
+        "auto_edit": "Изменить",
+        "auto_clear": "Сбросить",
+        "auto_clear_all": "Сбросить все",
+        "auto_rebuild": "Обновить",
+        "auto_rebuild_title": "Заново построить список объектов, используемых автоматизациями, скриптами и сценами",
+        "auto_confirm_clear": "Сбросить ошибку {name}? О ней снова будет сообщено при следующей ошибке.",
+        "auto_confirm_clear_all": "Сбросить все автоматизации с ошибками? О них снова будет сообщено при следующей ошибке.",
+        "auto_show_more": "Показать ещё {n}",
+        "auto_show_less": "Показать меньше",
+        "auto_last_failure": "Последняя ошибка",
         "network_total": "Получено / отправлено",
         "update_to": "Обновить до {versions}",
         "up_to_date": "Актуально",

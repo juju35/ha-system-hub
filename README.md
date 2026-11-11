@@ -23,6 +23,7 @@ Home Assistant integration that brings the care of your Home Assistant system to
 - **Watchdog**: reloads the integrations whose entities are all unavailable, with ignored integrations, power cycles through a smart plug and a notification on each reload.
 - **Batteries**: battery levels of every device, low-battery notifications.
 - **Git sync**: commit and push your configuration and export the dashboards to a Git repository.
+- **Automations**: the failed automations and the unavailable entities they use, as reported by [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor), with their trace and editor.
 - **Modules**: Containers, Marketplace, Watchdog, Batteries and Git sync can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
 - **Admin panel**: one sidebar panel with the System tab and a tab per module turned on, which you can order.
 
@@ -34,6 +35,7 @@ Home Assistant integration that brings the care of your Home Assistant system to
 | [Supervisor](https://www.home-assistant.io/integrations/hassio/) | Containers module (Home Assistant OS and Supervised installations) |
 | [Marketplace](https://www.home-assistant.io/integrations/marketplace/) | Marketplace module |
 | [AI Task](https://www.home-assistant.io/integrations/ai_task/) | Commit messages of the Git Sync module (optional) |
+| [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) (custom integration) | Automations module |
 
 ## Prerequisites
 
@@ -77,6 +79,7 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 | Marketplace | on when the Marketplace is loaded | Checks every repository installed from the Marketplace for updates, on the server, and installs them on demand |
 | Batteries | on | Notifies the low batteries twice a day, forecasts the replacements, counts the spare batteries |
 | Git Sync | off (needs a repository) | Commits and pushes the configuration to Git with AI commit messages, exports the dashboards |
+| Automations | on when Automation Monitor is loaded | Shows the failed automations and the unavailable linked entities reported by Automation Monitor; no entities of its own |
 
 A module turned off is not set up: its checks stop, its entities and its device are removed, its actions fail with *The … module is turned off*, and the Watchdog's Repairs issues and notifications are dismissed. Its settings and saved state (the Watchdog's history and reload counts, the Marketplace's last check, the Batteries' low-battery times and spare stock) are kept, so turning it back on picks up where it left off.
 
@@ -116,6 +119,7 @@ The **Configure** forms, also opened by **Module settings** in the panel's Setti
 | Marketplace | Updates available, last and next check; while a check runs, its progress bar, the share done, the time left and the failures (read every 2 seconds); **Check for updates**, **Update all** (asked first); afterwards the repositories that could not be checked and GitHub's requests left |
 | Batteries | Low and unavailable batteries, last notification; every battery **by level** (the ones in error first, then the lowest), **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); a search by name, room or type; the spare batteries by type (in stock, to buy for the batteries low or due within 30 days), a click sets a type's stock; **Export CSV**; **Notify now** |
 | Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
+| Automations | Failed automations, unavailable linked entities, last failure; each failure with its error, failed step and failures in a row, **Trace**, **Edit**, **Clear**; each unavailable entity with the automations, scripts and scenes using it; **Clear all** (asked first), **Refresh** (rebuilds the list of linked entities); lists folded from their title, 5 items then **Show more** |
 | Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
 
 Git Sync can't be turned on from the panel the first time: its repository is checked in **Configure → Modules**.
@@ -132,6 +136,7 @@ Every tab, light and dark themes:
 | Marketplace | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-marketplace.png" alt="sidebar panel, Marketplace tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-marketplace-dark.png" alt="sidebar panel, Marketplace tab, dark theme" width="400"> |
 | Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries.png" alt="sidebar panel, Batteries tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-batteries-dark.png" alt="sidebar panel, Batteries tab, dark theme" width="400"> |
 | Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync.png" alt="sidebar panel, Git Sync tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-git-sync-dark.png" alt="sidebar panel, Git Sync tab, dark theme" width="400"> |
+| Automations | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-automations.png" alt="sidebar panel, Automations tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-automations-dark.png" alt="sidebar panel, Automations tab, dark theme" width="400"> |
 | Settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings.png" alt="sidebar panel, Settings tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings-dark.png" alt="sidebar panel, Settings tab, dark theme" width="400"> |
 
 The Marketplace check running, the batteries by room, by type and by replacement date, and the Git Sync diff viewer:
@@ -531,6 +536,10 @@ When a battery goes below the threshold, System Hub writes down the time. For a 
 The list is updated whenever a battery changes, and every 10 minutes.
 
 Once a day (and at start), the drain of each level battery is measured on its recorded history over the last 30 days: a least-squares slope of the level, counted from the last replacement (a rise of 15 points or more), when at least three days and three points are recorded. From that drain and the current level come the days left before the threshold and the replacement date; a stable level (less than 0.05 % a day) gives none. The days left follow the level between two measures.
+
+## Automations
+
+Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor card](https://github.com/juju35/ha-automation-monitor-card) does: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no settings and no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
 
 ## Git Sync
 

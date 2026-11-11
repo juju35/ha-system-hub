@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
-          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
+          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
         }
       },
       "git_sync_repository": {
@@ -59,7 +61,6 @@
         "title": "System Hub opcijas",
         "menu_options": {
           "modules": "Moduļi",
-          "system": "Sistēma: sliekšņi",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Pievienot restartēšanu ar kontaktligzdu",
@@ -69,7 +70,8 @@
           "git_sync_repository": "Git Sync: Repozitorija iestatījumi",
           "git_sync": "Git Sync",
           "batteries_types": "Baterijas: bateriju veidi",
-          "batteries_import": "Baterijas: importēt no Battery Monitor"
+          "batteries_import": "Baterijas: importēt no Battery Monitor",
+          "system": "Sistēma: sliekšņi"
         }
       },
       "modules": {
@@ -80,14 +82,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
-          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
+          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
         }
       },
       "containers": {
@@ -1057,6 +1061,26 @@
         "open_device": "Ierīce",
         "pc_none": "Vēl nav restartēšanas ar kontaktligzdu: pievienojiet to sadaļā Konfigurēt → Watchdog: pievienot restartēšanu ar kontaktligzdu.",
         "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt",
+        "auto_failed": "Neizdevušās automatizācijas",
+        "auto_linked": "Nepieejamas saistītās vienības",
+        "auto_sensor_unavailable": "Sensors nav pieejams",
+        "auto_unavailable": "Automation Monitor sensori nav pieejami.",
+        "auto_not_found": "Automation Monitor nav atrasts. Vai Automation Monitor integrācija ir instalēta?",
+        "auto_all_ok": "Viss kārtībā",
+        "auto_step": "Solis",
+        "auto_streak": "{n} kļūmes pēc kārtas",
+        "auto_used_by": "Izmanto",
+        "auto_trace": "Izsekot",
+        "auto_edit": "Rediģēt",
+        "auto_clear": "Notīrīt",
+        "auto_clear_all": "Notīrīt visu",
+        "auto_rebuild": "Atsvaidzināt",
+        "auto_rebuild_title": "No jauna izveidot automatizāciju, skriptu un ainu izmantoto vienību sarakstu",
+        "auto_confirm_clear": "Notīrīt {name} kļūmi? Par to atkal tiks ziņots nākamās kļūmes gadījumā.",
+        "auto_confirm_clear_all": "Notīrīt visas neizdevušās automatizācijas? Par tām atkal tiks ziņots nākamās kļūmes gadījumā.",
+        "auto_show_more": "Rādīt vēl {n}",
+        "auto_show_less": "Rādīt mazāk",
+        "auto_last_failure": "Pēdējā kļūme",
         "network_total": "Saņemts / nosūtīts",
         "update_to": "Atjaunināt uz {versions}",
         "up_to_date": "Atjaunināts",

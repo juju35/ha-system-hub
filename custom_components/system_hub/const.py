@@ -15,7 +15,16 @@ MODULE_WATCHDOG: Final = "watchdog"
 MODULE_MARKETPLACE: Final = "marketplace"
 MODULE_BATTERIES: Final = "batteries"
 MODULE_GIT_SYNC: Final = "git_sync"
-MODULES: Final = (MODULE_CONTAINERS, MODULE_WATCHDOG, MODULE_MARKETPLACE, MODULE_BATTERIES, MODULE_GIT_SYNC)
+# Shows what Automation Monitor reports; no entities of its own.
+MODULE_AUTOMATIONS: Final = "automations"
+MODULES: Final = (
+    MODULE_CONTAINERS,
+    MODULE_WATCHDOG,
+    MODULE_MARKETPLACE,
+    MODULE_BATTERIES,
+    MODULE_GIT_SYNC,
+    MODULE_AUTOMATIONS,
+)
 
 # Panel: the order of its tabs (the System tab and the modules; Settings always comes last).
 CONF_TABS: Final = "tabs"

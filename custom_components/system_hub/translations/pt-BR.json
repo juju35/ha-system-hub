@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitora o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitoramento: nada é reiniciado.",
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca.",
-          "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…)."
+          "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…).",
+          "automations": "Mostra as automações com falha e as entidades indisponíveis informadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias."
         }
       },
       "git_sync_repository": {
@@ -59,7 +61,6 @@
         "title": "Opções do System Hub",
         "menu_options": {
           "modules": "Módulos",
-          "system": "Sistema: limites",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Adicionar um reinício por tomada",
@@ -69,7 +70,8 @@
           "git_sync_repository": "Git Sync: Definições do repositório",
           "git_sync": "Git Sync",
           "batteries_types": "Baterias: tipos de bateria",
-          "batteries_import": "Baterias: importar do Battery Monitor"
+          "batteries_import": "Baterias: importar do Battery Monitor",
+          "system": "Sistema: limites"
         }
       },
       "modules": {
@@ -80,14 +82,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitora o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitoramento: nada é reiniciado.",
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca.",
-          "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…)."
+          "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…).",
+          "automations": "Mostra as automações com falha e as entidades indisponíveis informadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias."
         }
       },
       "containers": {
@@ -1057,6 +1061,26 @@
         "open_device": "Dispositivo",
         "pc_none": "Ainda sem reinícios por tomada: adicione um em Configurar → Watchdog: adicionar um reinício por tomada.",
         "pc_configure": "Adicionar ou remover em Configurar",
+        "auto_failed": "Automações com falha",
+        "auto_linked": "Entidades associadas indisponíveis",
+        "auto_sensor_unavailable": "Sensor indisponível",
+        "auto_unavailable": "Os sensores do Automation Monitor estão indisponíveis.",
+        "auto_not_found": "Automation Monitor não encontrado. A integração Automation Monitor está instalada?",
+        "auto_all_ok": "Tudo bem",
+        "auto_step": "Passo",
+        "auto_streak": "{n} falhas seguidas",
+        "auto_used_by": "Usada por",
+        "auto_trace": "Rastreio",
+        "auto_edit": "Editar",
+        "auto_clear": "Limpar",
+        "auto_clear_all": "Limpar tudo",
+        "auto_rebuild": "Atualizar",
+        "auto_rebuild_title": "Reconstruir a lista de entidades usadas por automações, scripts e cenas",
+        "auto_confirm_clear": "Limpar a falha de {name}? Ela será informada novamente na próxima falha.",
+        "auto_confirm_clear_all": "Limpar todas as automações com falha? Elas serão informadas novamente na próxima falha.",
+        "auto_show_more": "Mostrar mais {n}",
+        "auto_show_less": "Mostrar menos",
+        "auto_last_failure": "Última falha",
         "network_total": "Recebido / enviado",
         "update_to": "Atualizar para {versions}",
         "up_to_date": "Atualizado",

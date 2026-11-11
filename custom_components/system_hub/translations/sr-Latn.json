@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
-          "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…)."
+          "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
+          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
         }
       },
       "git_sync_repository": {
@@ -59,7 +61,6 @@
         "title": "Opcije System Hub-a",
         "menu_options": {
           "modules": "Moduli",
-          "system": "Sistem: pragovi",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Dodaj restart preko utičnice",
@@ -69,7 +70,8 @@
           "git_sync_repository": "Git Sync: Podešavanja repozitorijuma",
           "git_sync": "Git Sync",
           "batteries_types": "Baterije: tipovi baterija",
-          "batteries_import": "Baterije: uvoz iz Battery Monitor"
+          "batteries_import": "Baterije: uvoz iz Battery Monitor",
+          "system": "Sistem: pragovi"
         }
       },
       "modules": {
@@ -80,14 +82,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
-          "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…)."
+          "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
+          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
         }
       },
       "containers": {
@@ -1057,6 +1061,26 @@
         "open_device": "Uređaj",
         "pc_none": "Još nema ponovnog pokretanja preko utičnice: dodajte ga u Konfiguriši → Watchdog: dodaj ponovno pokretanje preko utičnice.",
         "pc_configure": "Dodaj ili ukloni u Konfiguriši",
+        "auto_failed": "Neuspele automatizacije",
+        "auto_linked": "Nedostupni povezani entiteti",
+        "auto_sensor_unavailable": "Senzor nedostupan",
+        "auto_unavailable": "Senzori Automation Monitor-a su nedostupni.",
+        "auto_not_found": "Automation Monitor nije pronađen. Da li je integracija Automation Monitor instalirana?",
+        "auto_all_ok": "Sve je u redu",
+        "auto_step": "Korak",
+        "auto_streak": "{n} neuspeha zaredom",
+        "auto_used_by": "Koristi se u",
+        "auto_trace": "Trag",
+        "auto_edit": "Uredi",
+        "auto_clear": "Obriši",
+        "auto_clear_all": "Obriši sve",
+        "auto_rebuild": "Osveži",
+        "auto_rebuild_title": "Ponovo napravi listu entiteta koje koriste automatizacije, skripte i scene",
+        "auto_confirm_clear": "Obrisati neuspeh za {name}? Biće ponovo prijavljen pri sledećem neuspehu.",
+        "auto_confirm_clear_all": "Obrisati sve neuspele automatizacije? Biće ponovo prijavljene pri sledećem neuspehu.",
+        "auto_show_more": "Prikaži još {n}",
+        "auto_show_less": "Prikaži manje",
+        "auto_last_failure": "Poslednji neuspeh",
         "network_total": "Primljeno / poslato",
         "update_to": "Ažuriraj na {versions}",
         "up_to_date": "Ažurno",

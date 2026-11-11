@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
-          "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
+          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
         }
       },
       "git_sync_repository": {
@@ -59,7 +61,6 @@
         "title": "System Hub options",
         "menu_options": {
           "modules": "Modules",
-          "system": "System: thresholds",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Add a power cycle",
@@ -69,7 +70,8 @@
           "git_sync_repository": "Git Sync: Repository settings",
           "git_sync": "Git Sync",
           "batteries_types": "Batteries: Battery types",
-          "batteries_import": "Batteries: Import from Battery Monitor"
+          "batteries_import": "Batteries: Import from Battery Monitor",
+          "system": "System: thresholds"
         }
       },
       "modules": {
@@ -80,14 +82,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
-          "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
+          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
         }
       },
       "containers": {
@@ -1057,6 +1061,26 @@
         "open_device": "Device",
         "pc_none": "No power cycle yet: add one in Configure → Watchdog: Add a power cycle.",
         "pc_configure": "Add or remove in Configure",
+        "auto_failed": "Failed automations",
+        "auto_linked": "Unavailable linked entities",
+        "auto_sensor_unavailable": "Sensor unavailable",
+        "auto_unavailable": "The Automation Monitor sensors are unavailable.",
+        "auto_not_found": "Automation Monitor not found. Is the Automation Monitor integration installed?",
+        "auto_all_ok": "All good",
+        "auto_step": "Step",
+        "auto_streak": "{n} failures in a row",
+        "auto_used_by": "Used by",
+        "auto_trace": "Trace",
+        "auto_edit": "Edit",
+        "auto_clear": "Clear",
+        "auto_clear_all": "Clear all",
+        "auto_rebuild": "Refresh",
+        "auto_rebuild_title": "Rebuild the list of entities used by automations, scripts and scenes",
+        "auto_confirm_clear": "Clear the failure of {name}? It will be reported again on its next failure.",
+        "auto_confirm_clear_all": "Clear all failed automations? They will be reported again on their next failure.",
+        "auto_show_more": "Show {n} more",
+        "auto_show_less": "Show less",
+        "auto_last_failure": "Last failure",
         "network_total": "Received / sent",
         "update_to": "Update to {versions}",
         "up_to_date": "Up to date",

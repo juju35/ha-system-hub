@@ -9,14 +9,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
-          "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…)."
+          "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
+          "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit."
         }
       },
       "git_sync_repository": {
@@ -59,7 +61,6 @@
         "title": "Možnosti System Hub",
         "menu_options": {
           "modules": "Moduly",
-          "system": "Systém: prahy",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
@@ -69,7 +70,8 @@
           "git_sync_repository": "Git Sync: Nastavení repozitáře",
           "git_sync": "Git Sync",
           "batteries_types": "Baterie: typy baterií",
-          "batteries_import": "Baterie: import z Battery Monitor"
+          "batteries_import": "Baterie: import z Battery Monitor",
+          "system": "Systém: prahy"
         }
       },
       "modules": {
@@ -80,14 +82,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
-          "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…)."
+          "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
+          "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit."
         }
       },
       "containers": {
@@ -1057,6 +1061,26 @@
         "open_device": "Zařízení",
         "pc_none": "Zatím žádný restart přes zásuvku: přidejte ho v Konfigurovat → Watchdog: přidat restart přes zásuvku.",
         "pc_configure": "Přidat nebo odebrat v Konfigurovat",
+        "auto_failed": "Neúspěšné automatizace",
+        "auto_linked": "Nedostupné propojené entity",
+        "auto_sensor_unavailable": "Senzor nedostupný",
+        "auto_unavailable": "Senzory Automation Monitor jsou nedostupné.",
+        "auto_not_found": "Automation Monitor nebyl nalezen. Je integrace Automation Monitor nainstalována?",
+        "auto_all_ok": "Vše v pořádku",
+        "auto_step": "Krok",
+        "auto_streak": "Selhání za sebou: {n}",
+        "auto_used_by": "Použito v",
+        "auto_trace": "Trasování",
+        "auto_edit": "Upravit",
+        "auto_clear": "Vymazat",
+        "auto_clear_all": "Vymazat vše",
+        "auto_rebuild": "Obnovit",
+        "auto_rebuild_title": "Znovu sestavit seznam entit používaných automatizacemi, skripty a scénami",
+        "auto_confirm_clear": "Vymazat selhání {name}? Při dalším selhání bude znovu nahlášeno.",
+        "auto_confirm_clear_all": "Vymazat všechny neúspěšné automatizace? Při dalším selhání budou znovu nahlášeny.",
+        "auto_show_more": "Zobrazit další ({n})",
+        "auto_show_less": "Zobrazit méně",
+        "auto_last_failure": "Poslední selhání",
         "network_total": "Přijato / odesláno",
         "update_to": "Aktualizovat na {versions}",
         "up_to_date": "Aktuální",
