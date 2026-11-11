@@ -959,7 +959,17 @@
         "diff_mode": "Режим змінено",
         "diff_close": "Закрити",
         "diff_files_one": "{n} файл",
-        "diff_files_many": "Файли: {n}"
+        "diff_files_many": "Файли: {n}",
+        "chart_system": "CPU, RAM і температура",
+        "chart_network": "Мережа",
+        "chart_disks": "Заповнення дисків",
+        "period_h": "{n} год",
+        "period_d": "{n} д",
+        "ago_h": "−{n} год",
+        "ago_d": "−{n} д",
+        "now": "зараз",
+        "chart_empty": "Історії ще немає",
+        "disk": "Диск"
       }
     }
   }

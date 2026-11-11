@@ -959,7 +959,17 @@
         "diff_mode": "Spremenjen način",
         "diff_close": "Zapri",
         "diff_files_one": "{n} datoteka",
-        "diff_files_many": "Datoteke: {n}"
+        "diff_files_many": "Datoteke: {n}",
+        "chart_system": "CPU, RAM in temperatura",
+        "chart_network": "Omrežje",
+        "chart_disks": "Zasedenost diskov",
+        "period_h": "{n} h",
+        "period_d": "{n} d",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} d",
+        "now": "zdaj",
+        "chart_empty": "Zgodovine še ni",
+        "disk": "Disk"
       }
     }
   }

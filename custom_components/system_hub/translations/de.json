@@ -959,7 +959,17 @@
         "diff_mode": "Modus geändert",
         "diff_close": "Schließen",
         "diff_files_one": "{n} Datei",
-        "diff_files_many": "{n} Dateien"
+        "diff_files_many": "{n} Dateien",
+        "chart_system": "CPU, RAM und Temperatur",
+        "chart_network": "Netzwerk",
+        "chart_disks": "Datenträgerbelegung",
+        "period_h": "{n} h",
+        "period_d": "{n} T",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} T",
+        "now": "jetzt",
+        "chart_empty": "Noch kein Verlauf",
+        "disk": "Datenträger"
       }
     }
   }

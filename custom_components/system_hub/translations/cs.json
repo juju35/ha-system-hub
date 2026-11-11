@@ -959,7 +959,17 @@
         "diff_mode": "Změněn režim",
         "diff_close": "Zavřít",
         "diff_files_one": "{n} soubor",
-        "diff_files_many": "Soubory: {n}"
+        "diff_files_many": "Soubory: {n}",
+        "chart_system": "CPU, RAM a teplota",
+        "chart_network": "Síť",
+        "chart_disks": "Obsazení disků",
+        "period_h": "{n} h",
+        "period_d": "{n} d",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} d",
+        "now": "nyní",
+        "chart_empty": "Zatím bez historie",
+        "disk": "Disk"
       }
     }
   }

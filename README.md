@@ -92,7 +92,7 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 
 | Tab | Content |
 |---|---|
-| System | CPU, RAM, swap, temperature, load, up since, download and upload, and every disk, from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a tile opens its entity |
+| System | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap, load, up since, download and upload; history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; every disk, from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
 | Containers | Running and stopped containers, last read; every container with its state, version and update, CPU, RAM and the last 24 hours of CPU; **Refresh** |
 | Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the recent reloads and power cycles |
 | Marketplace | Updates available, last and next check (progress while it runs); **Check for updates**, **Update all** (asked first) |

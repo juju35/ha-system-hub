@@ -68,19 +68,38 @@ test('tabs: System, the modules turned on in the order chosen, Settings last', (
   assert.deepEqual([...panel({ loaded: false })._tabs()], ['system', 'settings']);
 });
 
-test('system tab: gauges from the System Monitor sensors, or how to add them', () => {
-  const html = panel({
+test('system tab: rings, history charts and their periods, or how to add System Monitor', async () => {
+  const state = {
     loaded: true,
     modules: [],
     tabs: ['system'],
     system: [
       { key: 'processor_use', entity_id: 'sensor.cpu', name: 'CPU', state: '95', unit: '%' },
-      { key: 'disk_use_percent', entity_id: 'sensor.disk', name: 'Disk /', state: '40', unit: '%' },
+      { key: 'memory_use_percent', entity_id: 'sensor.ram', name: 'RAM', state: '40', unit: '%' },
+      { key: 'disk_use_percent', entity_id: 'sensor.disk', name: 'Disk usage /', state: '40', unit: '%' },
+      { key: 'throughput_network_in', entity_id: 'sensor.rx', name: 'Network in eth0', state: '1.5', unit: 'MB/s' },
     ],
-  })._content();
-  assert.match(html, /<b>95<\/b>%/);
-  assert.match(html, /tile bad link/);
-  assert.match(html, /data-more="sensor.disk"/);
+  };
+  const p = panel(state);
+  const calls = [];
+  const now = Date.now() / 1000;
+  p._hass.callWS = async (msg) => {
+    calls.push(msg);
+    return Object.fromEntries(msg.entity_ids.map((id) => [id, [{ s: '10', lu: now - 3600 }, { s: '30', lu: now - 60 }]]));
+  };
+  let html = p._content();
+  assert.match(html, /class="ring link" data-more="sensor.cpu"/);
+  assert.match(html, /<b>95<\/b><span>%<\/span>/);
+  assert.match(html, /CPU, RAM and temperature/);
+  assert.match(html, /data-action="period" data-chart="system" data-hours="24" aria-pressed="true"/);
+  assert.match(html, /Loading/);
+  await new Promise((resolve) => setImmediate(resolve));
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(calls[0].type, 'history/history_during_period');
+  html = p._content();
+  assert.match(html, /<polyline points="[^"]+" stroke="#03a9f4"\/>/);
+  assert.match(html, /Network/);
+  assert.match(html, /Disk usage/);
   assert.match(panel({ loaded: true, modules: [], tabs: ['system'], system: [] })._content(), /domain=systemmonitor/);
 });
 

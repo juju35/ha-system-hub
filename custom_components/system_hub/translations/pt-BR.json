@@ -959,7 +959,17 @@
         "diff_mode": "Modo alterado",
         "diff_close": "Fechar",
         "diff_files_one": "{n} arquivo",
-        "diff_files_many": "{n} arquivos"
+        "diff_files_many": "{n} arquivos",
+        "chart_system": "CPU, RAM e temperatura",
+        "chart_network": "Rede",
+        "chart_disks": "Uso dos discos",
+        "period_h": "{n} h",
+        "period_d": "{n} d",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} d",
+        "now": "agora",
+        "chart_empty": "Ainda sem histórico",
+        "disk": "Disco"
       }
     }
   }

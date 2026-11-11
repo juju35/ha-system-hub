@@ -959,7 +959,17 @@
         "diff_mode": "Mód megváltozott",
         "diff_close": "Bezárás",
         "diff_files_one": "{n} fájl",
-        "diff_files_many": "{n} fájl"
+        "diff_files_many": "{n} fájl",
+        "chart_system": "CPU, RAM és hőmérséklet",
+        "chart_network": "Hálózat",
+        "chart_disks": "Lemezhasználat",
+        "period_h": "{n} ó",
+        "period_d": "{n} n",
+        "ago_h": "−{n} ó",
+        "ago_d": "−{n} n",
+        "now": "most",
+        "chart_empty": "Még nincs előzmény",
+        "disk": "Lemez"
       }
     }
   }

@@ -397,6 +397,32 @@ MOUNT = """([state, strings, tab, narrow, view]) => {
         for (const [k, v] of Object.entries(vars || {})) text = text.replaceAll(`{${k}}`, String(v));
         return text;
     };
+    // Recorded values of the System Monitor sensors: a gentle wave around their value now, the same at every run.
+    const seeded = (id) => {
+        let seed = [...id].reduce((n, c) => (n * 31 + c.charCodeAt(0)) % 2147483647, 7);
+        return () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+    };
+    const wave = (id, from, step, count) => {
+        const sensor = state.system.find((s) => s.entity_id === id);
+        const base = Number(sensor?.state) || 0;
+        const amp = /processor_use|throughput/.test(id) ? 0.6 : /temperature/.test(id) ? 0.12 : /disk/.test(id) ? 0.01 : 0.06;
+        const rnd = seeded(id);
+        let v = base;
+        return Array.from({ length: count }, (_, i) => {
+            v += (rnd() - 0.5) * base * amp;
+            v = Math.max(0, v * 0.9 + base * 0.1 + (i % 37 === 20 ? base * amp * 2 : 0));
+            return [from + i * step, Math.round(v * 100) / 100];
+        });
+    };
+    const history = (msg) => {
+        const from = Date.parse(msg.start_time);
+        const count = Math.round((Date.now() - from) / 300000);
+        return Object.fromEntries(msg.entity_ids.map((id) => [id, wave(id, from, 300000, count).map(([t, v]) => ({ s: String(v), lu: t / 1000 }))]));
+    };
+    const statistics = (msg) => {
+        const from = Date.parse(msg.start_time);
+        return Object.fromEntries(msg.statistic_ids.map((id) => [id, wave(id, from, 3600000, 168).map(([t, v]) => ({ start: t, mean: v }))]));
+    };
     const el = document.createElement("system-hub-panel");
     el.panel = { url_path: "system-hub", config: {} };
     el.narrow = narrow;
@@ -413,7 +439,11 @@ MOUNT = """([state, strings, tab, narrow, view]) => {
                 ? state
                 : msg.service === "git_sync_get_diff"
                   ? { response: state.git_sync_diff }
-                  : {},
+                  : msg.type === "history/history_during_period"
+                    ? history(msg)
+                    : msg.type === "recorder/statistics_during_period"
+                      ? statistics(msg)
+                      : {},
     };
     if (view) el._battView = view;
     document.getElementById("root").appendChild(el);
@@ -523,7 +553,7 @@ def main():
                 continue
             box = page.locator("#root").bounding_box()
             clip = {"x": 0, "y": 0, "width": width, "height": max(int(box["height"] + 0.999) + 16, 200)}
-            capture(page, out / f"{shot['file']}.png", clip=clip, animations="disabled")
+            capture(page, out / f"{shot['file']}.png", clip=clip, full_page=True, animations="disabled")
             page.close()
         browser.close()
 
