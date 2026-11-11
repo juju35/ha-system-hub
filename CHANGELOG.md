@@ -3,6 +3,12 @@
 ## Unreleased
 
 ### New
+- **Lovelace cards**, served by System Hub and added to the dashboard resources by itself (removed with the integration; loaded on every page with the resources in YAML mode), with the card types of the integrations they replace so their dashboards keep working:
+  - the **System Monitor Card** and **Mini Card** (replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card));
+  - the **Watchdog Card** and **Mini Card** (a card still pointing at Integration Watchdog's sensor finds System Hub's);
+  - the **Marketplace Refresh Card**;
+  - the **Battery Monitor Card** and **Mini Card**, with the battery types set in **Configure**;
+  - the **Git Sync Card** and **Mini Card**, with the diff viewer.
 - **System tab**: received and sent since the boot (System Monitor's network in and out, physical interfaces summed); the Home Assistant Core and OS versions, orange with the version available when an update is, opening Settings → Updates.
 - **Thresholds** in **Configure → System: thresholds**: when CPU, RAM, disk, temperature and swap turn orange and red in the System tab (the rings, the tiles and the disks); the red one must be above the orange one.
 - **Batteries tab**: **Export CSV** (every battery with its room, type, level, status, drain, days left and replacement date, made by the browser), the spare batteries by type with how many to buy and a form to set a type's stock, and a search by name, room or type.

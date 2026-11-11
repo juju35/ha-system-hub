@@ -160,6 +160,241 @@ On a phone:
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-phone.png" alt="sidebar panel on a phone" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-phone-dark.png" alt="sidebar panel on a phone, dark theme" width="300"> |
 
+## Lovelace cards
+
+System Hub also serves the cards of the integrations it replaces, with the same card types, so their dashboards keep working once the old card or integration is removed. There is nothing to install: each card is added to **Settings → Dashboards → Resources** by itself (`/system_hub_static/cards/<card>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, the cards are loaded on every page instead. Remove the old card's resource (or uninstall it) after the move.
+
+| Card | Types | Replaces |
+|---|---|---|
+| [System Monitor](#system-monitor-cards) | `custom:system-monitor-card`, `custom:system-monitor-mini-card` | [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card) |
+| [Watchdog](#watchdog-card) | `custom:integration-watchdog-card`, `custom:integration-watchdog-mini-card` | [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog)'s cards |
+| [Marketplace Refresh](#marketplace-refresh-card) | `custom:marketplace-refresh-card` | [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh)'s card |
+| [Battery Monitor](#battery-monitor-card) | `custom:battery-monitor-card`, `custom:battery-monitor-mini-card` | [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor)'s cards |
+| [Git Sync](#git-sync-card) | `custom:git-sync-card`, `custom:git-sync-mini-card` | [ha-git-sync](https://github.com/juju35/ha-git-sync)'s cards |
+| [Orphan Entities](#cards) | `custom:orphan-entities-card`, `custom:orphan-entities-mini-card` | [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities)'s cards |
+
+## System Monitor cards
+
+System Hub ships two Lovelace cards to monitor the machine running Home Assistant itself — CPU, RAM, disk, temperature, network, storage, backups and processes at a glance: the full **System Monitor Card** and the compact **System Monitor Mini Card** (formerly [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card)).
+
+There is nothing to install: System Hub adds the cards to **Settings → Dashboards → Resources** by itself (`/system_hub_static/cards/system-monitor-card.js`, with the version in its URL so that an update is fetched again), and removes them when the integration is removed. With the dashboard resources in YAML mode, the cards are loaded on every page instead. If you used the separate card before, remove its resource (or uninstall it): the custom element names are the same (`custom:system-monitor-card`, `custom:system-monitor-mini-card`), so your dashboards keep working unchanged.
+
+The cards are built on top of the core [System Monitor integration](https://www.home-assistant.io/integrations/systemmonitor/): entities are **discovered automatically**, you don't have to pick them one by one, and it works whatever the language of your installation.
+
+| System Monitor Card | System Monitor Mini Card |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="system-monitor-card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-mini.png" alt="system-monitor-mini-card" width="400"> |
+
+### Features
+
+- Two cards: a full **System Monitor Card** and a compact **System Monitor Mini Card**
+- **Zoom** on the mini card: a button at the top right switches it to the full System Monitor card (same options) and back; a click anywhere outside the card brings it back too
+- Automatic discovery of the System Monitor entities through the entity registry (any language)
+- CPU, RAM, disk and CPU temperature gauges, uptime, load average and IP address
+- Home Assistant Core and OS versions, with an orange badge when an update is available
+- Network download / upload rates and totals, per interface (virtual interfaces such as `docker0` or `hassio` are hidden)
+- **24 h history**: a discreet curve of the last 24 hours behind the CPU and RAM gauges (bars on the mini card) and each download / upload rate, on the full card and the mini card, from the recorder's statistics on a real time axis, with a break where the recorder has no data (refreshed every 5 minutes; `show_history: false` turns it off)
+- Storage: every monitored mount point and the swap, with used space, and the size of the Home Assistant database
+- Backups: when the last automatic backup was made and when the next one is due, orange / red when it gets old or the last attempt failed (the mini card shows it only then), from Home Assistant's own backup sensors
+- Monitored processes, green when running and red when stopped: hidden while they all run (their status tile shows the list on a click), always shown while one is stopped, with their overall status in the status row
+- Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature, swap), with thresholds you can change
+- Click any value to open its Home Assistant history (more-info dialog)
+- Visual editor in the dashboard UI for every card (no YAML needed)
+- Light and dark mode, English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, European Portuguese, Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian and Greek
+
+### Supported integrations
+
+| Integration | What the cards show |
+|---|---|
+| [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) (built in) | CPU, RAM, disk and temperature gauges, uptime, load, IP address, network, storage and swap, monitored processes |
+| [File Size](https://www.home-assistant.io/integrations/filesize/) (built in, optional) | Size of the Home Assistant database |
+| Home Assistant updates (built in, `update.home_assistant_*`) | Core and OS versions, with a badge when an update is available |
+
+The Marketplace updates and the unavailable integrations are in System Hub's sidebar panel (Marketplace and Watchdog tabs).
+
+### Prerequisites
+
+Home Assistant 2024.8 or later, and:
+
+The [System Monitor integration](https://www.home-assistant.io/integrations/systemmonitor/) must be added (**Settings → Devices & services → Add integration → System Monitor**).
+
+Most of its sensors are disabled by default: open the **System Monitor** device and enable the ones you want to see on the card, for example:
+
+| Card section | Sensors to enable |
+|---|---|
+| System | Processor use, Memory usage (or Memory use + Memory free), Disk usage / Disk use + Disk free, Processor temperature, Last boot (called Uptime in recent versions), Load (1m/5m/15m), IPv4 address |
+| Network | Network throughput in / out, Network in / out (totals) |
+| Storage | Disk use + Disk free for each mount point, Swap use + Swap free. For the database size, the [File Size](https://www.home-assistant.io/integrations/filesize/) integration on `/config/home-assistant_v2.db` (see below) |
+| Processes | Process binary sensors (configured in the integration options) |
+
+Sections and gauges without any enabled sensor are simply not displayed.
+
+### Configuration
+
+#### Visual editor
+
+Edit a dashboard, click **Add card** and search for **System Monitor Card** or **System Monitor Mini Card**. Set an optional title, choose the sections to display, the network interface and the language. The preview updates live, and options left at their default are kept out of the generated YAML.
+
+#### Minimal
+
+```yaml
+type: custom:system-monitor-card
+```
+
+```yaml
+type: custom:system-monitor-mini-card
+```
+
+#### Full options
+
+```yaml
+type: custom:system-monitor-card
+title: My Home Assistant
+show_system: true
+show_network: true
+show_history: true
+show_storage: true
+show_backups: true
+show_processes: true
+interface: eth0
+language: fr
+cpu_warning: 70
+cpu_critical: 90
+ram_warning: 80
+ram_critical: 95
+disk_warning: 80
+disk_critical: 90
+temp_warning: 75
+temp_critical: 90
+swap_warning: 50
+swap_critical: 80
+backup_warning: 2
+backup_critical: 7
+```
+
+```yaml
+type: custom:system-monitor-mini-card
+title: My Home Assistant
+show_storage: true
+show_network: true
+show_history: true
+zoom: true
+interface: eth0
+language: fr
+cpu_warning: 70
+cpu_critical: 90
+```
+
+#### Options reference
+
+| Option | Card | Default | Description |
+|---|---|---|---|
+| `title` | all | `Home Assistant` | Card title |
+| `show_system` | full | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
+| `show_network` | full, mini | `true` | Network download / upload |
+| `show_history` | full, mini | `true` | 24 h curve behind the CPU and RAM gauges (bars on the mini card, RAM from its `memory_use_percent` sensor, on a 0–100 % scale) and each download / upload rate, from the recorder's 5-minute statistics (one query for all of them) (on the mini card, the rates then show as tiles above the footer instead of in it) |
+| `show_storage` | full, mini | `true` | Full card: mount points, swap and database size. Mini card: disk bar |
+| `show_backups` | full, mini | `true` | Full card: the last and next automatic backups at the end of Storage. Mini card: an orange / red item when the last backup is too old or failed |
+| `show_processes` | full | `true` | Monitored processes and their status tile |
+| `zoom` | mini | `true` | Zoom button at the top right: shows the full card, and back to the compact view |
+| `interface` | full, mini | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
+| `cpu_warning` / `cpu_critical` | full, mini | `70` / `90` | CPU usage (%) from which the gauge turns orange / red |
+| `ram_warning` / `ram_critical` | full, mini | `80` / `95` | RAM usage (%) from which the gauge turns orange / red |
+| `disk_warning` / `disk_critical` | full, mini | `80` / `90` | Disk usage (%) from which the gauges and storage bars turn orange / red |
+| `temp_warning` / `temp_critical` | full, mini | `75` / `90` | CPU temperature (°C, whatever the unit of the sensor) from which the gauge turns orange / red |
+| `swap_warning` / `swap_critical` | full | `50` / `80` | Swap usage (%) from which the swap bar turns orange / red |
+| `backup_warning` / `backup_critical` | full, mini | `2` / `7` | Days since the last successful automatic backup from which the backup turns orange / red (red also when the last attempt failed, or there was never one) |
+| `language` | all | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
+
+### Screenshots
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-dark.png" alt="card dark" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-mini.png" alt="mini card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-mini-dark.png" alt="mini card dark" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-mini-zoom.png" alt="mini card zoomed in" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-mini-zoom-dark.png" alt="mini card zoomed in dark" width="400"> |
+
+### How it works
+
+The cards read the entity registry of Home Assistant and keep the entities of the `systemmonitor` platform. Each sensor is recognized by its translation key (`processor_use`, `memory_use_percent`, `disk_free`, `throughput_network_in`…), so entity ids translated in another language (for example `sensor.system_monitor_utilisation_du_processeur`) and renamed entities are supported. Mount points, interfaces and process names are read from the end of the sensor name, after the device name and the label: a mount point starts at its first `/` (so names with spaces, `/mnt/My Passport`, are kept whole), an interface is the last word, a process name is what follows `Process` (or the label the other processes share). This works for a sensor alone of its kind too (`Disk usage /config`). A sensor renamed in its entity settings (`WAN up`, `Root free`) no longer says its argument: it is read from its entity id instead, which Home Assistant made from the original name (`sensor.system_monitor_network_throughput_out_eth0` → `eth0`, `sensor.system_monitor_disk_free` → `/`). When the registry is not available, English entity ids (`sensor.system_monitor_processor_use`…) are used as a fallback.
+
+The Core and OS versions come from the `update.home_assistant_core_*` and `update.home_assistant_operating_system_*` entities when they exist, otherwise from the running Home Assistant version.
+
+#### Status row
+
+Under the header, a tile gives the overall status of the **Processes** section (running or the number stopped), green when all is well, red otherwise. The Core / OS update badge turns grey "Unknown" when the update entity is unavailable. Click the tile to show the section unfolded; a click elsewhere folds or hides it again. The Home Assistant Core / OS update stays next to the logo. The tile is left out when the section is hidden or has no process.
+
+#### Mini card
+
+The compact card shows CPU, RAM, disk and temperature bars, then the Core / OS status, the network rates and the uptime. While a monitored process is stopped, its header icon turns red and its footer shows a red "N stopped" item: a click on it shows the full card with the processes list unfolded (with `zoom: false`, it opens the first stopped process). At the far right of the header, a small round button (`mdi:arrow-expand`) shows the full card in its place, with the same options, exactly as the **System Monitor Card** shows it, and turns into `mdi:arrow-collapse` to bring the compact view back; a click anywhere outside the card does too, but not a click in a dialog opened from it (more-info). `zoom: false` removes the button.
+
+#### Processes
+
+The processes section is hidden while every monitored process runs: the **Processes** tile of the status row says "Running", and a click on it shows the list, which hides again on a click on its title or elsewhere. As soon as a process is stopped, the section shows up by itself and stays, whatever you click, until every process runs again. Its title shows the number of processes, and the number stopped in red.
+
+#### Backups
+
+The **Storage** section also shows Home Assistant's automatic backups, from the sensors of the built-in Backup integration (Home Assistant 2025.2 or later, nothing to set up): *Last successful automatic backup*, *Last attempted automatic backup*, *Next scheduled automatic backup* and *Backup manager state*. The row shows when the last one was made and when the next one is due; it turns orange after `backup_warning` days, red after `backup_critical` days, when the last attempt failed or when there was never one, and says *Backing up…* while one runs. Click it for the sensor's history. Only automatic backups count (set them up in **Settings → System → Backups**).
+
+#### Database size
+
+The **Storage** section ends with the size of the Home Assistant database (the default SQLite one, `home-assistant_v2.db`), read from the [File Size](https://www.home-assistant.io/integrations/filesize/) integration. To get it:
+
+1. Allow Home Assistant to read the file, in `configuration.yaml`, then restart:
+   ```yaml
+   homeassistant:
+     allowlist_external_dirs:
+       - /config
+   ```
+2. **Settings → Devices & services → Add integration → File Size**, with the path `/config/home-assistant_v2.db`.
+
+The card finds its size sensor by itself (platform `filesize`, a file named `home-assistant_v2.db`); a click on the row opens its history. Without it, the row is not shown. An external database (MariaDB, PostgreSQL) is not a file and isn't supported.
+
+#### Thresholds
+
+Gauges and bars turn orange, then red, when a value reaches these thresholds (the defaults; each can be changed with the `*_warning` / `*_critical` options, in YAML or in the visual editor):
+
+| Value | Orange | Red |
+|---|---|---|
+| CPU usage | 70 % | 90 % |
+| RAM usage | 80 % | 95 % |
+| Disk usage | 80 % | 90 % |
+| CPU temperature | 75 °C (167 °F) | 90 °C (194 °F) |
+| Swap usage | 50 % | 80 % |
+
+The CPU temperature is shown in the unit of its sensor, which follows the unit system of Home Assistant (°C, or °F with US customary units) or the display unit chosen in the sensor's settings; the thresholds are in °C and apply to the same temperature in any unit.
+
+### Translations
+
+The cards auto-detect the language from your Home Assistant settings. Currently supported:
+
+| Language | Code |
+|---|---|
+| English | `en` |
+| Français | `fr` |
+| Deutsch | `de` |
+| Español | `es` |
+| Српски | `sr` |
+| Srpski (latinica) | `sr-Latn` |
+| Italiano | `it` |
+| Nederlands | `nl` |
+| Português (Portugal) | `pt` |
+| Polski | `pl` |
+| Română | `ro` |
+| Dansk | `da` |
+| Svenska | `sv` |
+| Български | `bg` |
+| Русский | `ru` |
+| Українська | `uk` |
+| Magyar | `hu` |
+| Slovenčina | `sk` |
+| Čeština | `cs` |
+| Slovenščina | `sl` |
+| Latviešu | `lv` |
+| Ελληνικά | `el` |
+
+Regional variants fall back to the base language (`it-IT` → `it`, `nl-BE` → `nl`, `pl-PL` → `pl`); Brazilian Portuguese (`pt-BR`) uses the European Portuguese translation. In the languages whose plurals have more than two forms (Serbian, Polish, Romanian, Russian, Ukrainian, Slovak, Czech, Slovenian and Latvian), counts other than 1 read "label: {n}" (`Nedostupne: 2`).
+
 ## Containers
 
 Home Assistant's own containers, read from the Supervisor: **Home Assistant Core**, the **Supervisor** and every **add-on**. **Monitoring only**: the module never starts, stops or restarts anything.
@@ -337,6 +572,65 @@ actions:
 | `attempt` | Power cycle number in a row (1, 2…) |
 | `max_reloads` | Power cycles in a row before giving up |
 
+### Watchdog card
+
+System Hub serves the **Watchdog Card** (ported from Integration Watchdog) with its other cards: no separate install. It keeps the card types of Integration Watchdog, so dashboards that used them keep working once Integration Watchdog is removed (a card still pointing at its old sensor finds System Hub's on its own). Add it from the card picker (**Watchdog Card (System Hub)**), or:
+
+```yaml
+type: custom:integration-watchdog-card
+```
+
+| Unavailable integrations | Everything available |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog.png" alt="Watchdog card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-ok.png" alt="Watchdog card, all available" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-dark.png" alt="Watchdog card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-ok-dark.png" alt="Watchdog card, all available, dark theme" width="400"> |
+
+- **Header**: status (all available, *n* unavailable, *n* given up, checking…), time of the last check and the **Check now** button. On a narrow card the status takes a second line, shortens, then keeps only its coloured dot, with the text on hover. In a Sections view the card takes at least 8 columns
+- **Summary**: unavailable integrations, reloads since Home Assistant started, ignored integrations (listed on hover)
+- **Unavailable integrations**: for each one, how long it has been down and its reloads (*1/3 reloads*), *Grace period* before the first one, *Given up* once the limit is reached
+- **Recent reloads**: the last attempt of each integration (reloaded, failed or given up), newest first, with the attempt and how long ago. The history is saved, so it survives a restart
+- For an administrator, a row opens the integration's page in **Settings** on its entry, to reload it by hand or read its logs (other users can't open Settings, so their rows are not clickable). Integration logos come from the Home Assistant brands
+- For an administrator, an integration given up gets a **Try again** button next to its row: it runs the `system_hub.watchdog_reset` action (start over and reload now)
+
+It reads the Watchdog module's entities (`sensor.system_hub_watchdog_unavailable_integrations`, `sensor.system_hub_watchdog_last_reload`, `sensor.system_hub_watchdog_last_check`, `button.system_hub_watchdog_check_now`), found by their translation keys, so renamed entities are still found. Every option is in the visual editor:
+
+| Option | Default | Description |
+|---|---|---|
+| `entity` | found automatically | The **Unavailable integrations** sensor of System Hub |
+| `title` | Watchdog | Card title |
+| `show_stats` | `true` | Summary tiles |
+| `show_unavailable` | `true` | Unavailable integrations |
+| `show_history` | `true` | Recent reloads |
+| `history_count` | `5` | Recent reloads shown (one per integration), from 1 to 20 |
+| `check_button` | `true` | **Check now** button in the header. It presses the button entity, so any user who sees the card can run a check (only the `system_hub.watchdog_check` action is limited to administrators) |
+| `hide_when_ok` | `false` | Hide the card while every integration is available (always shown while editing the dashboard) |
+| `language` | Home Assistant's | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt`, `pl`, `sr`, `sr-Latn`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` |
+
+#### Watchdog mini card
+
+`custom:integration-watchdog-mini-card` shows the essentials on two lines, for a compact dashboard: the icon, title, **Check now** button and status, then a chip per unavailable integration (*Hue Bridge · 1/3 reloads*, *Zigbee · Given up*), or the last reload while everything is available, and the time of the last check. Search for **Watchdog Mini Card (System Hub)** when adding a card, or in YAML:
+
+```yaml
+type: custom:integration-watchdog-mini-card
+```
+
+| Unavailable integrations | Everything available | Zoomed in |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-mini.png" alt="Watchdog mini card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-mini-ok.png" alt="Watchdog mini card, all available" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-mini-zoom.png" alt="Watchdog mini card zoomed in" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-mini-dark.png" alt="Watchdog mini card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-mini-ok-dark.png" alt="Watchdog mini card, all available, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog-mini-zoom-dark.png" alt="Watchdog mini card zoomed in, dark theme" width="400"> |
+
+- The **detail** button (top right) switches the card to the full Watchdog card, with the same options, and back, as does a click anywhere else on the page
+- For an administrator, an integration's chip opens its page in **Settings**, on its entry; for other users, a chip opens the sensor
+- In a Sections view the card takes 6 columns by default, its minimum; on a narrow card the icon gives way and the status keeps only its coloured dot
+
+It takes every option of the full card (they set its detail view, `hide_when_ok` and `check_button` apply to both views), plus:
+
+| Option | Default | Description |
+|---|---|---|
+| `zoom` | `true` | **Detail** button showing the full card. `false` removes it |
+
+The screenshots are made by `python scripts/screenshots_watchdog.py`.
+
 ## Marketplace
 
 | Option | Default | Description |
@@ -428,6 +722,46 @@ actions:
         {{ trigger.event.data.count }} new update(s): {{ trigger.event.data.updates | join(', ') }}
         ({{ trigger.event.data.total }} available)
 ```
+
+### Marketplace Refresh card
+
+The card of System Hub's **Marketplace** module, ported from [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh): same element name, options and look, so a dashboard keeps working once the module replaces the old integration. System Hub serves it with its other cards: no separate install. Add it from the card picker, or:
+
+```yaml
+type: custom:marketplace-refresh-card
+```
+
+| Updates available | Checking | Installing | Up to date |
+|---|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace.png" alt="Card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-checking.png" alt="Card while checking" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-installing.png" alt="Card while installing" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-ok.png" alt="Card, up to date" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-dark.png" alt="Card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-checking-dark.png" alt="Card while checking, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-installing-dark.png" alt="Card while installing, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-ok-dark.png" alt="Card, up to date, dark theme" width="400"> |
+
+- **Header**: status (up to date, *n* updates, *n* failed, checking *done/total*, error), when the last check ran and when the next automatic one is due, and the **Check for updates** button
+- **Progress bar** while a check runs
+- **Few GitHub requests left**: under 1,500, a line with the number left and when GitHub's limit resets — checks wait for it
+- **Updates available** (with their number): the repositories with an update, from the Marketplace's own update entities, with the installed and new version, hidden when there is none. A row opens the update entity, to install it or read the release notes
+- **Update all (*n*)**: installs every update listed, one after the other, after a confirmation at the top of the card (administrators only). The rows being installed and the number left show the progress
+- **Could not be installed**: the updates that failed, with the error
+- **Could not be checked**: the repositories the last check couldn't fetch (and, without a GitHub account connected, the ones added from a link, with a line saying why), and the error of a check that failed
+
+Every option is in the visual editor:
+
+| Option | Default | Description |
+|---|---|---|
+| `entity` | found automatically | The Marketplace **Status** sensor (`sensor.system_hub_marketplace_status`); its **Last check** sensor or **Check for updates** button lead to it, and an entity that no longer exists (from the old integration, say) falls back to it |
+| `title` | Marketplace updates | Card title |
+| `show_updates` | `true` | Updates available |
+| `show_failed` | `true` | Repositories that couldn't be checked, and the error of a failed check |
+| `check_button` | `true` | **Check for updates** button in the header |
+| `install_button` | `true` | **Update all** button on the updates available (administrators only) |
+| `hide_when_ok` | `false` | Hide the card while everything is up to date (it shows while checking, with an update or an error, and always while editing the dashboard) |
+| `language` | Home Assistant's | `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` |
+
+#### Entities and actions used
+
+The card reads the Marketplace module's sensors, told apart by their translation key (`marketplace_status`, `marketplace_last_check`, button `marketplace_check_updates`) so renamed entity IDs keep working, and only System Hub's (the other modules have a status too), plus the Marketplace's own update entities. **Check for updates** presses `button.system_hub_marketplace_check_updates`; **Update all** calls `system_hub.marketplace_install_updates` with the update entities listed.
+
+Screenshots: `python scripts/screenshots_marketplace.py` (mock data, frozen clock; repository pictures are not fetched).
 
 ## Batteries
 
@@ -541,6 +875,88 @@ When a battery goes below the threshold, System Hub writes down the time. For a 
 The list is updated whenever a battery changes, and every 10 minutes.
 
 Once a day (and at start), the drain of each level battery is measured on its recorded history over the last 30 days: a least-squares slope of the level, counted from the last replacement (a rise of 15 points or more), when at least three days and three points are recorded. From that drain and the current level come the days left before the threshold and the replacement date; a stable level (less than 0.05 % a day) gives none. The days left follow the level between two measures.
+
+### Battery Monitor card
+
+The **Battery Monitor Card** and **Battery Monitor Mini Card**, served by System Hub for its Batteries module. The card types are those of Battery Monitor (`custom:battery-monitor-card`, `custom:battery-monitor-mini-card`), so dashboards made with it keep working once Battery Monitor is removed.
+
+Add it from the dashboard (**Add card → Battery Monitor Card**) or in YAML:
+
+```yaml
+type: custom:battery-monitor-card
+```
+
+| Option | Default | Description |
+|---|---|---|
+| `entity` | Auto | The System Hub **Low batteries** sensor; found automatically |
+| `title` | `Batteries` | Card title |
+| `columns` | `1` | Number of battery columns (1–3); a card too narrow for them shows fewer, each at least 160 px wide |
+| `only_low` | `false` | Show only the batteries below the threshold or unavailable |
+| `hide_when_ok` | `false` | Hide the whole card when every battery is above the threshold and available (always shown while editing the dashboard) |
+| `notify_button` | `true` | Bell button in the header that presses System Hub's **Notify now** button: it turns while sending, then shows a check mark, or the reason in its tooltip when it fails; disabled while the button is unavailable |
+| `popup` | `true` | Full screen button in the header |
+| `expanded` | `false` | Lay the full screen view out in the card itself (by room, by type, by replacement date, what to replace, next replacement); no full screen button then |
+| `csv_button` | `true` | **Export CSV** button in the full screen view and the expanded card |
+| `battery_models` | — | The battery type of every device of a model: `Hue dimmer switch: CR2450` |
+| `battery_types` | — | The type of one battery, by battery entity: `sensor.remote_battery: 2× AAA` |
+| `language` | Auto | Force language: `en`, `fr`, `de`, `es`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv`, `el`, `sr` or `sr-Latn` |
+
+Tap a battery to open its details.
+
+#### Mini card
+
+A compact card for a half-width column: the header with its status and **Notify now** button, and only the batteries needing attention. The detail button (top right) shows the full card; a click outside brings the compact view back. Same options and editor:
+
+```yaml
+type: custom:battery-monitor-mini-card
+```
+
+#### Full screen
+
+The **full screen** button shows every battery grouped **by room**, **by battery type** or **by replacement date**, with **To replace** (how many batteries of each type to buy) and **Next replacement** (the first battery the measured drain takes to the threshold). **Export CSV** downloads every battery (room, type, level, status, drain, days left, replacement date). It closes with its button, Escape, a click outside, or the back button on a phone.
+
+#### Battery types
+
+System Hub already gives each battery its type: the one set in **Settings → Devices & services → System Hub → Configure → Battery types** (per battery or per device model), otherwise [Battery Notes](https://github.com/andrew-codechimp/HA-Battery-Notes). The types set in the card editor (**Battery types by model**, **Battery types by battery**) still apply on top, for that card only; **Configure → Import from Battery Monitor** brings those of existing cards into System Hub. `2× AA` (or `2x AA`, `AA x2`) counts two batteries; batteries without a type are grouped under **Unknown type**.
+
+```yaml
+type: custom:battery-monitor-card
+battery_models:
+  Hue dimmer switch: CR2450
+battery_types:
+  sensor.remote_battery: 2× AAA
+```
+
+#### Screenshots
+
+A battery due for replacement blinks its icon (honours `prefers-reduced-motion`):
+
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-due.gif" alt="due battery animation" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-due-dark.gif" alt="due battery animation, dark" width="400"> |
+
+| Every battery | Low batteries only |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-low.png" alt="low batteries only" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-dark.png" alt="card, dark" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-low-dark.png" alt="low batteries only, dark" width="400"> |
+
+| Mini card | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-mini.png" alt="mini card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-mini-dark.png" alt="mini card, dark" width="400"> |
+
+| Full screen, by replacement date | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-forecast.png" alt="full screen by replacement date" width="700"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-forecast-dark.png" alt="full screen by replacement date, dark" width="700"> |
+
+| Full screen, by room | Full screen, by battery type |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup.png" alt="full screen by room" width="700"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-type.png" alt="full screen by type" width="700"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-dark.png" alt="full screen by room, dark" width="700"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-type-dark.png" alt="full screen by type, dark" width="700"> |
+
+| Phone, by room | Phone, by battery type |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-phone.png" alt="phone by room" width="241"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-phone-type.png" alt="phone by type" width="241"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-phone-dark.png" alt="phone by room, dark" width="241"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries-popup-phone-type-dark.png" alt="phone by type, dark" width="241"> |
 
 ## Automations
 
@@ -722,6 +1138,82 @@ The module raises these issues in **Settings → System → Repairs**:
 | Cannot push (diverged) | The branch and the remote both have commits the other lacks, or the rebase of a commit stopped on a conflict | In a terminal in the repository: `git pull --rebase`, fix the conflicts (`git add`, `git rebase --continue`), then Commit & push. Removed by the next successful push |
 | Cannot push (behind) | The remote has new commits and *Pull before push* is off | Turn the option on, or run `git pull --rebase`. Removed by the next successful push |
 | `.gitignore` does not exclude secrets | The repository holds a `configuration.yaml` and its `.gitignore` lets `secrets.yaml` or `.storage/` be committed | **Fix** shows the lines to add and appends them to `.gitignore` once confirmed (repairs are for administrators only). A file already tracked stays tracked: `git rm -r --cached secrets.yaml .storage` removes it from the repository, not from the disk |
+
+### Git Sync card
+
+The card of System Hub's **Git Sync** module, ported from [ha-git-sync](https://github.com/juju35/ha-git-sync): same element names, options and look, so a dashboard keeps working once the module replaces the old integration. System Hub serves it with its other cards: no separate install. Add it from the card picker, or:
+
+```yaml
+type: custom:git-sync-card
+```
+
+| Changes pending | Up to date |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-clean.png" alt="Card, up to date" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-dark.png" alt="Card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-clean-dark.png" alt="Card, up to date, dark theme" width="400"> |
+
+| Push failed | Commit & push, message written by the ✨ button |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-error.png" alt="Card, push failed" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-confirm.png" alt="Card, commit confirmation" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-error-dark.png" alt="Card, push failed, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-confirm-dark.png" alt="Card, commit confirmation, dark theme" width="400"> |
+
+- **Header**: status (up to date, changes, push pending, behind, diverged, error, working…), branch and remote repository
+- **Last commit**: message, short hash and how long ago
+- **Changed files**: collapsible list, folded again when you click elsewhere
+- **Last push** and **Dashboard export**, with the number of exported files
+- **Commit & push** opens a confirmation at the top of the card with a message box, as in VS Code: the placeholder names the branch, and the ✨ button inside it (shown when an AI task is set) writes the message for the current changes without committing, so you can read and edit it before **Commit & push**. Left empty, the AI task writes it when committing. **Enter** commits, **Escape** closes. **Export dashboards** runs the export right away. The result is shown in a toast
+- **Pull** (shown when the remote has commits that are not here, unless local changes sit on top of unpushed commits: commit first) brings in the remote commits right away, with `system_hub.git_sync_pull`
+- The actions (**Commit & push**, **Pull**, **Export dashboards**, **View changes**, ✨) are shown to administrators only, as the actions themselves are reserved to them; other users see the status
+- **View changes** (the compare button beside the actions, also linked from the commit confirmation, shown when something changed) opens the **diff viewer** below
+
+#### Diff viewer
+
+A full-screen view of what the next commit would include, laid out like an editor's source control view: the changed files on the left with their status letter (**A**dded, **M**odified, **D**eleted, **R**enamed, **T**ype or mode changed) and their added and removed lines, the selected file on the right hunk by hunk, with the line numbers of both sides, additions in green and deletions in red. On a phone it fills the screen and the files become a row of chips above the diff. Nothing is staged or committed by looking: the diff comes from a copy of the Git index (`system_hub.git_sync_get_diff`). **↑ ↓** walk the files, **Escape** or a click outside closes, **Commit & push** goes straight to the commit confirmation of the card.
+
+| Desktop | Phone |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-diff.png" alt="Diff viewer" width="640"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-diff-phone.png" alt="Diff viewer on a phone" width="250"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-diff-dark.png" alt="Diff viewer, dark theme" width="640"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-diff-phone-dark.png" alt="Diff viewer on a phone, dark theme" width="250"> |
+
+Every option is in the visual editor:
+
+| Option | Default | Description |
+|---|---|---|
+| `entity` | found automatically | The Git Sync **Status** sensor (`sensor.system_hub_git_sync_status`); any other Git Sync entity leads to it, and an entity that isn't one (from the old integration, say) falls back to it |
+| `title` | Git Sync | Card title |
+| `show_files` | `true` | Collapsible list of the changed files |
+| `show_export` | `true` | Last export and the **Export dashboards** button |
+| `language` | Home Assistant's | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt` (European Portuguese), `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv`, `el`, `sr` (Serbian, Cyrillic) or `sr-Latn` (Serbian, Latin) |
+
+#### Mini card
+
+A compact version for a 6-column slot: status, branch, last commit on one line, number of changed files, last push and **Commit & push** as an icon button (plus **Pull** when the remote has new commits; administrators only). The zoom button at the top right switches it to the full card (same options) and back; a click anywhere else brings back the compact view.
+
+```yaml
+type: custom:git-sync-mini-card
+```
+
+| Changes pending | Up to date | Push failed |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini.png" alt="Mini card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-clean.png" alt="Mini card, up to date" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-error.png" alt="Mini card, push failed" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-dark.png" alt="Mini card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-clean-dark.png" alt="Mini card, up to date, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-error-dark.png" alt="Mini card, push failed, dark theme" width="400"> |
+
+| Zoomed in | |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-zoomed.png" alt="Mini card zoomed in to the full card" width="389"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync-mini-zoomed-dark.png" alt="Mini card zoomed in, dark theme" width="389"> |
+
+In the compact view **Commit & push** opens the same message box (✨ button included) in place of the content. The mini card takes the options of the full card, plus:
+
+| Option | Default | Description |
+|---|---|---|
+| `zoom` | `true` | Zoom button switching to the full card; `show_files` and `show_export` apply to the full view |
+
+
+#### Entities and actions used
+
+The card reads the Git Sync module's sensors, told apart by their translation key (`git_sync_status`, `git_sync_last_commit`, `git_sync_last_push`, `git_sync_last_export`) so renamed entity IDs keep working, and only System Hub's (the other modules have a status too). It calls `system_hub.git_sync_commit_push`, `system_hub.git_sync_pull`, `system_hub.git_sync_export_dashboards`, `system_hub.git_sync_generate_message` and `system_hub.git_sync_get_diff`, with no config entry: System Hub has a single one.
+
+Screenshots: `python scripts/screenshots_git_sync.py` (mock data, frozen clock).
 
 ## Orphans
 

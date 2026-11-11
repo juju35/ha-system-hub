@@ -3158,7 +3158,7 @@ for (const card of [
   },
 ]) {
   if (!window.customCards.some((c) => c.type === card.type))
-    window.customCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub/blob/main/docs/cards/system-monitor.md" });
+    window.customCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub#system-monitor-cards" });
 }
 
 console.info(
