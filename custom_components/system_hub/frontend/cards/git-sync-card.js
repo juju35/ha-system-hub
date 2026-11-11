@@ -6,7 +6,7 @@
  * integration, same card types: dashboards using it keep working.
  * https://github.com/juju35/ha-system-hub
  */
-var GIT_SYNC_CARD_VERSION = '0.5.4';
+var GIT_SYNC_CARD_VERSION = '0.5.5';
 // System Hub: its entities (platform system_hub, translation keys git_sync_*) and actions (system_hub.git_sync_*)
 var GS_DOMAIN = 'system_hub';
 var GS_PREFIX = 'git_sync_';
