@@ -154,6 +154,58 @@ test('batteries tab: lowest first, unavailable on top', () => {
   assert.match(html, /Notify now/);
 });
 
+test('batteries tab: by room, by battery type, by replacement date', () => {
+  const state = {
+    loaded: true,
+    modules: ['batteries'],
+    tabs: ['batteries'],
+    batteries: {
+      threshold: 20,
+      batteries: [
+        { entity_id: 'sensor.a', name: 'Door', area: 'Entrance', level: 8, low: true, battery_type: 'CR2032' },
+        { entity_id: 'sensor.b', name: 'Remote', area: 'Kitchen', level: 40, battery_type: '2× AAA', days_left: 20, drain_per_day: 1 },
+        { entity_id: 'sensor.c', name: 'Window', area: 'Kitchen', level: 70, battery_type: 'CR2032', days_left: 120 },
+        { entity_id: 'sensor.d', name: 'Lamp', level: 90 },
+      ],
+    },
+  };
+  const p = panel(state, 'batteries');
+  const names = (view) => JSON.parse(JSON.stringify(p._battGroups(state.batteries.batteries, view).map((g) => [g.name, g.items.map((x) => x.b.name)])));
+  assert.deepEqual(names('room'), [
+    ['Entrance', ['Door']],
+    ['Kitchen', ['Remote', 'Window']],
+    ['No room', ['Lamp']],
+  ]);
+  assert.deepEqual(names('type'), [
+    ['CR2032', ['Door', 'Window']],
+    ['AAA', ['Remote']],
+    ['Unknown type', ['Lamp']],
+  ]);
+  assert.deepEqual(names('forecast'), [
+    ['To replace now', ['Door']],
+    ['Within 30 days', ['Remote']],
+    ['Later', ['Window']],
+    ['No forecast yet', ['Lamp']],
+  ]);
+  p._battView = 'type';
+  const html = p._content();
+  assert.match(html, /data-view="type" aria-pressed="true"/);
+  assert.match(html, /By replacement date/);
+});
+
+test('git sync tab: the diff viewer opens on the changes', () => {
+  const html = panel(
+    { loaded: true, modules: ['git_sync'], tabs: ['git_sync'], git_sync: { status: 'dirty', branch: 'main', changed: 2, files: [] } },
+    'git_sync',
+  )._content();
+  assert.match(html, /data-action="git_sync_diff"[^>]*>\s*<ha-icon icon="mdi:file-compare"><\/ha-icon>View changes/);
+  const clean = panel(
+    { loaded: true, modules: ['git_sync'], tabs: ['git_sync'], git_sync: { status: 'clean', branch: 'main', changed: 0, ahead: 0, files: [] } },
+    'git_sync',
+  )._content();
+  assert.match(clean, /data-action="git_sync_diff" disabled/);
+});
+
 test('git sync tab: commit form, or the repository to set up', () => {
   const html = panel(
     {

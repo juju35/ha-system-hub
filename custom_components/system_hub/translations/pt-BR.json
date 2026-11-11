@@ -227,7 +227,7 @@
           "allow_sensitive": "Faz commit das alterações de arquivos sensíveis já rastreados pelo Git (secrets.yaml, .storage, chaves, banco de dados, logs). Arquivos sensíveis novos são sempre recusados.",
           "notify_service": "Por exemplo notify.mobile_app_telemovel. Deixe vazio para desativar.",
           "notify_image": "URL HTTPS absoluto (exigido pelo iOS).",
-          "export_format": "JSON copia os ficheiros .storage tal como estão; YAML mantém apenas a configuração do painel, mais legível nos diffs.",
+          "export_format": "JSON copia os arquivos .storage tal como estão; YAML mantém apenas a configuração do painel, mais legível nos diffs.",
           "export_dir": "Dentro da pasta de configuração (um caminho relativo começa nela) ou de uma pasta de allowlist_external_dirs.",
           "commit_before_update": "Quando uma atualização for instalada (Home Assistant, um complemento, uma integração), fazer primeiro commit e push da configuração, para ter um commit para onde voltar. Um único commit para atualizações instaladas juntas."
         }
@@ -483,10 +483,10 @@
             "name": "Commits atrás"
           },
           "changed_count": {
-            "name": "Ficheiros alterados"
+            "name": "Arquivos alterados"
           },
           "changed_files": {
-            "name": "Lista de ficheiros alterados"
+            "name": "Lista de arquivos alterados"
           },
           "last_error": {
             "name": "Último erro"
@@ -497,7 +497,7 @@
         }
       },
       "git_sync_changed_files": {
-        "name": "Ficheiros alterados"
+        "name": "Arquivos alterados"
       },
       "git_sync_last_commit": {
         "name": "Último commit",
@@ -525,7 +525,7 @@
         "name": "Última exportação dos painéis",
         "state_attributes": {
           "files": {
-            "name": "Ficheiros exportados"
+            "name": "Arquivos exportados"
           }
         }
       },
@@ -605,11 +605,11 @@
     },
     "batteries_export": {
       "name": "Exportar baterias para CSV",
-      "description": "Escreve cada bateria monitorizada (nível, divisão, fraca, indisponível, a tratar, desde quando, descarga por dia, dias restantes, data de substituição) num ficheiro CSV.",
+      "description": "Escreve cada bateria monitorizada (nível, divisão, fraca, indisponível, a tratar, desde quando, descarga por dia, dias restantes, data de substituição) num arquivo CSV.",
       "fields": {
         "path": {
-          "name": "Ficheiro",
-          "description": "Caminho do ficheiro CSV; system_hub_batteries.csv na pasta de configuração se vazio."
+          "name": "Arquivo",
+          "description": "Caminho do arquivo CSV; system_hub_batteries.csv na pasta de configuração se vazio."
         }
       }
     },
@@ -765,7 +765,7 @@
       "message": "{path} está fora das pastas permitidas (pasta de configuração ou allowlist_external_dirs)."
     },
     "batteries_path_not_csv": {
-      "message": "{path} não é um ficheiro CSV (.csv): a exportação só escreve ficheiros CSV."
+      "message": "{path} não é um arquivo CSV (.csv): a exportação só escreve arquivos CSV."
     },
     "batteries_path_hidden": {
       "message": "{path} está numa pasta oculta (como .storage): a exportação não escreve aí."
@@ -928,7 +928,37 @@
         "configure": "Configurações dos módulos",
         "git_needs_repo": "Configure primeiro o repositório em Configurar → Módulos.",
         "done": "Concluído",
-        "failed": "Falhou: {error}"
+        "failed": "Falhou: {error}",
+        "by_room": "Por cômodo",
+        "by_type": "Por tipo de bateria",
+        "by_forecast": "Por data de substituição",
+        "no_area": "Sem cômodo",
+        "unknown_type": "Tipo desconhecido",
+        "rechargeable": "Recarregável integrada",
+        "fc_now": "Substituir agora",
+        "fc_month": "Em até 30 dias",
+        "fc_quarter": "Em até 3 meses",
+        "fc_later": "Mais tarde",
+        "fc_none": "Ainda sem previsão",
+        "forecast": "≈ {d} restantes",
+        "days": "{n} d",
+        "replace_on": "por volta de {date}",
+        "drain": "−{n} % por dia",
+        "diff": "Ver alterações",
+        "diff_title": "Alterações em ‘{branch}’",
+        "diff_loading": "Carregando as alterações…",
+        "diff_empty": "Sem alterações para mostrar",
+        "diff_binary": "Arquivo binário",
+        "diff_truncated": "Diff cortado aqui: mais {n} linhas",
+        "diff_more_files": "Mais {n} arquivos não mostrados",
+        "diff_added": "Adicionado",
+        "diff_modified": "Modificado",
+        "diff_deleted": "Excluído",
+        "diff_renamed": "Renomeado",
+        "diff_mode": "Modo alterado",
+        "diff_close": "Fechar",
+        "diff_files_one": "{n} arquivo",
+        "diff_files_many": "{n} arquivos"
       }
     }
   }

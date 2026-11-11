@@ -70,6 +70,307 @@ function shSpark(values) {
   return `<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${d.join(' ')}"/></svg>`;
 }
 
+// Status letter and colour of a file in the diff viewer, as in an editor's source control view.
+var SH_DIFF_STATUS = {
+  added: { letter: 'A', key: 'diff_added', color: 'var(--sh-ok)' },
+  modified: { letter: 'M', key: 'diff_modified', color: 'var(--sh-warn)' },
+  deleted: { letter: 'D', key: 'diff_deleted', color: 'var(--sh-alert)' },
+  renamed: { letter: 'R', key: 'diff_renamed', color: 'var(--sh-info)' },
+  copied: { letter: 'C', key: 'diff_added', color: 'var(--sh-info)' },
+  mode: { letter: 'T', key: 'diff_mode', color: 'var(--sh-off)' },
+};
+
+// "config/packages/lights.yaml" → ["lights.yaml", "config/packages"].
+var shSplitPath = (path) => {
+  const i = String(path || '').lastIndexOf('/');
+  return i < 0 ? [path, ''] : [path.slice(i + 1), path.slice(0, i)];
+};
+
+
+// The diff viewer of Git Sync, as in an editor's source control view (from the Git Sync card)
+class SystemHubDiffDialog extends HTMLElement {
+  constructor() {
+    super();
+    this._open = false;
+    this._loading = false;
+    this._diff = null;
+    this._error = null;
+    this._selected = 0;
+    this._onKey = (ev) => {
+      if (!this._open) return;
+      if (ev.key === 'Escape') {
+        ev.preventDefault();
+        this.close();
+      } else if ((ev.key === 'ArrowDown' || ev.key === 'ArrowUp') && !(ev.target?.closest?.('.d-main'))) {
+        const files = this._diff?.files || [];
+        if (!files.length) return;
+        ev.preventDefault();
+        this._select((this._selected + (ev.key === 'ArrowDown' ? 1 : files.length - 1)) % files.length);
+      }
+    };
+  }
+
+  // Opens the viewer for a card: `request` fetches the diff, `onCommit` (optional) adds a Commit & push button.
+  async open({ t, locale, branch, commitLabel, request, onCommit }) {
+    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+    this._tr = t;
+    this._commitLabel = commitLabel;
+    this._locale = locale;
+    this._branch = branch;
+    this._onCommit = onCommit;
+    this._open = true;
+    this._loading = true;
+    this._diff = null;
+    this._error = null;
+    this._selected = 0;
+    this._restore = document.activeElement;
+    document.addEventListener?.('keydown', this._onKey);
+    this._render();
+    try {
+      this._diff = await request();
+    } catch (err) {
+      this._error = err?.message || String(err);
+    } finally {
+      this._loading = false;
+      if (this._open) {
+        this._render();
+        this.shadowRoot.querySelector('.d-main')?.focus?.({ preventScroll: true });
+      }
+    }
+  }
+
+  close() {
+    if (!this._open) return;
+    this._open = false;
+    document.removeEventListener?.('keydown', this._onKey);
+    this._render();
+    this._restore?.focus?.({ preventScroll: true });
+  }
+
+  _t(key, vars) {
+    return this._tr(key, vars);
+  }
+
+  _select(index) {
+    this._selected = index;
+    this._render();
+    this.shadowRoot.querySelector('.d-main')?.scrollTo?.(0, 0);
+    this.shadowRoot.querySelector(`.d-file[data-i="${index}"]`)?.focus?.({ preventScroll: true });
+  }
+
+  _fmt(n) {
+    try {
+      return Number(n).toLocaleString(this._locale);
+    } catch (_err) {
+      return String(n);
+    }
+  }
+
+  _fileItem(file, index) {
+    const st = SH_DIFF_STATUS[file.status] || SH_DIFF_STATUS.modified;
+    const [name, dir] = shSplitPath(file.path);
+    const label = this._t(st.key);
+    return `<button class="d-file${index === this._selected ? ' selected' : ''}" data-i="${index}" role="option" aria-selected="${index === this._selected}"
+        title="${shEsc(file.path)}">
+      <span class="d-st" style="--c:${st.color}" title="${shEsc(label)}" aria-label="${shEsc(label)}">${st.letter}</span>
+      <span class="d-name"><span class="d-base">${shEsc(name)}</span>${dir ? `<span class="d-dir">${shEsc(dir)}</span>` : ''}</span>
+      <span class="d-counts">${file.additions ? `<span class="d-add">+${this._fmt(file.additions)}</span>` : ''}${
+        file.deletions ? `<span class="d-del">−${this._fmt(file.deletions)}</span>` : ''
+      }</span>
+    </button>`;
+  }
+
+  _hunk(hunk) {
+    const rows = hunk.lines
+      .map((line) => {
+        const cls = line.kind === 'add' ? 'add' : line.kind === 'del' ? 'del' : 'ctx';
+        const sign = line.kind === 'add' ? '+' : line.kind === 'del' ? '−' : ' ';
+        return `<tr class="${cls}"><td class="ln">${line.old ?? ''}</td><td class="ln">${line.new ?? ''}</td><td class="sg">${sign}</td><td class="tx">${shEsc(line.text)}</td></tr>`;
+      })
+      .join('');
+    return `<tr class="hunk"><td class="ln"></td><td class="ln"></td><td class="sg"></td><td class="tx">${shEsc(hunk.header)}</td></tr>${rows}`;
+  }
+
+  _fileView(file) {
+    const st = SH_DIFF_STATUS[file.status] || SH_DIFF_STATUS.modified;
+    const rename = file.old_path ? `<span class="d-old">${shEsc(file.old_path)}</span><ha-icon icon="mdi:arrow-right"></ha-icon>` : '';
+    let body;
+    if (file.binary) body = `<div class="d-note"><ha-icon icon="mdi:file-outline"></ha-icon>${shEsc(this._t('diff_binary'))}</div>`;
+    else if (!file.hunks.length) body = `<div class="d-note">${shEsc(this._t(st.key))}</div>`;
+    else {
+      body = `<table class="d-table" aria-label="${shEsc(file.path)}"><tbody>${file.hunks.map((h) => this._hunk(h)).join('')}</tbody></table>`;
+      if (file.truncated) body += `<div class="d-note">${shEsc(this._t('diff_truncated', { n: this._fmt(file.truncated) }))}</div>`;
+    }
+    return `<div class="d-head">
+        <span class="d-st big" style="--c:${st.color}" title="${shEsc(this._t(st.key))}">${st.letter}</span>
+        <span class="d-path">${rename}<span>${shEsc(file.path)}</span></span>
+        <span class="d-counts">${file.additions ? `<span class="d-add">+${this._fmt(file.additions)}</span>` : ''}${
+          file.deletions ? `<span class="d-del">−${this._fmt(file.deletions)}</span>` : ''
+        }</span>
+      </div>${body}`;
+  }
+
+  _render() {
+    if (!this.shadowRoot) return;
+    if (!this._open) {
+      this.shadowRoot.innerHTML = '';
+      return;
+    }
+    const diff = this._diff;
+    const files = diff?.files || [];
+    const selected = files[this._selected];
+    let main;
+    let summary = '';
+    if (this._loading) main = `<div class="d-note d-center"><ha-icon class="spin" icon="mdi:loading"></ha-icon>${shEsc(this._t('diff_loading'))}</div>`;
+    else if (this._error) main = `<div class="d-note d-center d-error">${shEsc(this._t('failed', { error: this._error }))}</div>`;
+    else if (!files.length) main = `<div class="d-note d-center">${shEsc(this._t('diff_empty'))}</div>`;
+    else {
+      main = this._fileView(selected);
+      summary = `${shEsc(this._t(files.length + (diff.more_files || 0) === 1 ? 'diff_files_one' : 'diff_files_many', { n: this._fmt(files.length + (diff.more_files || 0)) }))} · <span class="d-add">+${this._fmt(diff.additions)}</span> <span class="d-del">−${this._fmt(diff.deletions)}</span>`;
+    }
+    const list = files.length
+      ? `<div class="d-list" role="listbox" aria-label="${shEsc(this._t('changed'))}">${files.map((f, i) => this._fileItem(f, i)).join('')}${
+          diff.more_files ? `<div class="d-more">${shEsc(this._t('diff_more_files', { n: this._fmt(diff.more_files) }))}</div>` : ''
+        }</div>`
+      : '';
+    const commit = this._onCommit && files.length
+      ? `<button class="d-btn primary" id="commit"><ha-icon icon="mdi:source-commit-end"></ha-icon>${shEsc(this._commitLabel)}</button>`
+      : '';
+    this.shadowRoot.innerHTML = `<style>${this._css()}</style>
+      <div class="d-backdrop"></div>
+      <div class="d-dialog" role="dialog" aria-modal="true" aria-label="${shEsc(this._t('diff_title', { branch: this._branch || 'HEAD' }))}">
+        <div class="d-top">
+          <div class="badge"><ha-icon icon="mdi:file-compare"></ha-icon></div>
+          <div class="d-titles">
+            <div class="d-title">${shEsc(this._t('diff_title', { branch: this._branch || 'HEAD' }))}</div>
+            <div class="d-sub">${summary}</div>
+          </div>
+          <button class="d-x" id="close" title="${shEsc(this._t('diff_close'))}" aria-label="${shEsc(this._t('diff_close'))}"><ha-icon icon="mdi:close"></ha-icon></button>
+        </div>
+        <div class="d-body${files.length ? '' : ' alone'}">
+          ${list}
+          <div class="d-main" tabindex="0">${main}</div>
+        </div>
+        <div class="d-foot">
+          <button class="d-btn" id="close2"><ha-icon icon="mdi:close"></ha-icon>${shEsc(this._t('diff_close'))}</button>
+          ${commit}
+        </div>
+      </div>`;
+    this._bind();
+  }
+
+  _bind() {
+    const root = this.shadowRoot;
+    const on = (sel, fn) => root.querySelector(sel)?.addEventListener('click', fn);
+    on('.d-backdrop', () => this.close());
+    on('#close', () => this.close());
+    on('#close2', () => this.close());
+    on('#commit', () => {
+      const cb = this._onCommit;
+      this.close();
+      cb?.();
+    });
+    root.querySelector('.d-list')?.addEventListener('click', (ev) => {
+      const item = ev.target?.closest?.('.d-file');
+      if (item) this._select(Number(item.dataset.i));
+    });
+  }
+
+  _css() {
+    return `
+      :host { --sh-ok: var(--success-color, #43a047); --sh-warn: var(--warning-color, #ffa600);
+              --sh-info: var(--info-color, #039be5); --sh-alert: var(--error-color, #db4437);
+              --sh-off: var(--disabled-text-color, #9e9e9e); --sh-accent: var(--primary-color, #03a9f4);
+              --sh-mono: var(--code-font-family, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+              --sh-bg: var(--card-background-color, var(--ha-card-background, #fff));
+              --sh-line: var(--divider-color, rgba(127,127,127,.2)); }
+      .d-backdrop { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.45); backdrop-filter: blur(2px); }
+      /* Full screen on a phone; a large centred window elsewhere. */
+      .d-dialog { position: fixed; inset: 0; z-index: 1001; display: flex; flex-direction: column; min-height: 0;
+                  background: var(--sh-bg); color: var(--primary-text-color); font-family: var(--paper-font-body1_-_font-family, inherit); }
+      @media (min-width: 900px) and (min-height: 600px) {
+        .d-dialog { inset: 24px; max-width: 1280px; margin: 0 auto; border-radius: 16px;
+                    box-shadow: 0 12px 40px rgba(0,0,0,.35); border: 1px solid var(--sh-line); }
+      }
+      .d-top { flex: none; display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--sh-line); }
+      .badge { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
+               color: var(--sh-accent); background: color-mix(in srgb, var(--sh-accent) 18%, transparent); }
+      .badge ha-icon { --mdc-icon-size: 24px; }
+      .d-titles { flex: 1 1 auto; min-width: 0; }
+      .d-title { font-size: 16px; font-weight: 500; line-height: 22px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .d-sub { font-size: 12px; line-height: 16px; color: var(--secondary-text-color); }
+      .d-x { flex: none; width: 36px; height: 36px; border: none; border-radius: 50%; padding: 0; display: grid; place-items: center;
+             cursor: pointer; background: transparent; color: var(--secondary-text-color); }
+      .d-x:hover { background: color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color: var(--primary-text-color); }
+      .d-x:focus-visible, .d-btn:focus-visible, .d-file:focus-visible { outline: 2px solid var(--sh-accent); outline-offset: 1px; }
+
+      .d-body { flex: 1 1 auto; min-height: 0; display: flex; }
+      .d-body.alone .d-main { width: 100%; }
+      /* Files: a column on the left; on a narrow screen, a row of chips above the diff. */
+      .d-list { flex: none; width: 280px; overflow-y: auto; border-right: 1px solid var(--sh-line); padding: 6px; display: flex; flex-direction: column; gap: 2px;
+                background: var(--secondary-background-color, color-mix(in srgb, var(--primary-text-color) 4%, transparent)); }
+      .d-file { display: flex; align-items: center; gap: 8px; width: 100%; min-width: 0; padding: 6px 8px; border: none; border-radius: 8px;
+                cursor: pointer; text-align: left; font: inherit; font-size: 13px; color: var(--primary-text-color); background: transparent; }
+      .d-file:hover { background: color-mix(in srgb, var(--sh-accent) 8%, transparent); }
+      .d-file.selected { background: color-mix(in srgb, var(--sh-accent) 16%, transparent); }
+      .d-st { flex: none; width: 20px; height: 20px; border-radius: 5px; display: grid; place-items: center; font-family: var(--sh-mono);
+              font-size: 11px; font-weight: 700; color: var(--c); background: color-mix(in srgb, var(--c) 18%, transparent); }
+      .d-st.big { width: 24px; height: 24px; font-size: 12px; }
+      .d-name { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; line-height: 16px; }
+      .d-base { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .d-dir { font-size: 11px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; direction: rtl; text-align: left; }
+      .d-counts { flex: none; display: inline-flex; gap: 6px; font-family: var(--sh-mono); font-size: 11px; }
+      .d-add { color: var(--sh-ok); }
+      .d-del { color: var(--sh-alert); }
+      .d-more { padding: 8px; font-size: 12px; color: var(--secondary-text-color); }
+      @media (max-width: 719px) {
+        .d-body { flex-direction: column; }
+        .d-list { width: auto; max-height: 34%; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; overflow-y: hidden;
+                  border-right: none; border-bottom: 1px solid var(--sh-line); }
+        .d-file { width: auto; flex: none; max-width: 220px; }
+        .d-dir { display: none; }
+        .d-more { white-space: nowrap; align-self: center; }
+      }
+
+      .d-main { flex: 1 1 auto; min-width: 0; overflow: auto; outline: none; }
+      .d-head { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; gap: 10px; padding: 8px 12px; font-size: 13px;
+                background: var(--sh-bg); border-bottom: 1px solid var(--sh-line); }
+      .d-path { flex: 1 1 auto; min-width: 0; display: flex; align-items: center; gap: 6px; font-family: var(--sh-mono); font-size: 12px;
+                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .d-path ha-icon { --mdc-icon-size: 14px; color: var(--secondary-text-color); }
+      .d-old { color: var(--secondary-text-color); }
+      .d-note { display: flex; align-items: center; gap: 8px; padding: 16px; font-size: 13px; color: var(--secondary-text-color); }
+      .d-note.d-center { justify-content: center; padding: 48px 16px; }
+      .d-note.d-error { color: var(--sh-alert); }
+      .d-note ha-icon { --mdc-icon-size: 20px; }
+      .spin { animation: sh-spin 1s linear infinite; }
+
+      /* The diff itself: old and new line numbers, sign, text; additions tinted green, deletions red. */
+      .d-table { width: 100%; border-collapse: collapse; font-family: var(--sh-mono); font-size: 12px; line-height: 20px; tab-size: 4; }
+      .d-table td { padding: 0 6px; vertical-align: top; white-space: pre; }
+      .d-table .ln { width: 1%; min-width: 3.5ch; text-align: right; color: var(--secondary-text-color); opacity: .7; user-select: none;
+                     background: color-mix(in srgb, var(--primary-text-color) 3%, transparent); }
+      .d-table .sg { width: 1%; padding: 0 4px; user-select: none; }
+      .d-table .tx { white-space: pre-wrap; word-break: break-all; }
+      .d-table tr.add td { background: color-mix(in srgb, var(--sh-ok) 14%, transparent); }
+      .d-table tr.add .ln, .d-table tr.add .sg { color: var(--sh-ok); opacity: 1; }
+      .d-table tr.del td { background: color-mix(in srgb, var(--sh-alert) 14%, transparent); }
+      .d-table tr.del .ln, .d-table tr.del .sg { color: var(--sh-alert); opacity: 1; }
+      .d-table tr.hunk td { color: var(--sh-info); background: color-mix(in srgb, var(--sh-info) 8%, transparent); }
+
+      .d-foot { flex: none; display: flex; justify-content: flex-end; gap: 8px; padding: 10px 16px; border-top: 1px solid var(--sh-line); }
+      .d-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 38px; padding: 4px 14px; border-radius: 10px; cursor: pointer;
+               font: inherit; font-size: 14px; font-weight: 500; color: var(--secondary-text-color); background: transparent;
+               border: 1px solid color-mix(in srgb, var(--secondary-text-color) 35%, transparent); }
+      .d-btn.primary { color: var(--sh-accent); border-color: color-mix(in srgb, var(--sh-accent) 45%, transparent); }
+      .d-btn:hover { background: color-mix(in srgb, var(--sh-accent) 10%, transparent); }
+      .d-btn ha-icon { --mdc-icon-size: 18px; }
+      @keyframes sh-spin { to { transform: rotate(360deg); } }
+      @media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+    `;
+  }
+}
+
 class SystemHubPanel extends HTMLElement {
   static VERSION = SYSTEM_HUB_PANEL_VERSION;
 
@@ -141,6 +442,12 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn { border:0; background:none; cursor:pointer; color:var(--secondary-text-color); padding:8px; border-radius:50%; display:flex; --mdc-icon-size:20px; }
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
+    .grow { flex:1; }
+    .segs { display:inline-flex; border-radius:8px; overflow:hidden; background:var(--secondary-background-color, rgba(127,127,127,.12)); }
+    .seg { display:inline-flex; align-items:center; gap:6px; border:0; background:none; cursor:pointer; font:inherit; font-size:13px;
+           padding:7px 12px; color:var(--secondary-text-color); --mdc-icon-size:16px; }
+    .seg.active { color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); font-weight:500; }
+    .lhead .muted { font-size:12px; }
     .confirm { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 14px; border-radius:8px;
                background:color-mix(in srgb, var(--tone-warn) 12%, transparent); }
     code { font-family:var(--code-font-family, monospace); font-size:12px; }
@@ -167,6 +474,11 @@ class SystemHubPanel extends HTMLElement {
     this._messages = {};
     this._draft = {};
     this._localize = null;
+    try {
+      this._battView = localStorage.getItem('system_hub_batteries_view') || 'room';
+    } catch (_err) {
+      this._battView = 'room';
+    }
   }
 
   set hass(hass) {
@@ -589,31 +901,133 @@ class SystemHubPanel extends HTMLElement {
       <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>`;
   }
 
-  // Batteries: lowest first
+  // Batteries: in groups by room, by battery type or by replacement date (as the Battery Monitor full screen view)
   _batteries() {
     var data = this._state.batteries || {};
-    var rank = (b) => (b.unavailable ? 0 : b.alert ? 1 : 2);
-    var list = [...(data.batteries || [])].sort((a, b) => rank(a) - rank(b) || (a.level ?? 101) - (b.level ?? 101));
+    var view = this._battView || 'room';
     var tiles = [
       this._tile('mdi:battery-alert-variant-outline', `<b>${data.low ?? 0}</b>`, this._t('low'), data.low ? 'warn' : 'good'),
       this._tile('mdi:battery-unknown', `<b>${data.unavailable ?? 0}</b>`, this._t('unavailable'), data.unavailable ? 'bad' : 'good'),
       this._tile('mdi:bell-check-outline', shEsc(this._ago(data.last_notification)), this._entityName('sensor', 'batteries_last_notification'), ''),
     ];
-    var rows = list
-      .map((b) => {
-        var tone = b.unavailable ? 'bad' : b.low ? 'warn' : 'good';
-        var level = shNum(b.level);
-        var detail = [b.area, b.battery_type].filter(Boolean).join(' · ');
-        return `<div class="item link ${tone}" data-more="${shEsc(b.entity_id)}"><ha-icon icon="${shEsc(b.icon || 'mdi:battery')}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(b.name)}</div>${detail ? `<div class="s">${shEsc(detail)}</div>` : ''}</div>
-          <div class="side"><span>${b.unavailable ? shEsc(this._t('unavailable')) : level === null ? shEsc(this._t('low')) : `${Math.round(level)} %`}</span>
-          ${level === null ? '' : `<div class="meter"><span style="width:${Math.min(level, 100)}%"></span></div>`}</div></div>`;
-      })
+    var views = [
+      ['room', 'mdi:sofa-outline', 'by_room'],
+      ['type', 'mdi:battery-outline', 'by_type'],
+      ['forecast', 'mdi:calendar-clock', 'by_forecast'],
+    ]
+      .map(
+        ([key, icon, label]) =>
+          `<button class="seg${key === view ? ' active' : ''}" data-action="batt_view" data-view="${key}" aria-pressed="${key === view}"><ha-icon icon="${icon}"></ha-icon>${shEsc(this._t(label))}</button>`,
+      )
       .join('');
-    var allGood = `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
+    var list = data.batteries || [];
+    var groups = list.length
+      ? this._battGroups(list, view)
+          .map(
+            (g) => `<ha-card class="list"><div class="lhead"><ha-icon icon="${g.icon}"></ha-icon><span class="lname">${shEsc(g.name)}</span><span class="muted">${g.items.length}</span></div>
+            ${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</ha-card>`,
+          )
+          .join('')
+      : `<ha-card class="list"><div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div></ha-card>`;
     return `<div class="tiles">${tiles.join('')}</div>
-      <div class="actions">${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'))}${this._message('batteries_notify')}</div>
-      <ha-card class="list">${rows || allGood}</ha-card>`;
+      <div class="actions">${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'))}${this._message('batteries_notify')}
+      <span class="grow"></span><div class="segs" role="group">${views}</div></div>
+      ${groups}`;
+  }
+
+  _battRow(b, context) {
+    var tone = b.unavailable ? 'bad' : b.low ? 'warn' : 'good';
+    var level = shNum(b.level);
+    return `<div class="item link ${tone}" data-more="${shEsc(b.entity_id)}"><ha-icon icon="${shEsc(b.icon || 'mdi:battery')}"></ha-icon>
+      <div class="who"><div class="n">${shEsc(b.name)}</div>${context ? `<div class="s">${shEsc(context)}</div>` : ''}</div>
+      <div class="side"><span>${b.unavailable ? shEsc(this._t('unavailable')) : level === null ? shEsc(this._t('low')) : `${Math.round(level)} %`}</span>
+      ${level === null ? '' : `<div class="meter"><span style="width:${Math.min(level, 100)}%"></span></div>`}</div></div>`;
+  }
+
+  // "2× AA" → AA; a built-in rechargeable battery is its own type
+  _battType(b) {
+    var raw = (b.battery_type || '').trim();
+    if (!raw) return '';
+    return raw.replace(/^\d+\s*[×x]\s*/i, '');
+  }
+
+  _battTypeName(type) {
+    return type === 'rechargeable' ? this._t('rechargeable') : type;
+  }
+
+  // [{ key, name, icon, items: [{ b, context }] }]: rooms by name, types by how many batteries use them, the
+  // room-less and the unknown last; by replacement date, the bands from now to later, then the ones without forecast
+  _battGroups(list, view) {
+    var rank = (b) => (b.unavailable ? 0 : b.alert || b.low ? 1 : 2);
+    var byLevel = (a, b) => rank(a) - rank(b) || (a.level ?? 101) - (b.level ?? 101) || a.name.localeCompare(b.name);
+    if (view === 'forecast') return this._battForecast(list);
+    var map = new Map();
+    [...list].sort(byLevel).forEach((b) => {
+      var key = view === 'room' ? b.area || '' : this._battType(b);
+      if (!map.has(key)) map.set(key, []);
+      var context = view === 'room' ? this._battTypeName(b.battery_type || '') : b.area || '';
+      map.get(key).push({ b, context });
+    });
+    return [...map.entries()]
+      .map(([key, items]) => ({
+        key,
+        items,
+        name: key ? (view === 'type' ? this._battTypeName(key) : key) : this._t(view === 'room' ? 'no_area' : 'unknown_type'),
+        icon: view === 'room' ? 'mdi:sofa-outline' : key ? 'mdi:battery-outline' : 'mdi:battery-unknown',
+      }))
+      .sort((a, b) => !a.key - !b.key || (view === 'type' ? b.items.length - a.items.length : 0) || a.name.localeCompare(b.name));
+  }
+
+  _battForecast(list) {
+    var bands = [
+      ['now', 'mdi:battery-alert-variant-outline', (b) => b.low || b.unavailable],
+      ['month', 'mdi:calendar-alert', (b) => Number.isInteger(b.days_left) && b.days_left <= 30],
+      ['quarter', 'mdi:calendar-clock', (b) => Number.isInteger(b.days_left) && b.days_left <= 92],
+      ['later', 'mdi:calendar-check', (b) => Number.isInteger(b.days_left)],
+      ['none', 'mdi:help-circle-outline', () => true],
+    ];
+    var items = new Map(bands.map(([key]) => [key, []]));
+    var order = (a, b) =>
+      (a.days_left ?? Number.POSITIVE_INFINITY) - (b.days_left ?? Number.POSITIVE_INFINITY) || (a.level ?? 101) - (b.level ?? 101) || a.name.localeCompare(b.name);
+    [...list].sort(order).forEach((b) => {
+      var key = bands.find(([, , test]) => test(b))[0];
+      var drain = Number(b.drain_per_day) > 0 ? this._t('drain', { n: this._battNum(b.drain_per_day) }) : '';
+      var when =
+        key === 'now' || key === 'none'
+          ? ''
+          : [this._t('forecast', { d: this._t('days', { n: b.days_left }) }), b.replace_by ? this._t('replace_on', { date: this._battDate(b.replace_by) }) : '']
+              .filter(Boolean)
+              .join(' ');
+      items.get(key).push({ b, context: [b.area, when, drain].filter(Boolean).join(' · ') });
+    });
+    return bands
+      .filter(([key]) => items.get(key).length)
+      .map(([key, icon]) => ({ key, icon, items: items.get(key), name: this._t(`fc_${key}`) }));
+  }
+
+  _battNum(n) {
+    var lang = this._hass?.locale?.language || this._hass?.language || undefined;
+    try {
+      return new Intl.NumberFormat(lang, { maximumFractionDigits: n < 1 ? 2 : 1 }).format(n);
+    } catch (_err) {
+      return String(Math.round(n * 100) / 100);
+    }
+  }
+
+  // Day and month; the year only for a date beyond the next eleven months
+  _battDate(iso) {
+    var date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return '';
+    var far = date - Date.now() > 330 * 864e5;
+    try {
+      return date.toLocaleDateString(this._hass?.locale?.language || this._hass?.language || undefined, {
+        day: 'numeric',
+        month: 'short',
+        ...(far ? { year: 'numeric' } : {}),
+      });
+    } catch (_err) {
+      return iso.slice(0, 10);
+    }
   }
 
   // Git Sync: status, changed files, commit and push
@@ -636,6 +1050,7 @@ class SystemHubPanel extends HTMLElement {
       <ha-card class="block"><div class="actions"><label class="box"><input data-draft="message" placeholder="${shEsc(this._t('message'))}" value="${shEsc(this._draft.message || '')}"></label>
         ${data.ai_task ? this._button('git_sync_generate_message', 'mdi:creation-outline', this._t('generate'), { quiet: true }) : ''}</div>
         <div class="actions">${this._button('git_sync_commit_push', 'mdi:source-commit-end', this._entityName('button', 'git_sync_commit_push'))}
+        ${this._button('git_sync_diff', 'mdi:file-compare', this._t('diff'), { quiet: true, disabled: !data.changed && !data.ahead })}
         ${this._button('git_sync_pull', 'mdi:source-pull', this._serviceName('git_sync_pull'), { quiet: true })}
         ${this._button('git_sync_export_dashboards', 'mdi:export', this._entityName('button', 'git_sync_export_dashboards'), { quiet: true })}
         ${sync ? `<span class="pill warn">${shEsc(sync)}</span>` : ''}${this._message('git_sync')}</div>
@@ -709,9 +1124,19 @@ class SystemHubPanel extends HTMLElement {
       this._draft.tabs = tabs;
       return this._render();
     }
+    if (action === 'batt_view') {
+      this._battView = button.dataset.view;
+      try {
+        localStorage.setItem('system_hub_batteries_view', this._battView);
+      } catch (_err) {
+        // no storage: the view stays for this visit
+      }
+      return this._render();
+    }
     if (action === 'save') return this._save();
     if (action.startsWith('watchdog_reset:')) return this._run('watchdog_reset', 'watchdog_reset', { entry_id: action.split(':')[1] });
     if (action === 'git_sync_generate_message') return this._generate();
+    if (action === 'git_sync_diff') return this._openDiff();
     if (action === 'git_sync_commit_push') {
       var message = (this._draft.message || '').trim();
       return this._run(action, 'git_sync', message ? { message } : {}, () => {
@@ -740,6 +1165,25 @@ class SystemHubPanel extends HTMLElement {
     delete this._busy[service];
     await this._load();
   }
+
+  // The changes a commit would include, in the full screen diff viewer
+  _openDiff() {
+    if (!this._diffDialog) {
+      this._diffDialog = document.createElement('system-hub-diff-dialog');
+      document.body?.appendChild?.(this._diffDialog);
+    }
+    var state = this._state?.git_sync || {};
+    this._diffDialog.open({
+      t: (key, vars) => this._t(key, vars),
+      locale: this._hass?.locale?.language || this._hass?.language || undefined,
+      branch: state.branch,
+      commitLabel: this._entityName('button', 'git_sync_commit_push'),
+      request: async () =>
+        (await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service: 'git_sync_get_diff', service_data: {}, return_response: true }))?.response,
+      onCommit: () => this.shadowRoot.querySelector('[data-draft="message"]')?.focus?.({ preventScroll: true }),
+    });
+  }
+
 
   async _generate() {
     var service = 'git_sync_generate_message';
@@ -779,6 +1223,9 @@ class SystemHubPanel extends HTMLElement {
   }
 }
 
+if (!customElements.get('system-hub-diff-dialog')) {
+  customElements.define('system-hub-diff-dialog', SystemHubDiffDialog);
+}
 if (!customElements.get('system-hub-panel')) {
   customElements.define('system-hub-panel', SystemHubPanel);
 }
