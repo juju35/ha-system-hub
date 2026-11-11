@@ -28,10 +28,11 @@ const context = {
   setInterval: () => 0,
   clearInterval() {},
   setTimeout: () => 0,
+  clearTimeout() {},
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc };`, context);
-const { SystemHubPanel, shBytes, shTone, shSpark, shEsc } = context.panel;
+vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr };`, context);
+const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr } = context.panel;
 
 // The strings as Home Assistant's localize returns them from the integration's English translations
 function localize(key, vars = {}) {
@@ -47,7 +48,8 @@ function panel(state, tab) {
   p._hass = { language: 'en', localize };
   p._localize = localize;
   p._state = state;
-  if (tab) p._tab = tab;
+  // The tab shown: the System tab unless a test picks another (the panel opens on the first tab)
+  p._tab = tab || 'system';
   return p;
 }
 
@@ -350,7 +352,18 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   const html = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings')._content();
   for (const m of ['containers', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations']) assert.match(html, new RegExp(`data-module="${m}"`));
   assert.match(html, /data-module="watchdog" checked/);
-  assert.match(html, /data-tab-move="system" data-dir="-1"[^>]*disabled/);
+  // Sections Enabled / Disabled, a handle on the ones turned on, the first one opened by default
+  assert.match(html, /Enabled<\/div><div class="cfglist"><div class="row cfgrow" data-row-tab="system"><button class="icon-btn dragh"/);
+  assert.match(html, /data-row-tab="system">.*?<span class="pill cfgdef">default/s);
+  assert.match(html, /Disabled<\/div><div class="cfglist off">.*data-row-tab="containers"/s);
+  assert.doesNotMatch(html, /data-module="status"|data-module="system" checked/);
+  // A row dragged, or moved with ↓ from its handle: the order in the draft, the ones turned off after
+  const q = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
+  q._render = () => {};
+  q._cfgMove('watchdog', 0);
+  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['watchdog', 'system', 'status']);
+  q._cfgDragKey({ key: 'ArrowDown', preventDefault() {}, target: { closest: () => ({ dataset: { tab: 'watchdog' } }) } });
+  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['system', 'watchdog', 'status']);
   // Nothing changed: no save bar; a change brings it, with Discard
   assert.doesNotMatch(html, /data-action="save"/);
   const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
@@ -678,7 +691,7 @@ test('settings tab: a module opens on its Configure form, driven through the opt
     };
     // Every module has its row, the System thresholds too; a module turned off can't be opened
     let html = p._content();
-    assert.match(html, /System thresholds/);
+    assert.match(html, /data-action="cfg_toggle" data-module="system"/);
     assert.match(html, /data-action="cfg_toggle" data-module="watchdog"/);
     assert.doesNotMatch(html, /data-action="cfg_toggle" data-module="containers"/);
     await p._cfgOpen('watchdog');
@@ -743,4 +756,70 @@ test('git sync tab: the count of changed files always; more than 5 folded until 
   many = p._content();
   assert.match(many, /f6\.yaml/);
   assert.match(many, /aria-expanded="true"/);
+});
+
+test('status tab: a score, one tile per area in the order of the tabs, each opening its tab', () => {
+  const state = {
+    loaded: true,
+    modules: ['watchdog', 'batteries', 'git_sync', 'orphans', 'containers', 'marketplace'],
+    tabs: ['status', 'batteries', 'system', 'watchdog', 'git_sync', 'containers', 'marketplace', 'orphans'],
+    thresholds: { cpu: [70, 90], ram: [70, 90], disk: [80, 90], temperature: [70, 85], swap: [50, 80] },
+    system: [
+      { key: 'processor_use', entity_id: 'sensor.cpu', name: 'CPU', state: '14' },
+      { key: 'memory_use_percent', entity_id: 'sensor.ram', name: 'RAM', state: '48' },
+      { key: 'disk_use_percent', entity_id: 'sensor.disk', name: 'Disk', state: '93' },
+      { key: 'process', entity_id: 'binary_sensor.process_frigate', name: 'Process frigate', state: 'off' },
+    ],
+    updates: [{ key: 'core', state: 'on', installed: '2026.11.0', latest: '2026.11.1' }],
+    watchdog: { unavailable: [{ title: 'Printer', gave_up: true }], max_reloads: 5 },
+    batteries: { low: 1, unavailable: 0, batteries: [{ name: 'Door', level: '8', low: true }] },
+    git_sync: { available: true, branch: 'main', changed: 0, ahead: 0, behind: 0 },
+    orphans: { total: 0, devices: 0 },
+    containers: { containers: [{ name: 'Core', container: 'homeassistant', state: 'started' }] },
+    marketplace: { state: 'idle', list: [{ title: 'Mushroom', latest: 'v5.0.0' }] },
+  };
+  const p = panel(state, 'status');
+  assert.deepEqual([...p._tabs()].slice(0, 2), ['status', 'batteries']);
+  const html = p._content();
+  const order = [...html.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['batteries', 'system', 'watchdog', 'git_sync', 'containers', 'marketplace', 'orphans']);
+  // Batteries to watch, the disk above its red threshold, a given-up integration and a process stopped: needing action
+  assert.match(html, /sttile warn" data-action="st_open" data-tab="batteries"/);
+  assert.match(html, /sttile bad" data-action="st_open" data-tab="system"/);
+  assert.match(html, /High: Disk/);
+  assert.match(html, /sttile bad" data-action="st_open" data-tab="containers"[\s\S]*?1 stopped/);
+  assert.match(html, /sttile warn" data-action="st_open" data-tab="marketplace"[\s\S]*?2 available/);
+  assert.match(html, /sttile good" data-action="st_open" data-tab="git_sync"/);
+  // 100 − 3 × 15 − 2 × 5
+  assert.match(html, /<b>45<\/b>/);
+  assert.match(html, /5 points to check/);
+  p._render = () => {};
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'st_open', tab: 'watchdog' } } : null) } });
+  assert.equal(p._tab, 'watchdog');
+});
+
+test('load: the words of the error, and what is shown kept while the connection is lost', async () => {
+  // A command cut by a lost connection: {error: {code, message}}, not [object Object]
+  assert.equal(shErr({ type: 'result', success: false, error: { code: 3, message: 'Connection lost' } }), 'Connection lost');
+  assert.equal(shErr({ code: 'unknown_command', message: 'Unknown command.' }), 'Unknown command.');
+  assert.equal(shErr({ body: { message: 'Invalid flow' } }), 'Invalid flow');
+  assert.equal(shErr(3), '3');
+  const lost = async () => {
+    throw { type: 'result', success: false, error: { code: 3, message: 'Connection lost' } };
+  };
+  // Nothing read yet: the message, in words
+  const first = panel(null);
+  first._hass.callWS = lost;
+  first._render = () => {};
+  await first._load();
+  assert.equal(first._error, 'Connection lost');
+  // Already shown: kept, no message
+  const shown = panel({ loaded: true, modules: [], tabs: ['system'] });
+  shown._hass.callWS = lost;
+  let renders = 0;
+  shown._render = () => renders++;
+  await shown._load();
+  assert.ok(!shown._error);
+  assert.equal(shown._state.loaded, true);
+  assert.equal(renders, 0);
 });

@@ -258,7 +258,7 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
         config_entry_id=hass.config_entries.async_entries("box")[0].entry_id, identifiers={("box", "2")}
     )
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert result["type"] is FlowResultType.MENU
     assert result["menu_options"] == ["modules", "system", "watchdog", "watchdog_add_power_cycle"]
     result = await hass.config_entries.options.async_configure(
@@ -281,7 +281,7 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
     assert entry.runtime_data.watchdog.power_cycles[0].off_time == timedelta(seconds=15)
 
     # Twice the same device: refused.
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert result["menu_options"] == [
         "modules",
         "system",
@@ -295,7 +295,7 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
     assert (await submit())["errors"] == {"device_id": "device_already_cycled"}
 
     # The settings keep the power cycles.
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "watchdog"})
     await hass.config_entries.options.async_configure(
         result["flow_id"], {CONF_SCAN_INTERVAL: 5, CONF_GRACE_PERIOD: 15, CONF_MAX_RELOADS: 3}
@@ -304,7 +304,7 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
     assert entry.options["watchdog"][CONF_POWER_CYCLES] == [cycle]
     assert entry.options["watchdog"][CONF_MAX_RELOADS] == 3
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], {"next_step_id": "watchdog_remove_power_cycle"}
     )

@@ -98,7 +98,7 @@ def _listed(hass: HomeAssistant) -> dict[str, str]:
 
 
 async def _options_step(hass: HomeAssistant, entry: MockConfigEntry):
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert "orphans" in result["menu_options"]
     return await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "orphans"})
 

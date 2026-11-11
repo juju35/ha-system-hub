@@ -79,7 +79,7 @@ async def test_options_reload(hass: HomeAssistant) -> None:
     entry = await _setup(hass)
     assert hass.states.get(LOW).state == "1"
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "batteries"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {**OPTIONS, CONF_THRESHOLD: 10})
     assert result["type"] is FlowResultType.CREATE_ENTRY

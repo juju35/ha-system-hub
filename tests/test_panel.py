@@ -102,6 +102,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     assert result["loaded"] is True
     assert result["modules"] == ["watchdog", "batteries"]
     assert result["tabs"] == [
+        "status",
         "system",
         "containers",
         "watchdog",
@@ -183,6 +184,7 @@ async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
     await hass.async_block_till_done()
     assert entry.options[CONF_MODULES] == ["watchdog", "batteries"]
     assert entry.options["tabs"] == [
+        "status",
         "batteries",
         "system",
         "containers",
@@ -206,6 +208,7 @@ async def test_git_sync_needs_its_repository(hass: HomeAssistant, hass_ws_client
 
 def test_tab_order() -> None:
     assert tab_order({}) == [
+        "status",
         "system",
         "containers",
         "watchdog",
@@ -215,7 +218,9 @@ def test_tab_order() -> None:
         "automations",
         "orphans",
     ]
+    # An order saved before the Status tab: it comes first
     assert tab_order({"tabs": ["git_sync", "unknown", "git_sync", "system"]}) == [
+        "status",
         "git_sync",
         "system",
         "containers",
@@ -225,11 +230,13 @@ def test_tab_order() -> None:
         "automations",
         "orphans",
     ]
+    # Moved by hand: kept where it is
+    assert tab_order({"tabs": ["system", "status"]})[:2] == ["system", "status"]
 
 
 async def test_system_thresholds_step(hass: HomeAssistant, hass_ws_client) -> None:
     entry = await _setup(hass, [])
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert "system" in result["menu_options"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "system"})
     assert result["step_id"] == "system"
@@ -305,10 +312,13 @@ async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: 
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    # As the frontend starts it (its flow API's context)
-    result = await hass.config_entries.options.async_init(entry.entry_id, context={"show_advanced_options": False})
-    assert result["type"] is FlowResultType.ABORT
-    assert result["reason"] == "use_panel"
+    # No Configure on the integration's page: the devices link to the Settings tab
+    assert entry.supports_options is False
+    # As the frontend starts it, with or without show_advanced_options (Home Assistant 2026.11 no longer sends it)
+    for context in ({"show_advanced_options": False}, {}):
+        result = await hass.config_entries.options.async_init(entry.entry_id, context=context)
+        assert result["type"] is FlowResultType.ABORT
+        assert result["reason"] == "use_panel"
     assert result["description_placeholders"] == {"url": "/system-hub/settings"}
 
     client = await hass_ws_client(hass)

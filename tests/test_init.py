@@ -115,7 +115,7 @@ async def test_turning_a_module_off_removes_its_entities_and_device(hass: HomeAs
     entities = er.async_get(hass)
     assert entities.async_get(WATCHDOG_SENSOR) is not None
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert result["type"] is FlowResultType.MENU
     assert result["menu_options"] == ["modules", "system", "watchdog", "watchdog_add_power_cycle", "marketplace"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "modules"})
@@ -137,13 +137,13 @@ async def test_turning_a_module_off_removes_its_entities_and_device(hass: HomeAs
     assert (DOMAIN, f"{entry.entry_id}_watchdog") not in identifiers
     assert (DOMAIN, f"{entry.entry_id}_marketplace") in identifiers
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert result["menu_options"] == ["modules", "system", "marketplace"]
 
 
 async def test_options_cannot_turn_on_marketplace_without_it(hass: HomeAssistant) -> None:
     entry = await _setup(hass, ["watchdog"])
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "modules"})
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], {"watchdog": True, "marketplace": True}

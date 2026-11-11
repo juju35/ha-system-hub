@@ -7,6 +7,8 @@ on:
     paths:
       - "custom_components/**/frontend/**"
       - "scripts/**"
+      - "custom_components/**/translations/en.json"
+      - ".github/workflows/screenshots.yml"
 
 # Protected main is never pushed to: the job commits the refreshed screenshots
 # back onto the pull request's own branch, so they land through the normal merge.
@@ -26,6 +28,13 @@ jobs:
   screenshots:
     name: Render screenshots
     runs-on: ubuntu-latest
+    # Debian 12 rather than the Ubuntu runner: its apt mirrors (deb.debian.org) instead of Ubuntu's archives, which the
+    # runners sometimes cannot resolve.
+    container: node:22-bookworm
+    # The container's default shell is sh: bash for pipefail and the scripts
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -34,36 +43,31 @@ jobs:
           # Everything else keeps the default ref — for a fork PR that is the merge
           # ref, which github.ref_name ("N/merge") does not resolve to.
           ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref || '' }}
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
-        with:
-          python-version: "3.13"
-      - run: pip install playwright==1.64.1
-      # Download the browser binary (no apt here) separately from its system libraries, so the apt work all sits in
-      # the one time-boxed, retried step below and a hung mirror can never stall an unguarded install. The download
-      # itself is time-boxed and retried too, so a slow CDN cannot block the job indefinitely.
-      - name: Install Chromium
-        timeout-minutes: 10
+      # The checkout belongs to another user than the container's root: git refuses it otherwise.
+      - name: Trust the checkout
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      # Python, ffmpeg (required), Roboto, then Playwright with Chromium and its libraries, from Debian's mirrors: each
+      # apt call time-boxed and retried so a flaky mirror is abandoned and retried instead of hanging.
+      - name: Install Python, ffmpeg, Roboto and Chromium
+        timeout-minutes: 20
         run: |
           ok=
           for i in 1 2 3; do
-            timeout 180 playwright install chromium && ok=1 && break
-            echo "chromium download attempt $i failed or timed out, retrying in 15s"; sleep 15
-          done
-          [ -n "$ok" ] || { echo "::error::chromium download failed 3 times"; exit 1; }
-      # ffmpeg (required, not preinstalled) + Roboto + the browser's apt deps, each apt call time-boxed and retried
-      # so a flaky mirror is abandoned and retried instead of hanging; fail loudly if ffmpeg is still missing.
-      - name: Install ffmpeg, Roboto and browser deps
-        timeout-minutes: 12
-        run: |
-          ok=
-          for i in 1 2 3; do
-            timeout 150 sudo apt-get update \
-              && timeout 300 sudo apt-get install -y ffmpeg fonts-roboto \
-              && timeout 300 playwright install-deps chromium \
+            timeout 150 apt-get update \
+              && timeout 300 apt-get install -y --no-install-recommends python3 python3-venv ffmpeg fonts-roboto \
               && ok=1 && break
             echo "apt attempt $i failed or timed out, retrying in 15s"; sleep 15
           done
           [ -n "$ok" ] || { echo "::error::apt failed 3 times"; exit 1; }
+          python3 -m venv /opt/venv
+          echo /opt/venv/bin >> "$GITHUB_PATH"
+          /opt/venv/bin/pip install -q playwright==1.64.1
+          ok=
+          for i in 1 2 3; do
+            timeout 300 /opt/venv/bin/playwright install --with-deps chromium && ok=1 && break
+            echo "chromium attempt $i failed or timed out, retrying in 15s"; sleep 15
+          done
+          [ -n "$ok" ] || { echo "::error::chromium install failed 3 times"; exit 1; }
           ffmpeg -version > /dev/null
       - name: Render screenshots
         run: |
@@ -97,9 +101,14 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           # Passed through the environment, never expanded into the script: a branch name cannot inject commands.
           HEAD_REF: ${{ github.head_ref }}
+          REPO: ${{ github.repository }}
+        # The REST API rather than gh, which the container does not have
         run: |
           for wf in lint.yml validate.yml hacs.yml; do
-            if [ -f ".github/workflows/$wf" ]; then gh workflow run "$wf" --ref "$HEAD_REF"; fi
+            [ -f ".github/workflows/$wf" ] || continue
+            curl -fsS -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$REPO/actions/workflows/$wf/dispatches" \
+              -d "$(python3 -c 'import json, os; print(json.dumps({"ref": os.environ["HEAD_REF"]}))')"
           done
       - name: Upload screenshots artifact
         if: github.event_name == 'workflow_dispatch'

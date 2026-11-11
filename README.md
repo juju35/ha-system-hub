@@ -15,6 +15,16 @@ Home Assistant integration that brings the care of your Home Assistant system to
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="System Hub sidebar panel, System tab" width="800"></p>
 
+| System Monitor | Watchdog | Marketplace Refresh |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="System Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog.png" alt="Watchdog card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace.png" alt="Marketplace Refresh card" width="260"> |
+
+| Battery Monitor | Git Sync | Orphan Entities |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="Battery Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Git Sync card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="260"> |
+
+The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section shows its mini card, its states and its dark theme.
+
 ## Features
 
 - **System**: CPU, memory, disks, network and temperatures from the System Monitor integration.
@@ -69,7 +79,7 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 
 **Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Containers module needs the Supervisor (Home Assistant OS or a Supervised installation), the Marketplace module Home Assistant's Marketplace.
 
-**Configure** opens a menu: **Modules** turns modules on or off, then one entry per module turned on sets it up (**System: thresholds** always, then **Containers**, **Watchdog**, **Watchdog: Add a power cycle**, **Watchdog: Remove power cycles**, **Marketplace**, **Batteries**, **Git Sync: Repository settings**, **Git Sync**, **Orphans**).
+Everything else is set in the panel's **Settings** tab (**System Hub** in the sidebar): the modules turned on or off, the order of the tabs and every module's settings. The integration page has no **Configure**: the link of every **System Hub** device opens this tab.
 
 ### Modules
 
@@ -89,21 +99,27 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 
 #### Module settings
 
-Every module's settings are edited in the panel's **Settings** tab: each module opens on its form (and its further steps: power cycles, battery types, the import from Battery Monitor, the Git repository), the same forms as **Configure** with the same checks; **Module settings** in a module's tab opens its section. The forms:
+The **Settings** tab lists the modules and the tabs: **Enabled** then **Disabled**, a handle ═ to drag a row (or ↑ ↓ from it) to set the order of the tabs, the first one opening by default, and a switch per module; **Save** or **Discard** once changed. A module's ⚙ opens its settings in place (the System thresholds in the System row), with its further steps: the power cycles of the Watchdog, the battery types and the import from Battery Monitor, the Git repository. They are Home Assistant's own forms, with the same checks as the integration's options; **Module settings** in a module's tab opens its section.
 
-| Form | Light | Dark |
+| Light | Dark |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings.png" alt="sidebar panel, Settings tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-settings-dark.png" alt="sidebar panel, Settings tab, dark theme" width="400"> |
+
+Each module's settings, opened in place:
+
+| Settings | Light | Dark |
 |---|---|---|
-| Menu | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-menu.png" alt="Configure, Menu" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-menu-dark.png" alt="Configure, Menu, dark theme" width="300"> |
-| Modules | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-modules.png" alt="Configure, Modules" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-modules-dark.png" alt="Configure, Modules, dark theme" width="300"> |
-| Containers | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers.png" alt="Configure, Containers" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers-dark.png" alt="Configure, Containers, dark theme" width="300"> |
-| Watchdog | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog.png" alt="Configure, Watchdog" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-dark.png" alt="Configure, Watchdog, dark theme" width="300"> |
-| Watchdog: Add a power cycle | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle.png" alt="Configure, Watchdog: Add a power cycle" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle-dark.png" alt="Configure, Watchdog: Add a power cycle, dark theme" width="300"> |
-| Marketplace | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace.png" alt="Configure, Marketplace" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace-dark.png" alt="Configure, Marketplace, dark theme" width="300"> |
-| Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries.png" alt="Configure, Batteries" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-dark.png" alt="Configure, Batteries, dark theme" width="300"> |
-| Batteries: Battery types | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-types.png" alt="Configure, Batteries: Battery types" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-types-dark.png" alt="Configure, Batteries: Battery types, dark theme" width="300"> |
-| Batteries: Import from Battery Monitor | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import.png" alt="Configure, Batteries: Import from Battery Monitor" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import-dark.png" alt="Configure, Batteries: Import from Battery Monitor, dark theme" width="300"> |
-| Git Sync: Repository settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository.png" alt="Configure, Git Sync: Repository settings" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository-dark.png" alt="Configure, Git Sync: Repository settings, dark theme" width="300"> |
-| Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync.png" alt="Configure, Git Sync" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-dark.png" alt="Configure, Git Sync, dark theme" width="300"> |
+| System thresholds | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-system.png" alt="Settings tab, System thresholds" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-system-dark.png" alt="Settings tab, System thresholds, dark theme" width="300"> |
+| Containers | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers.png" alt="Settings tab, Containers" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-containers-dark.png" alt="Settings tab, Containers, dark theme" width="300"> |
+| Watchdog | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog.png" alt="Settings tab, Watchdog" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-dark.png" alt="Settings tab, Watchdog, dark theme" width="300"> |
+| Watchdog: Power cycle a device | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle.png" alt="Settings tab, Watchdog: Power cycle a device" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-watchdog-power-cycle-dark.png" alt="Settings tab, Watchdog: Power cycle a device, dark theme" width="300"> |
+| Marketplace | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace.png" alt="Settings tab, Marketplace" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-marketplace-dark.png" alt="Settings tab, Marketplace, dark theme" width="300"> |
+| Batteries | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries.png" alt="Settings tab, Batteries" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-dark.png" alt="Settings tab, Batteries, dark theme" width="300"> |
+| Batteries: Battery types | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-types.png" alt="Settings tab, Batteries: Battery types" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-types-dark.png" alt="Settings tab, Batteries: Battery types, dark theme" width="300"> |
+| Batteries: Import from Battery Monitor | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import.png" alt="Settings tab, Batteries: Import from Battery Monitor" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import-dark.png" alt="Settings tab, Batteries: Import from Battery Monitor, dark theme" width="300"> |
+| Git Sync: Repository settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository.png" alt="Settings tab, Git Sync: Repository settings" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository-dark.png" alt="Settings tab, Git Sync: Repository settings, dark theme" width="300"> |
+| Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync.png" alt="Settings tab, Git Sync" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-dark.png" alt="Settings tab, Git Sync, dark theme" width="300"> |
+| Orphans | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-orphans.png" alt="Settings tab, Orphans" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-orphans-dark.png" alt="Settings tab, Orphans, dark theme" width="300"> |
 
 ### Diagnostics
 
@@ -115,17 +131,18 @@ Every module's settings are edited in the panel's **Settings** tab: each module 
 
 | Tab | Content |
 |---|---|
-| System | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap (from its percentage, or its use and free), load, received and sent since the boot, the Home Assistant Core and OS versions (orange with the version available when an update is, a click opens Settings → Updates), uptime, IP address, download and upload, the database size (the [File Size](https://www.home-assistant.io/integrations/filesize/) integration on `home-assistant_v2.db`), the last and next automatic backups (orange after 2 days, red after 7 or when the last one failed); history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; the network figures leave out the virtual interfaces (loopback, Docker, `hassio`, `veth…`, bridges, tunnels, WireGuard, Tailscale); CPU, RAM, disk, temperature and swap turn orange then red from the thresholds of **Configure → System: thresholds** (70/90 %, 70/90 %, 80/90 %, 70/85 °C, 50/80 % by default); every disk and the processes System Monitor watches (the stopped ones first), from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
+| Status | The health of the instance at a glance: a score out of 100 (100, less 15 per area needing action, 5 per area to watch, 1 per area with something to know) and one tile per area, in the order of the tabs: System, Containers & process, Updates (Core, OS and the Marketplace), Watchdog, Automations, Batteries, Git Sync, Orphans; each tile says its level and its details, and opens its tab |
+| System | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap (from its percentage, or its use and free), load, received and sent since the boot, the Home Assistant Core and OS versions (orange with the version available when an update is, a click opens Settings → Updates), uptime, IP address, download and upload, the database size (the [File Size](https://www.home-assistant.io/integrations/filesize/) integration on `home-assistant_v2.db`), the last and next automatic backups (orange after 2 days, red after 7 or when the last one failed); history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; the network figures leave out the virtual interfaces (loopback, Docker, `hassio`, `veth…`, bridges, tunnels, WireGuard, Tailscale); CPU, RAM, disk, temperature and swap turn orange then red from the thresholds of **Settings → System ⚙** (70/90 %, 70/90 %, 80/90 %, 70/85 °C, 50/80 % by default); every disk and the processes System Monitor watches (the stopped ones first), from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
 | Containers | Running and stopped containers, last read; every container with its state, version and update, CPU, RAM and the last 24 hours of CPU; **Refresh** |
-| Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the power cycles set up (device and room, plug and its state, delays, status, count, the device's page; added and removed in Configure); the recent reloads and power cycles |
+| Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the power cycles set up (device and room, plug and its state, delays, status, count, the device's page; added and removed in **Settings → Watchdog ⚙**); the recent reloads and power cycles |
 | Marketplace | A header with the updates available, the last and next check, the repositories that could not be checked and GitHub (account connected, requests left, next try after the limit); **Check for updates**, **Update all** (asked first); while a check runs, its progress bar, the share done, the time left and the failures (read every 2 seconds); then a card per update: logo, installed → latest version with the size of the change (major, minor, patch), the start of its release notes, **Release notes** and its own **Update**; the repositories that could not be checked with a link to GitHub |
 | Batteries | Low and unavailable batteries, last notification; every battery **by level** (the ones in error first, then the lowest), **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); a search by name, room or type; the spare batteries by type (in stock, to buy for the batteries low or due within 30 days), a click sets a type's stock; **Export CSV**; **Notify now** |
 | Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
 | Automations | Failed automations, unavailable linked entities, last failure; each failure with its error, failed step and failures in a row, **Trace**, **Edit**, **Clear**; each unavailable entity with the automations, scripts and scenes using it; **Clear all** (asked first), **Refresh** (rebuilds the list of linked entities); lists folded from their title, 5 items then **Show more** |
 | Orphans | A counter per reason (a click filters on it), orphan devices, removed since start, last scan; **Scan now**; the orphaned entities with a search, integration and reason filters, what uses each (with links); tick them one by one or every match, then **Remove** or **Ignore** (asked first); the orphan devices, removed or ignored the same way |
-| Settings | Every module with its switch and its settings opened in place (the System thresholds too), Save and Cancel per module; the tab order; Save and Discard for the modules and tabs changed |
+| Settings | The modules and the tabs in one list, as Home Assistant's sidebar editor: **Enabled** then **Disabled**; a handle ═ to drag a row (or ↑ ↓ from it with the keyboard) to set the order of the tabs, the first one opening by default; each module with its switch and its settings ⚙ opened in place (the System thresholds in the System row), Save and Cancel per module; Save and Discard for the modules and tabs changed |
 
-Git Sync can't be turned on from the panel the first time: its repository is checked in **Configure → Modules**.
+Turning Git Sync on the first time asks for its repository: its form opens in the **Settings** tab, and the module is saved once the repository is checked.
 
 ### Screenshots
 
@@ -133,6 +150,7 @@ Every tab, light and dark themes:
 
 | Tab | Light | Dark |
 |---|---|---|
+| Status | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-status.png" alt="sidebar panel, Status tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-status-dark.png" alt="sidebar panel, Status tab, dark" width="400"> |
 | System | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="sidebar panel, System tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system-dark.png" alt="sidebar panel, System tab, dark theme" width="400"> |
 | Containers | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-containers.png" alt="sidebar panel, Containers tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-containers-dark.png" alt="sidebar panel, Containers tab, dark theme" width="400"> |
 | Watchdog | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-watchdog.png" alt="sidebar panel, Watchdog tab" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-watchdog-dark.png" alt="sidebar panel, Watchdog tab, dark theme" width="400"> |
@@ -456,7 +474,7 @@ actions:
 
 #### Power cycles
 
-A device that hangs (a router, a hub, a camera) often only comes back once its power is cut. Associate it with the smart plug that powers it, in **Configure → Watchdog: Add a power cycle**:
+A device that hangs (a router, a hub, a camera) often only comes back once its power is cut. Associate it with the smart plug that powers it, in **Settings → Watchdog ⚙ → Add a power cycle**:
 
 | Field | Default | Description |
 |---|---|---|
@@ -917,7 +935,7 @@ The **full screen** button shows every battery grouped **by room**, **by battery
 
 #### Battery types
 
-System Hub already gives each battery its type: the one set in **Settings → Devices & services → System Hub → Configure → Battery types** (per battery or per device model), otherwise [Battery Notes](https://github.com/andrew-codechimp/HA-Battery-Notes). The types set in the card editor (**Battery types by model**, **Battery types by battery**) still apply on top, for that card only; **Configure → Import from Battery Monitor** brings those of existing cards into System Hub. `2× AA` (or `2x AA`, `AA x2`) counts two batteries; batteries without a type are grouped under **Unknown type**.
+System Hub already gives each battery its type: the one set in panel's **Settings → Batteries ⚙ → Battery types** (per battery or per device model), otherwise [Battery Notes](https://github.com/andrew-codechimp/HA-Battery-Notes). The types set in the card editor (**Battery types by model**, **Battery types by battery**) still apply on top, for that card only; **Settings → Batteries ⚙ → Import from Battery Monitor** brings those of existing cards into System Hub. `2× AA` (or `2x AA`, `AA x2`) counts two batteries; batteries without a type are grouped under **Unknown type**.
 
 ```yaml
 type: custom:battery-monitor-card
@@ -966,7 +984,7 @@ Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev
 
 Commits and pushes the Home Assistant configuration to a Git remote (GitHub, Gitea…), with commit messages written by an AI task, and exports the dashboards. One repository.
 
-Turning the module on (in the setup or in **Configure → Modules**) asks for the repository first: it is checked with Git (work tree, remote, branch name, commit author) before it is saved. Change it later with **Configure → Git Sync: Repository settings**, the options with **Configure → Git Sync**.
+Turning the module on (in the setup or with its switch in the panel's **Settings** tab) asks for the repository first: it is checked with Git (work tree, remote, branch name, commit author) before it is saved. Change it later with **Settings → Git Sync ⚙ → Repository settings**, the options with **Settings → Git Sync ⚙**.
 
 Prerequisites:
 
@@ -1248,9 +1266,15 @@ The Orphan Entities card and mini card are served by System Hub (`custom:orphan-
 | Card | Light | Dark |
 |---|---|---|
 | Card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-dark.png" alt="Orphan Entities card, dark theme" width="300"> |
+| Two entities selected | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-selected.png" alt="Orphan Entities card, two entities selected" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-selected-dark.png" alt="Orphan Entities card, two entities selected, dark theme" width="300"> |
+| Used by an automation or a dashboard | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-used.png" alt="Orphan Entities card, entity used by an automation" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-used-dark.png" alt="Orphan Entities card, entity used by an automation, dark theme" width="300"> |
+| Filtered on a reason | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-filtered.png" alt="Orphan Entities card filtered on a reason" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-filtered-dark.png" alt="Orphan Entities card filtered on a reason, dark theme" width="300"> |
+| No orphan | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-ok.png" alt="Orphan Entities card, no orphan" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-ok-dark.png" alt="Orphan Entities card, no orphan, dark theme" width="300"> |
 | Remove, confirmed | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-confirm.png" alt="Orphan Entities card asking to confirm" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-confirm-dark.png" alt="Orphan Entities card asking to confirm, dark theme" width="300"> |
 | Orphan devices | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-devices.png" alt="Orphan Entities card, orphan devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-devices-dark.png" alt="Orphan Entities card, orphan devices, dark theme" width="300"> |
 | Mini card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini.png" alt="Orphan Entities mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-dark.png" alt="Orphan Entities mini card, dark theme" width="300"> |
+| Mini card, no orphan | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-ok.png" alt="Orphan Entities mini card, no orphan" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-ok-dark.png" alt="Orphan Entities mini card, no orphan, dark theme" width="300"> |
+| Mini card zoomed in | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-zoom.png" alt="Orphan Entities mini card zoomed in to the full card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-zoom-dark.png" alt="Orphan Entities mini card zoomed in to the full card, dark theme" width="300"> |
 
 #### Entities
 
@@ -1281,7 +1305,7 @@ Removes orphan devices of the last scan with their entities; without `devices`, 
 
 #### Action `system_hub.orphans_ignore`
 
-Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are dropped from the list at once and saved in **Configure → Orphans** (System Hub is not reloaded for it). Administrators only.
+Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are dropped from the list at once and saved in **Settings → Orphans ⚙** (System Hub is not reloaded for it). Administrators only.
 
 #### Events
 
@@ -1292,7 +1316,7 @@ Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are 
 
 ## Migrating
 
-System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in **Configure**. Rename in your automations:
+System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, Git Sync and Orphan Entities: remove them once System Hub is set up, so that nothing is checked twice. Their options are not imported; set them again in the panel's **Settings** tab. Rename in your automations:
 
 | Before | System Hub |
 |---|---|
@@ -1312,7 +1336,7 @@ System Hub replaces Integration Watchdog, Marketplace Refresh, Battery Monitor, 
 | `orphan_entities_removed` / `_devices_removed` events | `system_hub_orphans_removed` / `system_hub_orphans_devices_removed` |
 | `sensor.orphan_entities_*`, `button.orphan_entities_scan_now` | `sensor.system_hub_orphans_*`, `button.system_hub_orphans_scan_now` |
 
-[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards keep their names (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and are now served by System Hub; once Orphan Entities is removed, point a card's `entity` (if set) to `sensor.system_hub_orphans_orphaned_entities`. Its ignored integrations and entities are not imported: set them again in **Configure → Orphans**.
+[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards keep their names (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and are now served by System Hub; once Orphan Entities is removed, point a card's `entity` (if set) to `sensor.system_hub_orphans_orphaned_entities`. Its ignored integrations and entities are not imported: set them again in **Settings → Orphans ⚙**.
 
 ## Translations
 

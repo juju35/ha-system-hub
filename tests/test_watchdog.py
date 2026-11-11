@@ -68,7 +68,7 @@ async def _setup(hass: HomeAssistant, **options) -> MockConfigEntry:
 
 async def _settings_flow(hass: HomeAssistant, entry: MockConfigEntry):
     """The options flow, past its menu: the settings form."""
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert result["type"] is FlowResultType.MENU
     return await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "watchdog"})
 

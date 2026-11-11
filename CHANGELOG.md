@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.0.0 - 2026-11-11
+
+### New
+- **Status tab**, the first tab: the health of the instance at a glance. A score out of 100 in a ring (100, less 15 per area needing action, 5 per area to watch, 1 per area with something to know), the points to check by level, the Home Assistant version and uptime; then one tile per area in the order of the tabs (System, Containers & process, Updates, Watchdog, Automations, Batteries, Git Sync, Orphans), each with its level, a few words, its details, and opening its tab. An order of the tabs saved before puts it first.
+
+### Improved
+- **Settings tab**: the modules and the tabs in one list, as Home Assistant's sidebar editor. **Enabled** then **Disabled**; each row enabled has a handle ═ to drag it (or ↑ ↓ from it with the keyboard) to set the order of the tabs, the first one opening by default; each module its switch and its settings ⚙ opened in place, the System thresholds in the System row.
+- **README**: the settings described in the panel's Settings tab (the paths through **Configure** replaced); the screenshots of the old Configure forms replaced by each module's settings opened in the Settings tab, rendered by the CI from the options flow's own forms (`scripts/screenshot-forms.json`, checked against the flow by the tests).
+- **Status tab**: the tiles take the icons of the modules, as in Settings.
+- **README**: every card shown at the top, under the panel, and the Orphan Entities card's other states (selected, used, filtered, no orphan, mini card).
+
+### Fixed
+- **Configure** no longer shows the options menu (Home Assistant 2026.11 no longer tells the panel's flow apart from it): the integration page has no Configure anymore, the System Hub devices link to the panel's Settings tab, and an options flow started from anywhere but the panel stops with that link.
+- **Panel**: "Unable to load: [object Object]" when the connection to Home Assistant was lost (Home Assistant restarting, the app back from the background). The error now says what happened, what is shown stays while the connection is back, and the panel reads its state again by itself (after 3 seconds, when the connection is back, and when the page is shown again).
+
 ## 0.5.5 - 2026-11-11
 
 ### Improved

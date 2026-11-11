@@ -11,10 +11,13 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '0.5.5';
+var SYSTEM_HUB_PANEL_VERSION = '1.0.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
+// A state that could not be read (Home Assistant restarting, connection lost): read again after
+var SH_RETRY_MS = 3000;
 var SH_MODULE_ICONS = {
+  status: 'mdi:heart-pulse',
   system: 'mdi:chip',
   containers: 'mdi:docker',
   watchdog: 'mdi:shield-search',
@@ -34,6 +37,11 @@ var SH_MODULE_NAMES = {
   automations: 'Automations',
   orphans: 'Orphans',
 };
+// Every tab in its order, the ones not in it yet after
+function shAllTabs(tabs) {
+  var order = [...(tabs || [])];
+  return [...order, ...['status', 'system', ...Object.keys(SH_MODULE_NAMES)].filter((t) => !order.includes(t))];
+}
 // Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
 var SH_AUTO_MAX = 5;
 // Git Sync tab: the list of changed files is folded beyond this many
@@ -76,6 +84,15 @@ function shFocusSelector(el) {
   var esc = (v) => (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, '\\$&'));
   var parts = attrs.filter((a) => el.hasAttribute?.(a)).map((a) => `[${a}="${esc(el.getAttribute(a))}"]`);
   return parts.length ? parts.join('') : null;
+}
+
+// The words of an error: a WebSocket one is {code, message}, or {error: {code, message}} when the connection was lost;
+// a REST one carries its body
+function shErr(err) {
+  if (err == null) return '';
+  if (typeof err !== 'object') return String(err);
+  var text = err.message || err.error?.message || err.body?.message || err.error?.code || err.code;
+  return text ? String(text) : String(err);
 }
 
 function shEsc(value) {
@@ -176,7 +193,7 @@ class SystemHubDiffDialog extends HTMLElement {
     try {
       this._diff = await request();
     } catch (err) {
-      this._error = err?.message || String(err);
+      this._error = shErr(err);
     } finally {
       this._loading = false;
       if (this._open) {
@@ -571,8 +588,8 @@ class SystemHubPanel extends HTMLElement {
     .who .n { font-size:15px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .who .n b { font-size:20px; font-weight:500; margin-right:4px; font-variant-numeric:tabular-nums; }
     .who .s { font-size:12px; color:var(--secondary-text-color); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .good { --tone:var(--tone-good); } .warn { --tone:var(--tone-warn); } .bad { --tone:var(--tone-bad); }
-    .good, .warn, .bad { --tone-text: color-mix(in srgb, var(--tone) 50%, var(--primary-text-color)); }
+    .good { --tone:var(--tone-good); } .warn { --tone:var(--tone-warn); } .bad { --tone:var(--tone-bad); } .info { --tone:var(--info-color, #039be5); }
+    .good, .warn, .bad, .info { --tone-text: color-mix(in srgb, var(--tone) 50%, var(--primary-text-color)); }
     .pill { flex:none; font-size:11px; font-weight:500; padding:2px 10px; border-radius:12px; color:var(--tone-text, var(--primary-text-color));
             background:color-mix(in srgb, var(--tone, var(--secondary-text-color)) 15%, transparent); white-space:nowrap; }
     .list { padding:6px 0; overflow:hidden; }
@@ -602,11 +619,48 @@ class SystemHubPanel extends HTMLElement {
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
     .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
     .spin { animation:sh-spin 1s linear infinite; }
+    .sthero { display:flex; align-items:center; gap:28px; padding:20px 28px; flex-wrap:wrap;
+              background:linear-gradient(135deg, color-mix(in srgb, var(--tone, var(--primary-color)) 10%, var(--card-background-color, #fff)), var(--card-background-color, #fff)); }
+        .stscore { position:relative; width:170px; height:170px; flex:none; }
+    .stscore svg { width:100%; height:100%; }
+    .sttrack { fill:none; stroke:var(--divider-color, rgba(127,127,127,.2)); stroke-width:14; }
+    .starc { fill:none; stroke:var(--tone); stroke-width:14; stroke-linecap:round; transition:stroke-dashoffset .8s ease; }
+    .stnum { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .stnum b { font-size:46px; font-weight:300; line-height:1; }
+    .stnum span { font-size:12px; color:var(--secondary-text-color); margin-top:4px; }
+    .sthero .who { flex:1; min-width:220px; }
+    .sttitle { font-size:24px; font-weight:500; }
+    .sthero .s { font-size:14px; margin:6px 0 12px; white-space:normal; }
+    .stpills { display:flex; flex-wrap:wrap; gap:6px; }
+    .stgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
+    .sttile { position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; gap:8px; text-align:left; cursor:pointer;
+              padding:16px; border-radius:var(--ha-card-border-radius, 12px); border:1px solid var(--divider-color, rgba(127,127,127,.15));
+              background:var(--card-background-color, #fff); color:var(--primary-text-color); font:inherit; }
+    .sttile:hover { border-color:color-mix(in srgb, var(--tone) 50%, transparent); }
+    .sttile:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
+    .stglow { position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 100% 0, color-mix(in srgb, var(--tone) 20%, transparent), transparent 60%); }
+    .sthead { position:relative; display:flex; align-items:center; gap:10px; }
+    .stic { width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:none; --mdc-icon-size:22px;
+            color:var(--tone); background:color-mix(in srgb, var(--tone) 16%, transparent); }
+    .stname { flex:1; font-size:14px; font-weight:500; }
+    .stdot { width:9px; height:9px; border-radius:50%; background:var(--tone); box-shadow:0 0 8px var(--tone); }
+    .stval { position:relative; font-size:19px; font-weight:500; }
+    .stdet { position:relative; font-size:12px; color:var(--secondary-text-color); line-height:1.4;
+             display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    @media (max-width:600px) { .sthero { gap:16px; padding:16px; } .stscore { width:130px; height:130px; } .stnum b { font-size:36px; } }
     .cfg { gap:0; }
     .cfg h2 { margin-bottom:4px; }
     .cfgrow { padding:6px 0; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); }
     .cfgrow.open { background:color-mix(in srgb, var(--primary-color) 6%, transparent); margin:0 -16px; padding:6px 16px; }
     .cfgpad { width:36px; flex:none; }
+    .cfgsec { font-size:12px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--secondary-text-color); padding:14px 0 4px; }
+    .cfglist { display:flex; flex-direction:column; }
+    .cfgrow.off > ha-icon, .cfgrow.off .who { opacity:.55; }
+    .dragh { cursor:grab; touch-action:none; color:var(--secondary-text-color); }
+    .cfgrow.dragging { background:var(--secondary-background-color, rgba(127,127,127,.12)); box-shadow:0 8px 24px rgba(0,0,0,.25);
+                       border-radius:12px; position:relative; z-index:1; }
+    .cfgrow.dragging .dragh { cursor:grabbing; }
+    .cfgdef { margin-left:8px; vertical-align:2px; }
     .cfgbody { display:flex; flex-direction:column; gap:12px; padding:12px 0 16px 36px; }
     .cfgbody .loading { padding:12px 0; }
     .cfgtabs { align-self:flex-start; }
@@ -804,7 +858,11 @@ class SystemHubPanel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
-    this._tab = 'system';
+    // The page shown again (the app back from the background): read again at once
+    this._onVisible = () => {
+      if (!document.hidden && this._hass) this._load();
+    };
+    this._tab = null;
     this._state = null;
     this._error = null;
     this._busy = {};
@@ -823,6 +881,11 @@ class SystemHubPanel extends HTMLElement {
 
   set hass(hass) {
     var first = !this._hass;
+    // The connection back (Home Assistant restarted, the app back from the background): read again at once
+    if (hass?.connection && hass.connection !== this._conn) {
+      this._conn = hass.connection;
+      hass.connection.addEventListener?.('ready', () => this.isConnected && this._load());
+    }
     var language = this._hass?.language;
     this._hass = hass;
     if (this._menu) this._menu.hass = hass;
@@ -841,7 +904,7 @@ class SystemHubPanel extends HTMLElement {
 
   set route(route) {
     var path = (route?.path || '').split('/').filter(Boolean)[0];
-    this._routeTab = path || 'system';
+    this._routeTab = path || null;
     if (this._state) this._selectTab(this._routeTab);
   }
 
@@ -861,12 +924,15 @@ class SystemHubPanel extends HTMLElement {
       if (!document.hidden) this._load();
     }, SH_REFRESH_MS);
     if (this._hass && this._state) this._load();
+    document.addEventListener?.('visibilitychange', this._onVisible);
   }
 
   disconnectedCallback() {
     clearInterval(this._timer);
     clearTimeout(this._fast);
+    clearTimeout(this._retry);
     this._timer = null;
+    document.removeEventListener?.('visibilitychange', this._onVisible);
   }
 
   async _start() {
@@ -926,22 +992,29 @@ class SystemHubPanel extends HTMLElement {
       }
       // The Orphans tab shown: its whole list, read again with the state
       if (this._state?.orphans && (this._routeTab || this._tab) === 'orphans') await this._orphLoad();
+      clearTimeout(this._retry);
     } catch (err) {
-      this._error = err?.message || String(err);
+      // Home Assistant restarting, the connection lost (the app back from the background): what is shown stays, read
+      // again in a few seconds; the message only when nothing could be read yet
+      if (!this._state?.loaded) this._error = shErr(err);
+      clearTimeout(this._retry);
+      if (this.isConnected) this._retry = setTimeout(() => this._load(), SH_RETRY_MS);
+      if (this._state?.loaded) return;
     }
     // A settings form open: left as it is, what is being typed included
-    if (this._tab === 'settings' && this._cfg?.flow) return;
+    if (this._tab === 'settings' && (this._cfg?.flow || this._drag)) return;
     this._render();
   }
 
   _tabs() {
     if (!this._state?.loaded) return ['system', 'settings'];
     var modules = this._state.modules || [];
-    return [...(this._state.tabs || []).filter((t) => t === 'system' || modules.includes(t)), 'settings'];
+    return [...(this._state.tabs || []).filter((t) => t === 'status' || t === 'system' || modules.includes(t)), 'settings'];
   }
 
   _tabName(tab) {
     if (tab === 'system' || tab === 'settings') return this._t(tab);
+    if (tab === 'status') return this._t('tab_status');
     if (tab === 'containers') return this._t('tab_containers');
     return SH_MODULE_NAMES[tab] || tab;
   }
@@ -990,6 +1063,8 @@ class SystemHubPanel extends HTMLElement {
       ev.preventDefault();
     });
     root.querySelector('main').addEventListener('click', (ev) => this._onClick(ev));
+    root.querySelector('main').addEventListener('pointerdown', (ev) => this._cfgDragStart?.(ev));
+    root.querySelector('main').addEventListener('keydown', (ev) => this._cfgDragKey?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => {
       if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches?.('[role="button"][data-more]')) {
         ev.preventDefault();
@@ -1048,6 +1123,7 @@ class SystemHubPanel extends HTMLElement {
     if (this._state === null) return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
     if (!this._state.loaded) return `<ha-card class="note">${shEsc(this._t('not_loaded'))}</ha-card>`;
     var html = {
+      status: () => this._status(),
       system: () => this._system(),
       containers: () => this._containers(),
       watchdog: () => this._watchdog(),
@@ -2020,17 +2096,8 @@ class SystemHubPanel extends HTMLElement {
   // Settings: the modules turned on, and the order of the tabs
   _settings() {
     var modules = this._draft.modules || this._state.modules || [];
-    var tabs = this._draft.tabs || this._state.tabs || [];
-    var tabRows = tabs
-      .map(
-        (tab, i) => `<div class="row"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon><div class="who"><div class="n">${shEsc(this._tabName(tab))}</div></div>
-        <button class="icon-btn" data-action="move" data-tab-move="${tab}" data-dir="-1" title="${shEsc(this._t('move_up'))}" aria-label="${shEsc(this._t('move_up'))}"${i === 0 ? ' disabled' : ''}><ha-icon icon="mdi:arrow-up"></ha-icon></button>
-        <button class="icon-btn" data-action="move" data-tab-move="${tab}" data-dir="1" title="${shEsc(this._t('move_down'))}" aria-label="${shEsc(this._t('move_down'))}"${i === tabs.length - 1 ? ' disabled' : ''}><ha-icon icon="mdi:arrow-down"></ha-icon></button></div>`,
-      )
-      .join('');
     var changed = Boolean(this._draft.modules || this._draft.tabs);
     return `${this._settingsModules(modules)}
-      <ha-card class="block"><h2>${shEsc(this._t('tabs'))}</h2>${tabRows}</ha-card>
       ${
         changed || this._busy.save
           ? `<div class="savebar" role="region" aria-label="${shEsc(this._t('unsaved'))}"><span class="grow">${shEsc(this._t('unsaved'))}</span>
@@ -2079,20 +2146,12 @@ class SystemHubPanel extends HTMLElement {
       this._confirm = action === 'confirm_install' ? 'install' : null;
       return this._render();
     }
-    if (action === 'move') {
-      var tabs = [...(this._draft.tabs || this._state.tabs || [])];
-      var i = tabs.indexOf(button.dataset.tabMove);
-      var j = i + Number(button.dataset.dir);
-      if (i < 0 || j < 0 || j >= tabs.length) return;
-      [tabs[i], tabs[j]] = [tabs[j], tabs[i]];
-      this._draft.tabs = tabs;
-      return this._render();
-    }
     if (action === 'period') {
       this._periods[button.dataset.chart] = Number(button.dataset.hours);
       return this._render();
     }
     if (action === 'batt_csv') return this._battDownload();
+    if (action === 'st_open') return this._selectTab(button.dataset.tab);
     if (action === 'git_files_fold') {
       var shownNow = this._gitFilesOpen ?? Math.max(this._state.git_sync?.changed ?? 0, (this._state.git_sync?.files || []).length) <= SH_GIT_FILES_MAX;
       this._gitFilesOpen = !shownNow;
@@ -2172,7 +2231,7 @@ class SystemHubPanel extends HTMLElement {
       this._toast(this._t('done'));
       done?.();
     } catch (err) {
-      this._messages[messageKey] = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages[messageKey] = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     await this._load();
     delete this._busy[busyKey];
@@ -2320,7 +2379,7 @@ class SystemHubPanel extends HTMLElement {
       if (message) this._draft.message = message;
       else this._messages.git_sync = { text: this._t('clean'), tone: '' };
     } catch (err) {
-      this._messages.git_sync = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages.git_sync = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     delete this._busy[service];
     this._render();
@@ -2356,7 +2415,7 @@ class SystemHubPanel extends HTMLElement {
         }
         return;
       }
-      this._messages.save = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages.save = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     delete this._busy.save;
     this._render();
@@ -2422,7 +2481,7 @@ var SH_ORPHANS_METHODS = {
       o.sel = new Set([...o.sel].filter((id) => ids.has(id)));
       o.dsel = new Set([...o.dsel].filter((id) => devices.has(id)));
     } catch (err) {
-      o.error = err?.message || String(err);
+      o.error = shErr(err);
     }
     o.loading = false;
   },
@@ -2660,7 +2719,7 @@ var SH_ORPHANS_METHODS = {
       }
       if (text) this._toast(text);
     } catch (err) {
-      this._messages.orphans = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages.orphans = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     await this._load();
     delete this._busy.orph;
@@ -2727,28 +2786,103 @@ var SH_SETTINGS_METHODS = {
   },
 
   // One row per module (and the System thresholds): its switch, what it does, and its settings once opened
+  // The modules and the tabs in one list, as Home Assistant's sidebar editor: the ones turned on in the order of the
+  // tabs (dragged by their handle, or moved with ↑ ↓ from it), each with its switch and its settings opened in place;
+  // the ones turned off below
   _settingsModules(modules) {
     var cfg = this._cfgState();
-    var rows = ['system', ...Object.keys(SH_MODULE_NAMES)].map((m) => {
-      var isSystem = m === 'system';
-      var on = isSystem || modules.includes(m);
-      var steps = SH_SETTINGS_STEPS[m] || [];
-      var saved = isSystem || (this._state.modules || []).includes(m);
-      var open = cfg.module === m;
-      var hint = isSystem ? this._t('settings_system_hint') : this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${m}`);
-      var name = isSystem ? this._t('settings_system') : SH_MODULE_NAMES[m];
-      var canOpen = steps.length && saved;
-      var head = `<div class="row cfgrow${open ? ' open' : ''}"><ha-icon icon="${SH_SETTINGS_ICONS[m] || SH_MODULE_ICONS[m]}"></ha-icon>
-        <div class="who"><div class="n">${shEsc(name)}</div>${hint ? `<div class="s">${shEsc(hint)}</div>` : ''}</div>
-        ${isSystem ? '' : `<ha-switch data-module="${m}"${on ? ' checked' : ''} aria-label="${shEsc(name)}"></ha-switch>`}
+    var tabs = shAllTabs(this._draft.tabs || this._state.tabs);
+    var on = (t) => t === 'status' || t === 'system' || modules.includes(t);
+    var row = (tab, enabled) => {
+      var fixed = tab === 'status' || tab === 'system';
+      var steps = SH_SETTINGS_STEPS[tab] || [];
+      var saved = tab === 'system' || (this._state.modules || []).includes(tab);
+      var open = cfg.module === tab;
+      var name = this._tabName(tab);
+      var hint =
+        tab === 'status'
+          ? this._t('st_hint')
+          : tab === 'system'
+            ? this._t('settings_system_hint')
+            : this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${tab}`);
+      var first = enabled && tabs.find(on) === tab;
+      var handle = enabled
+        ? `<button class="icon-btn dragh" data-tab="${tab}" title="${shEsc(this._t('drag'))}" aria-label="${shEsc(`${this._t('drag')} · ${name}`)}"><ha-icon icon="mdi:drag-horizontal-variant"></ha-icon></button>`
+        : '<span class="cfgpad"></span>';
+      var head = `<div class="row cfgrow${open ? ' open' : ''}${enabled ? '' : ' off'}" data-row-tab="${tab}">${handle}<ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>
+        <div class="who"><div class="n">${shEsc(name)}${first ? `<span class="pill cfgdef">${shEsc(this._t('tab_default'))}</span>` : ''}</div>${hint ? `<div class="s">${shEsc(hint)}</div>` : ''}</div>
+        ${fixed ? '' : `<ha-switch data-module="${tab}"${enabled ? ' checked' : ''} aria-label="${shEsc(name)}"></ha-switch>`}
         ${
-          canOpen
-            ? `<button class="icon-btn" data-action="cfg_toggle" data-module="${m}" aria-expanded="${open}" title="${shEsc(this._t('settings'))}" aria-label="${shEsc(`${this._t('settings')} · ${name}`)}"><ha-icon icon="mdi:chevron-${open ? 'up' : 'down'}"></ha-icon></button>`
+          steps.length && saved
+            ? `<button class="icon-btn" data-action="cfg_toggle" data-module="${tab}" aria-expanded="${open}" title="${shEsc(this._t('settings'))}" aria-label="${shEsc(`${this._t('settings')} · ${name}`)}"><ha-icon icon="mdi:cog${open ? '' : '-outline'}"></ha-icon></button>`
             : '<span class="cfgpad"></span>'
         }</div>`;
-      return head + (open ? this._cfgBody(m) : '');
-    });
-    return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules'))}</h2><span class="msg">${shEsc(this._t('modules_hint'))}</span>${rows.join('')}</ha-card>`;
+      return head + (open ? this._cfgBody(tab) : '');
+    };
+    var enabled = tabs.filter(on);
+    var disabled = tabs.filter((t) => !on(t));
+    return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules_tabs'))}</h2><span class="msg">${shEsc(this._t('modules_tabs_hint'))}</span>
+      <div class="cfgsec">${shEsc(this._t('enabled'))}</div><div class="cfglist">${enabled.map((t) => row(t, true)).join('')}</div>
+      ${disabled.length ? `<div class="cfgsec">${shEsc(this._t('disabled'))}</div><div class="cfglist off">${disabled.map((t) => row(t, false)).join('')}</div>` : ''}</ha-card>`;
+  },
+
+  // Moves a tab among those turned on (the ones turned off keep their place): to the index `to` of that list
+  _cfgMove(tab, to) {
+    var modules = this._draft.modules || this._state.modules || [];
+    var tabs = shAllTabs(this._draft.tabs || this._state.tabs);
+    var on = (t) => t === 'status' || t === 'system' || modules.includes(t);
+    var enabled = tabs.filter(on).filter((t) => t !== tab);
+    enabled.splice(Math.max(0, Math.min(to, enabled.length)), 0, tab);
+    var next = [...enabled, ...tabs.filter((t) => !on(t))];
+    if (next.join() !== tabs.join()) this._draft.tabs = next;
+    this._render();
+  },
+
+  // Dragging a row by its handle (mouse, finger, pen): the row follows among those turned on, the order is kept once
+  // let go. Followed on the window: a row moved in the page loses the pointer capture
+  _cfgDragStart(ev) {
+    var handle = ev.target.closest?.('.dragh');
+    if (!handle || ev.button > 0) return;
+    var list = handle.closest('.cfglist');
+    var row = handle.closest('[data-row-tab]');
+    if (!list || !row) return;
+    ev.preventDefault();
+    var cfg = this._cfgState();
+    if (cfg.module) {
+      this._cfgAbort();
+      Object.assign(cfg, { module: null, step: null, error: null, haForm: null });
+    }
+    this._drag = { tab: row.dataset.rowTab };
+    row.classList.add('dragging');
+    var move = (e) => {
+      var over = this.shadowRoot.elementFromPoint?.(e.clientX, e.clientY)?.closest?.('[data-row-tab]');
+      if (!over || over === row || over.parentNode !== list) return;
+      var box = over.getBoundingClientRect();
+      list.insertBefore(row, e.clientY > box.top + box.height / 2 ? over.nextSibling : over);
+    };
+    var end = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', end);
+      window.removeEventListener('pointercancel', end);
+      var order = [...list.querySelectorAll('[data-row-tab]')].map((el) => el.dataset.rowTab);
+      this._drag = null;
+      this._cfgMove(row.dataset.rowTab, order.indexOf(row.dataset.rowTab));
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+  },
+
+  // ↑ ↓ on a handle: the row one place up or down
+  _cfgDragKey(ev) {
+    var handle = ev.target.closest?.('.dragh');
+    if (!handle || (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown')) return;
+    ev.preventDefault();
+    var tab = handle.dataset.tab;
+    var modules = this._draft.modules || this._state.modules || [];
+    var enabled = shAllTabs(this._draft.tabs || this._state.tabs).filter((t) => t === 'status' || t === 'system' || modules.includes(t));
+    this._cfgMove(tab, enabled.indexOf(tab) + (ev.key === 'ArrowUp' ? -1 : 1));
+    this.shadowRoot.querySelector(`.dragh[data-tab="${tab}"]`)?.focus();
   },
 
   // An open section: the step's form, its further steps, Save
@@ -2828,7 +2962,7 @@ var SH_SETTINGS_METHODS = {
       cfg.flowId = menu.flow_id;
       await this._cfgGo(cfg.step);
     } catch (err) {
-      cfg.error = this._t('failed', { error: err?.body?.message || err?.message || String(err) });
+      cfg.error = this._t('failed', { error: shErr(err) });
       this._render();
     }
   },
@@ -2885,7 +3019,7 @@ var SH_SETTINGS_METHODS = {
       this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, cfg.data));
     } catch (err) {
       cfg.busy = false;
-      cfg.errors = { base: err?.body?.message || err?.message || String(err) };
+      cfg.errors = { base: shErr(err) };
       this._render();
     }
   },
@@ -2913,7 +3047,7 @@ var SH_SETTINGS_METHODS = {
     }
     if (action === 'cfg_step') {
       this._cfgGo(button.dataset.step).catch((err) => {
-        cfg.error = this._t('failed', { error: err?.message || String(err) });
+        cfg.error = this._t('failed', { error: shErr(err) });
         this._render();
       });
       return true;
@@ -2939,3 +3073,170 @@ var SH_SETTINGS_METHODS = {
 };
 
 Object.assign(SystemHubPanel.prototype, SH_SETTINGS_METHODS);
+
+// Status tab: the health of the instance at a glance. A score out of 100 (100, less 15 per area needing action, 5 per
+// area to watch, 1 per area with something to know), then one tile per area in the order of the tabs: its level, what
+// it says in a few words, its details; a click opens its tab. Worked out here from what the panel already reads.
+var SH_STATUS_WEIGHTS = { bad: 15, warn: 5, info: 1, good: 0 };
+
+var SH_STATUS_METHODS = {
+  // One area: [tone, value, details] or null when there is nothing to show (module off, nothing read yet)
+  _stArea(tab) {
+    var s = this._state;
+    var n = (key, count) => this._t(key, { n: count });
+    var join = (parts) => parts.filter(Boolean).join(' · ');
+    if (tab === 'system') {
+      var sensors = s.system || [];
+      if (!sensors.length) return null;
+      var one = (key) => sensors.find((x) => x.key === key);
+      var th = { ...SH_THRESHOLDS, ...(s.thresholds || {}) };
+      var disks = sensors.filter((x) => x.key === 'disk_use_percent');
+      var disk = disks.map((d) => shNum(d.state)).filter((v) => v !== null);
+      var checks = [
+        ['cpu', shNum(one('processor_use')?.state), 'CPU', '%'],
+        ['ram', shNum(one('memory_use_percent')?.state), 'RAM', '%'],
+        ['temperature', shNum(one('processor_temperature')?.state), '', '°C'],
+        ['disk', disk.length ? Math.max(...disk) : null, this._t('disk'), '%'],
+      ].filter(([, v]) => v !== null);
+      var tones = checks.map(([key, v]) => shTone(v, th[key][0], th[key][1]));
+      var tone = tones.includes('bad') ? 'bad' : tones.includes('warn') ? 'warn' : 'good';
+      var high = checks.filter((_c, i) => tones[i] !== 'good').map(([, , label]) => label || this._t('temperature'));
+      return [tone, tone === 'good' ? this._t('st_normal') : this._t('st_high', { what: high.join(', ') }), join(checks.map(([, v, label, unit]) => `${label ? `${label} ` : ''}${Math.round(v)} ${unit}`))];
+    }
+    if (tab === 'containers') {
+      var data = s.containers;
+      if (!data) return null;
+      var list = data.containers || [];
+      var down = list.filter((c) => c.down);
+      var procs = (s.system || []).filter((x) => x.key === 'process');
+      var stopped = procs.filter((p) => p.state !== 'on');
+      var images = list.filter((c) => c.update_available);
+      var running = list.filter((c) => c.state === 'started' || c.state === 'startup').length;
+      var problems = down.length + stopped.length;
+      return [
+        problems ? 'bad' : images.length || data.error ? 'warn' : 'good',
+        problems ? n('st_stopped', problems) : images.length ? n('st_available', images.length) : this._t('st_all_running'),
+        join([...down.map((c) => c.container || c.name), ...stopped.map((p) => shProcess(p)), `${running}/${list.length}`]),
+      ];
+    }
+    if (tab === 'marketplace') {
+      var market = s.marketplace;
+      var core = (s.updates || []).filter((u) => u.state === 'on');
+      if (!market && !core.length) return null;
+      var repos = market?.list || [];
+      var count = repos.length + core.length;
+      return [
+        market?.state === 'error' ? 'bad' : count ? 'warn' : 'good',
+        count ? n('st_available', count) : this._t('up_to_date'),
+        join([...core.map((u) => `${u.key === 'core' ? 'Core' : 'OS'} ${u.latest}`), ...repos.map((u) => `${u.title} ${u.latest}`)]),
+      ];
+    }
+    if (tab === 'watchdog') {
+      var wd = s.watchdog;
+      if (!wd) return null;
+      var unavailable = wd.unavailable || [];
+      var gaveUp = unavailable.filter((u) => u.gave_up);
+      return [
+        gaveUp.length ? 'bad' : unavailable.length || wd.paused ? 'warn' : 'good',
+        gaveUp.length ? n('st_gave_up', gaveUp.length) : unavailable.length ? n('st_unavailable', unavailable.length) : this._t('all_available'),
+        join(unavailable.map((u) => `${u.title}${u.gave_up ? '' : ` ${u.reloads ?? 0}/${wd.max_reloads ?? ''}`}`)),
+      ];
+    }
+    if (tab === 'automations') {
+      var au = s.automations;
+      if (!au?.available) return null;
+      var failures = au.failures || [];
+      var linked = au.linked || [];
+      var repeated = failures.some((f) => f.consecutive_failures > 1);
+      return [
+        repeated ? 'bad' : failures.length || linked.length ? 'warn' : 'good',
+        failures.length ? n('st_failing', failures.length) : linked.length ? n('st_unavailable', linked.length) : this._t('auto_all_ok'),
+        join([...failures.map((f) => `${f.name}${f.consecutive_failures > 1 ? ` ×${f.consecutive_failures}` : ''}`), linked.length ? n('st_linked', linked.length) : '']),
+      ];
+    }
+    if (tab === 'batteries') {
+      var bat = s.batteries;
+      if (!bat) return null;
+      var low = (bat.batteries || []).filter((b) => b.low).sort((a, b) => (shNum(a.level) ?? 0) - (shNum(b.level) ?? 0));
+      return [
+        low.length ? 'warn' : bat.unavailable ? 'info' : 'good',
+        low.length ? n('st_to_replace', low.length) : bat.unavailable ? n('st_unavailable', bat.unavailable) : this._t('st_all_good'),
+        join(low.map((b) => `${b.name} ${Math.round(shNum(b.level) ?? 0)} %`)),
+      ];
+    }
+    if (tab === 'git_sync') {
+      var git = s.git_sync;
+      if (!git || git.available === false) return null;
+      var error = git.last_error || git.status === 'error' || (git.ahead && git.behind);
+      var changed = git.changed || 0;
+      return [
+        error ? 'bad' : changed || git.ahead || git.behind ? 'warn' : 'good',
+        error ? this._t('st_error') : changed ? n('st_changed', changed) : git.ahead ? n('st_to_push', git.ahead) : git.behind ? this._t('behind', { n: git.behind }) : this._t('clean'),
+        join([git.branch, git.ahead ? this._t('ahead', { n: git.ahead }) : '', git.last_push ? this._t('st_pushed', { when: this._rel(git.last_push) }) : '']),
+      ];
+    }
+    if (tab === 'orphans') {
+      var orph = s.orphans;
+      if (!orph) return null;
+      var total = orph.total ?? Object.values(orph.counts || {}).reduce((a, b) => a + b, 0);
+      var devices = orph.devices ?? 0;
+      return [
+        total || devices ? 'info' : 'good',
+        total ? n('st_entities', total) : devices ? n(devices === 1 ? 'st_device' : 'st_devices', devices) : this._t('st_none'),
+        join([devices ? n(devices === 1 ? 'st_device' : 'st_devices', devices) : '', orph.last_scan ? this._t('st_scanned', { when: this._rel(orph.last_scan) }) : '']),
+      ];
+    }
+    return null;
+  },
+
+  _status() {
+    var areas = this._tabs()
+      .filter((t) => t !== 'status' && t !== 'settings')
+      .map((tab) => [tab, this._stArea(tab)])
+      .filter(([, a]) => a);
+    var counts = { bad: 0, warn: 0, info: 0, good: 0 };
+    for (var [, [tone]] of areas) counts[tone] += 1;
+    var score = Math.max(0, 100 - Object.entries(counts).reduce((sum, [tone, k]) => sum + SH_STATUS_WEIGHTS[tone] * k, 0));
+    var points = counts.bad + counts.warn + counts.info;
+    var ringTone = score >= 80 ? 'good' : score >= 50 ? 'warn' : 'bad';
+    var r = 84;
+    var circ = 2 * Math.PI * r;
+    var core = (this._state.updates || []).find((u) => u.key === 'core');
+    var boot = (this._state.system || []).find((x) => x.key === 'last_boot');
+    var bootAt = boot ? Date.parse(boot.state) : NaN;
+    var meta = [
+      core?.installed ? `Home Assistant ${core.installed}` : '',
+      Number.isNaN(bootAt) ? '' : this._t('st_up', { time: this._uptime(Date.now() - bootAt).replace(/<[^>]+>/g, '') }),
+    ].filter(Boolean);
+    var pills = [
+      ['bad', 'st_n_bad'],
+      ['warn', 'st_n_warn'],
+      ['info', 'st_n_info'],
+      ['good', 'st_n_good'],
+    ]
+      .filter(([tone]) => counts[tone])
+      .map(([tone, key]) => `<span class="pill ${tone}">${shEsc(this._t(key, { n: counts[tone] }))}</span>`)
+      .join('');
+    var hero = `<ha-card class="sthero ${ringTone}">
+      <div class="stscore" role="img" aria-label="${shEsc(`${score} / 100`)}"><svg viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="${r}" class="sttrack"></circle>
+        <circle cx="100" cy="100" r="${r}" class="starc" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - score / 100)}" transform="rotate(-90 100 100)"></circle></svg>
+        <div class="stnum"><b>${score}</b><span>${shEsc(this._t('st_score'))}</span></div></div>
+      <div class="who"><div class="sttitle">${shEsc(points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good'))}</div>
+        ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}<div class="stpills">${pills}</div></div></ha-card>`;
+    var tiles = areas
+      .map(([tab, [tone, value, details]]) => `<button class="sttile ${tone}" data-action="st_open" data-tab="${tab}" aria-label="${shEsc(`${this._stName(tab)}: ${value}`)}">
+        <span class="stglow"></span>
+        <span class="sthead"><span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._stName(tab))}</span><span class="stdot"></span></span>
+        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</button>`)
+      .join('');
+    return `${hero}<div class="stgrid">${tiles}</div>`;
+  },
+
+  _stName(tab) {
+    if (tab === 'marketplace') return this._t('st_updates');
+    return this._tabName(tab);
+  },
+};
+
+Object.assign(SystemHubPanel.prototype, SH_STATUS_METHODS);
