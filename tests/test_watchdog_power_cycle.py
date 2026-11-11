@@ -260,7 +260,7 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
 
     result = await hass.config_entries.options.async_init(entry.entry_id)
     assert result["type"] is FlowResultType.MENU
-    assert result["menu_options"] == ["modules", "watchdog", "watchdog_add_power_cycle"]
+    assert result["menu_options"] == ["modules", "system", "watchdog", "watchdog_add_power_cycle"]
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], {"next_step_id": "watchdog_add_power_cycle"}
     )
@@ -282,7 +282,13 @@ async def test_options_flow_add_and_remove(hass: HomeAssistant, plug: list[str])
 
     # Twice the same device: refused.
     result = await hass.config_entries.options.async_init(entry.entry_id)
-    assert result["menu_options"] == ["modules", "watchdog", "watchdog_add_power_cycle", "watchdog_remove_power_cycle"]
+    assert result["menu_options"] == [
+        "modules",
+        "system",
+        "watchdog",
+        "watchdog_add_power_cycle",
+        "watchdog_remove_power_cycle",
+    ]
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], {"next_step_id": "watchdog_add_power_cycle"}
     )

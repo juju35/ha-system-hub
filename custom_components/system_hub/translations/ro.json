@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Baterii: tipuri de baterii",
           "batteries_import": "Baterii: import din Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "Sistem: praguri"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integrări ale căror entități nu sunt listate niciodată. Tastați un domeniu pentru a adăuga una care nu apare în listă.",
           "ignored_entities": "Entități (ID-uri de entitate) și dispozitive (ID-uri de dispozitiv) niciodată listate. Cardul le adaugă aici cu butonul Ignoră."
         }
+      },
+      "system": {
+        "title": "Sistem: praguri",
+        "description": "Fila Sistem colorează o valoare în portocaliu de la primul prag și în roșu de la al doilea.",
+        "data": {
+          "cpu_warning": "CPU: portocaliu de la",
+          "cpu_critical": "CPU: roșu de la",
+          "ram_warning": "RAM: portocaliu de la",
+          "ram_critical": "RAM: roșu de la",
+          "disk_warning": "Disc: portocaliu de la",
+          "disk_critical": "Disc: roșu de la",
+          "temperature_warning": "Temperatură: portocaliu de la",
+          "temperature_critical": "Temperatură: roșu de la",
+          "swap_warning": "Swap: portocaliu de la",
+          "swap_critical": "Swap: roșu de la"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "Dosarul trebuie să fie în dosarul de configurare sau într-un dosar din allowlist_external_dirs, în afara dosarelor ascunse precum .storage.",
       "battery_required": "Alegeți bateria.",
       "type_required": "Alegeți sau scrieți tipul.",
-      "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie."
+      "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie.",
+      "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu."
     },
     "abort": {
       "nothing_to_import": "Nimic de importat din Battery Monitor."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "De la pornirea Home Assistant",
         "orph_stat_ignored": "Ignorate",
         "orph_all": "Toate",
-        "orph_confirm_devices_used": "Dispozitive încă folosite de automatizări sau scripturi: {n}. Acestea pot să nu mai funcționeze."
+        "orph_confirm_devices_used": "Dispozitive încă folosite de automatizări sau scripturi: {n}. Acestea pot să nu mai funcționeze.",
+        "network_total": "Primit / trimis",
+        "update_to": "Actualizare la {versions}",
+        "up_to_date": "La zi",
+        "export_csv": "Exportă CSV",
+        "spares": "Rezervă",
+        "to_buy": "{n} de cumpărat",
+        "set_stock": "Setează stocul",
+        "stock_type": "Tip de baterie",
+        "stock_count": "Număr",
+        "search_batteries": "Caută: nume, cameră, tip",
+        "no_match": "Nicio baterie nu corespunde"
       }
     },
     "battery_type": {

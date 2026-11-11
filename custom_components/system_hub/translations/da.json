@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importér fra Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "System: tærskler"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integrationer, hvis entiteter aldrig vises. Skriv et domæne for at tilføje en, der ikke er på listen.",
           "ignored_entities": "Entiteter (entitets-id'er) og enheder (enheds-id'er), der aldrig vises. Kortet tilføjer dem her med sin Ignorer-knap."
         }
+      },
+      "system": {
+        "title": "System: tærskler",
+        "description": "Fanen System farver en værdi orange fra den første tærskel og rød fra den anden.",
+        "data": {
+          "cpu_warning": "CPU: orange fra",
+          "cpu_critical": "CPU: rød fra",
+          "ram_warning": "RAM: orange fra",
+          "ram_critical": "RAM: rød fra",
+          "disk_warning": "Disk: orange fra",
+          "disk_critical": "Disk: rød fra",
+          "temperature_warning": "Temperatur: orange fra",
+          "temperature_critical": "Temperatur: rød fra",
+          "swap_warning": "Swap: orange fra",
+          "swap_critical": "Swap: rød fra"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "Mappen skal ligge i konfigurationsmappen eller i en mappe fra allowlist_external_dirs, uden for skjulte mapper som .storage.",
       "battery_required": "Vælg batteriet.",
       "type_required": "Vælg eller skriv typen.",
-      "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet."
+      "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet.",
+      "critical_below_warning": "Den røde tærskel skal ligge over den orange."
     },
     "abort": {
       "nothing_to_import": "Intet at importere fra Battery Monitor."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Siden Home Assistant startede",
         "orph_stat_ignored": "Ignoreret",
         "orph_all": "Alle",
-        "orph_confirm_devices_used": "Enheder, der stadig bruges af automatiseringer eller scripts: {n}. De kan holde op med at virke."
+        "orph_confirm_devices_used": "Enheder, der stadig bruges af automatiseringer eller scripts: {n}. De kan holde op med at virke.",
+        "network_total": "Modtaget / sendt",
+        "update_to": "Opdater til {versions}",
+        "up_to_date": "Opdateret",
+        "export_csv": "Eksportér CSV",
+        "spares": "Lager",
+        "to_buy": "{n} at købe",
+        "set_stock": "Angiv lager",
+        "stock_type": "Batteritype",
+        "stock_count": "Antal",
+        "search_batteries": "Søg: navn, rum, type",
+        "no_match": "Intet batteri passer"
       }
     },
     "battery_type": {

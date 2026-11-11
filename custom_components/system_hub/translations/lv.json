@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Baterijas: bateriju veidi",
           "batteries_import": "Baterijas: importēt no Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "Sistēma: sliekšņi"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integrācijas, kuru vienības nekad netiek rādītas. Ievadiet domēnu, lai pievienotu integrāciju, kuras nav sarakstā.",
           "ignored_entities": "Vienības (vienību ID) un ierīces (ierīču ID), kas nekad netiek uzskaitītas. Kartīte tās šeit pievieno ar pogu Ignorēt."
         }
+      },
+      "system": {
+        "title": "Sistēma: sliekšņi",
+        "description": "Cilne Sistēma iekrāso vērtību oranžu no pirmā sliekšņa un sarkanu no otrā.",
+        "data": {
+          "cpu_warning": "CPU: oranžs no",
+          "cpu_critical": "CPU: sarkans no",
+          "ram_warning": "RAM: oranžs no",
+          "ram_critical": "RAM: sarkans no",
+          "disk_warning": "Disks: oranžs no",
+          "disk_critical": "Disks: sarkans no",
+          "temperature_warning": "Temperatūra: oranžs no",
+          "temperature_critical": "Temperatūra: sarkans no",
+          "swap_warning": "Swap: oranžs no",
+          "swap_critical": "Swap: sarkans no"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "Mapei jābūt konfigurācijas mapē vai allowlist_external_dirs mapē, ārpus slēptām mapēm, piemēram, .storage.",
       "battery_required": "Izvēlieties bateriju.",
       "type_required": "Izvēlieties vai ierakstiet veidu.",
-      "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai."
+      "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai.",
+      "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā."
     },
     "abort": {
       "nothing_to_import": "No Battery Monitor nav ko importēt."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Kopš Home Assistant palaišanas",
         "orph_stat_ignored": "Ignorētas",
         "orph_all": "Visas",
-        "orph_confirm_devices_used": "Ierīces, ko joprojām izmanto automatizācijas vai skripti: {n}. Tie var pārstāt darboties."
+        "orph_confirm_devices_used": "Ierīces, ko joprojām izmanto automatizācijas vai skripti: {n}. Tie var pārstāt darboties.",
+        "network_total": "Saņemts / nosūtīts",
+        "update_to": "Atjaunināt uz {versions}",
+        "up_to_date": "Atjaunināts",
+        "export_csv": "Eksportēt CSV",
+        "spares": "Rezerve",
+        "to_buy": "{n} jānopērk",
+        "set_stock": "Iestatīt krājumu",
+        "stock_type": "Bateriju tips",
+        "stock_count": "Skaits",
+        "search_batteries": "Meklēt: nosaukums, telpa, tips",
+        "no_match": "Neviena baterija neatbilst"
       }
     },
     "battery_type": {

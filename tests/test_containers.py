@@ -229,7 +229,7 @@ async def test_state_since_and_history(
 async def test_options(hass: HomeAssistant, supervisor: FakeSupervisor) -> None:
     entry = await _setup(hass)
     result = await hass.config_entries.options.async_init(entry.entry_id)
-    assert result["menu_options"] == ["modules", "containers"]
+    assert result["menu_options"] == ["modules", "system", "containers"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "containers"})
     assert result["type"] is FlowResultType.FORM
     result = await hass.config_entries.options.async_configure(

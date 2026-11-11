@@ -10,6 +10,9 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.selector import (
     BooleanSelector,
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     SelectOptionDict,
     SelectSelector,
     SelectSelectorConfig,
@@ -21,6 +24,8 @@ from .batteries import importer as batteries_importer
 from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
 from .const import (
     CONF_MODULES,
+    CONF_SYSTEM,
+    DEFAULT_THRESHOLDS,
     DOMAIN,
     MARKETPLACE_DOMAIN,
     MODULE_BATTERIES,
@@ -138,7 +143,7 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_create_entry(data={**self.config_entry.options, CONF_MODULES: self._modules(), **changes})
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        menu = ["modules"]
+        menu = ["modules", "system"]
         modules = self._modules()
         if MODULE_CONTAINERS in modules:
             menu.append("containers")
@@ -157,6 +162,36 @@ class SystemHubOptionsFlow(OptionsFlow):
         if MODULE_ORPHANS in modules:
             menu.append("orphans")
         return self.async_show_menu(step_id="init", menu_options=menu)
+
+    async def async_step_system(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The System tab's thresholds: orange from the first value, red from the second."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            values = {key: int(value) for key, value in user_input.items()}
+            for key in DEFAULT_THRESHOLDS:
+                if values[f"{key}_warning"] >= values[f"{key}_critical"]:
+                    errors[f"{key}_critical"] = "critical_below_warning"
+            if not errors:
+                return self._save(**{CONF_SYSTEM: values})
+        current = self._module(CONF_SYSTEM)
+        fields: dict[Any, Any] = {}
+        for key, (warn, crit) in DEFAULT_THRESHOLDS.items():
+            unit = "°C" if key == "temperature" else "%"
+            number = NumberSelector(
+                NumberSelectorConfig(
+                    min=1,
+                    max=120 if key == "temperature" else 100,
+                    step=1,
+                    mode=NumberSelectorMode.BOX,
+                    unit_of_measurement=unit,
+                )
+            )
+            fields[vol.Required(f"{key}_warning", default=current.get(f"{key}_warning", warn))] = number
+            fields[vol.Required(f"{key}_critical", default=current.get(f"{key}_critical", crit))] = number
+        schema = vol.Schema(fields)
+        if user_input:
+            schema = self.add_suggested_values_to_schema(schema, user_input)
+        return self.async_show_form(step_id="system", data_schema=schema, errors=errors)
 
     async def async_step_modules(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Turn modules on or off."""

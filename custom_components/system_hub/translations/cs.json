@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Baterie: typy baterií",
           "batteries_import": "Baterie: import z Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "Systém: prahy"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integrace, jejichž entity se nikdy nezobrazují. Zadejte doménu a přidejte integraci, která není v seznamu.",
           "ignored_entities": "Entity (ID entit) a zařízení (ID zařízení), která se nikdy nezobrazují. Karta je sem přidává tlačítkem Ignorovat."
         }
+      },
+      "system": {
+        "title": "Systém: prahy",
+        "description": "Karta Systém obarví hodnotu oranžově od prvního prahu a červeně od druhého.",
+        "data": {
+          "cpu_warning": "CPU: oranžová od",
+          "cpu_critical": "CPU: červená od",
+          "ram_warning": "RAM: oranžová od",
+          "ram_critical": "RAM: červená od",
+          "disk_warning": "Disk: oranžová od",
+          "disk_critical": "Disk: červená od",
+          "temperature_warning": "Teplota: oranžová od",
+          "temperature_critical": "Teplota: červená od",
+          "swap_warning": "Swap: oranžová od",
+          "swap_critical": "Swap: červená od"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "Složka musí být ve složce konfigurace nebo ve složce z allowlist_external_dirs, mimo skryté složky, jako je .storage.",
       "battery_required": "Vyberte baterii.",
       "type_required": "Vyberte nebo zadejte typ.",
-      "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii."
+      "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii.",
+      "critical_below_warning": "Červený práh musí být nad oranžovým."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor není co importovat."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Od spuštění Home Assistant",
         "orph_stat_ignored": "Ignorované",
         "orph_all": "Všechny",
-        "orph_confirm_devices_used": "Zařízení stále používaná automatizacemi nebo skripty: {n}. Ty mohou přestat fungovat."
+        "orph_confirm_devices_used": "Zařízení stále používaná automatizacemi nebo skripty: {n}. Ty mohou přestat fungovat.",
+        "network_total": "Přijato / odesláno",
+        "update_to": "Aktualizovat na {versions}",
+        "up_to_date": "Aktuální",
+        "export_csv": "Exportovat CSV",
+        "spares": "Zásoba",
+        "to_buy": "{n} koupit",
+        "set_stock": "Nastavit zásobu",
+        "stock_type": "Typ baterie",
+        "stock_count": "Počet",
+        "search_batteries": "Hledat: název, místnost, typ",
+        "no_match": "Žádná baterie neodpovídá"
       }
     },
     "battery_type": {

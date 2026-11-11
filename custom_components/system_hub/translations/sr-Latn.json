@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Baterije: tipovi baterija",
           "batteries_import": "Baterije: uvoz iz Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "Sistem: pragovi"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integracije čiji se entiteti nikada ne prikazuju. Unesite domen da biste dodali neku koja nije na listi.",
           "ignored_entities": "Entiteti (ID entiteta) i uređaji (ID uređaja) koji se nikad ne prikazuju. Kartica ih ovde dodaje svojim dugmetom Ignoriši."
         }
+      },
+      "system": {
+        "title": "Sistem: pragovi",
+        "description": "Kartica Sistem boji vrednost u narandžasto od prvog praga i u crveno od drugog.",
+        "data": {
+          "cpu_warning": "CPU: narandžasto od",
+          "cpu_critical": "CPU: crveno od",
+          "ram_warning": "RAM: narandžasto od",
+          "ram_critical": "RAM: crveno od",
+          "disk_warning": "Disk: narandžasto od",
+          "disk_critical": "Disk: crveno od",
+          "temperature_warning": "Temperatura: narandžasto od",
+          "temperature_critical": "Temperatura: crveno od",
+          "swap_warning": "Swap: narandžasto od",
+          "swap_critical": "Swap: crveno od"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "Fascikla mora biti u fascikli konfiguracije ili u fascikli iz allowlist_external_dirs, van skrivenih fascikli kao što je .storage.",
       "battery_required": "Izaberite bateriju.",
       "type_required": "Izaberite ili unesite tip.",
-      "no_model": "Uređaj ove baterije nema model: podesite tip za samu bateriju."
+      "no_model": "Uređaj ove baterije nema model: podesite tip za samu bateriju.",
+      "critical_below_warning": "Crveni prag mora biti iznad narandžastog."
     },
     "abort": {
       "nothing_to_import": "Nema šta da se uveze iz Battery Monitor."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Od pokretanja Home Assistant-a",
         "orph_stat_ignored": "Ignorisani",
         "orph_all": "Svi",
-        "orph_confirm_devices_used": "Uređaji koje još koriste automatizacije ili skripte: {n}. One mogu prestati da rade."
+        "orph_confirm_devices_used": "Uređaji koje još koriste automatizacije ili skripte: {n}. One mogu prestati da rade.",
+        "network_total": "Primljeno / poslato",
+        "update_to": "Ažuriraj na {versions}",
+        "up_to_date": "Ažurno",
+        "export_csv": "Izvezi CSV",
+        "spares": "Zaliha",
+        "to_buy": "{n} za kupovinu",
+        "set_stock": "Podesi zalihu",
+        "stock_type": "Tip baterije",
+        "stock_count": "Broj",
+        "search_batteries": "Pretraga: naziv, prostorija, tip",
+        "no_match": "Nijedna baterija ne odgovara"
       }
     },
     "battery_type": {

@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batteries: Battery types",
           "batteries_import": "Batteries: Import from Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "System: thresholds"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integrations whose entities are never listed. Type a domain to add one that isn't listed.",
           "ignored_entities": "Entities (entity IDs) and devices (device IDs) never listed. The card adds them here with its Ignore button."
         }
+      },
+      "system": {
+        "title": "System: thresholds",
+        "description": "The System tab turns a value orange from the first threshold and red from the second.",
+        "data": {
+          "cpu_warning": "CPU: orange from",
+          "cpu_critical": "CPU: red from",
+          "ram_warning": "RAM: orange from",
+          "ram_critical": "RAM: red from",
+          "disk_warning": "Disk: orange from",
+          "disk_critical": "Disk: red from",
+          "temperature_warning": "Temperature: orange from",
+          "temperature_critical": "Temperature: red from",
+          "swap_warning": "Swap: orange from",
+          "swap_critical": "Swap: red from"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "The folder must be inside the configuration folder or a folder of allowlist_external_dirs, outside hidden folders such as .storage.",
       "battery_required": "Choose the battery.",
       "type_required": "Pick or type the type.",
-      "no_model": "This battery's device has no model: set the type for the battery itself."
+      "no_model": "This battery's device has no model: set the type for the battery itself.",
+      "critical_below_warning": "The red threshold must be above the orange one."
     },
     "abort": {
       "nothing_to_import": "Nothing to import from Battery Monitor."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Since Home Assistant started",
         "orph_stat_ignored": "Ignored",
         "orph_all": "All",
-        "orph_confirm_devices_used": "Devices still used by automations or scripts: {n}. They may stop working."
+        "orph_confirm_devices_used": "Devices still used by automations or scripts: {n}. They may stop working.",
+        "network_total": "Received / sent",
+        "update_to": "Update to {versions}",
+        "up_to_date": "Up to date",
+        "export_csv": "Export CSV",
+        "spares": "Spares",
+        "to_buy": "{n} to buy",
+        "set_stock": "Set the stock",
+        "stock_type": "Battery type",
+        "stock_count": "Count",
+        "search_batteries": "Search: name, room, type",
+        "no_match": "No battery matches"
       }
     },
     "battery_type": {

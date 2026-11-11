@@ -12,8 +12,8 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigEntryState
-from homeassistant.const import ATTR_ENTITY_ID, Platform
-from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
+from homeassistant.const import ATTR_ENTITY_ID, EVENT_HOMEASSISTANT_STARTED, Platform
+from homeassistant.core import CoreState, Event, HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
 from homeassistant.exceptions import HomeAssistantError, ServiceValidationError
 from homeassistant.helpers import config_validation as cv
 from homeassistant.helpers import device_registry as dr
@@ -26,6 +26,7 @@ from .batteries import async_disable_batteries, async_remove_batteries, async_se
 from .batteries.const import ATTR_BATTERY_TYPE, ATTR_COUNT, ATTR_PATH, SERVICE_EXPORT, SERVICE_NOTIFY, SERVICE_SET_STOCK
 from .batteries.export import async_export
 from .batteries.monitor import BatteryMonitor
+from .cards import async_register_cards, async_remove_cards
 from .const import (
     CONF_MODULES,
     DOMAIN,
@@ -182,6 +183,15 @@ def _validation_error(err: MarketplaceNotAvailableError) -> ServiceValidationErr
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     """Register the actions of every module (administrators only); those of a module turned off refuse to run."""
 
+    # The Lovelace cards, on every dashboard once Home Assistant has started (the resources are loaded by then).
+    async def _register_cards(_event: Event | None = None) -> None:
+        await async_register_cards(hass)
+
+    if hass.state is CoreState.running:
+        await _register_cards()
+    else:
+        hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, _register_cards)
+
     async def containers_refresh(_call: ServiceCall) -> None:
         """Read the containers now; fails when the Supervisor could not be read."""
         monitor = loaded_monitor(hass)
@@ -322,8 +332,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
     if MODULE_ORPHANS in modules:
         data.orphans = await async_setup_orphans(hass, entry, module_options(entry, MODULE_ORPHANS))
     entry.runtime_data = data
-    # Added again after a removal (which drops the panel) without a restart: the panel comes back.
+    # Added again after a removal (which drops the panel and the cards) without a restart: they come back.
     await async_register_panel(hass)
+    if hass.state is CoreState.running:
+        await async_register_cards(hass)
     _async_remove_disabled(hass, entry, modules)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
@@ -365,6 +377,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
     if any(e.entry_id != entry.entry_id for e in hass.config_entries.async_entries(DOMAIN)):
         return
     async_remove_panel(hass)
+    await async_remove_cards(hass)
     await async_remove_watchdog(hass)
     await async_remove_marketplace(hass)
     await async_remove_batteries(hass)

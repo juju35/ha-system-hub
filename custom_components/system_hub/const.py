@@ -28,6 +28,15 @@ MODULES: Final = (
 # Panel: the order of its tabs (the System tab and the modules; Settings always comes last).
 CONF_TABS: Final = "tabs"
 TAB_SYSTEM: Final = "system"
+# The System tab's thresholds (orange, red) in %, °C for the temperature, in the options under "system".
+CONF_SYSTEM: Final = "system"
+DEFAULT_THRESHOLDS: Final = {
+    "cpu": (70, 90),
+    "ram": (70, 90),
+    "disk": (80, 90),
+    "temperature": (70, 85),
+    "swap": (50, 80),
+}
 
 # Home Assistant's own Marketplace integration, which the Marketplace module drives.
 MARKETPLACE_DOMAIN: Final = "marketplace"

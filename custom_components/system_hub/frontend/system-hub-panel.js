@@ -373,6 +373,11 @@ class SystemHubDiffDialog extends HTMLElement {
   }
 }
 
+// Interfaces left out of the network figures: loopback, containers, bridges, tunnels and VPNs (as the old card did)
+var SH_VIRTUAL_IF = /^(lo|docker\d*|hassio|veth.*|br-.*|virbr\d*|tun\d*|tap\d*|wg\d*|vlan.*|dummy\d*|tailscale.*)$/;
+// The System tab's thresholds (orange, red) when the integration sends none: Configure → System: thresholds
+var SH_THRESHOLDS = { cpu: [70, 90], ram: [70, 90], disk: [80, 90], temperature: [70, 85], swap: [50, 80] };
+
 // One colour per kind of data, the same in the rings, the charts and their legends
 var SH_COLORS = {
   cpu: '#03a9f4',
@@ -563,6 +568,20 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
     .grow { flex:1; }
+    .tilelink { color:inherit; text-decoration:none; display:block; min-width:0; }
+    .tilelink > .tile { height:100%; box-sizing:border-box; }
+    .ver { white-space:nowrap; }
+    .rv.warn b { color:color-mix(in srgb, var(--tone-warn) 60%, var(--primary-text-color)); }
+    .rv.bad b { color:color-mix(in srgb, var(--tone-bad) 60%, var(--primary-text-color)); }
+    .bsearch { flex:0 1 220px; min-width:160px; --mdc-icon-size:18px; padding-left:8px; color:var(--secondary-text-color); }
+    .bsearch input { color:var(--primary-text-color); }
+    .spare { border:0; cursor:pointer; font:inherit; font-size:12px; padding:2px 9px; border-radius:999px; color:var(--primary-text-color);
+             background:color-mix(in srgb, var(--tone-good) 14%, transparent); display:inline-flex; align-items:center; gap:4px; --mdc-icon-size:14px; }
+    .spare.short { background:color-mix(in srgb, var(--tone-warn) 16%, transparent); }
+    .spare.add { background:var(--secondary-background-color, rgba(127,127,127,.12)); padding:2px 6px; }
+    .stockform { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:-6px 0 14px; }
+    .stockform .box { flex:0 1 200px; min-width:140px; }
+    .stockform .box.count { flex:0 1 110px; min-width:90px; }
     .warn-text { color:color-mix(in srgb, var(--tone-warn) 50%, var(--primary-text-color)) !important; }
     .lhead .act { font-size:12px; padding:4px 10px; }
     .mono { font-family:var(--code-font-family, monospace); font-size:15px; }
@@ -865,6 +884,7 @@ class SystemHubPanel extends HTMLElement {
       if (ev.target.dataset?.draft) this._draft[ev.target.dataset.draft] = ev.target.value;
       // The Orphans search and filters narrow the list as they change
       if (ev.target.dataset?.draft?.startsWith('orph_')) this._render();
+      if (ev.target.dataset?.draft === 'batt_search') this._render();
     });
   }
 
@@ -929,9 +949,10 @@ class SystemHubPanel extends HTMLElement {
   }
 
   _tile(icon, value, label, tone, opts = {}) {
-    return `<ha-card class="tile ${tone || ''}${opts.entity ? ' link' : ''}"${opts.entity ? ` data-more="${shEsc(opts.entity)}"` : ''}${opts.title ? ` title="${shEsc(opts.title)}"` : ''}>
+    var card = `<ha-card class="tile ${tone || ''}${opts.entity || opts.href ? ' link' : ''}"${opts.entity ? ` data-more="${shEsc(opts.entity)}"` : ''}${opts.title ? ` title="${shEsc(opts.title)}"` : ''}>
       ${opts.spark || ''}<div class="avatar"><ha-icon icon="${icon}"></ha-icon></div>
       <div class="who"><div class="n">${value}</div><div class="s">${shEsc(label)}</div></div></ha-card>`;
+    return opts.href ? `<a class="tilelink" href="${shEsc(opts.href)}" data-nav="${shEsc(opts.href)}">${card}</a>` : card;
   }
 
   _ago(iso) {
@@ -971,17 +992,21 @@ class SystemHubPanel extends HTMLElement {
     var ram = one('memory_use_percent');
     var temp = one('processor_temperature');
     var disks = all('disk_use_percent');
-    var rx = all('throughput_network_in');
-    var txs = all('throughput_network_out');
+    // Physical interfaces only: docker0, hassio, veth… would count the same traffic twice
+    var physical = (s) => !SH_VIRTUAL_IF.test(shIface(s));
+    var rx = all('throughput_network_in').filter(physical);
+    var txs = all('throughput_network_out').filter(physical);
+    var th = { ...SH_THRESHOLDS, ...(this._state.thresholds || {}) };
+    var level = (v, key) => shTone(v, th[key][0], th[key][1]);
     // Rings: the value now, the last 24 hours behind it, each kind of data in its own colour
     var ringDefs = [
-      [cpu, this._t('cpu'), SH_COLORS.cpu, '%'],
-      [ram, this._t('ram'), SH_COLORS.ram, '%'],
-      [temp, this._t('temperature'), SH_COLORS.temp, temp?.unit || '°C'],
-      [disks[0], disks.length > 1 ? `${this._t('disk')} ${shMount(disks[0])}` : this._t('disk'), SH_COLORS.disks[0], '%'],
+      [cpu, this._t('cpu'), SH_COLORS.cpu, '%', 'cpu'],
+      [ram, this._t('ram'), SH_COLORS.ram, '%', 'ram'],
+      [temp, this._t('temperature'), SH_COLORS.temp, temp?.unit || '°C', 'temperature'],
+      [disks[0], disks.length > 1 ? `${this._t('disk')} ${shMount(disks[0])}` : this._t('disk'), SH_COLORS.disks[0], '%', 'disk'],
     ].filter(([s]) => s);
     var ringHist = this._history(ringDefs.map(([s]) => s.entity_id), 24);
-    var rings = ringDefs.map(([s, label, color, unit]) => this._ring(s, label, color, unit, ringHist?.[s.entity_id])).join('');
+    var rings = ringDefs.map(([s, label, color, unit, key]) => this._ring(s, label, color, unit, ringHist?.[s.entity_id], level(shNum(s.state), key))).join('');
     var tiles = [];
     // Swap: its percentage, else worked out from the swap used and free (the percentage sensor is off by default)
     var swap = one('swap_use_percent');
@@ -992,7 +1017,7 @@ class SystemHubPanel extends HTMLElement {
       var free = shNum(swapFree?.state);
       var v = swap ? shNum(swap.state) : used !== null && free !== null && used + free > 0 ? (used * 100) / (used + free) : null;
       var size = used === null ? '' : ` <span class="more">${shEsc(`${used} ${swapUse.unit || ''}`.trim())}</span>`;
-      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%${size}`, this._t('swap'), shTone(v, 50, 80), { entity: (swap || swapUse).entity_id }));
+      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%${size}`, this._t('swap'), level(v, 'swap'), { entity: (swap || swapUse).entity_id }));
     }
     var loads = ['load_1m', 'load_5m', 'load_15m'].map(one).filter(Boolean);
     if (loads.length) {
@@ -1001,6 +1026,31 @@ class SystemHubPanel extends HTMLElement {
           entity: loads[0].entity_id,
         }),
       );
+    }
+    // Received and sent since the boot, physical interfaces summed (System Monitor gives MiB)
+    var totIn = all('network_in').filter(physical);
+    var totOut = all('network_out').filter(physical);
+    if (totIn.length || totOut.length) {
+      var total = (list) => shBytes(list.reduce((sum, x) => sum + (shNum(x.state) || 0), 0) * 1024 * 1024);
+      tiles.push(
+        this._tile('mdi:counter', `<b class="ver">${shEsc(total(totIn))}</b> <span class="more">/ ${shEsc(total(totOut))}</span>`, this._t('network_total'), '', {
+          entity: (totIn[0] || totOut[0]).entity_id,
+        }),
+      );
+    }
+    // Home Assistant Core and OS versions, orange when an update is available; Settings → Updates on a click
+    var updates = this._state.updates || [];
+    if (updates.length) {
+      var pending = updates.filter((u) => u.state === 'on');
+      // Core's version first and larger, the OS's after it
+      var versions = updates
+        .map((u, i) => (i ? `<span class="more">${u.key === 'core' ? 'Core' : 'OS'} ${shEsc(u.installed || '—')}</span>` : `<b class="ver">${shEsc(u.installed || '—')}</b>`))
+        .join(' ');
+      var full = updates.map((u) => `${u.key === 'core' ? 'Core' : 'OS'} ${u.installed || '—'}`).join(' · ');
+      var label = pending.length
+        ? this._t('update_to', { versions: pending.map((u) => `${u.key === 'core' ? 'Core' : 'OS'} ${u.latest}`).join(', ') })
+        : this._t('up_to_date');
+      tiles.push(this._tile('mdi:home-assistant', versions, label, pending.length ? 'warn' : 'good', { href: '/config/updates', title: full }));
     }
     // Uptime: how long since the last boot (the date in the tile's title)
     var boot = one('last_boot');
@@ -1081,7 +1131,7 @@ class SystemHubPanel extends HTMLElement {
         ${disks
           .map((s) => {
             var v = shNum(s.state);
-            return `<div class="item link ${shTone(v, 80, 90)}" data-more="${shEsc(s.entity_id)}"><ha-icon icon="mdi:harddisk"></ha-icon>
+            return `<div class="item link ${level(v, 'disk')}" data-more="${shEsc(s.entity_id)}"><ha-icon icon="mdi:harddisk"></ha-icon>
               <div class="who"><div class="n">${shEsc(s.name)}</div></div>
               <div class="side"><span>${v === null ? '—' : `${Math.round(v)}%`}</span><div class="meter"><span style="width:${Math.min(v || 0, 100)}%"></span></div></div></div>`;
           })
@@ -1118,7 +1168,7 @@ class SystemHubPanel extends HTMLElement {
   }
 
   // A ring: the value now over its scale (0-100, 0-100 °C for a temperature), the last 24 hours drawn behind it
-  _ring(sensor, label, color, unit, values) {
+  _ring(sensor, label, color, unit, values, tone) {
     var v = shNum(sensor.state);
     var c = 2 * Math.PI * 40;
     var dash = v === null ? 0 : (c * Math.min(Math.max(v, 0), 100)) / 100;
@@ -1127,7 +1177,7 @@ class SystemHubPanel extends HTMLElement {
       ${values ? shArea(values, 100) : ''}
       <svg class="gauge" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="40"/>
         <circle class="arc" cx="50" cy="50" r="40" stroke-dasharray="${dash.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 50 50)"/></svg>
-      <div class="rv"><b>${shown}</b><span>${shEsc(unit)}</span></div>
+      <div class="rv ${tone === 'good' ? '' : tone || ''}"><b>${shown}</b><span>${shEsc(unit)}</span></div>
       <div class="rl">${shEsc(label)}</div></ha-card>`;
   }
 
@@ -1422,6 +1472,9 @@ class SystemHubPanel extends HTMLElement {
     var all = data.batteries || [];
     // "Hide the batteries that are fine" (Configure → Batteries): only the low and unavailable ones
     var list = data.hide_ok ? all.filter((b) => b.low || b.unavailable) : all;
+    // The search: name, room or type
+    var query = (this._draft.batt_search || '').trim().toLowerCase();
+    if (query) list = list.filter((b) => [b.name, b.area, b.battery_type].some((v) => String(v || '').toLowerCase().includes(query)));
     var tiles = [
       this._tile('mdi:battery-alert-variant-outline', `<b>${data.low ?? 0}</b>`, this._t('low'), data.low ? 'warn' : 'good'),
       this._tile('mdi:battery-unknown', `<b>${data.unavailable ?? 0}</b>`, this._t('unavailable'), data.unavailable ? 'bad' : 'good'),
@@ -1448,7 +1501,9 @@ class SystemHubPanel extends HTMLElement {
       .join('');
     var body = list.length
       ? `<div class="bgroups${view === 'level' ? ' flat' : ''}">${groups}</div>`
-      : `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
+      : query
+        ? `<div class="empty">${shEsc(this._t('no_match'))}</div>`
+        : `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
     var buy = this._battToReplace(all);
     var next = this._battNext(all);
     return `<div class="tiles">${tiles.join('')}</div>
@@ -1457,9 +1512,13 @@ class SystemHubPanel extends HTMLElement {
           <div class="btabs" role="group">${views}</div>
           <div class="bline"><span class="rlabel"><ha-icon icon="mdi:cart-outline"></ha-icon>${shEsc(this._t('to_replace'))}</span>${buy || `<span class="none">${shEsc(this._t('nothing_to_replace'))}</span>`}</div>
           ${next}
+          ${this._battSpares(data.spares || {})}
           <span class="grow"></span>
+          <label class="box bsearch"><ha-icon icon="mdi:magnify"></ha-icon><input data-draft="batt_search" placeholder="${shEsc(this._t('search_batteries'))}" value="${shEsc(this._draft.batt_search || '')}"></label>
+          ${this._button('batt_csv', 'mdi:file-delimited-outline', this._t('export_csv'), { quiet: true })}
           ${this._button('batteries_notify', 'mdi:bell-ring-outline', this._entityName('button', 'batteries_notify_now'), { quiet: true })}${this._message('batteries_notify')}
         </div>
+        ${this._stockForm ? this._battStockForm() : ''}
         ${body}
       </ha-card>`;
   }
@@ -1506,6 +1565,59 @@ class SystemHubPanel extends HTMLElement {
       .sort((a, b) => !a[0] - !b[0] || b[1] - a[1])
       .map(([type, n]) => `<span class="buy${type ? '' : ' unknown'}"><b>${n}×</b> ${shEsc(type ? this._battTypeName(type) : this._t('unknown_type'))}</span>`)
       .join('');
+  }
+
+  // The spare batteries counted by type: in stock, and how many to buy for the batteries low or due within 30 days
+  _battSpares(spares) {
+    var chips = Object.entries(spares)
+      .map(([kind, s]) => {
+        var buy = s.short ? ` · ${this._t('to_buy', { n: s.short })}` : '';
+        return `<button class="spare${s.short ? ' short' : ''}" data-action="stock_edit" data-kind="${shEsc(kind)}"><b>${s.stock}×</b> ${shEsc(this._battTypeName(kind))}${shEsc(buy)}</button>`;
+      })
+      .join('');
+    return `<div class="bline"><span class="rlabel"><ha-icon icon="mdi:archive-outline"></ha-icon>${shEsc(this._t('spares'))}</span>${chips}
+      <button class="spare add" data-action="stock_edit" data-kind="" title="${shEsc(this._t('set_stock'))}" aria-label="${shEsc(this._t('set_stock'))}"><ha-icon icon="mdi:plus"></ha-icon></button>${this._message('batteries_set_stock')}</div>`;
+  }
+
+  // Set the spare batteries of a type (0 keeps counting it, empty stops counting it)
+  _battStockForm() {
+    return `<div class="stockform"><label class="box"><input data-draft="stock_type" placeholder="${shEsc(this._t('stock_type'))}" value="${shEsc(this._draft.stock_type || '')}"></label>
+      <label class="box count"><input data-draft="stock_count" type="number" min="0" max="999" placeholder="${shEsc(this._t('stock_count'))}" value="${shEsc(this._draft.stock_count ?? '')}"></label>
+      ${this._button('set_stock', 'mdi:content-save-outline', this._t('save'))}${this._button('stock_cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`;
+  }
+
+  // Every battery as a CSV file, downloaded by the browser (as the Battery Monitor card)
+  _battCsv() {
+    var cell = (v) => {
+      var text = String(v ?? '');
+      return /[",;\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    };
+    var head = ['name', 'area', 'type', 'level', 'status', 'drain_per_day', 'days_left', 'replace_by', 'below_since', 'entity_id'];
+    var rows = (this._state.batteries?.batteries || []).map((b) => [
+      b.name,
+      b.area || '',
+      b.battery_type || '',
+      b.level ?? '',
+      b.unavailable ? 'unavailable' : b.low ? 'low' : 'ok',
+      b.drain_per_day ?? '',
+      b.days_left ?? '',
+      b.replace_by ? String(b.replace_by).slice(0, 10) : '',
+      b.below_since || '',
+      b.entity_id,
+    ]);
+    return [head, ...rows].map((r) => r.map(cell).join(',')).join('\r\n');
+  }
+
+  _battDownload() {
+    var blob = new Blob([`\ufeff${this._battCsv()}\r\n`], { type: 'text/csv;charset=utf-8' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = `batteries-${new Date().toISOString().slice(0, 10)}.csv`;
+    this.shadowRoot.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   // The next battery to replace by its forecast, with its date
@@ -1688,6 +1800,14 @@ class SystemHubPanel extends HTMLElement {
 
   _onClick(ev) {
     if (this._orphClick(ev)) return;
+    // A link inside Home Assistant: its own navigation, without reloading the page
+    var nav = ev.target.closest?.('[data-nav]');
+    if (nav && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && ev.button !== 1) {
+      ev.preventDefault?.();
+      history.pushState(null, '', nav.dataset.nav);
+      window.dispatchEvent(new CustomEvent('location-changed', { detail: { replace: false } }));
+      return;
+    }
     var more = ev.target.closest?.('[data-more]');
     if (more && !ev.target.closest('button, a, input')) {
       this.dispatchEvent(new CustomEvent('hass-more-info', { detail: { entityId: more.dataset.more }, bubbles: true, composed: true }));
@@ -1725,6 +1845,26 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'period') {
       this._periods[button.dataset.chart] = Number(button.dataset.hours);
       return this._render();
+    }
+    if (action === 'batt_csv') return this._battDownload();
+    if (action === 'stock_edit' || action === 'stock_cancel') {
+      this._stockForm = action === 'stock_edit';
+      if (this._stockForm) {
+        var kind = button.dataset.kind || '';
+        this._draft.stock_type = kind;
+        this._draft.stock_count = kind ? String(this._state.batteries?.spares?.[kind]?.stock ?? '') : '';
+      }
+      return this._render();
+    }
+    if (action === 'set_stock') {
+      var type = (this._draft.stock_type || '').trim();
+      if (!type) return;
+      var count = String(this._draft.stock_count ?? '').trim();
+      var data = { battery_type: type };
+      if (count !== '') data.count = Math.max(0, Math.round(Number(count)));
+      return this._run('batteries_set_stock', 'batteries_set_stock', data, () => {
+        this._stockForm = false;
+      });
     }
     if (action === 'batt_view') {
       this._battView = button.dataset.view;

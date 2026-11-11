@@ -15,6 +15,7 @@ _.async_step_user  # unused method (custom_components/system_hub/config_flow.py:
 _.async_get_options_flow  # unused method (custom_components/system_hub/config_flow.py:114)
 _.async_step_init  # unused method (custom_components/system_hub/config_flow.py:136)
 _.async_step_modules  # unused method (custom_components/system_hub/config_flow.py:153)
+_.async_step_system  # unused method (custom_components/system_hub/config_flow.py)
 _.async_step_batteries_types  # unused method (custom_components/system_hub/config_flow.py:267)
 _.async_step_batteries_import  # unused method (custom_components/system_hub/config_flow.py:282)
 _.async_step_containers  # unused method (custom_components/system_hub/config_flow.py:170)

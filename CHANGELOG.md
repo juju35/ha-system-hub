@@ -3,9 +3,15 @@
 ## Unreleased
 
 ### New
+- **System tab**: received and sent since the boot (System Monitor's network in and out, physical interfaces summed); the Home Assistant Core and OS versions, orange with the version available when an update is, opening Settings → Updates.
+- **Thresholds** in **Configure → System: thresholds**: when CPU, RAM, disk, temperature and swap turn orange and red in the System tab (the rings, the tiles and the disks); the red one must be above the orange one.
+- **Batteries tab**: **Export CSV** (every battery with its room, type, level, status, drain, days left and replacement date, made by the browser), the spare batteries by type with how many to buy and a form to set a type's stock, and a search by name, room or type.
 - **Orphans module** (replaces [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities)): the entities their integration no longer provides — integration removed, integration not loaded, not provided, unavailable or unknown for longer than a delay (24 hours) — and the orphan devices, scanned every 15 minutes and shortly after the registries change, after a grace period at start (10 minutes); what still uses each one (automations, scripts, scenes, groups, dashboards); removal in bulk with each entity checked again; ignored integrations, entities and devices. Sensors **Orphaned entities** and **Last scan**, button **Scan now**, actions `system_hub.orphans_scan`, `orphans_remove`, `orphans_remove_devices` and `orphans_ignore` (administrators only), events `system_hub_orphans_removed` and `system_hub_orphans_devices_removed`. On by default; its settings in **Configure → Orphans**.
 - **Orphans tab** in the panel: counters by reason, the list with a search, integration and reason filters, selection one by one or of every match, **Remove** and **Ignore** in bulk once confirmed, what uses each orphan with links, and the orphan devices; read from the new `system_hub/orphans` WebSocket command.
 - The **Orphan Entities card** and mini card, served by System Hub with the Orphans module's entities and actions.
+
+### Fixed
+- **System tab**: the virtual interfaces (loopback, Docker, `hassio`, `veth…`, bridges, tunnels, VPNs) no longer count in the download and upload tile and the Network chart, as in the old System Monitor card.
 
 ## 0.3.0 - 2026-11-11
 

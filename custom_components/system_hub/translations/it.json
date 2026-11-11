@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batterie: tipi di batteria",
           "batteries_import": "Batterie: importa da Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "Sistema: soglie"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integrazioni le cui entità non vengono mai elencate. Digita un dominio per aggiungerne una non presente nell'elenco.",
           "ignored_entities": "Entità (ID entità) e dispositivi (ID dispositivo) mai elencati. La scheda li aggiunge qui con il pulsante Ignora."
         }
+      },
+      "system": {
+        "title": "Sistema: soglie",
+        "description": "La scheda Sistema colora un valore di arancione dalla prima soglia e di rosso dalla seconda.",
+        "data": {
+          "cpu_warning": "CPU: arancione da",
+          "cpu_critical": "CPU: rosso da",
+          "ram_warning": "RAM: arancione da",
+          "ram_critical": "RAM: rosso da",
+          "disk_warning": "Disco: arancione da",
+          "disk_critical": "Disco: rosso da",
+          "temperature_warning": "Temperatura: arancione da",
+          "temperature_critical": "Temperatura: rosso da",
+          "swap_warning": "Swap: arancione da",
+          "swap_critical": "Swap: rosso da"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "La cartella deve trovarsi nella cartella di configurazione o in una cartella di allowlist_external_dirs, fuori dalle cartelle nascoste come .storage.",
       "battery_required": "Scegli la batteria.",
       "type_required": "Scegli o scrivi il tipo.",
-      "no_model": "Il dispositivo di questa batteria non ha un modello: imposta il tipo per la batteria stessa."
+      "no_model": "Il dispositivo di questa batteria non ha un modello: imposta il tipo per la batteria stessa.",
+      "critical_below_warning": "La soglia rossa deve essere sopra quella arancione."
     },
     "abort": {
       "nothing_to_import": "Niente da importare da Battery Monitor."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Dall’avvio di Home Assistant",
         "orph_stat_ignored": "Ignorate",
         "orph_all": "Tutte",
-        "orph_confirm_devices_used": "Dispositivi ancora usati da automazioni o script: {n}. Potrebbero smettere di funzionare."
+        "orph_confirm_devices_used": "Dispositivi ancora usati da automazioni o script: {n}. Potrebbero smettere di funzionare.",
+        "network_total": "Ricevuti / inviati",
+        "update_to": "Aggiorna a {versions}",
+        "up_to_date": "Aggiornato",
+        "export_csv": "Esporta CSV",
+        "spares": "Scorta",
+        "to_buy": "{n} da comprare",
+        "set_stock": "Imposta la scorta",
+        "stock_type": "Tipo di batteria",
+        "stock_count": "Quantità",
+        "search_batteries": "Cerca: nome, stanza, tipo",
+        "no_match": "Nessuna batteria corrisponde"
       }
     },
     "battery_type": {

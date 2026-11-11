@@ -71,7 +71,8 @@
           "git_sync": "Git Sync",
           "batteries_types": "Batterijen: batterijtypen",
           "batteries_import": "Batterijen: importeren uit Battery Monitor",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "system": "Systeem: drempels"
         }
       },
       "modules": {
@@ -277,6 +278,22 @@
           "ignored_integrations": "Integraties waarvan de entiteiten nooit worden getoond. Typ een domein om er een toe te voegen die niet in de lijst staat.",
           "ignored_entities": "Entiteiten (entiteit-ID's) en apparaten (apparaat-ID's) die nooit worden getoond. De kaart voegt ze hier toe met de knop Negeren."
         }
+      },
+      "system": {
+        "title": "Systeem: drempels",
+        "description": "Het tabblad Systeem kleurt een waarde oranje vanaf de eerste drempel en rood vanaf de tweede.",
+        "data": {
+          "cpu_warning": "CPU: oranje vanaf",
+          "cpu_critical": "CPU: rood vanaf",
+          "ram_warning": "RAM: oranje vanaf",
+          "ram_critical": "RAM: rood vanaf",
+          "disk_warning": "Schijf: oranje vanaf",
+          "disk_critical": "Schijf: rood vanaf",
+          "temperature_warning": "Temperatuur: oranje vanaf",
+          "temperature_critical": "Temperatuur: rood vanaf",
+          "swap_warning": "Swap: oranje vanaf",
+          "swap_critical": "Swap: rood vanaf"
+        }
       }
     },
     "error": {
@@ -294,7 +311,8 @@
       "export_dir_not_allowed": "De map moet in de configuratiemap of in een map van allowlist_external_dirs liggen, buiten verborgen mappen zoals .storage.",
       "battery_required": "Kies de batterij.",
       "type_required": "Kies of typ het type.",
-      "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf."
+      "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf.",
+      "critical_below_warning": "De rode drempel moet boven de oranje liggen."
     },
     "abort": {
       "nothing_to_import": "Niets te importeren uit Battery Monitor."
@@ -1216,7 +1234,18 @@
         "orph_stat_removed_hint": "Sinds Home Assistant is gestart",
         "orph_stat_ignored": "Genegeerd",
         "orph_all": "Alle",
-        "orph_confirm_devices_used": "Apparaten nog in gebruik door automatiseringen of scripts: {n}. Die kunnen stoppen met werken."
+        "orph_confirm_devices_used": "Apparaten nog in gebruik door automatiseringen of scripts: {n}. Die kunnen stoppen met werken.",
+        "network_total": "Ontvangen / verzonden",
+        "update_to": "Bijwerken naar {versions}",
+        "up_to_date": "Bijgewerkt",
+        "export_csv": "CSV exporteren",
+        "spares": "Voorraad",
+        "to_buy": "{n} te kopen",
+        "set_stock": "Voorraad instellen",
+        "stock_type": "Batterijtype",
+        "stock_count": "Aantal",
+        "search_batteries": "Zoeken: naam, ruimte, type",
+        "no_match": "Geen batterij komt overeen"
       }
     },
     "battery_type": {
