@@ -242,6 +242,7 @@ async def test_options(hass: HomeAssistant, supervisor: FakeSupervisor) -> None:
         "scan_interval": 30,
         "notify": False,
         "notify_services": ["notify.mobile_app_phone"],
+        "stoppable_processes": [],
     }
     assert entry.runtime_data.containers.notify is False
 

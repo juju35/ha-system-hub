@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Интервал на опресняване",
           "notify": "Известяване",
-          "notify_services": "Действия за известяване"
+          "notify_services": "Действия за известяване",
+          "stoppable_processes": "Процеси, които може да са спрени"
         },
         "data_description": {
           "scan_interval": "Секунди между две четения от Supervisor.",
           "notify": "Известяване, когато контейнер, който трябва да работи (добавка, стартирана при зареждане), спре, и когато се върне.",
-          "notify_services": "Изпращай всяко известие и чрез тези действия (notify.mobile_app_…). Винаги се създава постоянно известие."
+          "notify_services": "Изпращай всяко известие и чрез тези действия (notify.mobile_app_…). Винаги се създава постоянно известие.",
+          "stoppable_processes": "Процеси на System Monitor, които може да са спрени: не се броят за проблем в раздела Статус и се показват в сиво."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Температура: оранжево от",
           "temperature_critical": "Температура: червено от",
           "swap_warning": "Swap: оранжево от",
-          "swap_critical": "Swap: червено от",
-          "stoppable_processes": "Процеси, които може да са спрени"
+          "swap_critical": "Swap: червено от"
         },
-        "data_description": {
-          "stoppable_processes": "Процеси на System Monitor, които може да са спрени: не се броят за проблем в раздела Статус и се показват в сиво."
-        }
+        "data_description": {}
       }
     },
     "error": {

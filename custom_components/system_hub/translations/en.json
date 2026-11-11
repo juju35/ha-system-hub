@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Refresh interval",
           "notify": "Notify",
-          "notify_services": "Notify actions"
+          "notify_services": "Notify actions",
+          "stoppable_processes": "Processes that may be stopped"
         },
         "data_description": {
           "scan_interval": "Seconds between two reads of the Supervisor.",
           "notify": "Notify when a container that should run (an add-on started at boot) stops, and when it is back.",
-          "notify_services": "Also send each notification with these actions (notify.mobile_app_…). A persistent notification is always created."
+          "notify_services": "Also send each notification with these actions (notify.mobile_app_…). A persistent notification is always created.",
+          "stoppable_processes": "System Monitor processes that may be stopped: not counted as a problem on the Status tab, shown in grey."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperature: orange from",
           "temperature_critical": "Temperature: red from",
           "swap_warning": "Swap: orange from",
-          "swap_critical": "Swap: red from",
-          "stoppable_processes": "Processes that may be stopped"
+          "swap_critical": "Swap: red from"
         },
-        "data_description": {
-          "stoppable_processes": "System Monitor processes that may be stopped: not counted as a problem on the Status tab, shown in grey."
-        }
+        "data_description": {}
       }
     },
     "error": {

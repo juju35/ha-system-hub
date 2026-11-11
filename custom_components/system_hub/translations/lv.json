@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Atjaunināšanas intervāls",
           "notify": "Paziņot",
-          "notify_services": "Paziņojumu darbības"
+          "notify_services": "Paziņojumu darbības",
+          "stoppable_processes": "Procesi, kas drīkst būt apturēti"
         },
         "data_description": {
           "scan_interval": "Sekundes starp diviem Supervisor nolasījumiem.",
           "notify": "Paziņot, kad konteiners, kam vajadzētu darboties (papildinājums, kas palaists ielādējot), apstājas, un kad tas atgriežas.",
-          "notify_services": "Sūtīt katru paziņojumu arī ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr."
+          "notify_services": "Sūtīt katru paziņojumu arī ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr.",
+          "stoppable_processes": "System Monitor procesi, kas drīkst būt apturēti: cilnē Statuss netiek uzskatīti par problēmu, tiek rādīti pelēkā krāsā."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatūra: oranžs no",
           "temperature_critical": "Temperatūra: sarkans no",
           "swap_warning": "Swap: oranžs no",
-          "swap_critical": "Swap: sarkans no",
-          "stoppable_processes": "Procesi, kas drīkst būt apturēti"
+          "swap_critical": "Swap: sarkans no"
         },
-        "data_description": {
-          "stoppable_processes": "System Monitor procesi, kas drīkst būt apturēti: cilnē Statuss netiek uzskatīti par problēmu, tiek rādīti pelēkā krāsā."
-        }
+        "data_description": {}
       }
     },
     "error": {

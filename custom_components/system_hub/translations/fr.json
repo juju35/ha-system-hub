@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Intervalle de rafraîchissement",
           "notify": "Notifier",
-          "notify_services": "Actions de notification"
+          "notify_services": "Actions de notification",
+          "stoppable_processes": "Processus pouvant être arrêtés"
         },
         "data_description": {
           "scan_interval": "Secondes entre deux lectures du Supervisor.",
           "notify": "Notifier quand un conteneur qui devrait tourner (un add-on lancé au démarrage) s'arrête, et quand il revient.",
-          "notify_services": "Envoyer aussi chaque notification avec ces actions (notify.mobile_app_…). Une notification persistante est toujours créée."
+          "notify_services": "Envoyer aussi chaque notification avec ces actions (notify.mobile_app_…). Une notification persistante est toujours créée.",
+          "stoppable_processes": "Processus de System Monitor qui peuvent être à l'arrêt : ils ne comptent pas comme un problème dans l'onglet Statut et s'affichent en gris."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Température: orange dès",
           "temperature_critical": "Température: rouge dès",
           "swap_warning": "Swap: orange dès",
-          "swap_critical": "Swap: rouge dès",
-          "stoppable_processes": "Processus pouvant être arrêtés"
+          "swap_critical": "Swap: rouge dès"
         },
-        "data_description": {
-          "stoppable_processes": "Processus de System Monitor qui peuvent être à l'arrêt : ils ne comptent pas comme un problème dans l'onglet Statut et s'affichent en gris."
-        }
+        "data_description": {}
       }
     },
     "error": {

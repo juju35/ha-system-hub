@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Frissítési időköz",
           "notify": "Értesítés",
-          "notify_services": "Értesítési műveletek"
+          "notify_services": "Értesítési műveletek",
+          "stoppable_processes": "Leállítható folyamatok"
         },
         "data_description": {
           "scan_interval": "Másodpercek a Supervisor két lekérdezése között.",
           "notify": "Értesítés, ha egy konténer, amelynek futnia kellene (rendszerinduláskor induló kiegészítő), leáll, és amikor újra fut.",
-          "notify_services": "Minden értesítés elküldése ezekkel a műveletekkel is (notify.mobile_app_…). Állandó értesítés mindig létrejön."
+          "notify_services": "Minden értesítés elküldése ezekkel a műveletekkel is (notify.mobile_app_…). Állandó értesítés mindig létrejön.",
+          "stoppable_processes": "System Monitor folyamatok, amelyek leállhatnak: az Állapot lapon nem számítanak hibának, szürkén jelennek meg."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Hőmérséklet: narancs ettől",
           "temperature_critical": "Hőmérséklet: piros ettől",
           "swap_warning": "Swap: narancs ettől",
-          "swap_critical": "Swap: piros ettől",
-          "stoppable_processes": "Leállítható folyamatok"
+          "swap_critical": "Swap: piros ettől"
         },
-        "data_description": {
-          "stoppable_processes": "System Monitor folyamatok, amelyek leállhatnak: az Állapot lapon nem számítanak hibának, szürkén jelennek meg."
-        }
+        "data_description": {}
       }
     },
     "error": {

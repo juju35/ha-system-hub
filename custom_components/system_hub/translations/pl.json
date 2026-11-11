@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Interwał odświeżania",
           "notify": "Powiadamiaj",
-          "notify_services": "Akcje powiadomień"
+          "notify_services": "Akcje powiadomień",
+          "stoppable_processes": "Procesy, które mogą być zatrzymane"
         },
         "data_description": {
           "scan_interval": "Sekundy między dwoma odczytami z Supervisora.",
           "notify": "Powiadamiaj, gdy kontener, który powinien działać (dodatek uruchamiany przy starcie), zatrzyma się i gdy wróci.",
-          "notify_services": "Wysyłaj też każde powiadomienie za pomocą tych akcji (notify.mobile_app_…). Trwałe powiadomienie jest tworzone zawsze."
+          "notify_services": "Wysyłaj też każde powiadomienie za pomocą tych akcji (notify.mobile_app_…). Trwałe powiadomienie jest tworzone zawsze.",
+          "stoppable_processes": "Procesy System Monitor, które mogą być zatrzymane: nie są liczone jako problem na karcie Status, wyświetlane na szaro."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatura: pomarańczowy od",
           "temperature_critical": "Temperatura: czerwony od",
           "swap_warning": "Swap: pomarańczowy od",
-          "swap_critical": "Swap: czerwony od",
-          "stoppable_processes": "Procesy, które mogą być zatrzymane"
+          "swap_critical": "Swap: czerwony od"
         },
-        "data_description": {
-          "stoppable_processes": "Procesy System Monitor, które mogą być zatrzymane: nie są liczone jako problem na karcie Status, wyświetlane na szaro."
-        }
+        "data_description": {}
       }
     },
     "error": {

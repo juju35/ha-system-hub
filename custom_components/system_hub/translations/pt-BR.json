@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Intervalo de atualização",
           "notify": "Notificar",
-          "notify_services": "Ações de notificação"
+          "notify_services": "Ações de notificação",
+          "stoppable_processes": "Processos que podem estar parados"
         },
         "data_description": {
           "scan_interval": "Segundos entre duas leituras do Supervisor.",
           "notify": "Notificar quando um contêiner que deveria estar rodando (um add-on iniciado na inicialização) para, e quando volta.",
-          "notify_services": "Enviar também cada notificação com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente."
+          "notify_services": "Enviar também cada notificação com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente.",
+          "stoppable_processes": "Processos do System Monitor que podem estar parados: não contam como problema na aba Status e aparecem em cinza."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatura: laranja a partir de",
           "temperature_critical": "Temperatura: vermelho a partir de",
           "swap_warning": "Swap: laranja a partir de",
-          "swap_critical": "Swap: vermelho a partir de",
-          "stoppable_processes": "Processos que podem estar parados"
+          "swap_critical": "Swap: vermelho a partir de"
         },
-        "data_description": {
-          "stoppable_processes": "Processos do System Monitor que podem estar parados: não contam como problema na aba Status e aparecem em cinza."
-        }
+        "data_description": {}
       }
     },
     "error": {

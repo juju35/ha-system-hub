@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Opdateringsinterval",
           "notify": "Giv besked",
-          "notify_services": "Notifikationshandlinger"
+          "notify_services": "Notifikationshandlinger",
+          "stoppable_processes": "Processer, der må være stoppet"
         },
         "data_description": {
           "scan_interval": "Sekunder mellem to aflæsninger af Supervisor.",
           "notify": "Giv besked, når en container, der burde køre (en tilføjelse startet ved opstart), stopper, og når den er tilbage.",
-          "notify_services": "Send også hver notifikation med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation."
+          "notify_services": "Send også hver notifikation med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation.",
+          "stoppable_processes": "System Monitor-processer, der må være stoppet: tæller ikke som et problem på fanen Status og vises gråt."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatur: orange fra",
           "temperature_critical": "Temperatur: rød fra",
           "swap_warning": "Swap: orange fra",
-          "swap_critical": "Swap: rød fra",
-          "stoppable_processes": "Processer, der må være stoppet"
+          "swap_critical": "Swap: rød fra"
         },
-        "data_description": {
-          "stoppable_processes": "System Monitor-processer, der må være stoppet: tæller ikke som et problem på fanen Status og vises gråt."
-        }
+        "data_description": {}
       }
     },
     "error": {

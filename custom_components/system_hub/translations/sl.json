@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Interval osveževanja",
           "notify": "Obveščaj",
-          "notify_services": "Dejanja obvestil"
+          "notify_services": "Dejanja obvestil",
+          "stoppable_processes": "Procesi, ki so lahko ustavljeni"
         },
         "data_description": {
           "scan_interval": "Sekunde med dvema branjema iz Supervisorja.",
           "notify": "Obvesti, ko se vsebnik, ki bi moral delovati (dodatek, ki se zažene ob zagonu), ustavi, in ko se vrne.",
-          "notify_services": "Vsako obvestilo pošlji tudi s temi dejanji (notify.mobile_app_…). Trajno obvestilo se ustvari vedno."
+          "notify_services": "Vsako obvestilo pošlji tudi s temi dejanji (notify.mobile_app_…). Trajno obvestilo se ustvari vedno.",
+          "stoppable_processes": "Procesi System Monitor, ki so lahko ustavljeni: na zavihku Stanje ne štejejo kot težava, prikazani so sivo."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatura: oranžno od",
           "temperature_critical": "Temperatura: rdeče od",
           "swap_warning": "Swap: oranžno od",
-          "swap_critical": "Swap: rdeče od",
-          "stoppable_processes": "Procesi, ki so lahko ustavljeni"
+          "swap_critical": "Swap: rdeče od"
         },
-        "data_description": {
-          "stoppable_processes": "Procesi System Monitor, ki so lahko ustavljeni: na zavihku Stanje ne štejejo kot težava, prikazani so sivo."
-        }
+        "data_description": {}
       }
     },
     "error": {

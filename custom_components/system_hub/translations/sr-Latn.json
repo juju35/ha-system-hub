@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Interval osvežavanja",
           "notify": "Obaveštavaj",
-          "notify_services": "Akcije obaveštenja"
+          "notify_services": "Akcije obaveštenja",
+          "stoppable_processes": "Procesi koji mogu biti zaustavljeni"
         },
         "data_description": {
           "scan_interval": "Sekunde između dva očitavanja Supervisor-a.",
           "notify": "Obavesti kada se kontejner koji bi trebalo da radi (dodatak koji se pokreće pri startu) zaustavi, i kada se vrati.",
-          "notify_services": "Svako obaveštenje pošalji i ovim akcijama (notify.mobile_app_…). Trajno obaveštenje se uvek kreira."
+          "notify_services": "Svako obaveštenje pošalji i ovim akcijama (notify.mobile_app_…). Trajno obaveštenje se uvek kreira.",
+          "stoppable_processes": "Procesi System Monitor-a koji mogu biti zaustavljeni: ne računaju se kao problem na kartici Status, prikazuju se sivo."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Temperatura: narandžasto od",
           "temperature_critical": "Temperatura: crveno od",
           "swap_warning": "Swap: narandžasto od",
-          "swap_critical": "Swap: crveno od",
-          "stoppable_processes": "Procesi koji mogu biti zaustavljeni"
+          "swap_critical": "Swap: crveno od"
         },
-        "data_description": {
-          "stoppable_processes": "Procesi System Monitor-a koji mogu biti zaustavljeni: ne računaju se kao problem na kartici Status, prikazuju se sivo."
-        }
+        "data_description": {}
       }
     },
     "error": {

@@ -102,12 +102,14 @@
         "data": {
           "scan_interval": "Interval obnovy",
           "notify": "Upozorniť",
-          "notify_services": "Akcie upozornení"
+          "notify_services": "Akcie upozornení",
+          "stoppable_processes": "Procesy, ktoré môžu byť zastavené"
         },
         "data_description": {
           "scan_interval": "Sekundy medzi dvoma načítaniami zo Supervisora.",
           "notify": "Upozorniť, keď sa kontajner, ktorý by mal bežať (doplnok spúšťaný pri štarte), zastaví, a keď sa vráti.",
-          "notify_services": "Každé upozornenie odoslať aj pomocou týchto akcií (notify.mobile_app_…). Trvalé upozornenie sa vytvorí vždy."
+          "notify_services": "Každé upozornenie odoslať aj pomocou týchto akcií (notify.mobile_app_…). Trvalé upozornenie sa vytvorí vždy.",
+          "stoppable_processes": "Procesy System Monitor, ktoré môžu byť zastavené: na karte Stav sa nepočítajú ako problém, zobrazia sa sivo."
         }
       },
       "watchdog": {
@@ -296,12 +298,9 @@
           "temperature_warning": "Teplota: oranžová od",
           "temperature_critical": "Teplota: červená od",
           "swap_warning": "Swap: oranžová od",
-          "swap_critical": "Swap: červená od",
-          "stoppable_processes": "Procesy, ktoré môžu byť zastavené"
+          "swap_critical": "Swap: červená od"
         },
-        "data_description": {
-          "stoppable_processes": "Procesy System Monitor, ktoré môžu byť zastavené: na karte Stav sa nepočítajú ako problém, zobrazia sa sivo."
-        }
+        "data_description": {}
       }
     },
     "error": {
