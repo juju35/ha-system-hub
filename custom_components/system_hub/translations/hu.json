@@ -1095,9 +1095,6 @@
         "behind": "{n} letöltendő",
         "modules": "Modulok",
         "modules_hint": "A kikapcsolt modul leállítja az ellenőrzéseit, és az entitásai törlődnek; a beállításai megmaradnak.",
-        "tabs": "Lapok sorrendje",
-        "move_up": "Fel",
-        "move_down": "Le",
         "save": "Mentés",
         "saved": "Mentve",
         "configure": "Modulbeállítások",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} eszköz",
         "st_none": "Nincs",
         "st_scanned": "átvizsgálva {when}",
-        "st_device": "1 eszköz"
+        "st_device": "1 eszköz",
+        "modules_tabs": "Modulok és lapok",
+        "modules_tabs_hint": "Húzza a ═ jelet a lapok sorrendjéhez; az első nyílik meg alapértelmezésként.",
+        "enabled": "Bekapcsolva",
+        "disabled": "Kikapcsolva",
+        "tab_default": "alapértelmezett",
+        "drag": "Áthelyezés",
+        "st_hint": "A példány állapota egy pillantással"
       }
     },
     "battery_type": {

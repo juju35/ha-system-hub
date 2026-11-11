@@ -1095,9 +1095,6 @@
         "behind": "{n} por obter",
         "modules": "Módulos",
         "modules_hint": "Um módulo desativado deixa de fazer verificações e as suas entidades são removidas; as suas definições são mantidas.",
-        "tabs": "Ordem dos separadores",
-        "move_up": "Subir",
-        "move_down": "Descer",
         "save": "Guardar",
         "saved": "Guardado",
         "configure": "Definições dos módulos",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} dispositivos",
         "st_none": "Nenhuma",
         "st_scanned": "analisado {when}",
-        "st_device": "1 dispositivo"
+        "st_device": "1 dispositivo",
+        "modules_tabs": "Módulos e separadores",
+        "modules_tabs_hint": "Arraste ═ para ordenar os separadores; o primeiro abre por predefinição.",
+        "enabled": "Ativados",
+        "disabled": "Desativados",
+        "tab_default": "predefinido",
+        "drag": "Mover",
+        "st_hint": "A saúde da instância num relance"
       }
     },
     "battery_type": {

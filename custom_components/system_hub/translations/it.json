@@ -1095,9 +1095,6 @@
         "behind": "{n} da scaricare",
         "modules": "Moduli",
         "modules_hint": "Un modulo disattivato interrompe i suoi controlli e le sue entità vengono rimosse; le sue impostazioni vengono conservate.",
-        "tabs": "Ordine delle schede",
-        "move_up": "Sposta su",
-        "move_down": "Sposta giù",
         "save": "Salva",
         "saved": "Salvato",
         "configure": "Impostazioni dei moduli",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} dispositivi",
         "st_none": "Nessuna",
         "st_scanned": "analizzato {when}",
-        "st_device": "1 dispositivo"
+        "st_device": "1 dispositivo",
+        "modules_tabs": "Moduli e schede",
+        "modules_tabs_hint": "Trascina ═ per ordinare le schede; la prima si apre per impostazione predefinita.",
+        "enabled": "Attivati",
+        "disabled": "Disattivati",
+        "tab_default": "predefinita",
+        "drag": "Sposta",
+        "st_hint": "Lo stato dell'istanza a colpo d'occhio"
       }
     },
     "battery_type": {

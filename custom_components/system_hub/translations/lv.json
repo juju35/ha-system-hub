@@ -1095,9 +1095,6 @@
         "behind": "{n} jāsaņem",
         "modules": "Moduļi",
         "modules_hint": "Izslēgts modulis pārtrauc pārbaudes, un tā entītijas tiek noņemtas; tā iestatījumi tiek saglabāti.",
-        "tabs": "Cilņu secība",
-        "move_up": "Uz augšu",
-        "move_down": "Uz leju",
         "save": "Saglabāt",
         "saved": "Saglabāts",
         "configure": "Moduļu iestatījumi",
@@ -1321,7 +1318,14 @@
         "st_devices": "Ierīces: {n}",
         "st_none": "Nav",
         "st_scanned": "pārbaudīts {when}",
-        "st_device": "Ierīces: 1"
+        "st_device": "Ierīces: 1",
+        "modules_tabs": "Moduļi un cilnes",
+        "modules_tabs_hint": "Velciet ═, lai sakārtotu cilnes; pirmā atveras pēc noklusējuma.",
+        "enabled": "Ieslēgti",
+        "disabled": "Izslēgti",
+        "tab_default": "noklusējuma",
+        "drag": "Pārvietot",
+        "st_hint": "Instances stāvoklis vienā mirklī"
       }
     },
     "battery_type": {

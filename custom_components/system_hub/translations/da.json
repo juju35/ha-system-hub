@@ -1095,9 +1095,6 @@
         "behind": "{n} at hente",
         "modules": "Moduler",
         "modules_hint": "Et modul, der er slået fra, stopper sine kontroller, og dets enheder fjernes; dets indstillinger bevares.",
-        "tabs": "Fanernes rækkefølge",
-        "move_up": "Flyt op",
-        "move_down": "Flyt ned",
         "save": "Gem",
         "saved": "Gemt",
         "configure": "Modulindstillinger",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} enheder",
         "st_none": "Ingen",
         "st_scanned": "scannet {when}",
-        "st_device": "1 enhed"
+        "st_device": "1 enhed",
+        "modules_tabs": "Moduler og faner",
+        "modules_tabs_hint": "Træk ═ for at ordne fanerne; den første åbnes som standard.",
+        "enabled": "Aktiveret",
+        "disabled": "Deaktiveret",
+        "tab_default": "standard",
+        "drag": "Flyt",
+        "st_hint": "Instansens tilstand med ét blik"
       }
     },
     "battery_type": {

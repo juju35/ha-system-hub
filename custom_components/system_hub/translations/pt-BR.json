@@ -1095,9 +1095,6 @@
         "behind": "{n} para baixar",
         "modules": "Módulos",
         "modules_hint": "Um módulo desativado para de fazer verificações e suas entidades são removidas; suas configurações são mantidas.",
-        "tabs": "Ordem das abas",
-        "move_up": "Mover para cima",
-        "move_down": "Mover para baixo",
         "save": "Salvar",
         "saved": "Salvo",
         "configure": "Configurações dos módulos",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} dispositivos",
         "st_none": "Nenhuma",
         "st_scanned": "analisado {when}",
-        "st_device": "1 dispositivo"
+        "st_device": "1 dispositivo",
+        "modules_tabs": "Módulos e abas",
+        "modules_tabs_hint": "Arraste ═ para ordenar as abas; a primeira abre por padrão.",
+        "enabled": "Ativados",
+        "disabled": "Desativados",
+        "tab_default": "padrão",
+        "drag": "Mover",
+        "st_hint": "A saúde da instância num relance"
       }
     },
     "battery_type": {

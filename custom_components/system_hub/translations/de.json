@@ -1095,9 +1095,6 @@
         "behind": "{n} zu pullen",
         "modules": "Module",
         "modules_hint": "Ein ausgeschaltetes Modul beendet seine Prüfungen und seine Entitäten werden entfernt; seine Einstellungen bleiben erhalten.",
-        "tabs": "Reihenfolge der Tabs",
-        "move_up": "Nach oben",
-        "move_down": "Nach unten",
         "save": "Speichern",
         "saved": "Gespeichert",
         "configure": "Moduleinstellungen",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} Geräte",
         "st_none": "Keine",
         "st_scanned": "geprüft {when}",
-        "st_device": "1 Gerät"
+        "st_device": "1 Gerät",
+        "modules_tabs": "Module und Tabs",
+        "modules_tabs_hint": "Ziehe ═, um die Tabs zu ordnen; der erste öffnet sich standardmäßig.",
+        "enabled": "Aktiviert",
+        "disabled": "Deaktiviert",
+        "tab_default": "Standard",
+        "drag": "Verschieben",
+        "st_hint": "Der Zustand der Instanz auf einen Blick"
       }
     },
     "battery_type": {

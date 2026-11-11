@@ -1095,9 +1095,6 @@
         "behind": "{n} att hämta",
         "modules": "Moduler",
         "modules_hint": "En inaktiverad modul slutar med sina kontroller och dess entiteter tas bort; dess inställningar sparas.",
-        "tabs": "Flikarnas ordning",
-        "move_up": "Flytta upp",
-        "move_down": "Flytta ned",
         "save": "Spara",
         "saved": "Sparat",
         "configure": "Modulinställningar",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} enheter",
         "st_none": "Inga",
         "st_scanned": "skannad {when}",
-        "st_device": "1 enhet"
+        "st_device": "1 enhet",
+        "modules_tabs": "Moduler och flikar",
+        "modules_tabs_hint": "Dra ═ för att ordna flikarna; den första öppnas som standard.",
+        "enabled": "Aktiverade",
+        "disabled": "Inaktiverade",
+        "tab_default": "standard",
+        "drag": "Flytta",
+        "st_hint": "Instansens hälsa i en blick"
       }
     },
     "battery_type": {

@@ -35,6 +35,11 @@ var SH_MODULE_NAMES = {
   automations: 'Automations',
   orphans: 'Orphans',
 };
+// Every tab in its order, the ones not in it yet after
+function shAllTabs(tabs) {
+  var order = [...(tabs || [])];
+  return [...order, ...['status', 'system', ...Object.keys(SH_MODULE_NAMES)].filter((t) => !order.includes(t))];
+}
 // Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
 var SH_AUTO_MAX = 5;
 // Git Sync tab: the list of changed files is folded beyond this many
@@ -637,6 +642,14 @@ class SystemHubPanel extends HTMLElement {
     .cfgrow { padding:6px 0; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); }
     .cfgrow.open { background:color-mix(in srgb, var(--primary-color) 6%, transparent); margin:0 -16px; padding:6px 16px; }
     .cfgpad { width:36px; flex:none; }
+    .cfgsec { font-size:12px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--secondary-text-color); padding:14px 0 4px; }
+    .cfglist { display:flex; flex-direction:column; }
+    .cfgrow.off > ha-icon, .cfgrow.off .who { opacity:.55; }
+    .dragh { cursor:grab; touch-action:none; color:var(--secondary-text-color); }
+    .cfgrow.dragging { background:var(--secondary-background-color, rgba(127,127,127,.12)); box-shadow:0 8px 24px rgba(0,0,0,.25);
+                       border-radius:12px; position:relative; z-index:1; }
+    .cfgrow.dragging .dragh { cursor:grabbing; }
+    .cfgdef { margin-left:8px; vertical-align:2px; }
     .cfgbody { display:flex; flex-direction:column; gap:12px; padding:12px 0 16px 36px; }
     .cfgbody .loading { padding:12px 0; }
     .cfgtabs { align-self:flex-start; }
@@ -960,7 +973,7 @@ class SystemHubPanel extends HTMLElement {
       this._error = err?.message || String(err);
     }
     // A settings form open: left as it is, what is being typed included
-    if (this._tab === 'settings' && this._cfg?.flow) return;
+    if (this._tab === 'settings' && (this._cfg?.flow || this._drag)) return;
     this._render();
   }
 
@@ -1021,6 +1034,8 @@ class SystemHubPanel extends HTMLElement {
       ev.preventDefault();
     });
     root.querySelector('main').addEventListener('click', (ev) => this._onClick(ev));
+    root.querySelector('main').addEventListener('pointerdown', (ev) => this._cfgDragStart?.(ev));
+    root.querySelector('main').addEventListener('keydown', (ev) => this._cfgDragKey?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => {
       if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches?.('[role="button"][data-more]')) {
         ev.preventDefault();
@@ -2052,17 +2067,8 @@ class SystemHubPanel extends HTMLElement {
   // Settings: the modules turned on, and the order of the tabs
   _settings() {
     var modules = this._draft.modules || this._state.modules || [];
-    var tabs = this._draft.tabs || this._state.tabs || [];
-    var tabRows = tabs
-      .map(
-        (tab, i) => `<div class="row"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon><div class="who"><div class="n">${shEsc(this._tabName(tab))}</div></div>
-        <button class="icon-btn" data-action="move" data-tab-move="${tab}" data-dir="-1" title="${shEsc(this._t('move_up'))}" aria-label="${shEsc(this._t('move_up'))}"${i === 0 ? ' disabled' : ''}><ha-icon icon="mdi:arrow-up"></ha-icon></button>
-        <button class="icon-btn" data-action="move" data-tab-move="${tab}" data-dir="1" title="${shEsc(this._t('move_down'))}" aria-label="${shEsc(this._t('move_down'))}"${i === tabs.length - 1 ? ' disabled' : ''}><ha-icon icon="mdi:arrow-down"></ha-icon></button></div>`,
-      )
-      .join('');
     var changed = Boolean(this._draft.modules || this._draft.tabs);
     return `${this._settingsModules(modules)}
-      <ha-card class="block"><h2>${shEsc(this._t('tabs'))}</h2>${tabRows}</ha-card>
       ${
         changed || this._busy.save
           ? `<div class="savebar" role="region" aria-label="${shEsc(this._t('unsaved'))}"><span class="grow">${shEsc(this._t('unsaved'))}</span>
@@ -2109,15 +2115,6 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'reload') return this._load();
     if (action === 'cancel' || action === 'confirm_install') {
       this._confirm = action === 'confirm_install' ? 'install' : null;
-      return this._render();
-    }
-    if (action === 'move') {
-      var tabs = [...(this._draft.tabs || this._state.tabs || [])];
-      var i = tabs.indexOf(button.dataset.tabMove);
-      var j = i + Number(button.dataset.dir);
-      if (i < 0 || j < 0 || j >= tabs.length) return;
-      [tabs[i], tabs[j]] = [tabs[j], tabs[i]];
-      this._draft.tabs = tabs;
       return this._render();
     }
     if (action === 'period') {
@@ -2760,28 +2757,103 @@ var SH_SETTINGS_METHODS = {
   },
 
   // One row per module (and the System thresholds): its switch, what it does, and its settings once opened
+  // The modules and the tabs in one list, as Home Assistant's sidebar editor: the ones turned on in the order of the
+  // tabs (dragged by their handle, or moved with ↑ ↓ from it), each with its switch and its settings opened in place;
+  // the ones turned off below
   _settingsModules(modules) {
     var cfg = this._cfgState();
-    var rows = ['system', ...Object.keys(SH_MODULE_NAMES)].map((m) => {
-      var isSystem = m === 'system';
-      var on = isSystem || modules.includes(m);
-      var steps = SH_SETTINGS_STEPS[m] || [];
-      var saved = isSystem || (this._state.modules || []).includes(m);
-      var open = cfg.module === m;
-      var hint = isSystem ? this._t('settings_system_hint') : this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${m}`);
-      var name = isSystem ? this._t('settings_system') : SH_MODULE_NAMES[m];
-      var canOpen = steps.length && saved;
-      var head = `<div class="row cfgrow${open ? ' open' : ''}"><ha-icon icon="${SH_SETTINGS_ICONS[m] || SH_MODULE_ICONS[m]}"></ha-icon>
-        <div class="who"><div class="n">${shEsc(name)}</div>${hint ? `<div class="s">${shEsc(hint)}</div>` : ''}</div>
-        ${isSystem ? '' : `<ha-switch data-module="${m}"${on ? ' checked' : ''} aria-label="${shEsc(name)}"></ha-switch>`}
+    var tabs = shAllTabs(this._draft.tabs || this._state.tabs);
+    var on = (t) => t === 'status' || t === 'system' || modules.includes(t);
+    var row = (tab, enabled) => {
+      var fixed = tab === 'status' || tab === 'system';
+      var steps = SH_SETTINGS_STEPS[tab] || [];
+      var saved = tab === 'system' || (this._state.modules || []).includes(tab);
+      var open = cfg.module === tab;
+      var name = this._tabName(tab);
+      var hint =
+        tab === 'status'
+          ? this._t('st_hint')
+          : tab === 'system'
+            ? this._t('settings_system_hint')
+            : this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${tab}`);
+      var first = enabled && tabs.find(on) === tab;
+      var handle = enabled
+        ? `<button class="icon-btn dragh" data-tab="${tab}" title="${shEsc(this._t('drag'))}" aria-label="${shEsc(`${this._t('drag')} · ${name}`)}"><ha-icon icon="mdi:drag-horizontal-variant"></ha-icon></button>`
+        : '<span class="cfgpad"></span>';
+      var head = `<div class="row cfgrow${open ? ' open' : ''}${enabled ? '' : ' off'}" data-row-tab="${tab}">${handle}<ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>
+        <div class="who"><div class="n">${shEsc(name)}${first ? `<span class="pill cfgdef">${shEsc(this._t('tab_default'))}</span>` : ''}</div>${hint ? `<div class="s">${shEsc(hint)}</div>` : ''}</div>
+        ${fixed ? '' : `<ha-switch data-module="${tab}"${enabled ? ' checked' : ''} aria-label="${shEsc(name)}"></ha-switch>`}
         ${
-          canOpen
-            ? `<button class="icon-btn" data-action="cfg_toggle" data-module="${m}" aria-expanded="${open}" title="${shEsc(this._t('settings'))}" aria-label="${shEsc(`${this._t('settings')} · ${name}`)}"><ha-icon icon="mdi:chevron-${open ? 'up' : 'down'}"></ha-icon></button>`
+          steps.length && saved
+            ? `<button class="icon-btn" data-action="cfg_toggle" data-module="${tab}" aria-expanded="${open}" title="${shEsc(this._t('settings'))}" aria-label="${shEsc(`${this._t('settings')} · ${name}`)}"><ha-icon icon="mdi:cog${open ? '' : '-outline'}"></ha-icon></button>`
             : '<span class="cfgpad"></span>'
         }</div>`;
-      return head + (open ? this._cfgBody(m) : '');
-    });
-    return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules'))}</h2><span class="msg">${shEsc(this._t('modules_hint'))}</span>${rows.join('')}</ha-card>`;
+      return head + (open ? this._cfgBody(tab) : '');
+    };
+    var enabled = tabs.filter(on);
+    var disabled = tabs.filter((t) => !on(t));
+    return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules_tabs'))}</h2><span class="msg">${shEsc(this._t('modules_tabs_hint'))}</span>
+      <div class="cfgsec">${shEsc(this._t('enabled'))}</div><div class="cfglist">${enabled.map((t) => row(t, true)).join('')}</div>
+      ${disabled.length ? `<div class="cfgsec">${shEsc(this._t('disabled'))}</div><div class="cfglist off">${disabled.map((t) => row(t, false)).join('')}</div>` : ''}</ha-card>`;
+  },
+
+  // Moves a tab among those turned on (the ones turned off keep their place): to the index `to` of that list
+  _cfgMove(tab, to) {
+    var modules = this._draft.modules || this._state.modules || [];
+    var tabs = shAllTabs(this._draft.tabs || this._state.tabs);
+    var on = (t) => t === 'status' || t === 'system' || modules.includes(t);
+    var enabled = tabs.filter(on).filter((t) => t !== tab);
+    enabled.splice(Math.max(0, Math.min(to, enabled.length)), 0, tab);
+    var next = [...enabled, ...tabs.filter((t) => !on(t))];
+    if (next.join() !== tabs.join()) this._draft.tabs = next;
+    this._render();
+  },
+
+  // Dragging a row by its handle (mouse, finger, pen): the row follows among those turned on, the order is kept once
+  // let go. Followed on the window: a row moved in the page loses the pointer capture
+  _cfgDragStart(ev) {
+    var handle = ev.target.closest?.('.dragh');
+    if (!handle || ev.button > 0) return;
+    var list = handle.closest('.cfglist');
+    var row = handle.closest('[data-row-tab]');
+    if (!list || !row) return;
+    ev.preventDefault();
+    var cfg = this._cfgState();
+    if (cfg.module) {
+      this._cfgAbort();
+      Object.assign(cfg, { module: null, step: null, error: null, haForm: null });
+    }
+    this._drag = { tab: row.dataset.rowTab };
+    row.classList.add('dragging');
+    var move = (e) => {
+      var over = this.shadowRoot.elementFromPoint?.(e.clientX, e.clientY)?.closest?.('[data-row-tab]');
+      if (!over || over === row || over.parentNode !== list) return;
+      var box = over.getBoundingClientRect();
+      list.insertBefore(row, e.clientY > box.top + box.height / 2 ? over.nextSibling : over);
+    };
+    var end = () => {
+      window.removeEventListener('pointermove', move);
+      window.removeEventListener('pointerup', end);
+      window.removeEventListener('pointercancel', end);
+      var order = [...list.querySelectorAll('[data-row-tab]')].map((el) => el.dataset.rowTab);
+      this._drag = null;
+      this._cfgMove(row.dataset.rowTab, order.indexOf(row.dataset.rowTab));
+    };
+    window.addEventListener('pointermove', move);
+    window.addEventListener('pointerup', end);
+    window.addEventListener('pointercancel', end);
+  },
+
+  // ↑ ↓ on a handle: the row one place up or down
+  _cfgDragKey(ev) {
+    var handle = ev.target.closest?.('.dragh');
+    if (!handle || (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown')) return;
+    ev.preventDefault();
+    var tab = handle.dataset.tab;
+    var modules = this._draft.modules || this._state.modules || [];
+    var enabled = shAllTabs(this._draft.tabs || this._state.tabs).filter((t) => t === 'status' || t === 'system' || modules.includes(t));
+    this._cfgMove(tab, enabled.indexOf(tab) + (ev.key === 'ArrowUp' ? -1 : 1));
+    this.shadowRoot.querySelector(`.dragh[data-tab="${tab}"]`)?.focus();
   },
 
   // An open section: the step's form, its further steps, Save

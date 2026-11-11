@@ -1095,9 +1095,6 @@
         "behind": "{n} op te halen",
         "modules": "Modules",
         "modules_hint": "Een uitgeschakelde module stopt met controleren en haar entiteiten worden verwijderd; haar instellingen blijven bewaard.",
-        "tabs": "Volgorde van de tabbladen",
-        "move_up": "Omhoog",
-        "move_down": "Omlaag",
         "save": "Opslaan",
         "saved": "Opgeslagen",
         "configure": "Module-instellingen",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} apparaten",
         "st_none": "Geen",
         "st_scanned": "gescand {when}",
-        "st_device": "1 apparaat"
+        "st_device": "1 apparaat",
+        "modules_tabs": "Modules en tabbladen",
+        "modules_tabs_hint": "Sleep ═ om de tabbladen te ordenen; het eerste opent standaard.",
+        "enabled": "Ingeschakeld",
+        "disabled": "Uitgeschakeld",
+        "tab_default": "standaard",
+        "drag": "Verplaatsen",
+        "st_hint": "De gezondheid van de instantie in één oogopslag"
       }
     },
     "battery_type": {

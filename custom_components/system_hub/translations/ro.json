@@ -1095,9 +1095,6 @@
         "behind": "{n} de preluat",
         "modules": "Module",
         "modules_hint": "Un modul dezactivat își oprește verificările, iar entitățile sale sunt eliminate; setările sale sunt păstrate.",
-        "tabs": "Ordinea filelor",
-        "move_up": "Mută sus",
-        "move_down": "Mută jos",
         "save": "Salvează",
         "saved": "Salvat",
         "configure": "Setările modulelor",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} dispozitive",
         "st_none": "Niciuna",
         "st_scanned": "scanat {when}",
-        "st_device": "1 dispozitiv"
+        "st_device": "1 dispozitiv",
+        "modules_tabs": "Module și file",
+        "modules_tabs_hint": "Trageți ═ pentru a ordona filele; prima se deschide implicit.",
+        "enabled": "Activate",
+        "disabled": "Dezactivate",
+        "tab_default": "implicită",
+        "drag": "Mută",
+        "st_hint": "Starea instanței dintr-o privire"
       }
     },
     "battery_type": {

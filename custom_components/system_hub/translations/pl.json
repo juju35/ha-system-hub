@@ -1095,9 +1095,6 @@
         "behind": "{n} do pobrania",
         "modules": "Moduły",
         "modules_hint": "Wyłączony moduł przestaje wykonywać sprawdzenia, a jego encje są usuwane; jego ustawienia zostają zachowane.",
-        "tabs": "Kolejność kart",
-        "move_up": "W górę",
-        "move_down": "W dół",
         "save": "Zapisz",
         "saved": "Zapisano",
         "configure": "Ustawienia modułów",
@@ -1321,7 +1318,14 @@
         "st_devices": "Urządzenia: {n}",
         "st_none": "Brak",
         "st_scanned": "sprawdzono {when}",
-        "st_device": "Urządzenia: 1"
+        "st_device": "Urządzenia: 1",
+        "modules_tabs": "Moduły i karty",
+        "modules_tabs_hint": "Przeciągnij ═, aby ustawić kolejność kart; pierwsza otwiera się domyślnie.",
+        "enabled": "Włączone",
+        "disabled": "Wyłączone",
+        "tab_default": "domyślna",
+        "drag": "Przenieś",
+        "st_hint": "Stan instancji w skrócie"
       }
     },
     "battery_type": {

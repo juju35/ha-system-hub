@@ -1095,9 +1095,6 @@
         "behind": "{n} à récupérer",
         "modules": "Modules",
         "modules_hint": "Un module désactivé arrête ses vérifications et ses entités sont supprimées ; ses réglages sont conservés.",
-        "tabs": "Ordre des onglets",
-        "move_up": "Monter",
-        "move_down": "Descendre",
         "save": "Enregistrer",
         "saved": "Enregistré",
         "configure": "Réglages des modules",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} appareils",
         "st_none": "Aucune",
         "st_scanned": "analysé {when}",
-        "st_device": "1 appareil"
+        "st_device": "1 appareil",
+        "modules_tabs": "Modules et onglets",
+        "modules_tabs_hint": "Faites glisser ═ pour ordonner les onglets ; le premier s'ouvre par défaut.",
+        "enabled": "Activés",
+        "disabled": "Désactivés",
+        "tab_default": "par défaut",
+        "drag": "Déplacer",
+        "st_hint": "La santé de l'instance en un coup d'œil"
       }
     },
     "battery_type": {

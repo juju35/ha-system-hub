@@ -351,7 +351,18 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   const html = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings')._content();
   for (const m of ['containers', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations']) assert.match(html, new RegExp(`data-module="${m}"`));
   assert.match(html, /data-module="watchdog" checked/);
-  assert.match(html, /data-tab-move="system" data-dir="-1"[^>]*disabled/);
+  // Sections Enabled / Disabled, a handle on the ones turned on, the first one opened by default
+  assert.match(html, /Enabled<\/div><div class="cfglist"><div class="row cfgrow" data-row-tab="system"><button class="icon-btn dragh"/);
+  assert.match(html, /data-row-tab="system">.*?<span class="pill cfgdef">default/s);
+  assert.match(html, /Disabled<\/div><div class="cfglist off">.*data-row-tab="containers"/s);
+  assert.doesNotMatch(html, /data-module="status"|data-module="system" checked/);
+  // A row dragged, or moved with ↓ from its handle: the order in the draft, the ones turned off after
+  const q = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
+  q._render = () => {};
+  q._cfgMove('watchdog', 0);
+  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['watchdog', 'system', 'status']);
+  q._cfgDragKey({ key: 'ArrowDown', preventDefault() {}, target: { closest: () => ({ dataset: { tab: 'watchdog' } }) } });
+  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['system', 'watchdog', 'status']);
   // Nothing changed: no save bar; a change brings it, with Discard
   assert.doesNotMatch(html, /data-action="save"/);
   const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
@@ -679,7 +690,7 @@ test('settings tab: a module opens on its Configure form, driven through the opt
     };
     // Every module has its row, the System thresholds too; a module turned off can't be opened
     let html = p._content();
-    assert.match(html, /System thresholds/);
+    assert.match(html, /data-action="cfg_toggle" data-module="system"/);
     assert.match(html, /data-action="cfg_toggle" data-module="watchdog"/);
     assert.doesNotMatch(html, /data-action="cfg_toggle" data-module="containers"/);
     await p._cfgOpen('watchdog');

@@ -1095,9 +1095,6 @@
         "behind": "{n} to pull",
         "modules": "Modules",
         "modules_hint": "A module turned off stops its checks and its entities are removed; its settings are kept.",
-        "tabs": "Tab order",
-        "move_up": "Move up",
-        "move_down": "Move down",
         "save": "Save",
         "saved": "Saved",
         "configure": "Module settings",
@@ -1321,7 +1318,14 @@
         "st_devices": "{n} devices",
         "st_none": "None",
         "st_scanned": "scanned {when}",
-        "st_device": "1 device"
+        "st_device": "1 device",
+        "modules_tabs": "Modules and tabs",
+        "modules_tabs_hint": "Drag ═ to set the order of the tabs; the first one opens by default.",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "tab_default": "default",
+        "drag": "Move",
+        "st_hint": "The health of the instance at a glance"
       }
     },
     "battery_type": {

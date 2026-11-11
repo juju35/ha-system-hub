@@ -1095,9 +1095,6 @@
         "behind": "{n} za preuzimanje",
         "modules": "Moduli",
         "modules_hint": "Isključen modul zaustavlja svoje provere i njegovi entiteti se uklanjaju; njegova podešavanja se čuvaju.",
-        "tabs": "Redosled kartica",
-        "move_up": "Pomeri gore",
-        "move_down": "Pomeri dole",
         "save": "Sačuvaj",
         "saved": "Sačuvano",
         "configure": "Podešavanja modula",
@@ -1321,7 +1318,14 @@
         "st_devices": "Uređaji: {n}",
         "st_none": "Nema",
         "st_scanned": "provereno {when}",
-        "st_device": "Uređaji: 1"
+        "st_device": "Uređaji: 1",
+        "modules_tabs": "Moduli i kartice",
+        "modules_tabs_hint": "Prevucite ═ da poređate kartice; prva se otvara podrazumevano.",
+        "enabled": "Uključeni",
+        "disabled": "Isključeni",
+        "tab_default": "podrazumevana",
+        "drag": "Pomeri",
+        "st_hint": "Stanje instance na prvi pogled"
       }
     },
     "battery_type": {

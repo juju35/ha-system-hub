@@ -1095,9 +1095,6 @@
         "behind": "{n} ke stažení",
         "modules": "Moduly",
         "modules_hint": "Vypnutý modul zastaví své kontroly a jeho entity jsou odstraněny; jeho nastavení zůstává zachováno.",
-        "tabs": "Pořadí karet",
-        "move_up": "Posunout nahoru",
-        "move_down": "Posunout dolů",
         "save": "Uložit",
         "saved": "Uloženo",
         "configure": "Nastavení modulů",
@@ -1321,7 +1318,14 @@
         "st_devices": "Zařízení: {n}",
         "st_none": "Žádné",
         "st_scanned": "prověřeno {when}",
-        "st_device": "Zařízení: 1"
+        "st_device": "Zařízení: 1",
+        "modules_tabs": "Moduly a karty",
+        "modules_tabs_hint": "Přetažením ═ seřaďte karty; první se otevře ve výchozím stavu.",
+        "enabled": "Zapnuté",
+        "disabled": "Vypnuté",
+        "tab_default": "výchozí",
+        "drag": "Přesunout",
+        "st_hint": "Stav instance na první pohled"
       }
     },
     "battery_type": {
