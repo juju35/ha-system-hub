@@ -7,15 +7,10 @@ curves. The cards draw their own icons: no icon file is needed. A file is only r
 differ from the one already there (scripts/screenshots.py).
 """
 
-import json
-import os
-import subprocess
+from screenshot_node_cards import ZOOM, light_dark, node_mock, render
 
-from playwright.sync_api import sync_playwright
+from screenshots import ROOT
 
-from screenshots import NOW, ROOT, capture, open_page, page_html
-
-CARD_JS = (ROOT / "custom_components/system_hub/frontend/cards/system-monitor-card.js").read_text(encoding="utf-8")
 MOCK = ROOT / "test/system-monitor-card/mock-states.mjs"
 
 # One entry per light/dark pair: screenshots/<file>.png and <file>-dark.png
@@ -30,23 +25,10 @@ PAIRS = [
         "zoom": True,
     },
 ]
-SHOTS = [
-    {**pair, "file": pair["file"] + suffix, "theme": theme}
-    for pair in PAIRS
-    for theme, suffix in (("light", ""), ("dark", "-dark"))
-]
+SHOTS = light_dark(PAIRS)
 
-# Minimal stand-in for Home Assistant's <ha-card>
-HA_CARD = """customElements.define("ha-card", class extends HTMLElement {
-  constructor() {
-    super();
-    this.attachShadow({ mode: "open" }).innerHTML =
-      "<style>:host{display:block;background:var(--card-background-color);border-radius:12px;" +
-      "border:1px solid var(--divider-color);color:var(--primary-text-color);overflow:hidden}</style><slot></slot>";
-  }
-});"""
-
-MOUNT = """([type, config, states, entities, devices, zoom]) => {
+MOUNT = (
+    """([type, config, states, entities, devices, zoom]) => {
   const el = document.createElement(type);
   el.setConfig({ type: `custom:${type}`, ...config });
   // Recorder statistics: a 24 h rate curve for each rate sensor (busy evening, quiet night), and percentages for the
@@ -69,46 +51,20 @@ MOUNT = """([type, config, states, entities, devices, zoom]) => {
     config: { version: "2026.10.2" }, language: "en", locale: { language: "en" }, user: { is_admin: true },
   };
   document.getElementById("root").appendChild(el);
-  // A mouse click (detail 1): a keyboard one would focus the button and draw its focus ring.
-  if (zoom) el.shadowRoot.querySelector(".zoom").dispatchEvent(new MouseEvent("click", { bubbles: true, composed: true, detail: 1 }));
-}"""
-
-
-def mock_states():
-    """The mock states, entity and device registries of the cards' tests, dated from the frozen clock."""
-    script = f"""
-const now = Date.parse({json.dumps(NOW)});
-const RealDate = Date;
-globalThis.Date = class extends RealDate {{
-  constructor(...a) {{ super(...(a.length ? a : [now])); }}
-  static now() {{ return now; }}
-}};
-const m = await import({json.dumps(MOCK.as_uri())});
-console.log(JSON.stringify(m));
 """
-    out = subprocess.run(["node", "--input-type=module", "-e", script], check=True, capture_output=True, text=True)
-    return json.loads(out.stdout)
+    + ZOOM
+    + """}"""
+)
 
 
 def main():
-    out = ROOT / "screenshots"
-    out.mkdir(exist_ok=True)
-    mock = mock_states()
-    with sync_playwright() as p:
-        browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
-        for shot in SHOTS:
-            html = page_html(shot["theme"], shot["width"], padding=16)
-            page = open_page(browser, shot["file"], (1000, 2000), html)
-            page.add_script_tag(content=HA_CARD)
-            page.add_script_tag(content=CARD_JS)
-            states = {**mock["states"], **(mock["procsRunning"] if shot.get("procs_ok") else {})}
-            page.evaluate(MOUNT, [shot["type"], {}, states, mock["entities"], mock["devices"], bool(shot.get("zoom"))])
-            page.wait_for_timeout(800)
-            box = page.locator("#root").bounding_box()
-            clip = {"x": 0, "y": 0, "width": shot["width"] + 32, "height": int(box["height"] + 0.999) + 32}
-            capture(page, out / f"{shot['file']}.png", clip=clip, animations="disabled")
-            page.close()
-        browser.close()
+    mock = node_mock(MOCK, ["states", "entities", "devices", "procsRunning"])
+
+    def args(shot):
+        states = {**mock["states"], **(mock["procsRunning"] if shot.get("procs_ok") else {})}
+        return [shot["type"], {}, states, mock["entities"], mock["devices"], bool(shot.get("zoom"))]
+
+    render("system-monitor-card.js", SHOTS, MOUNT, args)
 
 
 if __name__ == "__main__":
