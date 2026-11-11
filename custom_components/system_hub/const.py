@@ -34,6 +34,8 @@ TAB_STATUS: Final = "status"
 TAB_SYSTEM: Final = "system"
 # The System tab's thresholds (orange, red) in %, °C for the temperature, in the options under "system".
 CONF_SYSTEM: Final = "system"
+# System settings: the System Monitor processes that may be stopped (entity ids), not counted as a problem
+CONF_STOPPABLE_PROCESSES: Final = "stoppable_processes"
 DEFAULT_THRESHOLDS: Final = {
     "cpu": (70, 90),
     "ram": (70, 90),

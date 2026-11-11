@@ -2258,7 +2258,26 @@ class SystemMonitorBase extends HTMLElement {
 
   set hass(hass) {
     this._hass = hass;
+    this._loadStoppable();
     this._maybeRender();
+  }
+
+  /**
+   * The processes that may be stopped, chosen in System Hub's System settings: read once, then not counted as stopped
+   * (grey chip). Without System Hub loaded, none.
+   */
+  _loadStoppable() {
+    if (this._stoppableAsked || !this._hass?.callWS) return;
+    this._stoppableAsked = true;
+    this._hass
+      .callWS({ type: "system_hub/stoppable_processes" })
+      .then((ids) => {
+        this._stoppable = new Set(Array.isArray(ids) ? ids : []);
+        if (!this._stoppable.size) return;
+        this._sig = null;
+        this._maybeRender();
+      })
+      .catch(() => {});
   }
 
   /** Home Assistant sets hass on every state change of the instance: render only when one the card shows changed. */
@@ -2390,7 +2409,7 @@ class SystemMonitorBase extends HTMLElement {
    * about its process: it is not counted (grey chip, see `_unknownProcs`).
    */
   _stopped(sm) {
-    return Object.values(sm.procs).filter((id) => this._s(id)?.state === "off");
+    return Object.values(sm.procs).filter((id) => this._s(id)?.state === "off" && !this._stoppable?.has(id));
   }
 
   /** Monitored processes whose sensor is neither on nor off (unavailable, unknown, missing). */
@@ -2743,7 +2762,8 @@ class SystemMonitorCard extends SystemMonitorBase {
     // Running green, stopped red, unavailable / unknown grey (its state in the tooltip).
     const chips = entries.map(([name, id]) => {
       const state = this._s(id)?.state;
-      const cls = state === "on" ? "good" : state === "off" ? "crit" : "muted";
+      // Stopped as allowed in System Hub's System settings: grey, no alert
+      const cls = state === "on" ? "good" : state === "off" && !this._stoppable?.has(id) ? "crit" : "muted";
       const title = cls === "muted" ? ` title="${esc(`${name}: ${this._t("st_unknown")}`)}"` : "";
       return `<span class="chip clickable ${cls}" data-entity="${id}" role="button" tabindex="0"${title}><span class="dot"></span>${esc(name)}</span>`;
     });

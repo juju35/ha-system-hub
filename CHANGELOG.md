@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+### New
+- **Processes that may be stopped**: chosen in **Settings → System ⚙** among the processes System Monitor watches. Stopped, they are no problem: not counted on the Status tab, grey in the processes list ("Stopped (allowed)"), and no red status nor alert on the System Monitor cards.
+
 ## 1.0.2 - 2026-11-11
 
 ### Fixed

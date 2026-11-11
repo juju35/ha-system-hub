@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatura: pomarańczowy od",
           "temperature_critical": "Temperatura: czerwony od",
           "swap_warning": "Swap: pomarańczowy od",
-          "swap_critical": "Swap: czerwony od"
+          "swap_critical": "Swap: czerwony od",
+          "stoppable_processes": "Procesy, które mogą być zatrzymane"
+        },
+        "data_description": {
+          "stoppable_processes": "Procesy System Monitor, które mogą być zatrzymane: nie są liczone jako problem na karcie Status, wyświetlane na szaro."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Wyłączone",
         "tab_default": "domyślna",
         "drag": "Przenieś",
-        "st_hint": "Stan instancji w skrócie"
+        "st_hint": "Stan instancji w skrócie",
+        "stopped_allowed": "Zatrzymany (dozwolone)"
       }
     },
     "battery_type": {

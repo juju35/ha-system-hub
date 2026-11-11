@@ -508,6 +508,8 @@ def mock_state():
             None,
         ),
         ("process", "binary_sensor.system_monitor_process_frigate", "System Monitor Process frigate", "off", None),
+        # Stopped as allowed in the System settings: grey, no alert
+        ("process", "binary_sensor.system_monitor_process_rsync", "System Monitor Process rsync", "off", None),
         ("disk_use_percent", "sensor.system_monitor_disk_usage", "Disk usage /", "38.4", "%"),
         ("disk_use_percent", "sensor.system_monitor_disk_usage_media", "Disk usage /media", "82.7", "%"),
         ("disk_use_percent", "sensor.system_monitor_disk_usage_backup", "Disk usage /backup", "93.1", "%"),
@@ -570,6 +572,7 @@ def mock_state():
         "thresholds": {"cpu": [70, 90], "ram": [70, 90], "disk": [80, 90], "temperature": [70, 85], "swap": [50, 80]},
         "system": [
             {"key": key, "entity_id": entity, "name": name, "state": state, "unit": unit}
+            | ({"stoppable": True} if entity == "binary_sensor.system_monitor_process_rsync" else {})
             for key, entity, name, state, unit in system
         ],
         "containers": {

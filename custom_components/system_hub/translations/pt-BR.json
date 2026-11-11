@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatura: laranja a partir de",
           "temperature_critical": "Temperatura: vermelho a partir de",
           "swap_warning": "Swap: laranja a partir de",
-          "swap_critical": "Swap: vermelho a partir de"
+          "swap_critical": "Swap: vermelho a partir de",
+          "stoppable_processes": "Processos que podem estar parados"
+        },
+        "data_description": {
+          "stoppable_processes": "Processos do System Monitor que podem estar parados: não contam como problema na aba Status e aparecem em cinza."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Desativados",
         "tab_default": "padrão",
         "drag": "Mover",
-        "st_hint": "A saúde da instância num relance"
+        "st_hint": "A saúde da instância num relance",
+        "stopped_allowed": "Parado (permitido)"
       }
     },
     "battery_type": {

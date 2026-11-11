@@ -22,6 +22,7 @@ from homeassistant.helpers import entity_registry as er
 from . import automations
 from .const import (
     CONF_MODULES,
+    CONF_STOPPABLE_PROCESSES,
     CONF_SYSTEM,
     CONF_TABS,
     DEFAULT_THRESHOLDS,
@@ -89,6 +90,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_state)
         websocket_api.async_register_command(hass, ws_update_settings)
         websocket_api.async_register_command(hass, ws_options_flow)
+        websocket_api.async_register_command(hass, ws_stoppable_processes)
         websocket_api.async_register_command(hass, orphans_panel.ws_orphans)
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
@@ -173,6 +175,12 @@ def thresholds(options: dict[str, Any]) -> dict[str, list[int]]:
     return result
 
 
+def stoppable_processes(options: dict[str, Any]) -> set[str]:
+    """The processes that may be stopped, chosen in the System settings."""
+    chosen = options.get(CONF_SYSTEM) if isinstance(options.get(CONF_SYSTEM), dict) else {}
+    return {str(e) for e in chosen.get(CONF_STOPPABLE_PROCESSES) or []}
+
+
 def _updates(hass: HomeAssistant) -> list[dict[str, Any]]:
     """Home Assistant Core and OS: installed and latest versions, whether an update is available."""
     updates = []
@@ -194,8 +202,9 @@ def _updates(hass: HomeAssistant) -> list[dict[str, Any]]:
     return updates
 
 
-def _system(hass: HomeAssistant) -> list[dict[str, Any]]:
-    """System Monitor sensors and processes, backups, database size: key, entity id, name, state, unit."""
+def _system(hass: HomeAssistant, stoppable: set[str] | None = None) -> list[dict[str, Any]]:
+    """System Monitor sensors and processes, backups, database size: key, entity id, name, state, unit; a process
+    that may be stopped says so."""
     registry = er.async_get(hass)
     sensors = []
     for item in sorted(registry.entities.values(), key=lambda e: e.entity_id):
@@ -204,15 +213,16 @@ def _system(hass: HomeAssistant) -> list[dict[str, Any]]:
         key = _key(hass, item)
         if key is None or (state := hass.states.get(item.entity_id)) is None:
             continue
-        sensors.append(
-            {
-                "key": key,
-                "entity_id": item.entity_id,
-                "name": state.name,
-                "state": state.state,
-                "unit": state.attributes.get("unit_of_measurement"),
-            }
-        )
+        sensor = {
+            "key": key,
+            "entity_id": item.entity_id,
+            "name": state.name,
+            "state": state.state,
+            "unit": state.attributes.get("unit_of_measurement"),
+        }
+        if key == "process" and stoppable and item.entity_id in stoppable:
+            sensor["stoppable"] = True
+        sensors.append(sensor)
     return sensors
 
 
@@ -352,6 +362,16 @@ def _git_sync(coordinator: Any) -> dict[str, Any]:
     }
 
 
+@websocket_api.websocket_command({vol.Required("type"): "system_hub/stoppable_processes"})
+@callback
+def ws_stoppable_processes(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """The processes that may be stopped (System settings), for the System Monitor cards of every user."""
+    entry = _entry(hass)
+    connection.send_result(msg["id"], sorted(stoppable_processes(dict(entry.options))) if entry else [])
+
+
 @websocket_api.require_admin
 @websocket_api.websocket_command({vol.Required("type"): "system_hub/state"})
 @callback
@@ -370,7 +390,7 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         "modules": enabled_modules(entry),
         "tabs": tab_order(dict(entry.options)),
         "git_sync_configured": data.git_sync is not None,
-        "system": _system(hass),
+        "system": _system(hass, stoppable_processes(dict(entry.options))),
         "updates": _updates(hass),
         "thresholds": thresholds(dict(entry.options)),
     }

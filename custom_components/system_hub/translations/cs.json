@@ -296,7 +296,11 @@
           "temperature_warning": "Teplota: oranžová od",
           "temperature_critical": "Teplota: červená od",
           "swap_warning": "Swap: oranžová od",
-          "swap_critical": "Swap: červená od"
+          "swap_critical": "Swap: červená od",
+          "stoppable_processes": "Procesy, které mohou být zastavené"
+        },
+        "data_description": {
+          "stoppable_processes": "Procesy System Monitor, které mohou být zastavené: na kartě Stav se nepočítají jako problém, zobrazí se šedě."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Vypnuté",
         "tab_default": "výchozí",
         "drag": "Přesunout",
-        "st_hint": "Stav instance na první pohled"
+        "st_hint": "Stav instance na první pohled",
+        "stopped_allowed": "Zastaveno (povoleno)"
       }
     },
     "battery_type": {

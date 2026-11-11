@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatur: orange ab",
           "temperature_critical": "Temperatur: rot ab",
           "swap_warning": "Swap: orange ab",
-          "swap_critical": "Swap: rot ab"
+          "swap_critical": "Swap: rot ab",
+          "stoppable_processes": "Prozesse, die gestoppt sein dürfen"
+        },
+        "data_description": {
+          "stoppable_processes": "System-Monitor-Prozesse, die gestoppt sein dürfen: kein Problem im Status-Tab, grau angezeigt."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Deaktiviert",
         "tab_default": "Standard",
         "drag": "Verschieben",
-        "st_hint": "Der Zustand der Instanz auf einen Blick"
+        "st_hint": "Der Zustand der Instanz auf einen Blick",
+        "stopped_allowed": "Gestoppt (erlaubt)"
       }
     },
     "battery_type": {

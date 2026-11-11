@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatură: portocaliu de la",
           "temperature_critical": "Temperatură: roșu de la",
           "swap_warning": "Swap: portocaliu de la",
-          "swap_critical": "Swap: roșu de la"
+          "swap_critical": "Swap: roșu de la",
+          "stoppable_processes": "Procese care pot fi oprite"
+        },
+        "data_description": {
+          "stoppable_processes": "Procese System Monitor care pot fi oprite: nu contează ca problemă în fila Stare și apar cu gri."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Dezactivate",
         "tab_default": "implicită",
         "drag": "Mută",
-        "st_hint": "Starea instanței dintr-o privire"
+        "st_hint": "Starea instanței dintr-o privire",
+        "stopped_allowed": "Oprit (permis)"
       }
     },
     "battery_type": {

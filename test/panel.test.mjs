@@ -834,3 +834,26 @@ test('tabs: none before the state is read, then the first of the configured orde
   if (!p._tabs().includes(p._tab)) p._tab = p._tabs()[0];
   assert.equal(p._tab, 'status');
 });
+
+test('processes: one that may be stopped is grey, not counted on the Status tab', () => {
+  const state = {
+    loaded: true,
+    modules: ['containers'],
+    tabs: ['status', 'system', 'containers'],
+    containers: { containers: [{ slug: 'core', name: 'Core', state: 'started' }] },
+    system: [
+      { key: 'process', entity_id: 'binary_sensor.p_backup', name: 'Process rsync', state: 'off', stoppable: true },
+      { key: 'process', entity_id: 'binary_sensor.p_z2m', name: 'Process zigbee2mqtt', state: 'on' },
+    ],
+  };
+  const p = panel(state, 'containers');
+  const html = p._processList();
+  assert.match(html, /<span class="pill good">Running<\/span><\/div>/);
+  assert.match(html, /Stopped \(allowed\)/);
+  assert.doesNotMatch(html, /pill bad/);
+  const [tone] = p._stArea('containers');
+  assert.equal(tone, 'good');
+  // Not allowed: a problem
+  state.system[0].stoppable = false;
+  assert.equal(p._stArea('containers')[0], 'bad');
+});

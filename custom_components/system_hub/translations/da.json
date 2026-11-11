@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatur: orange fra",
           "temperature_critical": "Temperatur: rød fra",
           "swap_warning": "Swap: orange fra",
-          "swap_critical": "Swap: rød fra"
+          "swap_critical": "Swap: rød fra",
+          "stoppable_processes": "Processer, der må være stoppet"
+        },
+        "data_description": {
+          "stoppable_processes": "System Monitor-processer, der må være stoppet: tæller ikke som et problem på fanen Status og vises gråt."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Deaktiveret",
         "tab_default": "standard",
         "drag": "Flyt",
-        "st_hint": "Instansens tilstand med ét blik"
+        "st_hint": "Instansens tilstand med ét blik",
+        "stopped_allowed": "Stoppet (tilladt)"
       }
     },
     "battery_type": {

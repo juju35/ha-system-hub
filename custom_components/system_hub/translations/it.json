@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatura: arancione da",
           "temperature_critical": "Temperatura: rosso da",
           "swap_warning": "Swap: arancione da",
-          "swap_critical": "Swap: rosso da"
+          "swap_critical": "Swap: rosso da",
+          "stoppable_processes": "Processi che possono essere arrestati"
+        },
+        "data_description": {
+          "stoppable_processes": "Processi di System Monitor che possono essere arrestati: non contano come problema nella scheda Stato e appaiono in grigio."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Disattivati",
         "tab_default": "predefinita",
         "drag": "Sposta",
-        "st_hint": "Lo stato dell'istanza a colpo d'occhio"
+        "st_hint": "Lo stato dell'istanza a colpo d'occhio",
+        "stopped_allowed": "Arrestato (consentito)"
       }
     },
     "battery_type": {

@@ -328,3 +328,30 @@ async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: 
     assert "modules" in answer["menu_options"]
     result = await hass.config_entries.options.async_configure(answer["flow_id"], {"next_step_id": "system"})
     assert result["step_id"] == "system"
+
+
+async def test_processes_that_may_be_stopped(hass: HomeAssistant, hass_ws_client, hass_read_only_access_token) -> None:
+    """Chosen in the System settings: flagged in the panel's state and read by the cards of any user."""
+    _system_monitor(hass)
+    process = "binary_sensor.systemmonitor_process_python3"
+    assert hass.states.get(process) is not None
+    entry = await _setup(hass, [])
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
+    result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "system"})
+    levels = (("cpu", 70), ("ram", 70), ("disk", 80), ("temperature", 70), ("swap", 50))
+    values = {f"{key}_{level}": v for key, base in levels for level, v in (("warning", base), ("critical", base + 10))}
+    result = await hass.config_entries.options.async_configure(
+        result["flow_id"], {**values, "stoppable_processes": [process]}
+    )
+    assert result["type"] is FlowResultType.CREATE_ENTRY
+    await hass.async_block_till_done()
+    assert entry.options["system"]["stoppable_processes"] == [process]
+    assert entry.options["system"]["cpu_warning"] == 70
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "system_hub/state"})
+    system = (await client.receive_json())["result"]["system"]
+    assert next(s for s in system if s["entity_id"] == process)["stoppable"] is True
+    # Not an administrator: the cards still read them
+    user = await hass_ws_client(hass, hass_read_only_access_token)
+    await user.send_json_auto_id({"type": "system_hub/stoppable_processes"})
+    assert (await user.receive_json())["result"] == [process]

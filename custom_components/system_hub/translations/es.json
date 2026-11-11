@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatura: naranja desde",
           "temperature_critical": "Temperatura: rojo desde",
           "swap_warning": "Swap: naranja desde",
-          "swap_critical": "Swap: rojo desde"
+          "swap_critical": "Swap: rojo desde",
+          "stoppable_processes": "Procesos que pueden estar detenidos"
+        },
+        "data_description": {
+          "stoppable_processes": "Procesos de System Monitor que pueden estar detenidos: no cuentan como problema en la pestaña Estado y se muestran en gris."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Desactivados",
         "tab_default": "predeterminada",
         "drag": "Mover",
-        "st_hint": "El estado de la instancia de un vistazo"
+        "st_hint": "El estado de la instancia de un vistazo",
+        "stopped_allowed": "Detenido (permitido)"
       }
     },
     "battery_type": {

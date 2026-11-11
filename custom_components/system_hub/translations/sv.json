@@ -296,7 +296,11 @@
           "temperature_warning": "Temperatur: orange från",
           "temperature_critical": "Temperatur: rött från",
           "swap_warning": "Swap: orange från",
-          "swap_critical": "Swap: rött från"
+          "swap_critical": "Swap: rött från",
+          "stoppable_processes": "Processer som får vara stoppade"
+        },
+        "data_description": {
+          "stoppable_processes": "System Monitor-processer som får vara stoppade: räknas inte som ett problem på fliken Status och visas i grått."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Inaktiverade",
         "tab_default": "standard",
         "drag": "Flytta",
-        "st_hint": "Instansens hälsa i en blick"
+        "st_hint": "Instansens hälsa i en blick",
+        "stopped_allowed": "Stoppad (tillåtet)"
       }
     },
     "battery_type": {

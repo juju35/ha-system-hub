@@ -296,7 +296,11 @@
           "temperature_warning": "Температура: помаранчевий від",
           "temperature_critical": "Температура: червоний від",
           "swap_warning": "Swap: помаранчевий від",
-          "swap_critical": "Swap: червоний від"
+          "swap_critical": "Swap: червоний від",
+          "stoppable_processes": "Процеси, які можуть бути зупинені"
+        },
+        "data_description": {
+          "stoppable_processes": "Процеси System Monitor, які можуть бути зупинені: не вважаються проблемою на вкладці Статус і показуються сірим."
         }
       }
     },
@@ -1325,7 +1329,8 @@
         "disabled": "Вимкнені",
         "tab_default": "типова",
         "drag": "Перемістити",
-        "st_hint": "Стан екземпляра з першого погляду"
+        "st_hint": "Стан екземпляра з першого погляду",
+        "stopped_allowed": "Зупинено (дозволено)"
       }
     },
     "battery_type": {

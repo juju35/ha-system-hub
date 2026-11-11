@@ -1382,18 +1382,22 @@ class SystemHubPanel extends HTMLElement {
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
   }
 
-  // The processes System Monitor watches: the stopped ones first
+  // The processes System Monitor watches: the stopped ones first (those that may be stopped after them, in grey)
   _processList() {
-    var procs = (this._state.system || []).filter((x) => x.key === 'process').sort((a, b) => (a.state === 'on') - (b.state === 'on') || a.name.localeCompare(b.name));
-    var stopped = procs.filter((p) => p.state !== 'on').length;
+    var rank = (p) => (p.state === 'on' ? 2 : p.stoppable ? 1 : 0);
+    var procs = (this._state.system || []).filter((x) => x.key === 'process').sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+    var stopped = procs.filter((p) => p.state !== 'on' && !p.stoppable).length;
     var procList = procs.length
       ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:application-cog-outline"></ha-icon><span class="lname">${shEsc(this._t('processes'))}</span>
         ${stopped ? `<span class="pill bad">${shEsc(`${stopped} ${this._t('stopped')}`)}</span>` : `<span class="pill good">${shEsc(this._t('running'))}</span>`}</div>
         ${procs
           .map((p) => {
             var on = p.state === 'on';
-            return `<div class="item link ${on ? 'good' : 'bad'}" data-more="${shEsc(p.entity_id)}"><ha-icon icon="mdi:cog${on ? '' : '-off'}-outline"></ha-icon>
-              <div class="who"><div class="n">${shEsc(shProcess(p))}</div></div><span class="pill ${on ? 'good' : 'bad'}">${shEsc(this._t(on ? 'running' : 'stopped'))}</span></div>`;
+            // Stopped, as allowed in the System settings: no alert
+            var tone = on ? 'good' : p.stoppable ? 'idle' : 'bad';
+            var label = on ? this._t('running') : p.stoppable ? this._t('stopped_allowed') : this._t('stopped');
+            return `<div class="item link ${tone}" data-more="${shEsc(p.entity_id)}"><ha-icon icon="mdi:cog${on ? '' : '-off'}-outline"></ha-icon>
+              <div class="who"><div class="n">${shEsc(shProcess(p))}</div></div><span class="pill ${tone}">${shEsc(label)}</span></div>`;
           })
           .join('')}</ha-card>`
       : '';
@@ -3112,7 +3116,8 @@ var SH_STATUS_METHODS = {
       var list = data.containers || [];
       var down = list.filter((c) => c.down);
       var procs = (s.system || []).filter((x) => x.key === 'process');
-      var stopped = procs.filter((p) => p.state !== 'on');
+      // The processes that may be stopped (System settings) are no problem
+      var stopped = procs.filter((p) => p.state !== 'on' && !p.stoppable);
       var images = list.filter((c) => c.update_available);
       var running = list.filter((c) => c.state === 'started' || c.state === 'startup').length;
       var problems = down.length + stopped.length;
