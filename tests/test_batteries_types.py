@@ -108,6 +108,8 @@ async def test_type_errors(hass: HomeAssistant) -> None:
         result["flow_id"], {"battery": door, "type": "3× AAA", "quantity": 1}
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
+    # The entry reloads with the new options: done before the test ends, so no timer of the old setup is left
+    await hass.async_block_till_done()
     assert entry.options["batteries"][CONF_BATTERY_TYPES] == {door: "3× AAA"}
 
 
