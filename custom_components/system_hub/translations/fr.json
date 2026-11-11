@@ -1271,7 +1271,9 @@
         "auto_show_less": "Afficher moins",
         "auto_last_failure": "Dernier échec",
         "unsaved": "Modifications non enregistrées",
-        "discard": "Annuler les modifications"
+        "discard": "Annuler les modifications",
+        "tab_containers": "Conteneurs et processus",
+        "containers": "Conteneurs"
       }
     },
     "battery_type": {

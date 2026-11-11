@@ -1271,7 +1271,9 @@
         "auto_show_less": "Kevesebb",
         "auto_last_failure": "Utolsó hiba",
         "unsaved": "Nem mentett módosítások",
-        "discard": "Elvetés"
+        "discard": "Elvetés",
+        "tab_containers": "Konténerek és folyamatok",
+        "containers": "Konténerek"
       }
     },
     "battery_type": {

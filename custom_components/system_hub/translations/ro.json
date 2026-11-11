@@ -1271,7 +1271,9 @@
         "auto_show_less": "Afișează mai puțin",
         "auto_last_failure": "Ultimul eșec",
         "unsaved": "Modificări nesalvate",
-        "discard": "Renunță"
+        "discard": "Renunță",
+        "tab_containers": "Containere și procese",
+        "containers": "Containere"
       }
     },
     "battery_type": {

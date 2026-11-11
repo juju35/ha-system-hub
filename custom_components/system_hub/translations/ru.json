@@ -1271,7 +1271,9 @@
         "auto_show_less": "Показать меньше",
         "auto_last_failure": "Последняя ошибка",
         "unsaved": "Несохранённые изменения",
-        "discard": "Отменить"
+        "discard": "Отменить",
+        "tab_containers": "Контейнеры и процессы",
+        "containers": "Контейнеры"
       }
     },
     "battery_type": {

@@ -1,8 +1,9 @@
-"""Monitor Home Assistant's own containers through the Supervisor: Core, the Supervisor and every add-on.
+"""Monitor Home Assistant's own containers through the Supervisor: Core, the Supervisor, its plugins, every add-on.
 
 Monitoring only: nothing is started, stopped or restarted. Every refresh reads the list of add-ons, the
-information and statistics of each one, of Core and of the Supervisor (state, version, CPU, memory, network,
-disk). A container is *down* when it should run and doesn't: Core or the Supervisor not answering, or an
+information and statistics of each one, of Core, of the Supervisor and of its plugins (audio, cli, dns,
+multicast, observer): state, version, image, CPU, memory, network, disk; each one with its Docker container name.
+A container is *down* when it should run and doesn't: Core, the Supervisor or a plugin not answering, or an
 add-on set to start at boot that is stopped or in error. Going down and coming back are notified, never during
 Home Assistant's start (the add-ons are still starting then) and never at the first refresh.
 """
@@ -15,6 +16,7 @@ from collections import deque
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
+from types import SimpleNamespace
 from typing import Any
 
 from homeassistant.components import persistent_notification
@@ -25,11 +27,16 @@ from homeassistant.util import dt as dt_util
 from ..const import DOMAIN
 from ..notify import async_send_notify
 from .const import (
+    APP_PREFIX_SINCE,
+    CONTAINER_CORE,
+    CONTAINER_PREFIX,
     HISTORY_SPAN,
     HISTORY_STEP,
     KIND_ADDON,
     KIND_CORE,
+    KIND_PLUGIN,
     KIND_SUPERVISOR,
+    PLUGINS,
     REQUEST_TIMEOUT,
     SLUG_CORE,
     SLUG_SUPERVISOR,
@@ -51,8 +58,11 @@ class Container:
     version: str | None = None
     version_latest: str | None = None
     update_available: bool = False
-    # Add-ons only: "auto" when started at boot. Core and the Supervisor always should run.
+    # Add-ons only: "auto" when started at boot. Core, the Supervisor and its plugins always should run.
     boot: str | None = None
+    # The Docker container (homeassistant, hassio_supervisor, hassio_dns, app_<slug>…) and its image with the tag.
+    container: str | None = None
+    image: str | None = None
     cpu_percent: float | None = None
     memory_usage: int | None = None
     memory_limit: int | None = None
@@ -157,6 +167,8 @@ class ContainerMonitor:
 
     async def _async_read(self) -> list[Container]:
         client = _client(self.hass)
+        # The plugins and the add-ons' images have no call of their own in the client: its plain requests
+        raw = getattr(client, "_client", None)
         core_info, core_stats, sup_info, sup_stats, addons = await asyncio.gather(
             client.homeassistant.info(),
             client.homeassistant.stats(),
@@ -164,15 +176,31 @@ class ContainerMonitor:
             client.supervisor.stats(),
             client.addons.list(),
         )
-        containers = [
-            _container(SLUG_CORE, "Home Assistant Core", KIND_CORE, STATE_STARTED, core_info, core_stats),
-            _container(SLUG_SUPERVISOR, "Supervisor", KIND_SUPERVISOR, STATE_STARTED, sup_info, sup_stats),
-        ]
+        core = _container(SLUG_CORE, "Home Assistant Core", KIND_CORE, STATE_STARTED, core_info, core_stats)
+        core.container = CONTAINER_CORE
+        core.image = _tagged(getattr(core_info, "image", None), core.version)
+        sup = _container(SLUG_SUPERVISOR, "Supervisor", KIND_SUPERVISOR, STATE_STARTED, sup_info, sup_stats)
+        sup.container = f"{CONTAINER_PREFIX}supervisor"
+        arch = getattr(sup_info, "arch", None)
+        sup.image = _tagged(f"ghcr.io/home-assistant/{arch}-hassio-supervisor" if arch else None, sup.version)
+        prefix = "app" if _version(sup.version) >= APP_PREFIX_SINCE else "addon"
+        containers = [core, sup]
+
+        async def plugin(name: str) -> Container | None:
+            info, stats = await asyncio.gather(_get(raw, f"{name}/info"), _get(raw, f"{name}/stats"))
+            if info is None:
+                return None
+            container = _container(
+                name, PLUGINS[name], KIND_PLUGIN, STATE_STARTED if stats is not None else "unknown", info, stats
+            )
+            container.container = f"{CONTAINER_PREFIX}{name}"
+            container.image = _tagged(getattr(info, "image", None), container.version)
+            return container
 
         async def addon(item: Any) -> Container:
-            # Statistics only exist for a running add-on; the boot setting comes from its full information.
+            # Statistics only exist for a running add-on; the boot setting and the image come from its full information.
             info, stats = await asyncio.gather(
-                client.addons.addon_info(item.slug),
+                _get(raw, f"addons/{item.slug}/info") if raw is not None else client.addons.addon_info(item.slug),
                 client.addons.addon_stats(item.slug) if _value(item.state) == STATE_STARTED else _none(),
                 return_exceptions=True,
             )
@@ -184,10 +212,14 @@ class ContainerMonitor:
                 item,
                 None if isinstance(stats, BaseException) else stats,
             )
-            if not isinstance(info, BaseException):
-                container.boot = _value(info.boot)
+            container.container = f"{prefix}_{item.slug}"
+            if info is not None and not isinstance(info, BaseException):
+                container.boot = _value(getattr(info, "boot", None)) if getattr(info, "boot", None) else None
+                container.image = _tagged(getattr(info, "image", None), container.version)
             return container
 
+        if raw is not None:
+            containers += [c for c in await asyncio.gather(*(plugin(name) for name in PLUGINS)) if c is not None]
         containers += await asyncio.gather(*(addon(item) for item in addons))
         return containers
 
@@ -249,6 +281,35 @@ def notification_id(slug: str) -> str:
 
 async def _none() -> None:
     return None
+
+
+async def _get(raw: Any, uri: str) -> SimpleNamespace | None:
+    """A Supervisor endpoint the client has no call for, its data as attributes; None when it fails."""
+    if raw is None:
+        return None
+    try:
+        response = await raw.get(uri)
+    except Exception:  # noqa: BLE001 - a plugin or an add-on that doesn't answer is left out, not the whole refresh
+        return None
+    data = getattr(response, "data", None)
+    return SimpleNamespace(**data) if isinstance(data, dict) else None
+
+
+def _tagged(image: str | None, version: str | None) -> str | None:
+    """image:version, as Docker lists it."""
+    if not image:
+        return None
+    return f"{image}:{version}" if version else image
+
+
+def _version(version: str | None) -> tuple[int, ...]:
+    """2026.07.4 -> (2026, 7, 4); a dev or unknown version counts as the newest."""
+    parts = []
+    for part in (version or "").split(".")[:3]:
+        if not part.isdigit():
+            break
+        parts.append(int(part))
+    return tuple(parts) if len(parts) == 3 else (9999,)
 
 
 def _value(value: Any) -> str:

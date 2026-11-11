@@ -397,7 +397,7 @@ Regional variants fall back to the base language (`it-IT` → `it`, `nl-BE` → 
 
 ## Containers
 
-Home Assistant's own containers, read from the Supervisor: **Home Assistant Core**, the **Supervisor** and every **add-on**. **Monitoring only**: the module never starts, stops or restarts anything.
+Home Assistant's own Docker containers, read from the Supervisor: **Home Assistant Core** (`homeassistant`), the **Supervisor** (`hassio_supervisor`), its **plugins** (`hassio_audio`, `hassio_cli`, `hassio_dns`, `hassio_multicast`, `hassio_observer`) and every **add-on** (`app_<slug>`, `addon_<slug>` before Supervisor 2026.07.4). **Monitoring only**: the module never starts, stops or restarts anything. The panel's **Containers & processes** tab lists them as Docker does, with their image, next to the processes System Monitor watches.
 
 | Option | Default | Description |
 |---|---|---|
@@ -405,9 +405,9 @@ Home Assistant's own containers, read from the Supervisor: **Home Assistant Core
 | Notify | on | Notify when a container that should run stops, and when it is back |
 | Notify actions | none | Also send each notification with these actions (`notify.mobile_app_phone`…). A persistent notification is always created |
 
-A container **should run** when it is Core, the Supervisor, or an add-on set to start at boot. It is **down** when it should run and is stopped or in error; an add-on started by hand only is never down. Going down creates a persistent notification (one per container, replaced) and coming back dismisses it. Nothing is notified at the first read, nor while Home Assistant is starting, when the add-ons are starting too. If the Supervisor can't be read (busy, restarting), the last figures are kept and the error is shown in the attributes; the next refresh tries again.
+A container **should run** when it is Core, the Supervisor, one of its plugins, or an add-on set to start at boot. It is **down** when it should run and is stopped or in error; an add-on started by hand only is never down. Going down creates a persistent notification (one per container, replaced) and coming back dismisses it. Nothing is notified at the first read, nor while Home Assistant is starting, when the add-ons are starting too. If the Supervisor can't be read (busy, restarting), the last figures are kept and the error is shown in the attributes; the next refresh tries again.
 
-For every container: state and since when, version, latest version and whether an update is available, CPU %, memory (used, limit, %), network (received, sent) and disk (read, written) since it started. The panel also gets their CPU and memory over the last 24 hours (one point every 5 minutes, in memory only).
+For every container: its Docker name and image, state and since when, version, latest version and whether an update is available, CPU %, memory (used, limit, %), network (received, sent) and disk (read, written) since it started. The panel also gets their CPU and memory over the last 24 hours (one point every 5 minutes, in memory only).
 
 #### Entities
 

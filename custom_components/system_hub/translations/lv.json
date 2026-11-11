@@ -1271,7 +1271,9 @@
         "auto_show_less": "Rādīt mazāk",
         "auto_last_failure": "Pēdējā kļūme",
         "unsaved": "Nesaglabātas izmaiņas",
-        "discard": "Atmest"
+        "discard": "Atmest",
+        "tab_containers": "Konteineri un procesi",
+        "containers": "Konteineri"
       }
     },
     "battery_type": {

@@ -1271,7 +1271,9 @@
         "auto_show_less": "Zobraziť menej",
         "auto_last_failure": "Posledné zlyhanie",
         "unsaved": "Neuložené zmeny",
-        "discard": "Zahodiť"
+        "discard": "Zahodiť",
+        "tab_containers": "Kontajnery a procesy",
+        "containers": "Kontajnery"
       }
     },
     "battery_type": {

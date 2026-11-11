@@ -1271,7 +1271,9 @@
         "auto_show_less": "Zobrazit méně",
         "auto_last_failure": "Poslední selhání",
         "unsaved": "Neuložené změny",
-        "discard": "Zahodit"
+        "discard": "Zahodit",
+        "tab_containers": "Kontejnery a procesy",
+        "containers": "Kontejnery"
       }
     },
     "battery_type": {

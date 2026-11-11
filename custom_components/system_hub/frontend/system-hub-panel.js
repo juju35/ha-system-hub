@@ -569,6 +569,7 @@ class SystemHubPanel extends HTMLElement {
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
     .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
     .spin { animation:sh-spin 1s linear infinite; }
+    .pill > ha-icon { --mdc-icon-size:14px; vertical-align:-2px; margin-right:2px; }
     .loading { display:flex; align-items:center; gap:10px; color:var(--secondary-text-color); --mdc-icon-size:20px; }
     .loading ha-icon { color:var(--primary-color); }
     .loading.small { font-size:12px; gap:6px; --mdc-icon-size:16px; }
@@ -861,6 +862,7 @@ class SystemHubPanel extends HTMLElement {
 
   _tabName(tab) {
     if (tab === 'system' || tab === 'settings') return this._t(tab);
+    if (tab === 'containers') return this._t('tab_containers');
     return SH_MODULE_NAMES[tab] || tab;
   }
 
@@ -1213,8 +1215,16 @@ class SystemHubPanel extends HTMLElement {
           })
           .join('')}</ha-card>`
       : '';
-    // The processes System Monitor watches: the stopped ones first
-    var procs = all('process').sort((a, b) => (a.state === 'on') - (b.state === 'on') || a.name.localeCompare(b.name));
+    // With the Containers tab, the processes are listed there, next to the containers
+    var procList = this._tabs().includes('containers') ? '' : this._processList();
+    var lists = [diskList, procList].filter(Boolean);
+    return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
+      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
+  }
+
+  // The processes System Monitor watches: the stopped ones first
+  _processList() {
+    var procs = (this._state.system || []).filter((x) => x.key === 'process').sort((a, b) => (a.state === 'on') - (b.state === 'on') || a.name.localeCompare(b.name));
     var stopped = procs.filter((p) => p.state !== 'on').length;
     var procList = procs.length
       ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:application-cog-outline"></ha-icon><span class="lname">${shEsc(this._t('processes'))}</span>
@@ -1227,9 +1237,7 @@ class SystemHubPanel extends HTMLElement {
           })
           .join('')}</ha-card>`
       : '';
-    var lists = [diskList, procList].filter(Boolean);
-    return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
-      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
+    return procList;
   }
 
   // "8 d 4 h", "5 h 12 min", "35 min"
@@ -1374,19 +1382,21 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:alert-circle-outline', `<b>${down.length}</b>`, this._t('down'), down.length ? 'bad' : 'good'),
       this._tile('mdi:clock-check-outline', shEsc(this._rel(data.last_update)), this._t('last_check'), data.error ? 'bad' : ''),
     ];
-    var order = { core: 0, supervisor: 1, addon: 2 };
+    var order = { core: 0, supervisor: 1, plugin: 2, addon: 3 };
+    var icons = { core: 'mdi:home-assistant', supervisor: 'mdi:shield-home-outline', plugin: 'mdi:cube-outline', addon: 'mdi:puzzle-outline' };
     var rows = [...list]
-      .sort((a, b) => (b.down ? 1 : 0) - (a.down ? 1 : 0) || order[a.kind] - order[b.kind] || a.name.localeCompare(b.name))
+      .sort((a, b) => (b.down ? 1 : 0) - (a.down ? 1 : 0) || order[a.kind] - order[b.kind] || (a.container || a.name).localeCompare(b.container || b.name))
       .map((c) => {
         var on = c.state === 'started' || c.state === 'startup';
         var tone = c.down ? 'bad' : on ? 'good' : '';
         var cpu = shNum(c.cpu_percent);
         var mem = shNum(c.memory_percent);
         var spark = shSpark((history[c.slug] || []).map((p) => p[1]));
-        var kind = this._t(c.kind);
-        var version = c.update_available ? this._t('update', { version: c.version_latest }) : c.version || '';
-        return `<div class="item ${tone}"><ha-icon icon="${c.kind === 'addon' ? 'mdi:puzzle-outline' : c.kind === 'core' ? 'mdi:home-assistant' : 'mdi:shield-home-outline'}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(c.name)}</div><div class="s">${shEsc(kind)}${version ? ` · ${shEsc(version)}` : ''}</div></div>
+        // As Docker lists it: the container's name, then what it is and its image (or its version)
+        var sub = [c.container ? c.name : this._t(c.kind), c.image || c.version].filter(Boolean);
+        var update = c.update_available ? `<span class="pill warn" title="${shEsc(this._t('update', { version: c.version_latest }))}"><ha-icon icon="mdi:arrow-up-circle-outline"></ha-icon>${shEsc(c.version_latest || '')}</span>` : '';
+        return `<div class="item ${tone}"><ha-icon icon="${icons[c.kind] || 'mdi:docker'}"></ha-icon>
+          <div class="who"><div class="n">${shEsc(c.container || c.name)}</div><div class="s" title="${shEsc(sub.join(' · '))}">${shEsc(sub.join(' · '))}</div></div>${update}
           ${spark ? `<div class="trend ${tone}">${spark}</div>` : ''}
           <span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span>
           <div class="side fixed">${
@@ -1401,7 +1411,9 @@ class SystemHubPanel extends HTMLElement {
     return `<div class="tiles">${tiles.join('')}</div>
       <div class="actions">${this._button('containers_refresh', 'mdi:refresh', this._serviceName('containers_refresh'))}${this._message('containers_refresh')}
       ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}${this._configure()}</div>
-      <ha-card class="list">${rows || `<div class="empty"><ha-icon icon="mdi:docker"></ha-icon>${shEsc(this._t('no_containers'))}</div>`}</ha-card>`;
+      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:docker"></ha-icon><span class="lname">${shEsc(this._t('containers'))}</span><span class="muted">${running}/${list.length}</span></div>
+      ${rows || `<div class="empty"><ha-icon icon="mdi:docker"></ha-icon>${shEsc(this._t('no_containers'))}</div>`}</ha-card>
+      ${this._processList()}`;
   }
 
   // Watchdog: the unavailable integrations and the recent reloads

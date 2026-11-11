@@ -1271,7 +1271,9 @@
         "auto_show_less": "Εμφάνιση λιγότερων",
         "auto_last_failure": "Τελευταία αποτυχία",
         "unsaved": "Μη αποθηκευμένες αλλαγές",
-        "discard": "Απόρριψη"
+        "discard": "Απόρριψη",
+        "tab_containers": "Κοντέινερ και διεργασίες",
+        "containers": "Κοντέινερ"
       }
     },
     "battery_type": {
