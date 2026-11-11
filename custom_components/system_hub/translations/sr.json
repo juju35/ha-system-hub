@@ -70,7 +70,8 @@
           "git_sync_repository": "Git Sync: Подешавања репозиторијума",
           "git_sync": "Git Sync",
           "batteries_types": "Батерије: типови батерија",
-          "batteries_import": "Батерије: увоз из Battery Monitor"
+          "batteries_import": "Батерије: увоз из Battery Monitor",
+          "system": "Систем: прагови"
         }
       },
       "modules": {
@@ -259,6 +260,22 @@
       "batteries_import": {
         "title": "Увоз из Battery Monitor",
         "description": "Пронађено у Battery Monitor: подешавања: {settings}, типови батерија подешени у његовим картицама: {types}, типови резервних батерија: {stock}. Пошаљите да бисте их пренели у System Hub: његова подешавања замењују подешавања модула Батерије, а типови батерија већ подешени овде се задржавају."
+      },
+      "system": {
+        "title": "Систем: прагови",
+        "description": "Картица Систем боји вредност у наранџасто од првог прага и у црвено од другог.",
+        "data": {
+          "cpu_warning": "CPU: наранџасто од",
+          "cpu_critical": "CPU: црвено од",
+          "ram_warning": "RAM: наранџасто од",
+          "ram_critical": "RAM: црвено од",
+          "disk_warning": "Диск: наранџасто од",
+          "disk_critical": "Диск: црвено од",
+          "temperature_warning": "Температура: наранџасто од",
+          "temperature_critical": "Температура: црвено од",
+          "swap_warning": "Swap: наранџасто од",
+          "swap_critical": "Swap: црвено од"
+        }
       }
     },
     "error": {
@@ -276,7 +293,8 @@
       "export_dir_not_allowed": "Фасцикла мора бити у фасцикли конфигурације или у фасцикли из allowlist_external_dirs, ван скривених фасцикли као што је .storage.",
       "battery_required": "Изаберите батерију.",
       "type_required": "Изаберите или унесите тип.",
-      "no_model": "Уређај ове батерије нема модел: подесите тип за саму батерију."
+      "no_model": "Уређај ове батерије нема модел: подесите тип за саму батерију.",
+      "critical_below_warning": "Црвени праг мора бити изнад наранџастог."
     },
     "abort": {
       "nothing_to_import": "Нема шта да се увезе из Battery Monitor."
@@ -1062,7 +1080,18 @@
         "auto_confirm_clear_all": "Обрисати све неуспеле аутоматизације? Биће поново пријављене при следећем неуспеху.",
         "auto_show_more": "Прикажи још {n}",
         "auto_show_less": "Прикажи мање",
-        "auto_last_failure": "Последњи неуспех"
+        "auto_last_failure": "Последњи неуспех",
+        "network_total": "Примљено / послато",
+        "update_to": "Ажурирај на {versions}",
+        "up_to_date": "Ажурно",
+        "export_csv": "Извези CSV",
+        "spares": "Залиха",
+        "to_buy": "{n} за куповину",
+        "set_stock": "Подеси залиху",
+        "stock_type": "Тип батерије",
+        "stock_count": "Број",
+        "search_batteries": "Претрага: назив, просторија, тип",
+        "no_match": "Ниједна батерија не одговара"
       }
     },
     "battery_type": {

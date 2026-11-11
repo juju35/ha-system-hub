@@ -70,7 +70,8 @@
           "git_sync_repository": "Git Sync: Tároló beállításai",
           "git_sync": "Git Sync",
           "batteries_types": "Elemek: elemtípusok",
-          "batteries_import": "Elemek: importálás a Battery Monitorból"
+          "batteries_import": "Elemek: importálás a Battery Monitorból",
+          "system": "Rendszer: küszöbök"
         }
       },
       "modules": {
@@ -259,6 +260,22 @@
       "batteries_import": {
         "title": "Importálás a Battery Monitorból",
         "description": "A Battery Monitorban találtak: {settings} beállítás, {types} kártyáiban beállított elemtípus és {stock} tartalékelem-típus. Küldje el, hogy átkerüljenek a System Hubba: beállításai felváltják az Elemek modul beállításait, az itt már beállított elemtípusok megmaradnak."
+      },
+      "system": {
+        "title": "Rendszer: küszöbök",
+        "description": "A Rendszer lap az első küszöbtől narancssárgára, a másodiktól pirosra színezi az értéket.",
+        "data": {
+          "cpu_warning": "CPU: narancs ettől",
+          "cpu_critical": "CPU: piros ettől",
+          "ram_warning": "RAM: narancs ettől",
+          "ram_critical": "RAM: piros ettől",
+          "disk_warning": "Lemez: narancs ettől",
+          "disk_critical": "Lemez: piros ettől",
+          "temperature_warning": "Hőmérséklet: narancs ettől",
+          "temperature_critical": "Hőmérséklet: piros ettől",
+          "swap_warning": "Swap: narancs ettől",
+          "swap_critical": "Swap: piros ettől"
+        }
       }
     },
     "error": {
@@ -276,7 +293,8 @@
       "export_dir_not_allowed": "A mappának a konfigurációs mappában vagy az allowlist_external_dirs egyik mappájában kell lennie, rejtett mappákon (például .storage) kívül.",
       "battery_required": "Válassza ki az elemet.",
       "type_required": "Válassza ki vagy írja be a típust.",
-      "no_model": "Ennek az elemnek az eszközéhez nincs modell: állítsa be a típust magára az elemre."
+      "no_model": "Ennek az elemnek az eszközéhez nincs modell: állítsa be a típust magára az elemre.",
+      "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie."
     },
     "abort": {
       "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
@@ -1062,7 +1080,18 @@
         "auto_confirm_clear_all": "Törlöd az összes sikertelen automatizálást? A következő hibánál újra megjelennek.",
         "auto_show_more": "Még {n} megjelenítése",
         "auto_show_less": "Kevesebb",
-        "auto_last_failure": "Utolsó hiba"
+        "auto_last_failure": "Utolsó hiba",
+        "network_total": "Fogadott / küldött",
+        "update_to": "Frissítés erre: {versions}",
+        "up_to_date": "Naprakész",
+        "export_csv": "Exportálás CSV-be",
+        "spares": "Tartalék",
+        "to_buy": "{n} vásárlandó",
+        "set_stock": "Készlet beállítása",
+        "stock_type": "Elemtípus",
+        "stock_count": "Darab",
+        "search_batteries": "Keresés: név, helyiség, típus",
+        "no_match": "Nincs egyező elem"
       }
     },
     "battery_type": {

@@ -70,7 +70,8 @@
           "git_sync_repository": "Git Sync: Настройки на хранилището",
           "git_sync": "Git Sync",
           "batteries_types": "Батерии: типове батерии",
-          "batteries_import": "Батерии: импорт от Battery Monitor"
+          "batteries_import": "Батерии: импорт от Battery Monitor",
+          "system": "Система: прагове"
         }
       },
       "modules": {
@@ -259,6 +260,22 @@
       "batteries_import": {
         "title": "Импорт от Battery Monitor",
         "description": "Намерено в Battery Monitor: {settings} настройки, {types} типа батерии, зададени в картите му, и {stock} типа резервни батерии. Изпратете, за да ги пренесете в System Hub: настройките му заменят тези на модула Батерии, а вече зададените тук типове батерии се запазват."
+      },
+      "system": {
+        "title": "Система: прагове",
+        "description": "Разделът Система оцветява стойност в оранжево от първия праг и в червено от втория.",
+        "data": {
+          "cpu_warning": "CPU: оранжево от",
+          "cpu_critical": "CPU: червено от",
+          "ram_warning": "RAM: оранжево от",
+          "ram_critical": "RAM: червено от",
+          "disk_warning": "Диск: оранжево от",
+          "disk_critical": "Диск: червено от",
+          "temperature_warning": "Температура: оранжево от",
+          "temperature_critical": "Температура: червено от",
+          "swap_warning": "Swap: оранжево от",
+          "swap_critical": "Swap: червено от"
+        }
       }
     },
     "error": {
@@ -276,7 +293,8 @@
       "export_dir_not_allowed": "Папката трябва да е в папката с конфигурацията или в папка от allowlist_external_dirs, извън скрити папки като .storage.",
       "battery_required": "Изберете батерията.",
       "type_required": "Изберете или въведете типа.",
-      "no_model": "Устройството на тази батерия няма модел: задайте типа за самата батерия."
+      "no_model": "Устройството на тази батерия няма модел: задайте типа за самата батерия.",
+      "critical_below_warning": "Червеният праг трябва да е над оранжевия."
     },
     "abort": {
       "nothing_to_import": "Няма какво да се импортира от Battery Monitor."
@@ -1062,7 +1080,18 @@
         "auto_confirm_clear_all": "Да се изчистят ли всички неуспешни автоматизации? Ще бъдат докладвани отново при следващия неуспех.",
         "auto_show_more": "Покажи още {n}",
         "auto_show_less": "Покажи по-малко",
-        "auto_last_failure": "Последен неуспех"
+        "auto_last_failure": "Последен неуспех",
+        "network_total": "Получени / изпратени",
+        "update_to": "Обновяване до {versions}",
+        "up_to_date": "Актуално",
+        "export_csv": "Експорт в CSV",
+        "spares": "Резерв",
+        "to_buy": "{n} за купуване",
+        "set_stock": "Задай наличност",
+        "stock_type": "Тип батерия",
+        "stock_count": "Брой",
+        "search_batteries": "Търсене: име, стая, тип",
+        "no_match": "Няма съвпадащи батерии"
       }
     },
     "battery_type": {

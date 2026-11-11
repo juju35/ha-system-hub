@@ -70,7 +70,8 @@
           "git_sync_repository": "Git Sync : Paramètres du dépôt",
           "git_sync": "Git Sync",
           "batteries_types": "Batteries : types de pile",
-          "batteries_import": "Batteries : importer depuis Battery Monitor"
+          "batteries_import": "Batteries : importer depuis Battery Monitor",
+          "system": "Système : seuils"
         }
       },
       "modules": {
@@ -259,6 +260,22 @@
       "batteries_import": {
         "title": "Importer depuis Battery Monitor",
         "description": "Trouvé dans Battery Monitor : {settings} réglages, {types} types de pile réglés dans ses cartes et {stock} types de piles de rechange. Validez pour les reprendre dans System Hub : ses réglages remplacent ceux du module Batteries, et les types de pile déjà réglés ici sont conservés."
+      },
+      "system": {
+        "title": "Système : seuils",
+        "description": "L'onglet Système passe une valeur en orange à partir du premier seuil et en rouge à partir du second.",
+        "data": {
+          "cpu_warning": "CPU: orange dès",
+          "cpu_critical": "CPU: rouge dès",
+          "ram_warning": "RAM: orange dès",
+          "ram_critical": "RAM: rouge dès",
+          "disk_warning": "Disque: orange dès",
+          "disk_critical": "Disque: rouge dès",
+          "temperature_warning": "Température: orange dès",
+          "temperature_critical": "Température: rouge dès",
+          "swap_warning": "Swap: orange dès",
+          "swap_critical": "Swap: rouge dès"
+        }
       }
     },
     "error": {
@@ -276,7 +293,8 @@
       "export_dir_not_allowed": "Le dossier doit être dans le dossier de configuration ou un dossier de allowlist_external_dirs, hors des dossiers cachés comme .storage.",
       "battery_required": "Choisissez la batterie.",
       "type_required": "Choisissez ou saisissez le type.",
-      "no_model": "L'appareil de cette batterie n'a pas de modèle : réglez le type pour la batterie elle-même."
+      "no_model": "L'appareil de cette batterie n'a pas de modèle : réglez le type pour la batterie elle-même.",
+      "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange."
     },
     "abort": {
       "nothing_to_import": "Rien à importer depuis Battery Monitor."
@@ -1062,7 +1080,18 @@
         "auto_confirm_clear_all": "Effacer toutes les automatisations en échec ? Elles seront de nouveau signalées au prochain échec.",
         "auto_show_more": "Afficher {n} de plus",
         "auto_show_less": "Afficher moins",
-        "auto_last_failure": "Dernier échec"
+        "auto_last_failure": "Dernier échec",
+        "network_total": "Reçu / envoyé",
+        "update_to": "Mise à jour vers {versions}",
+        "up_to_date": "À jour",
+        "export_csv": "Exporter en CSV",
+        "spares": "Réserve",
+        "to_buy": "{n} à acheter",
+        "set_stock": "Régler le stock",
+        "stock_type": "Type de pile",
+        "stock_count": "Nombre",
+        "search_batteries": "Rechercher : nom, pièce, type",
+        "no_match": "Aucune pile ne correspond"
       }
     },
     "battery_type": {

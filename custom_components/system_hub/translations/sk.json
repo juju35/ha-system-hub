@@ -70,7 +70,8 @@
           "git_sync_repository": "Git Sync: Nastavenia repozitára",
           "git_sync": "Git Sync",
           "batteries_types": "Batérie: typy batérií",
-          "batteries_import": "Batérie: import z Battery Monitor"
+          "batteries_import": "Batérie: import z Battery Monitor",
+          "system": "Systém: prahy"
         }
       },
       "modules": {
@@ -259,6 +260,22 @@
       "batteries_import": {
         "title": "Import z Battery Monitor",
         "description": "Nájdené v Battery Monitor: nastavenia: {settings}, typy batérií nastavené v jeho kartách: {types}, typy náhradných batérií: {stock}. Odoslaním ich prenesiete do System Hub: jeho nastavenia nahradia nastavenia modulu Batérie a typy batérií už nastavené tu zostanú zachované."
+      },
+      "system": {
+        "title": "Systém: prahy",
+        "description": "Karta Systém zafarbí hodnotu na oranžovo od prvého prahu a na červeno od druhého.",
+        "data": {
+          "cpu_warning": "CPU: oranžová od",
+          "cpu_critical": "CPU: červená od",
+          "ram_warning": "RAM: oranžová od",
+          "ram_critical": "RAM: červená od",
+          "disk_warning": "Disk: oranžová od",
+          "disk_critical": "Disk: červená od",
+          "temperature_warning": "Teplota: oranžová od",
+          "temperature_critical": "Teplota: červená od",
+          "swap_warning": "Swap: oranžová od",
+          "swap_critical": "Swap: červená od"
+        }
       }
     },
     "error": {
@@ -276,7 +293,8 @@
       "export_dir_not_allowed": "Priečinok musí byť v priečinku konfigurácie alebo v priečinku z allowlist_external_dirs, mimo skrytých priečinkov, ako je .storage.",
       "battery_required": "Vyberte batériu.",
       "type_required": "Vyberte alebo zadajte typ.",
-      "no_model": "Zariadenie tejto batérie nemá model: nastavte typ pre samotnú batériu."
+      "no_model": "Zariadenie tejto batérie nemá model: nastavte typ pre samotnú batériu.",
+      "critical_below_warning": "Červený prah musí byť nad oranžovým."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor nie je čo importovať."
@@ -1062,7 +1080,18 @@
         "auto_confirm_clear_all": "Vymazať všetky neúspešné automatizácie? Pri ďalšom zlyhaní budú znova nahlásené.",
         "auto_show_more": "Zobraziť ďalšie ({n})",
         "auto_show_less": "Zobraziť menej",
-        "auto_last_failure": "Posledné zlyhanie"
+        "auto_last_failure": "Posledné zlyhanie",
+        "network_total": "Prijaté / odoslané",
+        "update_to": "Aktualizovať na {versions}",
+        "up_to_date": "Aktuálne",
+        "export_csv": "Exportovať CSV",
+        "spares": "Zásoba",
+        "to_buy": "{n} kúpiť",
+        "set_stock": "Nastaviť zásobu",
+        "stock_type": "Typ batérie",
+        "stock_count": "Počet",
+        "search_batteries": "Hľadať: názov, miestnosť, typ",
+        "no_match": "Žiadna batéria nezodpovedá"
       }
     },
     "battery_type": {

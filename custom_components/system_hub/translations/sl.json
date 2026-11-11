@@ -70,7 +70,8 @@
           "git_sync_repository": "Git Sync: Nastavitve repozitorija",
           "git_sync": "Git Sync",
           "batteries_types": "Baterije: vrste baterij",
-          "batteries_import": "Baterije: uvoz iz Battery Monitor"
+          "batteries_import": "Baterije: uvoz iz Battery Monitor",
+          "system": "Sistem: pragovi"
         }
       },
       "modules": {
@@ -259,6 +260,22 @@
       "batteries_import": {
         "title": "Uvoz iz Battery Monitor",
         "description": "Najdeno v Battery Monitor: nastavitve: {settings}, vrste baterij, nastavljene v njegovih karticah: {types}, vrste rezervnih baterij: {stock}. Pošljite, da jih prenesete v System Hub: njegove nastavitve zamenjajo nastavitve modula Baterije, vrste baterij, že nastavljene tukaj, pa ostanejo."
+      },
+      "system": {
+        "title": "Sistem: pragovi",
+        "description": "Zavihek Sistem obarva vrednost oranžno od prvega praga in rdeče od drugega.",
+        "data": {
+          "cpu_warning": "CPU: oranžno od",
+          "cpu_critical": "CPU: rdeče od",
+          "ram_warning": "RAM: oranžno od",
+          "ram_critical": "RAM: rdeče od",
+          "disk_warning": "Disk: oranžno od",
+          "disk_critical": "Disk: rdeče od",
+          "temperature_warning": "Temperatura: oranžno od",
+          "temperature_critical": "Temperatura: rdeče od",
+          "swap_warning": "Swap: oranžno od",
+          "swap_critical": "Swap: rdeče od"
+        }
       }
     },
     "error": {
@@ -276,7 +293,8 @@
       "export_dir_not_allowed": "Mapa mora biti v mapi konfiguracije ali v mapi iz allowlist_external_dirs, zunaj skritih map, kot je .storage.",
       "battery_required": "Izberite baterijo.",
       "type_required": "Izberite ali vpišite vrsto.",
-      "no_model": "Naprava te baterije nima modela: nastavite vrsto za samo baterijo."
+      "no_model": "Naprava te baterije nima modela: nastavite vrsto za samo baterijo.",
+      "critical_below_warning": "Rdeči prag mora biti nad oranžnim."
     },
     "abort": {
       "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
@@ -1062,7 +1080,18 @@
         "auto_confirm_clear_all": "Počistim vse neuspešne avtomatizacije? Ob naslednji napaki bodo znova prijavljene.",
         "auto_show_more": "Pokaži še {n}",
         "auto_show_less": "Pokaži manj",
-        "auto_last_failure": "Zadnja napaka"
+        "auto_last_failure": "Zadnja napaka",
+        "network_total": "Prejeto / poslano",
+        "update_to": "Posodobi na {versions}",
+        "up_to_date": "Posodobljeno",
+        "export_csv": "Izvozi CSV",
+        "spares": "Zaloga",
+        "to_buy": "{n} za nakup",
+        "set_stock": "Nastavi zalogo",
+        "stock_type": "Vrsta baterije",
+        "stock_count": "Število",
+        "search_batteries": "Iskanje: ime, prostor, vrsta",
+        "no_match": "Nobena baterija se ne ujema"
       }
     },
     "battery_type": {

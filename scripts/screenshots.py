@@ -143,6 +143,16 @@ def mock_state():
             "0.4",
             "MB/s",
         ),
+        # A container bridge: left out of the network figures
+        (
+            "throughput_network_in",
+            "sensor.system_monitor_network_throughput_in_docker0",
+            "Network in docker0",
+            "9.6",
+            "MB/s",
+        ),
+        ("network_in", "sensor.system_monitor_network_in_eth0", "Network in eth0", "18734.2", "MiB"),
+        ("network_out", "sensor.system_monitor_network_out_eth0", "Network out eth0", "4127.9", "MiB"),
         ("ipv4_address", "sensor.system_monitor_ipv4_address_eth0", "IPv4 address eth0", "192.168.1.20", None),
         ("swap_use", "sensor.system_monitor_swap_use", "Swap use", "131", "MiB"),
         ("swap_free", "sensor.system_monitor_swap_free", "Swap free", "3965", "MiB"),
@@ -223,6 +233,23 @@ def mock_state():
         "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync"],
         "tabs": ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync"],
         "git_sync_configured": True,
+        "updates": [
+            {
+                "key": "core",
+                "entity_id": "update.home_assistant_core_update",
+                "state": "on",
+                "installed": "2026.10.4",
+                "latest": "2026.11.1",
+            },
+            {
+                "key": "os",
+                "entity_id": "update.home_assistant_operating_system_update",
+                "state": "off",
+                "installed": "16.3",
+                "latest": "16.3",
+            },
+        ],
+        "thresholds": {"cpu": [70, 90], "ram": [70, 90], "disk": [80, 90], "temperature": [70, 85], "swap": [50, 80]},
         "system": [
             {"key": key, "entity_id": entity, "name": name, "state": state, "unit": unit}
             for key, entity, name, state, unit in system
@@ -324,6 +351,10 @@ def mock_state():
             "low": 2,
             "unavailable": 1,
             "last_notification": "2026-11-09T19:00:00+01:00",
+            "spares": {
+                "CR2032": {"stock": 0, "needed": 1, "short": 1},
+                "AAA": {"stock": 6, "needed": 2, "short": 0},
+            },
             "batteries": [
                 {
                     "entity_id": f"sensor.battery_{i}",
@@ -650,11 +681,25 @@ def checking_state(state):
     return {**state, "marketplace": running}
 
 
-def page_html(theme, width):
+def open_page(browser, name, viewport, html):
+    """A new page at the frozen clock, Paris time, with `html` in it; page errors are printed."""
+    page = browser.new_page(
+        device_scale_factor=2,
+        viewport={"width": viewport[0], "height": viewport[1]},
+        timezone_id="Europe/Paris",
+        locale="en-US",
+    )
+    page.on("pageerror", lambda err: print(f"{name}: page error: {err}"))
+    page.clock.set_fixed_time(NOW)
+    page.set_content(html)
+    return page
+
+
+def page_html(theme, width, padding=0):
     variables = "".join(f"{k}:{v};" for k, v in {**THEMES[theme], **COMMON}.items())
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
 :root {{ {variables} }}
-body {{ margin: 0; background: var(--primary-background-color); color: var(--primary-text-color);
+body {{ margin: 0; padding: {padding}px; background: var(--primary-background-color); color: var(--primary-text-color);
        font-family: Roboto, "Segoe UI", Helvetica, Arial, sans-serif; width: {width}px; }}
 </style></head><body><div id="root"></div></body></html>"""
 
@@ -709,15 +754,7 @@ def main():
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for shot in SHOTS:
             width, height = PHONE if shot.get("phone") else (WIDTH, 900)
-            page = browser.new_page(
-                device_scale_factor=2,
-                viewport={"width": width, "height": height},
-                timezone_id="Europe/Paris",
-                locale="en-US",
-            )
-            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
-            page.clock.set_fixed_time(NOW)
-            page.set_content(page_html(shot["theme"], width))
+            page = open_page(browser, shot["file"], (width, height), page_html(shot["theme"], width))
             page.add_script_tag(content=HA_ELEMENTS)
             page.add_script_tag(content=PANEL_JS)
             shown = checking_state(state) if shot.get("checking") else state
