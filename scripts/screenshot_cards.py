@@ -3,8 +3,8 @@
 Used by the card screenshot scripts (scripts/screenshots_*.py, run from the repository root).
 """
 
-import io
 import json
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -92,16 +92,17 @@ def page_html(theme: str, width: int) -> str:
 
 
 def same_pixels(old: bytes, new: bytes) -> bool:
-    """True when both PNGs decode to the same pixels (size and mode included), whatever their compression."""
-    from PIL import Image
+    """True when both PNGs decode to the same pixels (size included), whatever their compression (ffmpeg decodes)."""
+    from screenshots import pixels
 
     if old == new:
         return True
-    try:
-        with Image.open(io.BytesIO(old)) as a, Image.open(io.BytesIO(new)) as b:
-            return a.size == b.size and a.convert("RGBA").tobytes() == b.convert("RGBA").tobytes()
-    except (OSError, ValueError):
-        return False
+    with tempfile.TemporaryDirectory() as tmp:
+        a, b = Path(tmp, "a.png"), Path(tmp, "b.png")
+        a.write_bytes(old)
+        b.write_bytes(new)
+        decoded = pixels(a)
+        return decoded is not None and decoded == pixels(b)
 
 
 def save(path: Path, png: bytes) -> None:
