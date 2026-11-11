@@ -98,6 +98,12 @@ const STRINGS = {
     zoom: "Zoom button",
     zoom_helper: "Switches the card to the full card and back",
     interface: "Network interface (optional, all by default)",
+    entities: "Sensors of your choice (instead of System Monitor's)",
+    ent_processor_use: "CPU usage (%)",
+    ent_processor_temperature: "CPU temperature",
+    ent_memory_use_percent: "RAM usage (%)",
+    ent_swap_use_percent: "Swap usage (%)",
+    ent_last_boot: "Last boot",
     language: "Language",
     lang_auto: "Automatic",
   },
@@ -161,6 +167,12 @@ const STRINGS = {
     zoom: "Bouton zoom",
     zoom_helper: "Bascule la carte en carte complète, et inversement",
     interface: "Interface réseau (facultatif, toutes par défaut)",
+    entities: "Capteurs de votre choix (au lieu de ceux de System Monitor)",
+    ent_processor_use: "Utilisation du processeur (%)",
+    ent_processor_temperature: "Température du processeur",
+    ent_memory_use_percent: "Utilisation de la RAM (%)",
+    ent_swap_use_percent: "Utilisation du swap (%)",
+    ent_last_boot: "Dernier démarrage",
     language: "Langue",
     lang_auto: "Automatique",
   },
@@ -224,6 +236,12 @@ const STRINGS = {
     zoom: "Zoom-Schaltfläche",
     zoom_helper: "Schaltet zwischen kompakter und vollständiger Karte um",
     interface: "Netzwerkschnittstelle (optional, standardmäßig alle)",
+    entities: "Sensoren Ihrer Wahl (statt der von System Monitor)",
+    ent_processor_use: "CPU-Auslastung (%)",
+    ent_processor_temperature: "CPU-Temperatur",
+    ent_memory_use_percent: "RAM-Auslastung (%)",
+    ent_swap_use_percent: "Swap-Auslastung (%)",
+    ent_last_boot: "Letzter Start",
     language: "Sprache",
     lang_auto: "Automatisch",
   },
@@ -287,6 +305,12 @@ const STRINGS = {
     zoom: "Botón de zoom",
     zoom_helper: "Alterna entre la tarjeta completa y la vista compacta",
     interface: "Interfaz de red (opcional, todas por defecto)",
+    entities: "Sensores a su elección (en lugar de los de System Monitor)",
+    ent_processor_use: "Uso de CPU (%)",
+    ent_processor_temperature: "Temperatura de la CPU",
+    ent_memory_use_percent: "Uso de RAM (%)",
+    ent_swap_use_percent: "Uso de swap (%)",
+    ent_last_boot: "Último arranque",
     language: "Idioma",
     lang_auto: "Automático",
   },
@@ -351,6 +375,12 @@ const STRINGS = {
     zoom: "Дугме за увећање",
     zoom_helper: "Пребацује картицу на пун приказ и назад",
     interface: "Мрежни интерфејс (опционо, подразумевано сви)",
+    entities: "Сензори по вашем избору (уместо оних из System Monitor-а)",
+    ent_processor_use: "Искоришћеност процесора (%)",
+    ent_processor_temperature: "Температура процесора",
+    ent_memory_use_percent: "Искоришћеност RAM-а (%)",
+    ent_swap_use_percent: "Искоришћеност swap-а (%)",
+    ent_last_boot: "Последње покретање",
     language: "Језик",
     lang_auto: "Аутоматски",
   },
@@ -415,6 +445,12 @@ const STRINGS = {
     zoom: "Dugme za uvećanje",
     zoom_helper: "Prebacuje karticu na pun prikaz i nazad",
     interface: "Mrežni interfejs (opciono, podrazumevano svi)",
+    entities: "Senzori po vašem izboru (umesto onih iz System Monitor-a)",
+    ent_processor_use: "Iskorišćenost procesora (%)",
+    ent_processor_temperature: "Temperatura procesora",
+    ent_memory_use_percent: "Iskorišćenost RAM-a (%)",
+    ent_swap_use_percent: "Iskorišćenost swap-a (%)",
+    ent_last_boot: "Poslednje pokretanje",
     language: "Jezik",
     lang_auto: "Automatski",
   },
@@ -479,6 +515,12 @@ const STRINGS = {
     zoom: "Pulsante zoom",
     zoom_helper: "Passa alla scheda completa e viceversa",
     interface: "Interfaccia di rete (facoltativa, predefinito: tutte)",
+    entities: "Sensori a scelta (al posto di quelli di System Monitor)",
+    ent_processor_use: "Uso della CPU (%)",
+    ent_processor_temperature: "Temperatura della CPU",
+    ent_memory_use_percent: "Uso della RAM (%)",
+    ent_swap_use_percent: "Uso dello swap (%)",
+    ent_last_boot: "Ultimo avvio",
     language: "Lingua",
     lang_auto: "Automatico",
   },
@@ -543,6 +585,12 @@ const STRINGS = {
     zoom: "Zoomknop",
     zoom_helper: "Schakelt tussen de volledige kaart en de compacte weergave",
     interface: "Netwerkinterface (optioneel, standaard alle)",
+    entities: "Sensoren naar keuze (in plaats van die van System Monitor)",
+    ent_processor_use: "CPU-gebruik (%)",
+    ent_processor_temperature: "CPU-temperatuur",
+    ent_memory_use_percent: "RAM-gebruik (%)",
+    ent_swap_use_percent: "Swap-gebruik (%)",
+    ent_last_boot: "Laatste start",
     language: "Taal",
     lang_auto: "Automatisch",
   },
@@ -607,6 +655,12 @@ const STRINGS = {
     zoom: "Botão de zoom",
     zoom_helper: "Alterna entre o cartão completo e a vista compacta",
     interface: "Interface de rede (opcional, todas por predefinição)",
+    entities: "Sensores à sua escolha (em vez dos do System Monitor)",
+    ent_processor_use: "Utilização da CPU (%)",
+    ent_processor_temperature: "Temperatura da CPU",
+    ent_memory_use_percent: "Utilização da RAM (%)",
+    ent_swap_use_percent: "Utilização do swap (%)",
+    ent_last_boot: "Último arranque",
     language: "Idioma",
     lang_auto: "Automático",
   },
@@ -671,6 +725,12 @@ const STRINGS = {
     zoom: "Przycisk powiększenia",
     zoom_helper: "Przełącza między pełną kartą a widokiem kompaktowym",
     interface: "Interfejs sieciowy (opcjonalny, domyślnie wszystkie)",
+    entities: "Wybrane czujniki (zamiast tych z System Monitor)",
+    ent_processor_use: "Użycie procesora (%)",
+    ent_processor_temperature: "Temperatura procesora",
+    ent_memory_use_percent: "Użycie RAM (%)",
+    ent_swap_use_percent: "Użycie swap (%)",
+    ent_last_boot: "Ostatnie uruchomienie",
     language: "Język",
     lang_auto: "Automatycznie",
   },
@@ -735,6 +795,12 @@ const STRINGS = {
     zoom: "Buton de zoom",
     zoom_helper: "Comută între cardul complet și vizualizarea compactă",
     interface: "Interfață de rețea (opțional, implicit toate)",
+    entities: "Senzori la alegere (în locul celor din System Monitor)",
+    ent_processor_use: "Utilizare procesor (%)",
+    ent_processor_temperature: "Temperatura procesorului",
+    ent_memory_use_percent: "Utilizare RAM (%)",
+    ent_swap_use_percent: "Utilizare swap (%)",
+    ent_last_boot: "Ultima pornire",
     language: "Limbă",
     lang_auto: "Automat",
   },
@@ -799,6 +865,12 @@ const STRINGS = {
     zoom: "Zoomknap",
     zoom_helper: "Skifter mellem hele kortet og kompakt visning",
     interface: "Netværksinterface (valgfrit, alle som standard)",
+    entities: "Sensorer efter eget valg (i stedet for System Monitors)",
+    ent_processor_use: "CPU-forbrug (%)",
+    ent_processor_temperature: "CPU-temperatur",
+    ent_memory_use_percent: "RAM-forbrug (%)",
+    ent_swap_use_percent: "Swap-forbrug (%)",
+    ent_last_boot: "Seneste opstart",
     language: "Sprog",
     lang_auto: "Automatisk",
   },
@@ -863,6 +935,12 @@ const STRINGS = {
     zoom: "Zoomknapp",
     zoom_helper: "Växlar mellan hela kortet och kompakt vy",
     interface: "Nätverksgränssnitt (valfritt, alla som standard)",
+    entities: "Valfria sensorer (i stället för System Monitors)",
+    ent_processor_use: "CPU-användning (%)",
+    ent_processor_temperature: "CPU-temperatur",
+    ent_memory_use_percent: "RAM-användning (%)",
+    ent_swap_use_percent: "Swap-användning (%)",
+    ent_last_boot: "Senaste start",
     language: "Språk",
     lang_auto: "Automatiskt",
   },
@@ -927,6 +1005,12 @@ const STRINGS = {
     zoom: "Бутон за мащабиране",
     zoom_helper: "Превключва между цялата карта и компактния изглед",
     interface: "Мрежов интерфейс (по избор, по подразбиране всички)",
+    entities: "Сензори по ваш избор (вместо тези на System Monitor)",
+    ent_processor_use: "Натоварване на процесора (%)",
+    ent_processor_temperature: "Температура на процесора",
+    ent_memory_use_percent: "Използване на RAM (%)",
+    ent_swap_use_percent: "Използване на swap (%)",
+    ent_last_boot: "Последно стартиране",
     language: "Език",
     lang_auto: "Автоматично",
   },
@@ -991,6 +1075,12 @@ const STRINGS = {
     zoom: "Кнопка масштабирования",
     zoom_helper: "Переключает между полной карточкой и компактным видом",
     interface: "Сетевой интерфейс (необязательно, по умолчанию все)",
+    entities: "Датчики на выбор (вместо датчиков System Monitor)",
+    ent_processor_use: "Загрузка процессора (%)",
+    ent_processor_temperature: "Температура процессора",
+    ent_memory_use_percent: "Использование ОЗУ (%)",
+    ent_swap_use_percent: "Использование swap (%)",
+    ent_last_boot: "Последний запуск",
     language: "Язык",
     lang_auto: "Автоматически",
   },
@@ -1055,6 +1145,12 @@ const STRINGS = {
     zoom: "Кнопка масштабування",
     zoom_helper: "Перемикає між повною карткою та компактним виглядом",
     interface: "Мережевий інтерфейс (необов’язково, типово всі)",
+    entities: "Датчики на вибір (замість датчиків System Monitor)",
+    ent_processor_use: "Завантаження процесора (%)",
+    ent_processor_temperature: "Температура процесора",
+    ent_memory_use_percent: "Використання ОЗП (%)",
+    ent_swap_use_percent: "Використання swap (%)",
+    ent_last_boot: "Останній запуск",
     language: "Мова",
     lang_auto: "Автоматично",
   },
@@ -1119,6 +1215,12 @@ const STRINGS = {
     zoom: "Nagyítás gomb",
     zoom_helper: "Vált a teljes kártya és a kompakt nézet között",
     interface: "Hálózati interfész (nem kötelező, alapértelmezés: mind)",
+    entities: "Választott érzékelők (a System Monitor érzékelői helyett)",
+    ent_processor_use: "Processzorhasználat (%)",
+    ent_processor_temperature: "Processzorhőmérséklet",
+    ent_memory_use_percent: "RAM-használat (%)",
+    ent_swap_use_percent: "Swap-használat (%)",
+    ent_last_boot: "Utolsó indítás",
     language: "Nyelv",
     lang_auto: "Automatikus",
   },
@@ -1183,6 +1285,12 @@ const STRINGS = {
     zoom: "Tlačidlo priblíženia",
     zoom_helper: "Prepína medzi celou kartou a kompaktným zobrazením",
     interface: "Sieťové rozhranie (voliteľné, predvolene všetky)",
+    entities: "Senzory podľa vlastného výberu (namiesto tých zo System Monitor)",
+    ent_processor_use: "Využitie procesora (%)",
+    ent_processor_temperature: "Teplota procesora",
+    ent_memory_use_percent: "Využitie RAM (%)",
+    ent_swap_use_percent: "Využitie swapu (%)",
+    ent_last_boot: "Posledné spustenie",
     language: "Jazyk",
     lang_auto: "Automaticky",
   },
@@ -1247,6 +1355,12 @@ const STRINGS = {
     zoom: "Tlačítko přiblížení",
     zoom_helper: "Přepíná mezi celou kartou a kompaktním zobrazením",
     interface: "Síťové rozhraní (volitelné, výchozí všechna)",
+    entities: "Senzory dle vlastního výběru (místo těch ze System Monitor)",
+    ent_processor_use: "Využití procesoru (%)",
+    ent_processor_temperature: "Teplota procesoru",
+    ent_memory_use_percent: "Využití RAM (%)",
+    ent_swap_use_percent: "Využití swapu (%)",
+    ent_last_boot: "Poslední spuštění",
     language: "Jazyk",
     lang_auto: "Automaticky",
   },
@@ -1311,6 +1425,12 @@ const STRINGS = {
     zoom: "Gumb za povečavo",
     zoom_helper: "Preklaplja med celotno kartico in strnjenim pogledom",
     interface: "Omrežni vmesnik (neobvezno, privzeto vsi)",
+    entities: "Senzorji po vaši izbiri (namesto tistih iz System Monitor)",
+    ent_processor_use: "Uporaba procesorja (%)",
+    ent_processor_temperature: "Temperatura procesorja",
+    ent_memory_use_percent: "Uporaba RAM (%)",
+    ent_swap_use_percent: "Uporaba swapa (%)",
+    ent_last_boot: "Zadnji zagon",
     language: "Jezik",
     lang_auto: "Samodejno",
   },
@@ -1375,6 +1495,12 @@ const STRINGS = {
     zoom: "Tālummaiņas poga",
     zoom_helper: "Pārslēdz starp pilno karti un kompakto skatu",
     interface: "Tīkla saskarne (neobligāta, pēc noklusējuma visas)",
+    entities: "Jūsu izvēlēti sensori (System Monitor sensoru vietā)",
+    ent_processor_use: "Procesora noslodze (%)",
+    ent_processor_temperature: "Procesora temperatūra",
+    ent_memory_use_percent: "RAM izmantojums (%)",
+    ent_swap_use_percent: "Swap izmantojums (%)",
+    ent_last_boot: "Pēdējā palaišana",
     language: "Valoda",
     lang_auto: "Automātiski",
   },
@@ -1439,6 +1565,12 @@ const STRINGS = {
     zoom: "Κουμπί μεγέθυνσης",
     zoom_helper: "Εναλλάσσει μεταξύ πλήρους κάρτας και συμπαγούς προβολής",
     interface: "Διεπαφή δικτύου (προαιρετική, προεπιλογή όλες)",
+    entities: "Αισθητήρες της επιλογής σας (αντί για του System Monitor)",
+    ent_processor_use: "Χρήση CPU (%)",
+    ent_processor_temperature: "Θερμοκρασία CPU",
+    ent_memory_use_percent: "Χρήση RAM (%)",
+    ent_swap_use_percent: "Χρήση swap (%)",
+    ent_last_boot: "Τελευταία εκκίνηση",
     language: "Γλώσσα",
     lang_auto: "Αυτόματα",
   },
@@ -1882,7 +2014,7 @@ const resolveArgs = (args, plain = []) => {
 };
 
 /** Map the System Monitor entities to a structured object of entity ids. */
-const discover = registryCache((hass, missing) => {
+const discovered = registryCache((hass, missing) => {
   const sm = { scalars: {}, disks: {}, nets: {}, procs: {}, found: false };
   const args = []; // Sensors with an argument, resolved once all the names are known.
   const plain = []; // The other ones, whose names tell the device name.
@@ -1944,6 +2076,51 @@ const discover = registryCache((hass, missing) => {
 
   return sm;
 });
+
+// The `entities` option: sensors of the user's choice, for a value System Monitor does not give or gives under
+// another name (a disk of another integration, a sensor of their own). Scalars by their key, disks by name
+// (a usage % sensor, or { use_percent, use, free }), interfaces by name ({ in, out, ipv4 }). They replace the
+// discovered ones of the same key or name, and are added to the others.
+const DISK_KEYS = { use_percent: "disk_use_percent", use: "disk_use", free: "disk_free" };
+const NET_KEYS = { in: "throughput_network_in", out: "throughput_network_out", ipv4: "ipv4_address" };
+const isEntityId = (v) => typeof v === "string" && /^[a-z_]+\.[a-z0-9_]+$/.test(v);
+
+const withEntities = (sm, entities) => {
+  if (!entities || typeof entities !== "object") return sm;
+  const out = { ...sm, scalars: { ...sm.scalars }, disks: { ...sm.disks }, nets: { ...sm.nets }, procs: { ...sm.procs } };
+  for (const key of SCALAR_KEYS) if (isEntityId(entities[key])) out.scalars[key] = entities[key];
+  const group = (value, keys, plain) => {
+    if (isEntityId(value)) return { [plain]: value };
+    if (!value || typeof value !== "object") return null;
+    const ids = Object.fromEntries(Object.entries(keys).filter(([k]) => isEntityId(value[k])).map(([k, key]) => [key, value[k]]));
+    return Object.keys(ids).length ? ids : null;
+  };
+  for (const [name, value] of Object.entries(entities.disks || {})) {
+    const ids = group(value, DISK_KEYS, "disk_use_percent");
+    if (ids) out.disks[name] = ids;
+  }
+  for (const [name, value] of Object.entries(entities.interfaces || {})) {
+    const ids = group(value, NET_KEYS, "throughput_network_in");
+    if (ids) out.nets[name] = ids;
+  }
+  out.found = sm.found || Object.keys(out.scalars).length > 0 || Object.keys(out.disks).length > 0;
+  return out;
+};
+
+// The discovery with the card's `entities`, one result per discovery and option (a stable object while neither
+// changes, as the discovery itself).
+const withEntitiesCache = new WeakMap();
+const discover = (hass, config) => {
+  const sm = discovered(hass);
+  const entities = config?.entities;
+  if (!entities) return sm;
+  const key = JSON.stringify(entities);
+  const hit = withEntitiesCache.get(sm);
+  if (hit?.key === key) return hit.result;
+  const result = withEntities(sm, entities);
+  withEntitiesCache.set(sm, { key, result });
+  return result;
+};
 
 /** Network interfaces to display: the configured one, else the physical ones with a throughput sensor. */
 const interfaces = (sm, config) => {
@@ -2064,8 +2241,8 @@ const backupStatus = (hass, config, b) => {
 };
 
 /** Entity ids a card reads its states from: a change of any other state doesn't re-render it. */
-const trackedIds = (hass) => {
-  const sm = discover(hass);
+const trackedIds = (hass, config) => {
+  const sm = discover(hass, config);
   const ids = [...Object.values(sm.scalars), ...Object.values(sm.procs), sm.core_update, sm.os_update];
   for (const group of [sm.disks, sm.nets]) for (const g of Object.values(group)) ids.push(...Object.values(g));
   ids.push(discoverDatabase(hass), ...Object.values(discoverBackup(hass) || {}));
@@ -2077,7 +2254,7 @@ const trackedIds = (hass) => {
  * identity, Home Assistant replaces a state object when it changes), the registries, the user,
  * the language, and the current minute for the uptime and the relative times ("2 minutes ago").
  */
-const renderSignature = (hass) => [
+const renderSignature = (hass, config) => [
   hass.entities,
   hass.devices,
   hass.user,
@@ -2085,7 +2262,7 @@ const renderSignature = (hass) => [
   hass.locale,
   hass.config,
   Math.floor(Date.now() / 60000),
-  ...trackedIds(hass).map((id) => hass.states[id]),
+  ...trackedIds(hass, config).map((id) => hass.states[id]),
 ];
 
 const sameSignature = (a, b) => !!a && a.length === b.length && a.every((v, i) => v === b[i]);
@@ -2283,7 +2460,7 @@ class SystemMonitorBase extends HTMLElement {
   /** Home Assistant sets hass on every state change of the instance: render only when one the card shows changed. */
   _maybeRender() {
     if (!this._hass) return;
-    const sig = renderSignature(this._hass);
+    const sig = renderSignature(this._hass, this._config);
     if (sameSignature(this._sig, sig)) return;
     this._sig = sig;
     this._update();
@@ -2418,7 +2595,7 @@ class SystemMonitorBase extends HTMLElement {
   }
 
   _procsKo() {
-    return this._stopped(discover(this._hass)).length > 0;
+    return this._stopped(discover(this._hass, this._config)).length > 0;
   }
 
   /**
@@ -2590,7 +2767,7 @@ class SystemMonitorCard extends SystemMonitorBase {
   }
 
   _render() {
-    const sm = discover(this._hass);
+    const sm = discover(this._hass, this._config);
     if (!sm.found) return this._noSm();
     const c = this._config;
     const parts = [];
@@ -2916,7 +3093,7 @@ class SystemMonitorMiniCard extends SystemMonitorZoomCard {
   }
 
   _compactRender() {
-    const sm = discover(this._hass);
+    const sm = discover(this._hass, this._config);
     if (!sm.found) return this._noSm();
     const c = this._config;
     const sc = sm.scalars;
@@ -3008,6 +3185,9 @@ class SystemMonitorMiniCard extends SystemMonitorZoomCard {
 // Visual editors (ha-form)
 // ---------------------------------------------------------------------------
 
+// The values whose sensor the visual editor lets the user choose (`entities`).
+const EDITOR_ENTITIES = ["processor_use", "processor_temperature", "memory_use_percent", "swap_use_percent", "last_boot"];
+
 class SystemMonitorEditorBase extends HTMLElement {
   static get toggles() {
     return [];
@@ -3030,7 +3210,7 @@ class SystemMonitorEditorBase extends HTMLElement {
 
   _schema() {
     const tr = (k) => t(this._hass, this._config, k);
-    const sm = this._hass ? discover(this._hass) : { nets: {} };
+    const sm = this._hass ? discover(this._hass, this._config) : { nets: {} };
     const ifOptions = Object.keys(sm.nets)
       .filter((i) => sm.nets[i].throughput_network_in || sm.nets[i].throughput_network_out)
       .map((i) => ({ value: i, label: i }));
@@ -3063,6 +3243,14 @@ class SystemMonitorEditorBase extends HTMLElement {
       {
         name: "interface",
         selector: { select: { mode: "dropdown", custom_value: true, options: [{ value: "", label: tr("lang_auto") }, ...ifOptions] } },
+      },
+      // Sensors of the user's choice for the main values (the disks and interfaces are set in YAML), saved under
+      // `entities`, as the YAML option.
+      {
+        type: "expandable",
+        name: "entities",
+        title: tr("entities"),
+        schema: EDITOR_ENTITIES.map((key) => ({ name: key, selector: { entity: { domain: "sensor" } } })),
       },
       {
         name: "language",
@@ -3104,7 +3292,7 @@ class SystemMonitorEditorBase extends HTMLElement {
     if (!this._hass || !this._config) return;
     if (!this._form) {
       this._form = document.createElement("ha-form");
-      this._form.computeLabel = (s) => t(this._hass, this._config, s.name);
+      this._form.computeLabel = (s) => t(this._hass, this._config, EDITOR_ENTITIES.includes(s.name) ? `ent_${s.name}` : s.name);
       this._form.computeHelper = (s) => {
         const key = `${s.name}_helper`;
         const text = t(this._hass, this._config, key);
@@ -3113,6 +3301,11 @@ class SystemMonitorEditorBase extends HTMLElement {
       this._form.addEventListener("value-changed", (ev) => {
         ev.stopPropagation();
         const config = { ...ev.detail.value };
+        // The sensors chosen in the editor, merged into the YAML ones (disks, interfaces); emptied ones dropped.
+        if (config.entities && typeof config.entities === "object") {
+          const entities = Object.fromEntries(Object.entries(config.entities).filter(([, v]) => v !== "" && v !== undefined && v !== null));
+          config.entities = Object.keys(entities).length ? entities : undefined;
+        }
         for (const [k, v] of Object.entries(config)) {
           // Keep the YAML minimal: drop empty values, toggles left at their default (true) and default thresholds.
           if (v === "" || v === undefined || v === null || (this._booleans().includes(k) && v === true) || THRESHOLDS[k] === v) delete config[k];

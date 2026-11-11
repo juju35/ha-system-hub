@@ -5,6 +5,7 @@ import "./system-monitor-card/arguments.mjs";
 import "./system-monitor-card/backup.mjs";
 import "./system-monitor-card/discovery.mjs";
 import "./system-monitor-card/editor.mjs";
+import "./system-monitor-card/entities.mjs";
 import "./system-monitor-card/history.mjs";
 import "./system-monitor-card/i18n.mjs";
 import "./system-monitor-card/mini-stopped.mjs";

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 - 2026-11-11
+
+### New
+- **System Monitor cards: sensors of your choice** ([#55](https://github.com/juju35/ha-system-hub/issues/55), thanks @Matssa56): `entities` sets the sensors for the CPU, temperature, RAM, swap, load and last boot (also in the visual editor, under **Sensors of your choice**), for disks (a usage % sensor, or used and free ones, by the name to show) and for network interfaces (download and upload rates, address). They replace the sensors found for the same value, disk or interface and are added to the others; without System Monitor, the cards show them alone.
+
 ## 1.3.1 - 2026-11-11
 
 ### Fixed
