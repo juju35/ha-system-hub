@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Seneste fejl",
         "unsaved": "Ikke-gemte ændringer",
         "discard": "Kassér",
-        "containers": "Containere"
+        "containers": "Containere",
+        "tab_containers": "Containere og processer"
       }
     },
     "battery_type": {

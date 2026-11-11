@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Last failure",
         "unsaved": "Unsaved changes",
         "discard": "Discard",
-        "containers": "Containers"
+        "containers": "Containers",
+        "tab_containers": "Containers & process"
       }
     },
     "battery_type": {

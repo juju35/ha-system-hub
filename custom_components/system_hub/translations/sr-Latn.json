@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Poslednji neuspeh",
         "unsaved": "Nesačuvane izmene",
         "discard": "Odbaci",
-        "containers": "Kontejneri"
+        "containers": "Kontejneri",
+        "tab_containers": "Kontejneri i procesi"
       }
     },
     "battery_type": {

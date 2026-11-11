@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Последњи неуспех",
         "unsaved": "Несачуване измене",
         "discard": "Одбаци",
-        "containers": "Контејнери"
+        "containers": "Контејнери",
+        "tab_containers": "Контејнери и процеси"
       }
     },
     "battery_type": {

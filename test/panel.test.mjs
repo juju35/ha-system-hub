@@ -610,8 +610,10 @@ test('containers tab: the Docker containers with their image', () => {
   assert.ok(html.indexOf('hassio_dns') < html.indexOf('app_a0d7b954_vscode'));
   assert.match(html, /Studio Code Server · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
   assert.match(html, /7\.3\.0/);
-  // The processes stay in the System tab
-  assert.doesNotMatch(html, /binary_sensor\.process_frigate/);
+  // The processes are listed with the containers, no longer in the System tab
+  assert.equal(p._tabName('containers'), 'Containers & process');
+  assert.match(html, /Processes/);
+  assert.match(html, /binary_sensor\.process_frigate/);
   p._tab = 'system';
-  assert.match(p._content(), /binary_sensor\.process_frigate/);
+  assert.doesNotMatch(p._content(), /binary_sensor\.process_frigate/);
 });

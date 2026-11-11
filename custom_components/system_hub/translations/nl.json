@@ -1272,7 +1272,8 @@
         "auto_last_failure": "Laatste fout",
         "unsaved": "Niet-opgeslagen wijzigingen",
         "discard": "Verwerpen",
-        "containers": "Containers"
+        "containers": "Containers",
+        "tab_containers": "Containers en processen"
       }
     },
     "battery_type": {
