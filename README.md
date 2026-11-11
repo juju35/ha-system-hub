@@ -54,7 +54,7 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 ## Prerequisites
 
-- Home Assistant 2026.11 or newer
+- Home Assistant 2024.12 or newer. The **Marketplace** module needs Home Assistant 2026.11 or newer (the Marketplace came with it); the other modules work from 2024.12
 
 ## Installation
 
@@ -72,6 +72,8 @@ Or manually:
 2. Add `https://github.com/juju35/ha-system-hub` — Type: **Integration**
 3. Open **System Hub** and click **Install**
 4. Restart Home Assistant
+
+Before Home Assistant 2026.11, add it the same way as a custom repository of HACS (**HACS → ⋮ → Custom repositories**, Type: **Integration**).
 
 ### Manual
 

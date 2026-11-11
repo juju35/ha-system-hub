@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improved
+- **Home Assistant 2024.12 or newer**, as the integrations System Hub replaces, instead of 2026.11: only the **Marketplace** module needs 2026.11 (it is not offered without the Marketplace). Before 2026.11, System Hub is added as a custom repository of HACS. A CI job runs the tests on Home Assistant 2024.12.
+
 ### New
 - **Automations**: settings to leave devices and entities out (see 1.3.0).
 

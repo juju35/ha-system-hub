@@ -12,6 +12,9 @@ import os
 from pathlib import Path
 from unittest.mock import patch
 
+import pytest
+from awesomeversion import AwesomeVersion
+from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.data_entry_flow import _BaseFlowManagerView
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -85,6 +88,8 @@ async def _forms(hass: HomeAssistant) -> dict:
     return json.loads(json.dumps(forms))
 
 
+# Each Home Assistant serializes the selectors its own way: the file holds what the CI's latest one sends.
+@pytest.mark.skipif(AwesomeVersion(HA_VERSION) < AwesomeVersion("2026.10.0"), reason="forms of a newer Home Assistant")
 async def test_screenshot_forms_match_the_options_flow(hass: HomeAssistant) -> None:
     """The file the screenshots read is the forms the options flow shows now."""
     forms = await _forms(hass)
