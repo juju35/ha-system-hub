@@ -115,12 +115,12 @@ def save(path: Path, png: bytes) -> None:
         print(path.relative_to(ROOT))
 
 
-def open_card_page(browser, name: str, theme: str, width: int, *scripts: str):
+def open_card_page(browser, name: str, theme: str, width: int, *scripts: str, now: datetime = NOW):
     """A page in the theme with the clock frozen, logos not fetched (generic icon), and the given scripts loaded."""
     page = browser.new_page(device_scale_factor=2, viewport={"width": 1000, "height": 1600})
     page.on("pageerror", lambda err: print(f"{name}: page error: {err}"))
     page.route("https://brands.home-assistant.io/**", lambda route: route.abort())
-    page.clock.set_fixed_time(NOW.isoformat())
+    page.clock.set_fixed_time(now.isoformat())
     page.set_content(page_html(theme, width))
     for script in scripts:
         page.add_script_tag(content=script)

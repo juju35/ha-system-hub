@@ -8,16 +8,15 @@ A capture is only rewritten when its decoded pixels differ from the file already
 image is not a change), so an unchanged card never produces a screenshot commit.
 """
 
-import base64
 import json
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
+from screenshot_cards import open_card_page, shoot
 
 import screenshots as panel_screenshots
-from screenshots import page_html
 
 ROOT = Path(__file__).resolve().parent.parent
 CARD_JS = (ROOT / "custom_components/system_hub/frontend/cards/orphan-entities-card.js").read_text(encoding="utf-8")
@@ -161,12 +160,9 @@ SHOTS = [
 
 
 MOUNT = """([hass, dark, card, opts]) => {
-    // A 16 px frame of the theme background around the card
-    document.body.style.padding = "16px";
-    const el = document.createElement(card);
-    el.setConfig({ type: `custom:${card}` });
-    el.hass = { ...hass, themes: { darkMode: dark }, callService: async () => {} };
-    document.getElementById("root").appendChild(el);
+    const el = document.getElementById("root").appendChild(document.createElement(card));
+    el.setConfig({ type: "custom:" + card });
+    el.hass = Object.assign({}, hass, { themes: { darkMode: dark }, callService: async () => {} });
     // The mini card zoomed in: its detail button clicked with the mouse (no focus ring), the full card shown.
     if (opts.zoom) el.shadowRoot.querySelector(".zoom").dispatchEvent(new MouseEvent("click", { bubbles: true, composed: true, detail: 1 }));
     if (opts.reason) el._reason = opts.reason;
@@ -179,66 +175,19 @@ MOUNT = """([hass, dark, card, opts]) => {
 }"""
 
 
-# Decodes two PNGs (base64) in the browser and tells whether their pixels are the same: no image library needed.
-SAME_PIXELS = """async ([a, b]) => {
-    const decode = async (data) => {
-        const img = new Image();
-        img.src = "data:image/png;base64," + data;
-        await img.decode();
-        const canvas = document.createElement("canvas");
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0);
-        return ctx.getImageData(0, 0, canvas.width, canvas.height);
-    };
-    const [x, y] = [await decode(a), await decode(b)];
-    if (x.width !== y.width || x.height !== y.height) return false;
-    for (let i = 0; i < x.data.length; i++) if (x.data[i] !== y.data[i]) return false;
-    return true;
-}"""
-
-
-def same_pixels(page, new: bytes, path: Path) -> bool:
-    """True when `path` exists and holds exactly the pixels of the `new` PNG."""
-    if not path.exists():
-        return False
-    old = path.read_bytes()
-    if old == new:
-        return True
-    return page.evaluate(SAME_PIXELS, [base64.b64encode(new).decode(), base64.b64encode(old).decode()])
-
-
 def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for shot in SHOTS:
-            page = browser.new_page(device_scale_factor=2, viewport={"width": 1000, "height": 1600})
-            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
-            # No integration logo: the reason's icon, the same on every machine.
-            page.route("https://brands.home-assistant.io/**", lambda route: route.abort())
-            page.clock.set_fixed_time(NOW.isoformat())
             width = shot.get("width", WIDTH)
-            page.set_content(page_html(shot["theme"], width))
-            page.add_script_tag(content=HA_ELEMENTS)
-            page.add_script_tag(content=CARD_JS)
+            page = open_card_page(browser, shot["file"], shot["theme"], width, HA_ELEMENTS, CARD_JS, now=NOW)
             card = shot.get("card", "orphan-entities-card")
             opts = {k: shot[k] for k in ("zoom", "select", "dselect", "confirm", "reason", "open") if k in shot}
             page.evaluate(
                 MOUNT, [mock_hass(shot["hass"], devices=shot.get("devices", ())), shot["theme"] == "dark", card, opts]
             )
             page.wait_for_timeout(400)
-            box = page.locator("#root").bounding_box()
-            clip = {"x": 0, "y": 0, "width": width + 32, "height": int(box["height"] + 0.999) + 32}
-            path = ROOT / "screenshots" / f"{shot['file']}.png"
-            path.parent.mkdir(exist_ok=True)
-            png = page.screenshot(clip=clip, animations="disabled")
-            if same_pixels(page, png, path):
-                print(f"{path.relative_to(ROOT)} (unchanged)")
-            else:
-                path.write_bytes(png)
-                print(path.relative_to(ROOT))
-            page.close()
+            shoot(page, shot["file"], width)
         browser.close()
 
 
