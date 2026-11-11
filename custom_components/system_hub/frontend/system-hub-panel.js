@@ -2264,30 +2264,15 @@ class SystemHubPanel extends HTMLElement {
 
   // An action: its button spins (busyKey, the clicked button's action) until the state is read again; done in a toast, a
   // failure next to the buttons
+  // A list of data calls the action once per item, one after the other (an action that takes a single target).
   async _run(service, messageKey, data, done, domain = SH_DOMAIN, busyKey = service) {
     this._busy[busyKey] = true;
     delete this._messages[messageKey];
     this._render();
     try {
-      await this._hass.callService(domain, service, data);
+      for (var item of Array.isArray(data) ? data : [data]) await this._hass.callService(domain, service, item);
       this._toast(this._t('done'));
       done?.();
-    } catch (err) {
-      this._messages[messageKey] = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
-    }
-    await this._load();
-    delete this._busy[busyKey];
-    this._render();
-  }
-
-  // The same action once per data, one after the other (an action that takes a single target)
-  async _runEach(service, messageKey, items, domain, busyKey) {
-    this._busy[busyKey] = true;
-    delete this._messages[messageKey];
-    this._render();
-    try {
-      for (var data of items) await this._hass.callService(domain, service, data);
-      this._toast(this._t('done'));
     } catch (err) {
       this._messages[messageKey] = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
@@ -2409,7 +2394,7 @@ class SystemHubPanel extends HTMLElement {
       // single entity_id); otherwise one call clears them all.
       var auto = this._state.automations || {};
       if (!auto.failures_hidden) return this._run('reset', 'auto', {}, null, 'automation_monitor', 'auto_clear_all');
-      return this._runEach('reset', 'auto', (auto.failures || []).map((f) => ({ entity_id: f.entity_id })), 'automation_monitor', 'auto_clear_all');
+      return this._run('reset', 'auto', (auto.failures || []).map((f) => ({ entity_id: f.entity_id })), null, 'automation_monitor', 'auto_clear_all');
     }
     if (name === 'auto_rebuild') return this._run('rebuild_linked_entities', 'auto', {}, null, 'automation_monitor', 'auto_rebuild');
   }
