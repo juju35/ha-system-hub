@@ -1289,7 +1289,8 @@
         "tab_containers": "Containers en processen",
         "settings_system": "System-drempels",
         "settings_system_hint": "Wanneer CPU, RAM, schijf, temperatuur en swap oranje en rood worden",
-        "settings_unavailable": "Deze instellingen kunnen hier niet worden getoond: open Configureren"
+        "settings_unavailable": "Deze instellingen kunnen hier niet worden getoond: open Configureren",
+        "gh_requests": "{n} verzoeken over"
       }
     },
     "battery_type": {

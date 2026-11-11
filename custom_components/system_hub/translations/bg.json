@@ -1289,7 +1289,8 @@
         "tab_containers": "Контейнери и процеси",
         "settings_system": "Прагове на System",
         "settings_system_hint": "Кога CPU, RAM, диск, температура и swap стават оранжеви и червени",
-        "settings_unavailable": "Тези настройки не могат да се покажат тук: отворете Конфигуриране"
+        "settings_unavailable": "Тези настройки не могат да се покажат тук: отворете Конфигуриране",
+        "gh_requests": "Оставащи заявки: {n}"
       }
     },
     "battery_type": {

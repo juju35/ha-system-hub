@@ -1289,7 +1289,8 @@
         "tab_containers": "Contentores e processos",
         "settings_system": "Limiares do System",
         "settings_system_hint": "Quando CPU, RAM, disco, temperatura e swap ficam laranja e vermelhos",
-        "settings_unavailable": "Estas definições não podem ser mostradas aqui: abra Configurar"
+        "settings_unavailable": "Estas definições não podem ser mostradas aqui: abra Configurar",
+        "gh_requests": "{n} pedidos restantes"
       }
     },
     "battery_type": {

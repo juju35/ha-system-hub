@@ -613,8 +613,16 @@ class SystemHubPanel extends HTMLElement {
     .mkhead { display:flex; align-items:center; gap:14px; padding:14px 16px; flex-wrap:wrap; }
     .mkhead .who { flex:1; min-width:220px; }
     .mkhead .who .n { font-size:16px; font-weight:500; }
-    .mkhead .actions { flex:none; }
-    .mkgh { display:flex; align-items:center; gap:4px; --mdc-icon-size:14px; flex-wrap:wrap; }
+    .mkhead .actions { flex:none; flex-wrap:wrap; }
+    @media (max-width:700px) {
+      .mkhead { align-items:flex-start; position:relative; }
+      .mkhead .who { padding-right:44px; }
+      .mkhead .actions { flex:1 1 100%; }
+      .mkgear { position:absolute; top:10px; right:10px; }
+    }
+    .mkgh { display:flex; align-items:flex-start; gap:4px; --mdc-icon-size:14px; }
+    .mkgh > ha-icon { flex:none; margin-top:1px; }
+    .mkgh > span { min-width:0; }
     .mkgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px; }
     .mkcard { padding:14px; display:flex; flex-direction:column; gap:10px; cursor:pointer; }
     .mktop { display:flex; align-items:center; gap:12px; min-width:0; }
@@ -1572,7 +1580,7 @@ class SystemHubPanel extends HTMLElement {
     var retry = data.retry_after && new Date(data.retry_after) > new Date() ? this._t('gh_retry', { when: this._rel(data.retry_after) }) : '';
     var github = [
       data.github_connected === false ? this._t('gh_not_connected') : data.github_connected ? this._t('gh_connected') : '',
-      Number.isInteger(data.rate_limit_remaining) ? this._t('rate_limit', { n: data.rate_limit_remaining }) : '',
+      Number.isInteger(data.rate_limit_remaining) ? this._t('gh_requests', { n: data.rate_limit_remaining }) : '',
       data.not_checked ? this._t('not_checked', { n: data.not_checked }) : '',
     ].filter(Boolean);
     var confirm = this._confirm === 'install'
@@ -1583,7 +1591,7 @@ class SystemHubPanel extends HTMLElement {
     var header = `<ha-card class="mkhead ${tone}"><div class="avatar"><ha-icon icon="${running ? 'mdi:archive-sync' : n ? 'mdi:archive-alert-outline' : 'mdi:archive-check-outline'}"></ha-icon></div>
       <div class="who"><div class="n">${shEsc(title)}</div>
         ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}
-        ${github.length || retry ? `<div class="s mkgh"><ha-icon icon="mdi:github"></ha-icon>${shEsc(github.join(' · '))}${retry ? `<span class="warn-text">${github.length ? ' · ' : ''}${shEsc(retry)}</span>` : ''}</div>` : ''}
+        ${github.length || retry ? `<div class="s mkgh"><ha-icon icon="mdi:github"></ha-icon><span>${shEsc(github.join(' · '))}${retry ? `<span class="warn-text">${github.length ? ' · ' : ''}${shEsc(retry)}</span>` : ''}</span></div>` : ''}
         ${data.error ? `<div class="s warn-text">${shEsc(data.error)}</div>` : ''}</div>
       <div class="actions">${this._button('marketplace_check_updates', 'mdi:archive-refresh', this._entityName('button', 'marketplace_check_updates'), {
         quiet: Boolean(n),
@@ -1591,7 +1599,7 @@ class SystemHubPanel extends HTMLElement {
         busy: running || this._busy.marketplace_check_updates,
       })}
       ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t('install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
-      <button class="act quiet" data-action="open_settings:marketplace" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></button></div></ha-card>`;
+      <button class="act quiet mkgear" data-action="open_settings:marketplace" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></button></div></ha-card>`;
     var cards = list.map((u) => this._mkCard(u)).join('');
     var failed = failedNames
       .map(

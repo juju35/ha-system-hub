@@ -1289,7 +1289,8 @@
         "tab_containers": "Контејнери и процеси",
         "settings_system": "Прагови System",
         "settings_system_hint": "Када CPU, RAM, диск, температура и swap постају наранџасти и црвени",
-        "settings_unavailable": "Ова подешавања не могу да се прикажу овде: отворите Конфигуриши"
+        "settings_unavailable": "Ова подешавања не могу да се прикажу овде: отворите Конфигуриши",
+        "gh_requests": "Преосталих захтева: {n}"
       }
     },
     "battery_type": {

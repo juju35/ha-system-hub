@@ -1289,7 +1289,8 @@
         "tab_containers": "Container e processi",
         "settings_system": "Soglie di System",
         "settings_system_hint": "Quando CPU, RAM, disco, temperatura e swap diventano arancioni e rossi",
-        "settings_unavailable": "Queste impostazioni non si possono mostrare qui: apri Configura"
+        "settings_unavailable": "Queste impostazioni non si possono mostrare qui: apri Configura",
+        "gh_requests": "{n} richieste rimanenti"
       }
     },
     "battery_type": {

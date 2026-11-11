@@ -1289,7 +1289,8 @@
         "tab_containers": "Контейнери та процеси",
         "settings_system": "Пороги System",
         "settings_system_hint": "Коли CPU, RAM, диск, температура та swap стають помаранчевими й червоними",
-        "settings_unavailable": "Ці налаштування не можна показати тут: відкрийте «Налаштувати»"
+        "settings_unavailable": "Ці налаштування не можна показати тут: відкрийте «Налаштувати»",
+        "gh_requests": "Залишилося запитів: {n}"
       }
     },
     "battery_type": {

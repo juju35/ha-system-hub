@@ -1289,7 +1289,8 @@
         "tab_containers": "Контейнеры и процессы",
         "settings_system": "Пороги System",
         "settings_system_hint": "Когда CPU, RAM, диск, температура и swap становятся оранжевыми и красными",
-        "settings_unavailable": "Эти настройки нельзя показать здесь: откройте «Настроить»"
+        "settings_unavailable": "Эти настройки нельзя показать здесь: откройте «Настроить»",
+        "gh_requests": "Осталось запросов: {n}"
       }
     },
     "battery_type": {
