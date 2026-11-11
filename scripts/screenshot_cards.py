@@ -1,10 +1,10 @@
 """What the card screenshot scripts share: the themes, the Home Assistant stand-ins, the page and the pixel compare.
 
-Used by scripts/screenshots_git_sync.py and scripts/screenshots_marketplace.py (run from the repository root).
+Used by the card screenshot scripts (scripts/screenshots_*.py, run from the repository root).
 """
 
-import io
 import json
+import tempfile
 from datetime import datetime
 from pathlib import Path
 
@@ -92,16 +92,17 @@ def page_html(theme: str, width: int) -> str:
 
 
 def same_pixels(old: bytes, new: bytes) -> bool:
-    """True when both PNGs decode to the same pixels (size and mode included), whatever their compression."""
-    from PIL import Image
+    """True when both PNGs decode to the same pixels (size included), whatever their compression (ffmpeg decodes)."""
+    from screenshots import pixels
 
     if old == new:
         return True
-    try:
-        with Image.open(io.BytesIO(old)) as a, Image.open(io.BytesIO(new)) as b:
-            return a.size == b.size and a.convert("RGBA").tobytes() == b.convert("RGBA").tobytes()
-    except (OSError, ValueError):
-        return False
+    with tempfile.TemporaryDirectory() as tmp:
+        a, b = Path(tmp, "a.png"), Path(tmp, "b.png")
+        a.write_bytes(old)
+        b.write_bytes(new)
+        decoded = pixels(a)
+        return decoded is not None and decoded == pixels(b)
 
 
 def save(path: Path, png: bytes) -> None:
@@ -112,3 +113,23 @@ def save(path: Path, png: bytes) -> None:
     else:
         path.write_bytes(png)
         print(path.relative_to(ROOT))
+
+
+def open_card_page(browser, name: str, theme: str, width: int, *scripts: str):
+    """A page in the theme with the clock frozen, logos not fetched (generic icon), and the given scripts loaded."""
+    page = browser.new_page(device_scale_factor=2, viewport={"width": 1000, "height": 1600})
+    page.on("pageerror", lambda err: print(f"{name}: page error: {err}"))
+    page.route("https://brands.home-assistant.io/**", lambda route: route.abort())
+    page.clock.set_fixed_time(NOW.isoformat())
+    page.set_content(page_html(theme, width))
+    for script in scripts:
+        page.add_script_tag(content=script)
+    return page
+
+
+def shoot(page, name: str, width: int) -> None:
+    """Capture #root with its 16 px frame into screenshots/<name>.png (only when its pixels changed)."""
+    box = page.locator("#root").bounding_box()
+    clip = {"x": 0, "y": 0, "width": width + 32, "height": int(box["height"] + 0.999) + 32}
+    save(ROOT / "screenshots" / f"{name}.png", page.screenshot(clip=clip, animations="disabled"))
+    page.close()

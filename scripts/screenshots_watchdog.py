@@ -7,13 +7,13 @@ Every capture keeps a 16 px frame of the theme background around the card. A cap
 pixels differ from the file already there, so an unchanged card never produces a screenshot commit.
 """
 
-import base64
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
+from screenshot_cards import NOW, open_card_page, shoot
 
 from screenshots import HA_ELEMENTS as HUB_ELEMENTS
 
@@ -21,37 +21,10 @@ ROOT = Path(__file__).resolve().parent.parent
 CARD_JS = (ROOT / "custom_components/system_hub/frontend/cards/integration-watchdog-card.js").read_text()
 # Material Design Icons paths used by the card (from @mdi/js).
 ICONS = json.loads((ROOT / "scripts/screenshot-icons-watchdog.json").read_text())
-NOW = datetime.fromisoformat("2026-10-31T14:00:00+01:00")
 WIDTH = 460
 MINI_WIDTH = 400
 CARD = "integration-watchdog-card"
 MINI = "integration-watchdog-mini-card"
-
-THEMES = {
-    "light": {
-        "--primary-background-color": "#e8eaed",
-        "--secondary-background-color": "#ececec",
-        "--card-background-color": "#ffffff",
-        "--primary-text-color": "#212121",
-        "--secondary-text-color": "#727272",
-        "--divider-color": "rgba(0,0,0,.12)",
-    },
-    "dark": {
-        "--primary-background-color": "#111111",
-        "--secondary-background-color": "#282828",
-        "--card-background-color": "#1c1c1c",
-        "--primary-text-color": "#e1e1e1",
-        "--secondary-text-color": "#9b9b9b",
-        "--divider-color": "rgba(225,225,225,.12)",
-    },
-}
-COMMON = {
-    "--primary-color": "#03a9f4",
-    "--success-color": "#43a047",
-    "--warning-color": "#ffa600",
-    "--error-color": "#db4437",
-    "--text-primary-color": "#ffffff",
-}
 
 # The stand-ins for Home Assistant's elements are those of the panel screenshots, with the card's icons added.
 HA_ELEMENTS = HUB_ELEMENTS + "\nObject.assign(ICONS, " + json.dumps(ICONS) + ");"
@@ -154,18 +127,6 @@ SHOTS = [
 ]
 
 
-def page_html(theme, width, padding=16):
-    variables = "".join(f"{k}:{v};" for k, v in {**THEMES[theme], **COMMON}.items())
-    body = (
-        f"margin:0;padding:{padding}px;background:var(--primary-background-color);width:{width}px;"
-        'font-family:Roboto,"Segoe UI",Helvetica,Arial,sans-serif'
-    )
-    return (
-        f'<!doctype html><html><head><meta charset="utf-8"><style>:root{{{variables}}} body{{{body}}}</style>'
-        '</head><body><div id="root"></div></body></html>'
-    )
-
-
 MOUNT = """([hass, dark, card, zoom]) => {
     const el = document.createElement(card);
     el.setConfig({ type: `custom:${card}` });
@@ -175,66 +136,15 @@ MOUNT = """([hass, dark, card, zoom]) => {
     if (zoom) el.shadowRoot.querySelector(".zoom").dispatchEvent(new MouseEvent("click", { bubbles: true, composed: true, detail: 1 }));
 }"""
 
-# Decodes two PNGs (base64) in the browser and tells whether their pixels are the same: no image library needed.
-SAME_PIXELS = """async ([a, b]) => {
-    const decode = async (data) => {
-        const img = new Image();
-        img.src = "data:image/png;base64," + data;
-        await img.decode();
-        const canvas = document.createElement("canvas");
-        canvas.width = img.naturalWidth;
-        canvas.height = img.naturalHeight;
-        const ctx = canvas.getContext("2d", { willReadFrequently: true });
-        ctx.drawImage(img, 0, 0);
-        return ctx.getImageData(0, 0, canvas.width, canvas.height);
-    };
-    const [x, y] = [await decode(a), await decode(b)];
-    if (x.width !== y.width || x.height !== y.height) return false;
-    for (let i = 0; i < x.data.length; i++) if (x.data[i] !== y.data[i]) return false;
-    return true;
-}"""
-
-
-def same_pixels(page, new: bytes, path: Path) -> bool:
-    """True when `path` exists and holds exactly the pixels of the `new` PNG."""
-    if not path.exists():
-        return False
-    old = path.read_bytes()
-    if old == new:
-        return True
-    return page.evaluate(SAME_PIXELS, [base64.b64encode(new).decode(), base64.b64encode(old).decode()])
-
-
-def save(page, name: str, width: int, frame: int) -> None:
-    """Shoot #root (`frame` px of background added below it) into screenshots/<name>.png when its pixels changed."""
-    box = page.locator("#root").bounding_box()
-    clip = {"x": 0, "y": 0, "width": width, "height": int(box["height"] + 0.999) + frame}
-    path = ROOT / "screenshots" / f"{name}.png"
-    path.parent.mkdir(exist_ok=True)
-    png = page.screenshot(clip=clip, animations="disabled")
-    if same_pixels(page, png, path):
-        print(f"{path.relative_to(ROOT)} (unchanged)")
-    else:
-        path.write_bytes(png)
-        print(path.relative_to(ROOT))
-    page.close()
-
 
 def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for shot in SHOTS:
-            page = browser.new_page(device_scale_factor=2, viewport={"width": 1000, "height": 1600})
-            page.on("pageerror", lambda err, name=shot["file"]: print(f"{name}: page error: {err}"))
-            # No integration logo: the generic icon, the same on every machine.
-            page.route("https://brands.home-assistant.io/**", lambda route: route.abort())
-            page.clock.set_fixed_time(NOW.isoformat())
-            page.set_content(page_html(shot["theme"], shot["width"]))
-            page.add_script_tag(content=HA_ELEMENTS)
-            page.add_script_tag(content=CARD_JS)
+            page = open_card_page(browser, shot["file"], shot["theme"], shot["width"], HA_ELEMENTS, CARD_JS)
             page.evaluate(MOUNT, [mock_hass(*shot["hass"]), shot["theme"] == "dark", shot["card"], shot["zoom"]])
             page.wait_for_timeout(400)
-            save(page, shot["file"], shot["width"] + 32, 32)
+            shoot(page, shot["file"], shot["width"])
         browser.close()
 
 
