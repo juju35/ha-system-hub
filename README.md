@@ -15,6 +15,16 @@ Home Assistant integration that brings the care of your Home Assistant system to
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-system.png" alt="System Hub sidebar panel, System tab" width="800"></p>
 
+| System Monitor | Watchdog | Marketplace Refresh |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="System Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog.png" alt="Watchdog card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace.png" alt="Marketplace Refresh card" width="260"> |
+
+| Battery Monitor | Git Sync | Orphan Entities |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="Battery Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Git Sync card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="260"> |
+
+The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section shows its mini card, its states and its dark theme.
+
 ## Features
 
 - **System**: CPU, memory, disks, network and temperatures from the System Monitor integration.
@@ -174,16 +184,6 @@ System Hub also serves the cards of the integrations it replaces, with the same 
 | [Battery Monitor](#battery-monitor-card) | `custom:battery-monitor-card`, `custom:battery-monitor-mini-card` | [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor)'s cards |
 | [Git Sync](#git-sync-card) | `custom:git-sync-card`, `custom:git-sync-mini-card` | [ha-git-sync](https://github.com/juju35/ha-git-sync)'s cards |
 | [Orphan Entities](#cards) | `custom:orphan-entities-card`, `custom:orphan-entities-mini-card` | [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities)'s cards |
-
-| System Monitor | Watchdog | Marketplace Refresh |
-|---|---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="System Monitor card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog.png" alt="Watchdog card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace.png" alt="Marketplace Refresh card" width="400"> |
-
-| Battery Monitor | Git Sync | Orphan Entities |
-|---|---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="Battery Monitor card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Git Sync card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="400"> |
-
-Each card's section below shows its mini card, its states and its dark theme.
 
 ## System Monitor cards
 
