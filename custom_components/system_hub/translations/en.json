@@ -1027,7 +1027,18 @@
         "next_backup": "Next backup",
         "backing_up": "Backing up…",
         "backup_failed": "Last backup failed",
-        "processes": "Processes"
+        "processes": "Processes",
+        "power_cycles": "Power cycles",
+        "pc_line": "unavailable for {delay} min · off for {off} s",
+        "pc_count": "power cycles: {n}/{max}",
+        "pc_available": "Available",
+        "pc_unavailable": "Unavailable",
+        "plug_off": "Plug off: left alone",
+        "plug_unavailable": "Plug unavailable",
+        "unknown_device": "Device removed",
+        "open_device": "Device",
+        "pc_none": "No power cycle yet: add one in Configure → Watchdog: Add a power cycle.",
+        "pc_configure": "Add or remove in Configure"
       }
     },
     "battery_type": {

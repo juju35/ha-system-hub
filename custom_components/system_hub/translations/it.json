@@ -1027,7 +1027,18 @@
         "next_backup": "Prossimo backup",
         "backing_up": "Backup in corso…",
         "backup_failed": "Ultimo backup non riuscito",
-        "processes": "Processi"
+        "processes": "Processi",
+        "power_cycles": "Riavvii tramite presa",
+        "pc_line": "non disponibile per {delay} min · spenta {off} s",
+        "pc_count": "riavvii: {n}/{max}",
+        "pc_available": "Disponibile",
+        "pc_unavailable": "Non disponibile",
+        "plug_off": "Presa spenta: non toccata",
+        "plug_unavailable": "Presa non disponibile",
+        "unknown_device": "Dispositivo rimosso",
+        "open_device": "Dispositivo",
+        "pc_none": "Nessun riavvio tramite presa: aggiungine uno in Configura → Watchdog: aggiungi un riavvio tramite presa.",
+        "pc_configure": "Aggiungi o rimuovi in Configura"
       }
     },
     "battery_type": {

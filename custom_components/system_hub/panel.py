@@ -15,6 +15,8 @@ import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.config_entries import ConfigEntryState
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.helpers import area_registry as ar
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
 from .const import CONF_MODULES, CONF_TABS, DOMAIN, MODULE_GIT_SYNC, MODULES, TAB_SYSTEM
@@ -172,7 +174,37 @@ def _containers(monitor: Any) -> dict[str, Any]:
     }
 
 
-def _watchdog(watchdog: Any) -> dict[str, Any]:
+def _power_cycles(hass: HomeAssistant, watchdog: Any) -> list[dict[str, Any]]:
+    """The power cycles set up: the device and its room, the plug and its state, the delays, the current count."""
+    unavailable = {cycle.device_id for cycle, _ in watchdog.async_find_unavailable_devices()}
+    devices = dr.async_get(hass)
+    areas = ar.async_get(hass)
+    cycles = []
+    for cycle in watchdog.power_cycles:
+        device = devices.async_get(cycle.device_id)
+        area = areas.async_get_area(device.area_id) if device and device.area_id else None
+        plug = hass.states.get(cycle.switch)
+        attempts = watchdog.cycle_attempts.get(cycle.device_id)
+        cycles.append(
+            {
+                "device_id": cycle.device_id,
+                "device_name": (device.name_by_user or device.name) if device else None,
+                "area": area.name if area else None,
+                "switch": cycle.switch,
+                "switch_name": plug.name if plug else None,
+                "switch_state": plug.state if plug else None,
+                "delay": int(cycle.delay.total_seconds() // 60),
+                "off_time": int(cycle.off_time.total_seconds()),
+                "unavailable": cycle.device_id in unavailable,
+                "count": attempts.count if attempts else 0,
+                "gave_up": attempts.gave_up if attempts else False,
+                "last": attempts.last.isoformat() if attempts and attempts.last else None,
+            }
+        )
+    return cycles
+
+
+def _watchdog(hass: HomeAssistant, watchdog: Any) -> dict[str, Any]:
     return {
         "running": watchdog.running,
         "paused": watchdog.paused,
@@ -181,6 +213,7 @@ def _watchdog(watchdog: Any) -> dict[str, Any]:
         "max_reloads": watchdog.max_reloads,
         "unavailable": [watchdog.as_dict(u) for u in watchdog.unavailable],
         "history": list(watchdog.history),
+        "power_cycles": _power_cycles(hass, watchdog),
     }
 
 
@@ -264,7 +297,7 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     if data.containers is not None:
         result["containers"] = _containers(data.containers)
     if data.watchdog is not None:
-        result["watchdog"] = _watchdog(data.watchdog)
+        result["watchdog"] = _watchdog(hass, data.watchdog)
     if data.marketplace is not None:
         result["marketplace"] = _marketplace(data.marketplace)
     if data.batteries is not None:

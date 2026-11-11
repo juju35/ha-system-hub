@@ -1027,7 +1027,18 @@
         "next_backup": "Volgende back-up",
         "backing_up": "Back-up bezig…",
         "backup_failed": "Laatste back-up mislukt",
-        "processes": "Processen"
+        "processes": "Processen",
+        "power_cycles": "Herstarts via stekker",
+        "pc_line": "{delay} min onbeschikbaar · {off} s uit",
+        "pc_count": "herstarts: {n}/{max}",
+        "pc_available": "Beschikbaar",
+        "pc_unavailable": "Onbeschikbaar",
+        "plug_off": "Stekker uit: onaangeroerd",
+        "plug_unavailable": "Stekker onbeschikbaar",
+        "unknown_device": "Apparaat verwijderd",
+        "open_device": "Apparaat",
+        "pc_none": "Nog geen herstart via stekker: voeg er een toe via Configureren → Watchdog: herstart via stekker toevoegen.",
+        "pc_configure": "Toevoegen of verwijderen in Configureren"
       }
     },
     "battery_type": {

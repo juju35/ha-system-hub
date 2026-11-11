@@ -1027,7 +1027,18 @@
         "next_backup": "Następna kopia zapasowa",
         "backing_up": "Tworzenie kopii…",
         "backup_failed": "Ostatnia kopia zapasowa nie powiodła się",
-        "processes": "Procesy"
+        "processes": "Procesy",
+        "power_cycles": "Restarty przez gniazdko",
+        "pc_line": "niedostępne {delay} min · wyłączone {off} s",
+        "pc_count": "restarty: {n}/{max}",
+        "pc_available": "Dostępne",
+        "pc_unavailable": "Niedostępne",
+        "plug_off": "Gniazdko wyłączone: nietknięte",
+        "plug_unavailable": "Gniazdko niedostępne",
+        "unknown_device": "Urządzenie usunięte",
+        "open_device": "Urządzenie",
+        "pc_none": "Brak restartów przez gniazdko: dodaj w Konfiguruj → Watchdog: dodaj restart przez gniazdko.",
+        "pc_configure": "Dodaj lub usuń w Konfiguruj"
       }
     },
     "battery_type": {

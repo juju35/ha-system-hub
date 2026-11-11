@@ -1027,7 +1027,18 @@
         "next_backup": "Naslednja varnostna kopija",
         "backing_up": "Varnostno kopiranje…",
         "backup_failed": "Zadnja varnostna kopija ni uspela",
-        "processes": "Procesi"
+        "processes": "Procesi",
+        "power_cycles": "Ponovni zagoni prek vtičnice",
+        "pc_line": "nedosegljiva {delay} min · izklopljena {off} s",
+        "pc_count": "ponovni zagoni: {n}/{max}",
+        "pc_available": "Dosegljiva",
+        "pc_unavailable": "Nedosegljiva",
+        "plug_off": "Vtičnica izklopljena: nedotaknjena",
+        "plug_unavailable": "Vtičnica nedosegljiva",
+        "unknown_device": "Naprava odstranjena",
+        "open_device": "Naprava",
+        "pc_none": "Še ni ponovnega zagona prek vtičnice: dodajte ga v Konfiguriraj → Watchdog: dodaj ponovni zagon prek vtičnice.",
+        "pc_configure": "Dodaj ali odstrani v Konfiguriraj"
       }
     },
     "battery_type": {

@@ -1027,7 +1027,18 @@
         "next_backup": "Sledeća rezervna kopija",
         "backing_up": "Pravi se kopija…",
         "backup_failed": "Poslednja rezervna kopija nije uspela",
-        "processes": "Procesi"
+        "processes": "Procesi",
+        "power_cycles": "Restarti preko utičnice",
+        "pc_line": "nedostupan {delay} min · isključena {off} s",
+        "pc_count": "restarti: {n}/{max}",
+        "pc_available": "Dostupan",
+        "pc_unavailable": "Nedostupan",
+        "plug_off": "Utičnica isključena: ne dira se",
+        "plug_unavailable": "Utičnica nedostupna",
+        "unknown_device": "Uređaj uklonjen",
+        "open_device": "Uređaj",
+        "pc_none": "Još nema ponovnog pokretanja preko utičnice: dodajte ga u Konfiguriši → Watchdog: dodaj ponovno pokretanje preko utičnice.",
+        "pc_configure": "Dodaj ili ukloni u Konfiguriši"
       }
     },
     "battery_type": {

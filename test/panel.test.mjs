@@ -264,6 +264,34 @@ test('system tab: swap from its use and free, uptime, IP address, database, back
   assert.match(html, /1 Stopped/);
 });
 
+test('watchdog tab: the power cycles, and the rooms of the batteries with their own icons', () => {
+  const html = panel(
+    {
+      loaded: true,
+      modules: ['watchdog', 'batteries'],
+      tabs: ['watchdog'],
+      watchdog: {
+        max_reloads: 3,
+        unavailable: [],
+        history: [],
+        power_cycles: [
+          { device_id: 'd1', device_name: 'Hub', area: 'Hall', switch: 'switch.p', switch_name: 'Hub plug', switch_state: 'off', delay: 20, off_time: 10, unavailable: true, count: 1 },
+        ],
+      },
+    },
+    'watchdog',
+  )._content();
+  assert.match(html, /Power cycles/);
+  assert.match(html, /Hub plug · unavailable for 20 min · off for 10 s · power cycles: 1\/3/);
+  assert.match(html, /Plug off: left alone/);
+  assert.match(html, /href="\/config\/devices\/device\/d1"/);
+  const p = panel({ loaded: true, modules: ['batteries'], tabs: ['batteries'], batteries: { batteries: [] } }, 'batteries');
+  p._hass.areas = { k: { name: 'Kitchen', icon: 'mdi:fridge-outline' }, b: { name: 'Bath' } };
+  assert.equal(p._areaIcon('Kitchen'), 'mdi:fridge-outline');
+  assert.equal(p._areaIcon('Bath'), 'mdi:door-open');
+  assert.equal(p._areaIcon(''), 'mdi:home-outline');
+});
+
 test('marketplace tab: the progress of a check running', () => {
   const started = new Date(Date.now() - 40000).toISOString();
   const html = panel(

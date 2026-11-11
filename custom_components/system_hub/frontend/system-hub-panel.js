@@ -536,6 +536,8 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
     .grow { flex:1; }
+    .warn-text { color:color-mix(in srgb, var(--tone-warn) 50%, var(--primary-text-color)) !important; }
+    .lhead .act { font-size:12px; padding:4px 10px; }
     .mono { font-family:var(--code-font-family, monospace); font-size:15px; }
     .progress { padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
     .phead { display:flex; align-items:center; gap:10px; --mdc-icon-size:20px; color:var(--primary-color); }
@@ -1276,8 +1278,34 @@ class SystemHubPanel extends HTMLElement {
       <div class="actions">${this._button('watchdog_check', 'mdi:shield-search', this._entityName('button', 'watchdog_check'), { disabled: data.running })}
       ${data.paused ? `<span class="pill warn">${shEsc(this._t('paused'))}</span>` : ''}${this._message('watchdog_check')}${this._message('watchdog_reset')}</div>
       <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('all_available'))}</div>`}</ha-card>
+      ${this._powerCycles(data)}
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:history"></ha-icon><span class="lname">${shEsc(this._t('history'))}</span></div>
       ${history || `<div class="empty">${shEsc(this._t('no_history'))}</div>`}</ha-card>`;
+  }
+
+  // The devices power cycled through their smart plug: room, plug, delays, status, count; set up in Configure
+  _powerCycles(data) {
+    var cycles = data.power_cycles || [];
+    var rows = cycles
+      .map((c) => {
+        var tone = c.gave_up ? 'bad' : c.unavailable ? 'warn' : 'good';
+        var status = c.gave_up ? this._t('gave_up') : c.unavailable ? this._t('pc_unavailable') : this._t('pc_available');
+        var sub = [
+          c.switch_name || c.switch,
+          this._t('pc_line', { delay: c.delay, off: c.off_time }),
+          c.count ? this._t('pc_count', { n: c.count, max: data.max_reloads ?? '' }) : '',
+        ].filter(Boolean);
+        var plug = c.switch_state === 'off' ? 'plug_off' : c.switch_state === 'unavailable' || c.switch_state === null ? 'plug_unavailable' : '';
+        return `<div class="item ${tone}"><ha-icon icon="mdi:power-plug-outline"></ha-icon>
+          <div class="who"><div class="n">${shEsc(c.device_name || this._t('unknown_device'))}${c.area ? ` <span class="muted">${shEsc(c.area)}</span>` : ''}</div>
+            <div class="s">${shEsc(sub.join(' · '))}</div>${plug ? `<div class="s warn-text">${shEsc(this._t(plug))}</div>` : ''}</div>
+          <span class="pill ${tone}">${shEsc(status)}</span>
+          ${c.device_id ? `<a class="icon-btn" href="/config/devices/device/${shEsc(c.device_id)}" title="${shEsc(this._t('open_device'))}" aria-label="${shEsc(this._t('open_device'))}"><ha-icon icon="mdi:devices"></ha-icon></a>` : ''}</div>`;
+      })
+      .join('');
+    return `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:power-plug-outline"></ha-icon><span class="lname">${shEsc(this._t('power_cycles'))}</span>
+        <a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('pc_configure'))}</a></div>
+      ${rows || `<div class="empty">${shEsc(this._t('pc_none'))}</div>`}</ha-card>`;
   }
 
   // Marketplace: the server-side check and the updates found
@@ -1456,6 +1484,13 @@ class SystemHubPanel extends HTMLElement {
       <button class="nextb" data-more="${shEsc(next.entity_id)}"><b>${shEsc(next.name)}</b> · ${shEsc(when)}</button></div>`;
   }
 
+  // A room's own icon, set in its area settings (no room: a house)
+  _areaIcon(name) {
+    if (!name) return 'mdi:home-outline';
+    var area = Object.values(this._hass?.areas || {}).find((a) => a?.name === name);
+    return area?.icon || 'mdi:door-open';
+  }
+
   // "2× AA" → AA; a built-in rechargeable battery is its own type
   _battType(b) {
     var raw = (b.battery_type || '').trim();
@@ -1499,7 +1534,7 @@ class SystemHubPanel extends HTMLElement {
         key,
         items,
         name: key ? (view === 'type' ? this._battTypeName(key) : key) : this._t(view === 'room' ? 'no_area' : 'unknown_type'),
-        icon: view === 'room' ? 'mdi:sofa-outline' : key ? 'mdi:battery-outline' : 'mdi:battery-unknown',
+        icon: view === 'room' ? this._areaIcon(key) : key ? 'mdi:battery-outline' : 'mdi:battery-unknown',
         hint: view === 'type' && !key ? this._t('unknown_type_hint') : '',
         // By type, the batteries of that type in all (a remote with 2 AAA counts 2)
         cells: view === 'type' && key && key !== 'rechargeable' ? items.reduce((n, x) => n + x.cells, 0) : null,
