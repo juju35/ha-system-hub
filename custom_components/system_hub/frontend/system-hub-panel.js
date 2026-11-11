@@ -11,7 +11,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.2.0';
+var SYSTEM_HUB_PANEL_VERSION = '1.3.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -797,6 +797,7 @@ class SystemHubPanel extends HTMLElement {
     @keyframes sh-blink { 0%, 100% { opacity:1 } 50% { opacity:.35 } }
     @media (prefers-reduced-motion: reduce) { .brow.due .ic { animation:none; } }
     .segs { display:inline-flex; border-radius:8px; overflow:hidden; background:var(--secondary-background-color, rgba(127,127,127,.12)); }
+    .gitrepos { display:flex; flex-wrap:wrap; width:max-content; max-width:100%; margin:0 0 12px; }
     .seg { display:inline-flex; align-items:center; gap:6px; border:0; background:none; cursor:pointer; font:inherit; font-size:13px;
            padding:7px 12px; color:var(--secondary-text-color); --mdc-icon-size:16px; }
     .seg.active { color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); font-weight:500; }
@@ -832,6 +833,22 @@ class SystemHubPanel extends HTMLElement {
     .legend .lg { display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
     .legend i { width:14px; height:4px; border-radius:2px; }
     .pair { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:10px; }
+    .ha-ctl { margin-bottom:10px; }
+    .ha-backdrop { position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,.45); backdrop-filter:blur(2px); }
+    .ha-dialog { position:fixed; z-index:1001; left:50%; top:50%; transform:translate(-50%, -50%); width:min(440px, calc(100vw - 32px));
+                 box-sizing:border-box; padding:20px 20px 16px; border-radius:16px; background:var(--card-background-color, #fff);
+                 color:var(--primary-text-color); box-shadow:0 12px 40px rgba(0,0,0,.35); }
+    .ha-dhead { display:flex; align-items:center; gap:12px; font-size:18px; font-weight:500; }
+    .ha-dhead ha-icon { --mdc-icon-size:22px; padding:8px; border-radius:50%; color:var(--primary-color);
+                        background:color-mix(in srgb, var(--primary-color) 14%, transparent); }
+    .ha-dhead.bad ha-icon { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 14%, transparent); }
+    .ha-dialog p { margin:14px 0; color:var(--secondary-text-color); line-height:1.45; font-size:14px; }
+    .ha-check { display:flex; gap:8px; align-items:flex-start; padding:10px 12px; margin-bottom:14px; border-radius:8px; font-size:13px; }
+    .ha-check.good { color:var(--tone-good); background:color-mix(in srgb, var(--tone-good) 12%, transparent); }
+    .ha-check.bad { color:var(--tone-bad); background:color-mix(in srgb, var(--tone-bad) 12%, transparent); }
+    .ha-check pre { margin:6px 0 0; white-space:pre-wrap; overflow-wrap:anywhere; max-height:160px; overflow:auto;
+                    font-family:var(--code-font-family, monospace); font-size:12px; color:var(--primary-text-color); }
+    .ha-dialog .loading { margin-bottom:14px; }
     .confirm { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 14px; border-radius:8px;
                background:color-mix(in srgb, var(--tone-warn) 12%, transparent); }
     code { font-family:var(--code-font-family, monospace); font-size:12px; }
@@ -1072,6 +1089,11 @@ class SystemHubPanel extends HTMLElement {
     root.querySelector('main').addEventListener('pointerdown', (ev) => this._cfgDragStart?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => this._cfgDragKey?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && this._confirm?.startsWith?.('ha_')) {
+        this._confirm = null;
+        this._haCheck = null;
+        return this._render();
+      }
       if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.matches?.('[role="button"][data-more]')) {
         ev.preventDefault();
         this._onClick(ev);
@@ -1224,7 +1246,7 @@ class SystemHubPanel extends HTMLElement {
   _system() {
     var sensors = this._state.system || [];
     if (!sensors.length) {
-      return `<ha-card class="note">${shEsc(this._t('no_system'))}
+      return `${this._haControls()}<ha-card class="note">${shEsc(this._t('no_system'))}
         <a class="act" href="/config/integrations/dashboard/add?domain=systemmonitor"><ha-icon icon="mdi:plus"></ha-icon>System Monitor</a></ha-card>`;
     }
     var one = (key) => sensors.find((s) => s.key === key);
@@ -1381,8 +1403,70 @@ class SystemHubPanel extends HTMLElement {
     // With the Containers tab, the processes are listed there, next to the containers
     var procList = this._tabs().includes('containers') ? '' : this._processList();
     var lists = [diskList, procList].filter(Boolean);
-    return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
+    return `${this._haControls()}${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
+  }
+
+  // Reload the YAML configuration and restart Home Assistant, each once confirmed in a dialog; the restart checks the
+  // configuration first, as Home Assistant's own dialog does, and is refused while it is invalid
+  _haControls() {
+    return `<div class="actions ha-ctl">${this._message('ha')}<span class="grow"></span>
+      ${this._button('ha_ask:reload', 'mdi:reload', this._t('ha_reload'), { quiet: true, busy: this._busy.ha_reload })}
+      ${this._button('ha_ask:restart', 'mdi:restart', this._t('ha_restart'), { danger: true })}</div>${this._haDialog()}`;
+  }
+
+  _haDialog() {
+    var kind = this._confirm === 'ha_reload' ? 'reload' : this._confirm === 'ha_restart' ? 'restart' : null;
+    if (!kind) return '';
+    var check = kind === 'restart' ? this._haCheck : null;
+    var status = '';
+    if (check?.checking) status = this._spinner(this._t('ha_checking'), true);
+    else if (check?.invalid) {
+      status = `<div class="ha-check bad"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div><b>${shEsc(this._t('ha_invalid'))}</b>
+        ${check.errors ? `<pre>${shEsc(check.errors)}</pre>` : ''}</div></div>`;
+    } else if (check?.valid) status = `<div class="ha-check good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('ha_valid'))}</div>`;
+    var blocked = Boolean(check?.checking || check?.invalid);
+    var icon = kind === 'restart' ? 'mdi:restart' : 'mdi:reload';
+    return `<div class="ha-backdrop" data-action="cancel"></div>
+      <div class="ha-dialog" role="alertdialog" aria-modal="true" aria-labelledby="ha-dialog-title">
+        <div class="ha-dhead ${kind === 'restart' ? 'bad' : ''}"><ha-icon icon="${icon}"></ha-icon><span id="ha-dialog-title">${shEsc(this._t(`ha_${kind}_title`))}</span></div>
+        <p>${shEsc(this._t(`ha_${kind}_text`))}</p>${status}
+        <div class="actions"><span class="grow"></span>${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}
+          ${this._button(`ha_ok:${kind}`, icon, this._t(`ha_${kind}`), { danger: kind === 'restart', disabled: blocked })}</div></div>`;
+  }
+
+  async _haAction(action) {
+    var [name, kind] = action.split(':');
+    if (name === 'ha_ask') {
+      this._confirm = `ha_${kind}`;
+      this._haCheck = kind === 'restart' ? { checking: true } : null;
+      this._render();
+      this.shadowRoot.querySelector('.ha-dialog [data-action="cancel"]')?.focus?.();
+      if (kind === 'restart') {
+        try {
+          var result = await this._hass.callApi('POST', 'config/core/check_config');
+          this._haCheck = result?.result === 'invalid' ? { invalid: true, errors: result.errors || '' } : { valid: result?.result === 'valid' };
+        } catch (_err) {
+          // No check (the configuration panel off): Home Assistant still checks before it restarts
+          this._haCheck = {};
+        }
+        if (this._confirm === 'ha_restart') this._render();
+      }
+      return;
+    }
+    this._confirm = null;
+    if (kind === 'reload') return this._run('reload_all', 'ha', {}, null, 'homeassistant', 'ha_reload');
+    // The restart drops the connection: no failure to report then, Home Assistant's own banner takes over
+    this._render();
+    this._toast(this._t('ha_restarting'));
+    try {
+      await this._hass.callService('homeassistant', 'restart', {});
+    } catch (err) {
+      if (!/connection|lost|closed/i.test(String(err?.message || err?.code || err))) {
+        this._messages.ha = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+        this._render();
+      }
+    }
   }
 
   // The processes System Monitor watches: the stopped ones first (those that may be stopped after them, in grey)
@@ -2065,10 +2149,36 @@ class SystemHubPanel extends HTMLElement {
     }
   }
 
+  // Git Sync: every repository (the first one first), and the one the tab shows (a chip per repository)
+  _gitRepos() {
+    return this._state.git_sync_repos || [];
+  }
+
+  _gitData() {
+    var repos = this._gitRepos();
+    return repos.find((r) => r.id === this._gitRepo) || repos[0] || this._state.git_sync;
+  }
+
+  // The repository the tab's actions run on: named only when there are several
+  _gitTarget() {
+    var repos = this._gitRepos();
+    return repos.length > 1 ? { repository: this._gitData().path } : {};
+  }
+
   // Git Sync: status, changed files, commit and push
   _gitSync() {
-    var data = this._state.git_sync;
+    var data = this._gitData();
     if (!data) return `<ha-card class="note">${shEsc(this._t('git_needs_repo'))}</ha-card>`;
+    var repos = this._gitRepos();
+    var picker =
+      repos.length > 1
+        ? `<div class="segs gitrepos" role="group" aria-label="${shEsc(this._entityName('sensor', 'git_sync_status'))}">${repos
+            .map((r) => {
+              var on = r.id === data.id;
+              return `<button class="seg${on ? ' active' : ''}" data-action="git_repo" data-id="${shEsc(r.id)}" aria-pressed="${on}" title="${shEsc(r.path)}">${shEsc(r.title)}</button>`;
+            })
+            .join('')}</div>`
+        : '';
     var tone = { clean: 'good', dirty: 'warn', ahead: 'warn', behind: 'warn', diverged: 'bad', error: 'bad' }[data.status] || '';
     var commit = data.last_commit;
     var tiles = [
@@ -2088,7 +2198,7 @@ class SystemHubPanel extends HTMLElement {
     var fold = count
       ? `<button class="icon-btn" data-action="git_files_fold" aria-expanded="${open}" title="${shEsc(this._t('changed'))}" aria-label="${shEsc(this._t('changed'))}"><ha-icon icon="mdi:chevron-${open ? 'up' : 'down'}"></ha-icon></button>`
       : '';
-    return `<div class="tiles">${tiles.join('')}</div>
+    return `${picker}<div class="tiles">${tiles.join('')}</div>
       <ha-card class="block"><div class="actions"><label class="box"><input data-draft="message" placeholder="${shEsc(this._t('message'))}" value="${shEsc(this._draft.message || '')}"></label>
         ${data.ai_task ? this._button('git_sync_generate_message', 'mdi:creation-outline', this._t('generate'), { quiet: true }) : ''}</div>
         <div class="actions">${this._button('git_sync_commit_push', 'mdi:source-commit-end', this._entityName('button', 'git_sync_commit_push'))}
@@ -2153,6 +2263,7 @@ class SystemHubPanel extends HTMLElement {
     if ((action.startsWith('cfg_') || action.startsWith('open_settings')) && this._cfgClick(button)) return;
     if (action === 'reload') return this._load();
     if (action === 'cancel' || action === 'confirm_install') {
+      this._haCheck = null;
       this._confirm = action === 'confirm_install' ? 'install' : null;
       return this._render();
     }
@@ -2163,7 +2274,8 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'batt_csv') return this._battDownload();
     if (action === 'st_open') return this._selectTab(button.dataset.tab);
     if (action === 'git_files_fold') {
-      var shownNow = this._gitFilesOpen ?? Math.max(this._state.git_sync?.changed ?? 0, (this._state.git_sync?.files || []).length) <= SH_GIT_FILES_MAX;
+      var shown = this._gitData() || {};
+      var shownNow = this._gitFilesOpen ?? Math.max(shown.changed ?? 0, (shown.files || []).length) <= SH_GIT_FILES_MAX;
       this._gitFilesOpen = !shownNow;
       return this._render();
     }
@@ -2209,16 +2321,21 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action.startsWith('auto_')) return this._autoAction(action, button);
+    if (action.startsWith('ha_ask:') || action.startsWith('ha_ok:')) return this._haAction(action);
     if (action.startsWith('watchdog_reset:')) return this._run('watchdog_reset', 'watchdog_reset', { entry_id: action.split(':')[1] }, null, SH_DOMAIN, action);
     if (action === 'git_sync_generate_message') return this._generate();
     if (action === 'git_sync_diff') return this._openDiff();
+    if (action === 'git_repo') {
+      this._gitRepo = button.dataset.id;
+      return this._render();
+    }
     if (action === 'git_sync_commit_push') {
       var message = (this._draft.message || '').trim();
-      return this._run(action, 'git_sync', message ? { message } : {}, () => {
+      return this._run(action, 'git_sync', { ...(message ? { message } : {}), ...this._gitTarget() }, () => {
         this._draft.message = '';
       });
     }
-    if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', {}, null, SH_DOMAIN, action);
+    if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', this._gitTarget(), null, SH_DOMAIN, action);
     if (action === 'mk_install') {
       var target = button.dataset.entity;
       return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target] }, null, SH_DOMAIN, `mk_install:${target}`);
@@ -2232,12 +2349,13 @@ class SystemHubPanel extends HTMLElement {
 
   // An action: its button spins (busyKey, the clicked button's action) until the state is read again; done in a toast, a
   // failure next to the buttons
+  // A list of data calls the action once per item, one after the other (an action that takes a single target).
   async _run(service, messageKey, data, done, domain = SH_DOMAIN, busyKey = service) {
     this._busy[busyKey] = true;
     delete this._messages[messageKey];
     this._render();
     try {
-      await this._hass.callService(domain, service, data);
+      for (var item of Array.isArray(data) ? data : [data]) await this._hass.callService(domain, service, item);
       this._toast(this._t('done'));
       done?.();
     } catch (err) {
@@ -2285,7 +2403,7 @@ class SystemHubPanel extends HTMLElement {
     return `<div class="tiles">${tiles.join('')}</div>${confirm}
       <div class="actions"><span title="${shEsc(this._t('auto_rebuild_title'))}">${this._button('auto_rebuild', 'mdi:refresh', this._t('auto_rebuild'))}</span>
       ${failures.length ? this._button('auto_clear_all', 'mdi:notification-clear-all', this._t('auto_clear_all'), { quiet: true, busy: this._busy.auto_clear_all }) : ''}
-      ${this._message('auto')}${both ? `<span class="msg bad">${shEsc(this._t('auto_unavailable'))}</span>` : ''}</div>
+      ${this._message('auto')}${both ? `<span class="msg bad">${shEsc(this._t('auto_unavailable'))}</span>` : ''}${this._configure()}</div>
       ${this._autoSection('failed', 'mdi:robot-confused-outline', this._t('auto_failed'), failures, (f) => this._autoFailure(f))}
       ${this._autoSection('linked', 'mdi:link-variant-off', this._t('auto_linked'), linked, (e) => this._autoLinked(e))}`;
   }
@@ -2356,7 +2474,13 @@ class SystemHubPanel extends HTMLElement {
     }
     this._confirm = null;
     if (name === 'auto_clear_ok') return this._run('reset', 'auto', { entity_id: button.dataset.entity }, null, 'automation_monitor', `auto_clear:${button.dataset.entity}`);
-    if (name === 'auto_clear_all_ok') return this._run('reset', 'auto', {}, null, 'automation_monitor', 'auto_clear_all');
+    if (name === 'auto_clear_all_ok') {
+      // Failures left out by the settings stay: then only the listed ones are cleared, one call each (the action takes a
+      // single entity_id); otherwise one call clears them all.
+      var auto = this._state.automations || {};
+      if (!auto.failures_hidden) return this._run('reset', 'auto', {}, null, 'automation_monitor', 'auto_clear_all');
+      return this._run('reset', 'auto', (auto.failures || []).map((f) => ({ entity_id: f.entity_id })), null, 'automation_monitor', 'auto_clear_all');
+    }
     if (name === 'auto_rebuild') return this._run('rebuild_linked_entities', 'auto', {}, null, 'automation_monitor', 'auto_rebuild');
   }
 
@@ -2366,14 +2490,15 @@ class SystemHubPanel extends HTMLElement {
       this._diffDialog = document.createElement('system-hub-diff-dialog');
       document.body?.appendChild?.(this._diffDialog);
     }
-    var state = this._state?.git_sync || {};
+    var state = this._gitData() || {};
+    var target = this._gitTarget();
     this._diffDialog.open({
       t: (key, vars) => this._t(key, vars),
       locale: this._hass?.locale?.language || this._hass?.language || undefined,
       branch: state.branch,
       commitLabel: this._entityName('button', 'git_sync_commit_push'),
       request: async () =>
-        (await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service: 'git_sync_get_diff', service_data: {}, return_response: true }))?.response,
+        (await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service: 'git_sync_get_diff', service_data: target, return_response: true }))?.response,
       onCommit: () => this.shadowRoot.querySelector('[data-draft="message"]')?.focus?.({ preventScroll: true }),
     });
   }
@@ -2384,7 +2509,7 @@ class SystemHubPanel extends HTMLElement {
     this._busy[service] = true;
     this._render();
     try {
-      var res = await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service, service_data: {}, return_response: true });
+      var res = await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service, service_data: this._gitTarget(), return_response: true });
       var message = res?.response?.message;
       if (message) this._draft.message = message;
       else this._messages.git_sync = { text: this._t('clean'), tone: '' };
@@ -2756,7 +2881,8 @@ var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
-  git_sync: ['git_sync', 'git_sync_repository'],
+  git_sync: ['git_sync', 'git_sync_repository', 'git_sync_add_repository', 'git_sync_other', 'git_sync_remove_repository'],
+  automations: ['automations'],
   orphans: ['orphans'],
 };
 var SH_SETTINGS_ICONS = { system: 'mdi:chip' };
@@ -3181,6 +3307,10 @@ var SH_STATUS_METHODS = {
     if (tab === 'git_sync') {
       var git = s.git_sync;
       if (!git || git.available === false) return null;
+      // With several repositories, the one most in need of action speaks for all
+      var gitRepos = (s.git_sync_repos || []).filter((r) => r.available !== false);
+      var weight = (r) => (r.last_error || r.status === 'error' || (r.ahead && r.behind) ? 2 : r.changed || r.ahead || r.behind ? 1 : 0);
+      if (gitRepos.length > 1) git = gitRepos.reduce((a, b) => (weight(b) > weight(a) ? b : a));
       var error = git.last_error || git.status === 'error' || (git.ahead && git.behind);
       var changed = git.changed || 0;
       return [

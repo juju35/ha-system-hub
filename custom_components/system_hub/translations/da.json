@@ -74,7 +74,11 @@
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importér fra Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: tærskler"
+          "system": "System: tærskler",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Tilføj et repository",
+          "git_sync_other": "Git Sync: Andet repository",
+          "git_sync_remove_repository": "Git Sync: Fjern repositories"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: rød fra"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorerede enheder",
+          "exclude_entities": "Ignorerede entiteter"
+        },
+        "data_description": {
+          "exclude_devices": "Deres utilgængelige tilknyttede entiteter og de mislykkede automatiseringer, der hører til dem, udelades af lister, tællere og status.",
+          "exclude_entities": "Entitets-id’er eller mønstre med * og ?: matchende automatiseringer og entiteter udelades af lister, tællere og status"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Tilføj et repository",
+        "data": {
+          "repo_path": "Sti til repository",
+          "remote": "Remote",
+          "branch": "Gren",
+          "ssh_key": "Privat SSH-nøgle",
+          "author_name": "Forfatterens navn",
+          "author_email": "Forfatterens e-mail"
+        },
+        "data_description": {
+          "repo_path": "Mappe, der indeholder .git-mappen, normalt /config.",
+          "remote": "Git-remote, der skal pushes til, normalt origin.",
+          "branch": "Målgren på remoten. Lad feltet være tomt for at pushe den aktuelle gren.",
+          "ssh_key": "Privat nøgle til push. Opret den med handlingen generate_ssh_key, og tilføj derefter den offentlige nøgle som deploy key med skriveadgang.",
+          "author_name": "Valgfrit, tilsidesætter repositoriets git user.name / user.email.",
+          "author_email": "Valgfrit, tilsidesætter repositoriets git user.name / user.email."
+        }
+      },
+      "git_sync_other": {
+        "title": "Andet repository",
+        "data": {
+          "repo_id": "Repository"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Indstillinger for repository",
+        "description": "Repository {repository}",
+        "data": {
+          "repo_path": "Sti til repository",
+          "remote": "Remote",
+          "branch": "Gren",
+          "ssh_key": "Privat SSH-nøgle",
+          "author_name": "Forfatterens navn",
+          "author_email": "Forfatterens e-mail"
+        },
+        "data_description": {
+          "repo_path": "Mappe, der indeholder .git-mappen, normalt /config.",
+          "remote": "Git-remote, der skal pushes til, normalt origin.",
+          "branch": "Målgren på remoten. Lad feltet være tomt for at pushe den aktuelle gren.",
+          "ssh_key": "Privat nøgle til push. Opret den med handlingen generate_ssh_key, og tilføj derefter den offentlige nøgle som deploy key med skriveadgang.",
+          "author_name": "Valgfrit, tilsidesætter repositoriets git user.name / user.email.",
+          "author_email": "Valgfrit, tilsidesætter repositoriets git user.name / user.email."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repository {repository}",
+        "data": {
+          "ai_task_entity": "AI-opgaveentitet",
+          "commit_language": "Sprog for commitbeskeder",
+          "commit_interval": "Interval for automatisk commit",
+          "status_interval": "Interval for statusopdatering",
+          "fetch_interval": "Kontrolinterval for remote",
+          "pull_before_push": "Pull før push",
+          "allow_sensitive": "Tillad sporede følsomme filer",
+          "notify_service": "Notifikationshandling",
+          "notify_image": "Billed-URL til notifikation",
+          "export_enabled": "Daglig dashboardeksport",
+          "export_time": "Eksporttidspunkt",
+          "export_dir": "Eksportmappe",
+          "export_format": "Eksportformat",
+          "export_before_commit": "Eksportér dashboards før hvert commit",
+          "commit_before_update": "Commit før opdateringer"
+        },
+        "data_description": {
+          "ai_task_entity": "Genererer en Conventional Commits-besked ud fra diffen. Uden den bruges en generisk besked.",
+          "commit_interval": "Commit og push hvert N. minut, når der er ændringer. 0 deaktiverer det.",
+          "fetch_interval": "Fetch fra remote hvert N. minut for at se commits pushet andre steder fra (bagud, divergeret). 0 slår det fra; der køres stadig en fetch før hver push.",
+          "pull_before_push": "Når remote har nye commits, rebases der på dem (git pull --rebase --autostash) før push. Ved en konflikt afbrydes rebasen, intet pushes, og en reparation forklarer, hvad der skal gøres.",
+          "allow_sensitive": "Commit ændringer i følsomme filer, som Git allerede sporer (secrets.yaml, .storage, nøgler, database, logs). Nye følsomme filer afvises altid.",
+          "notify_service": "For eksempel notify.mobile_app_telefon. Lad feltet være tomt for at deaktivere.",
+          "notify_image": "Absolut HTTPS-URL (krævet af iOS).",
+          "export_format": "JSON kopierer .storage-filerne som de er; YAML beholder kun dashboardets konfiguration, som er lettere at læse i diffs.",
+          "export_dir": "I konfigurationsmappen (en relativ sti starter der) eller i en mappe fra allowlist_external_dirs.",
+          "commit_before_update": "Når en opdatering installeres (Home Assistant, en tilføjelse, en integration), commit og push konfigurationen først, så der er et commit at vende tilbage til. Ét commit for opdateringer installeret samlet."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Fjern repositories",
+        "description": "Deres entiteter, enhed, reparationer og gemte tilstand fjernes; selve repositories forbliver uændrede.",
+        "data": {
+          "git_sync_repositories": "Repositories der skal fjernes"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Vælg batteriet.",
       "type_required": "Vælg eller skriv typen.",
       "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet.",
-      "critical_below_warning": "Den røde tærskel skal ligge over den orange."
+      "critical_below_warning": "Den røde tærskel skal ligge over den orange.",
+      "repository_exists": "Dette repository er allerede sat op."
     },
     "abort": {
-      "nothing_to_import": "Intet at importere fra Battery Monitor.",
-      "use_panel": "System Hubs indstillinger er i dets panel: [åbn fanen Settings]({url})."
+      "nothing_to_import": "Intet at importere fra Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Besked",
           "description": "Commitbesked. Genereres af AI-opgaven, hvis tom."
+        },
+        "repository": {
+          "name": "Repository",
+          "description": "Sti (eller id) til repository. Udeladt: commit og push, pull og eksport kører på alle repositories, de andre handlinger på det første."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Eksportér dashboards",
-      "description": "Kopierer Lovelace-dashboards fra .storage til eksportmappen."
+      "description": "Kopierer Lovelace-dashboards fra .storage til eksportmappen.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sti (eller id) til repository. Udeladt: commit og push, pull og eksport kører på alle repositories, de andre handlinger på det første."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Generér SSH-nøgle",
-      "description": "Opretter SSH-nøgleparret, hvis det mangler, og returnerer den offentlige nøgle, der skal tilføjes som deploy key."
+      "description": "Opretter SSH-nøgleparret, hvis det mangler, og returnerer den offentlige nøgle, der skal tilføjes som deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sti (eller id) til repository. Udeladt: commit og push, pull og eksport kører på alle repositories, de andre handlinger på det første."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Generér commitbesked",
-      "description": "Skriver med AI-opgaven en commitbesked til de aktuelle ændringer uden at committe. Returnerer null, hvis intet er ændret."
+      "description": "Skriver med AI-opgaven en commitbesked til de aktuelle ændringer uden at committe. Returnerer null, hvis intet er ændret.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sti (eller id) til repository. Udeladt: commit og push, pull og eksport kører på alle repositories, de andre handlinger på det første."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Hent ændringer",
-      "description": "Returnerer de ændringer, et commit ville indeholde, fil for fil, som kortets diff-visning viser dem."
+      "description": "Returnerer de ændringer, et commit ville indeholde, fil for fil, som kortets diff-visning viser dem.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sti (eller id) til repository. Udeladt: commit og push, pull og eksport kører på alle repositories, de andre handlinger på det første."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Henter fjernlageret og tager dets nye commits ind: fast-forward, eller de lokale commits rebaset ovenpå (kun med et rent arbejdstræ). En konflikt afbryder rebase."
+      "description": "Henter fjernlageret og tager dets nye commits ind: fast-forward, eller de lokale commits rebaset ovenpå (kun med et rent arbejdstræ). En konflikt afbryder rebase.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sti (eller id) til repository. Udeladt: commit og push, pull og eksport kører på alle repositories, de andre handlinger på det første."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Scan efter forældreløse entiteter",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Ikke i enhedsregistret: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Ukendt repository {repository}. Opsatte repositories: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Alt er opdateret.",
         "progress": "{done} af {total} kontrolleret",
         "install_all": "Opdater alt",
+        "ha_reload": "Genindlæs konfiguration",
+        "ha_restart": "Genstart Home Assistant",
+        "ha_reload_title": "Genindlæs konfigurationen?",
+        "ha_reload_text": "Al YAML-konfiguration, som Home Assistant kan genindlæse (automatiseringer, scripts, scener, skabeloner, grupper…), læses igen uden genstart.",
+        "ha_restart_title": "Genstart Home Assistant?",
+        "ha_restart_text": "Home Assistant stopper og starter igen: det er utilgængeligt et øjeblik, og dets automatiseringer kører ikke imens.",
+        "ha_checking": "Kontrollerer konfigurationen…",
+        "ha_valid": "Konfigurationen er gyldig.",
+        "ha_invalid": "Konfigurationen er ugyldig: ret den før genstart.",
+        "ha_restarting": "Home Assistant genstarter…",
         "confirm_install": "Installere alle opdateringer nu?",
         "cancel": "Annuller",
         "last_check": "Seneste kontrol",

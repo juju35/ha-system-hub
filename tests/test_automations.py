@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
@@ -162,3 +163,63 @@ async def test_on_by_default_with_automation_monitor(hass: HomeAssistant) -> Non
     assert defaults["automations"] is True
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {})
     assert "automations" in result["options"][CONF_MODULES]
+
+
+async def _setup_with(hass: HomeAssistant, automations: dict) -> MockConfigEntry:
+    assert await async_setup_component(hass, "frontend", {})
+    entry = MockConfigEntry(
+        domain=DOMAIN, title="System Hub", options={CONF_MODULES: ["automations"], "automations": automations}
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    return entry
+
+
+async def test_excluded_entities_by_id_and_pattern(hass: HomeAssistant, hass_ws_client) -> None:
+    """Ids or patterns with * and ?, case-insensitive: left out of the lists and counted as hidden."""
+    _monitor(hass)
+    await _setup_with(hass, {"exclude_entities": ["AUTOMATION.OL?", "switch.*"]})
+    data = (await _state(hass, hass_ws_client))["automations"]
+    assert [f["entity_id"] for f in data["failures"]] == ["automation.lights"]
+    assert [e["entity_id"] for e in data["linked"]] == ["light.hall"]
+    assert data["failures_hidden"] == 1
+    assert data["linked_hidden"] == 1
+
+
+async def test_excluded_devices_by_id_and_name(hass: HomeAssistant, hass_ws_client) -> None:
+    """A device given by id or by name: its entities' failures and unavailability are left out."""
+    _monitor(hass)
+    config = MockConfigEntry(domain="test")
+    config.add_to_hass(hass)
+    devices = dr.async_get(hass)
+    entities = er.async_get(hass)
+    hall = devices.async_get_or_create(
+        config_entry_id=config.entry_id, identifiers={("test", "hall")}, name="Hall lamp"
+    )
+    pump = devices.async_get_or_create(config_entry_id=config.entry_id, identifiers={("test", "pump")}, name="Pump")
+    entities.async_get_or_create(
+        "light", "test", "hall", suggested_object_id="hall", device_id=hall.id, config_entry=config
+    )
+    entities.async_get_or_create(
+        "switch", "test", "pump", suggested_object_id="pump", device_id=pump.id, config_entry=config
+    )
+    await _setup_with(hass, {"exclude_devices": [pump.id, "hall LAMP"]})
+    data = (await _state(hass, hass_ws_client))["automations"]
+    assert data["linked"] == []
+    assert data["linked_hidden"] == 2
+    assert data["failures_hidden"] == 0
+
+
+async def test_settings_form(hass: HomeAssistant) -> None:
+    entry = await _setup_with(hass, {"exclude_entities": ["automation.test_*"]})
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
+    assert "automations" in result["menu_options"]
+    form = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "automations"})
+    assert form["step_id"] == "automations"
+    done = await hass.config_entries.options.async_configure(
+        form["flow_id"], {"exclude_devices": [], "exclude_entities": [" sensor.a ", "", "automation.b*"]}
+    )
+    assert done["type"] == "create_entry"
+    await hass.async_block_till_done()
+    assert entry.options["automations"] == {"exclude_devices": [], "exclude_entities": ["sensor.a", "automation.b*"]}

@@ -55,7 +55,7 @@ async def async_setup_entry(
             NextReplacementSensor(b, entry.entry_id, "next_replacement"),
             SparesSensor(b, entry.entry_id, "spare_batteries"),
         ]
-    if (g := data.git_sync) is not None:
+    for g in data.git_syncs:
         entities += [GitSyncSensor(g, entry.entry_id, description) for description in SENSORS]
     if (o := data.orphans) is not None:
         entities += orphans_entities.sensors(o, entry.entry_id)

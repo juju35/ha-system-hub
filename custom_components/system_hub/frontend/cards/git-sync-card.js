@@ -6,7 +6,7 @@
  * integration, same card types: dashboards using it keep working.
  * https://github.com/juju35/ha-system-hub
  */
-var GIT_SYNC_CARD_VERSION = '1.2.0';
+var GIT_SYNC_CARD_VERSION = '1.3.0';
 // System Hub: its entities (platform system_hub, translation keys git_sync_*) and actions (system_hub.git_sync_*)
 var GS_DOMAIN = 'system_hub';
 var GS_PREFIX = 'git_sync_';
@@ -1781,9 +1781,15 @@ class GitSyncCard extends HTMLElement {
     this.dispatchEvent(new CustomEvent('hass-notification', { detail: { message }, bubbles: true, composed: true }));
   }
 
+  // The repository the card shows, named in its actions when System Hub has several (else the only one is meant)
+  _target() {
+    const devices = Object.values(gsDevices(this._hass?.entities)).filter((d) => d.status);
+    const repository = this._hass?.states?.[this._ids?.status]?.attributes?.repository;
+    return devices.length > 1 && repository ? { repository } : {};
+  }
+
   async _call(service) {
-    // A single System Hub entry: no config entry to name
-    const data = {};
+    const data = this._target();
     if (service === 'commit_push') {
       const message = this._draft.trim();
       if (message) data.message = message;
@@ -1812,7 +1818,7 @@ class GitSyncCard extends HTMLElement {
   // Asks the AI task for a message describing the current changes, without committing, and puts it in the field.
   async _generate() {
     if (this._generating) return;
-    const data = {};
+    const data = this._target();
     this._generating = true;
     this._render();
     try {
@@ -1835,7 +1841,7 @@ class GitSyncCard extends HTMLElement {
 
   // Opens the full-screen diff viewer on the changes a commit would include.
   _openDiff() {
-    const data = {};
+    const data = this._target();
     if (!this._diffDialog) {
       this._diffDialog = document.createElement('git-sync-diff-dialog');
       document.body?.appendChild?.(this._diffDialog);

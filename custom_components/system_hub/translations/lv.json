@@ -74,7 +74,11 @@
           "batteries_types": "Baterijas: bateriju veidi",
           "batteries_import": "Baterijas: importēt no Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistēma: sliekšņi"
+          "system": "Sistēma: sliekšņi",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Pievienot repozitoriju",
+          "git_sync_other": "Git Sync: Cits repozitorijs",
+          "git_sync_remove_repository": "Git Sync: Noņemt repozitorijus"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: sarkans no"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorētās ierīces",
+          "exclude_entities": "Ignorētās vienības"
+        },
+        "data_description": {
+          "exclude_devices": "To nepieejamās saistītās entītijas un tām piesaistītās neizdevušās automatizācijas tiek izlaistas no sarakstiem, skaitītājiem un statusa.",
+          "exclude_entities": "Vienību ID vai šabloni ar * un ?: atbilstošās automatizācijas un vienības netiek iekļautas sarakstos, skaitītājos un statusā"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Pievienot repozitoriju",
+        "data": {
+          "repo_path": "Repozitorija ceļš",
+          "remote": "Remote",
+          "branch": "Zars",
+          "ssh_key": "Privātā SSH atslēga",
+          "author_name": "Autora vārds",
+          "author_email": "Autora e-pasts"
+        },
+        "data_description": {
+          "repo_path": "Mape, kurā ir direktorijs .git, parasti /config.",
+          "remote": "Git remote, uz kuru veikt push, parasti origin.",
+          "branch": "Mērķa zars remote pusē. Atstājiet tukšu, lai nosūtītu pašreizējo zaru.",
+          "ssh_key": "Privātā atslēga, ko izmanto push. Izveidojiet to ar darbību generate_ssh_key, pēc tam pievienojiet publisko atslēgu kā deploy key ar rakstīšanas tiesībām.",
+          "author_name": "Neobligāti, aizstāj repozitorija git user.name / user.email.",
+          "author_email": "Neobligāti, aizstāj repozitorija git user.name / user.email."
+        }
+      },
+      "git_sync_other": {
+        "title": "Cits repozitorijs",
+        "data": {
+          "repo_id": "Repozitorijs"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Repozitorija iestatījumi",
+        "description": "Repozitorijs {repository}",
+        "data": {
+          "repo_path": "Repozitorija ceļš",
+          "remote": "Remote",
+          "branch": "Zars",
+          "ssh_key": "Privātā SSH atslēga",
+          "author_name": "Autora vārds",
+          "author_email": "Autora e-pasts"
+        },
+        "data_description": {
+          "repo_path": "Mape, kurā ir direktorijs .git, parasti /config.",
+          "remote": "Git remote, uz kuru veikt push, parasti origin.",
+          "branch": "Mērķa zars remote pusē. Atstājiet tukšu, lai nosūtītu pašreizējo zaru.",
+          "ssh_key": "Privātā atslēga, ko izmanto push. Izveidojiet to ar darbību generate_ssh_key, pēc tam pievienojiet publisko atslēgu kā deploy key ar rakstīšanas tiesībām.",
+          "author_name": "Neobligāti, aizstāj repozitorija git user.name / user.email.",
+          "author_email": "Neobligāti, aizstāj repozitorija git user.name / user.email."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repozitorijs {repository}",
+        "data": {
+          "ai_task_entity": "AI uzdevuma vienība",
+          "commit_language": "Commit ziņojumu valoda",
+          "commit_interval": "Automātiskā commit intervāls",
+          "status_interval": "Statusa atsvaidzes intervāls",
+          "fetch_interval": "Remote pārbaudes intervāls",
+          "pull_before_push": "Pull pirms push",
+          "allow_sensitive": "Atļaut izsekotos sensitīvos failus",
+          "notify_service": "Paziņojuma darbība",
+          "notify_image": "Paziņojuma attēla URL",
+          "export_enabled": "Ikdienas paneļu eksports",
+          "export_time": "Eksporta laiks",
+          "export_dir": "Eksporta mape",
+          "export_format": "Eksporta formāts",
+          "export_before_commit": "Eksportēt paneļus pirms katra commit",
+          "commit_before_update": "Commit pirms atjauninājumiem"
+        },
+        "data_description": {
+          "ai_task_entity": "Ģenerē Conventional Commits ziņojumu no diff. Bez tās tiek izmantots vispārīgs ziņojums.",
+          "commit_interval": "Commit un push ik pēc N minūtēm, ja ir izmaiņas. 0 to atspējo.",
+          "fetch_interval": "Fetch no remote ik pēc N minūtēm, lai redzētu no citurienes nosūtītos commit (atpaliek, atšķiras). 0 to izslēdz; pirms katra push fetch tiek veikts jebkurā gadījumā.",
+          "pull_before_push": "Ja remote ir jauni commit, pirms push uz tiem tiek veikts rebase (git pull --rebase --autostash). Konflikta gadījumā rebase tiek pārtraukts, nekas netiek nosūtīts, un labojums paskaidro, kas jādara.",
+          "allow_sensitive": "Veikt commit sensitīvo failu izmaiņām, kurus Git jau izseko (secrets.yaml, .storage, atslēgas, datubāze, žurnāli). Jauni sensitīvie faili vienmēr tiek noraidīti.",
+          "notify_service": "Piemēram, notify.mobile_app_telefons. Atstājiet tukšu, lai atspējotu.",
+          "notify_image": "Absolūts HTTPS URL (nepieciešams iOS).",
+          "export_format": "JSON kopē .storage failus bez izmaiņām; YAML saglabā tikai paneļa konfigurāciju, ko vieglāk lasīt diff.",
+          "export_dir": "Konfigurācijas mapē (relatīvs ceļš sākas tur) vai allowlist_external_dirs mapē.",
+          "commit_before_update": "Kad tiek instalēts atjauninājums (Home Assistant, papildinājums, integrācija), vispirms veikt konfigurācijas commit un push, lai būtu commit, pie kura atgriezties. Viens commit kopā instalētiem atjauninājumiem."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Noņemt repozitorijus",
+        "description": "To entītijas, ierīce, labojumi un saglabātais stāvoklis tiek noņemti; paši repozitoriji paliek nemainīti.",
+        "data": {
+          "git_sync_repositories": "Noņemamie repozitoriji"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Izvēlieties bateriju.",
       "type_required": "Izvēlieties vai ierakstiet veidu.",
       "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai.",
-      "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā."
+      "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā.",
+      "repository_exists": "Šis repozitorijs jau ir iestatīts."
     },
     "abort": {
-      "nothing_to_import": "No Battery Monitor nav ko importēt.",
-      "use_panel": "System Hub iestatījumi ir tā panelī: [atvērt cilni Settings]({url})."
+      "nothing_to_import": "No Battery Monitor nav ko importēt."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Ziņojums",
           "description": "Commit ziņojums. Ja tukšs, to ģenerē AI uzdevums."
+        },
+        "repository": {
+          "name": "Repozitorijs",
+          "description": "Repozitorija ceļš (vai id). Bez tā: commit un push, pull un eksports darbojas visos repozitorijos, pārējās darbības — pirmajā."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Eksportēt paneļus",
-      "description": "Kopē Lovelace paneļus no .storage uz eksporta mapi."
+      "description": "Kopē Lovelace paneļus no .storage uz eksporta mapi.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorijs",
+          "description": "Repozitorija ceļš (vai id). Bez tā: commit un push, pull un eksports darbojas visos repozitorijos, pārējās darbības — pirmajā."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Ģenerēt SSH atslēgu",
-      "description": "Izveido SSH atslēgu pāri, ja tā nav, un atgriež publisko atslēgu, ko pievienot kā deploy key."
+      "description": "Izveido SSH atslēgu pāri, ja tā nav, un atgriež publisko atslēgu, ko pievienot kā deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorijs",
+          "description": "Repozitorija ceļš (vai id). Bez tā: commit un push, pull un eksports darbojas visos repozitorijos, pārējās darbības — pirmajā."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Ģenerēt commit ziņojumu",
-      "description": "Ar AI uzdevumu uzraksta commit ziņojumu pašreizējām izmaiņām, neveicot commit. Atgriež null, ja nekas nav mainījies."
+      "description": "Ar AI uzdevumu uzraksta commit ziņojumu pašreizējām izmaiņām, neveicot commit. Atgriež null, ja nekas nav mainījies.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorijs",
+          "description": "Repozitorija ceļš (vai id). Bez tā: commit un push, pull un eksports darbojas visos repozitorijos, pārējās darbības — pirmajā."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Iegūt izmaiņas",
-      "description": "Atgriež izmaiņas, ko iekļautu commit, failu pa failam, kā tās rāda kartītes atšķirību skats."
+      "description": "Atgriež izmaiņas, ko iekļautu commit, failu pa failam, kā tās rāda kartītes atšķirību skats.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorijs",
+          "description": "Repozitorija ceļš (vai id). Bez tā: commit un push, pull un eksports darbojas visos repozitorijos, pārējās darbības — pirmajā."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Ielādē attālo repozitoriju un pārņem tā jaunos commit: pārtīšana uz priekšu vai lokālie commit, pārbāzēti virs tiem (tikai ar tīru darba koku). Konflikts pārbāzēšanu atceļ."
+      "description": "Ielādē attālo repozitoriju un pārņem tā jaunos commit: pārtīšana uz priekšu vai lokālie commit, pārbāzēti virs tiem (tikai ar tīru darba koku). Konflikts pārbāzēšanu atceļ.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorijs",
+          "description": "Repozitorija ceļš (vai id). Bez tā: commit un push, pull un eksports darbojas visos repozitorijos, pārējās darbības — pirmajā."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Meklēt pamestas vienības",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Nav ierīču reģistrā: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Nezināms repozitorijs {repository}. Iestatītie repozitoriji: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Viss ir atjaunināts.",
         "progress": "Pārbaudīti {done} no {total}",
         "install_all": "Atjaunināt visu",
+        "ha_reload": "Pārlādēt konfigurāciju",
+        "ha_restart": "Restartēt Home Assistant",
+        "ha_reload_title": "Pārlādēt konfigurāciju?",
+        "ha_reload_text": "Visa YAML konfigurācija, ko Home Assistant spēj pārlādēt (automatizācijas, skripti, ainas, veidnes, grupas…), tiek nolasīta no jauna, bez restartēšanas.",
+        "ha_restart_title": "Restartēt Home Assistant?",
+        "ha_restart_text": "Home Assistant apstājas un atkal startē: brīdi tas nav pieejams, un tā automatizācijas šajā laikā nedarbojas.",
+        "ha_checking": "Pārbauda konfigurāciju…",
+        "ha_valid": "Konfigurācija ir derīga.",
+        "ha_invalid": "Konfigurācija nav derīga: izlabojiet to pirms restartēšanas.",
+        "ha_restarting": "Home Assistant restartējas…",
         "confirm_install": "Instalēt visus atjauninājumus tagad?",
         "cancel": "Atcelt",
         "last_check": "Pēdējā pārbaude",

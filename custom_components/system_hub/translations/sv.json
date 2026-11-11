@@ -74,7 +74,11 @@
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importera från Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: tröskelvärden"
+          "system": "System: tröskelvärden",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Lägg till ett repository",
+          "git_sync_other": "Git Sync: Annat repository",
+          "git_sync_remove_repository": "Git Sync: Ta bort repositories"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: rött från"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignorerade enheter",
+          "exclude_entities": "Ignorerade entiteter"
+        },
+        "data_description": {
+          "exclude_devices": "Deras otillgängliga länkade entiteter och de misslyckade automatiseringar som hör till dem utelämnas från listor, räknare och status.",
+          "exclude_entities": "Entitets-id:n eller mönster med * och ?: matchande automatiseringar och entiteter utelämnas från listor, räknare och status"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Lägg till ett repository",
+        "data": {
+          "repo_path": "Sökväg till förrådet",
+          "remote": "Remote",
+          "branch": "Gren",
+          "ssh_key": "Privat SSH-nyckel",
+          "author_name": "Författarens namn",
+          "author_email": "Författarens e-post"
+        },
+        "data_description": {
+          "repo_path": "Mapp som innehåller .git-katalogen, vanligtvis /config.",
+          "remote": "Git-remote att pusha till, vanligtvis origin.",
+          "branch": "Målgren på remoten. Lämna tomt för att pusha den aktuella grenen.",
+          "ssh_key": "Privat nyckel som används för push. Skapa den med åtgärden generate_ssh_key och lägg sedan till den publika nyckeln som deploy key med skrivbehörighet.",
+          "author_name": "Valfritt, ersätter förrådets git user.name / user.email.",
+          "author_email": "Valfritt, ersätter förrådets git user.name / user.email."
+        }
+      },
+      "git_sync_other": {
+        "title": "Annat repository",
+        "data": {
+          "repo_id": "Repository"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Inställningar för förrådet",
+        "description": "Repository {repository}",
+        "data": {
+          "repo_path": "Sökväg till förrådet",
+          "remote": "Remote",
+          "branch": "Gren",
+          "ssh_key": "Privat SSH-nyckel",
+          "author_name": "Författarens namn",
+          "author_email": "Författarens e-post"
+        },
+        "data_description": {
+          "repo_path": "Mapp som innehåller .git-katalogen, vanligtvis /config.",
+          "remote": "Git-remote att pusha till, vanligtvis origin.",
+          "branch": "Målgren på remoten. Lämna tomt för att pusha den aktuella grenen.",
+          "ssh_key": "Privat nyckel som används för push. Skapa den med åtgärden generate_ssh_key och lägg sedan till den publika nyckeln som deploy key med skrivbehörighet.",
+          "author_name": "Valfritt, ersätter förrådets git user.name / user.email.",
+          "author_email": "Valfritt, ersätter förrådets git user.name / user.email."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repository {repository}",
+        "data": {
+          "ai_task_entity": "AI-uppgiftsentitet",
+          "commit_language": "Språk för commitmeddelanden",
+          "commit_interval": "Intervall för automatisk commit",
+          "status_interval": "Intervall för statusuppdatering",
+          "fetch_interval": "Kontrollintervall för remote",
+          "pull_before_push": "Pull före push",
+          "allow_sensitive": "Tillåt spårade känsliga filer",
+          "notify_service": "Aviseringsåtgärd",
+          "notify_image": "Bild-URL för avisering",
+          "export_enabled": "Daglig export av instrumentpaneler",
+          "export_time": "Exporttid",
+          "export_dir": "Exportmapp",
+          "export_format": "Exportformat",
+          "export_before_commit": "Exportera instrumentpaneler före varje commit",
+          "commit_before_update": "Commit före uppdateringar"
+        },
+        "data_description": {
+          "ai_task_entity": "Genererar ett Conventional Commits-meddelande utifrån diffen. Utan den används ett generiskt meddelande.",
+          "commit_interval": "Commit och push var N:e minut när det finns ändringar. 0 inaktiverar.",
+          "fetch_interval": "Gör fetch från remote var N:e minut för att se commits som pushats från annat håll (efter, divergerat). 0 stänger av det; en fetch körs ändå före varje push.",
+          "pull_before_push": "När remote har nya commits görs rebase på dem (git pull --rebase --autostash) före push. Vid en konflikt avbryts rebasen, inget pushas och en reparation förklarar vad som ska göras.",
+          "allow_sensitive": "Committa ändringar i känsliga filer som Git redan spårar (secrets.yaml, .storage, nycklar, databas, loggar). Nya känsliga filer avvisas alltid.",
+          "notify_service": "Till exempel notify.mobile_app_telefon. Lämna tomt för att inaktivera.",
+          "notify_image": "Absolut HTTPS-URL (krävs av iOS).",
+          "export_format": "JSON kopierar .storage-filerna som de är; YAML behåller bara instrumentpanelens konfiguration, som är lättare att läsa i diffar.",
+          "export_dir": "I konfigurationsmappen (en relativ sökväg börjar där) eller i en mapp från allowlist_external_dirs.",
+          "commit_before_update": "När en uppdatering installeras (Home Assistant, ett tillägg, en integration), committa och pusha konfigurationen först, så att det finns en commit att gå tillbaka till. En commit för uppdateringar som installeras tillsammans."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Ta bort repositories",
+        "description": "Deras entiteter, enhet, reparationer och sparade tillstånd tas bort; själva repositories lämnas orörda.",
+        "data": {
+          "git_sync_repositories": "Repositories att ta bort"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Välj batteriet.",
       "type_required": "Välj eller skriv typen.",
       "no_model": "Det här batteriets enhet har ingen modell: ange typen för själva batteriet.",
-      "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange."
+      "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange.",
+      "repository_exists": "Detta repository är redan konfigurerat."
     },
     "abort": {
-      "nothing_to_import": "Inget att importera från Battery Monitor.",
-      "use_panel": "System Hubs inställningar finns i dess panel: [öppna fliken Settings]({url})."
+      "nothing_to_import": "Inget att importera från Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Meddelande",
           "description": "Commitmeddelande. Genereras av AI-uppgiften om tomt."
+        },
+        "repository": {
+          "name": "Repository",
+          "description": "Sökväg (eller id) till repository. Utelämnad: commit och push, pull och export körs på alla repositories, övriga åtgärder på det första."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Exportera instrumentpaneler",
-      "description": "Kopierar Lovelace-instrumentpanelerna från .storage till exportmappen."
+      "description": "Kopierar Lovelace-instrumentpanelerna från .storage till exportmappen.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sökväg (eller id) till repository. Utelämnad: commit och push, pull och export körs på alla repositories, övriga åtgärder på det första."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Generera SSH-nyckel",
-      "description": "Skapar SSH-nyckelparet om det saknas och returnerar den publika nyckeln som ska läggas till som deploy key."
+      "description": "Skapar SSH-nyckelparet om det saknas och returnerar den publika nyckeln som ska läggas till som deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sökväg (eller id) till repository. Utelämnad: commit och push, pull och export körs på alla repositories, övriga åtgärder på det första."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Generera commitmeddelande",
-      "description": "Skriver med AI-uppgiften ett commitmeddelande för de aktuella ändringarna, utan att göra commit. Returnerar null när inget har ändrats."
+      "description": "Skriver med AI-uppgiften ett commitmeddelande för de aktuella ändringarna, utan att göra commit. Returnerar null när inget har ändrats.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sökväg (eller id) till repository. Utelämnad: commit och push, pull och export körs på alla repositories, övriga åtgärder på det första."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Hämta ändringar",
-      "description": "Returnerar de ändringar en commit skulle innehålla, fil för fil, så som kortets diff-vy visar dem."
+      "description": "Returnerar de ändringar en commit skulle innehålla, fil för fil, så som kortets diff-vy visar dem.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sökväg (eller id) till repository. Utelämnad: commit och push, pull och export körs på alla repositories, övriga åtgärder på det första."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Hämtar fjärrförrådet och tar in dess nya commits: snabbspolning, eller de lokala commits ombaserade ovanpå (bara med ett rent arbetsträd). En konflikt avbryter rebase."
+      "description": "Hämtar fjärrförrådet och tar in dess nya commits: snabbspolning, eller de lokala commits ombaserade ovanpå (bara med ett rent arbetsträd). En konflikt avbryter rebase.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Sökväg (eller id) till repository. Utelämnad: commit och push, pull och export körs på alla repositories, övriga åtgärder på det första."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Sök efter föräldralösa entiteter",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Finns inte i enhetsregistret: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Okänt repository {repository}. Konfigurerade repositories: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Allt är uppdaterat.",
         "progress": "{done} av {total} kontrollerade",
         "install_all": "Uppdatera allt",
+        "ha_reload": "Läs om konfigurationen",
+        "ha_restart": "Starta om Home Assistant",
+        "ha_reload_title": "Läsa om konfigurationen?",
+        "ha_reload_text": "All YAML-konfiguration som Home Assistant kan läsa om (automationer, skript, scener, mallar, grupper…) läses in igen, utan omstart.",
+        "ha_restart_title": "Starta om Home Assistant?",
+        "ha_restart_text": "Home Assistant stoppas och startar igen: det är otillgängligt en stund och dess automationer körs inte under tiden.",
+        "ha_checking": "Kontrollerar konfigurationen…",
+        "ha_valid": "Konfigurationen är giltig.",
+        "ha_invalid": "Konfigurationen är ogiltig: rätta den innan omstart.",
+        "ha_restarting": "Home Assistant startar om…",
         "confirm_install": "Installera alla uppdateringar nu?",
         "cancel": "Avbryt",
         "last_check": "Senaste kontroll",

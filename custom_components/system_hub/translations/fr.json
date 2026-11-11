@@ -74,7 +74,11 @@
           "batteries_types": "Batteries : types de pile",
           "batteries_import": "Batteries : importer depuis Battery Monitor",
           "orphans": "Orphans",
-          "system": "Système : seuils"
+          "system": "Système : seuils",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync : Ajouter un dépôt",
+          "git_sync_other": "Git Sync : Autre dépôt",
+          "git_sync_remove_repository": "Git Sync : Retirer des dépôts"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: rouge dès"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Appareils ignorés",
+          "exclude_entities": "Entités ignorées"
+        },
+        "data_description": {
+          "exclude_devices": "Leurs entités liées indisponibles et les automatisations en échec qui leur sont rattachées sont exclues des listes, des compteurs et du statut.",
+          "exclude_entities": "Identifiants d’entité, ou motifs avec * et ? : les automatisations et entités correspondantes sont exclues des listes, des compteurs et du statut"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Ajouter un dépôt",
+        "data": {
+          "repo_path": "Chemin du dépôt",
+          "remote": "Remote",
+          "branch": "Branche",
+          "ssh_key": "Clé SSH privée",
+          "author_name": "Nom de l'auteur",
+          "author_email": "E-mail de l'auteur"
+        },
+        "data_description": {
+          "repo_path": "Dossier contenant le répertoire .git, en général /config.",
+          "remote": "Remote Git vers lequel pousser, en général origin.",
+          "branch": "Branche cible sur le remote. Laisser vide pour pousser la branche courante.",
+          "ssh_key": "Clé privée utilisée pour le push. Utilise l'action generate_ssh_key pour la créer, puis ajoute la clé publique comme deploy key avec accès en écriture.",
+          "author_name": "Facultatif, remplace user.name / user.email du dépôt.",
+          "author_email": "Facultatif, remplace user.name / user.email du dépôt."
+        }
+      },
+      "git_sync_other": {
+        "title": "Autre dépôt",
+        "data": {
+          "repo_id": "Dépôt"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Paramètres du dépôt",
+        "description": "Dépôt {repository}",
+        "data": {
+          "repo_path": "Chemin du dépôt",
+          "remote": "Remote",
+          "branch": "Branche",
+          "ssh_key": "Clé SSH privée",
+          "author_name": "Nom de l'auteur",
+          "author_email": "E-mail de l'auteur"
+        },
+        "data_description": {
+          "repo_path": "Dossier contenant le répertoire .git, en général /config.",
+          "remote": "Remote Git vers lequel pousser, en général origin.",
+          "branch": "Branche cible sur le remote. Laisser vide pour pousser la branche courante.",
+          "ssh_key": "Clé privée utilisée pour le push. Utilise l'action generate_ssh_key pour la créer, puis ajoute la clé publique comme deploy key avec accès en écriture.",
+          "author_name": "Facultatif, remplace user.name / user.email du dépôt.",
+          "author_email": "Facultatif, remplace user.name / user.email du dépôt."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Dépôt {repository}",
+        "data": {
+          "ai_task_entity": "Entité AI task",
+          "commit_language": "Langue du message de commit",
+          "commit_interval": "Intervalle de commit automatique",
+          "status_interval": "Intervalle de rafraîchissement du statut",
+          "fetch_interval": "Intervalle de vérification du remote",
+          "pull_before_push": "Pull avant le push",
+          "allow_sensitive": "Autoriser les fichiers sensibles suivis",
+          "notify_service": "Action de notification",
+          "notify_image": "URL de l'image de notification",
+          "export_enabled": "Export quotidien des dashboards",
+          "export_time": "Heure de l'export",
+          "export_dir": "Dossier d'export",
+          "export_format": "Format d'export",
+          "export_before_commit": "Exporter les dashboards avant chaque commit",
+          "commit_before_update": "Commit avant les mises à jour"
+        },
+        "data_description": {
+          "ai_task_entity": "Génère un message Conventional Commits à partir du diff. Sans elle, un message générique est utilisé.",
+          "commit_interval": "Commit et push toutes les N minutes s'il y a des changements. 0 pour désactiver.",
+          "fetch_interval": "Fetch du remote toutes les N minutes pour voir les commits poussés d'ailleurs (en retard, divergé). 0 pour désactiver ; un fetch a quand même lieu avant chaque push.",
+          "pull_before_push": "Quand le remote a de nouveaux commits, rebase dessus (git pull --rebase --autostash) avant le push. En cas de conflit, le rebase est annulé, rien n'est poussé et une réparation explique quoi faire.",
+          "allow_sensitive": "Commiter les modifications des fichiers sensibles déjà suivis par Git (secrets.yaml, .storage, clés, base de données, logs). Les nouveaux fichiers sensibles sont toujours refusés.",
+          "notify_service": "Par exemple notify.mobile_app_telephone. Laisser vide pour désactiver.",
+          "notify_image": "URL HTTPS absolue (requise par iOS).",
+          "export_format": "JSON copie les fichiers .storage tels quels ; YAML ne garde que la configuration du dashboard, plus lisible dans les diffs.",
+          "export_dir": "Dans le dossier de configuration (un chemin relatif part de là) ou un dossier de allowlist_external_dirs.",
+          "commit_before_update": "Quand une mise à jour est installée (Home Assistant, un module complémentaire, une intégration), commiter et pousser d'abord la configuration, pour avoir un commit où revenir. Un seul commit pour des mises à jour installées ensemble."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Retirer des dépôts",
+        "description": "Leurs entités, appareil, réparations et état enregistré sont supprimés ; les dépôts eux-mêmes ne sont pas modifiés.",
+        "data": {
+          "git_sync_repositories": "Dépôts à retirer"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Choisissez la batterie.",
       "type_required": "Choisissez ou saisissez le type.",
       "no_model": "L'appareil de cette batterie n'a pas de modèle : réglez le type pour la batterie elle-même.",
-      "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange."
+      "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange.",
+      "repository_exists": "Ce dépôt est déjà configuré."
     },
     "abort": {
-      "nothing_to_import": "Rien à importer depuis Battery Monitor.",
-      "use_panel": "Les réglages de System Hub sont dans son panneau : [ouvrir l'onglet Settings]({url})."
+      "nothing_to_import": "Rien à importer depuis Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Message",
           "description": "Message de commit. Généré par l'AI task si vide."
+        },
+        "repository": {
+          "name": "Dépôt",
+          "description": "Chemin (ou id) du dépôt. Sans lui : commit et push, pull et export portent sur tous les dépôts, les autres actions sur le premier."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Exporter les dashboards",
-      "description": "Copie les dashboards Lovelace de .storage vers le dossier d'export."
+      "description": "Copie les dashboards Lovelace de .storage vers le dossier d'export.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "Chemin (ou id) du dépôt. Sans lui : commit et push, pull et export portent sur tous les dépôts, les autres actions sur le premier."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Générer la clé SSH",
-      "description": "Crée la paire de clés SSH si elle n'existe pas et renvoie la clé publique à ajouter comme deploy key."
+      "description": "Crée la paire de clés SSH si elle n'existe pas et renvoie la clé publique à ajouter comme deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "Chemin (ou id) du dépôt. Sans lui : commit et push, pull et export portent sur tous les dépôts, les autres actions sur le premier."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Générer le message de commit",
-      "description": "Rédige un message de commit pour les modifications en cours avec l'AI task, sans committer. Renvoie null s'il n'y a aucune modification."
+      "description": "Rédige un message de commit pour les modifications en cours avec l'AI task, sans committer. Renvoie null s'il n'y a aucune modification.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "Chemin (ou id) du dépôt. Sans lui : commit et push, pull et export portent sur tous les dépôts, les autres actions sur le premier."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Obtenir les modifications",
-      "description": "Renvoie les modifications qu'un commit inclurait, fichier par fichier, telles que la vue diff de la carte les affiche."
+      "description": "Renvoie les modifications qu'un commit inclurait, fichier par fichier, telles que la vue diff de la carte les affiche.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "Chemin (ou id) du dépôt. Sans lui : commit et push, pull et export portent sur tous les dépôts, les autres actions sur le premier."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Récupère le distant et intègre ses nouveaux commits : avance rapide, ou commits locaux rebasés par-dessus (arbre de travail propre uniquement). Un conflit annule le rebase."
+      "description": "Récupère le distant et intègre ses nouveaux commits : avance rapide, ou commits locaux rebasés par-dessus (arbre de travail propre uniquement). Un conflit annule le rebase.",
+      "fields": {
+        "repository": {
+          "name": "Dépôt",
+          "description": "Chemin (ou id) du dépôt. Sans lui : commit et push, pull et export portent sur tous les dépôts, les autres actions sur le premier."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Rechercher les entités orphelines",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Absent du registre des appareils : {devices}."
+    },
+    "unknown_repository": {
+      "message": "Dépôt inconnu {repository}. Dépôts configurés : {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Tout est à jour.",
         "progress": "{done} sur {total} vérifiés",
         "install_all": "Tout mettre à jour",
+        "ha_reload": "Recharger la configuration",
+        "ha_restart": "Redémarrer Home Assistant",
+        "ha_reload_title": "Recharger la configuration ?",
+        "ha_reload_text": "Toute la configuration YAML que Home Assistant sait recharger (automatisations, scripts, scènes, modèles, groupes…) est relue, sans redémarrage.",
+        "ha_restart_title": "Redémarrer Home Assistant ?",
+        "ha_restart_text": "Home Assistant s'arrête puis redémarre : il est indisponible un moment et ses automatisations ne tournent pas pendant ce temps.",
+        "ha_checking": "Vérification de la configuration…",
+        "ha_valid": "La configuration est valide.",
+        "ha_invalid": "La configuration n'est pas valide : corrigez-la avant de redémarrer.",
+        "ha_restarting": "Home Assistant redémarre…",
         "confirm_install": "Installer toutes les mises à jour maintenant ?",
         "cancel": "Annuler",
         "last_check": "Dernière vérification",

@@ -25,8 +25,8 @@ async def async_setup_entry(
         entities.append(MarketplaceCheckButton(data.marketplace, entry.entry_id, "check_updates"))
     if data.batteries is not None:
         entities.append(BatteriesNotifyButton(data.batteries, entry.entry_id, "notify_now"))
-    if data.git_sync is not None:
-        entities += [GitSyncButton(data.git_sync, entry.entry_id, description) for description in BUTTONS]
+    for git_sync in data.git_syncs:
+        entities += [GitSyncButton(git_sync, entry.entry_id, description) for description in BUTTONS]
     if data.orphans is not None:
         entities += orphans_entities.buttons(data.orphans, entry.entry_id)
     async_add_entities(entities)

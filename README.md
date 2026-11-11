@@ -31,7 +31,7 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 ## Features
 
-- **System**: CPU, memory, disks, network and temperatures from the System Monitor integration.
+- **System**: CPU, memory, disks, network and temperatures from the System Monitor integration, with **Restart Home Assistant** (once the configuration is checked) and **Reload configuration**, each confirmed first.
 - **Containers**: Home Assistant Core, the Supervisor and every add-on, monitored on their own — state, version, CPU and memory, with their history. Monitoring only: nothing is restarted.
 - **Marketplace**: server-side check of the Marketplace updates, at an interval you choose.
 - **Watchdog**: reloads the integrations whose entities are all unavailable, with ignored integrations, power cycles through a smart plug and a notification on each reload.
@@ -54,7 +54,7 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 ## Prerequisites
 
-- Home Assistant 2026.11 or newer
+- Home Assistant 2024.12 or newer. The **Marketplace** module needs Home Assistant 2026.11 or newer (the Marketplace came with it); the other modules work from 2024.12
 
 ## Installation
 
@@ -73,6 +73,8 @@ Or manually:
 3. Open **System Hub** and click **Install**
 4. Restart Home Assistant
 
+Before Home Assistant 2026.11, add it the same way as a custom repository of HACS (**HACS → ⋮ → Custom repositories**, Type: **Integration**).
+
 ### Manual
 
 Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`, then restart Home Assistant.
@@ -83,7 +85,7 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 
 **Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Containers module needs the Supervisor (Home Assistant OS or a Supervised installation), the Marketplace module Home Assistant's Marketplace.
 
-Everything else is set in the panel's **Settings** tab (**System Hub** in the sidebar): the modules turned on or off, the order of the tabs and every module's settings. The integration page has no **Configure**: the link of every **System Hub** device opens this tab.
+Everything else is set in the panel's **Settings** tab (**System Hub** in the sidebar): the modules turned on or off, the order of the tabs and every module's settings. **Configure** on the integration's page opens the same settings, as a menu; the link of every **System Hub** device opens this tab.
 
 ### Modules
 
@@ -123,6 +125,7 @@ Each module's settings, opened in place:
 | Batteries: Import from Battery Monitor | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import.png" alt="Settings tab, Batteries: Import from Battery Monitor" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-batteries-import-dark.png" alt="Settings tab, Batteries: Import from Battery Monitor, dark theme" width="300"> |
 | Git Sync: Repository settings | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository.png" alt="Settings tab, Git Sync: Repository settings" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-repository-dark.png" alt="Settings tab, Git Sync: Repository settings, dark theme" width="300"> |
 | Git Sync | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync.png" alt="Settings tab, Git Sync" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-git-sync-dark.png" alt="Settings tab, Git Sync, dark theme" width="300"> |
+| Automations | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-automations.png" alt="Settings tab, Automations" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-automations-dark.png" alt="Settings tab, Automations, dark theme" width="300"> |
 | Orphans | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-orphans.png" alt="Settings tab, Orphans" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/config-orphans-dark.png" alt="Settings tab, Orphans, dark theme" width="300"> |
 
 ### Diagnostics
@@ -984,8 +987,16 @@ A battery due for replacement blinks its icon (honours `prefers-reduced-motion`)
 
 ## Automations
 
-Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor cards](#automation-monitor-cards) do: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no settings and no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
+Shows in the panel what the [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) integration reports, as the [Automation Monitor cards](#automation-monitor-cards) do: the automations whose last run failed (error, failed step, failures in a row) and the unavailable entities used by automations, scripts and scenes. Automation Monitor is installed separately; its two sensors are found by the entity registry (renamed ones too). The module has no entities of its own. **Clear** and **Clear all** call `automation_monitor.reset` (a cleared failure is reported again at its next failure), **Refresh** calls `automation_monitor.rebuild_linked_entities`. Turned on without Automation Monitor, the tab says so, with a link to add it.
 
+Its settings (**Settings → Automations ⚙**, or ⚙ in the tab) leave devices and entities out of the tab, its counts and the Status tab, as the card's `exclude_devices` and `exclude_entities` options do:
+
+| Option | Default | Description |
+|---|---|---|
+| Ignored devices | none | Their unavailable linked entities and the failed automations attached to them (by the device Automation Monitor gives, else the entity registry's) are left out. |
+| Ignored entities | none | Failed automations and unavailable linked entities whose entity id matches: an entity id, or a pattern with `*` (any characters) and `?` (one character), e.g. `automation.test_*`; case-insensitive |
+
+While some failures are left out, **Clear all** clears only the failures listed, one by one.
 
 ### Automation Monitor cards
 
@@ -1032,9 +1043,26 @@ type: custom:automation-monitor-card
 
 ## Git Sync
 
-Commits and pushes the Home Assistant configuration to a Git remote (GitHub, Gitea…), with commit messages written by an AI task, and exports the dashboards. One repository.
+Commits and pushes the Home Assistant configuration to a Git remote (GitHub, Gitea…), with commit messages written by an AI task, and exports the dashboards. One repository or several, as the former Git Sync integration had one entry per repository.
 
 Turning the module on (in the setup or with its switch in the panel's **Settings** tab) asks for the repository first: it is checked with Git (work tree, remote, branch name, commit author) before it is saved. Change it later with **Settings → Git Sync ⚙ → Repository settings**, the options with **Settings → Git Sync ⚙**.
+
+#### Several repositories
+
+**Settings → Git Sync ⚙ → Add a repository** adds another one (an ESPHome folder, a `/share` folder…), checked the same way; **Another repository** sets one of them (its repository settings, then its options: schedule, export, notifications…, its own as an entry of the former integration had them), **Remove repositories** removes some. Each further repository has its own device, **System Hub Git Sync (folder)**, with the same entities named after its folder (`sensor.system_hub_git_sync_esphome_status`…), its own repairs and its own saved state; the first repository keeps the module's entities. Turned on next to the former Git Sync integration, the module takes over every one of its repositories: the configuration folder's first, the others as further repositories.
+
+In the panel, the **Git Sync** tab shows one repository at a time, with a chip per repository; the **Status** tab shows the one most in need of action. The [card](#git-sync-card) shows the repository of the sensor it is given (`entity`), the first one by default.
+
+Every action takes an optional `repository`: the path of a repository (or its id). Without it, `git_sync_commit_push`, `git_sync_pull` and `git_sync_export_dashboards` run on every repository, the other actions on the first one. The response keeps the first repository's result at its top, as with a single repository; with several, `results` also lists each repository's result with its path:
+
+```yaml
+action: system_hub.git_sync_commit_push
+data:
+  repository: /config/esphome  # optional
+response_variable: result
+# {"committed": true, "pushed": true, "message": "...",
+#  "results": [{"repository": "/config/esphome", "committed": true, "pushed": true, "message": "..."}]}
+```
 
 Prerequisites:
 
@@ -1103,7 +1131,7 @@ Prerequisites:
 
 | Entity | Description |
 |---|---|
-| `sensor.system_hub_git_sync_status` | `clean`, `dirty`, `ahead` (committed, push pending, or a branch never pushed), `behind` (the remote has commits that are not here: the next commit pulls them first), `diverged` (both sides have commits: nothing is pushed until it is resolved, see [Repairs](#repairs)) or `error` (last push failed; retried by the automatic commit). Attributes: `branch`, `upstream`, `remote_url` (without the user or token of an HTTPS remote), `ahead`, `behind`, `changed_count`, `changed_files` (first 50), `last_error`, `ai_task` |
+| `sensor.system_hub_git_sync_status` | `clean`, `dirty`, `ahead` (committed, push pending, or a branch never pushed), `behind` (the remote has commits that are not here: the next commit pulls them first), `diverged` (both sides have commits: nothing is pushed until it is resolved, see [Repairs](#repairs)) or `error` (last push failed; retried by the automatic commit). Attributes: `repository` (its path), `branch`, `upstream`, `remote_url` (without the user or token of an HTTPS remote), `ahead`, `behind`, `changed_count`, `changed_files` (first 50), `last_error`, `ai_task` |
 | `sensor.system_hub_git_sync_changed_files` | Number of changed files |
 | `sensor.system_hub_git_sync_last_commit` | Time of the HEAD commit. Attributes: `message`, `sha`, `short_sha` |
 | `sensor.system_hub_git_sync_last_push` | Time of the last push made by the module. Attribute: `message` |
@@ -1381,7 +1409,7 @@ A module turned on for the first time takes over the settings of the integration
 | `battery_monitor.notify` / `.set_stock` / `.export` | `system_hub.batteries_notify` / `.batteries_set_stock` / `.batteries_export` |
 | `battery_monitor_low` / `_replaced` events | `system_hub_battery_low` / `system_hub_battery_replaced` |
 | `sensor.battery_monitor_*`, `button.battery_monitor_notify_now` | `sensor.system_hub_batteries_*`, `button.system_hub_batteries_notify_now` |
-| `git_sync.commit_push` / `.pull` / `.generate_message` / `.get_diff` / `.export_dashboards` / `.generate_ssh_key` | `system_hub.git_sync_commit_push` / `.git_sync_pull` / … (no `config_entry_id`: one repository; responses without the `results` list) |
+| `git_sync.commit_push` / `.pull` / `.generate_message` / `.get_diff` / `.export_dashboards` / `.generate_ssh_key` | `system_hub.git_sync_commit_push` / `.git_sync_pull` / … (`repository`, a path or id, instead of `config_entry_id`; the first repository's result at the top of the response, and `results` with several repositories) |
 | `git_sync_committed` / `git_sync_exported` events | `system_hub_git_committed` / `system_hub_dashboards_exported` |
 | `sensor.git_sync_<repo>_*`, `button.git_sync_<repo>_*` | `sensor.system_hub_git_sync_*`, `button.system_hub_git_sync_*` |
 | `orphan_entities.scan` / `.remove` / `.remove_devices` / `.ignore` | `system_hub.orphans_scan` / `.orphans_remove` / `.orphans_remove_devices` / `.orphans_ignore` |

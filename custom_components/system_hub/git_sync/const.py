@@ -106,7 +106,7 @@ SENSITIVE_FOLDERS: Final = (".storage", ".ssh")
 # What .gitignore must exclude: (a path to test with `git check-ignore`, the line suggested when it is not).
 GITIGNORE_REQUIRED: Final = (("secrets.yaml", "secrets.yaml"), (".storage/core.config", ".storage/"))
 
-# Repairs issues, suffixed with the entry ID
+# Repairs issues, suffixed with the entry ID (and the id of a further repository)
 ISSUE_PUSH_BLOCKED: Final = "git_sync_push_blocked"
 ISSUE_GITIGNORE: Final = "git_sync_gitignore_missing"
 
@@ -118,7 +118,13 @@ SERVICE_GENERATE_MESSAGE: Final = "git_sync_generate_message"
 SERVICE_GET_DIFF: Final = "git_sync_get_diff"
 SERVICE_PULL: Final = "git_sync_pull"
 ATTR_MESSAGE: Final = "message"
-ATTR_CONFIG_ENTRY_ID: Final = "config_entry_id"
+# The repository an action runs on: its path, or its id (any repository when left out, see services.py).
+ATTR_REPOSITORY: Final = "repository"
+
+# Further repositories (options["git_sync_repositories"]): each one the settings of a repository, with a stable id
+# that names its device, entities, store and repairs. The first repository is options["git_sync"], without an id.
+CONF_REPOSITORIES: Final = "git_sync_repositories"
+CONF_REPO_ID: Final = "repo_id"
 
 # Events
 EVENT_COMMITTED: Final = f"{DOMAIN}_git_committed"

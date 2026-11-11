@@ -74,7 +74,11 @@
           "batteries_types": "Baterije: vrste baterij",
           "batteries_import": "Baterije: uvoz iz Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistem: pragovi"
+          "system": "Sistem: pragovi",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Dodaj repozitorij",
+          "git_sync_other": "Git Sync: Drug repozitorij",
+          "git_sync_remove_repository": "Git Sync: Odstrani repozitorije"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: rdeče od"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Prezrte naprave",
+          "exclude_entities": "Prezrte entitete"
+        },
+        "data_description": {
+          "exclude_devices": "Njihove nedosegljive povezane entitete in z njimi povezane neuspešne avtomatizacije so izpuščene iz seznamov, števcev in stanja.",
+          "exclude_entities": "ID-ji entitet ali vzorci z * in ?: ustrezne avtomatizacije in entitete so izpuščene iz seznamov, števcev in stanja"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Dodaj repozitorij",
+        "data": {
+          "repo_path": "Pot do repozitorija",
+          "remote": "Remote",
+          "branch": "Veja",
+          "ssh_key": "Zasebni ključ SSH",
+          "author_name": "Ime avtorja",
+          "author_email": "E-pošta avtorja"
+        },
+        "data_description": {
+          "repo_path": "Mapa, ki vsebuje imenik .git, običajno /config.",
+          "remote": "Git remote, na katerega se izvede push, običajno origin.",
+          "branch": "Ciljna veja na remote. Pustite prazno, da se pošlje trenutna veja.",
+          "ssh_key": "Zasebni ključ za push. Ustvarite ga z dejanjem generate_ssh_key, nato dodajte javni ključ kot deploy key s pravico pisanja.",
+          "author_name": "Neobvezno, nadomesti git user.name / user.email repozitorija.",
+          "author_email": "Neobvezno, nadomesti git user.name / user.email repozitorija."
+        }
+      },
+      "git_sync_other": {
+        "title": "Drug repozitorij",
+        "data": {
+          "repo_id": "Repozitorij"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Nastavitve repozitorija",
+        "description": "Repozitorij {repository}",
+        "data": {
+          "repo_path": "Pot do repozitorija",
+          "remote": "Remote",
+          "branch": "Veja",
+          "ssh_key": "Zasebni ključ SSH",
+          "author_name": "Ime avtorja",
+          "author_email": "E-pošta avtorja"
+        },
+        "data_description": {
+          "repo_path": "Mapa, ki vsebuje imenik .git, običajno /config.",
+          "remote": "Git remote, na katerega se izvede push, običajno origin.",
+          "branch": "Ciljna veja na remote. Pustite prazno, da se pošlje trenutna veja.",
+          "ssh_key": "Zasebni ključ za push. Ustvarite ga z dejanjem generate_ssh_key, nato dodajte javni ključ kot deploy key s pravico pisanja.",
+          "author_name": "Neobvezno, nadomesti git user.name / user.email repozitorija.",
+          "author_email": "Neobvezno, nadomesti git user.name / user.email repozitorija."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repozitorij {repository}",
+        "data": {
+          "ai_task_entity": "Entiteta opravila AI",
+          "commit_language": "Jezik sporočil commitov",
+          "commit_interval": "Interval samodejnega commita",
+          "status_interval": "Interval osvežitve stanja",
+          "fetch_interval": "Interval preverjanja remote",
+          "pull_before_push": "Pull pred push",
+          "allow_sensitive": "Dovoli sledene občutljive datoteke",
+          "notify_service": "Dejanje obvestila",
+          "notify_image": "URL slike obvestila",
+          "export_enabled": "Dnevni izvoz nadzornih plošč",
+          "export_time": "Čas izvoza",
+          "export_dir": "Mapa za izvoz",
+          "export_format": "Oblika izvoza",
+          "export_before_commit": "Izvozi nadzorne plošče pred vsakim commitom",
+          "commit_before_update": "Commit pred posodobitvami"
+        },
+        "data_description": {
+          "ai_task_entity": "Iz diffa ustvari sporočilo Conventional Commits. Brez nje se uporabi splošno sporočilo.",
+          "commit_interval": "Commit in push vsakih N minut, ko so spremembe. 0 onemogoči.",
+          "fetch_interval": "Fetch iz remote vsakih N minut, da so vidni commiti, poslani od drugod (zaostaja, razhaja se). 0 ga izklopi; pred vsakim push se fetch vseeno izvede.",
+          "pull_before_push": "Ko ima remote nove commite, se pred push nanje izvede rebase (git pull --rebase --autostash). Ob konfliktu se rebase prekine, nič se ne pošlje, popravilo pa pojasni, kaj storiti.",
+          "allow_sensitive": "Commit sprememb občutljivih datotek, ki jih Git že sledi (secrets.yaml, .storage, ključi, zbirka podatkov, dnevniki). Nove občutljive datoteke so vedno zavrnjene.",
+          "notify_service": "Na primer notify.mobile_app_telefon. Pustite prazno za onemogočanje.",
+          "notify_image": "Absolutni URL HTTPS (zahteva ga iOS).",
+          "export_format": "JSON kopira datoteke .storage nespremenjene; YAML ohrani le konfiguracijo nadzorne plošče, ki je v diffih lažje berljiva.",
+          "export_dir": "V mapi konfiguracije (relativna pot se začne tam) ali v mapi iz allowlist_external_dirs.",
+          "commit_before_update": "Ko se namesti posodobitev (Home Assistant, dodatek, integracija), najprej naredi commit in push konfiguracije, da obstaja commit, h kateremu se lahko vrnete. En commit za posodobitve, nameščene skupaj."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Odstrani repozitorije",
+        "description": "Njihove entitete, naprava, popravila in shranjeno stanje so odstranjeni; sami repozitoriji ostanejo nespremenjeni.",
+        "data": {
+          "git_sync_repositories": "Repozitoriji za odstranitev"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Izberite baterijo.",
       "type_required": "Izberite ali vpišite vrsto.",
       "no_model": "Naprava te baterije nima modela: nastavite vrsto za samo baterijo.",
-      "critical_below_warning": "Rdeči prag mora biti nad oranžnim."
+      "critical_below_warning": "Rdeči prag mora biti nad oranžnim.",
+      "repository_exists": "Ta repozitorij je že nastavljen."
     },
     "abort": {
-      "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz.",
-      "use_panel": "Nastavitve System Hub so na njegovi plošči: [odpri zavihek Settings]({url})."
+      "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Sporočilo",
           "description": "Sporočilo commita. Če je prazno, ga ustvari opravilo AI."
+        },
+        "repository": {
+          "name": "Repozitorij",
+          "description": "Pot (ali id) repozitorija. Brez nje: commit in push, pull in izvoz tečejo na vseh repozitorijih, ostala dejanja na prvem."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Izvozi nadzorne plošče",
-      "description": "Kopira nadzorne plošče Lovelace iz .storage v mapo za izvoz."
+      "description": "Kopira nadzorne plošče Lovelace iz .storage v mapo za izvoz.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorij",
+          "description": "Pot (ali id) repozitorija. Brez nje: commit in push, pull in izvoz tečejo na vseh repozitorijih, ostala dejanja na prvem."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Ustvari ključ SSH",
-      "description": "Ustvari par ključev SSH, če manjka, in vrne javni ključ, ki ga dodate kot deploy key."
+      "description": "Ustvari par ključev SSH, če manjka, in vrne javni ključ, ki ga dodate kot deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorij",
+          "description": "Pot (ali id) repozitorija. Brez nje: commit in push, pull in izvoz tečejo na vseh repozitorijih, ostala dejanja na prvem."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Ustvari sporočilo commita",
-      "description": "Z opravilom AI napiše sporočilo commita za trenutne spremembe, brez commita. Vrne null, če se ni nič spremenilo."
+      "description": "Z opravilom AI napiše sporočilo commita za trenutne spremembe, brez commita. Vrne null, če se ni nič spremenilo.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorij",
+          "description": "Pot (ali id) repozitorija. Brez nje: commit in push, pull in izvoz tečejo na vseh repozitorijih, ostala dejanja na prvem."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Pridobi spremembe",
-      "description": "Vrne spremembe, ki bi jih commit vseboval, datoteko po datoteko, kot jih prikazuje pogled razlik kartice."
+      "description": "Vrne spremembe, ki bi jih commit vseboval, datoteko po datoteko, kot jih prikazuje pogled razlik kartice.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorij",
+          "description": "Pot (ali id) repozitorija. Brez nje: commit in push, pull in izvoz tečejo na vseh repozitorijih, ostala dejanja na prvem."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Pridobi oddaljeni repozitorij in prevzame njegove nove commite: previjanje naprej ali lokalni commiti, prestavljeni na vrh (le pri čistem delovnem drevesu). Spor prestavljanje prekine."
+      "description": "Pridobi oddaljeni repozitorij in prevzame njegove nove commite: previjanje naprej ali lokalni commiti, prestavljeni na vrh (le pri čistem delovnem drevesu). Spor prestavljanje prekine.",
+      "fields": {
+        "repository": {
+          "name": "Repozitorij",
+          "description": "Pot (ali id) repozitorija. Brez nje: commit in push, pull in izvoz tečejo na vseh repozitorijih, ostala dejanja na prvem."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Poišči osirotele entitete",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Ni v registru naprav: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Neznan repozitorij {repository}. Nastavljeni repozitoriji: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Vse je posodobljeno.",
         "progress": "Preverjeno {done} od {total}",
         "install_all": "Posodobi vse",
+        "ha_reload": "Znova naloži konfiguracijo",
+        "ha_restart": "Znova zaženi Home Assistant",
+        "ha_reload_title": "Znova naložiti konfiguracijo?",
+        "ha_reload_text": "Vsa konfiguracija YAML, ki jo Home Assistant zna znova naložiti (avtomatizacije, skripte, scene, predloge, skupine…), se prebere znova, brez ponovnega zagona.",
+        "ha_restart_title": "Znova zagnati Home Assistant?",
+        "ha_restart_text": "Home Assistant se ustavi in znova zažene: za trenutek ni na voljo, njegove avtomatizacije pa medtem ne tečejo.",
+        "ha_checking": "Preverjanje konfiguracije…",
+        "ha_valid": "Konfiguracija je veljavna.",
+        "ha_invalid": "Konfiguracija ni veljavna: popravite jo pred ponovnim zagonom.",
+        "ha_restarting": "Home Assistant se znova zaganja…",
         "confirm_install": "Želite zdaj namestiti vse posodobitve?",
         "cancel": "Prekliči",
         "last_check": "Zadnje preverjanje",

@@ -86,6 +86,8 @@ async def async_get_config_entry_diagnostics(hass: HomeAssistant, entry: SystemH
         }
     if (git := entry.runtime_data.git_sync) is not None:
         data["git_sync"] = _git_sync(git)
+        if further := entry.runtime_data.git_syncs[1:]:
+            data["git_sync_repositories"] = {c.repo_id: _git_sync(c) for c in further}
     if (watchdog := entry.runtime_data.watchdog) is not None:
         data |= _watchdog(watchdog)
     if (refresher := entry.runtime_data.marketplace) is not None:

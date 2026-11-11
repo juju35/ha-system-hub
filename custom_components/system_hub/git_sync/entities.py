@@ -15,13 +15,19 @@ from homeassistant.components.sensor import (
     SensorStateClass,
 )
 from homeassistant.const import EntityCategory
+from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.util import dt as dt_util
 
-from ..const import MODULE_GIT_SYNC
-from ..entity import SystemHubEntity
+from ..const import DOMAIN, MODULE_GIT_SYNC
+from ..entity import DEVICE_NAMES, SystemHubEntity, unique_id
 from .const import STATUSES
 from .coordinator import GitSyncCoordinator, GitSyncData
 from .git import truncate_files
+
+
+def device_key(entry_id: str, repo_id: str = "") -> str:
+    """The identifier of a repository's device: the module's device for the first one."""
+    return f"{entry_id}_{MODULE_GIT_SYNC}" + (f"_{repo_id}" if repo_id else "")
 
 
 class GitSyncEntity(SystemHubEntity):
@@ -30,6 +36,17 @@ class GitSyncEntity(SystemHubEntity):
     def __init__(self, coordinator: GitSyncCoordinator, entry_id: str, key: str) -> None:
         super().__init__(coordinator, entry_id, MODULE_GIT_SYNC, key)
         self.coordinator = coordinator
+        if repo_id := coordinator.repo_id:
+            # A further repository: its own device ("System Hub Git Sync (folder)") and unique ids, the same
+            # translation keys as the first one's entities.
+            self._attr_unique_id = unique_id(entry_id, f"{MODULE_GIT_SYNC}_{repo_id}", key)
+            self._attr_device_info = DeviceInfo(
+                identifiers={(DOMAIN, device_key(entry_id, repo_id))},
+                name=f"{DEVICE_NAMES[MODULE_GIT_SYNC]} ({coordinator.title})",
+                manufacturer=self._attr_device_info["manufacturer"],
+                entry_type=self._attr_device_info["entry_type"],
+                configuration_url=self._attr_device_info["configuration_url"],
+            )
 
     @property
     def available(self) -> bool:
@@ -38,6 +55,7 @@ class GitSyncEntity(SystemHubEntity):
 
 def _status_attrs(data: GitSyncData) -> dict[str, Any]:
     return {
+        "repository": data.repository,
         "branch": data.git.branch,
         "upstream": data.git.upstream,
         "remote_url": data.remote_url,

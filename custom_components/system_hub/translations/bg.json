@@ -74,7 +74,11 @@
           "batteries_types": "Батерии: типове батерии",
           "batteries_import": "Батерии: импорт от Battery Monitor",
           "orphans": "Orphans",
-          "system": "Система: прагове"
+          "system": "Система: прагове",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Добавяне на хранилище",
+          "git_sync_other": "Git Sync: Друго хранилище",
+          "git_sync_remove_repository": "Git Sync: Премахване на хранилища"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: червено от"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Игнорирани устройства",
+          "exclude_entities": "Игнорирани обекти"
+        },
+        "data_description": {
+          "exclude_devices": "Техните недостъпни свързани обекти и неуспешните автоматизации, свързани с тях, се изключват от списъците, броячите и състоянието.",
+          "exclude_entities": "ID на обекти или шаблони с * и ?: съответстващите автоматизации и обекти се изключват от списъците, броячите и състоянието"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Добавяне на хранилище",
+        "data": {
+          "repo_path": "Път до хранилището",
+          "remote": "Remote",
+          "branch": "Клон",
+          "ssh_key": "Частен SSH ключ",
+          "author_name": "Име на автора",
+          "author_email": "Имейл на автора"
+        },
+        "data_description": {
+          "repo_path": "Папка, съдържаща директорията .git, обикновено /config.",
+          "remote": "Git remote, към който се прави push, обикновено origin.",
+          "branch": "Целеви клон в remote. Оставете празно, за да се изпрати текущият клон.",
+          "ssh_key": "Частен ключ, използван за push. Създайте го с действието generate_ssh_key, след това добавете публичния ключ като deploy key с право на запис.",
+          "author_name": "По избор, заменя git user.name / user.email на хранилището.",
+          "author_email": "По избор, заменя git user.name / user.email на хранилището."
+        }
+      },
+      "git_sync_other": {
+        "title": "Друго хранилище",
+        "data": {
+          "repo_id": "Хранилище"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Настройки на хранилището",
+        "description": "Хранилище {repository}",
+        "data": {
+          "repo_path": "Път до хранилището",
+          "remote": "Remote",
+          "branch": "Клон",
+          "ssh_key": "Частен SSH ключ",
+          "author_name": "Име на автора",
+          "author_email": "Имейл на автора"
+        },
+        "data_description": {
+          "repo_path": "Папка, съдържаща директорията .git, обикновено /config.",
+          "remote": "Git remote, към който се прави push, обикновено origin.",
+          "branch": "Целеви клон в remote. Оставете празно, за да се изпрати текущият клон.",
+          "ssh_key": "Частен ключ, използван за push. Създайте го с действието generate_ssh_key, след това добавете публичния ключ като deploy key с право на запис.",
+          "author_name": "По избор, заменя git user.name / user.email на хранилището.",
+          "author_email": "По избор, заменя git user.name / user.email на хранилището."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Хранилище {repository}",
+        "data": {
+          "ai_task_entity": "Обект за AI задача",
+          "commit_language": "Език на commit съобщенията",
+          "commit_interval": "Интервал на автоматичния commit",
+          "status_interval": "Интервал на опресняване на състоянието",
+          "fetch_interval": "Интервал на проверка на remote",
+          "pull_before_push": "Pull преди push",
+          "allow_sensitive": "Разрешаване на следени чувствителни файлове",
+          "notify_service": "Действие за известие",
+          "notify_image": "URL на изображение за известие",
+          "export_enabled": "Ежедневен експорт на таблата",
+          "export_time": "Час на експорта",
+          "export_dir": "Папка за експорт",
+          "export_format": "Формат на експорта",
+          "export_before_commit": "Експортиране на таблата преди всеки commit",
+          "commit_before_update": "Commit преди обновления"
+        },
+        "data_description": {
+          "ai_task_entity": "Генерира съобщение във формат Conventional Commits от diff-а. Без него се използва общо съобщение.",
+          "commit_interval": "Commit и push на всеки N минути, когато има промени. 0 го изключва.",
+          "fetch_interval": "Fetch от remote на всеки N минути, за да се виждат commit-ите, изпратени от другаде (изоставане, разклоняване). 0 го изключва; преди всеки push все пак се прави fetch.",
+          "pull_before_push": "Когато remote има нови commit-и, преди push се прави rebase върху тях (git pull --rebase --autostash). При конфликт rebase се прекратява, нищо не се изпраща и поправка обяснява какво да се направи.",
+          "allow_sensitive": "Commit на промените в чувствителни файлове, които Git вече следи (secrets.yaml, .storage, ключове, база данни, журнали). Новите чувствителни файлове винаги се отказват.",
+          "notify_service": "Например notify.mobile_app_phone. Оставете празно, за да изключите.",
+          "notify_image": "Абсолютен HTTPS URL (изисква се от iOS).",
+          "export_format": "JSON копира файловете от .storage без промяна; YAML запазва само конфигурацията на таблото, по-лесна за четене в diff-ове.",
+          "export_dir": "В папката с конфигурацията (относителен път започва оттам) или в папка от allowlist_external_dirs.",
+          "commit_before_update": "Когато се инсталира обновление (Home Assistant, добавка, интеграция), първо се прави commit и push на конфигурацията, за да има commit, към който да се върнете. Един commit за обновления, инсталирани заедно."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Премахване на хранилища",
+        "description": "Техните обекти, устройство, поправки и запазено състояние се премахват; самите хранилища остават непроменени.",
+        "data": {
+          "git_sync_repositories": "Хранилища за премахване"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Изберете батерията.",
       "type_required": "Изберете или въведете типа.",
       "no_model": "Устройството на тази батерия няма модел: задайте типа за самата батерия.",
-      "critical_below_warning": "Червеният праг трябва да е над оранжевия."
+      "critical_below_warning": "Червеният праг трябва да е над оранжевия.",
+      "repository_exists": "Това хранилище вече е настроено."
     },
     "abort": {
-      "nothing_to_import": "Няма какво да се импортира от Battery Monitor.",
-      "use_panel": "Настройките на System Hub са в неговия панел: [отваряне на раздела Settings]({url})."
+      "nothing_to_import": "Няма какво да се импортира от Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Съобщение",
           "description": "Commit съобщение. Генерира се от AI задачата, ако е празно."
+        },
+        "repository": {
+          "name": "Хранилище",
+          "description": "Път (или id) на хранилището. Без него: commit и push, pull и експортът се изпълняват за всички хранилища, другите действия за първото."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Експортиране на таблата",
-      "description": "Копира таблата на Lovelace от .storage в папката за експорт."
+      "description": "Копира таблата на Lovelace от .storage в папката за експорт.",
+      "fields": {
+        "repository": {
+          "name": "Хранилище",
+          "description": "Път (или id) на хранилището. Без него: commit и push, pull и експортът се изпълняват за всички хранилища, другите действия за първото."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Генериране на SSH ключ",
-      "description": "Създава двойката SSH ключове, ако липсва, и връща публичния ключ за добавяне като deploy key."
+      "description": "Създава двойката SSH ключове, ако липсва, и връща публичния ключ за добавяне като deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Хранилище",
+          "description": "Път (или id) на хранилището. Без него: commit и push, pull и експортът се изпълняват за всички хранилища, другите действия за първото."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Генериране на commit съобщение",
-      "description": "Пише с AI задачата commit съобщение за текущите промени, без да прави commit. Връща null, ако няма промени."
+      "description": "Пише с AI задачата commit съобщение за текущите промени, без да прави commit. Връща null, ако няма промени.",
+      "fields": {
+        "repository": {
+          "name": "Хранилище",
+          "description": "Път (или id) на хранилището. Без него: commit и push, pull и експортът се изпълняват за всички хранилища, другите действия за първото."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Вземане на промените",
-      "description": "Връща промените, които един commit би включил, файл по файл, както ги показва изгледът на разликите в картата."
+      "description": "Връща промените, които един commit би включил, файл по файл, както ги показва изгледът на разликите в картата.",
+      "fields": {
+        "repository": {
+          "name": "Хранилище",
+          "description": "Път (или id) на хранилището. Без него: commit и push, pull и експортът се изпълняват за всички хранилища, другите действия за първото."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Изтегля отдалеченото хранилище и прибавя новите му commit-и: превъртане напред или локалните commit-и, пренесени върху тях (само при чисто работно дърво). Конфликт прекратява пренасянето."
+      "description": "Изтегля отдалеченото хранилище и прибавя новите му commit-и: превъртане напред или локалните commit-и, пренесени върху тях (само при чисто работно дърво). Конфликт прекратява пренасянето.",
+      "fields": {
+        "repository": {
+          "name": "Хранилище",
+          "description": "Път (или id) на хранилището. Без него: commit и push, pull и експортът се изпълняват за всички хранилища, другите действия за първото."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Сканиране за осиротели обекти",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Не е в регистъра на устройствата: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Неизвестно хранилище {repository}. Настроени хранилища: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Всичко е актуално.",
         "progress": "Проверени {done} от {total}",
         "install_all": "Актуализирай всичко",
+        "ha_reload": "Презареждане на конфигурацията",
+        "ha_restart": "Рестартиране на Home Assistant",
+        "ha_reload_title": "Презареждане на конфигурацията?",
+        "ha_reload_text": "Цялата YAML конфигурация, която Home Assistant може да презареди (автоматизации, скриптове, сцени, шаблони, групи…), се прочита отново, без рестартиране.",
+        "ha_restart_title": "Рестартиране на Home Assistant?",
+        "ha_restart_text": "Home Assistant спира и стартира отново: за момент е недостъпен и автоматизациите му не работят междувременно.",
+        "ha_checking": "Проверка на конфигурацията…",
+        "ha_valid": "Конфигурацията е валидна.",
+        "ha_invalid": "Конфигурацията не е валидна: коригирайте я преди рестартиране.",
+        "ha_restarting": "Home Assistant се рестартира…",
         "confirm_install": "Да се инсталират ли всички актуализации сега?",
         "cancel": "Отказ",
         "last_check": "Последна проверка",

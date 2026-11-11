@@ -74,7 +74,11 @@
           "batteries_types": "Batterijen: batterijtypen",
           "batteries_import": "Batterijen: importeren uit Battery Monitor",
           "orphans": "Orphans",
-          "system": "Systeem: drempels"
+          "system": "Systeem: drempels",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Repository toevoegen",
+          "git_sync_other": "Git Sync: Andere repository",
+          "git_sync_remove_repository": "Git Sync: Repository's verwijderen"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: rood vanaf"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Genegeerde apparaten",
+          "exclude_entities": "Genegeerde entiteiten"
+        },
+        "data_description": {
+          "exclude_devices": "Hun niet-beschikbare gekoppelde entiteiten en de mislukte automatiseringen die erbij horen worden weggelaten uit de lijsten, tellers en status.",
+          "exclude_entities": "Entiteit-ID’s, of patronen met * en ?: overeenkomende automatiseringen en entiteiten worden weggelaten uit de lijsten, tellers en status"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Repository toevoegen",
+        "data": {
+          "repo_path": "Pad van de repository",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "Persoonlijke SSH-sleutel",
+          "author_name": "Naam van de auteur",
+          "author_email": "E-mail van de auteur"
+        },
+        "data_description": {
+          "repo_path": "Map met de .git-directory, meestal /config.",
+          "remote": "Git-remote om naar te pushen, meestal origin.",
+          "branch": "Doelbranch op de remote. Leeg laten om de huidige branch te pushen.",
+          "ssh_key": "Persoonlijke sleutel voor de push. Maak hem aan met de actie generate_ssh_key en voeg de publieke sleutel toe als deploy key met schrijftoegang.",
+          "author_name": "Optioneel, vervangt user.name / user.email van de repository.",
+          "author_email": "Optioneel, vervangt user.name / user.email van de repository."
+        }
+      },
+      "git_sync_other": {
+        "title": "Andere repository",
+        "data": {
+          "repo_id": "Repository"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Instellingen van de repository",
+        "description": "Repository {repository}",
+        "data": {
+          "repo_path": "Pad van de repository",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "Persoonlijke SSH-sleutel",
+          "author_name": "Naam van de auteur",
+          "author_email": "E-mail van de auteur"
+        },
+        "data_description": {
+          "repo_path": "Map met de .git-directory, meestal /config.",
+          "remote": "Git-remote om naar te pushen, meestal origin.",
+          "branch": "Doelbranch op de remote. Leeg laten om de huidige branch te pushen.",
+          "ssh_key": "Persoonlijke sleutel voor de push. Maak hem aan met de actie generate_ssh_key en voeg de publieke sleutel toe als deploy key met schrijftoegang.",
+          "author_name": "Optioneel, vervangt user.name / user.email van de repository.",
+          "author_email": "Optioneel, vervangt user.name / user.email van de repository."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repository {repository}",
+        "data": {
+          "ai_task_entity": "AI-taakentiteit",
+          "commit_language": "Taal van het commitbericht",
+          "commit_interval": "Interval van de automatische commit",
+          "status_interval": "Vernieuwingsinterval van de status",
+          "fetch_interval": "Controle-interval van de remote",
+          "pull_before_push": "Pull vóór de push",
+          "allow_sensitive": "Gevolgde gevoelige bestanden toestaan",
+          "notify_service": "Meldingsactie",
+          "notify_image": "URL van de meldingsafbeelding",
+          "export_enabled": "Dagelijkse export van de dashboards",
+          "export_time": "Tijdstip van de export",
+          "export_dir": "Exportmap",
+          "export_format": "Exportformaat",
+          "export_before_commit": "Dashboards exporteren vóór elke commit",
+          "commit_before_update": "Commit vóór updates"
+        },
+        "data_description": {
+          "ai_task_entity": "Genereert een Conventional Commits-bericht uit de diff. Zonder deze entiteit wordt een algemeen bericht gebruikt.",
+          "commit_interval": "Commit en push elke N minuten als er wijzigingen zijn. 0 schakelt dit uit.",
+          "fetch_interval": "Elke N minuten een fetch van de remote om commits te zien die elders zijn gepusht (achter, uiteengelopen). 0 schakelt het uit; vóór elke push wordt toch een fetch gedaan.",
+          "pull_before_push": "Als de remote nieuwe commits heeft, wordt vóór de push daarop gerebased (git pull --rebase --autostash). Bij een conflict wordt de rebase afgebroken, wordt niets gepusht en legt een reparatie uit wat te doen.",
+          "allow_sensitive": "Wijzigingen committen van gevoelige bestanden die Git al volgt (secrets.yaml, .storage, sleutels, database, logs). Nieuwe gevoelige bestanden worden altijd geweigerd.",
+          "notify_service": "Bijvoorbeeld notify.mobile_app_telefoon. Leeg laten om uit te schakelen.",
+          "notify_image": "Absolute HTTPS-URL (vereist door iOS).",
+          "export_format": "JSON kopieert de .storage-bestanden ongewijzigd; YAML bewaart alleen de dashboardconfiguratie, beter leesbaar in diffs.",
+          "export_dir": "In de configuratiemap (een relatief pad begint daar) of in een map van allowlist_external_dirs.",
+          "commit_before_update": "Wanneer een update wordt geïnstalleerd (Home Assistant, een add-on, een integratie), eerst de configuratie committen en pushen, zodat er een commit is om naar terug te gaan. Eén commit voor updates die samen worden geïnstalleerd."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Repository's verwijderen",
+        "description": "Hun entiteiten, apparaat, reparaties en opgeslagen status worden verwijderd; de repository's zelf blijven ongewijzigd.",
+        "data": {
+          "git_sync_repositories": "Te verwijderen repository's"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Kies de batterij.",
       "type_required": "Kies of typ het type.",
       "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf.",
-      "critical_below_warning": "De rode drempel moet boven de oranje liggen."
+      "critical_below_warning": "De rode drempel moet boven de oranje liggen.",
+      "repository_exists": "Deze repository is al ingesteld."
     },
     "abort": {
-      "nothing_to_import": "Niets te importeren uit Battery Monitor.",
-      "use_panel": "De instellingen van System Hub staan in zijn paneel: [open het tabblad Settings]({url})."
+      "nothing_to_import": "Niets te importeren uit Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Bericht",
           "description": "Commitbericht. Gegenereerd door de AI-taak als leeg."
+        },
+        "repository": {
+          "name": "Repository",
+          "description": "Pad (of id) van de repository. Zonder: commit en push, pull en export lopen op alle repository's, de andere acties op de eerste."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Dashboards exporteren",
-      "description": "Kopieert de Lovelace-dashboards van .storage naar de exportmap."
+      "description": "Kopieert de Lovelace-dashboards van .storage naar de exportmap.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Pad (of id) van de repository. Zonder: commit en push, pull en export lopen op alle repository's, de andere acties op de eerste."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "SSH-sleutel genereren",
-      "description": "Maakt het SSH-sleutelpaar aan als het ontbreekt en geeft de publieke sleutel terug om als deploy key toe te voegen."
+      "description": "Maakt het SSH-sleutelpaar aan als het ontbreekt en geeft de publieke sleutel terug om als deploy key toe te voegen.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Pad (of id) van de repository. Zonder: commit en push, pull en export lopen op alle repository's, de andere acties op de eerste."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Commitbericht genereren",
-      "description": "Schrijft met de AI-taak een commitbericht voor de huidige wijzigingen, zonder te committen. Geeft null terug als er niets gewijzigd is."
+      "description": "Schrijft met de AI-taak een commitbericht voor de huidige wijzigingen, zonder te committen. Geeft null terug als er niets gewijzigd is.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Pad (of id) van de repository. Zonder: commit en push, pull en export lopen op alle repository's, de andere acties op de eerste."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Wijzigingen ophalen",
-      "description": "Geeft de wijzigingen terug die een commit zou bevatten, bestand per bestand, zoals de diff-weergave van de kaart ze toont."
+      "description": "Geeft de wijzigingen terug die een commit zou bevatten, bestand per bestand, zoals de diff-weergave van de kaart ze toont.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Pad (of id) van de repository. Zonder: commit en push, pull en export lopen op alle repository's, de andere acties op de eerste."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Haalt de remote op en neemt de nieuwe commits over: fast-forward, of de lokale commits erbovenop gerebased (alleen bij een schone werkmap). Een conflict breekt de rebase af."
+      "description": "Haalt de remote op en neemt de nieuwe commits over: fast-forward, of de lokale commits erbovenop gerebased (alleen bij een schone werkmap). Een conflict breekt de rebase af.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Pad (of id) van de repository. Zonder: commit en push, pull en export lopen op alle repository's, de andere acties op de eerste."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Scannen op verweesde entiteiten",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Niet in het apparaatregister: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Onbekende repository {repository}. Ingestelde repository's: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Alles is bijgewerkt.",
         "progress": "{done} van {total} gecontroleerd",
         "install_all": "Alles bijwerken",
+        "ha_reload": "Configuratie herladen",
+        "ha_restart": "Home Assistant herstarten",
+        "ha_reload_title": "Configuratie herladen?",
+        "ha_reload_text": "Alle YAML-configuratie die Home Assistant kan herladen (automatiseringen, scripts, scènes, sjablonen, groepen…) wordt opnieuw ingelezen, zonder herstart.",
+        "ha_restart_title": "Home Assistant herstarten?",
+        "ha_restart_text": "Home Assistant stopt en start opnieuw: het is even niet beschikbaar en de automatiseringen draaien in die tijd niet.",
+        "ha_checking": "Configuratie controleren…",
+        "ha_valid": "De configuratie is geldig.",
+        "ha_invalid": "De configuratie is ongeldig: corrigeer deze voor het herstarten.",
+        "ha_restarting": "Home Assistant wordt herstart…",
         "confirm_install": "Nu alle updates installeren?",
         "cancel": "Annuleren",
         "last_check": "Laatste controle",

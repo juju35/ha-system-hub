@@ -74,7 +74,11 @@
           "batteries_types": "Батареї: типи батарей",
           "batteries_import": "Батареї: імпорт із Battery Monitor",
           "orphans": "Orphans",
-          "system": "Система: пороги"
+          "system": "Система: пороги",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Додати репозиторій",
+          "git_sync_other": "Git Sync: Інший репозиторій",
+          "git_sync_remove_repository": "Git Sync: Видалити репозиторії"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: червоний від"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ігноровані пристрої",
+          "exclude_entities": "Ігноровані сутності"
+        },
+        "data_description": {
+          "exclude_devices": "Їхні недоступні пов’язані сутності та прив’язані до них невдалі автоматизації вилучаються зі списків, лічильників і статусу.",
+          "exclude_entities": "ID сутностей або шаблони з * і ?: відповідні автоматизації та сутності виключаються зі списків, лічильників і статусу"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Додати репозиторій",
+        "data": {
+          "repo_path": "Шлях до репозиторію",
+          "remote": "Remote",
+          "branch": "Гілка",
+          "ssh_key": "Приватний ключ SSH",
+          "author_name": "Ім'я автора",
+          "author_email": "Email автора"
+        },
+        "data_description": {
+          "repo_path": "Тека, що містить каталог .git, зазвичай /config.",
+          "remote": "Git remote для push, зазвичай origin.",
+          "branch": "Цільова гілка в remote. Залиште порожнім, щоб надіслати поточну гілку.",
+          "ssh_key": "Приватний ключ для push. Створіть його дією generate_ssh_key, потім додайте публічний ключ як deploy key з правом запису.",
+          "author_name": "Необов'язково, замінює git user.name / user.email репозиторію.",
+          "author_email": "Необов'язково, замінює git user.name / user.email репозиторію."
+        }
+      },
+      "git_sync_other": {
+        "title": "Інший репозиторій",
+        "data": {
+          "repo_id": "Репозиторій"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Налаштування репозиторію",
+        "description": "Репозиторій {repository}",
+        "data": {
+          "repo_path": "Шлях до репозиторію",
+          "remote": "Remote",
+          "branch": "Гілка",
+          "ssh_key": "Приватний ключ SSH",
+          "author_name": "Ім'я автора",
+          "author_email": "Email автора"
+        },
+        "data_description": {
+          "repo_path": "Тека, що містить каталог .git, зазвичай /config.",
+          "remote": "Git remote для push, зазвичай origin.",
+          "branch": "Цільова гілка в remote. Залиште порожнім, щоб надіслати поточну гілку.",
+          "ssh_key": "Приватний ключ для push. Створіть його дією generate_ssh_key, потім додайте публічний ключ як deploy key з правом запису.",
+          "author_name": "Необов'язково, замінює git user.name / user.email репозиторію.",
+          "author_email": "Необов'язково, замінює git user.name / user.email репозиторію."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Репозиторій {repository}",
+        "data": {
+          "ai_task_entity": "Об'єкт AI-завдання",
+          "commit_language": "Мова повідомлень commit",
+          "commit_interval": "Інтервал автоматичного commit",
+          "status_interval": "Інтервал оновлення стану",
+          "fetch_interval": "Інтервал перевірки remote",
+          "pull_before_push": "Pull перед push",
+          "allow_sensitive": "Дозволити відстежувані конфіденційні файли",
+          "notify_service": "Дія сповіщення",
+          "notify_image": "URL зображення сповіщення",
+          "export_enabled": "Щоденний експорт панелей",
+          "export_time": "Час експорту",
+          "export_dir": "Тека експорту",
+          "export_format": "Формат експорту",
+          "export_before_commit": "Експортувати панелі перед кожним commit",
+          "commit_before_update": "Коміт перед оновленнями"
+        },
+        "data_description": {
+          "ai_task_entity": "Генерує повідомлення у форматі Conventional Commits за diff. Без нього використовується загальне повідомлення.",
+          "commit_interval": "Commit і push кожні N хвилин, якщо є зміни. 0 вимикає.",
+          "fetch_interval": "Fetch з remote кожні N хвилин, щоб бачити commit, надіслані з іншого місця (відставання, розбіжність). 0 вимикає; перед кожним push fetch однаково виконується.",
+          "pull_before_push": "Якщо в remote є нові commit, перед push виконується rebase на них (git pull --rebase --autostash). У разі конфлікту rebase скасовується, нічого не надсилається, а виправлення пояснює, що робити.",
+          "allow_sensitive": "Робити commit змін конфіденційних файлів, які Git уже відстежує (secrets.yaml, .storage, ключі, база даних, журнали). Нові конфіденційні файли завжди відхиляються.",
+          "notify_service": "Наприклад, notify.mobile_app_phone. Залиште порожнім, щоб вимкнути.",
+          "notify_image": "Абсолютний HTTPS URL (потрібен для iOS).",
+          "export_format": "JSON копіює файли .storage як є; YAML зберігає лише конфігурацію панелі, її простіше читати в diff.",
+          "export_dir": "У теці конфігурації (відносний шлях починається звідти) або в теці з allowlist_external_dirs.",
+          "commit_before_update": "Під час встановлення оновлення (Home Assistant, доповнення, інтеграції) спершу виконувати коміт і push конфігурації, щоб було до чого повернутися. Один коміт для оновлень, встановлених разом."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Видалити репозиторії",
+        "description": "Їхні сутності, пристрій, виправлення та збережений стан видаляються; самі репозиторії не змінюються.",
+        "data": {
+          "git_sync_repositories": "Репозиторії для видалення"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Виберіть батарею.",
       "type_required": "Виберіть або введіть тип.",
       "no_model": "Пристрій цієї батареї не має моделі: задайте тип для самої батареї.",
-      "critical_below_warning": "Червоний поріг має бути вищим за помаранчевий."
+      "critical_below_warning": "Червоний поріг має бути вищим за помаранчевий.",
+      "repository_exists": "Цей репозиторій уже налаштовано."
     },
     "abort": {
-      "nothing_to_import": "Нічого імпортувати з Battery Monitor.",
-      "use_panel": "Налаштування System Hub знаходяться на його панелі: [відкрити вкладку Settings]({url})."
+      "nothing_to_import": "Нічого імпортувати з Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Повідомлення",
           "description": "Повідомлення commit. Генерується AI-завданням, якщо порожньо."
+        },
+        "repository": {
+          "name": "Репозиторій",
+          "description": "Шлях (або id) репозиторію. Без нього: commit і push, pull та експорт виконуються для всіх репозиторіїв, інші дії — для першого."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Експортувати панелі",
-      "description": "Копіює панелі Lovelace із .storage до теки експорту."
+      "description": "Копіює панелі Lovelace із .storage до теки експорту.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторій",
+          "description": "Шлях (або id) репозиторію. Без нього: commit і push, pull та експорт виконуються для всіх репозиторіїв, інші дії — для першого."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Згенерувати ключ SSH",
-      "description": "Створює пару ключів SSH, якщо її немає, і повертає публічний ключ для додавання як deploy key."
+      "description": "Створює пару ключів SSH, якщо її немає, і повертає публічний ключ для додавання як deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторій",
+          "description": "Шлях (або id) репозиторію. Без нього: commit і push, pull та експорт виконуються для всіх репозиторіїв, інші дії — для першого."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Згенерувати повідомлення commit",
-      "description": "Пише за допомогою AI-завдання повідомлення commit для поточних змін, не виконуючи commit. Повертає null, якщо нічого не змінилося."
+      "description": "Пише за допомогою AI-завдання повідомлення commit для поточних змін, не виконуючи commit. Повертає null, якщо нічого не змінилося.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторій",
+          "description": "Шлях (або id) репозиторію. Без нього: commit і push, pull та експорт виконуються для всіх репозиторіїв, інші дії — для першого."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Отримати зміни",
-      "description": "Повертає зміни, які увійшли б до commit, файл за файлом, як їх показує перегляд відмінностей картки."
+      "description": "Повертає зміни, які увійшли б до commit, файл за файлом, як їх показує перегляд відмінностей картки.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторій",
+          "description": "Шлях (або id) репозиторію. Без нього: commit і push, pull та експорт виконуються для всіх репозиторіїв, інші дії — для першого."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Отримує віддалений репозиторій і забирає його нові commit-и: перемотування вперед або локальні commit-и, перенесені поверх (лише за чистого робочого дерева). Конфлікт скасовує перенесення."
+      "description": "Отримує віддалений репозиторій і забирає його нові commit-и: перемотування вперед або локальні commit-и, перенесені поверх (лише за чистого робочого дерева). Конфлікт скасовує перенесення.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторій",
+          "description": "Шлях (або id) репозиторію. Без нього: commit і push, pull та експорт виконуються для всіх репозиторіїв, інші дії — для першого."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Пошук осиротілих сутностей",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Немає в реєстрі пристроїв: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Невідомий репозиторій {repository}. Налаштовані репозиторії: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Усе оновлено.",
         "progress": "Перевірено {done} з {total}",
         "install_all": "Оновити все",
+        "ha_reload": "Перезавантажити конфігурацію",
+        "ha_restart": "Перезапустити Home Assistant",
+        "ha_reload_title": "Перезавантажити конфігурацію?",
+        "ha_reload_text": "Уся YAML-конфігурація, яку Home Assistant уміє перезавантажувати (автоматизації, скрипти, сцени, шаблони, групи…), буде прочитана знову, без перезапуску.",
+        "ha_restart_title": "Перезапустити Home Assistant?",
+        "ha_restart_text": "Home Assistant зупиниться й запуститься знову: деякий час він буде недоступний, а його автоматизації тим часом не працюють.",
+        "ha_checking": "Перевірка конфігурації…",
+        "ha_valid": "Конфігурація коректна.",
+        "ha_invalid": "Конфігурація некоректна: виправте її перед перезапуском.",
+        "ha_restarting": "Home Assistant перезапускається…",
         "confirm_install": "Установити всі оновлення зараз?",
         "cancel": "Скасувати",
         "last_check": "Остання перевірка",

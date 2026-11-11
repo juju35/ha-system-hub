@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from typing import Any
+from uuid import uuid4
 
 import voluptuous as vol
 from homeassistant.config_entries import ConfigEntry, ConfigFlow, ConfigFlowResult, OptionsFlow
@@ -20,6 +21,7 @@ from homeassistant.helpers.selector import (
 )
 
 from .automations import AUTOMATION_MONITOR
+from .automations import flow as automations_flow
 from .batteries import flow as batteries_flow
 from .batteries import importer as batteries_importer
 from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
@@ -38,18 +40,18 @@ from .const import (
     MODULE_ORPHANS,
     MODULE_WATCHDOG,
     MODULES,
-    PANEL_PATH,
-    SOURCE_PANEL,
 )
 from .containers import flow as containers_flow
 from .containers.flow import stoppable_processes
 from .containers.monitor import supervisor_available
 from .git_sync import configured as git_sync_configured
 from .git_sync import flow as git_sync_flow
-from .git_sync.const import CONF_REPO_PATH
+from .git_sync import further_repositories
+from .git_sync.const import CONF_REPO_ID, CONF_REPO_PATH, CONF_REPOSITORIES
+from .git_sync.coordinator import GitSyncCoordinator
 from .marketplace import flow as marketplace_flow
 from .orphans import flow as orphans_flow
-from .standalone import STANDALONE, taken_over
+from .standalone import STANDALONE, further_git_sync, taken_over
 from .standalone import settings as standalone_settings
 from .watchdog import flow as watchdog_flow
 from .watchdog.const import CONF_DELAY, CONF_DEVICE, CONF_OFF_TIME, CONF_POWER_CYCLES, CONF_SWITCH
@@ -147,6 +149,8 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
                         CONF_MODULES: self._chosen_modules,
                         **_taken_over(self.hass, {}, self._chosen_modules),
                         MODULE_GIT_SYNC: settings,
+                        # The standalone Git Sync's other repositories.
+                        CONF_REPOSITORIES: further_git_sync(self.hass, settings[CONF_REPO_PATH]),
                     },
                 )
         # The standalone Git Sync's repository, SSH key and author when it is set up.
@@ -164,13 +168,6 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         return SystemHubOptionsFlow()
 
-    @classmethod
-    @callback
-    def async_supports_options_flow(cls, config_entry: ConfigEntry) -> bool:
-        # No Configure on the integration's page: the settings are in the panel's Settings tab, which the System Hub
-        # devices link to; the panel still drives this options flow
-        return False
-
 
 class SystemHubOptionsFlow(OptionsFlow):
     """The modules turned on, then the settings of each one; a module turned off keeps its settings."""
@@ -178,6 +175,9 @@ class SystemHubOptionsFlow(OptionsFlow):
     _pending_modules: list[str] | None = None
     # Settings of the standalone integrations taken over by the modules being turned on.
     _taken_over: dict[str, Any] | None = None
+    # Git Sync: the further repository being set, and its repository settings until its options are saved.
+    _other: str | None = None
+    _other_changes: dict[str, Any] | None = None
 
     def _modules(self) -> list[str]:
         modules = self.config_entry.options.get(CONF_MODULES)
@@ -191,10 +191,7 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_create_entry(data={**self.config_entry.options, CONF_MODULES: self._modules(), **changes})
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        # Started anywhere but the panel (Home Assistant's flow API, whatever context it sends): the settings are in
-        # the panel's Settings tab, the only one to start this flow, with its own source
-        if self.context.get("source") != SOURCE_PANEL:
-            return self.async_abort(reason="use_panel", description_placeholders={"url": f"/{PANEL_PATH}/settings"})
+        # Started by Configure on the integration's page, or by the panel's Settings tab: the same menu.
         menu = ["modules", "system"]
         modules = self._modules()
         if MODULE_CONTAINERS in modules:
@@ -211,6 +208,12 @@ class SystemHubOptionsFlow(OptionsFlow):
                 menu.append("batteries_import")
         if MODULE_GIT_SYNC in modules:
             menu += ["git_sync_repository", "git_sync"]
+            if git_sync_configured(self._module(MODULE_GIT_SYNC)):
+                menu.append("git_sync_add_repository")
+                if further_repositories(self.config_entry.options):
+                    menu += ["git_sync_other", "git_sync_remove_repository"]
+        if MODULE_AUTOMATIONS in modules:
+            menu.append("automations")
         if MODULE_ORPHANS in modules:
             menu.append("orphans")
         return self.async_show_menu(step_id="init", menu_options=menu)
@@ -412,7 +415,11 @@ class SystemHubOptionsFlow(OptionsFlow):
             if not errors:
                 settings = (current or _git_sync_defaults(self.hass)) | user_input
                 modules = self._pending_modules or self._modules()
-                return self._save(**{CONF_MODULES: modules, **(self._taken_over or {}), MODULE_GIT_SYNC: settings})
+                changes = {CONF_MODULES: modules, **(self._taken_over or {}), MODULE_GIT_SYNC: settings}
+                if not current and not self._further():
+                    # Set up for the first time: the standalone Git Sync's other repositories too.
+                    changes[CONF_REPOSITORIES] = further_git_sync(self.hass, settings[CONF_REPO_PATH])
+                return self._save(**changes)
         # Never set here: the standalone Git Sync's repository, SSH key and author when it is set up.
         defaults = current or standalone_settings(self.hass, MODULE_GIT_SYNC)
         return self.async_show_form(
@@ -435,6 +442,123 @@ class SystemHubOptionsFlow(OptionsFlow):
             data_schema=self.add_suggested_values_to_schema(schema, user_input) if user_input else schema,
             errors=errors,
         )
+
+    # Git Sync: further repositories, each with its own settings as an entry of the former Git Sync integration
+
+    def _further(self) -> list[dict[str, Any]]:
+        return further_repositories(self.config_entry.options)
+
+    def _paths_used(self, skip: str | None = None) -> set[str]:
+        paths = [self._module(MODULE_GIT_SYNC).get(CONF_REPO_PATH)] + [
+            r[CONF_REPO_PATH] for r in self._further() if r[CONF_REPO_ID] != skip
+        ]
+        return {str(p).rstrip("/") or "/" for p in paths if p}
+
+    def _save_further(self, repositories: list[dict[str, Any]]) -> ConfigFlowResult:
+        return self._save(**{CONF_REPOSITORIES: repositories})
+
+    async def async_step_git_sync_add_repository(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Another repository: its path, remote, branch, SSH key and author, checked; the defaults for the rest."""
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await _repository_errors(user_input)
+            if not errors and user_input[CONF_REPO_PATH] in self._paths_used():
+                errors[CONF_REPO_PATH] = "repository_exists"
+            if not errors:
+                settings = git_sync_flow.default_options(self.hass) | user_input | {CONF_REPO_ID: uuid4().hex[:8]}
+                return self._save_further([*self._further(), settings])
+        return self.async_show_form(
+            step_id="git_sync_add_repository",
+            data_schema=self.add_suggested_values_to_schema(
+                git_sync_flow.repository_schema({CONF_REPO_PATH: ""}), user_input or {}
+            ),
+            errors=errors,
+        )
+
+    async def async_step_git_sync_other(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Which further repository to set: then its repository settings, then its options."""
+        further = self._further()
+        if user_input is not None and any(r[CONF_REPO_ID] == user_input.get(CONF_REPO_ID) for r in further):
+            self._other = user_input[CONF_REPO_ID]
+            return await self.async_step_git_sync_other_repository()
+        choices = [SelectOptionDict(value=r[CONF_REPO_ID], label=r[CONF_REPO_PATH]) for r in further]
+        return self.async_show_form(
+            step_id="git_sync_other",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(CONF_REPO_ID, default=choices[0]["value"]): SelectSelector(
+                        SelectSelectorConfig(options=choices, mode=SelectSelectorMode.LIST)
+                    )
+                }
+            ),
+        )
+
+    def _other_settings(self) -> dict[str, Any]:
+        return next((r for r in self._further() if r[CONF_REPO_ID] == self._other), {})
+
+    async def async_step_git_sync_other_repository(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The chosen repository's path, remote, branch, SSH key and author, checked."""
+        current = self._other_settings()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await _repository_errors(user_input)
+            if not errors and user_input[CONF_REPO_PATH] in self._paths_used(skip=self._other):
+                errors[CONF_REPO_PATH] = "repository_exists"
+            if not errors:
+                self._other_changes = user_input
+                return await self.async_step_git_sync_other_options()
+        return self.async_show_form(
+            step_id="git_sync_other_repository",
+            data_schema=git_sync_flow.repository_schema(user_input or current),
+            errors=errors,
+            description_placeholders={"repository": str(current.get(CONF_REPO_PATH, ""))},
+        )
+
+    async def async_step_git_sync_other_options(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The chosen repository's commit message, schedules, notifications and dashboard export."""
+        current = self._other_settings() | (self._other_changes or {})
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            errors = await git_sync_flow.options_errors(self.hass, user_input)
+            if not errors:
+                updated = current | user_input
+                return self._save_further([updated if r[CONF_REPO_ID] == self._other else r for r in self._further()])
+        schema = git_sync_flow.options_schema(self.hass, current)
+        return self.async_show_form(
+            step_id="git_sync_other_options",
+            data_schema=self.add_suggested_values_to_schema(schema, user_input) if user_input else schema,
+            errors=errors,
+            description_placeholders={"repository": str(current.get(CONF_REPO_PATH, ""))},
+        )
+
+    async def async_step_git_sync_remove_repository(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Further repositories to remove: their entities, device, repairs and saved state go with them."""
+        further = self._further()
+        if user_input is not None:
+            gone = set(user_input.get(CONF_REPOSITORIES) or [])
+            for repo_id in gone:
+                await GitSyncCoordinator.async_remove_store(self.hass, repo_id)
+            return self._save_further([r for r in further if r[CONF_REPO_ID] not in gone])
+        choices = [SelectOptionDict(value=r[CONF_REPO_ID], label=r[CONF_REPO_PATH]) for r in further]
+        return self.async_show_form(
+            step_id="git_sync_remove_repository",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional(CONF_REPOSITORIES, default=[]): SelectSelector(
+                        SelectSelectorConfig(options=choices, multiple=True, mode=SelectSelectorMode.LIST)
+                    )
+                }
+            ),
+        )
+
+    # Automations
+
+    async def async_step_automations(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Devices and entities left out of the Automations tab and its status."""
+        if user_input is not None:
+            return self._save(**{MODULE_AUTOMATIONS: automations_flow.settings_options(user_input)})
+        schema = automations_flow.settings_schema(self._module(MODULE_AUTOMATIONS))
+        return self.async_show_form(step_id="automations", data_schema=schema)
 
     # Orphans
 

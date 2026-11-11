@@ -70,16 +70,45 @@ git_sync_commit_push:
       example: "fix: corridor light threshold"
       selector:
         text:
+    repository:
+      example: "/config"
+      selector:
+        text:
 
 git_sync_export_dashboards:
+  fields:
+    repository:
+      example: "/config"
+      selector:
+        text:
 
 git_sync_generate_ssh_key:
+  fields:
+    repository:
+      example: "/config"
+      selector:
+        text:
 
 git_sync_generate_message:
+  fields:
+    repository:
+      example: "/config"
+      selector:
+        text:
 
 git_sync_get_diff:
+  fields:
+    repository:
+      example: "/config"
+      selector:
+        text:
 
 git_sync_pull:
+  fields:
+    repository:
+      example: "/config"
+      selector:
+        text:
 
 orphans_scan:
 orphans_remove:

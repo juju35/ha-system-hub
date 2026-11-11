@@ -108,7 +108,7 @@ async def test_turned_on_in_the_options_asks_for_the_repository(hass: HomeAssist
     assert entry.runtime_data.git_sync is not None
 
     result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
-    assert result["menu_options"] == ["modules", "system", "git_sync_repository", "git_sync"]
+    assert result["menu_options"] == ["modules", "system", "git_sync_repository", "git_sync", "git_sync_add_repository"]
 
 
 async def test_turned_on_without_a_repository_is_skipped(hass: HomeAssistant) -> None:

@@ -452,6 +452,118 @@ test('automations tab: Clear asks first, then calls Automation Monitor', async (
   assert.equal(p._confirm, null);
 });
 
+test('system tab: Reload configuration asks first, then reloads every YAML configuration', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._hass.callWS = async () => p._state;
+  p._render = () => {};
+  p._toast = () => {};
+  assert.match(p._content(), /data-action="ha_ask:reload"/);
+  assert.match(p._content(), /data-action="ha_ask:restart"/);
+  await p._haAction('ha_ask:reload');
+  assert.equal(calls.length, 0);
+  assert.match(p._content(), /role="alertdialog"[\s\S]*Reload the configuration\?/);
+  await p._haAction('ha_ok:reload');
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['homeassistant', 'reload_all', {}]]);
+  assert.doesNotMatch(p._content(), /role="alertdialog"/);
+});
+
+test('system tab: Restart checks the configuration first and is refused while it is invalid', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._render = () => {};
+  p._toast = () => {};
+  p._hass.callApi = async () => ({ result: 'invalid', errors: "Invalid config for 'automation'" });
+  await p._haAction('ha_ask:restart');
+  var html = p._content();
+  assert.match(html, /Restart Home Assistant\?/);
+  assert.match(html, /The configuration is invalid/);
+  assert.match(html, /Invalid config for &#39;automation&#39;|Invalid config for 'automation'/);
+  assert.match(html, /data-action="ha_ok:restart"[^>]* disabled/);
+  // Cancelled; then valid: restarts
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'cancel' } } : null) } });
+  assert.equal(p._confirm, null);
+  p._hass.callApi = async () => ({ result: 'valid' });
+  await p._haAction('ha_ask:restart');
+  assert.match(p._content(), /The configuration is valid/);
+  assert.doesNotMatch(p._content(), /data-action="ha_ok:restart"[^>]* disabled/);
+  await p._haAction('ha_ok:restart');
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['homeassistant', 'restart', {}]]);
+  assert.equal(p._confirm, null);
+});
+
+test('system tab: a restart that drops the connection is no failure', async () => {
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._render = () => {};
+  p._toast = () => {};
+  p._hass.callService = async () => {
+    throw { code: 3, message: 'Connection lost' };
+  };
+  await p._haAction('ha_ok:restart');
+  assert.equal(p._messages.ha, undefined);
+  p._hass.callService = async () => {
+    throw new Error('Unauthorized');
+  };
+  await p._haAction('ha_ok:restart');
+  assert.match(p._messages.ha.text, /Unauthorized/);
+});
+
+test('automations tab: Clear all with failures left out clears the listed ones only', async () => {
+  const calls = [];
+  const p = panel(
+    {
+      loaded: true,
+      modules: ['automations'],
+      tabs: ['automations'],
+      automations: { available: true, failures: [{ entity_id: 'automation.a' }, { entity_id: 'automation.b' }], failures_hidden: 1, linked: [] },
+    },
+    'automations',
+  );
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._hass.callWS = async () => p._state;
+  p._render = () => {};
+  p._toast = () => {};
+  await p._autoAction('auto_clear_all_ok', { dataset: {} });
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [
+    ['automation_monitor', 'reset', { entity_id: 'automation.a' }],
+    ['automation_monitor', 'reset', { entity_id: 'automation.b' }],
+  ]);
+});
+
+test('automations tab: its settings open from the tab', () => {
+  const html = panel({ loaded: true, modules: ['automations'], tabs: ['automations'], automations: { available: true, failures: [], linked: [] } }, 'automations')._content();
+  assert.match(html, /data-action="open_settings:automations"/);
+});
+
+test('git sync tab: a chip per repository, the actions on the one shown', async () => {
+  const repos = [
+    { id: '', title: 'config', path: '/config', status: 'clean', branch: 'main', changed: 0, files: [] },
+    { id: 'ab12cd34', title: 'esphome', path: '/config/esphome', status: 'dirty', branch: 'dev', changed: 1, files: ['node.yaml'] },
+  ];
+  const calls = [];
+  const p = panel({ loaded: true, modules: ['git_sync'], tabs: ['git_sync'], git_sync: repos[0], git_sync_repos: repos }, 'git_sync');
+  p._hass.callService = async (_domain, service, data) => calls.push([service, data]);
+  p._hass.callWS = async () => p._state;
+  p._render = () => {};
+  p._toast = () => {};
+  let html = p._content();
+  assert.match(html, /data-action="git_repo" data-id="ab12cd34"[^>]*>esphome</);
+  assert.doesNotMatch(html, /node\.yaml/);
+  const click = (action, dataset = {}) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset }, disabled: false } : null) } });
+  click('git_repo', { id: 'ab12cd34' });
+  html = p._content();
+  assert.match(html, /node\.yaml/);
+  assert.match(html, /<b>dev<\/b>/);
+  await click('git_sync_pull');
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['git_sync_pull', { repository: '/config/esphome' }]]);
+  // A single repository: no chip, no repository named
+  const one = panel({ loaded: true, modules: ['git_sync'], tabs: ['git_sync'], git_sync: repos[0], git_sync_repos: [repos[0]] }, 'git_sync');
+  assert.doesNotMatch(one._content(), /git_repo/);
+  assert.equal(JSON.stringify(one._gitTarget()), '{}');
+});
+
 test('system tab: virtual interfaces left out, totals received and sent, Core and OS versions', () => {
   const html = panel({
     loaded: true,

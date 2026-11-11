@@ -74,7 +74,11 @@
           "batteries_types": "Baterii: tipuri de baterii",
           "batteries_import": "Baterii: import din Battery Monitor",
           "orphans": "Orphans",
-          "system": "Sistem: praguri"
+          "system": "Sistem: praguri",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Adaugă un depozit",
+          "git_sync_other": "Git Sync: Alt depozit",
+          "git_sync_remove_repository": "Git Sync: Elimină depozite"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: roșu de la"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Dispozitive ignorate",
+          "exclude_entities": "Entități ignorate"
+        },
+        "data_description": {
+          "exclude_devices": "Entitățile lor legate indisponibile și automatizările eșuate asociate sunt excluse din liste, contoare și stare.",
+          "exclude_entities": "ID-uri de entitate sau modele cu * și ?: automatizările și entitățile potrivite sunt excluse din liste, contoare și stare"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Adaugă un depozit",
+        "data": {
+          "repo_path": "Calea depozitului",
+          "remote": "Remote",
+          "branch": "Ramură",
+          "ssh_key": "Cheie privată SSH",
+          "author_name": "Numele autorului",
+          "author_email": "E-mailul autorului"
+        },
+        "data_description": {
+          "repo_path": "Folderul care conține directorul .git, de obicei /config.",
+          "remote": "Remote-ul Git către care se face push, de obicei origin.",
+          "branch": "Ramura țintă de pe remote. Lăsați gol pentru a face push ramurii curente.",
+          "ssh_key": "Cheia privată folosită pentru push. Creați-o cu acțiunea generate_ssh_key, apoi adăugați cheia publică drept deploy key cu drept de scriere.",
+          "author_name": "Opțional, înlocuiește git user.name / user.email al depozitului.",
+          "author_email": "Opțional, înlocuiește git user.name / user.email al depozitului."
+        }
+      },
+      "git_sync_other": {
+        "title": "Alt depozit",
+        "data": {
+          "repo_id": "Depozit"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Setările depozitului",
+        "description": "Depozit {repository}",
+        "data": {
+          "repo_path": "Calea depozitului",
+          "remote": "Remote",
+          "branch": "Ramură",
+          "ssh_key": "Cheie privată SSH",
+          "author_name": "Numele autorului",
+          "author_email": "E-mailul autorului"
+        },
+        "data_description": {
+          "repo_path": "Folderul care conține directorul .git, de obicei /config.",
+          "remote": "Remote-ul Git către care se face push, de obicei origin.",
+          "branch": "Ramura țintă de pe remote. Lăsați gol pentru a face push ramurii curente.",
+          "ssh_key": "Cheia privată folosită pentru push. Creați-o cu acțiunea generate_ssh_key, apoi adăugați cheia publică drept deploy key cu drept de scriere.",
+          "author_name": "Opțional, înlocuiește git user.name / user.email al depozitului.",
+          "author_email": "Opțional, înlocuiește git user.name / user.email al depozitului."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Depozit {repository}",
+        "data": {
+          "ai_task_entity": "Entitate sarcină AI",
+          "commit_language": "Limba mesajului de commit",
+          "commit_interval": "Interval de commit automat",
+          "status_interval": "Interval de reîmprospătare a stării",
+          "fetch_interval": "Interval de verificare a remote-ului",
+          "pull_before_push": "Pull înainte de push",
+          "allow_sensitive": "Permite fișierele sensibile urmărite",
+          "notify_service": "Acțiune de notificare",
+          "notify_image": "URL-ul imaginii din notificare",
+          "export_enabled": "Export zilnic al tablourilor de bord",
+          "export_time": "Ora exportului",
+          "export_dir": "Folder de export",
+          "export_format": "Format de export",
+          "export_before_commit": "Exportă tablourile de bord înainte de fiecare commit",
+          "commit_before_update": "Commit înainte de actualizări"
+        },
+        "data_description": {
+          "ai_task_entity": "Generează un mesaj Conventional Commits din diff. Fără ea, se folosește un mesaj generic.",
+          "commit_interval": "Commit și push la fiecare N minute când există modificări. 0 dezactivează.",
+          "fetch_interval": "Face fetch din remote la fiecare N minute pentru a vedea commit-urile trimise din altă parte (în urmă, divergent). 0 dezactivează; înainte de fiecare push se face oricum un fetch.",
+          "pull_before_push": "Când remote-ul are commit-uri noi, face rebase pe ele (git pull --rebase --autostash) înainte de push. La un conflict, rebase-ul este anulat, nu se trimite nimic și o reparație explică ce e de făcut.",
+          "allow_sensitive": "Face commit modificărilor fișierelor sensibile deja urmărite de Git (secrets.yaml, .storage, chei, bază de date, loguri). Fișierele sensibile noi sunt refuzate întotdeauna.",
+          "notify_service": "De exemplu notify.mobile_app_telefon. Lăsați gol pentru a dezactiva.",
+          "notify_image": "URL HTTPS absolut (cerut de iOS).",
+          "export_format": "JSON copiază fișierele .storage ca atare; YAML păstrează doar configurația tabloului de bord, mai ușor de citit în diff-uri.",
+          "export_dir": "În dosarul de configurare (o cale relativă pornește de acolo) sau într-un dosar din allowlist_external_dirs.",
+          "commit_before_update": "Când se instalează o actualizare (Home Assistant, un add-on, o integrare), mai întâi fă commit și push configurației, ca să existe un commit la care să revii. Un singur commit pentru actualizările instalate împreună."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Elimină depozite",
+        "description": "Entitățile, dispozitivul, reparațiile și starea salvată ale acestora sunt eliminate; depozitele în sine rămân neschimbate.",
+        "data": {
+          "git_sync_repositories": "Depozite de eliminat"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Alegeți bateria.",
       "type_required": "Alegeți sau scrieți tipul.",
       "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie.",
-      "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu."
+      "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu.",
+      "repository_exists": "Acest depozit este deja configurat."
     },
     "abort": {
-      "nothing_to_import": "Nimic de importat din Battery Monitor.",
-      "use_panel": "Setările System Hub sunt în panoul său: [deschide fila Settings]({url})."
+      "nothing_to_import": "Nimic de importat din Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Mesaj",
           "description": "Mesajul de commit. Generat de sarcina AI dacă este gol."
+        },
+        "repository": {
+          "name": "Depozit",
+          "description": "Calea (sau id-ul) depozitului. Fără ea: commit și push, pull și exportul rulează pe toate depozitele, celelalte acțiuni pe primul."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Exportă tablourile de bord",
-      "description": "Copiază tablourile de bord Lovelace din .storage în folderul de export."
+      "description": "Copiază tablourile de bord Lovelace din .storage în folderul de export.",
+      "fields": {
+        "repository": {
+          "name": "Depozit",
+          "description": "Calea (sau id-ul) depozitului. Fără ea: commit și push, pull și exportul rulează pe toate depozitele, celelalte acțiuni pe primul."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Generează cheie SSH",
-      "description": "Creează perechea de chei SSH dacă lipsește și returnează cheia publică de adăugat drept deploy key."
+      "description": "Creează perechea de chei SSH dacă lipsește și returnează cheia publică de adăugat drept deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Depozit",
+          "description": "Calea (sau id-ul) depozitului. Fără ea: commit și push, pull și exportul rulează pe toate depozitele, celelalte acțiuni pe primul."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Generează mesajul de commit",
-      "description": "Scrie cu sarcina AI un mesaj de commit pentru modificările curente, fără a face commit. Returnează null dacă nu s-a schimbat nimic."
+      "description": "Scrie cu sarcina AI un mesaj de commit pentru modificările curente, fără a face commit. Returnează null dacă nu s-a schimbat nimic.",
+      "fields": {
+        "repository": {
+          "name": "Depozit",
+          "description": "Calea (sau id-ul) depozitului. Fără ea: commit și push, pull și exportul rulează pe toate depozitele, celelalte acțiuni pe primul."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Obține modificările",
-      "description": "Returnează modificările pe care le-ar include un commit, fișier cu fișier, așa cum le afișează vizualizatorul de diferențe al cardului."
+      "description": "Returnează modificările pe care le-ar include un commit, fișier cu fișier, așa cum le afișează vizualizatorul de diferențe al cardului.",
+      "fields": {
+        "repository": {
+          "name": "Depozit",
+          "description": "Calea (sau id-ul) depozitului. Fără ea: commit și push, pull și exportul rulează pe toate depozitele, celelalte acțiuni pe primul."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Preia depozitul la distanță și integrează commit-urile noi: avans rapid sau commit-urile locale rebazate deasupra (doar cu arborele de lucru curat). Un conflict anulează rebase-ul."
+      "description": "Preia depozitul la distanță și integrează commit-urile noi: avans rapid sau commit-urile locale rebazate deasupra (doar cu arborele de lucru curat). Un conflict anulează rebase-ul.",
+      "fields": {
+        "repository": {
+          "name": "Depozit",
+          "description": "Calea (sau id-ul) depozitului. Fără ea: commit și push, pull și exportul rulează pe toate depozitele, celelalte acțiuni pe primul."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Scanează entitățile orfane",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Nu se află în registrul de dispozitive: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Depozit necunoscut {repository}. Depozite configurate: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Totul este la zi.",
         "progress": "{done} din {total} verificate",
         "install_all": "Actualizează tot",
+        "ha_reload": "Reîncarcă configurația",
+        "ha_restart": "Repornește Home Assistant",
+        "ha_reload_title": "Reîncărcați configurația?",
+        "ha_reload_text": "Toată configurația YAML pe care Home Assistant o poate reîncărca (automatizări, scripturi, scene, șabloane, grupuri…) este citită din nou, fără repornire.",
+        "ha_restart_title": "Reporniți Home Assistant?",
+        "ha_restart_text": "Home Assistant se oprește și pornește din nou: este indisponibil pentru un moment, iar automatizările sale nu rulează între timp.",
+        "ha_checking": "Se verifică configurația…",
+        "ha_valid": "Configurația este validă.",
+        "ha_invalid": "Configurația nu este validă: corectați-o înainte de repornire.",
+        "ha_restarting": "Home Assistant repornește…",
         "confirm_install": "Instalați acum toate actualizările?",
         "cancel": "Anulează",
         "last_check": "Ultima verificare",

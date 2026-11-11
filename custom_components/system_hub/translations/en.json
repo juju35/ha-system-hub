@@ -74,7 +74,11 @@
           "batteries_types": "Batteries: Battery types",
           "batteries_import": "Batteries: Import from Battery Monitor",
           "orphans": "Orphans",
-          "system": "System: thresholds"
+          "system": "System: thresholds",
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Add a repository",
+          "git_sync_other": "Git Sync: Another repository",
+          "git_sync_remove_repository": "Git Sync: Remove repositories"
         }
       },
       "modules": {
@@ -301,6 +305,102 @@
           "swap_critical": "Swap: red from"
         },
         "data_description": {}
+      },
+      "automations": {
+        "title": "Automations",
+        "data": {
+          "exclude_devices": "Ignored devices",
+          "exclude_entities": "Ignored entities"
+        },
+        "data_description": {
+          "exclude_devices": "Their unavailable linked entities and the failed automations attached to them are left out of the lists, counters and status.",
+          "exclude_entities": "Entity ids, or patterns with * and ?: matching automations and entities are left out of the lists, counters and status"
+        }
+      },
+      "git_sync_add_repository": {
+        "title": "Add a repository",
+        "data": {
+          "repo_path": "Repository path",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "SSH private key",
+          "author_name": "Author name",
+          "author_email": "Author email"
+        },
+        "data_description": {
+          "repo_path": "Folder containing the .git directory, usually /config.",
+          "remote": "Git remote to push to, usually origin.",
+          "branch": "Target branch on the remote. Leave empty to push the current branch.",
+          "ssh_key": "Private key used for push. Use the generate_ssh_key action to create it, then add the public key as a deploy key with write access.",
+          "author_name": "Optional, overrides the git user.name / user.email of the repository.",
+          "author_email": "Optional, overrides the git user.name / user.email of the repository."
+        }
+      },
+      "git_sync_other": {
+        "title": "Another repository",
+        "data": {
+          "repo_id": "Repository"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Repository settings",
+        "description": "Repository {repository}",
+        "data": {
+          "repo_path": "Repository path",
+          "remote": "Remote",
+          "branch": "Branch",
+          "ssh_key": "SSH private key",
+          "author_name": "Author name",
+          "author_email": "Author email"
+        },
+        "data_description": {
+          "repo_path": "Folder containing the .git directory, usually /config.",
+          "remote": "Git remote to push to, usually origin.",
+          "branch": "Target branch on the remote. Leave empty to push the current branch.",
+          "ssh_key": "Private key used for push. Use the generate_ssh_key action to create it, then add the public key as a deploy key with write access.",
+          "author_name": "Optional, overrides the git user.name / user.email of the repository.",
+          "author_email": "Optional, overrides the git user.name / user.email of the repository."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repository {repository}",
+        "data": {
+          "ai_task_entity": "AI task entity",
+          "commit_language": "Commit message language",
+          "commit_interval": "Automatic commit interval",
+          "status_interval": "Status refresh interval",
+          "fetch_interval": "Remote check interval",
+          "pull_before_push": "Pull before push",
+          "allow_sensitive": "Allow tracked sensitive files",
+          "notify_service": "Notification action",
+          "notify_image": "Notification image URL",
+          "export_enabled": "Daily dashboard export",
+          "export_time": "Export time",
+          "export_dir": "Export folder",
+          "export_format": "Export format",
+          "export_before_commit": "Export dashboards before each commit",
+          "commit_before_update": "Commit before updates"
+        },
+        "data_description": {
+          "ai_task_entity": "Generates a Conventional Commits message from the diff. Without it, a generic message is used.",
+          "commit_interval": "Commit and push every N minutes when there are changes. 0 disables it.",
+          "fetch_interval": "Fetch the remote every N minutes to see the commits pushed from elsewhere (behind, diverged). 0 disables it; a fetch still runs before each push.",
+          "pull_before_push": "When the remote has new commits, rebase on them (git pull --rebase --autostash) before pushing. On a conflict the rebase is aborted, nothing is pushed and a repair explains what to do.",
+          "allow_sensitive": "Commit the changes of sensitive files already tracked by Git (secrets.yaml, .storage, keys, database, logs). New sensitive files are always refused.",
+          "notify_service": "For example notify.mobile_app_phone. Leave empty to disable.",
+          "notify_image": "Absolute HTTPS URL (required by iOS).",
+          "export_format": "JSON copies the .storage files as is; YAML keeps only the dashboard configuration, easier to read in diffs.",
+          "export_dir": "Inside the configuration folder (a relative path starts there) or a folder of allowlist_external_dirs.",
+          "commit_before_update": "When an update is installed (Home Assistant, an add-on, an integration), commit and push the configuration first, so there is a commit to go back to. One commit for updates installed together."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Remove repositories",
+        "description": "Their entities, device, repairs and saved state are removed; the repositories themselves are left as they are.",
+        "data": {
+          "git_sync_repositories": "Repositories to remove"
+        }
       }
     },
     "error": {
@@ -319,11 +419,11 @@
       "battery_required": "Choose the battery.",
       "type_required": "Pick or type the type.",
       "no_model": "This battery's device has no model: set the type for the battery itself.",
-      "critical_below_warning": "The red threshold must be above the orange one."
+      "critical_below_warning": "The red threshold must be above the orange one.",
+      "repository_exists": "This repository is already set up."
     },
     "abort": {
-      "nothing_to_import": "Nothing to import from Battery Monitor.",
-      "use_panel": "System Hub's settings are in its panel: [open the Settings tab]({url})."
+      "nothing_to_import": "Nothing to import from Battery Monitor."
     }
   },
   "entity": {
@@ -750,28 +850,62 @@
         "message": {
           "name": "Message",
           "description": "Commit message. Generated by the AI task when empty."
+        },
+        "repository": {
+          "name": "Repository",
+          "description": "Path (or id) of the repository. Left out: commit and push, pull and the export run on every repository, the other actions on the first one."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Export dashboards",
-      "description": "Copies the Lovelace dashboards from .storage to the export folder."
+      "description": "Copies the Lovelace dashboards from .storage to the export folder.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Path (or id) of the repository. Left out: commit and push, pull and the export run on every repository, the other actions on the first one."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Generate SSH key",
-      "description": "Creates the SSH key pair if missing and returns the public key to add as a deploy key."
+      "description": "Creates the SSH key pair if missing and returns the public key to add as a deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Path (or id) of the repository. Left out: commit and push, pull and the export run on every repository, the other actions on the first one."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Generate commit message",
-      "description": "Writes a commit message for the current changes with the AI task, without committing. Returns null when nothing changed."
+      "description": "Writes a commit message for the current changes with the AI task, without committing. Returns null when nothing changed.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Path (or id) of the repository. Left out: commit and push, pull and the export run on every repository, the other actions on the first one."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Get changes",
-      "description": "Returns the changes a commit would include, file by file, as the card's diff viewer shows them."
+      "description": "Returns the changes a commit would include, file by file, as the card's diff viewer shows them.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Path (or id) of the repository. Left out: commit and push, pull and the export run on every repository, the other actions on the first one."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Fetches the remote and brings in its new commits: a fast-forward, or the local commits rebased on top of them (only on a clean work tree). A conflict aborts the rebase."
+      "description": "Fetches the remote and brings in its new commits: a fast-forward, or the local commits rebased on top of them (only on a clean work tree). A conflict aborts the rebase.",
+      "fields": {
+        "repository": {
+          "name": "Repository",
+          "description": "Path (or id) of the repository. Left out: commit and push, pull and the export run on every repository, the other actions on the first one."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Scan for orphaned entities",
@@ -971,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Not in the device registry: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Unknown repository {repository}. Repositories set up: {repositories}."
     }
   },
   "issues": {
@@ -1082,6 +1219,16 @@
         "no_updates": "Everything is up to date.",
         "progress": "{done} of {total} checked",
         "install_all": "Update all",
+        "ha_reload": "Reload configuration",
+        "ha_restart": "Restart Home Assistant",
+        "ha_reload_title": "Reload the configuration?",
+        "ha_reload_text": "Every YAML configuration Home Assistant can reload (automations, scripts, scenes, templates, groups…) is read again, without a restart.",
+        "ha_restart_title": "Restart Home Assistant?",
+        "ha_restart_text": "Home Assistant stops then starts again: it is unavailable for a moment and its automations do not run meanwhile.",
+        "ha_checking": "Checking the configuration…",
+        "ha_valid": "The configuration is valid.",
+        "ha_invalid": "The configuration is invalid: fix it before restarting.",
+        "ha_restarting": "Home Assistant is restarting…",
         "confirm_install": "Install every update now?",
         "cancel": "Cancel",
         "last_check": "Last check",

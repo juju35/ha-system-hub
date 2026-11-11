@@ -1,14 +1,15 @@
 """The standalone integrations System Hub replaces: their settings, taken over when a module is turned on.
 
 Each one stored its settings under the same keys as its module here (Battery Monitor's types and spare batteries also
-live outside its entry: see batteries/importer.py). Git Sync could hold several repositories; the module keeps one, the
-configuration folder's when there is one.
+live outside its entry: see batteries/importer.py). Git Sync held one entry per repository: the configuration folder's
+becomes the module's first repository, the others its further repositories.
 """
 
 from __future__ import annotations
 
 from types import ModuleType
 from typing import Any, Final
+from uuid import uuid4
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -43,8 +44,8 @@ def _keys(module: str) -> set[str]:
     return {value for name, value in vars(const).items() if name.startswith("CONF_") and isinstance(value, str)}
 
 
-def entry(hass: HomeAssistant, module: str) -> ConfigEntry | None:
-    """The standalone integration's entry for a module (Git Sync: the configuration folder's repository first)."""
+def entries(hass: HomeAssistant, module: str) -> list[ConfigEntry]:
+    """The standalone integration's entries for a module (Git Sync: the configuration folder's repository first)."""
     domain = STANDALONE.get(module)
     entries = [e for e in hass.config_entries.async_entries(domain) if not e.disabled_by] if domain else []
     if module == MODULE_GIT_SYNC:
@@ -55,16 +56,40 @@ def entry(hass: HomeAssistant, module: str) -> ConfigEntry | None:
             return str(options.get(git_sync_const.CONF_REPO_PATH, "")).rstrip("/") != config
 
         entries.sort(key=elsewhere)
-    return entries[0] if entries else None
+    return entries
+
+
+def entry(hass: HomeAssistant, module: str) -> ConfigEntry | None:
+    """The standalone integration's first entry for a module."""
+    found = entries(hass, module)
+    return found[0] if found else None
+
+
+def _settings_of(found: ConfigEntry, module: str) -> dict[str, Any]:
+    keys = _keys(module)
+    return {key: value for key, value in {**found.data, **found.options}.items() if key in keys}
 
 
 def settings(hass: HomeAssistant, module: str) -> dict[str, Any]:
     """The standalone integration's settings for a module, under the module's keys; empty without one."""
     found = entry(hass, module)
-    if found is None:
-        return {}
-    keys = _keys(module)
-    return {key: value for key, value in {**found.data, **found.options}.items() if key in keys}
+    return _settings_of(found, module) if found is not None else {}
+
+
+def further_git_sync(hass: HomeAssistant, first_path: str) -> list[dict[str, Any]]:
+    """The standalone Git Sync's repositories other than the module's first one (`first_path`), as its further
+    repositories, each with an id."""
+
+    def norm(path: Any) -> str:
+        return str(path or "").rstrip("/") or "/"
+
+    further = [_settings_of(found, MODULE_GIT_SYNC) for found in entries(hass, MODULE_GIT_SYNC)]
+    return [
+        settings | {git_sync_const.CONF_REPO_ID: uuid4().hex[:8]}
+        for settings in further
+        if settings.get(git_sync_const.CONF_REPO_PATH)
+        and norm(settings[git_sync_const.CONF_REPO_PATH]) != norm(first_path)
+    ]
 
 
 def taken_over(hass: HomeAssistant, current: dict[str, Any], module: str) -> dict[str, Any]:
