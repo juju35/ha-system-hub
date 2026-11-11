@@ -319,7 +319,8 @@
       "critical_below_warning": "Próg czerwony musi być wyższy niż pomarańczowy."
     },
     "abort": {
-      "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
+      "nothing_to_import": "Nic do zaimportowania z Battery Monitor.",
+      "use_panel": "Ustawienia System Hub znajdują się w jego panelu: [otwórz kartę Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Zapisz",
         "saved": "Zapisano",
         "configure": "Ustawienia modułów",
-        "git_needs_repo": "Najpierw skonfiguruj repozytorium w Konfiguruj → Moduły.",
+        "git_needs_repo": "Najpierw skonfiguruj repozytorium: jego formularz otworzy się poniżej.",
         "done": "Gotowe",
         "failed": "Błąd: {error}",
         "by_level": "Według poziomu",

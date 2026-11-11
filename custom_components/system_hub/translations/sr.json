@@ -319,7 +319,8 @@
       "critical_below_warning": "Црвени праг мора бити изнад наранџастог."
     },
     "abort": {
-      "nothing_to_import": "Нема шта да се увезе из Battery Monitor."
+      "nothing_to_import": "Нема шта да се увезе из Battery Monitor.",
+      "use_panel": "Подешавања System Hub су у његовом панелу: [отвори картицу Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Сачувај",
         "saved": "Сачувано",
         "configure": "Подешавања модула",
-        "git_needs_repo": "Прво подесите репозиторијум у Конфигуриши → Модули.",
+        "git_needs_repo": "Прво подесите репозиторијум: његов образац се отвара испод.",
         "done": "Готово",
         "failed": "Неуспех: {error}",
         "by_level": "По нивоу",

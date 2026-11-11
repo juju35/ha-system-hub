@@ -289,3 +289,30 @@ async def test_marketplace_updates_for_the_panel(hass: HomeAssistant) -> None:
         "picture": "/p.png",
         "installing": False,
     }
+
+
+async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: HomeAssistant, hass_ws_client) -> None:
+    """Configure on the integration's page only links to the Settings tab; the tab starts the same flow."""
+    from homeassistant.data_entry_flow import FlowResultType  # noqa: PLC0415
+    from pytest_homeassistant_custom_component.common import MockConfigEntry  # noqa: PLC0415
+
+    from custom_components.system_hub.const import DOMAIN  # noqa: PLC0415
+
+    entry = MockConfigEntry(domain=DOMAIN, unique_id=DOMAIN, options={"modules": []})
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+
+    # As the frontend starts it (its flow API's context)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"show_advanced_options": False})
+    assert result["type"] is FlowResultType.ABORT
+    assert result["reason"] == "use_panel"
+    assert result["description_placeholders"] == {"url": "/system-hub/settings"}
+
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "system_hub/options_flow"})
+    answer = (await client.receive_json())["result"]
+    assert answer["type"] == "menu"
+    assert "modules" in answer["menu_options"]
+    result = await hass.config_entries.options.async_configure(answer["flow_id"], {"next_step_id": "system"})
+    assert result["step_id"] == "system"

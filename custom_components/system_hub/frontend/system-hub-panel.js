@@ -2317,8 +2317,21 @@ class SystemHubPanel extends HTMLElement {
       await this._load();
       this._toast(this._t('saved'));
     } catch (err) {
-      var text = err?.code === 'git_sync_needs_repository' ? this._t('git_needs_repo') : this._t('failed', { error: err?.message || String(err) });
-      this._messages.save = { text, tone: 'bad' };
+      if (err?.code === 'git_sync_needs_repository') {
+        // Its repository first, checked by the flow: the Modules form, with the modules chosen, then the repository
+        var chosen = this._draft.modules || [];
+        this._draft.modules = null;
+        delete this._busy.save;
+        this._messages.save = { text: this._t('git_needs_repo'), tone: 'bad' };
+        await this._cfgOpen('git_sync', 'modules');
+        if (this._cfg?.step === 'modules') {
+          for (var m of Object.keys(SH_MODULE_NAMES)) if (m in this._cfg.data) this._cfg.data[m] = chosen.includes(m);
+          this._cfg.haForm = null;
+          this._render();
+        }
+        return;
+      }
+      this._messages.save = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
     }
     delete this._busy.save;
     this._render();
@@ -2785,7 +2798,7 @@ var SH_SETTINGS_METHODS = {
       return this._render();
     }
     try {
-      var menu = await this._hass.callApi('POST', 'config/config_entries/options/flow', { handler: this._state.entry_id, show_advanced_options: true });
+      var menu = await this._hass.callWS({ type: 'system_hub/options_flow' });
       cfg.menu = menu.menu_options || [];
       cfg.flowId = menu.flow_id;
       await this._cfgGo(cfg.step);
@@ -2801,7 +2814,7 @@ var SH_SETTINGS_METHODS = {
     // A flow goes one way: another step starts it again from its menu
     if (cfg.flow) {
       await this._cfgAbort();
-      var menu = await this._hass.callApi('POST', 'config/config_entries/options/flow', { handler: this._state.entry_id, show_advanced_options: true });
+      var menu = await this._hass.callWS({ type: 'system_hub/options_flow' });
       cfg.menu = menu.menu_options || [];
       cfg.flowId = menu.flow_id;
     }

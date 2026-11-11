@@ -43,3 +43,8 @@ DEFAULT_THRESHOLDS: Final = {
 
 # Home Assistant's own Marketplace integration, which the Marketplace module drives.
 MARKETPLACE_DOMAIN: Final = "marketplace"
+
+# The sidebar panel's path: /system-hub, its Settings tab /system-hub/settings.
+PANEL_PATH: Final = "system-hub"
+# The source the Settings tab starts the options flow with (Configure, started by the frontend, links to it).
+SOURCE_PANEL: Final = "system_hub_panel"

@@ -319,7 +319,8 @@
       "critical_below_warning": "Crveni prag mora biti iznad narandžastog."
     },
     "abort": {
-      "nothing_to_import": "Nema šta da se uveze iz Battery Monitor."
+      "nothing_to_import": "Nema šta da se uveze iz Battery Monitor.",
+      "use_panel": "Podešavanja System Hub su u njegovom panelu: [otvori karticu Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Sačuvaj",
         "saved": "Sačuvano",
         "configure": "Podešavanja modula",
-        "git_needs_repo": "Prvo podesite repozitorijum u Konfiguriši → Moduli.",
+        "git_needs_repo": "Prvo podesite repozitorijum: njegov obrazac se otvara ispod.",
         "done": "Gotovo",
         "failed": "Neuspeh: {error}",
         "by_level": "Po nivou",

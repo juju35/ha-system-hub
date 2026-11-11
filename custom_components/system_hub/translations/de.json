@@ -319,7 +319,8 @@
       "critical_below_warning": "Der rote Schwellenwert muss über dem orangen liegen."
     },
     "abort": {
-      "nothing_to_import": "Nichts aus Battery Monitor zu importieren."
+      "nothing_to_import": "Nichts aus Battery Monitor zu importieren.",
+      "use_panel": "Die Einstellungen von System Hub befinden sich in seinem Panel: [Tab „Settings“ öffnen]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Speichern",
         "saved": "Gespeichert",
         "configure": "Moduleinstellungen",
-        "git_needs_repo": "Richte zuerst das Repository unter Konfigurieren → Module ein.",
+        "git_needs_repo": "Richten Sie zuerst das Repository ein: sein Formular öffnet sich unten.",
         "done": "Erledigt",
         "failed": "Fehlgeschlagen: {error}",
         "by_level": "Nach Ladestand",

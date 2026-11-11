@@ -319,7 +319,8 @@
       "critical_below_warning": "Červený prah musí byť nad oranžovým."
     },
     "abort": {
-      "nothing_to_import": "Z Battery Monitor nie je čo importovať."
+      "nothing_to_import": "Z Battery Monitor nie je čo importovať.",
+      "use_panel": "Nastavenia System Hub sú v jeho paneli: [otvoriť kartu Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Uložiť",
         "saved": "Uložené",
         "configure": "Nastavenia modulov",
-        "git_needs_repo": "Najprv nastavte repozitár v Konfigurovať → Moduly.",
+        "git_needs_repo": "Najprv nastavte repozitár: jeho formulár sa otvorí nižšie.",
         "done": "Hotovo",
         "failed": "Zlyhalo: {error}",
         "by_level": "Podľa úrovne",

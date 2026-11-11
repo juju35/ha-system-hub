@@ -666,6 +666,7 @@ test('settings tab: a module opens on its Configure form, driven through the opt
     p._load = async () => {};
     const calls = [];
     let submit = { type: 'form', step_id: 'watchdog', data_schema: [{ name: 'max_reloads', default: 5 }], errors: { max_reloads: 'too_low' } };
+    p._hass.callWS = async (msg) => (msg.type === 'system_hub/options_flow' ? p._hass.callApi('POST', 'config/config_entries/options/flow', { handler: 'E1', show_advanced_options: true }) : '');
     p._hass.callApi = async (method, path, body) => {
       calls.push([method, path, body]);
       if (method === 'DELETE') return {};
