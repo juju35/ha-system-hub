@@ -1296,3 +1296,20 @@ async def test_check_repository_refused_without_enough_github_requests(hass, fak
         await hass.services.async_call(DOMAIN, "marketplace_check_repository", {"entity_id": entity_id}, blocking=True)
     parcel.update_repository.assert_not_awaited()
     assert hass.states.get(STATUS).attributes["checking"] == []
+
+
+async def test_github_read_without_a_check(hass, fake_marketplace, freezer):
+    """After a restart, GitHub's account and requests left are known before any check, and read again now and then."""
+    method = _rate_limit(fake_marketplace, 4800, dt_util.utcnow() + timedelta(minutes=40))
+    await _setup(hass, hours=0)
+    state = hass.states.get(STATUS)
+    assert state.state == "idle"
+    assert state.attributes["github_connected"] is True
+    assert state.attributes["rate_limit_remaining"] == 4800
+    for repo in fake_marketplace.repositories.list_installed:
+        repo.update_repository.assert_not_awaited()
+    method.return_value.data.resources.core.remaining = 4700
+    freezer.tick(timedelta(minutes=15, seconds=1))
+    async_fire_time_changed(hass)
+    await hass.async_block_till_done()
+    assert hass.states.get(STATUS).attributes["rate_limit_remaining"] == 4700

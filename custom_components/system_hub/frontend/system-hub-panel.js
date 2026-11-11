@@ -1580,7 +1580,7 @@ class SystemHubPanel extends HTMLElement {
     if (list.length) this._mkFetchNotes(list);
     return `${header}${running ? this._progress(data) : ''}${confirm}
       ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
-      ${cards ? `<div class="mkgrid">${cards}</div>` : n || running ? '' : `<ha-card class="list"><div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div></ha-card>`}
+      ${cards ? `<div class="mkgrid">${cards}</div>` : ''}
       ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
   }
 
