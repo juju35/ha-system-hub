@@ -857,3 +857,11 @@ test('processes: one that may be stopped is grey, not counted on the Status tab'
   state.system[0].stoppable = false;
   assert.equal(p._stArea('containers')[0], 'bad');
 });
+
+test('status: a home beside the score, with the colour of the ring', () => {
+  const base = { loaded: true, modules: [], tabs: ['status', 'system'], system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '10' }] };
+  assert.match(panel(base, 'status')._content(), /class="stbadge"[^>]*><ha-icon icon="mdi:home-heart">/);
+  const hot = { ...base, system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '99' }] };
+  // One area critical: 85, still green
+  assert.match(panel(hot, 'status')._content(), /mdi:home-heart/);
+});
