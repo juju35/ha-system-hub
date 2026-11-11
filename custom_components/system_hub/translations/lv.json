@@ -59,6 +59,7 @@
         "title": "System Hub opcijas",
         "menu_options": {
           "modules": "Moduļi",
+          "system": "Sistēma: sliekšņi",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Pievienot restartēšanu ar kontaktligzdu",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Importēt no Battery Monitor",
         "description": "Atrasts Battery Monitor: iestatījumi: {settings}, tā kartītēs iestatītie bateriju veidi: {types}, rezerves bateriju veidi: {stock}. Iesniedziet, lai tos pārņemtu System Hub: tā iestatījumi aizstāj moduļa Baterijas iestatījumus, bet šeit jau iestatītie bateriju veidi tiek saglabāti."
+      },
+      "system": {
+        "title": "Sistēma: sliekšņi",
+        "description": "Cilne Sistēma iekrāso vērtību oranžu no pirmā sliekšņa un sarkanu no otrā.",
+        "data": {
+          "cpu_warning": "CPU: oranžs no",
+          "cpu_critical": "CPU: sarkans no",
+          "ram_warning": "RAM: oranžs no",
+          "ram_critical": "RAM: sarkans no",
+          "disk_warning": "Disks: oranžs no",
+          "disk_critical": "Disks: sarkans no",
+          "temperature_warning": "Temperatūra: oranžs no",
+          "temperature_critical": "Temperatūra: sarkans no",
+          "swap_warning": "Swap: oranžs no",
+          "swap_critical": "Swap: sarkans no"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Mapei jābūt konfigurācijas mapē vai allowlist_external_dirs mapē, ārpus slēptām mapēm, piemēram, .storage.",
       "battery_required": "Izvēlieties bateriju.",
       "type_required": "Izvēlieties vai ierakstiet veidu.",
-      "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai."
+      "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai.",
+      "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā."
     },
     "abort": {
       "nothing_to_import": "No Battery Monitor nav ko importēt."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Ierīce noņemta",
         "open_device": "Ierīce",
         "pc_none": "Vēl nav restartēšanas ar kontaktligzdu: pievienojiet to sadaļā Konfigurēt → Watchdog: pievienot restartēšanu ar kontaktligzdu.",
-        "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt"
+        "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt",
+        "network_total": "Saņemts / nosūtīts",
+        "update_to": "Atjaunināt uz {versions}",
+        "up_to_date": "Atjaunināts",
+        "export_csv": "Eksportēt CSV",
+        "spares": "Rezerve",
+        "to_buy": "{n} jānopērk",
+        "set_stock": "Iestatīt krājumu",
+        "stock_type": "Bateriju tips",
+        "stock_count": "Skaits",
+        "search_batteries": "Meklēt: nosaukums, telpa, tips",
+        "no_match": "Neviena baterija neatbilst"
       }
     },
     "battery_type": {

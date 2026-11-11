@@ -59,6 +59,7 @@
         "title": "Opcje System Hub",
         "menu_options": {
           "modules": "Moduły",
+          "system": "System: progi",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Dodaj restart przez gniazdko",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Import z Battery Monitor",
         "description": "Znaleziono w Battery Monitor: {settings} ustawień, {types} typów baterii ustawionych w jego kartach i {stock} typów baterii zapasowych. Zatwierdź, aby przenieść je do System Hub: jego ustawienia zastąpią ustawienia modułu Baterie, a typy baterii już ustawione tutaj zostaną zachowane."
+      },
+      "system": {
+        "title": "System: progi",
+        "description": "Karta System barwi wartość na pomarańczowo od pierwszego progu i na czerwono od drugiego.",
+        "data": {
+          "cpu_warning": "CPU: pomarańczowy od",
+          "cpu_critical": "CPU: czerwony od",
+          "ram_warning": "RAM: pomarańczowy od",
+          "ram_critical": "RAM: czerwony od",
+          "disk_warning": "Dysk: pomarańczowy od",
+          "disk_critical": "Dysk: czerwony od",
+          "temperature_warning": "Temperatura: pomarańczowy od",
+          "temperature_critical": "Temperatura: czerwony od",
+          "swap_warning": "Swap: pomarańczowy od",
+          "swap_critical": "Swap: czerwony od"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Folder musi znajdować się w folderze konfiguracji lub w folderze z allowlist_external_dirs, poza folderami ukrytymi, takimi jak .storage.",
       "battery_required": "Wybierz baterię.",
       "type_required": "Wybierz lub wpisz typ.",
-      "no_model": "Urządzenie tej baterii nie ma modelu: ustaw typ dla samej baterii."
+      "no_model": "Urządzenie tej baterii nie ma modelu: ustaw typ dla samej baterii.",
+      "critical_below_warning": "Próg czerwony musi być wyższy niż pomarańczowy."
     },
     "abort": {
       "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Urządzenie usunięte",
         "open_device": "Urządzenie",
         "pc_none": "Brak restartów przez gniazdko: dodaj w Konfiguruj → Watchdog: dodaj restart przez gniazdko.",
-        "pc_configure": "Dodaj lub usuń w Konfiguruj"
+        "pc_configure": "Dodaj lub usuń w Konfiguruj",
+        "network_total": "Odebrane / wysłane",
+        "update_to": "Aktualizacja do {versions}",
+        "up_to_date": "Aktualne",
+        "export_csv": "Eksportuj CSV",
+        "spares": "Zapas",
+        "to_buy": "{n} do kupienia",
+        "set_stock": "Ustaw zapas",
+        "stock_type": "Typ baterii",
+        "stock_count": "Liczba",
+        "search_batteries": "Szukaj: nazwa, pokój, typ",
+        "no_match": "Żadna bateria nie pasuje"
       }
     },
     "battery_type": {

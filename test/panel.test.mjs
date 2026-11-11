@@ -343,3 +343,117 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   assert.match(html, /data-tab-move="system" data-dir="-1"[^>]*disabled/);
   assert.match(html, /data-action="save" disabled/);
 });
+
+test('system tab: virtual interfaces left out, totals received and sent, Core and OS versions', () => {
+  const html = panel({
+    loaded: true,
+    modules: [],
+    tabs: ['system'],
+    system: [
+      { key: 'throughput_network_in', entity_id: 'sensor.rx_eth0', name: 'Network throughput in eth0', state: '1.5', unit: 'MB/s' },
+      { key: 'throughput_network_in', entity_id: 'sensor.rx_docker0', name: 'Network throughput in docker0', state: '40', unit: 'MB/s' },
+      { key: 'throughput_network_out', entity_id: 'sensor.tx_veth', name: 'Network throughput out veth1a2b', state: '30', unit: 'MB/s' },
+      { key: 'throughput_network_out', entity_id: 'sensor.tx_eth0', name: 'Network throughput out eth0', state: '0.5', unit: 'MB/s' },
+      { key: 'network_in', entity_id: 'sensor.in_eth0', name: 'Network in eth0', state: '1024', unit: 'MiB' },
+      { key: 'network_in', entity_id: 'sensor.in_hassio', name: 'Network in hassio', state: '9999', unit: 'MiB' },
+      { key: 'network_out', entity_id: 'sensor.out_eth0', name: 'Network out eth0', state: '512', unit: 'MiB' },
+    ],
+    updates: [
+      { key: 'core', entity_id: 'update.home_assistant_core_update', state: 'on', installed: '2026.10.4', latest: '2026.11.1' },
+      { key: 'os', entity_id: 'update.home_assistant_operating_system_update', state: 'off', installed: '16.3', latest: '16.3' },
+    ],
+  })._content();
+  assert.match(html, />1\.5<\/b>\/ <b[^>]*>0\.5<\/b>MB\/s/);
+  assert.match(html, /<b class="ver">1.00 GiB<\/b> <span class="more">\/ 512 MiB<\/span>/);
+  assert.match(html, /Received \/ sent/);
+  assert.match(html, /<a class="tilelink" href="\/config\/updates"[^>]*><ha-card class="tile warn link" title="Core 2026.10.4 · OS 16.3"/);
+  assert.match(html, /<b class="ver">2026.10.4<\/b> <span class="more">OS 16.3<\/span>/);
+  assert.match(html, /Update to Core 2026.11.1/);
+  const fine = panel({
+    loaded: true,
+    modules: [],
+    tabs: ['system'],
+    system: [{ key: 'ipv4_address', entity_id: 'sensor.ip', name: 'IP', state: '10.0.0.2' }],
+    updates: [{ key: 'core', state: 'off', installed: '2026.11.1', latest: '2026.11.1' }],
+  })._content();
+  assert.match(fine, /class="tile good link"/);
+  assert.match(fine, /Up to date/);
+});
+
+test('system tab: the thresholds chosen colour the rings, the swap and the disks', () => {
+  const state = {
+    loaded: true,
+    modules: [],
+    tabs: ['system'],
+    system: [
+      { key: 'processor_use', entity_id: 'sensor.cpu', name: 'CPU', state: '65', unit: '%' },
+      { key: 'disk_use_percent', entity_id: 'sensor.disk', name: 'Disk usage /', state: '85', unit: '%' },
+      { key: 'swap_use_percent', entity_id: 'sensor.swap', name: 'Swap', state: '60', unit: '%' },
+    ],
+  };
+  let html = panel(state)._content();
+  // The defaults: CPU 65 % is fine, the disk at 85 % orange, the swap at 60 % orange
+  assert.match(html, /<div class="rv "><b>65<\/b>/);
+  assert.match(html, /<div class="rv warn"><b>85<\/b>/);
+  assert.match(html, /class="tile warn link" data-more="sensor.swap"/);
+  assert.match(html, /class="item link warn" data-more="sensor.disk"/);
+  state.thresholds = { cpu: [50, 60], disk: [90, 95], swap: [70, 80] };
+  html = panel(state)._content();
+  assert.match(html, /<div class="rv bad"><b>65<\/b>/);
+  assert.match(html, /class="item link good" data-more="sensor.disk"/);
+  assert.match(html, /class="tile good link" data-more="sensor.swap"/);
+});
+
+test('batteries tab: search, spares and their stock, CSV export', async () => {
+  const state = {
+    loaded: true,
+    modules: ['batteries'],
+    tabs: ['batteries'],
+    batteries: {
+      threshold: 20,
+      batteries: [
+        { entity_id: 'sensor.a', name: 'Door', area: 'Entrance', level: 8, low: true, battery_type: 'CR2032', below_since: '2026-11-01T10:00:00+00:00' },
+        { entity_id: 'sensor.b', name: 'Remote, living', area: 'Kitchen', level: 40, battery_type: '2× AAA', days_left: 20, drain_per_day: 1.2, replace_by: '2026-12-01T00:00:00+01:00' },
+        { entity_id: 'sensor.c', name: 'Smoke', level: null, unavailable: true },
+      ],
+      spares: { CR2032: { stock: 0, needed: 1, short: 1 }, AAA: { stock: 6, needed: 2, short: 0 } },
+    },
+  };
+  const p = panel(state, 'batteries');
+  let html = p._content();
+  assert.match(html, /data-draft="batt_search"/);
+  assert.match(html, /data-action="batt_csv"/);
+  assert.match(html, /<button class="spare short" data-action="stock_edit" data-kind="CR2032"><b>0×<\/b> CR2032 · 1 to buy<\/button>/);
+  assert.match(html, /<button class="spare" data-action="stock_edit" data-kind="AAA"><b>6×<\/b> AAA<\/button>/);
+  // The search: by room, by type, or nothing
+  p._draft.batt_search = 'kitchen';
+  html = p._content();
+  assert.match(html, /data-more="sensor.b"/);
+  assert.doesNotMatch(html, /data-more="sensor.a"/);
+  p._draft.batt_search = 'cr20';
+  assert.match(p._content(), /data-more="sensor.a"/);
+  p._draft.batt_search = 'nothing';
+  assert.match(p._content(), /No battery matches/);
+  p._draft.batt_search = '';
+  // CSV: every battery, quoted where needed
+  const csv = p._battCsv().split('\r\n');
+  assert.equal(csv[0], 'name,area,type,level,status,drain_per_day,days_left,replace_by,below_since,entity_id');
+  assert.equal(csv[1], 'Door,Entrance,CR2032,8,low,,,,2026-11-01T10:00:00+00:00,sensor.a');
+  assert.equal(csv[2], '"Remote, living",Kitchen,2× AAA,40,ok,1.2,20,2026-12-01,,sensor.b');
+  assert.equal(csv[3], 'Smoke,,,,unavailable,,,,,sensor.c');
+  // The stock of a type: the form filled from the chip, then the service
+  const calls = [];
+  p._hass.callService = async (...args) => calls.push(args);
+  p._hass.callWS = async () => state;
+  p._render = () => {};
+  const click = (dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset } : null) } });
+  click({ action: 'stock_edit', kind: 'AAA' });
+  assert.equal(p._stockForm, true);
+  assert.equal(p._draft.stock_type, 'AAA');
+  assert.equal(p._draft.stock_count, '6');
+  assert.match(p._content(), /data-draft="stock_count" type="number"[^>]*value="6"/);
+  p._draft.stock_count = '4';
+  await click({ action: 'set_stock' });
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['system_hub', 'batteries_set_stock', { battery_type: 'AAA', count: 4 }]]);
+  assert.equal(p._stockForm, false);
+});

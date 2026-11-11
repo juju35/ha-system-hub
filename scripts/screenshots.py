@@ -143,6 +143,16 @@ def mock_state():
             "0.4",
             "MB/s",
         ),
+        # A container bridge: left out of the network figures
+        (
+            "throughput_network_in",
+            "sensor.system_monitor_network_throughput_in_docker0",
+            "Network in docker0",
+            "9.6",
+            "MB/s",
+        ),
+        ("network_in", "sensor.system_monitor_network_in_eth0", "Network in eth0", "18734.2", "MiB"),
+        ("network_out", "sensor.system_monitor_network_out_eth0", "Network out eth0", "4127.9", "MiB"),
         ("ipv4_address", "sensor.system_monitor_ipv4_address_eth0", "IPv4 address eth0", "192.168.1.20", None),
         ("swap_use", "sensor.system_monitor_swap_use", "Swap use", "131", "MiB"),
         ("swap_free", "sensor.system_monitor_swap_free", "Swap free", "3965", "MiB"),
@@ -223,6 +233,23 @@ def mock_state():
         "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync"],
         "tabs": ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync"],
         "git_sync_configured": True,
+        "updates": [
+            {
+                "key": "core",
+                "entity_id": "update.home_assistant_core_update",
+                "state": "on",
+                "installed": "2026.10.4",
+                "latest": "2026.11.1",
+            },
+            {
+                "key": "os",
+                "entity_id": "update.home_assistant_operating_system_update",
+                "state": "off",
+                "installed": "16.3",
+                "latest": "16.3",
+            },
+        ],
+        "thresholds": {"cpu": [70, 90], "ram": [70, 90], "disk": [80, 90], "temperature": [70, 85], "swap": [50, 80]},
         "system": [
             {"key": key, "entity_id": entity, "name": name, "state": state, "unit": unit}
             for key, entity, name, state, unit in system
@@ -324,6 +351,10 @@ def mock_state():
             "low": 2,
             "unavailable": 1,
             "last_notification": "2026-11-09T19:00:00+01:00",
+            "spares": {
+                "CR2032": {"stock": 0, "needed": 1, "short": 1},
+                "AAA": {"stock": 6, "needed": 2, "short": 0},
+            },
             "batteries": [
                 {
                     "entity_id": f"sensor.battery_{i}",

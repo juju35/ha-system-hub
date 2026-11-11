@@ -59,6 +59,7 @@
         "title": "Alternativ för System Hub",
         "menu_options": {
           "modules": "Moduler",
+          "system": "System: tröskelvärden",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Lägg till omstart via uttag",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Importera från Battery Monitor",
         "description": "Hittat i Battery Monitor: {settings} inställningar, {types} batterityper angivna i dess kort och {stock} typer av reservbatterier. Skicka för att hämta dem till System Hub: dess inställningar ersätter Batterier-modulens och de batterityper som redan angetts här behålls."
+      },
+      "system": {
+        "title": "System: tröskelvärden",
+        "description": "Fliken System färgar ett värde orange från det första tröskelvärdet och rött från det andra.",
+        "data": {
+          "cpu_warning": "CPU: orange från",
+          "cpu_critical": "CPU: rött från",
+          "ram_warning": "RAM: orange från",
+          "ram_critical": "RAM: rött från",
+          "disk_warning": "Disk: orange från",
+          "disk_critical": "Disk: rött från",
+          "temperature_warning": "Temperatur: orange från",
+          "temperature_critical": "Temperatur: rött från",
+          "swap_warning": "Swap: orange från",
+          "swap_critical": "Swap: rött från"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Mappen måste ligga i konfigurationsmappen eller i en mapp från allowlist_external_dirs, utanför dolda mappar som .storage.",
       "battery_required": "Välj batteriet.",
       "type_required": "Välj eller skriv typen.",
-      "no_model": "Det här batteriets enhet har ingen modell: ange typen för själva batteriet."
+      "no_model": "Det här batteriets enhet har ingen modell: ange typen för själva batteriet.",
+      "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange."
     },
     "abort": {
       "nothing_to_import": "Inget att importera från Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Enhet borttagen",
         "open_device": "Enhet",
         "pc_none": "Ingen omstart via uttag ännu: lägg till en i Konfigurera → Watchdog: lägg till en omstart via uttag.",
-        "pc_configure": "Lägg till eller ta bort i Konfigurera"
+        "pc_configure": "Lägg till eller ta bort i Konfigurera",
+        "network_total": "Mottaget / skickat",
+        "update_to": "Uppdatera till {versions}",
+        "up_to_date": "Uppdaterad",
+        "export_csv": "Exportera CSV",
+        "spares": "Lager",
+        "to_buy": "{n} att köpa",
+        "set_stock": "Ange lager",
+        "stock_type": "Batterityp",
+        "stock_count": "Antal",
+        "search_batteries": "Sök: namn, rum, typ",
+        "no_match": "Inget batteri matchar"
       }
     },
     "battery_type": {

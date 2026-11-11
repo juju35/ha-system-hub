@@ -59,6 +59,7 @@
         "title": "Možnosti System Hub",
         "menu_options": {
           "modules": "Moduly",
+          "system": "Systém: prahy",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Import z Battery Monitor",
         "description": "Nalezeno v Battery Monitor: nastavení: {settings}, typy baterií nastavené v jeho kartách: {types}, typy náhradních baterií: {stock}. Odesláním je převezmete do System Hub: jeho nastavení nahradí nastavení modulu Baterie a typy baterií již nastavené zde zůstanou zachovány."
+      },
+      "system": {
+        "title": "Systém: prahy",
+        "description": "Karta Systém obarví hodnotu oranžově od prvního prahu a červeně od druhého.",
+        "data": {
+          "cpu_warning": "CPU: oranžová od",
+          "cpu_critical": "CPU: červená od",
+          "ram_warning": "RAM: oranžová od",
+          "ram_critical": "RAM: červená od",
+          "disk_warning": "Disk: oranžová od",
+          "disk_critical": "Disk: červená od",
+          "temperature_warning": "Teplota: oranžová od",
+          "temperature_critical": "Teplota: červená od",
+          "swap_warning": "Swap: oranžová od",
+          "swap_critical": "Swap: červená od"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Složka musí být ve složce konfigurace nebo ve složce z allowlist_external_dirs, mimo skryté složky, jako je .storage.",
       "battery_required": "Vyberte baterii.",
       "type_required": "Vyberte nebo zadejte typ.",
-      "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii."
+      "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii.",
+      "critical_below_warning": "Červený práh musí být nad oranžovým."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor není co importovat."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Zařízení odebráno",
         "open_device": "Zařízení",
         "pc_none": "Zatím žádný restart přes zásuvku: přidejte ho v Konfigurovat → Watchdog: přidat restart přes zásuvku.",
-        "pc_configure": "Přidat nebo odebrat v Konfigurovat"
+        "pc_configure": "Přidat nebo odebrat v Konfigurovat",
+        "network_total": "Přijato / odesláno",
+        "update_to": "Aktualizovat na {versions}",
+        "up_to_date": "Aktuální",
+        "export_csv": "Exportovat CSV",
+        "spares": "Zásoba",
+        "to_buy": "{n} koupit",
+        "set_stock": "Nastavit zásobu",
+        "stock_type": "Typ baterie",
+        "stock_count": "Počet",
+        "search_batteries": "Hledat: název, místnost, typ",
+        "no_match": "Žádná baterie neodpovídá"
       }
     },
     "battery_type": {

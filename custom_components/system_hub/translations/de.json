@@ -59,6 +59,7 @@
         "title": "Optionen von System Hub",
         "menu_options": {
           "modules": "Module",
+          "system": "System: Schwellenwerte",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Neustart per Steckdose hinzufügen",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Aus Battery Monitor importieren",
         "description": "In Battery Monitor gefunden: {settings} Einstellungen, {types} in seinen Karten festgelegte Batterietypen und {stock} Typen von Ersatzbatterien. Absenden, um sie in System Hub zu übernehmen: seine Einstellungen ersetzen die des Moduls Batterien, die hier bereits festgelegten Batterietypen bleiben erhalten."
+      },
+      "system": {
+        "title": "System: Schwellenwerte",
+        "description": "Der Tab System färbt einen Wert ab dem ersten Schwellenwert orange und ab dem zweiten rot.",
+        "data": {
+          "cpu_warning": "CPU: orange ab",
+          "cpu_critical": "CPU: rot ab",
+          "ram_warning": "RAM: orange ab",
+          "ram_critical": "RAM: rot ab",
+          "disk_warning": "Datenträger: orange ab",
+          "disk_critical": "Datenträger: rot ab",
+          "temperature_warning": "Temperatur: orange ab",
+          "temperature_critical": "Temperatur: rot ab",
+          "swap_warning": "Swap: orange ab",
+          "swap_critical": "Swap: rot ab"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Der Ordner muss im Konfigurationsordner oder in einem Ordner von allowlist_external_dirs liegen, außerhalb versteckter Ordner wie .storage.",
       "battery_required": "Batterie auswählen.",
       "type_required": "Typ auswählen oder eingeben.",
-      "no_model": "Das Gerät dieser Batterie hat kein Modell: den Typ für die Batterie selbst festlegen."
+      "no_model": "Das Gerät dieser Batterie hat kein Modell: den Typ für die Batterie selbst festlegen.",
+      "critical_below_warning": "Der rote Schwellenwert muss über dem orangen liegen."
     },
     "abort": {
       "nothing_to_import": "Nichts aus Battery Monitor zu importieren."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Gerät entfernt",
         "open_device": "Gerät",
         "pc_none": "Noch kein Neustart per Steckdose: einen in Konfigurieren → Watchdog: Neustart per Steckdose hinzufügen anlegen.",
-        "pc_configure": "In Konfigurieren hinzufügen oder entfernen"
+        "pc_configure": "In Konfigurieren hinzufügen oder entfernen",
+        "network_total": "Empfangen / gesendet",
+        "update_to": "Update auf {versions}",
+        "up_to_date": "Aktuell",
+        "export_csv": "Als CSV exportieren",
+        "spares": "Vorrat",
+        "to_buy": "{n} kaufen",
+        "set_stock": "Vorrat festlegen",
+        "stock_type": "Batterietyp",
+        "stock_count": "Anzahl",
+        "search_batteries": "Suchen: Name, Raum, Typ",
+        "no_match": "Keine Batterie passt"
       }
     },
     "battery_type": {

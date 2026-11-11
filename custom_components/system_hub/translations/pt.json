@@ -59,6 +59,7 @@
         "title": "Opções do System Hub",
         "menu_options": {
           "modules": "Módulos",
+          "system": "Sistema: limiares",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Adicionar um reinício por tomada",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Importar do Battery Monitor",
         "description": "Encontrado no Battery Monitor: {settings} definições, {types} tipos de pilha definidos nos seus cartões e {stock} tipos de pilhas sobresselentes. Submeta para os trazer para o System Hub: as suas definições substituem as do módulo Baterias e os tipos de pilha já definidos aqui são mantidos."
+      },
+      "system": {
+        "title": "Sistema: limiares",
+        "description": "O separador Sistema mostra um valor a laranja a partir do primeiro limiar e a vermelho a partir do segundo.",
+        "data": {
+          "cpu_warning": "CPU: laranja a partir de",
+          "cpu_critical": "CPU: vermelho a partir de",
+          "ram_warning": "RAM: laranja a partir de",
+          "ram_critical": "RAM: vermelho a partir de",
+          "disk_warning": "Disco: laranja a partir de",
+          "disk_critical": "Disco: vermelho a partir de",
+          "temperature_warning": "Temperatura: laranja a partir de",
+          "temperature_critical": "Temperatura: vermelho a partir de",
+          "swap_warning": "Swap: laranja a partir de",
+          "swap_critical": "Swap: vermelho a partir de"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "A pasta tem de estar dentro da pasta de configuração ou de uma pasta de allowlist_external_dirs, fora de pastas ocultas como .storage.",
       "battery_required": "Escolha a bateria.",
       "type_required": "Escolha ou escreva o tipo.",
-      "no_model": "O dispositivo desta bateria não tem modelo: defina o tipo para a própria bateria."
+      "no_model": "O dispositivo desta bateria não tem modelo: defina o tipo para a própria bateria.",
+      "critical_below_warning": "O limiar vermelho tem de estar acima do laranja."
     },
     "abort": {
       "nothing_to_import": "Nada a importar do Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Dispositivo removido",
         "open_device": "Dispositivo",
         "pc_none": "Ainda sem reinícios por tomada: adicione um em Configurar → Watchdog: adicionar um reinício por tomada.",
-        "pc_configure": "Adicionar ou remover em Configurar"
+        "pc_configure": "Adicionar ou remover em Configurar",
+        "network_total": "Recebido / enviado",
+        "update_to": "Atualizar para {versions}",
+        "up_to_date": "Atualizado",
+        "export_csv": "Exportar CSV",
+        "spares": "Reserva",
+        "to_buy": "{n} a comprar",
+        "set_stock": "Definir o stock",
+        "stock_type": "Tipo de pilha",
+        "stock_count": "Quantidade",
+        "search_batteries": "Pesquisar: nome, divisão, tipo",
+        "no_match": "Nenhuma pilha corresponde"
       }
     },
     "battery_type": {

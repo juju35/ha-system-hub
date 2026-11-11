@@ -59,6 +59,7 @@
         "title": "Opzioni di System Hub",
         "menu_options": {
           "modules": "Moduli",
+          "system": "Sistema: soglie",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Aggiungi un riavvio tramite presa",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Importa da Battery Monitor",
         "description": "Trovato in Battery Monitor: {settings} impostazioni, {types} tipi di batteria impostati nelle sue schede e {stock} tipi di batterie di ricambio. Invia per portarli in System Hub: le sue impostazioni sostituiscono quelle del modulo Batterie e i tipi di batteria già impostati qui vengono mantenuti."
+      },
+      "system": {
+        "title": "Sistema: soglie",
+        "description": "La scheda Sistema colora un valore di arancione dalla prima soglia e di rosso dalla seconda.",
+        "data": {
+          "cpu_warning": "CPU: arancione da",
+          "cpu_critical": "CPU: rosso da",
+          "ram_warning": "RAM: arancione da",
+          "ram_critical": "RAM: rosso da",
+          "disk_warning": "Disco: arancione da",
+          "disk_critical": "Disco: rosso da",
+          "temperature_warning": "Temperatura: arancione da",
+          "temperature_critical": "Temperatura: rosso da",
+          "swap_warning": "Swap: arancione da",
+          "swap_critical": "Swap: rosso da"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "La cartella deve trovarsi nella cartella di configurazione o in una cartella di allowlist_external_dirs, fuori dalle cartelle nascoste come .storage.",
       "battery_required": "Scegli la batteria.",
       "type_required": "Scegli o scrivi il tipo.",
-      "no_model": "Il dispositivo di questa batteria non ha un modello: imposta il tipo per la batteria stessa."
+      "no_model": "Il dispositivo di questa batteria non ha un modello: imposta il tipo per la batteria stessa.",
+      "critical_below_warning": "La soglia rossa deve essere sopra quella arancione."
     },
     "abort": {
       "nothing_to_import": "Niente da importare da Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Dispositivo rimosso",
         "open_device": "Dispositivo",
         "pc_none": "Nessun riavvio tramite presa: aggiungine uno in Configura → Watchdog: aggiungi un riavvio tramite presa.",
-        "pc_configure": "Aggiungi o rimuovi in Configura"
+        "pc_configure": "Aggiungi o rimuovi in Configura",
+        "network_total": "Ricevuti / inviati",
+        "update_to": "Aggiorna a {versions}",
+        "up_to_date": "Aggiornato",
+        "export_csv": "Esporta CSV",
+        "spares": "Scorta",
+        "to_buy": "{n} da comprare",
+        "set_stock": "Imposta la scorta",
+        "stock_type": "Tipo di batteria",
+        "stock_count": "Quantità",
+        "search_batteries": "Cerca: nome, stanza, tipo",
+        "no_match": "Nessuna batteria corrisponde"
       }
     },
     "battery_type": {

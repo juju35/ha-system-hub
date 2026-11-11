@@ -59,6 +59,7 @@
         "title": "System Hub options",
         "menu_options": {
           "modules": "Modules",
+          "system": "System: thresholds",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Add a power cycle",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Import from Battery Monitor",
         "description": "Found in Battery Monitor: {settings} settings, {types} battery types set in its cards and {stock} types of spare batteries. Submit to bring them into System Hub: its settings replace those of the Batteries module, and the battery types already set here are kept."
+      },
+      "system": {
+        "title": "System: thresholds",
+        "description": "The System tab turns a value orange from the first threshold and red from the second.",
+        "data": {
+          "cpu_warning": "CPU: orange from",
+          "cpu_critical": "CPU: red from",
+          "ram_warning": "RAM: orange from",
+          "ram_critical": "RAM: red from",
+          "disk_warning": "Disk: orange from",
+          "disk_critical": "Disk: red from",
+          "temperature_warning": "Temperature: orange from",
+          "temperature_critical": "Temperature: red from",
+          "swap_warning": "Swap: orange from",
+          "swap_critical": "Swap: red from"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "The folder must be inside the configuration folder or a folder of allowlist_external_dirs, outside hidden folders such as .storage.",
       "battery_required": "Choose the battery.",
       "type_required": "Pick or type the type.",
-      "no_model": "This battery's device has no model: set the type for the battery itself."
+      "no_model": "This battery's device has no model: set the type for the battery itself.",
+      "critical_below_warning": "The red threshold must be above the orange one."
     },
     "abort": {
       "nothing_to_import": "Nothing to import from Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Device removed",
         "open_device": "Device",
         "pc_none": "No power cycle yet: add one in Configure → Watchdog: Add a power cycle.",
-        "pc_configure": "Add or remove in Configure"
+        "pc_configure": "Add or remove in Configure",
+        "network_total": "Received / sent",
+        "update_to": "Update to {versions}",
+        "up_to_date": "Up to date",
+        "export_csv": "Export CSV",
+        "spares": "Spares",
+        "to_buy": "{n} to buy",
+        "set_stock": "Set the stock",
+        "stock_type": "Battery type",
+        "stock_count": "Count",
+        "search_batteries": "Search: name, room, type",
+        "no_match": "No battery matches"
       }
     },
     "battery_type": {
