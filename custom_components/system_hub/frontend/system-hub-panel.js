@@ -1007,7 +1007,9 @@ class SystemHubPanel extends HTMLElement {
   }
 
   _tabs() {
-    if (!this._state?.loaded) return ['system', 'settings'];
+    // Nothing read yet: no tab, so that none is picked before the configured order is known
+    if (!this._state) return [];
+    if (!this._state.loaded) return ['system', 'settings'];
     var modules = this._state.modules || [];
     return [...(this._state.tabs || []).filter((t) => t === 'status' || t === 'system' || modules.includes(t)), 'settings'];
   }
@@ -1033,7 +1035,8 @@ class SystemHubPanel extends HTMLElement {
     this._selectTab(tab, focus);
     var base = (this._panel?.url_path || 'system-hub').replace(/^\//, '');
     try {
-      history.replaceState(history.state, '', `/${base}${this._tab === 'system' ? '' : `/${this._tab}`}`);
+      // Every tab in the address, the first one too: the panel's bare address opens the first tab of the order
+      history.replaceState(history.state, '', `/${base}/${this._tab}`);
     } catch (_err) {
       // no history (a test): the tab still shows
     }
