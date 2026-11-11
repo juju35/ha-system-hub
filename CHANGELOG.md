@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.1 - 2026-11-12
+
+### Fixed
+- **Uptime** in French (also Italian and Polish): the **System** tab's tile, the **Status** tab and the System Monitor card read "En marche depuis 22 h 10", which looks like the time of the last boot. They now read **Temps de fonctionnement** (`22 h 10 min de fonctionnement` on the **Status** tab).
+
 ## 1.4.0 - 2026-11-11
 
 ### New

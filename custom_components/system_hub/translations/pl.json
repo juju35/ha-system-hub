@@ -1448,7 +1448,7 @@
         "st_n_warn": "Do obserwacji: {n}",
         "st_n_info": "Info: {n}",
         "st_n_good": "OK: {n}",
-        "st_up": "działa od {time}",
+        "st_up": "czas pracy: {time}",
         "st_updates": "Aktualizacje",
         "st_normal": "Wszystko w normie",
         "st_high": "Wysokie: {what}",
