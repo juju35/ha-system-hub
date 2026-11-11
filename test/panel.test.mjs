@@ -617,3 +617,41 @@ test('containers tab: the Docker containers with their image', () => {
   p._tab = 'system';
   assert.doesNotMatch(p._content(), /binary_sensor\.process_frigate/);
 });
+
+test('marketplace tab: a card per update with the size of the change, its notes, its own Update; GitHub kept', async () => {
+  const marketplace = {
+    state: 'idle',
+    updates: 2,
+    github_connected: true,
+    rate_limit_remaining: 4812,
+    retry_after: new Date(Date.now() + 2 * 3600000).toISOString(),
+    failed: ['someone/abandoned-card'],
+    list: [
+      { entity_id: 'update.mushroom', title: 'Mushroom', installed: 'v4.4.0', latest: 'v5.0.0', release_url: 'https://x/rel', release_summary: null, picture: null, installing: false },
+      { entity_id: 'update.card_mod', title: 'card-mod', installed: '3.4.4', latest: '3.4.5', release_url: null, release_summary: 'Fix', picture: '/p.png', installing: true },
+    ],
+  };
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace');
+  p._hass.callWS = async () => '## v5.0.0\n\n**Breaking**: a [new editor](https://x) and <b>more</b>';
+  p._render = () => {};
+  let html = p._content();
+  assert.match(html, /2 updates available/);
+  assert.match(html, /GitHub connected · GitHub: 4812 requests left/);
+  assert.match(html, /limit reached, next try in 2 hours/);
+  assert.match(html, /class="pill bad">major/);
+  assert.match(html, /class="pill good">patch/);
+  assert.match(html, /href="https:\/\/x\/rel"/);
+  // card-mod is installing: its button spins
+  assert.match(html, /data-action="mk_install" data-entity="update.card_mod" disabled aria-busy="true"/);
+  assert.match(html, /href="https:\/\/github.com\/someone\/abandoned-card"/);
+  await new Promise((r) => setImmediate(r));
+  html = p._content();
+  assert.match(html, /v5\.0\.0 Breaking: a new editor and more/);
+  // Update on one card installs that one
+  const calls = [];
+  p._hass.callService = async (...args) => calls.push(args);
+  p._load = async () => {};
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'mk_install', entity: 'update.mushroom' } } : null) } });
+  await new Promise((r) => setImmediate(r));
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), ['system_hub', 'marketplace_install_updates', { entity_id: ['update.mushroom'] }]);
+});

@@ -258,3 +258,34 @@ async def test_system_thresholds_step(hass: HomeAssistant, hass_ws_client) -> No
     assert thresholds["cpu"] == [60, 80]
     assert thresholds["swap"] == [50, 75]
     assert thresholds["temperature"] == [65, 80]
+
+
+async def test_marketplace_updates_for_the_panel(hass: HomeAssistant) -> None:
+    from homeassistant.helpers import entity_registry as er  # noqa: PLC0415
+
+    from custom_components.system_hub.panel import _marketplace_updates  # noqa: PLC0415
+
+    registry = er.async_get(hass)
+    for uid, title, on in (("1", "Mushroom", True), ("2", "card-mod", True), ("3", "Up to date", False)):
+        entry = registry.async_get_or_create("update", "marketplace", uid, suggested_object_id=f"repo_{uid}")
+        attrs = {"title": title, "installed_version": "v1.0.0", "latest_version": "v2.0.0" if on else "v1.0.0"}
+        if uid == "1":
+            attrs |= {"release_url": "https://github.com/x/mushroom/releases/v2.0.0", "entity_picture": "/p.png"}
+        hass.states.async_set(entry.entity_id, "on" if on else "off", attrs)
+    # Another integration's update entity is left out
+    other = registry.async_get_or_create("update", "hassio", "x", suggested_object_id="addon")
+    hass.states.async_set(other.entity_id, "on", {"title": "Add-on"})
+
+    updates = _marketplace_updates(hass, ["update.repo_2"])
+    assert [u["title"] for u in updates] == ["card-mod", "Mushroom"]
+    assert updates[0]["installing"] is True
+    assert updates[1] == {
+        "entity_id": "update.repo_1",
+        "title": "Mushroom",
+        "installed": "v1.0.0",
+        "latest": "v2.0.0",
+        "release_url": "https://github.com/x/mushroom/releases/v2.0.0",
+        "release_summary": None,
+        "picture": "/p.png",
+        "installing": False,
+    }
