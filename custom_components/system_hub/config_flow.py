@@ -50,6 +50,8 @@ from .git_sync import flow as git_sync_flow
 from .git_sync.const import CONF_REPO_PATH
 from .marketplace import flow as marketplace_flow
 from .orphans import flow as orphans_flow
+from .standalone import STANDALONE, taken_over
+from .standalone import settings as standalone_settings
 from .watchdog import flow as watchdog_flow
 from .watchdog.const import CONF_DELAY, CONF_DEVICE, CONF_OFF_TIME, CONF_POWER_CYCLES, CONF_SWITCH
 
@@ -92,6 +94,23 @@ def _chosen(user_input: dict[str, Any]) -> list[str]:
     return [module for module in MODULES if user_input.get(module)]
 
 
+def _taken_over(hass: HomeAssistant, options: dict[str, Any], turned_on: list[str]) -> dict[str, Any]:
+    """The options of the modules turned on, with the settings of the standalone integration each one replaces
+    when the module was never set here (Git Sync's come with its repository step)."""
+    changes: dict[str, Any] = {}
+    for module in turned_on:
+        if module in STANDALONE and module != MODULE_GIT_SYNC:
+            current = options.get(module) if isinstance(options.get(module), dict) else {}
+            if settings := taken_over(hass, current, module):
+                changes[module] = settings
+    return changes
+
+
+def _git_sync_defaults(hass: HomeAssistant) -> dict[str, Any]:
+    """Settings of a new Git Sync module: the standalone Git Sync's when it is set up, else the defaults."""
+    return git_sync_flow.default_options(hass) | standalone_settings(hass, MODULE_GIT_SYNC)
+
+
 class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
     """Creates the single System Hub entry with the modules chosen."""
 
@@ -105,7 +124,11 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
             self._chosen_modules = _chosen(user_input)
             if MODULE_GIT_SYNC in self._chosen_modules:
                 return await self.async_step_git_sync_repository()
-            return self.async_create_entry(title="System Hub", data={}, options={CONF_MODULES: self._chosen_modules})
+            return self.async_create_entry(
+                title="System Hub",
+                data={},
+                options={CONF_MODULES: self._chosen_modules, **_taken_over(self.hass, {}, self._chosen_modules)},
+            )
         schema = _modules_schema(_available(self.hass))
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
@@ -117,15 +140,23 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
         if user_input is not None:
             errors = await _repository_errors(user_input)
             if not errors:
-                settings = user_input | git_sync_flow.default_options(self.hass)
+                settings = _git_sync_defaults(self.hass) | user_input
                 return self.async_create_entry(
                     title="System Hub",
                     data={},
-                    options={CONF_MODULES: self._chosen_modules, MODULE_GIT_SYNC: settings},
+                    options={
+                        CONF_MODULES: self._chosen_modules,
+                        **_taken_over(self.hass, {}, self._chosen_modules),
+                        MODULE_GIT_SYNC: settings,
+                    },
                 )
+        # The standalone Git Sync's repository, SSH key and author when it is set up.
+        defaults = standalone_settings(self.hass, MODULE_GIT_SYNC)
         return self.async_show_form(
             step_id="git_sync_repository",
-            data_schema=self.add_suggested_values_to_schema(git_sync_flow.repository_schema({}), user_input or {}),
+            data_schema=self.add_suggested_values_to_schema(
+                git_sync_flow.repository_schema(defaults), user_input or {}
+            ),
             errors=errors,
         )
 
@@ -146,6 +177,8 @@ class SystemHubOptionsFlow(OptionsFlow):
     """The modules turned on, then the settings of each one; a module turned off keeps its settings."""
 
     _pending_modules: list[str] | None = None
+    # Settings of the standalone integrations taken over by the modules being turned on.
+    _taken_over: dict[str, Any] | None = None
 
     def _modules(self) -> list[str]:
         modules = self.config_entry.options.get(CONF_MODULES)
@@ -226,11 +259,13 @@ class SystemHubOptionsFlow(OptionsFlow):
         errors = _modules_errors(self.hass, user_input) if user_input is not None else {}
         if user_input is not None and not errors:
             chosen = _chosen(user_input)
+            turned_on = [m for m in chosen if m not in self._modules()]
+            self._taken_over = _taken_over(self.hass, dict(self.config_entry.options), turned_on)
             if MODULE_GIT_SYNC in chosen and not git_sync_configured(self._module(MODULE_GIT_SYNC)):
                 # Turned on for the first time: its repository first, saved with the modules.
                 self._pending_modules = chosen
                 return await self.async_step_git_sync_repository()
-            return self._save(**{CONF_MODULES: chosen})
+            return self._save(**{CONF_MODULES: chosen, **self._taken_over})
         schema = _modules_schema(self._modules())
         if user_input is not None:
             schema = self.add_suggested_values_to_schema(schema, user_input)
@@ -378,12 +413,14 @@ class SystemHubOptionsFlow(OptionsFlow):
         if user_input is not None:
             errors = await _repository_errors(user_input)
             if not errors:
-                settings = (current or git_sync_flow.default_options(self.hass)) | user_input
+                settings = (current or _git_sync_defaults(self.hass)) | user_input
                 modules = self._pending_modules or self._modules()
-                return self._save(**{CONF_MODULES: modules, MODULE_GIT_SYNC: settings})
+                return self._save(**{CONF_MODULES: modules, **(self._taken_over or {}), MODULE_GIT_SYNC: settings})
+        # Never set here: the standalone Git Sync's repository, SSH key and author when it is set up.
+        defaults = current or standalone_settings(self.hass, MODULE_GIT_SYNC)
         return self.async_show_form(
             step_id="git_sync_repository",
-            data_schema=git_sync_flow.repository_schema(user_input or current),
+            data_schema=git_sync_flow.repository_schema(user_input or defaults),
             errors=errors,
         )
 
