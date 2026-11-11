@@ -797,6 +797,7 @@ class SystemHubPanel extends HTMLElement {
     @keyframes sh-blink { 0%, 100% { opacity:1 } 50% { opacity:.35 } }
     @media (prefers-reduced-motion: reduce) { .brow.due .ic { animation:none; } }
     .segs { display:inline-flex; border-radius:8px; overflow:hidden; background:var(--secondary-background-color, rgba(127,127,127,.12)); }
+    .gitrepos { display:flex; flex-wrap:wrap; width:max-content; max-width:100%; margin:0 0 12px; }
     .seg { display:inline-flex; align-items:center; gap:6px; border:0; background:none; cursor:pointer; font:inherit; font-size:13px;
            padding:7px 12px; color:var(--secondary-text-color); --mdc-icon-size:16px; }
     .seg.active { color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); font-weight:500; }
@@ -2065,10 +2066,36 @@ class SystemHubPanel extends HTMLElement {
     }
   }
 
+  // Git Sync: every repository (the first one first), and the one the tab shows (a chip per repository)
+  _gitRepos() {
+    return this._state.git_sync_repos || [];
+  }
+
+  _gitData() {
+    var repos = this._gitRepos();
+    return repos.find((r) => r.id === this._gitRepo) || repos[0] || this._state.git_sync;
+  }
+
+  // The repository the tab's actions run on: named only when there are several
+  _gitTarget() {
+    var repos = this._gitRepos();
+    return repos.length > 1 ? { repository: this._gitData().path } : {};
+  }
+
   // Git Sync: status, changed files, commit and push
   _gitSync() {
-    var data = this._state.git_sync;
+    var data = this._gitData();
     if (!data) return `<ha-card class="note">${shEsc(this._t('git_needs_repo'))}</ha-card>`;
+    var repos = this._gitRepos();
+    var picker =
+      repos.length > 1
+        ? `<div class="segs gitrepos" role="group" aria-label="${shEsc(this._entityName('sensor', 'git_sync_status'))}">${repos
+            .map((r) => {
+              var on = r.id === data.id;
+              return `<button class="seg${on ? ' active' : ''}" data-action="git_repo" data-id="${shEsc(r.id)}" aria-pressed="${on}" title="${shEsc(r.path)}">${shEsc(r.title)}</button>`;
+            })
+            .join('')}</div>`
+        : '';
     var tone = { clean: 'good', dirty: 'warn', ahead: 'warn', behind: 'warn', diverged: 'bad', error: 'bad' }[data.status] || '';
     var commit = data.last_commit;
     var tiles = [
@@ -2088,7 +2115,7 @@ class SystemHubPanel extends HTMLElement {
     var fold = count
       ? `<button class="icon-btn" data-action="git_files_fold" aria-expanded="${open}" title="${shEsc(this._t('changed'))}" aria-label="${shEsc(this._t('changed'))}"><ha-icon icon="mdi:chevron-${open ? 'up' : 'down'}"></ha-icon></button>`
       : '';
-    return `<div class="tiles">${tiles.join('')}</div>
+    return `${picker}<div class="tiles">${tiles.join('')}</div>
       <ha-card class="block"><div class="actions"><label class="box"><input data-draft="message" placeholder="${shEsc(this._t('message'))}" value="${shEsc(this._draft.message || '')}"></label>
         ${data.ai_task ? this._button('git_sync_generate_message', 'mdi:creation-outline', this._t('generate'), { quiet: true }) : ''}</div>
         <div class="actions">${this._button('git_sync_commit_push', 'mdi:source-commit-end', this._entityName('button', 'git_sync_commit_push'))}
@@ -2163,7 +2190,8 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'batt_csv') return this._battDownload();
     if (action === 'st_open') return this._selectTab(button.dataset.tab);
     if (action === 'git_files_fold') {
-      var shownNow = this._gitFilesOpen ?? Math.max(this._state.git_sync?.changed ?? 0, (this._state.git_sync?.files || []).length) <= SH_GIT_FILES_MAX;
+      var shown = this._gitData() || {};
+      var shownNow = this._gitFilesOpen ?? Math.max(shown.changed ?? 0, (shown.files || []).length) <= SH_GIT_FILES_MAX;
       this._gitFilesOpen = !shownNow;
       return this._render();
     }
@@ -2212,13 +2240,17 @@ class SystemHubPanel extends HTMLElement {
     if (action.startsWith('watchdog_reset:')) return this._run('watchdog_reset', 'watchdog_reset', { entry_id: action.split(':')[1] }, null, SH_DOMAIN, action);
     if (action === 'git_sync_generate_message') return this._generate();
     if (action === 'git_sync_diff') return this._openDiff();
+    if (action === 'git_repo') {
+      this._gitRepo = button.dataset.id;
+      return this._render();
+    }
     if (action === 'git_sync_commit_push') {
       var message = (this._draft.message || '').trim();
-      return this._run(action, 'git_sync', message ? { message } : {}, () => {
+      return this._run(action, 'git_sync', { ...(message ? { message } : {}), ...this._gitTarget() }, () => {
         this._draft.message = '';
       });
     }
-    if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', {}, null, SH_DOMAIN, action);
+    if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', this._gitTarget(), null, SH_DOMAIN, action);
     if (action === 'mk_install') {
       var target = button.dataset.entity;
       return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target] }, null, SH_DOMAIN, `mk_install:${target}`);
@@ -2388,14 +2420,15 @@ class SystemHubPanel extends HTMLElement {
       this._diffDialog = document.createElement('system-hub-diff-dialog');
       document.body?.appendChild?.(this._diffDialog);
     }
-    var state = this._state?.git_sync || {};
+    var state = this._gitData() || {};
+    var target = this._gitTarget();
     this._diffDialog.open({
       t: (key, vars) => this._t(key, vars),
       locale: this._hass?.locale?.language || this._hass?.language || undefined,
       branch: state.branch,
       commitLabel: this._entityName('button', 'git_sync_commit_push'),
       request: async () =>
-        (await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service: 'git_sync_get_diff', service_data: {}, return_response: true }))?.response,
+        (await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service: 'git_sync_get_diff', service_data: target, return_response: true }))?.response,
       onCommit: () => this.shadowRoot.querySelector('[data-draft="message"]')?.focus?.({ preventScroll: true }),
     });
   }
@@ -2406,7 +2439,7 @@ class SystemHubPanel extends HTMLElement {
     this._busy[service] = true;
     this._render();
     try {
-      var res = await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service, service_data: {}, return_response: true });
+      var res = await this._hass.callWS({ type: 'call_service', domain: SH_DOMAIN, service, service_data: this._gitTarget(), return_response: true });
       var message = res?.response?.message;
       if (message) this._draft.message = message;
       else this._messages.git_sync = { text: this._t('clean'), tone: '' };
@@ -2778,7 +2811,7 @@ var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
-  git_sync: ['git_sync', 'git_sync_repository'],
+  git_sync: ['git_sync', 'git_sync_repository', 'git_sync_add_repository', 'git_sync_other', 'git_sync_remove_repository'],
   automations: ['automations'],
   orphans: ['orphans'],
 };
@@ -3204,6 +3237,10 @@ var SH_STATUS_METHODS = {
     if (tab === 'git_sync') {
       var git = s.git_sync;
       if (!git || git.available === false) return null;
+      // With several repositories, the one most in need of action speaks for all
+      var gitRepos = (s.git_sync_repos || []).filter((r) => r.available !== false);
+      var weight = (r) => (r.last_error || r.status === 'error' || (r.ahead && r.behind) ? 2 : r.changed || r.ahead || r.behind ? 1 : 0);
+      if (gitRepos.length > 1) git = gitRepos.reduce((a, b) => (weight(b) > weight(a) ? b : a));
       var error = git.last_error || git.status === 'error' || (git.ahead && git.behind);
       var changed = git.changed || 0;
       return [

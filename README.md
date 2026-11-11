@@ -1043,9 +1043,26 @@ type: custom:automation-monitor-card
 
 ## Git Sync
 
-Commits and pushes the Home Assistant configuration to a Git remote (GitHub, Gitea…), with commit messages written by an AI task, and exports the dashboards. One repository.
+Commits and pushes the Home Assistant configuration to a Git remote (GitHub, Gitea…), with commit messages written by an AI task, and exports the dashboards. One repository or several, as the former Git Sync integration had one entry per repository.
 
 Turning the module on (in the setup or with its switch in the panel's **Settings** tab) asks for the repository first: it is checked with Git (work tree, remote, branch name, commit author) before it is saved. Change it later with **Settings → Git Sync ⚙ → Repository settings**, the options with **Settings → Git Sync ⚙**.
+
+#### Several repositories
+
+**Settings → Git Sync ⚙ → Add a repository** adds another one (an ESPHome folder, a `/share` folder…), checked the same way; **Another repository** sets one of them (its repository settings, then its options: schedule, export, notifications…, its own as an entry of the former integration had them), **Remove repositories** removes some. Each further repository has its own device, **System Hub Git Sync (folder)**, with the same entities named after its folder (`sensor.system_hub_git_sync_esphome_status`…), its own repairs and its own saved state; the first repository keeps the module's entities. Turned on next to the former Git Sync integration, the module takes over every one of its repositories: the configuration folder's first, the others as further repositories.
+
+In the panel, the **Git Sync** tab shows one repository at a time, with a chip per repository; the **Status** tab shows the one most in need of action. The [card](#git-sync-card) shows the repository of the sensor it is given (`entity`), the first one by default.
+
+Every action takes an optional `repository`: the path of a repository (or its id). Without it, `git_sync_commit_push`, `git_sync_pull` and `git_sync_export_dashboards` run on every repository, the other actions on the first one. The response keeps the first repository's result at its top, as with a single repository; with several, `results` also lists each repository's result with its path:
+
+```yaml
+action: system_hub.git_sync_commit_push
+data:
+  repository: /config/esphome  # optional
+response_variable: result
+# {"committed": true, "pushed": true, "message": "...",
+#  "results": [{"repository": "/config/esphome", "committed": true, "pushed": true, "message": "..."}]}
+```
 
 Prerequisites:
 
@@ -1114,7 +1131,7 @@ Prerequisites:
 
 | Entity | Description |
 |---|---|
-| `sensor.system_hub_git_sync_status` | `clean`, `dirty`, `ahead` (committed, push pending, or a branch never pushed), `behind` (the remote has commits that are not here: the next commit pulls them first), `diverged` (both sides have commits: nothing is pushed until it is resolved, see [Repairs](#repairs)) or `error` (last push failed; retried by the automatic commit). Attributes: `branch`, `upstream`, `remote_url` (without the user or token of an HTTPS remote), `ahead`, `behind`, `changed_count`, `changed_files` (first 50), `last_error`, `ai_task` |
+| `sensor.system_hub_git_sync_status` | `clean`, `dirty`, `ahead` (committed, push pending, or a branch never pushed), `behind` (the remote has commits that are not here: the next commit pulls them first), `diverged` (both sides have commits: nothing is pushed until it is resolved, see [Repairs](#repairs)) or `error` (last push failed; retried by the automatic commit). Attributes: `repository` (its path), `branch`, `upstream`, `remote_url` (without the user or token of an HTTPS remote), `ahead`, `behind`, `changed_count`, `changed_files` (first 50), `last_error`, `ai_task` |
 | `sensor.system_hub_git_sync_changed_files` | Number of changed files |
 | `sensor.system_hub_git_sync_last_commit` | Time of the HEAD commit. Attributes: `message`, `sha`, `short_sha` |
 | `sensor.system_hub_git_sync_last_push` | Time of the last push made by the module. Attribute: `message` |
@@ -1392,7 +1409,7 @@ A module turned on for the first time takes over the settings of the integration
 | `battery_monitor.notify` / `.set_stock` / `.export` | `system_hub.batteries_notify` / `.batteries_set_stock` / `.batteries_export` |
 | `battery_monitor_low` / `_replaced` events | `system_hub_battery_low` / `system_hub_battery_replaced` |
 | `sensor.battery_monitor_*`, `button.battery_monitor_notify_now` | `sensor.system_hub_batteries_*`, `button.system_hub_batteries_notify_now` |
-| `git_sync.commit_push` / `.pull` / `.generate_message` / `.get_diff` / `.export_dashboards` / `.generate_ssh_key` | `system_hub.git_sync_commit_push` / `.git_sync_pull` / … (no `config_entry_id`: one repository; responses without the `results` list) |
+| `git_sync.commit_push` / `.pull` / `.generate_message` / `.get_diff` / `.export_dashboards` / `.generate_ssh_key` | `system_hub.git_sync_commit_push` / `.git_sync_pull` / … (`repository`, a path or id, instead of `config_entry_id`; the first repository's result at the top of the response, and `results` with several repositories) |
 | `git_sync_committed` / `git_sync_exported` events | `system_hub_git_committed` / `system_hub_dashboards_exported` |
 | `sensor.git_sync_<repo>_*`, `button.git_sync_<repo>_*` | `sensor.system_hub_git_sync_*`, `button.system_hub_git_sync_*` |
 | `orphan_entities.scan` / `.remove` / `.remove_devices` / `.ignore` | `system_hub.orphans_scan` / `.orphans_remove` / `.orphans_remove_devices` / `.orphans_ignore` |

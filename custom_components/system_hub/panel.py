@@ -398,6 +398,10 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["batteries"] = _batteries(data.batteries)
     if data.git_sync is not None:
         result["git_sync"] = _git_sync(data.git_sync)
+        # Every repository, the first one first: the tab shows one at a time, with a chip per repository.
+        result["git_sync_repos"] = [
+            {"id": c.repo_id, "title": c.title, "path": c.repo.path, **_git_sync(c)} for c in data.git_syncs
+        ]
     if MODULE_AUTOMATIONS in result["modules"]:
         options = entry.options.get(MODULE_AUTOMATIONS)
         result["automations"] = automations.state(hass, options if isinstance(options, dict) else None)

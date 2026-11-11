@@ -96,6 +96,7 @@ class GitSyncData:
     """Snapshot exposed to the entities."""
 
     status: str = STATUS_CLEAN
+    repository: str | None = None
     git: GitStatus = field(default_factory=GitStatus)
     remote_url: str | None = None
     head: GitCommit | None = None
@@ -137,14 +138,15 @@ class GitSyncCoordinator(DataUpdateCoordinator[GitSyncData]):
 
     config_entry: ConfigEntry
 
-    def __init__(self, hass: HomeAssistant, entry: ConfigEntry, settings: dict[str, Any]) -> None:
-        """Set up the coordinator from the settings of the module."""
+    def __init__(self, hass: HomeAssistant, entry: ConfigEntry, settings: dict[str, Any], repo_id: str = "") -> None:
+        """Set up the coordinator from the settings of a repository: the module's first one (no id) or a further one."""
         self.settings: dict[str, Any] = dict(settings)
+        self.repo_id = repo_id
         super().__init__(
             hass,
             _LOGGER,
             config_entry=entry,
-            name=f"{DOMAIN} git sync",
+            name=f"{DOMAIN} git sync {repo_id}".rstrip(),
             update_interval=timedelta(seconds=self.settings.get(CONF_STATUS_INTERVAL, DEFAULT_STATUS_INTERVAL)),
         )
         self.repo = GitRepo(
@@ -155,9 +157,9 @@ class GitSyncCoordinator(DataUpdateCoordinator[GitSyncData]):
             author_name=self.settings.get(CONF_AUTHOR_NAME) or "",
             author_email=self.settings.get(CONF_AUTHOR_EMAIL) or "",
         )
-        self._store = self._make_store(hass, entry)
+        self._store = self._make_store(hass, repo_id)
         self._lock = asyncio.Lock()
-        self._state = GitSyncData(ai_task=self.settings.get(CONF_AI_TASK_ENTITY) or None)
+        self._state = GitSyncData(repository=self.repo.path, ai_task=self.settings.get(CONF_AI_TASK_ENTITY) or None)
         # Per export folder, the files the integration itself wrote there and the hash of what it wrote: the only
         # files a later export may overwrite, or delete while unchanged.
         self._export_manifest: dict[str, dict[str, str]] = {}
@@ -172,14 +174,19 @@ class GitSyncCoordinator(DataUpdateCoordinator[GitSyncData]):
         # Last error of an automatic commit that is retried at every interval (push or fetch failure): logged once.
         self._auto_error: str | None = None
 
+    @property
+    def title(self) -> str:
+        """The repository's name: the last folder of its path ("config" for /config)."""
+        return PurePosixPath(str(self.settings.get(CONF_REPO_PATH, "")).rstrip("/")).name or "/"
+
     @staticmethod
-    def _make_store(hass: HomeAssistant, _entry: ConfigEntry | None = None) -> Store[dict[str, Any]]:
-        return Store(hass, STORAGE_VERSION, STORAGE_KEY)
+    def _make_store(hass: HomeAssistant, repo_id: str = "") -> Store[dict[str, Any]]:
+        return Store(hass, STORAGE_VERSION, f"{STORAGE_KEY}_{repo_id}" if repo_id else STORAGE_KEY)
 
     @classmethod
-    async def async_remove_store(cls, hass: HomeAssistant) -> None:
-        """Delete the file holding the last push/export, when the integration is removed."""
-        await cls._make_store(hass).async_remove()
+    async def async_remove_store(cls, hass: HomeAssistant, repo_id: str = "") -> None:
+        """Delete the file holding the last push/export of a repository (the first one: the integration removed)."""
+        await cls._make_store(hass, repo_id).async_remove()
 
     # ------------------------------------------------------------------ polling
 
@@ -268,7 +275,8 @@ class GitSyncCoordinator(DataUpdateCoordinator[GitSyncData]):
     # ------------------------------------------------------------------ repairs
 
     def _issue_id(self, key: str) -> str:
-        return f"{key}_{self.config_entry.entry_id}"
+        suffix = f"_{self.repo_id}" if self.repo_id else ""
+        return f"{key}_{self.config_entry.entry_id}{suffix}"
 
     def _delete_issue(self, key: str) -> None:
         ir.async_delete_issue(self.hass, DOMAIN, self._issue_id(key))
@@ -291,7 +299,7 @@ class GitSyncCoordinator(DataUpdateCoordinator[GitSyncData]):
             severity=ir.IssueSeverity.WARNING,
             translation_key=ISSUE_GITIGNORE,
             translation_placeholders={"repo": self.repo.path, "lines": "\n".join(f"- `{line}`" for line in missing)},
-            data={"entry_id": self.config_entry.entry_id},
+            data={"entry_id": self.config_entry.entry_id, "repo_id": self.repo_id},
         )
 
     async def async_fix_gitignore(self) -> None:

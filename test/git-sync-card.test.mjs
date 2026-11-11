@@ -937,3 +937,22 @@ test('non-admin: the status only, no commit, pull, export, diff or AI message', 
   delete unknown.user;
   assert.doesNotMatch(html(render({}, unknown)), /id="commit"/);
 });
+
+test('several repositories: the actions name the one the card shows, a single one names none', async () => {
+  const ESP = 'sensor.system_hub_git_sync_esphome_status';
+  const hass = makeHass({ status: 'dirty', files: ['a.yaml'], behind: 2 });
+  hass.states[STATUS].attributes.repository = '/config';
+  hass.entities = { ...REGISTRY, [ESP]: { platform: 'system_hub', device_id: 'd2', translation_key: 'git_sync_status' } };
+  hass.states[ESP] = { state: 'dirty', attributes: { repository: '/config/esphome', branch: 'dev', changed_count: 1, changed_files: ['n.yaml'], behind: 1 } };
+  const card = render({ entity: ESP }, hass);
+  card.shadowRoot.querySelector('#pull').click();
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(JSON.stringify(hass.calls.at(-1).slice(0, 3)), JSON.stringify(['system_hub', 'git_sync_pull', { repository: '/config/esphome' }]));
+
+  const single = makeHass({ status: 'dirty', files: ['a.yaml'], behind: 2 });
+  single.states[STATUS].attributes.repository = '/config';
+  const one = render({}, single);
+  one.shadowRoot.querySelector('#pull').click();
+  await new Promise((r) => setTimeout(r, 0));
+  assert.equal(JSON.stringify(single.calls.at(-1).slice(0, 3)), JSON.stringify(['system_hub', 'git_sync_pull', {}]));
+});

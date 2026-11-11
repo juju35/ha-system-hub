@@ -12,7 +12,7 @@ from homeassistant.data_entry_flow import FlowResult
 from homeassistant.exceptions import HomeAssistantError
 from homeassistant.helpers import issue_registry as ir
 
-from . import loaded_git_sync, loaded_watchdog
+from . import loaded_git_syncs, loaded_watchdog
 from .const import DOMAIN
 from .watchdog.const import ATTR_ENTRY_ID
 
@@ -49,6 +49,10 @@ class GaveUpRepairFlow(RepairsFlow):
 class GitignoreFixFlow(RepairsFlow):
     """Show the lines to add, append them once an admin confirms (repairs are admin only)."""
 
+    def __init__(self, repo_id: str = "") -> None:
+        # The repository of the issue: "" for the module's first one.
+        self._repo_id = repo_id
+
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Start with the confirmation."""
         return await self.async_step_confirm()
@@ -56,8 +60,8 @@ class GitignoreFixFlow(RepairsFlow):
     async def async_step_confirm(self, user_input: dict[str, Any] | None = None) -> FlowResult:
         """Append the lines on submit."""
         try:
-            coordinator = loaded_git_sync(self.hass)
-        except HomeAssistantError:
+            coordinator = next(c for c in loaded_git_syncs(self.hass) if c.repo_id == self._repo_id)
+        except (HomeAssistantError, StopIteration):
             return self.async_abort(reason="not_loaded")
         if user_input is not None:
             await coordinator.async_fix_gitignore()
@@ -72,5 +76,5 @@ class GitignoreFixFlow(RepairsFlow):
 
 async def async_create_fix_flow(hass: HomeAssistant, issue_id: str, data: dict[str, Any] | None) -> RepairsFlow:
     if issue_id.startswith("git_sync_"):
-        return GitignoreFixFlow()
+        return GitignoreFixFlow(str((data or {}).get("repo_id") or ""))
     return GaveUpRepairFlow((data or {}).get(ATTR_ENTRY_ID) or issue_id.removeprefix("watchdog_gave_up_"))

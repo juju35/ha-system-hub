@@ -19,7 +19,9 @@ from .const import (
     CONF_COMMIT_INTERVAL,
     CONF_EXPORT_ENABLED,
     CONF_EXPORT_TIME,
+    CONF_REPO_ID,
     CONF_REPO_PATH,
+    CONF_REPOSITORIES,
     DEFAULT_COMMIT_INTERVAL,
     DEFAULT_EXPORT_TIME,
 )
@@ -33,22 +35,33 @@ def configured(settings: dict[str, Any]) -> bool:
     return bool(settings.get(CONF_REPO_PATH))
 
 
-async def async_setup_git_sync(hass: HomeAssistant, entry: ConfigEntry, settings: dict[str, Any]) -> GitSyncCoordinator:
+def further_repositories(options: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """The further repositories of the options (after the first one, options["git_sync"]), each with its id."""
+    items = options.get(CONF_REPOSITORIES)
+    if not isinstance(items, list):
+        return []
+    return [dict(item) for item in items if isinstance(item, dict) and item.get(CONF_REPO_ID) and configured(item)]
+
+
+async def async_setup_git_sync(
+    hass: HomeAssistant, entry: ConfigEntry, settings: dict[str, Any], repo_id: str = ""
+) -> GitSyncCoordinator:
     """Read the repository, then schedule the automatic commits and the daily export.
 
     A repository that can't be read (moved, key lost) leaves the module's entities unavailable with the error,
     instead of failing the whole integration: the next refresh tries again.
     """
-    coordinator = GitSyncCoordinator(hass, entry, settings)
+    coordinator = GitSyncCoordinator(hass, entry, settings, repo_id)
     await coordinator.async_load()
     await coordinator.async_refresh()
     _schedule(hass, entry, coordinator)
     return coordinator
 
 
-async def async_remove_git_sync(hass: HomeAssistant) -> None:
-    """The integration is removed: forget the last push and export."""
-    await GitSyncCoordinator.async_remove_store(hass)
+async def async_remove_git_sync(hass: HomeAssistant, repo_ids: list[str] | None = None) -> None:
+    """The integration is removed: forget the last push and export of every repository."""
+    for repo_id in ["", *(repo_ids or [])]:
+        await GitSyncCoordinator.async_remove_store(hass, repo_id)
 
 
 def _schedule(hass: HomeAssistant, entry: ConfigEntry, coordinator: GitSyncCoordinator) -> None:
@@ -62,11 +75,14 @@ def _schedule(hass: HomeAssistant, entry: ConfigEntry, coordinator: GitSyncCoord
             try:
                 await coordinator.async_auto_commit()
             except Exception:
-                _LOGGER.exception("Automatic commit failed")
+                _LOGGER.exception("Automatic commit of %s failed", coordinator.repo.path)
 
         entry.async_on_unload(
             async_track_time_interval(
-                hass, _auto_commit, timedelta(minutes=interval), name=f"{DOMAIN} git sync auto commit"
+                hass,
+                _auto_commit,
+                timedelta(minutes=interval),
+                name=f"{DOMAIN} git sync auto commit {coordinator.repo_id}",
             )
         )
 

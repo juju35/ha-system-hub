@@ -7,7 +7,7 @@ Each feature is a module the options turn on or off. A module turned off is not 
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 import voluptuous as vol
@@ -41,8 +41,10 @@ from .const import (
 from .containers import async_setup_containers
 from .containers.const import SERVICE_REFRESH
 from .containers.monitor import ContainerMonitor
-from .git_sync import async_remove_git_sync, async_setup_git_sync, configured
+from .git_sync import async_remove_git_sync, async_setup_git_sync, configured, further_repositories
+from .git_sync.const import CONF_REPO_ID
 from .git_sync.coordinator import GitSyncCoordinator
+from .git_sync.entities import device_key as git_sync_device_key
 from .git_sync.services import async_setup_git_sync_services
 from .marketplace import async_options_changed, async_remove_marketplace, async_setup_marketplace
 from .marketplace.const import SERVICE_CHECK_REPOSITORY, SERVICE_CHECK_UPDATES, SERVICE_INSTALL_UPDATES
@@ -82,6 +84,8 @@ class SystemHubData:
     marketplace: MarketplaceRefresher | None = None
     batteries: BatteryMonitor | None = None
     git_sync: GitSyncCoordinator | None = None
+    # Every repository of the Git Sync module: the first one (git_sync), then the further ones.
+    git_syncs: list[GitSyncCoordinator] = field(default_factory=list)
     orphans: OrphanScanner | None = None
 
 
@@ -134,6 +138,12 @@ def loaded_git_sync(hass: HomeAssistant) -> GitSyncCoordinator:
             translation_placeholders={"module": "Git Sync"},
         )
     return coordinator
+
+
+def loaded_git_syncs(hass: HomeAssistant) -> list[GitSyncCoordinator]:
+    """Every repository of the Git Sync module, the first one first."""
+    loaded_git_sync(hass)
+    return list(_loaded_data(hass).git_syncs)
 
 
 def loaded_orphans(hass: HomeAssistant) -> tuple[ConfigEntry, OrphanScanner]:
@@ -301,7 +311,7 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         supports_response=SupportsResponse.OPTIONAL,
     )
 
-    async_setup_git_sync_services(hass, lambda: loaded_git_sync(hass))
+    async_setup_git_sync_services(hass, lambda: loaded_git_syncs(hass))
     async_setup_orphans_services(hass, lambda: loaded_orphans(hass))
     return True
 
@@ -327,6 +337,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
         settings = module_options(entry, MODULE_GIT_SYNC)
         if configured(settings):
             data.git_sync = await async_setup_git_sync(hass, entry, settings)
+            data.git_syncs = [data.git_sync]
+            for further in further_repositories(entry.options):
+                repo_id = further.pop(CONF_REPO_ID)
+                data.git_syncs.append(await async_setup_git_sync(hass, entry, further, repo_id))
         else:
             _LOGGER.warning("Git Sync module turned on without a repository: set it up in Configure → Git Sync")
     if MODULE_ORPHANS in modules:
@@ -358,6 +372,19 @@ def _async_remove_disabled(hass: HomeAssistant, entry: ConfigEntry, modules: lis
         for device in dr.async_entries_for_config_entry(devices, entry.entry_id):
             if (DOMAIN, f"{entry.entry_id}_{module}") in device.identifiers:
                 devices.async_remove_device(device.id)
+    # The devices of the further Git Sync repositories removed (all of them with the module turned off), and
+    # their entities.
+    kept = {
+        git_sync_device_key(entry.entry_id, item[CONF_REPO_ID])
+        for item in (further_repositories(entry.options) if MODULE_GIT_SYNC in modules else [])
+    }
+    further = f"{entry.entry_id}_{MODULE_GIT_SYNC}_"
+    for device in dr.async_entries_for_config_entry(devices, entry.entry_id):
+        idents = {i for d, i in device.identifiers if d == DOMAIN and i.startswith(further)}
+        if idents and not idents & kept:
+            for item in er.async_entries_for_device(entities, device.id, include_disabled_entities=True):
+                entities.async_remove(item.entity_id)
+            devices.async_remove_device(device.id)
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -> bool:
@@ -381,7 +408,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
     await async_remove_watchdog(hass)
     await async_remove_marketplace(hass)
     await async_remove_batteries(hass)
-    await async_remove_git_sync(hass)
+    await async_remove_git_sync(hass, [item[CONF_REPO_ID] for item in further_repositories(entry.options)])
 
 
 async def _async_reload(hass: HomeAssistant, entry: SystemHubConfigEntry) -> None:

@@ -75,7 +75,10 @@
           "batteries_import": "Batérie: import z Battery Monitor",
           "orphans": "Orphans",
           "system": "Systém: prahy",
-          "automations": "Automations"
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Pridať repozitár",
+          "git_sync_other": "Git Sync: Iný repozitár",
+          "git_sync_remove_repository": "Git Sync: Odstrániť repozitáre"
         }
       },
       "modules": {
@@ -313,6 +316,91 @@
           "exclude_devices": "Ich nedostupné prepojené entity a k nim priradené neúspešné automatizácie sa vynechávajú zo zoznamov, počítadiel a stavu.",
           "exclude_entities": "ID entít alebo vzory s * a ?: zodpovedajúce automatizácie a entity sa vynechajú zo zoznamov, počítadiel a stavu"
         }
+      },
+      "git_sync_add_repository": {
+        "title": "Pridať repozitár",
+        "data": {
+          "repo_path": "Cesta k repozitáru",
+          "remote": "Remote",
+          "branch": "Vetva",
+          "ssh_key": "Súkromný kľúč SSH",
+          "author_name": "Meno autora",
+          "author_email": "E-mail autora"
+        },
+        "data_description": {
+          "repo_path": "Priečinok obsahujúci adresár .git, zvyčajne /config.",
+          "remote": "Git remote, na ktorý sa robí push, zvyčajne origin.",
+          "branch": "Cieľová vetva na remote. Nechajte prázdne, ak sa má odoslať aktuálna vetva.",
+          "ssh_key": "Súkromný kľúč používaný na push. Vytvorte ho akciou generate_ssh_key a potom pridajte verejný kľúč ako deploy key s právom zápisu.",
+          "author_name": "Voliteľné, nahrádza git user.name / user.email repozitára.",
+          "author_email": "Voliteľné, nahrádza git user.name / user.email repozitára."
+        }
+      },
+      "git_sync_other": {
+        "title": "Iný repozitár",
+        "data": {
+          "repo_id": "Repozitár"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Nastavenia repozitára",
+        "description": "Repozitár {repository}",
+        "data": {
+          "repo_path": "Cesta k repozitáru",
+          "remote": "Remote",
+          "branch": "Vetva",
+          "ssh_key": "Súkromný kľúč SSH",
+          "author_name": "Meno autora",
+          "author_email": "E-mail autora"
+        },
+        "data_description": {
+          "repo_path": "Priečinok obsahujúci adresár .git, zvyčajne /config.",
+          "remote": "Git remote, na ktorý sa robí push, zvyčajne origin.",
+          "branch": "Cieľová vetva na remote. Nechajte prázdne, ak sa má odoslať aktuálna vetva.",
+          "ssh_key": "Súkromný kľúč používaný na push. Vytvorte ho akciou generate_ssh_key a potom pridajte verejný kľúč ako deploy key s právom zápisu.",
+          "author_name": "Voliteľné, nahrádza git user.name / user.email repozitára.",
+          "author_email": "Voliteľné, nahrádza git user.name / user.email repozitára."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repozitár {repository}",
+        "data": {
+          "ai_task_entity": "Entita úlohy AI",
+          "commit_language": "Jazyk správ commitov",
+          "commit_interval": "Interval automatického commitu",
+          "status_interval": "Interval obnovenia stavu",
+          "fetch_interval": "Interval kontroly remote",
+          "pull_before_push": "Pull pred push",
+          "allow_sensitive": "Povoliť sledované citlivé súbory",
+          "notify_service": "Akcia oznámenia",
+          "notify_image": "URL obrázka oznámenia",
+          "export_enabled": "Denný export dashboardov",
+          "export_time": "Čas exportu",
+          "export_dir": "Priečinok exportu",
+          "export_format": "Formát exportu",
+          "export_before_commit": "Exportovať dashboardy pred každým commitom",
+          "commit_before_update": "Commit pred aktualizáciami"
+        },
+        "data_description": {
+          "ai_task_entity": "Vygeneruje správu Conventional Commits z diffu. Bez nej sa použije všeobecná správa.",
+          "commit_interval": "Commit a push každých N minút, keď sú zmeny. 0 to vypne.",
+          "fetch_interval": "Fetch z remote každých N minút, aby boli vidieť commity odoslané odinakiaľ (pozadu, rozchádza sa). 0 ho vypne; pred každým push sa fetch aj tak vykoná.",
+          "pull_before_push": "Keď má remote nové commity, pred push sa na ne vykoná rebase (git pull --rebase --autostash). Pri konflikte sa rebase preruší, nič sa neodošle a oprava vysvetlí, čo robiť.",
+          "allow_sensitive": "Commitovať zmeny citlivých súborov, ktoré Git už sleduje (secrets.yaml, .storage, kľúče, databáza, logy). Nové citlivé súbory sú vždy odmietnuté.",
+          "notify_service": "Napríklad notify.mobile_app_telefon. Nechajte prázdne na vypnutie.",
+          "notify_image": "Absolútna URL HTTPS (vyžaduje iOS).",
+          "export_format": "JSON skopíruje súbory .storage bez zmeny; YAML ponechá iba konfiguráciu dashboardu, ktorá sa v diffoch ľahšie číta.",
+          "export_dir": "V priečinku konfigurácie (relatívna cesta začína v ňom) alebo v priečinku z allowlist_external_dirs.",
+          "commit_before_update": "Keď sa inštaluje aktualizácia (Home Assistant, doplnok, integrácia), najprv sa vykoná commit a push konfigurácie, aby bol commit, ku ktorému sa dá vrátiť. Jeden commit pre aktualizácie inštalované spolu."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Odstrániť repozitáre",
+        "description": "Ich entity, zariadenie, opravy a uložený stav sa odstránia; samotné repozitáre zostanú bez zmeny.",
+        "data": {
+          "git_sync_repositories": "Repozitáre na odstránenie"
+        }
       }
     },
     "error": {
@@ -331,7 +419,8 @@
       "battery_required": "Vyberte batériu.",
       "type_required": "Vyberte alebo zadajte typ.",
       "no_model": "Zariadenie tejto batérie nemá model: nastavte typ pre samotnú batériu.",
-      "critical_below_warning": "Červený prah musí byť nad oranžovým."
+      "critical_below_warning": "Červený prah musí byť nad oranžovým.",
+      "repository_exists": "Tento repozitár je už nastavený."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor nie je čo importovať."
@@ -761,28 +850,62 @@
         "message": {
           "name": "Správa",
           "description": "Správa commitu. Ak je prázdna, vygeneruje ju úloha AI."
+        },
+        "repository": {
+          "name": "Repozitár",
+          "description": "Cesta (alebo id) repozitára. Bez nej: commit a push, pull a export bežia na všetkých repozitároch, ostatné akcie na prvom."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Exportovať dashboardy",
-      "description": "Skopíruje dashboardy Lovelace z .storage do priečinka exportu."
+      "description": "Skopíruje dashboardy Lovelace z .storage do priečinka exportu.",
+      "fields": {
+        "repository": {
+          "name": "Repozitár",
+          "description": "Cesta (alebo id) repozitára. Bez nej: commit a push, pull a export bežia na všetkých repozitároch, ostatné akcie na prvom."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Vygenerovať kľúč SSH",
-      "description": "Vytvorí pár kľúčov SSH, ak chýba, a vráti verejný kľúč na pridanie ako deploy key."
+      "description": "Vytvorí pár kľúčov SSH, ak chýba, a vráti verejný kľúč na pridanie ako deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repozitár",
+          "description": "Cesta (alebo id) repozitára. Bez nej: commit a push, pull a export bežia na všetkých repozitároch, ostatné akcie na prvom."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Vygenerovať správu commitu",
-      "description": "Pomocou úlohy AI napíše správu commitu pre aktuálne zmeny bez vykonania commitu. Vráti null, ak sa nič nezmenilo."
+      "description": "Pomocou úlohy AI napíše správu commitu pre aktuálne zmeny bez vykonania commitu. Vráti null, ak sa nič nezmenilo.",
+      "fields": {
+        "repository": {
+          "name": "Repozitár",
+          "description": "Cesta (alebo id) repozitára. Bez nej: commit a push, pull a export bežia na všetkých repozitároch, ostatné akcie na prvom."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Získať zmeny",
-      "description": "Vráti zmeny, ktoré by commit obsahoval, súbor po súbore, tak ako ich zobrazuje zobrazenie rozdielov karty."
+      "description": "Vráti zmeny, ktoré by commit obsahoval, súbor po súbore, tak ako ich zobrazuje zobrazenie rozdielov karty.",
+      "fields": {
+        "repository": {
+          "name": "Repozitár",
+          "description": "Cesta (alebo id) repozitára. Bez nej: commit a push, pull a export bežia na všetkých repozitároch, ostatné akcie na prvom."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Načíta vzdialený repozitár a prevezme jeho nové commity: posun dopredu alebo lokálne commity presunuté navrch (len pri čistom pracovnom strome). Konflikt presun zruší."
+      "description": "Načíta vzdialený repozitár a prevezme jeho nové commity: posun dopredu alebo lokálne commity presunuté navrch (len pri čistom pracovnom strome). Konflikt presun zruší.",
+      "fields": {
+        "repository": {
+          "name": "Repozitár",
+          "description": "Cesta (alebo id) repozitára. Bez nej: commit a push, pull a export bežia na všetkých repozitároch, ostatné akcie na prvom."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Vyhľadať osirotené entity",
@@ -982,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Nie je v registri zariadení: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Neznámy repozitár {repository}. Nastavené repozitáre: {repositories}."
     }
   },
   "issues": {

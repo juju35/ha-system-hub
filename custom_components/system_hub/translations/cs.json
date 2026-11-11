@@ -75,7 +75,10 @@
           "batteries_import": "Baterie: import z Battery Monitor",
           "orphans": "Orphans",
           "system": "Systém: prahy",
-          "automations": "Automations"
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Přidat repozitář",
+          "git_sync_other": "Git Sync: Jiný repozitář",
+          "git_sync_remove_repository": "Git Sync: Odebrat repozitáře"
         }
       },
       "modules": {
@@ -313,6 +316,91 @@
           "exclude_devices": "Jejich nedostupné propojené entity a k nim přiřazené neúspěšné automatizace se vynechávají ze seznamů, počítadel a stavu.",
           "exclude_entities": "ID entit nebo vzory s * a ?: odpovídající automatizace a entity jsou vynechány ze seznamů, počítadel a stavu"
         }
+      },
+      "git_sync_add_repository": {
+        "title": "Přidat repozitář",
+        "data": {
+          "repo_path": "Cesta k repozitáři",
+          "remote": "Remote",
+          "branch": "Větev",
+          "ssh_key": "Soukromý klíč SSH",
+          "author_name": "Jméno autora",
+          "author_email": "E-mail autora"
+        },
+        "data_description": {
+          "repo_path": "Složka obsahující adresář .git, obvykle /config.",
+          "remote": "Git remote, na který se provádí push, obvykle origin.",
+          "branch": "Cílová větev na remote. Ponechte prázdné pro odeslání aktuální větve.",
+          "ssh_key": "Soukromý klíč používaný pro push. Vytvořte ho akcí generate_ssh_key a poté přidejte veřejný klíč jako deploy key s právem zápisu.",
+          "author_name": "Volitelné, přepisuje git user.name / user.email repozitáře.",
+          "author_email": "Volitelné, přepisuje git user.name / user.email repozitáře."
+        }
+      },
+      "git_sync_other": {
+        "title": "Jiný repozitář",
+        "data": {
+          "repo_id": "Repozitář"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Nastavení repozitáře",
+        "description": "Repozitář {repository}",
+        "data": {
+          "repo_path": "Cesta k repozitáři",
+          "remote": "Remote",
+          "branch": "Větev",
+          "ssh_key": "Soukromý klíč SSH",
+          "author_name": "Jméno autora",
+          "author_email": "E-mail autora"
+        },
+        "data_description": {
+          "repo_path": "Složka obsahující adresář .git, obvykle /config.",
+          "remote": "Git remote, na který se provádí push, obvykle origin.",
+          "branch": "Cílová větev na remote. Ponechte prázdné pro odeslání aktuální větve.",
+          "ssh_key": "Soukromý klíč používaný pro push. Vytvořte ho akcí generate_ssh_key a poté přidejte veřejný klíč jako deploy key s právem zápisu.",
+          "author_name": "Volitelné, přepisuje git user.name / user.email repozitáře.",
+          "author_email": "Volitelné, přepisuje git user.name / user.email repozitáře."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repozitář {repository}",
+        "data": {
+          "ai_task_entity": "Entita úlohy AI",
+          "commit_language": "Jazyk zpráv commitů",
+          "commit_interval": "Interval automatického commitu",
+          "status_interval": "Interval obnovení stavu",
+          "fetch_interval": "Interval kontroly remote",
+          "pull_before_push": "Pull před push",
+          "allow_sensitive": "Povolit sledované citlivé soubory",
+          "notify_service": "Akce oznámení",
+          "notify_image": "URL obrázku oznámení",
+          "export_enabled": "Denní export dashboardů",
+          "export_time": "Čas exportu",
+          "export_dir": "Složka exportu",
+          "export_format": "Formát exportu",
+          "export_before_commit": "Exportovat dashboardy před každým commitem",
+          "commit_before_update": "Commit před aktualizacemi"
+        },
+        "data_description": {
+          "ai_task_entity": "Vygeneruje zprávu Conventional Commits z diffu. Bez ní se použije obecná zpráva.",
+          "commit_interval": "Commit a push každých N minut, pokud jsou změny. 0 vypíná.",
+          "fetch_interval": "Fetch z remote každých N minut, aby byly vidět commity odeslané odjinud (pozadu, rozcházení). 0 jej vypne; před každým push se fetch stejně provede.",
+          "pull_before_push": "Když má remote nové commity, před push se na ně provede rebase (git pull --rebase --autostash). Při konfliktu se rebase přeruší, nic se neodešle a oprava vysvětlí, co dělat.",
+          "allow_sensitive": "Commitovat změny citlivých souborů, které Git už sleduje (secrets.yaml, .storage, klíče, databáze, logy). Nové citlivé soubory jsou vždy odmítnuty.",
+          "notify_service": "Například notify.mobile_app_telefon. Ponechte prázdné pro vypnutí.",
+          "notify_image": "Absolutní URL HTTPS (vyžaduje iOS).",
+          "export_format": "JSON zkopíruje soubory .storage beze změny; YAML ponechá pouze konfiguraci dashboardu, která se v diffech snáze čte.",
+          "export_dir": "Ve složce konfigurace (relativní cesta začíná v ní) nebo ve složce z allowlist_external_dirs.",
+          "commit_before_update": "Když se instaluje aktualizace (Home Assistant, doplněk, integrace), nejprve se provede commit a push konfigurace, aby byl commit, ke kterému se lze vrátit. Jeden commit pro aktualizace instalované společně."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Odebrat repozitáře",
+        "description": "Jejich entity, zařízení, opravy a uložený stav se odeberou; samotné repozitáře zůstanou beze změny.",
+        "data": {
+          "git_sync_repositories": "Repozitáře k odebrání"
+        }
       }
     },
     "error": {
@@ -331,7 +419,8 @@
       "battery_required": "Vyberte baterii.",
       "type_required": "Vyberte nebo zadejte typ.",
       "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii.",
-      "critical_below_warning": "Červený práh musí být nad oranžovým."
+      "critical_below_warning": "Červený práh musí být nad oranžovým.",
+      "repository_exists": "Tento repozitář je již nastaven."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor není co importovat."
@@ -761,28 +850,62 @@
         "message": {
           "name": "Zpráva",
           "description": "Zpráva commitu. Pokud je prázdná, vygeneruje ji úloha AI."
+        },
+        "repository": {
+          "name": "Repozitář",
+          "description": "Cesta (nebo id) repozitáře. Bez ní: commit a push, pull a export běží na všech repozitářích, ostatní akce na prvním."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Exportovat dashboardy",
-      "description": "Zkopíruje dashboardy Lovelace z .storage do složky exportu."
+      "description": "Zkopíruje dashboardy Lovelace z .storage do složky exportu.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Cesta (nebo id) repozitáře. Bez ní: commit a push, pull a export běží na všech repozitářích, ostatní akce na prvním."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Vygenerovat klíč SSH",
-      "description": "Vytvoří pár klíčů SSH, pokud chybí, a vrátí veřejný klíč k přidání jako deploy key."
+      "description": "Vytvoří pár klíčů SSH, pokud chybí, a vrátí veřejný klíč k přidání jako deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Cesta (nebo id) repozitáře. Bez ní: commit a push, pull a export běží na všech repozitářích, ostatní akce na prvním."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Vygenerovat zprávu commitu",
-      "description": "Pomocí úlohy AI napíše zprávu commitu pro aktuální změny, aniž by provedla commit. Vrátí null, pokud se nic nezměnilo."
+      "description": "Pomocí úlohy AI napíše zprávu commitu pro aktuální změny, aniž by provedla commit. Vrátí null, pokud se nic nezměnilo.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Cesta (nebo id) repozitáře. Bez ní: commit a push, pull a export běží na všech repozitářích, ostatní akce na prvním."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Získat změny",
-      "description": "Vrátí změny, které by commit obsahoval, soubor po souboru, tak jak je zobrazuje zobrazení rozdílů karty."
+      "description": "Vrátí změny, které by commit obsahoval, soubor po souboru, tak jak je zobrazuje zobrazení rozdílů karty.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Cesta (nebo id) repozitáře. Bez ní: commit a push, pull a export běží na všech repozitářích, ostatní akce na prvním."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Načte vzdálený repozitář a převezme jeho nové commity: posun vpřed, nebo lokální commity přesunuté navrch (jen při čistém pracovním stromu). Konflikt přesun zruší."
+      "description": "Načte vzdálený repozitář a převezme jeho nové commity: posun vpřed, nebo lokální commity přesunuté navrch (jen při čistém pracovním stromu). Konflikt přesun zruší.",
+      "fields": {
+        "repository": {
+          "name": "Repozitář",
+          "description": "Cesta (nebo id) repozitáře. Bez ní: commit a push, pull a export běží na všech repozitářích, ostatní akce na prvním."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Vyhledat osiřelé entity",
@@ -982,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Není v registru zařízení: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Neznámý repozitář {repository}. Nastavené repozitáře: {repositories}."
     }
   },
   "issues": {

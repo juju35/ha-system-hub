@@ -75,7 +75,10 @@
           "batteries_import": "Elemek: importálás a Battery Monitorból",
           "orphans": "Orphans",
           "system": "Rendszer: küszöbök",
-          "automations": "Automations"
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Tároló hozzáadása",
+          "git_sync_other": "Git Sync: Másik tároló",
+          "git_sync_remove_repository": "Git Sync: Tárolók eltávolítása"
         }
       },
       "modules": {
@@ -313,6 +316,91 @@
           "exclude_devices": "Az elérhetetlen kapcsolt entitásaik és a hozzájuk tartozó sikertelen automatizálások kimaradnak a listákból, számlálókból és az állapotból.",
           "exclude_entities": "Entitásazonosítók vagy * és ? karaktert tartalmazó minták: az egyező automatizálások és entitások kimaradnak a listákból, számlálókból és az állapotból"
         }
+      },
+      "git_sync_add_repository": {
+        "title": "Tároló hozzáadása",
+        "data": {
+          "repo_path": "Tároló elérési útja",
+          "remote": "Remote",
+          "branch": "Ág",
+          "ssh_key": "Privát SSH-kulcs",
+          "author_name": "Szerző neve",
+          "author_email": "Szerző e-mail-címe"
+        },
+        "data_description": {
+          "repo_path": "A .git könyvtárat tartalmazó mappa, általában /config.",
+          "remote": "A Git remote, ahová a push történik, általában origin.",
+          "branch": "Célág a remote-on. Hagyja üresen az aktuális ág pusholásához.",
+          "ssh_key": "A pushhoz használt privát kulcs. Hozza létre a generate_ssh_key művelettel, majd adja hozzá a nyilvános kulcsot írási joggal rendelkező deploy keyként.",
+          "author_name": "Opcionális, felülírja a tároló git user.name / user.email beállítását.",
+          "author_email": "Opcionális, felülírja a tároló git user.name / user.email beállítását."
+        }
+      },
+      "git_sync_other": {
+        "title": "Másik tároló",
+        "data": {
+          "repo_id": "Tároló"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Tároló beállításai",
+        "description": "Tároló: {repository}",
+        "data": {
+          "repo_path": "Tároló elérési útja",
+          "remote": "Remote",
+          "branch": "Ág",
+          "ssh_key": "Privát SSH-kulcs",
+          "author_name": "Szerző neve",
+          "author_email": "Szerző e-mail-címe"
+        },
+        "data_description": {
+          "repo_path": "A .git könyvtárat tartalmazó mappa, általában /config.",
+          "remote": "A Git remote, ahová a push történik, általában origin.",
+          "branch": "Célág a remote-on. Hagyja üresen az aktuális ág pusholásához.",
+          "ssh_key": "A pushhoz használt privát kulcs. Hozza létre a generate_ssh_key művelettel, majd adja hozzá a nyilvános kulcsot írási joggal rendelkező deploy keyként.",
+          "author_name": "Opcionális, felülírja a tároló git user.name / user.email beállítását.",
+          "author_email": "Opcionális, felülírja a tároló git user.name / user.email beállítását."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Tároló: {repository}",
+        "data": {
+          "ai_task_entity": "MI-feladat entitás",
+          "commit_language": "Commitüzenet nyelve",
+          "commit_interval": "Automatikus commit időköze",
+          "status_interval": "Állapotfrissítés időköze",
+          "fetch_interval": "A remote ellenőrzési időköze",
+          "pull_before_push": "Pull a push előtt",
+          "allow_sensitive": "Követett érzékeny fájlok engedélyezése",
+          "notify_service": "Értesítési művelet",
+          "notify_image": "Értesítési kép URL-je",
+          "export_enabled": "Napi irányítópult-exportálás",
+          "export_time": "Exportálás időpontja",
+          "export_dir": "Exportálási mappa",
+          "export_format": "Exportálási formátum",
+          "export_before_commit": "Irányítópultok exportálása minden commit előtt",
+          "commit_before_update": "Commit frissítések előtt"
+        },
+        "data_description": {
+          "ai_task_entity": "Conventional Commits üzenetet generál a diffből. Nélküle általános üzenet készül.",
+          "commit_interval": "Commit és push N percenként, ha vannak módosítások. 0 letiltja.",
+          "fetch_interval": "N percenként fetch a remote-ról, hogy látszódjanak a máshonnan pusholt commitok (lemaradás, elágazás). 0 kikapcsolja; minden push előtt így is fut egy fetch.",
+          "pull_before_push": "Ha a remote-on új commitok vannak, push előtt rebase történik rájuk (git pull --rebase --autostash). Ütközéskor a rebase megszakad, semmi sem kerül push-ra, és egy javítás elmagyarázza a teendőket.",
+          "allow_sensitive": "A Git által már követett érzékeny fájlok (secrets.yaml, .storage, kulcsok, adatbázis, naplók) módosításainak commitja. Az új érzékeny fájlokat mindig elutasítja.",
+          "notify_service": "Például notify.mobile_app_telefon. Hagyja üresen a letiltáshoz.",
+          "notify_image": "Abszolút HTTPS URL (az iOS megköveteli).",
+          "export_format": "A JSON változatlanul másolja a .storage fájlokat; a YAML csak az irányítópult konfigurációját tartja meg, ami a diffekben könnyebben olvasható.",
+          "export_dir": "A konfigurációs mappában (a relatív útvonal innen indul) vagy az allowlist_external_dirs egyik mappájában.",
+          "commit_before_update": "Frissítés telepítésekor (Home Assistant, bővítmény, integráció) előbb commitolja és pusholja a konfigurációt, hogy legyen commit, amelyhez vissza lehet térni. Egy commit az együtt telepített frissítésekhez."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Tárolók eltávolítása",
+        "description": "Az entitásaik, eszközük, javításaik és mentett állapotuk törlődik; maguk a tárolók változatlanok maradnak.",
+        "data": {
+          "git_sync_repositories": "Eltávolítandó tárolók"
+        }
       }
     },
     "error": {
@@ -331,7 +419,8 @@
       "battery_required": "Válassza ki az elemet.",
       "type_required": "Válassza ki vagy írja be a típust.",
       "no_model": "Ennek az elemnek az eszközéhez nincs modell: állítsa be a típust magára az elemre.",
-      "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie."
+      "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie.",
+      "repository_exists": "Ez a tároló már be van állítva."
     },
     "abort": {
       "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
@@ -761,28 +850,62 @@
         "message": {
           "name": "Üzenet",
           "description": "Commitüzenet. Üresen hagyva az MI-feladat generálja."
+        },
+        "repository": {
+          "name": "Tároló",
+          "description": "A tároló útvonala (vagy azonosítója). Nélküle a commit és push, a pull és az exportálás minden tárolón fut, a többi művelet az elsőn."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Irányítópultok exportálása",
-      "description": "Átmásolja a Lovelace irányítópultokat a .storage mappából az exportálási mappába."
+      "description": "Átmásolja a Lovelace irányítópultokat a .storage mappából az exportálási mappába.",
+      "fields": {
+        "repository": {
+          "name": "Tároló",
+          "description": "A tároló útvonala (vagy azonosítója). Nélküle a commit és push, a pull és az exportálás minden tárolón fut, a többi művelet az elsőn."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "SSH-kulcs generálása",
-      "description": "Létrehozza az SSH-kulcspárt, ha hiányzik, és visszaadja a deploy keyként hozzáadandó nyilvános kulcsot."
+      "description": "Létrehozza az SSH-kulcspárt, ha hiányzik, és visszaadja a deploy keyként hozzáadandó nyilvános kulcsot.",
+      "fields": {
+        "repository": {
+          "name": "Tároló",
+          "description": "A tároló útvonala (vagy azonosítója). Nélküle a commit és push, a pull és az exportálás minden tárolón fut, a többi művelet az elsőn."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Commitüzenet generálása",
-      "description": "Az MI-feladattal commitüzenetet ír az aktuális módosításokhoz, commit nélkül. null értéket ad vissza, ha semmi sem változott."
+      "description": "Az MI-feladattal commitüzenetet ír az aktuális módosításokhoz, commit nélkül. null értéket ad vissza, ha semmi sem változott.",
+      "fields": {
+        "repository": {
+          "name": "Tároló",
+          "description": "A tároló útvonala (vagy azonosítója). Nélküle a commit és push, a pull és az exportálás minden tárolón fut, a többi művelet az elsőn."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Változások lekérése",
-      "description": "Visszaadja a commitba kerülő változásokat fájlonként, ahogy a kártya diff nézete mutatja őket."
+      "description": "Visszaadja a commitba kerülő változásokat fájlonként, ahogy a kártya diff nézete mutatja őket.",
+      "fields": {
+        "repository": {
+          "name": "Tároló",
+          "description": "A tároló útvonala (vagy azonosítója). Nélküle a commit és push, a pull és az exportálás minden tárolón fut, a többi művelet az elsőn."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Lekéri a távoli tárolót, és átveszi az új commitjait: előrepörgetés, vagy a helyi commitok áthelyezése föléjük (csak tiszta munkakönyvtárnál). Ütközés esetén az áthelyezés megszakad."
+      "description": "Lekéri a távoli tárolót, és átveszi az új commitjait: előrepörgetés, vagy a helyi commitok áthelyezése föléjük (csak tiszta munkakönyvtárnál). Ütközés esetén az áthelyezés megszakad.",
+      "fields": {
+        "repository": {
+          "name": "Tároló",
+          "description": "A tároló útvonala (vagy azonosítója). Nélküle a commit és push, a pull és az exportálás minden tárolón fut, a többi művelet az elsőn."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Árva entitások keresése",
@@ -982,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Nincs az eszköznyilvántartásban: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Ismeretlen tároló: {repository}. Beállított tárolók: {repositories}."
     }
   },
   "issues": {

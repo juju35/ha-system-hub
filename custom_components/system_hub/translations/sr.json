@@ -75,7 +75,10 @@
           "batteries_import": "Батерије: увоз из Battery Monitor",
           "orphans": "Orphans",
           "system": "Систем: прагови",
-          "automations": "Automations"
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Додај репозиторијум",
+          "git_sync_other": "Git Sync: Други репозиторијум",
+          "git_sync_remove_repository": "Git Sync: Уклони репозиторијуме"
         }
       },
       "modules": {
@@ -313,6 +316,91 @@
           "exclude_devices": "Њихови недоступни повезани ентитети и неуспеле аутоматизације везане за њих изостављају се из листа, бројача и статуса.",
           "exclude_entities": "ИД-ови ентитета или обрасци са * и ?: одговарајуће аутоматизације и ентитети се изостављају из листа, бројача и статуса"
         }
+      },
+      "git_sync_add_repository": {
+        "title": "Додај репозиторијум",
+        "data": {
+          "repo_path": "Путања репозиторијума",
+          "remote": "Удаљени репозиторијум",
+          "branch": "Грана",
+          "ssh_key": "Приватни SSH кључ",
+          "author_name": "Име аутора",
+          "author_email": "Имејл аутора"
+        },
+        "data_description": {
+          "repo_path": "Фасцикла која садржи директоријум .git, обично /config.",
+          "remote": "Git remote на који се ради push, обично origin.",
+          "branch": "Циљна грана на удаљеном репозиторијуму. Остави празно за push тренутне гране.",
+          "ssh_key": "Приватни кључ за push. Направи га радњом generate_ssh_key, па додај јавни кључ као deploy key са дозволом за писање.",
+          "author_name": "Опционо, замењује git user.name / user.email репозиторијума.",
+          "author_email": "Опционо, замењује git user.name / user.email репозиторијума."
+        }
+      },
+      "git_sync_other": {
+        "title": "Други репозиторијум",
+        "data": {
+          "repo_id": "Репозиторијум"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Подешавања репозиторијума",
+        "description": "Репозиторијум {repository}",
+        "data": {
+          "repo_path": "Путања репозиторијума",
+          "remote": "Удаљени репозиторијум",
+          "branch": "Грана",
+          "ssh_key": "Приватни SSH кључ",
+          "author_name": "Име аутора",
+          "author_email": "Имејл аутора"
+        },
+        "data_description": {
+          "repo_path": "Фасцикла која садржи директоријум .git, обично /config.",
+          "remote": "Git remote на који се ради push, обично origin.",
+          "branch": "Циљна грана на удаљеном репозиторијуму. Остави празно за push тренутне гране.",
+          "ssh_key": "Приватни кључ за push. Направи га радњом generate_ssh_key, па додај јавни кључ као deploy key са дозволом за писање.",
+          "author_name": "Опционо, замењује git user.name / user.email репозиторијума.",
+          "author_email": "Опционо, замењује git user.name / user.email репозиторијума."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Репозиторијум {repository}",
+        "data": {
+          "ai_task_entity": "AI task ентитет",
+          "commit_language": "Језик commit поруке",
+          "commit_interval": "Интервал аутоматског commit-а",
+          "status_interval": "Интервал освежавања статуса",
+          "fetch_interval": "Интервал провере remote",
+          "pull_before_push": "Pull пре push",
+          "allow_sensitive": "Дозволи праћене осетљиве датотеке",
+          "notify_service": "Радња обавештења",
+          "notify_image": "URL слике обавештења",
+          "export_enabled": "Дневни извоз контролних табли",
+          "export_time": "Време извоза",
+          "export_dir": "Фасцикла за извоз",
+          "export_format": "Формат извоза",
+          "export_before_commit": "Извези контролне табле пре сваког commit-а",
+          "commit_before_update": "Commit пре ажурирања"
+        },
+        "data_description": {
+          "ai_task_entity": "Пише поруку у формату Conventional Commits на основу diff-а. Без њега се користи општа порука.",
+          "commit_interval": "Commit и push на сваких N минута када има измена. 0 га искључује.",
+          "fetch_interval": "Fetch са remote на сваких N минута да би се видели commit-ови послати са другог места (заостаје, разилази се). 0 га искључује; пре сваког push fetch се ипак покреће.",
+          "pull_before_push": "Када remote има нове commit-ове, пре push се ради rebase на њих (git pull --rebase --autostash). Код конфликта rebase се прекида, ништа се не шаље, а поправка објашњава шта треба урадити.",
+          "allow_sensitive": "Commit измена осетљивих датотека које Git већ прати (secrets.yaml, .storage, кључеви, база података, дневници). Нове осетљиве датотеке се увек одбијају.",
+          "notify_service": "На пример notify.mobile_app_phone. Остави празно да искључиш.",
+          "notify_image": "Апсолутни HTTPS URL (захтева га iOS).",
+          "export_format": "JSON копира датотеке из .storage какве јесу; YAML задржава само конфигурацију контролне табле, лакшу за читање у diff-овима.",
+          "export_dir": "У фасцикли конфигурације (релативна путања почиње одатле) или у фасцикли из allowlist_external_dirs.",
+          "commit_before_update": "Када се инсталира ажурирање (Home Assistant, додатак, интеграција), прво се ради commit и push конфигурације, да би постојао commit на који се можете вратити. Један commit за ажурирања инсталирана заједно."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Уклони репозиторијуме",
+        "description": "Уклањају се њихови ентитети, уређај, поправке и сачувано стање; сами репозиторијуми остају непромењени.",
+        "data": {
+          "git_sync_repositories": "Репозиторијуми за уклањање"
+        }
       }
     },
     "error": {
@@ -331,7 +419,8 @@
       "battery_required": "Изаберите батерију.",
       "type_required": "Изаберите или унесите тип.",
       "no_model": "Уређај ове батерије нема модел: подесите тип за саму батерију.",
-      "critical_below_warning": "Црвени праг мора бити изнад наранџастог."
+      "critical_below_warning": "Црвени праг мора бити изнад наранџастог.",
+      "repository_exists": "Овај репозиторијум је већ подешен."
     },
     "abort": {
       "nothing_to_import": "Нема шта да се увезе из Battery Monitor."
@@ -761,28 +850,62 @@
         "message": {
           "name": "Порука",
           "description": "Commit порука. Када је празно, пише је AI task."
+        },
+        "repository": {
+          "name": "Репозиторијум",
+          "description": "Путања (или ид) репозиторијума. Без ње: commit и push, pull и извоз раде на свим репозиторијумима, остале радње на првом."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Извези контролне табле",
-      "description": "Копира Lovelace контролне табле из .storage у фасциклу за извоз."
+      "description": "Копира Lovelace контролне табле из .storage у фасциклу за извоз.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторијум",
+          "description": "Путања (или ид) репозиторијума. Без ње: commit и push, pull и извоз раде на свим репозиторијумима, остале радње на првом."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Генериши SSH кључ",
-      "description": "Прави пар SSH кључева ако не постоји и враћа јавни кључ који се додаје као deploy key."
+      "description": "Прави пар SSH кључева ако не постоји и враћа јавни кључ који се додаје као deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторијум",
+          "description": "Путања (или ид) репозиторијума. Без ње: commit и push, pull и извоз раде на свим репозиторијумима, остале радње на првом."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Генериши commit поруку",
-      "description": "Пише commit поруку за тренутне измене помоћу AI task-а, без commit-а. Враћа null када ништа није измењено."
+      "description": "Пише commit поруку за тренутне измене помоћу AI task-а, без commit-а. Враћа null када ништа није измењено.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторијум",
+          "description": "Путања (или ид) репозиторијума. Без ње: commit и push, pull и извоз раде на свим репозиторијумима, остале радње на првом."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Преузми измене",
-      "description": "Враћа измене које би commit садржао, датотеку по датотеку, онако како их приказује преглед разлика картице."
+      "description": "Враћа измене које би commit садржао, датотеку по датотеку, онако како их приказује преглед разлика картице.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторијум",
+          "description": "Путања (или ид) репозиторијума. Без ње: commit и push, pull и извоз раде на свим репозиторијумима, остале радње на првом."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Преузима удаљени репозиторијум и уноси његове нове commit-ове: премотавање унапред или локални commit-ови премештени преко њих (само уз чисто радно стабло). Сукоб прекида премештање."
+      "description": "Преузима удаљени репозиторијум и уноси његове нове commit-ове: премотавање унапред или локални commit-ови премештени преко њих (само уз чисто радно стабло). Сукоб прекида премештање.",
+      "fields": {
+        "repository": {
+          "name": "Репозиторијум",
+          "description": "Путања (или ид) репозиторијума. Без ње: commit и push, pull и извоз раде на свим репозиторијумима, остале радње на првом."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Скенирај осироћене ентитете",
@@ -982,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "Нема у регистру уређаја: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Непознат репозиторијум {repository}. Подешени репозиторијуми: {repositories}."
     }
   },
   "issues": {

@@ -75,7 +75,10 @@
           "batteries_import": "Baterías: importar desde Battery Monitor",
           "orphans": "Orphans",
           "system": "Sistema: umbrales",
-          "automations": "Automations"
+          "automations": "Automations",
+          "git_sync_add_repository": "Git Sync: Añadir un repositorio",
+          "git_sync_other": "Git Sync: Otro repositorio",
+          "git_sync_remove_repository": "Git Sync: Quitar repositorios"
         }
       },
       "modules": {
@@ -313,6 +316,91 @@
           "exclude_devices": "Sus entidades vinculadas no disponibles y las automatizaciones fallidas asociadas a ellos se excluyen de las listas, los contadores y el estado.",
           "exclude_entities": "IDs de entidad, o patrones con * y ?: las automatizaciones y entidades que coinciden se excluyen de las listas, los contadores y el estado"
         }
+      },
+      "git_sync_add_repository": {
+        "title": "Añadir un repositorio",
+        "data": {
+          "repo_path": "Ruta del repositorio",
+          "remote": "Remoto",
+          "branch": "Rama",
+          "ssh_key": "Clave SSH privada",
+          "author_name": "Nombre del autor",
+          "author_email": "Correo del autor"
+        },
+        "data_description": {
+          "repo_path": "Carpeta que contiene el directorio .git, normalmente /config.",
+          "remote": "Remoto Git al que enviar, normalmente origin.",
+          "branch": "Rama de destino en el remoto. Déjalo vacío para enviar la rama actual.",
+          "ssh_key": "Clave privada usada para el push. Créala con la acción generate_ssh_key y añade la clave pública como deploy key con acceso de escritura.",
+          "author_name": "Opcional, sustituye user.name / user.email del repositorio.",
+          "author_email": "Opcional, sustituye user.name / user.email del repositorio."
+        }
+      },
+      "git_sync_other": {
+        "title": "Otro repositorio",
+        "data": {
+          "repo_id": "Repositorio"
+        }
+      },
+      "git_sync_other_repository": {
+        "title": "Ajustes del repositorio",
+        "description": "Repositorio {repository}",
+        "data": {
+          "repo_path": "Ruta del repositorio",
+          "remote": "Remoto",
+          "branch": "Rama",
+          "ssh_key": "Clave SSH privada",
+          "author_name": "Nombre del autor",
+          "author_email": "Correo del autor"
+        },
+        "data_description": {
+          "repo_path": "Carpeta que contiene el directorio .git, normalmente /config.",
+          "remote": "Remoto Git al que enviar, normalmente origin.",
+          "branch": "Rama de destino en el remoto. Déjalo vacío para enviar la rama actual.",
+          "ssh_key": "Clave privada usada para el push. Créala con la acción generate_ssh_key y añade la clave pública como deploy key con acceso de escritura.",
+          "author_name": "Opcional, sustituye user.name / user.email del repositorio.",
+          "author_email": "Opcional, sustituye user.name / user.email del repositorio."
+        }
+      },
+      "git_sync_other_options": {
+        "title": "Git Sync",
+        "description": "Repositorio {repository}",
+        "data": {
+          "ai_task_entity": "Entidad AI task",
+          "commit_language": "Idioma del mensaje de commit",
+          "commit_interval": "Intervalo de commit automático",
+          "status_interval": "Intervalo de actualización del estado",
+          "fetch_interval": "Intervalo de comprobación del remoto",
+          "pull_before_push": "Pull antes del push",
+          "allow_sensitive": "Permitir archivos sensibles seguidos",
+          "notify_service": "Acción de notificación",
+          "notify_image": "URL de la imagen de notificación",
+          "export_enabled": "Exportación diaria de paneles",
+          "export_time": "Hora de exportación",
+          "export_dir": "Carpeta de exportación",
+          "export_format": "Formato de exportación",
+          "export_before_commit": "Exportar los paneles antes de cada commit",
+          "commit_before_update": "Commit antes de las actualizaciones"
+        },
+        "data_description": {
+          "ai_task_entity": "Genera un mensaje Conventional Commits a partir del diff. Sin ella se usa un mensaje genérico.",
+          "commit_interval": "Commit y push cada N minutos si hay cambios. 0 lo desactiva.",
+          "fetch_interval": "Hace fetch del remoto cada N minutos para ver los commits enviados desde otro sitio (atrasado, divergido). 0 lo desactiva; antes de cada push se hace igualmente un fetch.",
+          "pull_before_push": "Cuando el remoto tiene commits nuevos, hace rebase sobre ellos (git pull --rebase --autostash) antes del push. Si hay conflicto, el rebase se cancela, no se envía nada y una reparación explica qué hacer.",
+          "allow_sensitive": "Hace commit de los cambios de archivos sensibles ya seguidos por Git (secrets.yaml, .storage, claves, base de datos, logs). Los archivos sensibles nuevos siempre se rechazan.",
+          "notify_service": "Por ejemplo notify.mobile_app_telefono. Déjalo vacío para desactivarlo.",
+          "notify_image": "URL HTTPS absoluta (requerida por iOS).",
+          "export_format": "JSON copia los archivos .storage tal cual; YAML solo conserva la configuración del panel, más legible en los diffs.",
+          "export_dir": "Dentro de la carpeta de configuración (una ruta relativa empieza ahí) o de una carpeta de allowlist_external_dirs.",
+          "commit_before_update": "Cuando se instala una actualización (Home Assistant, un complemento, una integración), hacer primero commit y push de la configuración, para tener un commit al que volver. Un solo commit para las actualizaciones instaladas juntas."
+        }
+      },
+      "git_sync_remove_repository": {
+        "title": "Quitar repositorios",
+        "description": "Se eliminan sus entidades, dispositivo, reparaciones y estado guardado; los repositorios en sí no se modifican.",
+        "data": {
+          "git_sync_repositories": "Repositorios a quitar"
+        }
       }
     },
     "error": {
@@ -331,7 +419,8 @@
       "battery_required": "Elige la batería.",
       "type_required": "Elige o escribe el tipo.",
       "no_model": "El dispositivo de esta batería no tiene modelo: define el tipo para la propia batería.",
-      "critical_below_warning": "El umbral rojo debe estar por encima del naranja."
+      "critical_below_warning": "El umbral rojo debe estar por encima del naranja.",
+      "repository_exists": "Este repositorio ya está configurado."
     },
     "abort": {
       "nothing_to_import": "Nada que importar desde Battery Monitor."
@@ -761,28 +850,62 @@
         "message": {
           "name": "Mensaje",
           "description": "Mensaje de commit. Generado por la AI task si está vacío."
+        },
+        "repository": {
+          "name": "Repositorio",
+          "description": "Ruta (o id) del repositorio. Sin ella: commit y push, pull y la exportación se ejecutan en todos los repositorios, las demás acciones en el primero."
         }
       }
     },
     "git_sync_export_dashboards": {
       "name": "Exportar paneles",
-      "description": "Copia los paneles Lovelace de .storage a la carpeta de exportación."
+      "description": "Copia los paneles Lovelace de .storage a la carpeta de exportación.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "Ruta (o id) del repositorio. Sin ella: commit y push, pull y la exportación se ejecutan en todos los repositorios, las demás acciones en el primero."
+        }
+      }
     },
     "git_sync_generate_ssh_key": {
       "name": "Generar clave SSH",
-      "description": "Crea el par de claves SSH si no existe y devuelve la clave pública para añadirla como deploy key."
+      "description": "Crea el par de claves SSH si no existe y devuelve la clave pública para añadirla como deploy key.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "Ruta (o id) del repositorio. Sin ella: commit y push, pull y la exportación se ejecutan en todos los repositorios, las demás acciones en el primero."
+        }
+      }
     },
     "git_sync_generate_message": {
       "name": "Generar mensaje de commit",
-      "description": "Escribe con la AI task un mensaje de commit para los cambios actuales, sin hacer commit. Devuelve null si no hay cambios."
+      "description": "Escribe con la AI task un mensaje de commit para los cambios actuales, sin hacer commit. Devuelve null si no hay cambios.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "Ruta (o id) del repositorio. Sin ella: commit y push, pull y la exportación se ejecutan en todos los repositorios, las demás acciones en el primero."
+        }
+      }
     },
     "git_sync_get_diff": {
       "name": "Obtener cambios",
-      "description": "Devuelve los cambios que incluiría un commit, archivo por archivo, tal como los muestra el visor de diferencias de la tarjeta."
+      "description": "Devuelve los cambios que incluiría un commit, archivo por archivo, tal como los muestra el visor de diferencias de la tarjeta.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "Ruta (o id) del repositorio. Sin ella: commit y push, pull y la exportación se ejecutan en todos los repositorios, las demás acciones en el primero."
+        }
+      }
     },
     "git_sync_pull": {
       "name": "Pull",
-      "description": "Obtiene el remoto e incorpora sus nuevos commits: avance rápido, o los commits locales rebasados encima (solo con el árbol de trabajo limpio). Un conflicto cancela el rebase."
+      "description": "Obtiene el remoto e incorpora sus nuevos commits: avance rápido, o los commits locales rebasados encima (solo con el árbol de trabajo limpio). Un conflicto cancela el rebase.",
+      "fields": {
+        "repository": {
+          "name": "Repositorio",
+          "description": "Ruta (o id) del repositorio. Sin ella: commit y push, pull y la exportación se ejecutan en todos los repositorios, las demás acciones en el primero."
+        }
+      }
     },
     "orphans_scan": {
       "name": "Buscar entidades huérfanas",
@@ -982,6 +1105,9 @@
     },
     "orphans_device_not_registered": {
       "message": "No está en el registro de dispositivos: {devices}."
+    },
+    "unknown_repository": {
+      "message": "Repositorio desconocido {repository}. Repositorios configurados: {repositories}."
     }
   },
   "issues": {
