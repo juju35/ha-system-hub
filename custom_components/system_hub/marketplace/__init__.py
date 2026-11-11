@@ -7,7 +7,8 @@ from datetime import datetime, timedelta
 from typing import Any
 
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import CALLBACK_TYPE, HomeAssistant, callback
+from homeassistant.const import EVENT_STATE_CHANGED
+from homeassistant.core import CALLBACK_TYPE, Event, EventStateChangedData, HomeAssistant, callback
 from homeassistant.helpers.event import async_call_later, async_track_time_interval
 from homeassistant.helpers.start import async_at_started
 from homeassistant.helpers.storage import Store
@@ -40,6 +41,14 @@ async def async_setup_marketplace(
 
     entry.async_on_unload(async_at_started(hass, at_started))
     entry.async_on_unload(async_track_time_interval(hass, read_github, GITHUB_INTERVAL))
+
+    # An update installed (or found) outside a check changes the count at once, not at the next check
+    @callback
+    def update_changed(event: Event[EventStateChangedData]) -> None:
+        if event.data["entity_id"].startswith("update."):
+            refresher.async_count_updates()
+
+    entry.async_on_unload(hass.bus.async_listen(EVENT_STATE_CHANGED, update_changed))
     if refresher.scan_interval > 0:
         _async_schedule(hass, entry, refresher, timedelta(hours=refresher.scan_interval))
     return refresher

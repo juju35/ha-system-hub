@@ -1313,3 +1313,20 @@ async def test_github_read_without_a_check(hass, fake_marketplace, freezer):
     async_fire_time_changed(hass)
     await hass.async_block_till_done()
     assert hass.states.get(STATUS).attributes["rate_limit_remaining"] == 4700
+
+
+async def test_update_installed_outside_a_check_is_counted_at_once(hass, fake_marketplace):
+    """An update installed from the Marketplace itself (or this module) brings the count down without a new check."""
+    entry = await _setup(hass, hours=0)
+    registry = er.async_get(hass)
+    one = registry.async_get_or_create("update", "marketplace", "1", suggested_object_id="nas_card_update")
+    hass.states.async_set(one.entity_id, "on", {"installed_version": "v1.22.0", "latest_version": "v1.23.0"})
+    entry.runtime_data.marketplace.updates = 1
+    # Another integration's update entity changes nothing
+    other = registry.async_get_or_create("update", "dockhand", "x", suggested_object_id="nas_containers_dockhand")
+    hass.states.async_set(other.entity_id, "on")
+    await hass.async_block_till_done()
+    assert entry.runtime_data.marketplace.updates == 1
+    hass.states.async_set(one.entity_id, "off", {"installed_version": "v1.23.0", "latest_version": "v1.23.0"})
+    await hass.async_block_till_done()
+    assert hass.states.get(STATUS).attributes["updates"] == 0

@@ -718,3 +718,11 @@ test('marketplace tab: a brand image gets its access token; read once', async ()
   p._content();
   assert.equal(calls.filter((c) => c === 'brands/access_token').length, 1);
 });
+
+test('marketplace tab: the count is that of the updates waiting now, not of the last check', () => {
+  const marketplace = { state: 'idle', updates: 1, list: [] };
+  const html = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace')._content();
+  assert.doesNotMatch(html, /1 update available/);
+  assert.doesNotMatch(html, /data-action="confirm_install"/);
+  assert.match(html, /Everything is up to date/);
+});
