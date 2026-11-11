@@ -6,6 +6,7 @@
 - **Configure opens the panel**: on the integration's page, Configure no longer shows the menu of forms but a link to the panel's Settings tab, where every module's settings are (the same forms). The devices' **Visit** link opens it too. Turning Git Sync on without a repository opens its form in the Settings tab.
 
 ### Fixed
+- **Marketplace tab**: the count of updates (and **Update all**) is that of the updates waiting now: an update installed since the last check no longer leaves "1 update available" without a card. The module counts its updates again as soon as one is installed or found outside a check (its status sensor too).
 - **Marketplace tab on a phone**: the settings button sits in the header's corner instead of overflowing it, the GitHub icon stays next to its line, and "GitHub" is no longer written twice ("GitHub connected · 3555 requests left").
 
 ## 0.5.3 - 2026-11-11

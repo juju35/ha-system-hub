@@ -584,6 +584,26 @@ class MarketplaceRefresher:
             return False
         return True
 
+    @callback
+    def async_count_updates(self) -> None:
+        """The updates available, counted again from the Marketplace's update entities (one installed or found by the
+        Marketplace itself since the last check); not during a check, which counts them at its end."""
+        if self.state == STATE_RUNNING or self.updates is None:
+            return
+        registry = er.async_get(self.hass)
+        count = sum(
+            1
+            for entry in registry.entities.values()
+            if entry.platform == MARKETPLACE_DOMAIN
+            and entry.domain == "update"
+            and (state := self.hass.states.get(entry.entity_id)) is not None
+            and state.state == STATE_ON
+        )
+        if count != self.updates:
+            self.updates = count
+            self._notify()
+            self.entry.async_create_task(self.hass, self._async_save())
+
     async def async_read_github(self) -> None:
         """GitHub's account and requests left, read outside a check (after a restart, then now and then): free."""
         if self.state == STATE_RUNNING:

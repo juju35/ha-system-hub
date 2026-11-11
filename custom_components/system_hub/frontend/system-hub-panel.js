@@ -1566,7 +1566,9 @@ class SystemHubPanel extends HTMLElement {
     var data = this._state.marketplace || {};
     var running = data.state === 'running';
     var list = data.list || [];
-    var n = list.length || data.updates || 0;
+    // The updates waiting now (the Marketplace's update entities), not the count of the last check: one installed since
+    // is gone from both the cards and the count
+    var n = Array.isArray(data.list) ? list.length : data.updates || 0;
     var failedNames = data.failed || [];
     var installing = data.installing_updates || this._busy.marketplace_install_updates;
     var title = n ? this._t(n === 1 ? 'mk_title_one' : 'mk_title', { n }) : running ? this._t('checking') : this._t('no_updates');
