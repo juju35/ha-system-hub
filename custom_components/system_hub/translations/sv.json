@@ -959,7 +959,17 @@
         "diff_mode": "Läge ändrat",
         "diff_close": "Stäng",
         "diff_files_one": "{n} fil",
-        "diff_files_many": "{n} filer"
+        "diff_files_many": "{n} filer",
+        "chart_system": "CPU, RAM och temperatur",
+        "chart_network": "Nätverk",
+        "chart_disks": "Diskanvändning",
+        "period_h": "{n} h",
+        "period_d": "{n} d",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} d",
+        "now": "nu",
+        "chart_empty": "Ingen historik ännu",
+        "disk": "Disk"
       }
     }
   }

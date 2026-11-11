@@ -959,7 +959,17 @@
         "diff_mode": "Zmieniono tryb",
         "diff_close": "Zamknij",
         "diff_files_one": "{n} plik",
-        "diff_files_many": "Pliki: {n}"
+        "diff_files_many": "Pliki: {n}",
+        "chart_system": "CPU, RAM i temperatura",
+        "chart_network": "Sieć",
+        "chart_disks": "Zajętość dysków",
+        "period_h": "{n} h",
+        "period_d": "{n} d",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} d",
+        "now": "teraz",
+        "chart_empty": "Brak historii",
+        "disk": "Dysk"
       }
     }
   }

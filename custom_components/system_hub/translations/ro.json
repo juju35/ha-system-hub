@@ -959,7 +959,17 @@
         "diff_mode": "Mod schimbat",
         "diff_close": "Închide",
         "diff_files_one": "{n} fișier",
-        "diff_files_many": "Fișiere: {n}"
+        "diff_files_many": "Fișiere: {n}",
+        "chart_system": "CPU, RAM și temperatură",
+        "chart_network": "Rețea",
+        "chart_disks": "Ocuparea discurilor",
+        "period_h": "{n} h",
+        "period_d": "{n} z",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} z",
+        "now": "acum",
+        "chart_empty": "Încă nu există istoric",
+        "disk": "Disc"
       }
     }
   }

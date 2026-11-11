@@ -959,7 +959,17 @@
         "diff_mode": "Mainīts režīms",
         "diff_close": "Aizvērt",
         "diff_files_one": "{n} fails",
-        "diff_files_many": "Faili: {n}"
+        "diff_files_many": "Faili: {n}",
+        "chart_system": "CPU, RAM un temperatūra",
+        "chart_network": "Tīkls",
+        "chart_disks": "Disku aizpildījums",
+        "period_h": "{n} h",
+        "period_d": "{n} d",
+        "ago_h": "−{n} h",
+        "ago_d": "−{n} d",
+        "now": "tagad",
+        "chart_empty": "Vēstures vēl nav",
+        "disk": "Disks"
       }
     }
   }

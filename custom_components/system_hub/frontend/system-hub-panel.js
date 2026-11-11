@@ -371,6 +371,92 @@ class SystemHubDiffDialog extends HTMLElement {
   }
 }
 
+// One colour per kind of data, the same in the rings, the charts and their legends
+var SH_COLORS = {
+  cpu: '#03a9f4',
+  ram: '#8e24aa',
+  temp: '#ff7043',
+  download: '#43a047',
+  upload: '#1e88e5',
+  disks: ['#00897b', '#5c6bc0', '#f4511e', '#6d4c41', '#c0ca33'],
+};
+var SH_BUCKETS = 120;
+
+// [[ms, value]] → `n` averages over [start, end]; a bucket without a reading keeps the last value known before it
+function shBuckets(points, start, end, n) {
+  var sums = new Array(n).fill(0);
+  var counts = new Array(n).fill(0);
+  var before = null;
+  var step = (end - start) / n;
+  (points || []).forEach(([t, v]) => {
+    if (v === null || v === undefined || Number.isNaN(v)) return;
+    if (t < start) {
+      before = v;
+      return;
+    }
+    var i = Math.min(n - 1, Math.floor((t - start) / step));
+    sums[i] += v;
+    counts[i] += 1;
+  });
+  var last = before;
+  return sums.map((sum, i) => {
+    if (counts[i]) last = sum / counts[i];
+    return last;
+  });
+}
+
+// The polyline points of a series, split where it has no value
+function shPoints(values, w, h, max) {
+  var segs = [];
+  var cur = [];
+  var step = values.length > 1 ? w / (values.length - 1) : w;
+  values.forEach((v, i) => {
+    if (v === null || v === undefined) {
+      if (cur.length) segs.push(cur);
+      cur = [];
+      return;
+    }
+    var y = h - (Math.min(Math.max(v, 0), max) / max) * h;
+    cur.push(`${(i * step).toFixed(1)},${y.toFixed(1)}`);
+  });
+  if (cur.length) segs.push(cur);
+  return segs.filter((seg) => seg.length > 1);
+}
+
+// The last 24 hours behind a ring: an area at 12 % and its line at 50 %, on a 0-100 scale
+function shArea(values, max) {
+  return shPoints(values, 100, 30, max)
+    .map((seg) => `<svg class="behind" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+      <polygon points="${seg[0].split(',')[0]},30 ${seg.join(' ')} ${seg[seg.length - 1].split(',')[0]},30"/><polyline points="${seg.join(' ')}"/></svg>`)
+    .join('');
+}
+
+// A round top for a rate axis: 1, 2 or 5 times a power of ten
+function shNiceMax(values) {
+  var top = Math.max(0, ...values.filter((v) => v !== null && v !== undefined));
+  if (!top) return 1;
+  var p = 10 ** Math.floor(Math.log10(top));
+  return [1, 2, 5, 10].map((m) => m * p).find((m) => m >= top);
+}
+
+function shRate(v) {
+  return v < 10 ? Number(v.toFixed(1)).toString() : String(Math.round(v));
+}
+
+function shRound(n) {
+  return Number.isInteger(n) ? n : Number(n.toFixed(1));
+}
+
+// "Disk usage /media" → "/media"; "Network throughput in eth0" → "eth0"
+function shMount(sensor) {
+  var m = String(sensor.name || '').match(/(\/\S*)\s*$/);
+  return m ? m[1] : sensor.name;
+}
+
+function shIface(sensor) {
+  return String(sensor.name || '').split(' ').pop();
+}
+
 class SystemHubPanel extends HTMLElement {
   static VERSION = SYSTEM_HUB_PANEL_VERSION;
 
@@ -448,6 +534,37 @@ class SystemHubPanel extends HTMLElement {
            padding:7px 12px; color:var(--secondary-text-color); --mdc-icon-size:16px; }
     .seg.active { color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); font-weight:500; }
     .lhead .muted { font-size:12px; }
+    .rings { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; }
+    .ring { position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; padding:14px 12px 44px; gap:6px; cursor:pointer; }
+    .ring .behind { position:absolute; inset:auto 0 0 0; width:100%; height:34%; pointer-events:none; }
+    .ring .behind polygon { fill:var(--ring); opacity:.12; }
+    .ring .behind polyline { fill:none; stroke:var(--ring); stroke-width:1.5; opacity:.5; vector-effect:non-scaling-stroke; }
+    .gauge { position:relative; width:104px; height:104px; }
+    .gauge circle { fill:none; stroke-width:9; }
+    .gauge .track { stroke:var(--divider-color, rgba(127,127,127,.2)); }
+    .gauge .arc { stroke:var(--ring); stroke-linecap:round; }
+    .rv { position:absolute; top:14px; height:104px; display:flex; align-items:center; justify-content:center; gap:2px; }
+    .rv b { font-size:24px; font-weight:500; font-variant-numeric:tabular-nums; }
+    .rv span { font-size:13px; color:var(--secondary-text-color); margin-top:6px; }
+    .rl { position:relative; font-size:16px; font-weight:500; }
+    .chart { padding:14px 16px 12px; display:flex; flex-direction:column; gap:8px; min-width:0; }
+    .chead { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+    .ctitle { flex:1; font-size:17px; font-weight:500; }
+    .chart .seg { padding:5px 10px; font-size:12px; }
+    .plot { position:relative; }
+    .plot svg { width:100%; height:100%; display:block; overflow:visible; }
+    .plot polyline { fill:none; stroke-width:2; vector-effect:non-scaling-stroke; stroke-linejoin:round; }
+    .plot .grid line { stroke:var(--divider-color, rgba(127,127,127,.2)); stroke-width:1; vector-effect:non-scaling-stroke; }
+    .ymax { position:absolute; top:-2px; left:0; font-size:11px; color:var(--secondary-text-color); background:var(--card-background-color); padding-right:4px; }
+    .cnote { position:absolute; inset:0; display:grid; place-items:center; font-size:13px; color:var(--secondary-text-color); }
+    .xaxis { position:relative; height:16px; font-size:12px; color:var(--secondary-text-color); }
+    .xaxis span { position:absolute; transform:translateX(-50%); white-space:nowrap; }
+    .xaxis span:first-child { transform:none; }
+    .xaxis span:last-child { transform:translateX(-100%); }
+    .legend { display:flex; flex-wrap:wrap; gap:6px 20px; font-size:14px; }
+    .legend .lg { display:inline-flex; align-items:center; gap:8px; cursor:pointer; }
+    .legend i { width:14px; height:4px; border-radius:2px; }
+    .pair { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:10px; }
     .confirm { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:10px 14px; border-radius:8px;
                background:color-mix(in srgb, var(--tone-warn) 12%, transparent); }
     code { font-family:var(--code-font-family, monospace); font-size:12px; }
@@ -461,6 +578,11 @@ class SystemHubPanel extends HTMLElement {
       .side.fixed { width:auto; }
       .trend { display:none; }
       .tile .more { display:none; }
+      .rings { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; }
+      .gauge { width:84px; height:84px; }
+      .rv { height:84px; }
+      .rv b { font-size:20px; }
+      .pair { grid-template-columns:1fr; }
     }
   `;
 
@@ -474,6 +596,9 @@ class SystemHubPanel extends HTMLElement {
     this._messages = {};
     this._draft = {};
     this._localize = null;
+    this._hist = {};
+    this._histBusy = {};
+    this._periods = {};
     try {
       this._battView = localStorage.getItem('system_hub_batteries_view') || 'level';
     } catch (_err) {
@@ -736,24 +861,27 @@ class SystemHubPanel extends HTMLElement {
         <a class="act" href="/config/integrations/dashboard/add?domain=systemmonitor"><ha-icon icon="mdi:plus"></ha-icon>System Monitor</a></ha-card>`;
     }
     var one = (key) => sensors.find((s) => s.key === key);
-    var tiles = [];
-    var pct = (key, icon, label) => {
-      var s = one(key);
-      if (!s) return;
-      var v = shNum(s.state);
-      tiles.push(this._tile(icon, v === null ? '—' : `<b>${Math.round(v)}</b>%`, label, shTone(v), { entity: s.entity_id }));
-    };
-    pct('processor_use', 'mdi:cpu-64-bit', this._t('cpu'));
-    pct('memory_use_percent', 'mdi:memory', this._t('ram'));
-    pct('swap_use_percent', 'mdi:swap-horizontal', this._t('swap'));
+    var all = (key) => sensors.filter((s) => s.key === key);
+    var cpu = one('processor_use');
+    var ram = one('memory_use_percent');
     var temp = one('processor_temperature');
-    if (temp) {
-      var t = shNum(temp.state);
-      tiles.push(
-        this._tile('mdi:thermometer', t === null ? '—' : `<b>${Math.round(t)}</b>${shEsc(temp.unit || '°C')}`, this._t('temperature'), shTone(t, 70, 85), {
-          entity: temp.entity_id,
-        }),
-      );
+    var disks = all('disk_use_percent');
+    var rx = all('throughput_network_in');
+    var txs = all('throughput_network_out');
+    // Rings: the value now, the last 24 hours behind it, each kind of data in its own colour
+    var ringDefs = [
+      [cpu, this._t('cpu'), SH_COLORS.cpu, '%'],
+      [ram, this._t('ram'), SH_COLORS.ram, '%'],
+      [temp, this._t('temperature'), SH_COLORS.temp, temp?.unit || '°C'],
+      [disks[0], disks.length > 1 ? `${this._t('disk')} ${shMount(disks[0])}` : this._t('disk'), SH_COLORS.disks[0], '%'],
+    ].filter(([s]) => s);
+    var ringHist = this._history(ringDefs.map(([s]) => s.entity_id), 24);
+    var rings = ringDefs.map(([s, label, color, unit]) => this._ring(s, label, color, unit, ringHist?.[s.entity_id])).join('');
+    var tiles = [];
+    var swap = one('swap_use_percent');
+    if (swap) {
+      var v = shNum(swap.state);
+      tiles.push(this._tile('mdi:swap-horizontal', v === null ? '—' : `<b>${Math.round(v)}</b>%`, this._t('swap'), shTone(v), { entity: swap.entity_id }));
     }
     var loads = ['load_1m', 'load_5m', 'load_15m'].map(one).filter(Boolean);
     if (loads.length) {
@@ -765,16 +893,39 @@ class SystemHubPanel extends HTMLElement {
     }
     var boot = one('last_boot');
     if (boot) tiles.push(this._tile('mdi:clock-start', shEsc(this._day(boot.state)), this._t('uptime'), '', { entity: boot.entity_id }));
-    var rates = ['throughput_network_in', 'throughput_network_out']
-      .map((key) => sensors.filter((s) => s.key === key))
-      .map((list) => list.reduce((sum, s) => sum + (shNum(s.state) || 0), 0));
-    if (sensors.some((s) => s.key.startsWith('throughput'))) {
-      var unit = sensors.find((s) => s.key.startsWith('throughput'))?.unit || 'MB/s';
-      var rate = (v) => `<b>${v < 100 ? v.toFixed(1) : Math.round(v)}</b>${shEsc(unit)}`;
-      tiles.push(this._tile('mdi:download', rate(rates[0]), this._t('download'), 'good'));
-      tiles.push(this._tile('mdi:upload', rate(rates[1]), this._t('upload'), ''));
+    var unit = (rx[0] || txs[0])?.unit || 'MB/s';
+    var rate = (list) => {
+      var v = list.reduce((sum, s) => sum + (shNum(s.state) || 0), 0);
+      return v < 100 ? v.toFixed(1) : String(Math.round(v));
+    };
+    // Download and upload in one tile, in their chart colours
+    if (rx.length || txs.length) {
+      tiles.push(
+        this._tile(
+          'mdi:swap-vertical',
+          `<b style="color:${SH_COLORS.download}">${rate(rx)}</b>/ <b style="color:${SH_COLORS.upload}">${rate(txs)}</b>${shEsc(unit)}`,
+          `${this._t('download')} / ${this._t('upload')}`,
+          '',
+        ),
+      );
     }
-    var disks = sensors.filter((s) => s.key === 'disk_use_percent');
+    // History charts: CPU, RAM and temperature; the network; the disks
+    var charts = [];
+    var systemLines = [
+      [cpu, this._t('cpu'), SH_COLORS.cpu],
+      [ram, this._t('ram'), SH_COLORS.ram],
+      [temp, `${this._t('temperature')} (${temp?.unit || '°C'})`, SH_COLORS.temp],
+    ].filter(([s]) => s);
+    if (systemLines.length) charts.push(this._chart('system', this._t('chart_system'), systemLines, { max: 100, unit: '%', height: 180 }));
+    var netLines = [
+      ...rx.map((s) => [s, rx.length > 1 ? `${this._t('download')} · ${shIface(s)}` : this._t('download'), SH_COLORS.download]),
+      ...txs.map((s) => [s, txs.length > 1 ? `${this._t('upload')} · ${shIface(s)}` : this._t('upload'), SH_COLORS.upload]),
+    ];
+    var diskLines = disks.map((s, i) => [s, shMount(s), SH_COLORS.disks[i % SH_COLORS.disks.length]]);
+    var pair = [
+      netLines.length ? this._chart('network', this._t('chart_network'), netLines, { unit, height: 130 }) : '',
+      diskLines.length ? this._chart('disks', this._t('chart_disks'), diskLines, { max: 100, unit: '%', height: 130 }) : '',
+    ].filter(Boolean);
     var diskList = disks.length
       ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:harddisk"></ha-icon><span class="lname">${shEsc(this._t('disks'))}</span></div>
         ${disks
@@ -786,7 +937,127 @@ class SystemHubPanel extends HTMLElement {
           })
           .join('')}</ha-card>`
       : '';
-    return `<div class="tiles">${tiles.join('')}</div>${diskList}`;
+    return `${rings ? `<div class="rings">${rings}</div>` : ''}${tiles.length ? `<div class="tiles">${tiles.join('')}</div>` : ''}
+      ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${diskList}`;
+  }
+
+  // A ring: the value now over its scale (0-100, 0-100 °C for a temperature), the last 24 hours drawn behind it
+  _ring(sensor, label, color, unit, values) {
+    var v = shNum(sensor.state);
+    var c = 2 * Math.PI * 40;
+    var dash = v === null ? 0 : (c * Math.min(Math.max(v, 0), 100)) / 100;
+    var shown = v === null ? '—' : Math.round(v);
+    return `<ha-card class="ring link" data-more="${shEsc(sensor.entity_id)}" style="--ring:${color}">
+      ${values ? shArea(values, 100) : ''}
+      <svg class="gauge" viewBox="0 0 100 100" aria-hidden="true"><circle class="track" cx="50" cy="50" r="40"/>
+        <circle class="arc" cx="50" cy="50" r="40" stroke-dasharray="${dash.toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 50 50)"/></svg>
+      <div class="rv"><b>${shown}</b><span>${shEsc(unit)}</span></div>
+      <div class="rl">${shEsc(label)}</div></ha-card>`;
+  }
+
+  // A history chart: its lines over the period chosen (1 h, 6 h, 24 h or 7 days), a legend in the lines' colours
+  _chart(id, title, lines, opts) {
+    var hours = this._periods[id] || 24;
+    var data = this._history(
+      lines.map(([s]) => s.entity_id),
+      hours,
+    );
+    var periods = [1, 6, 24, 168]
+      .map((h) => {
+        var label = h < 168 ? this._t('period_h', { n: h }) : this._t('period_d', { n: 7 });
+        return `<button class="seg${h === hours ? ' active' : ''}" data-action="period" data-chart="${id}" data-hours="${h}" aria-pressed="${h === hours}">${shEsc(label)}</button>`;
+      })
+      .join('');
+    var series = lines.map(([s, , color]) => ({ color, values: data?.[s.entity_id] || [] }));
+    var max = opts.max || shNiceMax(series.flatMap((x) => x.values));
+    var w = 1000;
+    var h = opts.height;
+    var grid = [0.25, 0.5, 0.75, 1].map((f) => `<line x1="0" x2="${w}" y1="${(h - f * h).toFixed(1)}" y2="${(h - f * h).toFixed(1)}"/>`).join('');
+    var plot = series
+      .map((x) => {
+        var pts = shPoints(x.values, w, h, max);
+        if (!pts.length) return '';
+        return pts
+          .map((seg) => `<polygon points="${seg[0].split(',')[0]},${h} ${seg.join(' ')} ${seg[seg.length - 1].split(',')[0]},${h}" fill="${x.color}" opacity=".08"/>
+            <polyline points="${seg.join(' ')}" stroke="${x.color}"/>`)
+          .join('');
+      })
+      .join('');
+    var empty = data && !series.some((x) => x.values.some((v) => v !== null));
+    var ticks = hours < 168 ? [hours, (hours * 3) / 4, hours / 2, hours / 4] : [7, 5, 3, 1];
+    var axis = [...ticks.map((n) => (hours < 168 ? this._t('ago_h', { n: shRound(n) }) : this._t('ago_d', { n }))), this._t('now')]
+      .map((label, i, list) => `<span style="left:${(i * 100) / (list.length - 1)}%">${shEsc(label)}</span>`)
+      .join('');
+    var top = opts.max ? `${max} ${opts.unit}` : `${shRate(max)} ${opts.unit}`;
+    return `<ha-card class="chart">
+      <div class="chead"><span class="ctitle">${shEsc(title)}</span><div class="segs" role="group">${periods}</div></div>
+      <div class="plot" style="height:${h}px"><span class="ymax">${shEsc(top)}</span>
+        <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><g class="grid">${grid}</g>${plot}</svg>
+        ${data === null ? `<span class="cnote">${shEsc(this._t('loading'))}</span>` : empty ? `<span class="cnote">${shEsc(this._t('chart_empty'))}</span>` : ''}</div>
+      <div class="xaxis">${axis}</div>
+      <div class="legend">${lines.map(([s, label, color]) => `<span class="lg link" data-more="${shEsc(s.entity_id)}"><i style="background:${color}"></i>${shEsc(label)}</span>`).join('')}</div>
+    </ha-card>`;
+  }
+
+  // The recorded values of `ids` over the last `hours`, SH_BUCKETS averages each (null where nothing is known),
+  // fetched once and kept a few minutes; null while the first read runs (the panel draws again once it is in)
+  _history(ids, hours) {
+    var now = Date.now();
+    var fresh = hours <= 1 ? 60e3 : 300e3;
+    var missing = ids.filter((id) => {
+      var c = this._hist[`${hours}|${id}`];
+      return !c || now - c.at > fresh;
+    });
+    var known = ids.every((id) => this._hist[`${hours}|${id}`]);
+    if (missing.length && !this._histBusy[hours]) {
+      this._histBusy[hours] = true;
+      this._fetchHistory(missing, hours)
+        .then((data) => {
+          var at = Date.now();
+          missing.forEach((id) => {
+            this._hist[`${hours}|${id}`] = { at, values: data[id] || [] };
+          });
+        })
+        .catch(() => {
+          var at = Date.now();
+          missing.forEach((id) => {
+            this._hist[`${hours}|${id}`] ??= { at, values: [] };
+          });
+        })
+        .finally(() => {
+          delete this._histBusy[hours];
+          if (this.isConnected && this._tab === 'system') this._render();
+        });
+    }
+    if (!known) return null;
+    return Object.fromEntries(ids.map((id) => [id, this._hist[`${hours}|${id}`].values]));
+  }
+
+  async _fetchHistory(ids, hours) {
+    var end = Date.now();
+    var startMs = end - hours * 3600e3;
+    var start = new Date(startMs).toISOString();
+    var points = {};
+    if (hours > 24) {
+      // A week: the recorder's hourly means
+      var stats = await this._hass.callWS({ type: 'recorder/statistics_during_period', start_time: start, statistic_ids: ids, period: 'hour', types: ['mean'] });
+      ids.forEach((id) => {
+        points[id] = (stats?.[id] || []).map((p) => [typeof p.start === 'number' ? p.start : Date.parse(p.start), p.mean]);
+      });
+    } else {
+      var res = await this._hass.callWS({
+        type: 'history/history_during_period',
+        start_time: start,
+        entity_ids: ids,
+        minimal_response: true,
+        no_attributes: true,
+        significant_changes_only: false,
+      });
+      ids.forEach((id) => {
+        points[id] = (res?.[id] || []).map((p) => [(p.lu ?? p.lc ?? 0) * 1000, shNum(p.s)]);
+      });
+    }
+    return Object.fromEntries(ids.map((id) => [id, shBuckets(points[id], startMs, end, SH_BUCKETS)]));
   }
 
   // Containers: Core, the Supervisor and the add-ons (monitoring only)
@@ -1135,6 +1406,10 @@ class SystemHubPanel extends HTMLElement {
       if (i < 0 || j < 0 || j >= tabs.length) return;
       [tabs[i], tabs[j]] = [tabs[j], tabs[i]];
       this._draft.tabs = tabs;
+      return this._render();
+    }
+    if (action === 'period') {
+      this._periods[button.dataset.chart] = Number(button.dataset.hours);
       return this._render();
     }
     if (action === 'batt_view') {

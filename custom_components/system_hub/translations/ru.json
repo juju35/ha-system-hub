@@ -959,7 +959,17 @@
         "diff_mode": "Режим изменён",
         "diff_close": "Закрыть",
         "diff_files_one": "{n} файл",
-        "diff_files_many": "Файлы: {n}"
+        "diff_files_many": "Файлы: {n}",
+        "chart_system": "CPU, RAM и температура",
+        "chart_network": "Сеть",
+        "chart_disks": "Заполнение дисков",
+        "period_h": "{n} ч",
+        "period_d": "{n} д",
+        "ago_h": "−{n} ч",
+        "ago_d": "−{n} д",
+        "now": "сейчас",
+        "chart_empty": "Истории пока нет",
+        "disk": "Диск"
       }
     }
   }

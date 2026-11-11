@@ -959,7 +959,17 @@
         "diff_mode": "Αλλαγή λειτουργίας",
         "diff_close": "Κλείσιμο",
         "diff_files_one": "{n} αρχείο",
-        "diff_files_many": "{n} αρχεία"
+        "diff_files_many": "{n} αρχεία",
+        "chart_system": "CPU, RAM και θερμοκρασία",
+        "chart_network": "Δίκτυο",
+        "chart_disks": "Χρήση δίσκων",
+        "period_h": "{n} ώ",
+        "period_d": "{n} ημ",
+        "ago_h": "−{n} ώ",
+        "ago_d": "−{n} ημ",
+        "now": "τώρα",
+        "chart_empty": "Δεν υπάρχει ακόμη ιστορικό",
+        "disk": "Δίσκος"
       }
     }
   }

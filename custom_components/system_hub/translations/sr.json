@@ -959,7 +959,17 @@
         "diff_mode": "Режим промењен",
         "diff_close": "Затвори",
         "diff_files_one": "{n} датотека",
-        "diff_files_many": "Датотека: {n}"
+        "diff_files_many": "Датотека: {n}",
+        "chart_system": "CPU, RAM и температура",
+        "chart_network": "Мрежа",
+        "chart_disks": "Заузетост дискова",
+        "period_h": "{n} ч",
+        "period_d": "{n} д",
+        "ago_h": "−{n} ч",
+        "ago_d": "−{n} д",
+        "now": "сада",
+        "chart_empty": "Још нема историје",
+        "disk": "Диск"
       }
     }
   }

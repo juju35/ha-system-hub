@@ -3,6 +3,7 @@
 ## Unreleased
 
 ### New
+- **System tab**: CPU, RAM, temperature and disk as rings with their last 24 hours behind them, and history charts of CPU, RAM and temperature, of the network and of the disks over 1 hour, 6 hours, 24 hours or 7 days, read from the recorder (hourly means for 7 days); each kind of data has its own colour. Download and upload share one tile.
 - **Batteries tab**: every battery by level (the ones in error first, then the lowest), by room, by battery type or by replacement date (with the days left, the date and the daily drain), as in the Battery Monitor full screen view; the view chosen is remembered by the browser.
 - **Git Sync tab**: **View changes** opens the diff viewer of the Git Sync card again: the changed files with their status and counts, each file's diff with old and new line numbers, and **Commit and push** from it.
 
