@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from homeassistant.components import frontend
+from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant
 from homeassistant.data_entry_flow import FlowResultType
 from homeassistant.helpers import entity_registry as er
@@ -152,6 +153,47 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
         "swap": [50, 80],
     }
     assert result["batteries"]["spares"] == {}
+
+
+async def test_version_and_last_boot_whatever_the_language(hass: HomeAssistant, hass_ws_client) -> None:
+    """The Supervisor's Core update found by its unique id (its entity id in French), and System Monitor's last boot of
+    Home Assistant 2026: an uptime without a translation key."""
+    registry = er.async_get(hass)
+    core = registry.async_get_or_create(
+        "update", "hassio", "home_assistant_core_version_latest", suggested_object_id="home_assistant_core_mise_a_jour"
+    )
+    hass.states.async_set(core.entity_id, "off", {"installed_version": "2026.11.1", "latest_version": "2026.11.1"})
+    monitor = MockConfigEntry(domain="systemmonitor")
+    monitor.add_to_hass(hass)
+    boot = registry.async_get_or_create(
+        "sensor",
+        "systemmonitor",
+        "last_boot",
+        config_entry=monitor,
+        suggested_object_id="system_monitor_dernier_demarrage",
+        original_device_class="uptime",
+    )
+    hass.states.async_set(boot.entity_id, "2026-11-11T02:00:35+00:00", {"device_class": "uptime"})
+    await _setup(hass, [])
+    client = await hass_ws_client(hass)
+    await client.send_json({"id": 1, "type": "system_hub/state"})
+    result = (await client.receive_json())["result"]
+    assert core.entity_id == "update.home_assistant_core_mise_a_jour"
+    assert result["updates"] == [
+        {"key": "core", "entity_id": core.entity_id, "state": "off", "installed": "2026.11.1", "latest": "2026.11.1"}
+    ]
+    assert [s["entity_id"] for s in result["system"] if s["key"] == "last_boot"] == [boot.entity_id]
+
+
+async def test_version_without_the_supervisor(hass: HomeAssistant, hass_ws_client) -> None:
+    """A container or a Python install: Core's version running, without an update to tell."""
+    await _setup(hass, [])
+    client = await hass_ws_client(hass)
+    await client.send_json({"id": 1, "type": "system_hub/state"})
+    result = (await client.receive_json())["result"]
+    assert result["updates"] == [
+        {"key": "core", "entity_id": None, "state": "off", "installed": HA_VERSION, "latest": None}
+    ]
 
 
 async def test_state_without_the_integration(hass: HomeAssistant, hass_ws_client) -> None:

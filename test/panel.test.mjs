@@ -594,10 +594,20 @@ test('system tab: virtual interfaces left out, totals received and sent, Core an
     modules: [],
     tabs: ['system'],
     system: [{ key: 'ipv4_address', entity_id: 'sensor.ip', name: 'IP', state: '10.0.0.2' }],
-    updates: [{ key: 'core', state: 'off', installed: '2026.11.1', latest: '2026.11.1' }],
+    updates: [{ key: 'core', entity_id: 'update.home_assistant_core_mise_a_jour', state: 'off', installed: '2026.11.1', latest: '2026.11.1' }],
   })._content();
   assert.match(fine, /class="tile good link"/);
   assert.match(fine, /Up to date/);
+  // Without the Supervisor: the version running, no update to tell
+  var bare = panel({
+    loaded: true,
+    modules: [],
+    tabs: ['system'],
+    system: [{ key: 'ipv4_address', entity_id: 'sensor.ip', name: 'IP', state: '10.0.0.2' }],
+    updates: [{ key: 'core', entity_id: null, state: 'off', installed: '2026.11.1', latest: null }],
+  })._content();
+  assert.match(bare, /class="tile {2}link" title="Core 2026.11.1">[\s\S]*?<b class="ver">2026.11.1<\/b><\/div><div class="s">Home Assistant</);
+  assert.doesNotMatch(bare, /Up to date/);
 });
 
 test('system tab: the thresholds chosen colour the rings, the swap and the disks', () => {
@@ -970,10 +980,11 @@ test('processes: one that may be stopped is grey, not counted on the Status tab'
   assert.equal(p._stArea('containers')[0], 'bad');
 });
 
-test('status: a home beside the score, with the colour of the ring', () => {
+test('status: the house of the logo beside the score, with the colour of the ring and its badge', () => {
   const base = { loaded: true, modules: [], tabs: ['status', 'system'], system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '10' }] };
-  assert.match(panel(base, 'status')._content(), /class="stbadge"[^>]*><ha-icon icon="mdi:home-heart">/);
+  const pulse = /class="stbadge good"[^>]*><svg[\s\S]*<polyline points="-34,3/;
+  assert.match(panel(base, 'status')._content(), pulse);
   const hot = { ...base, system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '99' }] };
   // One area critical: 85, still green
-  assert.match(panel(hot, 'status')._content(), /mdi:home-heart/);
+  assert.match(panel(hot, 'status')._content(), pulse);
 });
