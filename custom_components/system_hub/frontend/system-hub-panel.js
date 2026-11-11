@@ -600,6 +600,16 @@ class SystemHubPanel extends HTMLElement {
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
     .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
     .spin { animation:sh-spin 1s linear infinite; }
+    .cfg { gap:0; }
+    .cfg h2 { margin-bottom:4px; }
+    .cfgrow { padding:6px 0; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); }
+    .cfgrow.open { background:color-mix(in srgb, var(--primary-color) 6%, transparent); margin:0 -16px; padding:6px 16px; }
+    .cfgpad { width:36px; flex:none; }
+    .cfgbody { display:flex; flex-direction:column; gap:12px; padding:12px 0 16px 36px; }
+    .cfgbody .loading { padding:12px 0; }
+    .cfgtabs { align-self:flex-start; }
+    .cfgdesc { white-space:pre-line; }
+    @media (max-width:600px) { .cfgbody { padding-left:0; } }
     .mkhead { display:flex; align-items:center; gap:14px; padding:14px 16px; flex-wrap:wrap; }
     .mkhead .who { flex:1; min-width:220px; }
     .mkhead .who .n { font-size:16px; font-weight:500; }
@@ -853,7 +863,7 @@ class SystemHubPanel extends HTMLElement {
 
   async _loadStrings() {
     try {
-      var categories = ['selector', 'entity', 'services', 'config'];
+      var categories = ['selector', 'entity', 'services', 'config', 'options'];
       var results = await Promise.all(categories.map((c) => this._hass.loadBackendTranslation?.(c, SH_DOMAIN)));
       this._localize = results.find(Boolean) || this._hass.localize;
     } catch (_err) {
@@ -867,14 +877,19 @@ class SystemHubPanel extends HTMLElement {
     return this._l(`component.${SH_DOMAIN}.selector.panel.options.${key}`, vars) || key;
   }
 
+  // Home Assistant's newest localize first: the one a translation load resolved with may lack the categories
+  // loaded alongside (the module descriptions of `config`, the forms of `options`)
   _l(key, vars) {
-    var localize = this._localize || this._hass?.localize;
-    if (!localize) return '';
-    try {
-      return localize(key, vars || {}) || '';
-    } catch (_err) {
-      return '';
+    for (var localize of [this._hass?.localize, this._localize]) {
+      if (!localize) continue;
+      try {
+        var text = localize(key, vars || {});
+        if (text) return text;
+      } catch (_err) {
+        // the next one
+      }
     }
+    return '';
   }
 
   _entityName(platform, key) {
@@ -900,6 +915,8 @@ class SystemHubPanel extends HTMLElement {
     } catch (err) {
       this._error = err?.message || String(err);
     }
+    // A settings form open: left as it is, what is being typed included
+    if (this._tab === 'settings' && this._cfg?.flow) return;
     this._render();
   }
 
@@ -994,6 +1011,7 @@ class SystemHubPanel extends HTMLElement {
     // The button or row with the focus keeps it through the refresh every few seconds
     var focusSel = !focusKey && active && main.contains(active) ? shFocusSelector(active) : null;
     main.innerHTML = this._content();
+    if (this._tab === 'settings') this._cfgMount(main);
     // Rows and tiles that open the entity's dialog: reached and opened from the keyboard too
     main.querySelectorAll('[data-more]:not(button):not(a)').forEach((el) => {
       el.tabIndex = 0;
@@ -1047,7 +1065,7 @@ class SystemHubPanel extends HTMLElement {
 
   // The module settings (Configure), at the end of a tab's buttons
   _configure() {
-    return `<span class="grow"></span><a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('configure'))}</a>`;
+    return `<span class="grow"></span>${this._button(`open_settings:${this._tab}`, 'mdi:cog-outline', this._t('configure'), { quiet: true })}`;
   }
 
   // Something being read: a spinner and what it is
@@ -1525,7 +1543,7 @@ class SystemHubPanel extends HTMLElement {
       })
       .join('');
     return `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:power-plug-outline"></ha-icon><span class="lname">${shEsc(this._t('power_cycles'))}</span>
-        <a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('pc_configure'))}</a></div>
+        ${this._button('open_settings:watchdog', 'mdi:cog-outline', this._t('pc_configure'), { quiet: true })}</div>
       ${rows || `<div class="empty">${shEsc(this._t('pc_none'))}</div>`}</ha-card>`;
   }
 
@@ -1569,7 +1587,7 @@ class SystemHubPanel extends HTMLElement {
         busy: running || this._busy.marketplace_check_updates,
       })}
       ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t('install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
-      <a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></a></div></ha-card>`;
+      <button class="act quiet" data-action="open_settings:marketplace" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></button></div></ha-card>`;
     var cards = list.map((u) => this._mkCard(u)).join('');
     var failed = failedNames
       .map(
@@ -1958,16 +1976,6 @@ class SystemHubPanel extends HTMLElement {
   _settings() {
     var modules = this._draft.modules || this._state.modules || [];
     var tabs = this._draft.tabs || this._state.tabs || [];
-    var all = Object.keys(SH_MODULE_NAMES);
-    var moduleRows = all
-      .map((m) => {
-        var on = modules.includes(m);
-        var hint = this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${m}`);
-        return `<label class="row"><ha-icon icon="${SH_MODULE_ICONS[m]}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(SH_MODULE_NAMES[m])}</div>${hint ? `<div class="s">${shEsc(hint)}</div>` : ''}</div>
-          <ha-switch data-module="${m}"${on ? ' checked' : ''}></ha-switch></label>`;
-      })
-      .join('');
     var tabRows = tabs
       .map(
         (tab, i) => `<div class="row"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon><div class="who"><div class="n">${shEsc(this._tabName(tab))}</div></div>
@@ -1976,7 +1984,7 @@ class SystemHubPanel extends HTMLElement {
       )
       .join('');
     var changed = Boolean(this._draft.modules || this._draft.tabs);
-    return `<ha-card class="block"><h2>${shEsc(this._t('modules'))}</h2><span class="msg">${shEsc(this._t('modules_hint'))}</span>${moduleRows}</ha-card>
+    return `${this._settingsModules(modules)}
       <ha-card class="block"><h2>${shEsc(this._t('tabs'))}</h2>${tabRows}</ha-card>
       ${
         changed || this._busy.save
@@ -1985,7 +1993,7 @@ class SystemHubPanel extends HTMLElement {
           ${this._button('save', 'mdi:content-save-outline', this._t('save'))}</div>`
           : ''
       }
-      <div class="actions">${this._message('save')}${this._configure()}</div>`;
+      <div class="actions">${this._message('save')}</div>`;
   }
 
   _onClick(ev) {
@@ -2020,6 +2028,7 @@ class SystemHubPanel extends HTMLElement {
     var button = ev.target.closest?.('[data-action]');
     if (!button || button.disabled) return;
     var action = button.dataset.action;
+    if ((action.startsWith('cfg_') || action.startsWith('open_settings')) && this._cfgClick(button)) return;
     if (action === 'reload') return this._load();
     if (action === 'cancel' || action === 'confirm_install') {
       this._confirm = action === 'confirm_install' ? 'install' : null;
@@ -2604,3 +2613,266 @@ if (!customElements.get('system-hub-diff-dialog')) {
 if (!customElements.get('system-hub-panel')) {
   customElements.define('system-hub-panel', SystemHubPanel);
 }
+
+// Settings tab: each module's settings, edited in the panel. The panel drives System Hub's own options flow (the
+// form Configure shows) through Home Assistant's flow API, so the fields, their checks and their errors are the same;
+// the forms are Home Assistant's <ha-form>. A module's further steps (power cycles, battery types, the import, the Git
+// repository) open from its section the same way.
+var SH_SETTINGS_STEPS = {
+  system: ['system'],
+  containers: ['containers'],
+  watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
+  marketplace: ['marketplace'],
+  batteries: ['batteries', 'batteries_types', 'batteries_import'],
+  git_sync: ['git_sync', 'git_sync_repository'],
+  orphans: ['orphans'],
+};
+var SH_SETTINGS_ICONS = { system: 'mdi:chip' };
+
+// Home Assistant loads <ha-form> with its config pages: loaded here through them when no page has needed it yet
+async function shLoadHaForm() {
+  if (customElements.get('ha-form')) return true;
+  try {
+    await customElements.whenDefined('partial-panel-resolver');
+    var resolver = document.createElement('partial-panel-resolver');
+    resolver.hass = { panels: [{ url_path: 'tmp', component_name: 'config' }] };
+    resolver._updateRoutes();
+    await resolver.routerOptions.routes.tmp.load();
+    await customElements.whenDefined('ha-panel-config');
+    var config = document.createElement('ha-panel-config');
+    await config.routerOptions.routes.automation.load();
+  } catch (_err) {
+    // Not loaded: the section links to Configure instead
+  }
+  return Boolean(customElements.get('ha-form'));
+}
+
+// The values a form starts from: those it suggests, else its defaults
+function shFormData(schema) {
+  var data = {};
+  for (var field of schema || []) {
+    if (field.description && field.description.suggested_value !== undefined) data[field.name] = field.description.suggested_value;
+    else if (field.default !== undefined) data[field.name] = field.default;
+  }
+  return data;
+}
+
+var SH_SETTINGS_METHODS = {
+  _cfgState() {
+    this._cfg ??= { module: null, step: null, flow: null, data: {}, errors: {}, menu: [], busy: false, error: null, haForm: null };
+    return this._cfg;
+  },
+
+  // One row per module (and the System thresholds): its switch, what it does, and its settings once opened
+  _settingsModules(modules) {
+    var cfg = this._cfgState();
+    var rows = ['system', ...Object.keys(SH_MODULE_NAMES)].map((m) => {
+      var isSystem = m === 'system';
+      var on = isSystem || modules.includes(m);
+      var steps = SH_SETTINGS_STEPS[m] || [];
+      var saved = isSystem || (this._state.modules || []).includes(m);
+      var open = cfg.module === m;
+      var hint = isSystem ? this._t('settings_system_hint') : this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${m}`);
+      var name = isSystem ? this._t('settings_system') : SH_MODULE_NAMES[m];
+      var canOpen = steps.length && saved;
+      var head = `<div class="row cfgrow${open ? ' open' : ''}"><ha-icon icon="${SH_SETTINGS_ICONS[m] || SH_MODULE_ICONS[m]}"></ha-icon>
+        <div class="who"><div class="n">${shEsc(name)}</div>${hint ? `<div class="s">${shEsc(hint)}</div>` : ''}</div>
+        ${isSystem ? '' : `<ha-switch data-module="${m}"${on ? ' checked' : ''} aria-label="${shEsc(name)}"></ha-switch>`}
+        ${
+          canOpen
+            ? `<button class="icon-btn" data-action="cfg_toggle" data-module="${m}" aria-expanded="${open}" title="${shEsc(this._t('settings'))}" aria-label="${shEsc(`${this._t('settings')} · ${name}`)}"><ha-icon icon="mdi:chevron-${open ? 'up' : 'down'}"></ha-icon></button>`
+            : '<span class="cfgpad"></span>'
+        }</div>`;
+      return head + (open ? this._cfgBody(m) : '');
+    });
+    return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules'))}</h2><span class="msg">${shEsc(this._t('modules_hint'))}</span>${rows.join('')}</ha-card>`;
+  },
+
+  // An open section: the step's form, its further steps, Save
+  _cfgBody(m) {
+    var cfg = this._cfgState();
+    if (cfg.error) {
+      return `<div class="cfgbody"><span class="msg bad">${shEsc(cfg.error)}</span>
+        <a class="act quiet" href="/config/integrations/integration/${SH_DOMAIN}"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('configure'))}</a></div>`;
+    }
+    if (!cfg.flow) return `<div class="cfgbody">${this._spinner(this._t('loading'))}</div>`;
+    var others = (SH_SETTINGS_STEPS[m] || []).filter((s) => cfg.menu.includes(s));
+    var tabs = others.length > 1
+      ? `<div class="btabs cfgtabs" role="group">${others
+          .map((s) => `<button class="btab${s === cfg.step ? ' on' : ''}" data-action="cfg_step" data-step="${s}" aria-pressed="${s === cfg.step}">${shEsc(this._cfgTitle(s))}</button>`)
+          .join('')}</div>`
+      : '';
+    var description = this._l(`component.${SH_DOMAIN}.options.step.${cfg.step}.description`, cfg.flow.description_placeholders || {});
+    var base = cfg.errors?.base ? this._l(`component.${SH_DOMAIN}.options.error.${cfg.errors.base}`) || cfg.errors.base : '';
+    return `<div class="cfgbody">${tabs}
+      ${description ? `<div class="s cfgdesc">${shEsc(description)}</div>` : ''}
+      <div class="cfgform" data-step="${shEsc(cfg.step)}"></div>
+      ${base ? `<span class="msg bad">${shEsc(base)}</span>` : ''}
+      <div class="actions"><span class="grow"></span>${this._button('cfg_close', 'mdi:close', this._t('cancel'), { quiet: true, disabled: cfg.busy })}
+        ${this._button('cfg_submit', 'mdi:content-save-outline', this._t('save'), { busy: cfg.busy })}</div></div>`;
+  },
+
+  _cfgTitle(step) {
+    return this._l(`component.${SH_DOMAIN}.options.step.${step}.title`) || step;
+  },
+
+  // The form of the open step, put in its place after each drawing (the same element: what is typed stays)
+  _cfgMount(main) {
+    var cfg = this._cfgState();
+    var slot = main.querySelector('.cfgform');
+    if (!slot || !cfg.flow) return;
+    if (!customElements.get('ha-form')) {
+      slot.textContent = this._t('loading');
+      return;
+    }
+    var form = cfg.haForm || document.createElement('ha-form');
+    if (!cfg.haForm) {
+      form.addEventListener('value-changed', (ev) => {
+        cfg.data = ev.detail.value;
+      });
+      cfg.haForm = form;
+    }
+    var step = cfg.step;
+    form.hass = this._hass;
+    form.schema = cfg.flow.data_schema || [];
+    form.data = cfg.data;
+    form.error = Object.fromEntries(
+      Object.entries(cfg.errors || {})
+        .filter(([key]) => key !== 'base')
+        .map(([key, value]) => [key, this._l(`component.${SH_DOMAIN}.options.error.${value}`) || value]),
+    );
+    form.computeLabel = (field) => this._l(`component.${SH_DOMAIN}.options.step.${step}.data.${field.name}`) || field.name;
+    form.computeHelper = (field) => this._l(`component.${SH_DOMAIN}.options.step.${step}.data_description.${field.name}`);
+    form.computeError = (error) => this._l(`component.${SH_DOMAIN}.options.error.${error}`) || error;
+    form.disabled = cfg.busy;
+    slot.appendChild(form);
+  },
+
+  // Opens a module's section on its first step (the one Configure would show), or closes it
+  async _cfgOpen(module, step) {
+    var cfg = this._cfgState();
+    await this._cfgAbort();
+    Object.assign(cfg, { module, step: step || SH_SETTINGS_STEPS[module][0], flow: null, data: {}, errors: {}, menu: [], error: null, busy: false });
+    this._render();
+    var ready = await shLoadHaForm();
+    if (!ready) {
+      cfg.error = this._t('settings_unavailable');
+      return this._render();
+    }
+    try {
+      var menu = await this._hass.callApi('POST', 'config/config_entries/options/flow', { handler: this._state.entry_id, show_advanced_options: true });
+      cfg.menu = menu.menu_options || [];
+      cfg.flowId = menu.flow_id;
+      await this._cfgGo(cfg.step);
+    } catch (err) {
+      cfg.error = this._t('failed', { error: err?.body?.message || err?.message || String(err) });
+      this._render();
+    }
+  },
+
+  async _cfgGo(step) {
+    var cfg = this._cfgState();
+    if (!cfg.menu.includes(step)) step = cfg.menu.find((s) => (SH_SETTINGS_STEPS[cfg.module] || []).includes(s)) || step;
+    // A flow goes one way: another step starts it again from its menu
+    if (cfg.flow) {
+      await this._cfgAbort();
+      var menu = await this._hass.callApi('POST', 'config/config_entries/options/flow', { handler: this._state.entry_id, show_advanced_options: true });
+      cfg.menu = menu.menu_options || [];
+      cfg.flowId = menu.flow_id;
+    }
+    var form = await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, { next_step_id: step });
+    this._cfgShow(form);
+  },
+
+  // What the flow answered: a form (the first time, or with its errors), the settings saved, or an abort
+  _cfgShow(result) {
+    var cfg = this._cfgState();
+    cfg.busy = false;
+    if (result.type === 'form') {
+      var first = !cfg.flow || cfg.step !== result.step_id;
+      cfg.flow = result;
+      cfg.step = result.step_id;
+      cfg.errors = result.errors || {};
+      if (first) {
+        cfg.data = shFormData(result.data_schema);
+        cfg.haForm = null;
+      }
+      return this._render();
+    }
+    if (result.type === 'create_entry') {
+      this._toast(this._t('saved'));
+      Object.assign(cfg, { module: null, step: null, flow: null, flowId: null, haForm: null });
+      this._render();
+      // The entry reloads with its new options: read them once it has
+      setTimeout(() => this._load(), 1500);
+      return;
+    }
+    cfg.flow = null;
+    cfg.flowId = null;
+    cfg.error = this._l(`component.${SH_DOMAIN}.options.abort.${result.reason}`) || result.reason || this._t('settings_unavailable');
+    this._render();
+  },
+
+  async _cfgSubmit() {
+    var cfg = this._cfgState();
+    if (!cfg.flowId) return;
+    cfg.busy = true;
+    this._render();
+    try {
+      this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, cfg.data));
+    } catch (err) {
+      cfg.busy = false;
+      cfg.errors = { base: err?.body?.message || err?.message || String(err) };
+      this._render();
+    }
+  },
+
+  async _cfgAbort() {
+    var cfg = this._cfgState();
+    var id = cfg.flowId;
+    cfg.flowId = null;
+    cfg.flow = null;
+    if (id) await this._hass.callApi('DELETE', `config/config_entries/options/flow/${id}`).catch(() => {});
+  },
+
+  // The Settings tab's buttons for the sections; true when the click was one of them
+  _cfgClick(button) {
+    var action = button.dataset.action;
+    var cfg = this._cfgState();
+    if (action === 'cfg_toggle') {
+      var module = button.dataset.module;
+      if (cfg.module === module) {
+        this._cfgAbort();
+        Object.assign(cfg, { module: null, step: null, error: null, haForm: null });
+        this._render();
+      } else this._cfgOpen(module);
+      return true;
+    }
+    if (action === 'cfg_step') {
+      this._cfgGo(button.dataset.step).catch((err) => {
+        cfg.error = this._t('failed', { error: err?.message || String(err) });
+        this._render();
+      });
+      return true;
+    }
+    if (action === 'cfg_submit') {
+      this._cfgSubmit();
+      return true;
+    }
+    if (action === 'cfg_close') {
+      this._cfgAbort();
+      Object.assign(cfg, { module: null, step: null, error: null, haForm: null });
+      this._render();
+      return true;
+    }
+    if (action.startsWith('open_settings')) {
+      var target = action.split(':')[1];
+      this._selectTab('settings');
+      if (target && SH_SETTINGS_STEPS[target]) this._cfgOpen(target);
+      return true;
+    }
+    return false;
+  },
+};
+
+Object.assign(SystemHubPanel.prototype, SH_SETTINGS_METHODS);

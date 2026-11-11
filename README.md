@@ -89,7 +89,7 @@ Every module has its own device (**System Hub Containers**, **System Hub Watchdo
 
 #### Module settings
 
-The **Configure** forms, also opened by **Module settings** in the panel's Settings tab:
+Every module's settings are edited in the panel's **Settings** tab: each module opens on its form (and its further steps: power cycles, battery types, the import from Battery Monitor, the Git repository), the same forms as **Configure** with the same checks; **Module settings** in a module's tab opens its section. The forms:
 
 | Form | Light | Dark |
 |---|---|---|
@@ -123,7 +123,7 @@ The **Configure** forms, also opened by **Module settings** in the panel's Setti
 | Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
 | Automations | Failed automations, unavailable linked entities, last failure; each failure with its error, failed step and failures in a row, **Trace**, **Edit**, **Clear**; each unavailable entity with the automations, scripts and scenes using it; **Clear all** (asked first), **Refresh** (rebuilds the list of linked entities); lists folded from their title, 5 items then **Show more** |
 | Orphans | A counter per reason (a click filters on it), orphan devices, removed since start, last scan; **Scan now**; the orphaned entities with a search, integration and reason filters, what uses each (with links); tick them one by one or every match, then **Remove** or **Ignore** (asked first); the orphan devices, removed or ignored the same way |
-| Settings | Turn modules on or off, order the tabs; **Module settings** opens Configure |
+| Settings | Every module with its switch and its settings opened in place (the System thresholds too), Save and Cancel per module; the tab order; Save and Discard for the modules and tabs changed |
 
 Git Sync can't be turned on from the panel the first time: its repository is checked in **Configure → Modules**.
 

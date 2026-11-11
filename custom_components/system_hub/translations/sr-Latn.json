@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub povezan",
         "gh_not_connected": "Nijedan GitHub nalog nije povezan",
         "gh_retry": "ograničenje dostignuto, novi pokušaj {when}",
-        "tab_containers": "Kontejneri i procesi"
+        "tab_containers": "Kontejneri i procesi",
+        "settings_system": "Pragovi System",
+        "settings_system_hint": "Kada CPU, RAM, disk, temperatura i swap postaju narandžasti i crveni",
+        "settings_unavailable": "Ova podešavanja ne mogu da se prikažu ovde: otvorite Konfiguriši"
       }
     },
     "battery_type": {

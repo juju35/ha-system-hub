@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub συνδεδεμένο",
         "gh_not_connected": "Κανένας λογαριασμός GitHub",
         "gh_retry": "όριο, νέα προσπάθεια {when}",
-        "tab_containers": "Κοντέινερ και διεργασίες"
+        "tab_containers": "Κοντέινερ και διεργασίες",
+        "settings_system": "Όρια System",
+        "settings_system_hint": "Πότε CPU, RAM, δίσκος, θερμοκρασία και swap γίνονται πορτοκαλί και κόκκινα",
+        "settings_unavailable": "Αυτές οι ρυθμίσεις δεν εμφανίζονται εδώ: ανοίξτε τη Διαμόρφωση"
       }
     },
     "battery_type": {

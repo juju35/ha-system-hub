@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub verbunden",
         "gh_not_connected": "Kein GitHub-Konto verbunden",
         "gh_retry": "Limit erreicht, nächster Versuch {when}",
-        "tab_containers": "Container und Prozesse"
+        "tab_containers": "Container und Prozesse",
+        "settings_system": "System-Schwellenwerte",
+        "settings_system_hint": "Wann CPU, RAM, Datenträger, Temperatur und Swap orange und rot werden",
+        "settings_unavailable": "Diese Einstellungen können hier nicht angezeigt werden: Konfigurieren öffnen"
       }
     },
     "battery_type": {

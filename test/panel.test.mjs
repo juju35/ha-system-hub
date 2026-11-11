@@ -655,3 +655,49 @@ test('marketplace tab: a card per update with the size of the change, its notes,
   await new Promise((r) => setImmediate(r));
   assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), ['system_hub', 'marketplace_install_updates', { entity_id: ['update.mushroom'] }]);
 });
+
+test('settings tab: a module opens on its Configure form, driven through the options flow, and saves', async () => {
+  const realGet = context.customElements.get;
+  context.customElements.get = (name) => (name === 'ha-form' ? class {} : undefined);
+  try {
+    const state = { loaded: true, entry_id: 'E1', modules: ['watchdog', 'batteries'], tabs: ['system', 'watchdog', 'batteries'] };
+    const p = panel(state, 'settings');
+    p._render = () => {};
+    p._load = async () => {};
+    const calls = [];
+    let submit = { type: 'form', step_id: 'watchdog', data_schema: [{ name: 'max_reloads', default: 5 }], errors: { max_reloads: 'too_low' } };
+    p._hass.callApi = async (method, path, body) => {
+      calls.push([method, path, body]);
+      if (method === 'DELETE') return {};
+      if (path === 'config/config_entries/options/flow') return { type: 'menu', flow_id: `F${calls.length}`, menu_options: ['modules', 'system', 'watchdog', 'watchdog_add_power_cycle', 'batteries'] };
+      if (body?.next_step_id) {
+        return { type: 'form', step_id: body.next_step_id, data_schema: [{ name: 'scan_interval', default: 10 }, { name: 'max_reloads', description: { suggested_value: 3 } }], errors: {} };
+      }
+      return submit;
+    };
+    // Every module has its row, the System thresholds too; a module turned off can't be opened
+    let html = p._content();
+    assert.match(html, /System thresholds/);
+    assert.match(html, /data-action="cfg_toggle" data-module="watchdog"/);
+    assert.doesNotMatch(html, /data-action="cfg_toggle" data-module="containers"/);
+    await p._cfgOpen('watchdog');
+    assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), ['POST', 'config/config_entries/options/flow', { handler: 'E1', show_advanced_options: true }]);
+    assert.deepEqual(JSON.parse(JSON.stringify(calls[1])), ['POST', 'config/config_entries/options/flow/F1', { next_step_id: 'watchdog' }]);
+    assert.deepEqual({ ...p._cfg.data }, { scan_interval: 10, max_reloads: 3 });
+    html = p._content();
+    assert.match(html, /class="cfgform" data-step="watchdog"/);
+    // Its further steps that Configure offers now
+    assert.match(html, /data-action="cfg_step" data-step="watchdog_add_power_cycle"/);
+    assert.doesNotMatch(html, /data-step="watchdog_remove_power_cycle"/);
+    // A form sent back with its errors stays open; saved: closed, in a toast
+    await p._cfgSubmit();
+    assert.equal(p._cfg.errors.max_reloads, 'too_low');
+    assert.equal(p._cfg.step, 'watchdog');
+    submit = { type: 'create_entry' };
+    await p._cfgSubmit();
+    assert.equal(p._cfg.module, null);
+    assert.equal(p.events.at(-1).detail.message, 'Saved');
+  } finally {
+    context.customElements.get = realGet;
+  }
+});

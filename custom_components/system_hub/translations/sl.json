@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub povezan",
         "gh_not_connected": "Noben račun GitHub ni povezan",
         "gh_retry": "omejitev dosežena, naslednji poskus {when}",
-        "tab_containers": "Vsebniki in procesi"
+        "tab_containers": "Vsebniki in procesi",
+        "settings_system": "Pragovi System",
+        "settings_system_hint": "Kdaj CPU, RAM, disk, temperatura in swap postanejo oranžni in rdeči",
+        "settings_unavailable": "Teh nastavitev ni mogoče prikazati tukaj: odprite Konfiguriraj"
       }
     },
     "battery_type": {

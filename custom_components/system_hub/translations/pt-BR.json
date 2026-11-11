@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub conectado",
         "gh_not_connected": "Nenhuma conta do GitHub conectada",
         "gh_retry": "limite atingido, nova tentativa {when}",
-        "tab_containers": "Contêineres e processos"
+        "tab_containers": "Contêineres e processos",
+        "settings_system": "Limites do System",
+        "settings_system_hint": "Quando CPU, RAM, disco, temperatura e swap ficam laranja e vermelhos",
+        "settings_unavailable": "Estas configurações não podem ser exibidas aqui: abra Configurar"
       }
     },
     "battery_type": {

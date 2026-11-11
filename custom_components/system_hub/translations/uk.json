@@ -1286,7 +1286,10 @@
         "gh_connected": "GitHub підключено",
         "gh_not_connected": "Обліковий запис GitHub не підключено",
         "gh_retry": "ліміт вичерпано, наступна спроба {when}",
-        "tab_containers": "Контейнери та процеси"
+        "tab_containers": "Контейнери та процеси",
+        "settings_system": "Пороги System",
+        "settings_system_hint": "Коли CPU, RAM, диск, температура та swap стають помаранчевими й червоними",
+        "settings_unavailable": "Ці налаштування не можна показати тут: відкрийте «Налаштувати»"
       }
     },
     "battery_type": {
