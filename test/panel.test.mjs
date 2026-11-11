@@ -586,7 +586,7 @@ test('times near now in words, the date beyond a week', () => {
   assert.equal(p._rel(null), 'Never');
 });
 
-test('containers tab: the Docker containers with their image, then the processes; the System tab leaves them out', () => {
+test('containers tab: the Docker containers with their image', () => {
   const state = {
     loaded: true,
     modules: ['containers'],
@@ -605,14 +605,13 @@ test('containers tab: the Docker containers with their image, then the processes
     },
   };
   const p = panel(state, 'containers');
-  assert.equal(p._tabName('containers'), 'Containers & process');
   const html = p._content();
   assert.ok(html.indexOf('hassio_supervisor') < html.indexOf('hassio_dns'));
   assert.ok(html.indexOf('hassio_dns') < html.indexOf('app_a0d7b954_vscode'));
   assert.match(html, /Studio Code Server · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
   assert.match(html, /7\.3\.0/);
-  assert.match(html, /Processes/);
-  assert.match(html, /binary_sensor\.process_frigate/);
+  // The processes stay in the System tab
+  assert.doesNotMatch(html, /binary_sensor\.process_frigate/);
   p._tab = 'system';
-  assert.doesNotMatch(p._content(), /binary_sensor\.process_frigate/);
+  assert.match(p._content(), /binary_sensor\.process_frigate/);
 });
