@@ -623,6 +623,10 @@ class SystemHubPanel extends HTMLElement {
     .mklogo { width:40px; height:40px; border-radius:10px; flex:none; object-fit:contain; display:flex; align-items:center; justify-content:center;
               color:#fff; font-weight:600; font-size:18px; background:var(--logo, var(--primary-color)); }
     img.mklogo { background:var(--secondary-background-color, rgba(127,127,127,.08)); }
+    .mklogos { display:contents; }
+    .mklogos > div.mklogo, .mklogos.broken > img { display:none; }
+    .mklogos.broken > div.mklogo { display:flex; }
+    .mkhead .who .s { white-space:normal; }
     .mkver { display:flex; align-items:center; gap:8px; font-family:var(--sh-mono, monospace); font-size:14px; --mdc-icon-size:18px; }
     .mkver ha-icon { color:var(--primary-color); }
     .mkver b { font-size:15px; }
@@ -1607,9 +1611,10 @@ class SystemHubPanel extends HTMLElement {
     var change = shChange(u.installed, u.latest);
     var busy = u.installing || this._busy[`mk_install:${u.entity_id}`];
     var notes = u.release_summary || this._mkNotes?.[`${u.entity_id}@${u.latest}`];
-    var logo = u.picture
-      ? `<img class="mklogo" src="${shEsc(u.picture)}" alt="" loading="lazy">`
-      : `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
+    var initial = `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
+    var picture = this._mkPicture(u.picture);
+    // A picture that doesn't load gives way to the initial
+    var logo = picture ? `<span class="mklogos"><img class="mklogo" src="${shEsc(picture)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('broken')">${initial}</span>` : initial;
     var link = u.release_url
       ? `<a class="act quiet" href="${shEsc(u.release_url)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</a>`
       : `<button class="act quiet" data-more="${shEsc(u.entity_id)}"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</button>`;
@@ -1620,6 +1625,26 @@ class SystemHubPanel extends HTMLElement {
       ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
       <div class="actions">${link}<span class="grow"></span>
         ${this._button('mk_install', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy, disabled: this._state.marketplace?.installing_updates })}</div></ha-card>`;
+  }
+
+  // A brand image of Home Assistant (/api/brands/…) needs its access token, read once (brands/access_token)
+  _mkPicture(url) {
+    if (!url) return null;
+    if (!url.startsWith('/api/brands/')) return url;
+    if (this._brandsToken === undefined && this._hass?.callWS) {
+      this._brandsToken = null;
+      this._hass
+        .callWS({ type: 'brands/access_token' })
+        .then((res) => {
+          this._brandsToken = res?.token || '';
+          if (this._tab === 'marketplace') this._render();
+        })
+        .catch(() => {
+          this._brandsToken = '';
+        });
+    }
+    if (!this._brandsToken) return this._brandsToken === '' ? url : null;
+    return `${url}${url.includes('?') ? '&' : '?'}token=${encodeURIComponent(this._brandsToken)}`;
   }
 
   // The release notes of each update, read once per version (Home Assistant's update/release_notes): their start

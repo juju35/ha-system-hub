@@ -701,3 +701,19 @@ test('settings tab: a module opens on its Configure form, driven through the opt
     context.customElements.get = realGet;
   }
 });
+
+test('marketplace tab: a brand image gets its access token; read once', async () => {
+  const marketplace = { state: 'idle', updates: 1, list: [{ entity_id: 'update.system_hub', title: 'System Hub', installed: 'v0.5.1', latest: 'v0.5.2', picture: '/api/brands/integration/system_hub/icon.png' }] };
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace');
+  const calls = [];
+  p._hass.callWS = async (msg) => {
+    calls.push(msg.type);
+    return msg.type === 'brands/access_token' ? { token: 'T 1' } : '';
+  };
+  p._render = () => {};
+  assert.doesNotMatch(p._content(), /<img/);
+  await new Promise((r) => setImmediate(r));
+  assert.match(p._content(), /src="\/api\/brands\/integration\/system_hub\/icon\.png\?token=T%201"/);
+  p._content();
+  assert.equal(calls.filter((c) => c === 'brands/access_token').length, 1);
+});
