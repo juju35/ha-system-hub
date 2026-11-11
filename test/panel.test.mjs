@@ -605,7 +605,7 @@ test('containers tab: the Docker containers with their image, then the processes
     },
   };
   const p = panel(state, 'containers');
-  assert.equal(p._tabName('containers'), 'Containers & processes');
+  assert.equal(p._tabName('containers'), 'Containers & process');
   const html = p._content();
   assert.ok(html.indexOf('hassio_supervisor') < html.indexOf('hassio_dns'));
   assert.ok(html.indexOf('hassio_dns') < html.indexOf('app_a0d7b954_vscode'));
