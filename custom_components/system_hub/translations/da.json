@@ -319,7 +319,8 @@
       "critical_below_warning": "Den røde tærskel skal ligge over den orange."
     },
     "abort": {
-      "nothing_to_import": "Intet at importere fra Battery Monitor."
+      "nothing_to_import": "Intet at importere fra Battery Monitor.",
+      "use_panel": "System Hubs indstillinger er i dets panel: [åbn fanen Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Gem",
         "saved": "Gemt",
         "configure": "Modulindstillinger",
-        "git_needs_repo": "Opsæt først repositoriet under Konfigurer → Moduler.",
+        "git_needs_repo": "Opsæt først repositoriet: dets formular åbner nedenfor.",
         "done": "Færdig",
         "failed": "Mislykkedes: {error}",
         "by_level": "Efter niveau",

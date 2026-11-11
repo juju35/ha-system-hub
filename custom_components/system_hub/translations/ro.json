@@ -319,7 +319,8 @@
       "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu."
     },
     "abort": {
-      "nothing_to_import": "Nimic de importat din Battery Monitor."
+      "nothing_to_import": "Nimic de importat din Battery Monitor.",
+      "use_panel": "Setările System Hub sunt în panoul său: [deschide fila Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Salvează",
         "saved": "Salvat",
         "configure": "Setările modulelor",
-        "git_needs_repo": "Configurați mai întâi depozitul în Configurare → Module.",
+        "git_needs_repo": "Configurați mai întâi depozitul: formularul său se deschide mai jos.",
         "done": "Gata",
         "failed": "Eșuat: {error}",
         "by_level": "După nivel",

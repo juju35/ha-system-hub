@@ -319,7 +319,8 @@
       "critical_below_warning": "El umbral rojo debe estar por encima del naranja."
     },
     "abort": {
-      "nothing_to_import": "Nada que importar desde Battery Monitor."
+      "nothing_to_import": "Nada que importar desde Battery Monitor.",
+      "use_panel": "Los ajustes de System Hub están en su panel: [abrir la pestaña Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Guardar",
         "saved": "Guardado",
         "configure": "Ajustes de los módulos",
-        "git_needs_repo": "Configura primero el repositorio en Configurar → Módulos.",
+        "git_needs_repo": "Configura primero el repositorio: su formulario se abre abajo.",
         "done": "Hecho",
         "failed": "Error: {error}",
         "by_level": "Por nivel",

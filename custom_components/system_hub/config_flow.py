@@ -37,6 +37,8 @@ from .const import (
     MODULE_ORPHANS,
     MODULE_WATCHDOG,
     MODULES,
+    PANEL_PATH,
+    SOURCE_PANEL,
 )
 from .containers import flow as containers_flow
 from .containers.monitor import supervisor_available
@@ -147,6 +149,10 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_create_entry(data={**self.config_entry.options, CONF_MODULES: self._modules(), **changes})
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        # Configure on the integration's page (the frontend's flow API, whose context carries show_advanced_options):
+        # the settings are in the panel's Settings tab, which drives this same flow with its own source
+        if "show_advanced_options" in self.context and self.context.get("source") != SOURCE_PANEL:
+            return self.async_abort(reason="use_panel", description_placeholders={"url": f"/{PANEL_PATH}/settings"})
         menu = ["modules", "system"]
         modules = self._modules()
         if MODULE_CONTAINERS in modules:

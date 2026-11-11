@@ -319,7 +319,8 @@
       "critical_below_warning": "O limite vermelho precisa estar acima do laranja."
     },
     "abort": {
-      "nothing_to_import": "Nada para importar do Battery Monitor."
+      "nothing_to_import": "Nada para importar do Battery Monitor.",
+      "use_panel": "As configurações do System Hub estão no painel dele: [abrir a aba Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Salvar",
         "saved": "Salvo",
         "configure": "Configurações dos módulos",
-        "git_needs_repo": "Configure primeiro o repositório em Configurar → Módulos.",
+        "git_needs_repo": "Configure primeiro o repositório: o formulário abre abaixo.",
         "done": "Concluído",
         "failed": "Falhou: {error}",
         "by_level": "Por nível",

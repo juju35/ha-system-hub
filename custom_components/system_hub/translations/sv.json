@@ -319,7 +319,8 @@
       "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange."
     },
     "abort": {
-      "nothing_to_import": "Inget att importera från Battery Monitor."
+      "nothing_to_import": "Inget att importera från Battery Monitor.",
+      "use_panel": "System Hubs inställningar finns i dess panel: [öppna fliken Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Spara",
         "saved": "Sparat",
         "configure": "Modulinställningar",
-        "git_needs_repo": "Konfigurera först förrådet under Konfigurera → Moduler.",
+        "git_needs_repo": "Konfigurera först förrådet: dess formulär öppnas nedan.",
         "done": "Klart",
         "failed": "Misslyckades: {error}",
         "by_level": "Efter nivå",

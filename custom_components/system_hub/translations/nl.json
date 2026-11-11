@@ -319,7 +319,8 @@
       "critical_below_warning": "De rode drempel moet boven de oranje liggen."
     },
     "abort": {
-      "nothing_to_import": "Niets te importeren uit Battery Monitor."
+      "nothing_to_import": "Niets te importeren uit Battery Monitor.",
+      "use_panel": "De instellingen van System Hub staan in zijn paneel: [open het tabblad Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Opslaan",
         "saved": "Opgeslagen",
         "configure": "Module-instellingen",
-        "git_needs_repo": "Stel eerst de repository in via Configureren → Modules.",
+        "git_needs_repo": "Stel eerst de repository in: het formulier opent hieronder.",
         "done": "Klaar",
         "failed": "Mislukt: {error}",
         "by_level": "Op niveau",

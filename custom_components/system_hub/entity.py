@@ -8,7 +8,7 @@ from typing import Protocol
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity import Entity
 
-from .const import DOMAIN
+from .const import DOMAIN, PANEL_PATH
 
 DEVICE_NAMES = {
     "containers": "System Hub Containers",
@@ -43,7 +43,8 @@ class SystemHubEntity(Entity):
             name=DEVICE_NAMES[module],
             manufacturer="juju35",
             entry_type=DeviceEntryType.SERVICE,
-            configuration_url="https://github.com/juju35/ha-system-hub",
+            # "Visit" on the device page: the panel's Settings tab
+            configuration_url=f"homeassistant://{PANEL_PATH}/settings",
         )
 
     async def async_added_to_hass(self) -> None:

@@ -319,7 +319,8 @@
       "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange."
     },
     "abort": {
-      "nothing_to_import": "Rien à importer depuis Battery Monitor."
+      "nothing_to_import": "Rien à importer depuis Battery Monitor.",
+      "use_panel": "Les réglages de System Hub sont dans son panneau : [ouvrir l'onglet Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Enregistrer",
         "saved": "Enregistré",
         "configure": "Réglages des modules",
-        "git_needs_repo": "Configurez d'abord le dépôt dans Configurer → Modules.",
+        "git_needs_repo": "Configurez d'abord le dépôt : son formulaire s'ouvre ci-dessous.",
         "done": "Terminé",
         "failed": "Échec : {error}",
         "by_level": "Par niveau",

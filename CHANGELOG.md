@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Improved
+- **Configure opens the panel**: on the integration's page, Configure no longer shows the menu of forms but a link to the panel's Settings tab, where every module's settings are (the same forms). The devices' **Visit** link opens it too. Turning Git Sync on without a repository opens its form in the Settings tab.
+
 ### Fixed
 - **Marketplace tab on a phone**: the settings button sits in the header's corner instead of overflowing it, the GitHub icon stays next to its line, and "GitHub" is no longer written twice ("GitHub connected · 3555 requests left").
 

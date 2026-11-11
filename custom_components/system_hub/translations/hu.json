@@ -319,7 +319,8 @@
       "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie."
     },
     "abort": {
-      "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
+      "nothing_to_import": "Nincs mit importálni a Battery Monitorból.",
+      "use_panel": "A System Hub beállításai a paneljén vannak: [a Settings lap megnyitása]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Mentés",
         "saved": "Mentve",
         "configure": "Modulbeállítások",
-        "git_needs_repo": "Először állítsd be a tárolót a Konfigurálás → Modulok alatt.",
+        "git_needs_repo": "Először állítsa be a tárolót: az űrlapja lent nyílik meg.",
         "done": "Kész",
         "failed": "Sikertelen: {error}",
         "by_level": "Szint szerint",

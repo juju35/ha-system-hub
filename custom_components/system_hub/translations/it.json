@@ -319,7 +319,8 @@
       "critical_below_warning": "La soglia rossa deve essere sopra quella arancione."
     },
     "abort": {
-      "nothing_to_import": "Niente da importare da Battery Monitor."
+      "nothing_to_import": "Niente da importare da Battery Monitor.",
+      "use_panel": "Le impostazioni di System Hub sono nel suo pannello: [apri la scheda Settings]({url})."
     }
   },
   "entity": {
@@ -1100,7 +1101,7 @@
         "save": "Salva",
         "saved": "Salvato",
         "configure": "Impostazioni dei moduli",
-        "git_needs_repo": "Configura prima il repository in Configura → Moduli.",
+        "git_needs_repo": "Configura prima il repository: il suo modulo si apre qui sotto.",
         "done": "Fatto",
         "failed": "Errore: {error}",
         "by_level": "Per livello",

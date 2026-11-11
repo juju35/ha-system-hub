@@ -29,6 +29,8 @@ from .const import (
     MODULE_AUTOMATIONS,
     MODULE_GIT_SYNC,
     MODULES,
+    PANEL_PATH,
+    SOURCE_PANEL,
     TAB_SYSTEM,
 )
 from .orphans import panel as orphans_panel
@@ -37,7 +39,6 @@ STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
 MODULE = "system-hub-panel.js"
 ELEMENT = "system-hub-panel"
-PANEL_PATH = "system-hub"
 PANEL_ICON = "mdi:home-analytics"
 TITLE = "System Hub"
 TABS = (TAB_SYSTEM, *MODULES)
@@ -86,6 +87,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         await hass.http.async_register_static_paths([StaticPathConfig(STATIC_URL, str(FRONTEND_DIR), True)])
         websocket_api.async_register_command(hass, ws_state)
         websocket_api.async_register_command(hass, ws_update_settings)
+        websocket_api.async_register_command(hass, ws_options_flow)
         websocket_api.async_register_command(hass, orphans_panel.ws_orphans)
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
@@ -415,3 +417,24 @@ async def ws_update_settings(
         options[CONF_TABS] = tab_order({CONF_TABS: msg["tabs"]})
     hass.config_entries.async_update_entry(entry, options=options)
     connection.send_result(msg["id"], {"modules": options.get(CONF_MODULES), "tabs": tab_order(options)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "system_hub/options_flow"})
+@websocket_api.async_response
+async def ws_options_flow(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Start the options flow for the panel's Settings tab: its menu; the steps go through the flow API.
+
+    Started with the panel's own source: from the integration's page (Configure), the flow only links to the panel.
+    """
+    entry = _entry(hass) or next(iter(hass.config_entries.async_entries(DOMAIN)), None)
+    if entry is None:
+        connection.send_error(msg["id"], "not_found", "System Hub is not set up")
+        return
+    result = await hass.config_entries.options.async_init(
+        entry.entry_id, context={"source": SOURCE_PANEL, "show_advanced_options": True}
+    )
+    connection.send_result(
+        msg["id"],
+        {"flow_id": result["flow_id"], "type": result["type"], "menu_options": list(result.get("menu_options") or [])},
+    )
