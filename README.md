@@ -79,7 +79,7 @@ Copy `custom_components/system_hub/` to `/config/custom_components/system_hub/`,
 
 **Settings → Devices & services → Add integration → System Hub**, then choose the modules to turn on. The Containers module needs the Supervisor (Home Assistant OS or a Supervised installation), the Marketplace module Home Assistant's Marketplace.
 
-Everything else is set in the panel's **Settings** tab (**System Hub** in the sidebar): the modules turned on or off, the order of the tabs and every module's settings. **Configure** on the integration page and the **System Hub** devices lead there.
+Everything else is set in the panel's **Settings** tab (**System Hub** in the sidebar): the modules turned on or off, the order of the tabs and every module's settings. The integration page has no **Configure**: the link of every **System Hub** device opens this tab.
 
 ### Modules
 

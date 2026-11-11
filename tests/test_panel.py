@@ -236,7 +236,7 @@ def test_tab_order() -> None:
 
 async def test_system_thresholds_step(hass: HomeAssistant, hass_ws_client) -> None:
     entry = await _setup(hass, [])
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert "system" in result["menu_options"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "system"})
     assert result["step_id"] == "system"
@@ -312,10 +312,13 @@ async def test_configure_links_to_the_panel_and_the_panel_drives_the_flow(hass: 
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    # As the frontend starts it (its flow API's context)
-    result = await hass.config_entries.options.async_init(entry.entry_id, context={"show_advanced_options": False})
-    assert result["type"] is FlowResultType.ABORT
-    assert result["reason"] == "use_panel"
+    # No Configure on the integration's page: the devices link to the Settings tab
+    assert entry.supports_options is False
+    # As the frontend starts it, with or without show_advanced_options (Home Assistant 2026.11 no longer sends it)
+    for context in ({"show_advanced_options": False}, {}):
+        result = await hass.config_entries.options.async_init(entry.entry_id, context=context)
+        assert result["type"] is FlowResultType.ABORT
+        assert result["reason"] == "use_panel"
     assert result["description_placeholders"] == {"url": "/system-hub/settings"}
 
     client = await hass_ws_client(hass)

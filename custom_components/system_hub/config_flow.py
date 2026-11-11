@@ -131,6 +131,13 @@ class SystemHubConfigFlow(ConfigFlow, domain=DOMAIN):
     def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlow:
         return SystemHubOptionsFlow()
 
+    @classmethod
+    @callback
+    def async_supports_options_flow(cls, config_entry: ConfigEntry) -> bool:
+        # No Configure on the integration's page: the settings are in the panel's Settings tab, which the System Hub
+        # devices link to; the panel still drives this options flow
+        return False
+
 
 class SystemHubOptionsFlow(OptionsFlow):
     """The modules turned on, then the settings of each one; a module turned off keeps its settings."""
@@ -149,9 +156,9 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_create_entry(data={**self.config_entry.options, CONF_MODULES: self._modules(), **changes})
 
     async def async_step_init(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        # Configure on the integration's page (the frontend's flow API, whose context carries show_advanced_options):
-        # the settings are in the panel's Settings tab, which drives this same flow with its own source
-        if "show_advanced_options" in self.context and self.context.get("source") != SOURCE_PANEL:
+        # Configure on the integration's page (Home Assistant's flow API, whatever context it sends): the settings are in
+        # the panel's Settings tab, the only one to start this flow, with its own source
+        if self.context.get("source") != SOURCE_PANEL:
             return self.async_abort(reason="use_panel", description_placeholders={"url": f"/{PANEL_PATH}/settings"})
         menu = ["modules", "system"]
         modules = self._modules()

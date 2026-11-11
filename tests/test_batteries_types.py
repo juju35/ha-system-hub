@@ -44,7 +44,7 @@ def _model(hass: HomeAssistant, entity_id: str, model: str) -> None:
 
 
 async def _types_step(hass: HomeAssistant, entry: MockConfigEntry, user_input: dict):
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert "batteries_types" in result["menu_options"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "batteries_types"})
     assert result["step_id"] == "batteries_types"
@@ -116,7 +116,7 @@ async def test_type_errors(hass: HomeAssistant) -> None:
 async def test_batteries_settings_keep_the_types_and_hide_the_fine_ones(hass: HomeAssistant, hass_ws_client) -> None:
     door = add_battery(hass, "Door", "50")
     entry = await _setup(hass, **{CONF_BATTERY_TYPES: {door: "CR2450"}})
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "batteries"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {**OPTIONS, CONF_HIDE_OK: True})
     assert result["type"] is FlowResultType.CREATE_ENTRY
@@ -158,7 +158,7 @@ async def test_import_from_battery_monitor(hass: HomeAssistant, tmp_path) -> Non
     # A type already set here is kept
     entry = await _setup(hass, **{CONF_BATTERY_MODELS: {"RC-1": "CR2032"}})
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert "batteries_import" in result["menu_options"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "batteries_import"})
     assert result["description_placeholders"] == {"settings": "2", "types": "2", "stock": "1"}
@@ -177,5 +177,5 @@ async def test_import_from_battery_monitor(hass: HomeAssistant, tmp_path) -> Non
 async def test_no_import_without_battery_monitor(hass: HomeAssistant, tmp_path) -> None:
     hass.config.config_dir = str(tmp_path)
     entry = await _setup(hass)
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert "batteries_import" not in result["menu_options"]

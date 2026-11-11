@@ -12,6 +12,7 @@
 - **README**: every card shown at the top, under the panel, and the Orphan Entities card's other states (selected, used, filtered, no orphan, mini card).
 
 ### Fixed
+- **Configure** no longer shows the options menu (Home Assistant 2026.11 no longer tells the panel's flow apart from it): the integration page has no Configure anymore, the System Hub devices link to the panel's Settings tab, and an options flow started from anywhere but the panel stops with that link.
 - **Panel**: "Unable to load: [object Object]" when the connection to Home Assistant was lost (Home Assistant restarting, the app back from the background). The error now says what happened, what is shown stays while the connection is back, and the panel reads its state again by itself (after 3 seconds, when the connection is back, and when the page is shown again).
 
 ## 0.5.5 - 2026-11-11

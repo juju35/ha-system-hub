@@ -77,7 +77,9 @@ async def _forms(hass: HomeAssistant) -> dict:
             forms[step] = {
                 "type": "form",
                 "step_id": step,
-                "data_schema": voluptuous_serialize.convert(result["data_schema"], custom_serializer=cv.custom_serializer),
+                "data_schema": voluptuous_serialize.convert(
+                    result["data_schema"], custom_serializer=cv.custom_serializer
+                ),
                 "errors": result.get("errors") or {},
                 "description_placeholders": result.get("description_placeholders") or {},
             }

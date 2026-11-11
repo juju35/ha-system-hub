@@ -97,7 +97,7 @@ async def test_turned_on_in_the_options_asks_for_the_repository(hass: HomeAssist
     assert await hass.config_entries.async_setup(entry.entry_id)
     await hass.async_block_till_done()
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "modules"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], ONLY_GIT_SYNC)
     assert result["step_id"] == "git_sync_repository"
@@ -107,7 +107,7 @@ async def test_turned_on_in_the_options_asks_for_the_repository(hass: HomeAssist
     assert entry.options[CONF_MODULES] == ["git_sync"]
     assert entry.runtime_data.git_sync is not None
 
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     assert result["menu_options"] == ["modules", "system", "git_sync_repository", "git_sync"]
 
 
@@ -136,7 +136,7 @@ def _defaults(schema) -> dict:
 
 
 async def _options_form(hass: HomeAssistant, entry: MockConfigEntry):
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     return await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "git_sync"})
 
 
@@ -171,7 +171,7 @@ async def test_options_refuse_an_unknown_action_and_folder(hass: HomeAssistant, 
 
 async def test_repository_can_be_changed_and_emptied(hass: HomeAssistant, repo: Path) -> None:
     entry = await _setup(hass, repo, **{CONF_BRANCH: "main", CONF_AUTHOR_NAME: "Jane"})
-    result = await hass.config_entries.options.async_init(entry.entry_id)
+    result = await hass.config_entries.options.async_init(entry.entry_id, context={"source": "system_hub_panel"})
     result = await hass.config_entries.options.async_configure(
         result["flow_id"], {"next_step_id": "git_sync_repository"}
     )
