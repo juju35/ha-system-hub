@@ -452,6 +452,64 @@ test('automations tab: Clear asks first, then calls Automation Monitor', async (
   assert.equal(p._confirm, null);
 });
 
+test('system tab: Reload configuration asks first, then reloads every YAML configuration', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._hass.callWS = async () => p._state;
+  p._render = () => {};
+  p._toast = () => {};
+  assert.match(p._content(), /data-action="ha_ask:reload"/);
+  assert.match(p._content(), /data-action="ha_ask:restart"/);
+  await p._haAction('ha_ask:reload');
+  assert.equal(calls.length, 0);
+  assert.match(p._content(), /role="alertdialog"[\s\S]*Reload the configuration\?/);
+  await p._haAction('ha_ok:reload');
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['homeassistant', 'reload_all', {}]]);
+  assert.doesNotMatch(p._content(), /role="alertdialog"/);
+});
+
+test('system tab: Restart checks the configuration first and is refused while it is invalid', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._render = () => {};
+  p._toast = () => {};
+  p._hass.callApi = async () => ({ result: 'invalid', errors: "Invalid config for 'automation'" });
+  await p._haAction('ha_ask:restart');
+  var html = p._content();
+  assert.match(html, /Restart Home Assistant\?/);
+  assert.match(html, /The configuration is invalid/);
+  assert.match(html, /Invalid config for &#39;automation&#39;|Invalid config for 'automation'/);
+  assert.match(html, /data-action="ha_ok:restart"[^>]* disabled/);
+  // Cancelled; then valid: restarts
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'cancel' } } : null) } });
+  assert.equal(p._confirm, null);
+  p._hass.callApi = async () => ({ result: 'valid' });
+  await p._haAction('ha_ask:restart');
+  assert.match(p._content(), /The configuration is valid/);
+  assert.doesNotMatch(p._content(), /data-action="ha_ok:restart"[^>]* disabled/);
+  await p._haAction('ha_ok:restart');
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['homeassistant', 'restart', {}]]);
+  assert.equal(p._confirm, null);
+});
+
+test('system tab: a restart that drops the connection is no failure', async () => {
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._render = () => {};
+  p._toast = () => {};
+  p._hass.callService = async () => {
+    throw { code: 3, message: 'Connection lost' };
+  };
+  await p._haAction('ha_ok:restart');
+  assert.equal(p._messages.ha, undefined);
+  p._hass.callService = async () => {
+    throw new Error('Unauthorized');
+  };
+  await p._haAction('ha_ok:restart');
+  assert.match(p._messages.ha.text, /Unauthorized/);
+});
+
 test('automations tab: Clear all with failures left out clears the listed ones only', async () => {
   const calls = [];
   const p = panel(

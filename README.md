@@ -31,7 +31,7 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 ## Features
 
-- **System**: CPU, memory, disks, network and temperatures from the System Monitor integration.
+- **System**: CPU, memory, disks, network and temperatures from the System Monitor integration, with **Restart Home Assistant** (once the configuration is checked) and **Reload configuration**, each confirmed first.
 - **Containers**: Home Assistant Core, the Supervisor and every add-on, monitored on their own — state, version, CPU and memory, with their history. Monitoring only: nothing is restarted.
 - **Marketplace**: server-side check of the Marketplace updates, at an interval you choose.
 - **Watchdog**: reloads the integrations whose entities are all unavailable, with ignored integrations, power cycles through a smart plug and a notification on each reload.
