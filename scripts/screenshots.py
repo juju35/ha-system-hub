@@ -464,11 +464,20 @@ SHOTS = [
         for view in ("room", "type", "forecast")
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
+    {"file": "panel-marketplace-checking", "theme": "light", "tab": "marketplace", "checking": True},
+    {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
+
+
+def checking_state(state):
+    """The Marketplace check running: 17 of 42 repositories checked in 40 seconds, one failed."""
+    running = {**state["marketplace"], "state": "running", "done": 17, "total": 42, "failed": ["Weather Radar Card"]}
+    running["started_at"] = "2026-11-10T08:59:20+01:00"
+    return {**state, "marketplace": running}
 
 
 def page_html(theme, width):
@@ -541,7 +550,8 @@ def main():
             page.set_content(page_html(shot["theme"], width))
             page.add_script_tag(content=HA_ELEMENTS)
             page.add_script_tag(content=PANEL_JS)
-            page.evaluate(MOUNT, [state, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
+            shown = checking_state(state) if shot.get("checking") else state
+            page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view")])
             page.wait_for_timeout(400)
             if shot.get("diff"):
                 # The viewer covers the window: the capture is the window.

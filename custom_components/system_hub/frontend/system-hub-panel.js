@@ -529,6 +529,20 @@ class SystemHubPanel extends HTMLElement {
     .icon-btn:hover:not([disabled]) { background:var(--secondary-background-color); color:var(--primary-color); }
     .icon-btn[disabled] { opacity:.3; cursor:default; }
     .grow { flex:1; }
+    .progress { padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+    .phead { display:flex; align-items:center; gap:10px; --mdc-icon-size:20px; color:var(--primary-color); }
+    .phead ha-icon { animation:sh-spin 2s linear infinite; }
+    .ptitle { flex:1; font-size:15px; font-weight:500; color:var(--primary-text-color); }
+    .ppct { font-size:20px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--primary-text-color); }
+    .pbar { height:8px; border-radius:4px; overflow:hidden; background:color-mix(in srgb, var(--primary-color) 15%, transparent); }
+    .pbar > span { display:block; height:100%; border-radius:4px; background:var(--primary-color); transition:width .6s ease; }
+    .pbar.busy > span { animation:sh-slide 1.4s ease-in-out infinite; }
+    .pmeta { display:flex; flex-wrap:wrap; gap:6px 18px; font-size:13px; color:var(--secondary-text-color); font-variant-numeric:tabular-nums; }
+    .pmeta .bad { color:color-mix(in srgb, var(--tone-bad) 50%, var(--primary-text-color)); }
+    .notes { display:flex; flex-direction:column; gap:4px; }
+    @keyframes sh-spin { to { transform:rotate(360deg) } }
+    @keyframes sh-slide { 0% { transform:translateX(-100%) } 100% { transform:translateX(340%) } }
+    @media (prefers-reduced-motion: reduce) { .phead ha-icon, .pbar.busy > span { animation:none; } }
     .bsheet { padding:14px 16px 16px; }
     .btop { display:flex; flex-wrap:wrap; align-items:center; gap:10px 20px; margin-bottom:16px; }
     .btabs { display:inline-flex; gap:4px; padding:3px; border-radius:12px; background:var(--secondary-background-color, rgba(128,128,128,.1)); }
@@ -553,6 +567,7 @@ class SystemHubPanel extends HTMLElement {
     .gchip { font-size:11px; padding:1px 8px; border-radius:999px; color:color-mix(in srgb, var(--tone-warn) 40%, var(--primary-text-color)); background:color-mix(in srgb, var(--tone-warn) 14%, transparent); }
     .gcount { font-size:11px; font-weight:400; color:var(--secondary-text-color); }
     .glist { display:grid; gap:6px; }
+    .ghint { font-size:11px; color:var(--secondary-text-color); margin-top:-2px; }
     .brow { --t:var(--tone-good); --tt:color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); border:0; font:inherit; color:inherit; text-align:left; cursor:pointer;
             min-width:0; display:flex; align-items:center; gap:8px; padding:5px 10px 5px 5px; border-radius:10px; background:var(--secondary-background-color, rgba(127,127,127,.08)); }
     .brow.warn { --t:var(--tone-warn); }
@@ -691,6 +706,7 @@ class SystemHubPanel extends HTMLElement {
 
   disconnectedCallback() {
     clearInterval(this._timer);
+    clearTimeout(this._fast);
     this._timer = null;
   }
 
@@ -739,6 +755,11 @@ class SystemHubPanel extends HTMLElement {
     try {
       this._state = await this._hass.callWS({ type: 'system_hub/state' });
       this._error = null;
+      // A check running on the Marketplace tab: its progress every 2 seconds rather than every 10
+      clearTimeout(this._fast);
+      if (this._state?.marketplace?.state === 'running' && this._tab === 'marketplace' && this.isConnected) {
+        this._fast = setTimeout(() => this._load(), 2000);
+      }
     } catch (err) {
       this._error = err?.message || String(err);
     }
@@ -1189,7 +1210,7 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:package-up', `<b>${data.updates ?? 0}</b>`, this._t('updates'), data.updates ? 'warn' : 'good'),
       this._tile(
         'mdi:archive-sync',
-        running ? shEsc(this._t('progress', { done: data.done ?? 0, total: data.total ?? 0 })) : shEsc(this._ago(data.last_check)),
+        shEsc(this._ago(data.last_check)),
         this._t('last_check'),
         data.state === 'error' ? 'bad' : '',
       ),
@@ -1203,14 +1224,54 @@ class SystemHubPanel extends HTMLElement {
     var rows = pending
       .map((name) => `<div class="item warn"><ha-icon icon="mdi:package-up"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div></div></div>`)
       .join('');
-    return `<div class="tiles">${tiles.join('')}</div>${confirm}
+    var failed = (data.failed || [])
+      .map((name) => `<div class="item bad"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div></div></div>`)
+      .join('');
+    var notes = [
+      data.not_checked ? this._t('not_checked', { n: data.not_checked }) : '',
+      Number.isInteger(data.rate_limit_remaining) ? this._t('rate_limit', { n: data.rate_limit_remaining }) : '',
+    ].filter(Boolean);
+    return `<div class="tiles">${tiles.join('')}</div>${running ? this._progress(data) : ''}${confirm}
       <div class="actions">${this._button('marketplace_check_updates', 'mdi:archive-refresh', this._entityName('button', 'marketplace_check_updates'), {
         disabled: running || data.installing_updates,
       })}
       ${pending.length ? this._button('confirm_install', 'mdi:package-down', this._t('install_all'), { quiet: true, disabled: running || data.installing_updates }) : ''}
       ${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}
       ${data.error ? `<span class="msg bad">${shEsc(data.error)}</span>` : ''}</div>
-      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>`;
+      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('no_updates'))}</div>`}</ha-card>
+      ${
+        failed && !running
+          ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><span class="lname">${shEsc(this._t('could_not_check'))}</span><span class="muted">${(data.failed || []).length}</span></div>${failed}</ha-card>`
+          : ''
+      }
+      ${notes.length ? `<div class="notes">${notes.map((n) => `<span class="msg">${shEsc(n)}</span>`).join('')}</div>` : ''}`;
+  }
+
+  // The check running: a bar of the repositories checked, the share done, the time left at the pace so far, the
+  // failures; a moving bar while the list of repositories is still being read
+  _progress(data) {
+    var done = data.done ?? 0;
+    var total = data.total ?? 0;
+    var pct = total ? Math.min(100, Math.round((done * 100) / total)) : null;
+    var meta = [];
+    if (total) meta.push(this._t('progress', { done, total }));
+    var started = data.started_at ? Date.parse(data.started_at) : Number.NaN;
+    if (total && done && done < total && !Number.isNaN(started)) {
+      var left = ((Date.now() - started) / done) * (total - done);
+      meta.push(this._t('remaining', { t: this._duration(left) }));
+    }
+    var fails = (data.failed || []).length;
+    return `<ha-card class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${done}">
+      <div class="phead"><ha-icon icon="mdi:archive-sync"></ha-icon><span class="ptitle">${shEsc(this._t('checking'))}</span>${pct === null ? '' : `<span class="ppct">${pct} %</span>`}</div>
+      <div class="pbar${pct === null ? ' busy' : ''}"><span style="width:${pct ?? 30}%"></span></div>
+      <div class="pmeta">${meta.map((m) => `<span>${shEsc(m)}</span>`).join('')}${fails ? `<span class="bad">${shEsc(this._t('failed_count', { n: fails }))}</span>` : ''}</div>
+    </ha-card>`;
+  }
+
+  // "45 s", "3 min"
+  _duration(ms) {
+    var s = Math.max(1, Math.round(ms / 1000));
+    return s < 60 ? this._t('sec', { n: s }) : this._t('min', { n: Math.round(s / 60) });
   }
 
   // Batteries: as the Battery Monitor full screen view — the views, what to replace and the next replacement, then the
@@ -1242,7 +1303,7 @@ class SystemHubPanel extends HTMLElement {
             ${alerts ? `<span class="gchip">${shEsc(this._t('to_check', { n: alerts }))}</span>` : ''}
             <span class="gcount">${shEsc(this._battCount(g))}</span></div>`
           : '';
-        return `<section class="bgroup">${head}<div class="glist">${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</div></section>`;
+        return `<section class="bgroup">${head}${g.hint ? `<div class="ghint">${shEsc(g.hint)}</div>` : ''}<div class="glist">${g.items.map((x) => this._battRow(x.b, x.context)).join('')}</div></section>`;
       })
       .join('');
     var body = list.length
@@ -1360,6 +1421,7 @@ class SystemHubPanel extends HTMLElement {
         items,
         name: key ? (view === 'type' ? this._battTypeName(key) : key) : this._t(view === 'room' ? 'no_area' : 'unknown_type'),
         icon: view === 'room' ? 'mdi:sofa-outline' : key ? 'mdi:battery-outline' : 'mdi:battery-unknown',
+        hint: view === 'type' && !key ? this._t('unknown_type_hint') : '',
         // By type, the batteries of that type in all (a remote with 2 AAA counts 2)
         cells: view === 'type' && key && key !== 'rechargeable' ? items.reduce((n, x) => n + x.cells, 0) : null,
       }))

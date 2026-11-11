@@ -17,6 +17,8 @@ const steps = [
   ['watchdog-power-cycle', 'Watchdog: Add a power cycle'],
   ['marketplace', 'Marketplace'],
   ['batteries', 'Batteries'],
+  ['batteries-types', 'Batteries: Battery types'],
+  ['batteries-import', 'Batteries: Import from Battery Monitor'],
   ['git-sync-repository', 'Git Sync: Repository settings'],
   ['git-sync', 'Git Sync'],
 ];

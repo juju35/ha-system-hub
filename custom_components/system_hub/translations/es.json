@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Ajustes del repositorio",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Baterías: tipos de pila",
+          "batteries_import": "Baterías: importar desde Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Notificación de la tarde",
           "notify_services": "Acciones de notificación",
           "ignored_entities": "Baterías ignoradas",
-          "ignored_integrations": "Integraciones ignoradas"
+          "ignored_integrations": "Integraciones ignoradas",
+          "hide_ok": "Ocultar las baterías en buen estado"
         },
         "data_description": {
           "threshold": "Una batería está baja por debajo de este nivel.",
@@ -177,7 +180,8 @@
           "evening_time": "Segunda de las dos notificaciones diarias.",
           "notify_services": "Enviar las notificaciones con estas acciones (notify.mobile_app_…). Siempre se crea una notificación persistente.",
           "ignored_entities": "Baterías que nunca se supervisan.",
-          "ignored_integrations": "Integraciones cuyas baterías nunca se supervisan (teléfonos y tabletas de la aplicación móvil por defecto). Escribe un dominio para añadir una que aún no esté configurada."
+          "ignored_integrations": "Integraciones cuyas baterías nunca se supervisan (teléfonos y tabletas de la aplicación móvil por defecto). Escribe un dominio para añadir una que aún no esté configurada.",
+          "hide_ok": "Solo siguen visibles las baterías por debajo del umbral o no disponibles"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "Dentro de la carpeta de configuración (una ruta relativa empieza ahí) o de una carpeta de allowlist_external_dirs.",
           "commit_before_update": "Cuando se instala una actualización (Home Assistant, un complemento, una integración), hacer primero commit y push de la configuración, para tener un commit al que volver. Un solo commit para las actualizaciones instaladas juntas."
         }
+      },
+      "batteries_types": {
+        "title": "Tipos de pila",
+        "description": "Los tipos definidos aquí tienen prioridad sobre los de Battery Notes. Desmarca un tipo para quitarlo o define uno más abajo.",
+        "data": {
+          "set": "Tipos definidos",
+          "battery": "Batería",
+          "type": "Tipo",
+          "quantity": "Número de pilas",
+          "whole_model": "Para todos los dispositivos de su modelo"
+        },
+        "data_description": {
+          "set": "Desmarca un tipo para quitarlo.",
+          "type": "Elígelo o escríbelo (CR2450, 2× AA…).",
+          "whole_model": "El mismo tipo para todos los dispositivos del modelo de esta batería."
+        }
+      },
+      "batteries_import": {
+        "title": "Importar desde Battery Monitor",
+        "description": "Encontrado en Battery Monitor: {settings} ajustes, {types} tipos de pila definidos en sus tarjetas y {stock} tipos de pilas de repuesto. Envía para traerlos a System Hub: sus ajustes sustituyen a los del módulo Baterías y se conservan los tipos de pila ya definidos aquí."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git no acepta este nombre de rama.",
       "author_required": "Git no sabe quién firma los commits aquí: indica el correo (y el nombre) del autor.",
       "unknown_notify_service": "Esta acción de notificación no existe.",
-      "export_dir_not_allowed": "La carpeta debe estar dentro de la carpeta de configuración o de una carpeta de allowlist_external_dirs, fuera de carpetas ocultas como .storage."
+      "export_dir_not_allowed": "La carpeta debe estar dentro de la carpeta de configuración o de una carpeta de allowlist_external_dirs, fuera de carpetas ocultas como .storage.",
+      "battery_required": "Elige la batería.",
+      "type_required": "Elige o escribe el tipo.",
+      "no_model": "El dispositivo de esta batería no tiene modelo: define el tipo para la propia batería."
+    },
+    "abort": {
+      "nothing_to_import": "Nada que importar desde Battery Monitor."
     }
   },
   "entity": {
@@ -980,7 +1010,21 @@
         "next_replacement": "Próximo cambio",
         "hours": "{n} h",
         "low_for": "baja desde hace {d}",
-        "unavailable_for": "no disponible desde hace {d}"
+        "unavailable_for": "no disponible desde hace {d}",
+        "unknown_type_hint": "Defínelo en Configurar → Baterías: tipos de pila",
+        "checking": "Comprobando los repositorios…",
+        "remaining": "≈ quedan {t}",
+        "failed_count": "{n} con error",
+        "could_not_check": "No se pudieron comprobar",
+        "not_checked": "{n} repositorios sin comprobar: no hay ninguna cuenta de GitHub conectada al Marketplace",
+        "rate_limit": "GitHub: quedan {n} solicitudes",
+        "sec": "{n} s",
+        "min": "{n} min"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Batería recargable integrada"
       }
     }
   }

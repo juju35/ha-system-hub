@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Nastavenia repozitára",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Batérie: typy batérií",
+          "batteries_import": "Batérie: import z Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Večerné upozornenie",
           "notify_services": "Akcie upozornení",
           "ignored_entities": "Ignorované batérie",
-          "ignored_integrations": "Ignorované integrácie"
+          "ignored_integrations": "Ignorované integrácie",
+          "hide_ok": "Skryť batérie v dobrom stave"
         },
         "data_description": {
           "threshold": "Pod touto úrovňou je batéria slabá.",
@@ -177,7 +180,8 @@
           "evening_time": "Druhé z dvoch denných upozornení.",
           "notify_services": "Odosielať upozornenia pomocou týchto akcií (notify.mobile_app_…). Trvalé upozornenie sa vytvorí vždy.",
           "ignored_entities": "Batérie, ktoré sa nikdy nesledujú.",
-          "ignored_integrations": "Integrácie, ktorých batérie sa nikdy nesledujú (predvolene telefóny a tablety mobilnej aplikácie). Zadajte doménu, ak chcete pridať integráciu, ktorá ešte nie je nastavená."
+          "ignored_integrations": "Integrácie, ktorých batérie sa nikdy nesledujú (predvolene telefóny a tablety mobilnej aplikácie). Zadajte doménu, ak chcete pridať integráciu, ktorá ešte nie je nastavená.",
+          "hide_ok": "Viditeľné zostanú len batérie pod prahom alebo nedostupné"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "V priečinku konfigurácie (relatívna cesta začína v ňom) alebo v priečinku z allowlist_external_dirs.",
           "commit_before_update": "Keď sa inštaluje aktualizácia (Home Assistant, doplnok, integrácia), najprv sa vykoná commit a push konfigurácie, aby bol commit, ku ktorému sa dá vrátiť. Jeden commit pre aktualizácie inštalované spolu."
         }
+      },
+      "batteries_types": {
+        "title": "Typy batérií",
+        "description": "Typy nastavené tu majú prednosť pred typmi z Battery Notes. Zrušte označenie typu, ak ho chcete odstrániť, alebo nižšie nastavte ďalší.",
+        "data": {
+          "set": "Nastavené typy",
+          "battery": "Batéria",
+          "type": "Typ",
+          "quantity": "Počet batérií",
+          "whole_model": "Pre všetky zariadenia jej modelu"
+        },
+        "data_description": {
+          "set": "Zrušte označenie typu, ak ho chcete odstrániť.",
+          "type": "Vyberte ho alebo zadajte (CR2450, 2× AA…).",
+          "whole_model": "Rovnaký typ pre všetky zariadenia modelu tejto batérie."
+        }
+      },
+      "batteries_import": {
+        "title": "Import z Battery Monitor",
+        "description": "Nájdené v Battery Monitor: nastavenia: {settings}, typy batérií nastavené v jeho kartách: {types}, typy náhradných batérií: {stock}. Odoslaním ich prenesiete do System Hub: jeho nastavenia nahradia nastavenia modulu Batérie a typy batérií už nastavené tu zostanú zachované."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git neprijíma tento názov vetvy.",
       "author_required": "Git nevie, kto tu podpisuje commity: zadajte e-mail (a meno) autora.",
       "unknown_notify_service": "Táto akcia oznámenia neexistuje.",
-      "export_dir_not_allowed": "Priečinok musí byť v priečinku konfigurácie alebo v priečinku z allowlist_external_dirs, mimo skrytých priečinkov, ako je .storage."
+      "export_dir_not_allowed": "Priečinok musí byť v priečinku konfigurácie alebo v priečinku z allowlist_external_dirs, mimo skrytých priečinkov, ako je .storage.",
+      "battery_required": "Vyberte batériu.",
+      "type_required": "Vyberte alebo zadajte typ.",
+      "no_model": "Zariadenie tejto batérie nemá model: nastavte typ pre samotnú batériu."
+    },
+    "abort": {
+      "nothing_to_import": "Z Battery Monitor nie je čo importovať."
     }
   },
   "entity": {
@@ -980,7 +1010,21 @@
         "next_replacement": "Ďalšia výmena",
         "hours": "{n} h",
         "low_for": "slabá už {d}",
-        "unavailable_for": "nedostupná už {d}"
+        "unavailable_for": "nedostupná už {d}",
+        "unknown_type_hint": "Nastavte ho v Konfigurovať → Batérie: typy batérií",
+        "checking": "Kontrolujú sa repozitáre…",
+        "remaining": "≈ zostáva {t}",
+        "failed_count": "Neúspešné: {n}",
+        "could_not_check": "Nepodarilo sa skontrolovať",
+        "not_checked": "Neskontrolované repozitáre: {n} — k Marketplace nie je pripojený žiadny účet GitHub",
+        "rate_limit": "GitHub: zostávajúce požiadavky: {n}",
+        "sec": "{n} s",
+        "min": "{n} min"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Vstavaný akumulátor"
       }
     }
   }

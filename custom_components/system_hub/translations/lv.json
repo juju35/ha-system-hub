@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Repozitorija iestatījumi",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Baterijas: bateriju veidi",
+          "batteries_import": "Baterijas: importēt no Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Vakara paziņojums",
           "notify_services": "Paziņošanas darbības",
           "ignored_entities": "Ignorētās baterijas",
-          "ignored_integrations": "Ignorētās integrācijas"
+          "ignored_integrations": "Ignorētās integrācijas",
+          "hide_ok": "Paslēpt baterijas, kas ir kārtībā"
         },
         "data_description": {
           "threshold": "Zem šī līmeņa baterija ir izlādēta.",
@@ -177,7 +180,8 @@
           "evening_time": "Otrais no diviem ikdienas paziņojumiem.",
           "notify_services": "Sūtīt paziņojumus ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr.",
           "ignored_entities": "Baterijas, kas nekad netiek uzraudzītas.",
-          "ignored_integrations": "Integrācijas, kuru baterijas nekad netiek uzraudzītas (pēc noklusējuma mobilās lietotnes tālruņi un planšetdatori). Ierakstiet domēnu, lai pievienotu vēl neiestatītu integrāciju."
+          "ignored_integrations": "Integrācijas, kuru baterijas nekad netiek uzraudzītas (pēc noklusējuma mobilās lietotnes tālruņi un planšetdatori). Ierakstiet domēnu, lai pievienotu vēl neiestatītu integrāciju.",
+          "hide_ok": "Redzamas paliek tikai baterijas zem sliekšņa vai nepieejamās"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "Konfigurācijas mapē (relatīvs ceļš sākas tur) vai allowlist_external_dirs mapē.",
           "commit_before_update": "Kad tiek instalēts atjauninājums (Home Assistant, papildinājums, integrācija), vispirms veikt konfigurācijas commit un push, lai būtu commit, pie kura atgriezties. Viens commit kopā instalētiem atjauninājumiem."
         }
+      },
+      "batteries_types": {
+        "title": "Bateriju veidi",
+        "description": "Šeit iestatītajiem veidiem ir prioritāte pār Battery Notes veidiem. Noņemiet atzīmi no veida, lai to noņemtu, vai iestatiet vēl vienu zemāk.",
+        "data": {
+          "set": "Iestatītie veidi",
+          "battery": "Baterija",
+          "type": "Veids",
+          "quantity": "Bateriju skaits",
+          "whole_model": "Visām tā modeļa ierīcēm"
+        },
+        "data_description": {
+          "set": "Noņemiet atzīmi no veida, lai to noņemtu.",
+          "type": "Izvēlieties vai ierakstiet (CR2450, 2× AA…).",
+          "whole_model": "Tas pats veids visām šīs baterijas modeļa ierīcēm."
+        }
+      },
+      "batteries_import": {
+        "title": "Importēt no Battery Monitor",
+        "description": "Atrasts Battery Monitor: iestatījumi: {settings}, tā kartītēs iestatītie bateriju veidi: {types}, rezerves bateriju veidi: {stock}. Iesniedziet, lai tos pārņemtu System Hub: tā iestatījumi aizstāj moduļa Baterijas iestatījumus, bet šeit jau iestatītie bateriju veidi tiek saglabāti."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git nepieņem šo zara nosaukumu.",
       "author_required": "Git nezina, kas šeit paraksta commit: ievadiet autora e-pastu (un vārdu).",
       "unknown_notify_service": "Šāda paziņojuma darbība nepastāv.",
-      "export_dir_not_allowed": "Mapei jābūt konfigurācijas mapē vai allowlist_external_dirs mapē, ārpus slēptām mapēm, piemēram, .storage."
+      "export_dir_not_allowed": "Mapei jābūt konfigurācijas mapē vai allowlist_external_dirs mapē, ārpus slēptām mapēm, piemēram, .storage.",
+      "battery_required": "Izvēlieties bateriju.",
+      "type_required": "Izvēlieties vai ierakstiet veidu.",
+      "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai."
+    },
+    "abort": {
+      "nothing_to_import": "No Battery Monitor nav ko importēt."
     }
   },
   "entity": {
@@ -980,7 +1010,21 @@
         "next_replacement": "Nākamā nomaiņa",
         "hours": "{n} h",
         "low_for": "izlādēta {d}",
-        "unavailable_for": "nav pieejama {d}"
+        "unavailable_for": "nav pieejama {d}",
+        "unknown_type_hint": "Iestatiet to sadaļā Konfigurēt → Baterijas: bateriju veidi",
+        "checking": "Pārbauda repozitorijus…",
+        "remaining": "≈ atlikušas {t}",
+        "failed_count": "Neizdevās: {n}",
+        "could_not_check": "Neizdevās pārbaudīt",
+        "not_checked": "Nepārbaudīti repozitoriji: {n} — Marketplace nav pievienots GitHub konts",
+        "rate_limit": "GitHub: atlikuši pieprasījumi: {n}",
+        "sec": "{n} s",
+        "min": "{n} min"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Iebūvēts akumulators"
       }
     }
   }

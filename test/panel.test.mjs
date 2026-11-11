@@ -213,6 +213,46 @@ test('batteries tab: by room, by battery type, by replacement date', () => {
   assert.match(html, /By replacement date/);
 });
 
+test('batteries tab: what to replace, and the fine batteries hidden when asked', () => {
+  const state = {
+    loaded: true,
+    modules: ['batteries'],
+    tabs: ['batteries'],
+    batteries: {
+      threshold: 20,
+      hide_ok: true,
+      batteries: [
+        { entity_id: 'sensor.a', name: 'Door', level: 8, low: true, battery_type: '2× AA' },
+        { entity_id: 'sensor.b', name: 'Smoke', level: null, unavailable: true },
+        { entity_id: 'sensor.c', name: 'Lamp', level: 90, battery_type: 'CR2032', days_left: 40, replace_by: '2026-12-20T00:00:00+01:00' },
+      ],
+    },
+  };
+  const html = panel(state, 'batteries')._content();
+  assert.match(html, /<b>2×<\/b> AA/);
+  assert.match(html, /<b>1×<\/b> Unknown type/);
+  assert.match(html, /Next replacement/);
+  assert.match(html, /Door/);
+  assert.doesNotMatch(html, /class="brow[^"]*" data-more="sensor.c"/);
+  state.batteries.hide_ok = false;
+  assert.match(panel(state, 'batteries')._content(), /class="brow ok" data-more="sensor.c"/);
+});
+
+test('marketplace tab: the progress of a check running', () => {
+  const started = new Date(Date.now() - 40000).toISOString();
+  const html = panel(
+    { loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace: { state: 'running', done: 10, total: 40, failed: ['X'], started_at: started } },
+    'marketplace',
+  )._content();
+  assert.match(html, /role="progressbar"[^>]*aria-valuenow="10"/);
+  assert.match(html, /25 %/);
+  assert.match(html, /10 of 40 checked/);
+  assert.match(html, /≈ 2 min left/);
+  assert.match(html, /1 failed/);
+  const reading = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace: { state: 'running', done: 0, total: 0 } }, 'marketplace')._content();
+  assert.match(reading, /class="pbar busy"/);
+});
+
 test('git sync tab: the diff viewer opens on the changes', () => {
   const html = panel(
     { loaded: true, modules: ['git_sync'], tabs: ['git_sync'], git_sync: { status: 'dirty', branch: 'main', changed: 2, files: [] } },

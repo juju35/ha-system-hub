@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Setările depozitului",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Baterii: tipuri de baterii",
+          "batteries_import": "Baterii: import din Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Notificarea de seară",
           "notify_services": "Acțiuni de notificare",
           "ignored_entities": "Baterii ignorate",
-          "ignored_integrations": "Integrări ignorate"
+          "ignored_integrations": "Integrări ignorate",
+          "hide_ok": "Ascunde bateriile în stare bună"
         },
         "data_description": {
           "threshold": "Sub acest nivel, bateria este considerată scăzută.",
@@ -177,7 +180,8 @@
           "evening_time": "A doua dintre cele două notificări zilnice.",
           "notify_services": "Trimite notificările cu aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna.",
           "ignored_entities": "Baterii care nu sunt monitorizate niciodată.",
-          "ignored_integrations": "Integrări ale căror baterii nu sunt monitorizate niciodată (implicit telefoanele și tabletele aplicației mobile). Introduceți un domeniu pentru a adăuga unul care nu este încă configurat."
+          "ignored_integrations": "Integrări ale căror baterii nu sunt monitorizate niciodată (implicit telefoanele și tabletele aplicației mobile). Introduceți un domeniu pentru a adăuga unul care nu este încă configurat.",
+          "hide_ok": "Rămân vizibile doar bateriile sub prag sau indisponibile"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "În dosarul de configurare (o cale relativă pornește de acolo) sau într-un dosar din allowlist_external_dirs.",
           "commit_before_update": "Când se instalează o actualizare (Home Assistant, un add-on, o integrare), mai întâi fă commit și push configurației, ca să existe un commit la care să revii. Un singur commit pentru actualizările instalate împreună."
         }
+      },
+      "batteries_types": {
+        "title": "Tipuri de baterii",
+        "description": "Tipurile setate aici au prioritate față de cele din Battery Notes. Debifați un tip pentru a-l elimina sau setați încă unul mai jos.",
+        "data": {
+          "set": "Tipuri setate",
+          "battery": "Baterie",
+          "type": "Tip",
+          "quantity": "Număr de baterii",
+          "whole_model": "Pentru toate dispozitivele modelului său"
+        },
+        "data_description": {
+          "set": "Debifați un tip pentru a-l elimina.",
+          "type": "Alegeți-l sau scrieți-l (CR2450, 2× AA…).",
+          "whole_model": "Același tip pentru toate dispozitivele modelului acestei baterii."
+        }
+      },
+      "batteries_import": {
+        "title": "Import din Battery Monitor",
+        "description": "Găsit în Battery Monitor: {settings} setări, {types} tipuri de baterii setate în cardurile sale și {stock} tipuri de baterii de rezervă. Trimiteți pentru a le aduce în System Hub: setările sale le înlocuiesc pe cele ale modulului Baterii, iar tipurile de baterii deja setate aici se păstrează."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git nu acceptă acest nume de ramură.",
       "author_required": "Git nu știe cine semnează aici commiturile: introduceți e-mailul (și numele) autorului.",
       "unknown_notify_service": "Această acțiune de notificare nu există.",
-      "export_dir_not_allowed": "Dosarul trebuie să fie în dosarul de configurare sau într-un dosar din allowlist_external_dirs, în afara dosarelor ascunse precum .storage."
+      "export_dir_not_allowed": "Dosarul trebuie să fie în dosarul de configurare sau într-un dosar din allowlist_external_dirs, în afara dosarelor ascunse precum .storage.",
+      "battery_required": "Alegeți bateria.",
+      "type_required": "Alegeți sau scrieți tipul.",
+      "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie."
+    },
+    "abort": {
+      "nothing_to_import": "Nimic de importat din Battery Monitor."
     }
   },
   "entity": {
@@ -980,7 +1010,21 @@
         "next_replacement": "Următoarea înlocuire",
         "hours": "{n} h",
         "low_for": "scăzută de {d}",
-        "unavailable_for": "indisponibilă de {d}"
+        "unavailable_for": "indisponibilă de {d}",
+        "unknown_type_hint": "Setați-l în Configurare → Baterii: tipuri de baterii",
+        "checking": "Se verifică depozitele…",
+        "remaining": "≈ {t} rămase",
+        "failed_count": "{n} eșuate",
+        "could_not_check": "Nu au putut fi verificate",
+        "not_checked": "{n} depozite neverificate: niciun cont GitHub nu este conectat la Marketplace",
+        "rate_limit": "GitHub: {n} cereri rămase",
+        "sec": "{n} s",
+        "min": "{n} min"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Acumulator integrat"
       }
     }
   }

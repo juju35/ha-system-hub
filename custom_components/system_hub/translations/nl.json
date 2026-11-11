@@ -66,7 +66,9 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync_repository": "Git Sync: Instellingen van de repository",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "batteries_types": "Batterijen: batterijtypen",
+          "batteries_import": "Batterijen: importeren uit Battery Monitor"
         }
       },
       "modules": {
@@ -168,7 +170,8 @@
           "evening_time": "Avondmelding",
           "notify_services": "Meldingsacties",
           "ignored_entities": "Genegeerde batterijen",
-          "ignored_integrations": "Genegeerde integraties"
+          "ignored_integrations": "Genegeerde integraties",
+          "hide_ok": "Batterijen verbergen die in orde zijn"
         },
         "data_description": {
           "threshold": "Onder dit niveau is een batterij bijna leeg.",
@@ -177,7 +180,8 @@
           "evening_time": "Tweede van de twee dagelijkse meldingen.",
           "notify_services": "Verstuur de meldingen met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt.",
           "ignored_entities": "Batterijen die nooit worden bewaakt.",
-          "ignored_integrations": "Integraties waarvan de batterijen nooit worden bewaakt (standaard telefoons en tablets van de mobiele app). Typ een domein om er een toe te voegen die nog niet is ingesteld."
+          "ignored_integrations": "Integraties waarvan de batterijen nooit worden bewaakt (standaard telefoons en tablets van de mobiele app). Typ een domein om er een toe te voegen die nog niet is ingesteld.",
+          "hide_ok": "Alleen batterijen onder de drempel of niet beschikbaar blijven zichtbaar"
         }
       },
       "git_sync_repository": {
@@ -231,6 +235,26 @@
           "export_dir": "In de configuratiemap (een relatief pad begint daar) of in een map van allowlist_external_dirs.",
           "commit_before_update": "Wanneer een update wordt geïnstalleerd (Home Assistant, een add-on, een integratie), eerst de configuratie committen en pushen, zodat er een commit is om naar terug te gaan. Eén commit voor updates die samen worden geïnstalleerd."
         }
+      },
+      "batteries_types": {
+        "title": "Batterijtypen",
+        "description": "Hier ingestelde typen gaan voor die van Battery Notes. Vink een type uit om het te verwijderen, of stel hieronder er nog een in.",
+        "data": {
+          "set": "Ingestelde typen",
+          "battery": "Batterij",
+          "type": "Type",
+          "quantity": "Aantal batterijen",
+          "whole_model": "Voor alle apparaten van dit model"
+        },
+        "data_description": {
+          "set": "Vink een type uit om het te verwijderen.",
+          "type": "Kies of typ het (CR2450, 2× AA…).",
+          "whole_model": "Hetzelfde type voor alle apparaten van het model van deze batterij."
+        }
+      },
+      "batteries_import": {
+        "title": "Importeren uit Battery Monitor",
+        "description": "Gevonden in Battery Monitor: {settings} instellingen, {types} batterijtypen ingesteld in zijn kaarten en {stock} typen reservebatterijen. Verzend om ze over te nemen in System Hub: zijn instellingen vervangen die van de module Batterijen, de hier al ingestelde batterijtypen blijven behouden."
       }
     },
     "error": {
@@ -245,7 +269,13 @@
       "invalid_branch": "Git accepteert deze branchnaam niet.",
       "author_required": "Git weet hier niet wie de commits ondertekent: vul het e-mailadres (en de naam) van de auteur in.",
       "unknown_notify_service": "Deze meldingsactie bestaat niet.",
-      "export_dir_not_allowed": "De map moet in de configuratiemap of in een map van allowlist_external_dirs liggen, buiten verborgen mappen zoals .storage."
+      "export_dir_not_allowed": "De map moet in de configuratiemap of in een map van allowlist_external_dirs liggen, buiten verborgen mappen zoals .storage.",
+      "battery_required": "Kies de batterij.",
+      "type_required": "Kies of typ het type.",
+      "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf."
+    },
+    "abort": {
+      "nothing_to_import": "Niets te importeren uit Battery Monitor."
     }
   },
   "entity": {
@@ -980,7 +1010,21 @@
         "next_replacement": "Volgende vervanging",
         "hours": "{n} u",
         "low_for": "al {d} laag",
-        "unavailable_for": "al {d} niet beschikbaar"
+        "unavailable_for": "al {d} niet beschikbaar",
+        "unknown_type_hint": "Stel het in via Configureren → Batterijen: batterijtypen",
+        "checking": "Repositories controleren…",
+        "remaining": "≈ nog {t}",
+        "failed_count": "{n} mislukt",
+        "could_not_check": "Konden niet worden gecontroleerd",
+        "not_checked": "{n} repositories niet gecontroleerd: er is geen GitHub-account met de Marketplace verbonden",
+        "rate_limit": "GitHub: nog {n} verzoeken",
+        "sec": "{n} s",
+        "min": "{n} min"
+      }
+    },
+    "battery_type": {
+      "options": {
+        "rechargeable": "Ingebouwde oplaadbare batterij"
       }
     }
   }
