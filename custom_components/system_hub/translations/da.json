@@ -59,6 +59,7 @@
         "title": "Indstillinger for System Hub",
         "menu_options": {
           "modules": "Moduler",
+          "system": "System: tærskler",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Tilføj genstart via stik",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Importér fra Battery Monitor",
         "description": "Fundet i Battery Monitor: {settings} indstillinger, {types} batterityper angivet i dets kort og {stock} typer reservebatterier. Indsend for at hente dem ind i System Hub: dets indstillinger erstatter Batterier-modulets, og de batterityper, der allerede er angivet her, bevares."
+      },
+      "system": {
+        "title": "System: tærskler",
+        "description": "Fanen System farver en værdi orange fra den første tærskel og rød fra den anden.",
+        "data": {
+          "cpu_warning": "CPU: orange fra",
+          "cpu_critical": "CPU: rød fra",
+          "ram_warning": "RAM: orange fra",
+          "ram_critical": "RAM: rød fra",
+          "disk_warning": "Disk: orange fra",
+          "disk_critical": "Disk: rød fra",
+          "temperature_warning": "Temperatur: orange fra",
+          "temperature_critical": "Temperatur: rød fra",
+          "swap_warning": "Swap: orange fra",
+          "swap_critical": "Swap: rød fra"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Mappen skal ligge i konfigurationsmappen eller i en mappe fra allowlist_external_dirs, uden for skjulte mapper som .storage.",
       "battery_required": "Vælg batteriet.",
       "type_required": "Vælg eller skriv typen.",
-      "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet."
+      "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet.",
+      "critical_below_warning": "Den røde tærskel skal ligge over den orange."
     },
     "abort": {
       "nothing_to_import": "Intet at importere fra Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Enhed fjernet",
         "open_device": "Enhed",
         "pc_none": "Ingen genstart via stik endnu: tilføj en i Konfigurer → Watchdog: tilføj en genstart via stik.",
-        "pc_configure": "Tilføj eller fjern i Konfigurer"
+        "pc_configure": "Tilføj eller fjern i Konfigurer",
+        "network_total": "Modtaget / sendt",
+        "update_to": "Opdater til {versions}",
+        "up_to_date": "Opdateret",
+        "export_csv": "Eksportér CSV",
+        "spares": "Lager",
+        "to_buy": "{n} at købe",
+        "set_stock": "Angiv lager",
+        "stock_type": "Batteritype",
+        "stock_count": "Antal",
+        "search_batteries": "Søg: navn, rum, type",
+        "no_match": "Intet batteri passer"
       }
     },
     "battery_type": {

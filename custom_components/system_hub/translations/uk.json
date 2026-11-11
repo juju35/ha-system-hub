@@ -59,6 +59,7 @@
         "title": "Параметри System Hub",
         "menu_options": {
           "modules": "Модулі",
+          "system": "Система: пороги",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Додати перезапуск через розетку",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Імпорт із Battery Monitor",
         "description": "Знайдено в Battery Monitor: налаштувань — {settings}, типів батарей, заданих у його картках, — {types}, типів запасних батарей — {stock}. Надішліть, щоб перенести їх у System Hub: його налаштування замінять налаштування модуля «Батареї», а вже задані тут типи батарей збережуться."
+      },
+      "system": {
+        "title": "Система: пороги",
+        "description": "Вкладка Система фарбує значення в помаранчевий від першого порогу і в червоний від другого.",
+        "data": {
+          "cpu_warning": "CPU: помаранчевий від",
+          "cpu_critical": "CPU: червоний від",
+          "ram_warning": "RAM: помаранчевий від",
+          "ram_critical": "RAM: червоний від",
+          "disk_warning": "Диск: помаранчевий від",
+          "disk_critical": "Диск: червоний від",
+          "temperature_warning": "Температура: помаранчевий від",
+          "temperature_critical": "Температура: червоний від",
+          "swap_warning": "Swap: помаранчевий від",
+          "swap_critical": "Swap: червоний від"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Тека має бути в теці конфігурації або в теці з allowlist_external_dirs, поза прихованими теками, як-от .storage.",
       "battery_required": "Виберіть батарею.",
       "type_required": "Виберіть або введіть тип.",
-      "no_model": "Пристрій цієї батареї не має моделі: задайте тип для самої батареї."
+      "no_model": "Пристрій цієї батареї не має моделі: задайте тип для самої батареї.",
+      "critical_below_warning": "Червоний поріг має бути вищим за помаранчевий."
     },
     "abort": {
       "nothing_to_import": "Нічого імпортувати з Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Пристрій видалено",
         "open_device": "Пристрій",
         "pc_none": "Перезапусків через розетку ще немає: додайте в «Налаштувати» → Watchdog: додати перезапуск через розетку.",
-        "pc_configure": "Додати або видалити в «Налаштувати»"
+        "pc_configure": "Додати або видалити в «Налаштувати»",
+        "network_total": "Отримано / надіслано",
+        "update_to": "Оновити до {versions}",
+        "up_to_date": "Актуально",
+        "export_csv": "Експорт у CSV",
+        "spares": "Запас",
+        "to_buy": "{n} купити",
+        "set_stock": "Задати запас",
+        "stock_type": "Тип батарейки",
+        "stock_count": "Кількість",
+        "search_batteries": "Пошук: назва, кімната, тип",
+        "no_match": "Немає відповідних батарейок"
       }
     },
     "battery_type": {

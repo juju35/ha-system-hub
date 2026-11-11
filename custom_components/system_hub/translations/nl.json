@@ -59,6 +59,7 @@
         "title": "Opties van System Hub",
         "menu_options": {
           "modules": "Modules",
+          "system": "Systeem: drempels",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Herstart via stekker toevoegen",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Importeren uit Battery Monitor",
         "description": "Gevonden in Battery Monitor: {settings} instellingen, {types} batterijtypen ingesteld in zijn kaarten en {stock} typen reservebatterijen. Verzend om ze over te nemen in System Hub: zijn instellingen vervangen die van de module Batterijen, de hier al ingestelde batterijtypen blijven behouden."
+      },
+      "system": {
+        "title": "Systeem: drempels",
+        "description": "Het tabblad Systeem kleurt een waarde oranje vanaf de eerste drempel en rood vanaf de tweede.",
+        "data": {
+          "cpu_warning": "CPU: oranje vanaf",
+          "cpu_critical": "CPU: rood vanaf",
+          "ram_warning": "RAM: oranje vanaf",
+          "ram_critical": "RAM: rood vanaf",
+          "disk_warning": "Schijf: oranje vanaf",
+          "disk_critical": "Schijf: rood vanaf",
+          "temperature_warning": "Temperatuur: oranje vanaf",
+          "temperature_critical": "Temperatuur: rood vanaf",
+          "swap_warning": "Swap: oranje vanaf",
+          "swap_critical": "Swap: rood vanaf"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "De map moet in de configuratiemap of in een map van allowlist_external_dirs liggen, buiten verborgen mappen zoals .storage.",
       "battery_required": "Kies de batterij.",
       "type_required": "Kies of typ het type.",
-      "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf."
+      "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf.",
+      "critical_below_warning": "De rode drempel moet boven de oranje liggen."
     },
     "abort": {
       "nothing_to_import": "Niets te importeren uit Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Apparaat verwijderd",
         "open_device": "Apparaat",
         "pc_none": "Nog geen herstart via stekker: voeg er een toe via Configureren → Watchdog: herstart via stekker toevoegen.",
-        "pc_configure": "Toevoegen of verwijderen in Configureren"
+        "pc_configure": "Toevoegen of verwijderen in Configureren",
+        "network_total": "Ontvangen / verzonden",
+        "update_to": "Bijwerken naar {versions}",
+        "up_to_date": "Bijgewerkt",
+        "export_csv": "CSV exporteren",
+        "spares": "Voorraad",
+        "to_buy": "{n} te kopen",
+        "set_stock": "Voorraad instellen",
+        "stock_type": "Batterijtype",
+        "stock_count": "Aantal",
+        "search_batteries": "Zoeken: naam, ruimte, type",
+        "no_match": "Geen batterij komt overeen"
       }
     },
     "battery_type": {

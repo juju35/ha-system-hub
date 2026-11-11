@@ -59,6 +59,7 @@
         "title": "Opțiuni System Hub",
         "menu_options": {
           "modules": "Module",
+          "system": "Sistem: praguri",
           "containers": "Containers",
           "watchdog": "Watchdog",
           "watchdog_add_power_cycle": "Watchdog: Adaugă o repornire prin priză",
@@ -255,6 +256,22 @@
       "batteries_import": {
         "title": "Import din Battery Monitor",
         "description": "Găsit în Battery Monitor: {settings} setări, {types} tipuri de baterii setate în cardurile sale și {stock} tipuri de baterii de rezervă. Trimiteți pentru a le aduce în System Hub: setările sale le înlocuiesc pe cele ale modulului Baterii, iar tipurile de baterii deja setate aici se păstrează."
+      },
+      "system": {
+        "title": "Sistem: praguri",
+        "description": "Fila Sistem colorează o valoare în portocaliu de la primul prag și în roșu de la al doilea.",
+        "data": {
+          "cpu_warning": "CPU: portocaliu de la",
+          "cpu_critical": "CPU: roșu de la",
+          "ram_warning": "RAM: portocaliu de la",
+          "ram_critical": "RAM: roșu de la",
+          "disk_warning": "Disc: portocaliu de la",
+          "disk_critical": "Disc: roșu de la",
+          "temperature_warning": "Temperatură: portocaliu de la",
+          "temperature_critical": "Temperatură: roșu de la",
+          "swap_warning": "Swap: portocaliu de la",
+          "swap_critical": "Swap: roșu de la"
+        }
       }
     },
     "error": {
@@ -272,7 +289,8 @@
       "export_dir_not_allowed": "Dosarul trebuie să fie în dosarul de configurare sau într-un dosar din allowlist_external_dirs, în afara dosarelor ascunse precum .storage.",
       "battery_required": "Alegeți bateria.",
       "type_required": "Alegeți sau scrieți tipul.",
-      "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie."
+      "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie.",
+      "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu."
     },
     "abort": {
       "nothing_to_import": "Nimic de importat din Battery Monitor."
@@ -1038,7 +1056,18 @@
         "unknown_device": "Dispozitiv eliminat",
         "open_device": "Dispozitiv",
         "pc_none": "Încă nicio repornire prin priză: adăugați una în Configurare → Watchdog: adăugați o repornire prin priză.",
-        "pc_configure": "Adăugați sau eliminați în Configurare"
+        "pc_configure": "Adăugați sau eliminați în Configurare",
+        "network_total": "Primit / trimis",
+        "update_to": "Actualizare la {versions}",
+        "up_to_date": "La zi",
+        "export_csv": "Exportă CSV",
+        "spares": "Rezervă",
+        "to_buy": "{n} de cumpărat",
+        "set_stock": "Setează stocul",
+        "stock_type": "Tip de baterie",
+        "stock_count": "Număr",
+        "search_batteries": "Caută: nume, cameră, tip",
+        "no_match": "Nicio baterie nu corespunde"
       }
     },
     "battery_type": {

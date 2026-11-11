@@ -19,7 +19,16 @@ from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
-from .const import CONF_MODULES, CONF_TABS, DOMAIN, MODULE_GIT_SYNC, MODULES, TAB_SYSTEM
+from .const import (
+    CONF_MODULES,
+    CONF_SYSTEM,
+    CONF_TABS,
+    DEFAULT_THRESHOLDS,
+    DOMAIN,
+    MODULE_GIT_SYNC,
+    MODULES,
+    TAB_SYSTEM,
+)
 
 STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
@@ -42,6 +51,8 @@ SYSTEM_KEYS = (
     "swap_use",
     "swap_free",
     "ipv4_address",
+    "network_in",
+    "network_out",
     "load_1m",
     "load_5m",
     "load_15m",
@@ -141,6 +152,36 @@ def _key(hass: HomeAssistant, item: er.RegistryEntry) -> str | None:
         if entry and str(entry.data.get("file_path", "")).endswith(".db"):
             return "database_size"
     return None
+
+
+def thresholds(options: dict[str, Any]) -> dict[str, list[int]]:
+    """The System tab's thresholds (orange, red) chosen, the defaults for the others."""
+    chosen = options.get(CONF_SYSTEM) if isinstance(options.get(CONF_SYSTEM), dict) else {}
+    result = {}
+    for key, (warn, crit) in DEFAULT_THRESHOLDS.items():
+        result[key] = [int(chosen.get(f"{key}_warning", warn)), int(chosen.get(f"{key}_critical", crit))]
+    return result
+
+
+def _updates(hass: HomeAssistant) -> list[dict[str, Any]]:
+    """Home Assistant Core and OS: installed and latest versions, whether an update is available."""
+    updates = []
+    for key, entity_id in (
+        ("core", "update.home_assistant_core_update"),
+        ("os", "update.home_assistant_operating_system_update"),
+    ):
+        if (state := hass.states.get(entity_id)) is None:
+            continue
+        updates.append(
+            {
+                "key": key,
+                "entity_id": entity_id,
+                "state": state.state,
+                "installed": state.attributes.get("installed_version"),
+                "latest": state.attributes.get("latest_version"),
+            }
+        )
+    return updates
 
 
 def _system(hass: HomeAssistant) -> list[dict[str, Any]]:
@@ -246,6 +287,7 @@ def _batteries(monitor: Any) -> dict[str, Any]:
         "low": len(monitor.low),
         "unavailable": len(monitor.unavailable),
         "batteries": [b.as_dict() for b in monitor.batteries],
+        "spares": monitor.spares(),
         "last_notification": monitor.last_notification.isoformat() if monitor.last_notification else None,
     }
 
@@ -293,6 +335,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         "tabs": tab_order(dict(entry.options)),
         "git_sync_configured": data.git_sync is not None,
         "system": _system(hass),
+        "updates": _updates(hass),
+        "thresholds": thresholds(dict(entry.options)),
     }
     if data.containers is not None:
         result["containers"] = _containers(data.containers)
