@@ -272,9 +272,11 @@ async def test_marketplace_updates_for_the_panel(hass: HomeAssistant) -> None:
         if uid == "1":
             attrs |= {"release_url": "https://github.com/x/mushroom/releases/v2.0.0", "entity_picture": "/p.png"}
         hass.states.async_set(entry.entity_id, "on" if on else "off", attrs)
-    # Another integration's update entity is left out
+    # Another integration's update entities are left out: an add-on, a container image of Dockhand
     other = registry.async_get_or_create("update", "hassio", "x", suggested_object_id="addon")
     hass.states.async_set(other.entity_id, "on", {"title": "Add-on"})
+    image = registry.async_get_or_create("update", "dockhand", "nas_1", suggested_object_id="nas_containers_dockhand")
+    hass.states.async_set(image.entity_id, "on", {"title": "dockhand", "installed_version": "1", "latest_version": "2"})
 
     updates = _marketplace_updates(hass, ["update.repo_2"])
     assert [u["title"] for u in updates] == ["card-mod", "Mushroom"]
