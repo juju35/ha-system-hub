@@ -14,6 +14,7 @@ from typing import Any
 import voluptuous as vol
 from homeassistant.components import websocket_api
 from homeassistant.config_entries import ConfigEntryState
+from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
@@ -153,7 +154,9 @@ def _key(hass: HomeAssistant, item: er.RegistryEntry) -> str | None:
     if item.platform == "systemmonitor":
         if item.domain == "binary_sensor":
             return "process" if item.translation_key == "process" else None
-        key = item.translation_key or ("last_boot" if item.original_device_class == "timestamp" else None)
+        # The last boot has no translation key: a timestamp, an uptime since 2026; its unique id is its key
+        last_boot = item.unique_id == "last_boot" or item.original_device_class in ("timestamp", "uptime")
+        key = item.translation_key or ("last_boot" if last_boot else None)
         key = "last_boot" if key == "uptime" else key
         return key if key in SYSTEM_KEYS else None
     if item.platform == "backup" and item.translation_key in BACKUP_KEYS:
@@ -175,14 +178,24 @@ def thresholds(options: dict[str, Any]) -> dict[str, list[int]]:
     return result
 
 
+# The Supervisor's update entities of Home Assistant Core and OS, by unique id: their entity ids follow the language of
+# the instance (update.home_assistant_core_mise_a_jour in French).
+UPDATE_ENTITIES = (
+    ("core", "home_assistant_core_version_latest", "update.home_assistant_core_update"),
+    ("os", "home_assistant_os_version_latest", "update.home_assistant_operating_system_update"),
+)
+
+
 def _updates(hass: HomeAssistant) -> list[dict[str, Any]]:
-    """Home Assistant Core and OS: installed and latest versions, whether an update is available."""
+    """Home Assistant Core and OS: installed and latest versions, whether an update is available. Without the
+    Supervisor (a container or a Python install), Core's version running, without an update to tell."""
+    registry = er.async_get(hass)
     updates = []
-    for key, entity_id in (
-        ("core", "update.home_assistant_core_update"),
-        ("os", "update.home_assistant_operating_system_update"),
-    ):
+    for key, unique_id, english in UPDATE_ENTITIES:
+        entity_id = registry.async_get_entity_id("update", "hassio", unique_id) or english
         if (state := hass.states.get(entity_id)) is None:
+            if key == "core":
+                updates.append({"key": key, "entity_id": None, "state": "off", "installed": HA_VERSION, "latest": None})
             continue
         updates.append(
             {

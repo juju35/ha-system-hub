@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.3.1 - 2026-11-11
+
+### Fixed
+- **Home Assistant's version** on the **Status** tab and the **System** tab's version tile on an instance in another language than English: the Supervisor's update entities are found by their unique id, not by their English entity id (`update.home_assistant_core_mise_a_jour` in French). Without the Supervisor (a container or a Python install), the version running is shown, without an update to tell.
+- **Uptime** on the **Status** tab and the **System** tab: System Monitor's last boot, an uptime without a translation key since Home Assistant 2026, was no longer recognised.
+
+### Changed
+- **Status** tab: the emblem beside the score is now drawn after System Hub's logo, larger (the house and its hub in the colour of the score, with a badge: a pulse, `!` or `×`), instead of a house with a heart.
+
 ## 1.3.0 - 2026-11-11
 
 What the integrations System Hub replaces could do and System Hub could not yet.
