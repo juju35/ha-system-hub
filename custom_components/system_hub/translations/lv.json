@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
@@ -18,7 +19,8 @@
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
-          "orphans": "Parāda vienības, ko to integrācija vairs nenodrošina, lai tās varētu noņemt vienlaikus."
+          "orphans": "Parāda vienības, ko to integrācija vairs nenodrošina, lai tās varētu noņemt vienlaikus.",
+          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
-          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
+          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Bateriju tips",
         "stock_count": "Skaits",
         "search_batteries": "Meklēt: nosaukums, telpa, tips",
-        "no_match": "Neviena baterija neatbilst"
+        "no_match": "Neviena baterija neatbilst",
+        "auto_failed": "Neizdevušās automatizācijas",
+        "auto_linked": "Nepieejamas saistītās vienības",
+        "auto_sensor_unavailable": "Sensors nav pieejams",
+        "auto_unavailable": "Automation Monitor sensori nav pieejami.",
+        "auto_not_found": "Automation Monitor nav atrasts. Vai Automation Monitor integrācija ir instalēta?",
+        "auto_all_ok": "Viss kārtībā",
+        "auto_step": "Solis",
+        "auto_streak": "{n} kļūmes pēc kārtas",
+        "auto_used_by": "Izmanto",
+        "auto_trace": "Izsekot",
+        "auto_edit": "Rediģēt",
+        "auto_clear": "Notīrīt",
+        "auto_clear_all": "Notīrīt visu",
+        "auto_rebuild": "Atsvaidzināt",
+        "auto_rebuild_title": "No jauna izveidot automatizāciju, skriptu un ainu izmantoto vienību sarakstu",
+        "auto_confirm_clear": "Notīrīt {name} kļūmi? Par to atkal tiks ziņots nākamās kļūmes gadījumā.",
+        "auto_confirm_clear_all": "Notīrīt visas neizdevušās automatizācijas? Par tām atkal tiks ziņots nākamās kļūmes gadījumā.",
+        "auto_show_more": "Rādīt vēl {n}",
+        "auto_show_less": "Rādīt mazāk",
+        "auto_last_failure": "Pēdējā kļūme"
       }
     },
     "battery_type": {

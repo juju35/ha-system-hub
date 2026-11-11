@@ -101,7 +101,16 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     result = (await client.receive_json())["result"]
     assert result["loaded"] is True
     assert result["modules"] == ["watchdog", "batteries"]
-    assert result["tabs"] == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"]
+    assert result["tabs"] == [
+        "system",
+        "containers",
+        "watchdog",
+        "marketplace",
+        "batteries",
+        "git_sync",
+        "automations",
+        "orphans",
+    ]
     keys = {s["key"]: s for s in result["system"]}
     assert set(keys) == {
         "processor_use",
@@ -122,6 +131,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     assert result["batteries"]["low"] == 1
     assert "containers" not in result
     assert "marketplace" not in result
+    assert "automations" not in result
     assert result["git_sync_configured"] is False
     assert result["updates"] == [
         {
@@ -179,6 +189,7 @@ async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
         "watchdog",
         "marketplace",
         "git_sync",
+        "automations",
         "orphans",
     ]
     assert entry.runtime_data.batteries is not None
@@ -194,7 +205,16 @@ async def test_git_sync_needs_its_repository(hass: HomeAssistant, hass_ws_client
 
 
 def test_tab_order() -> None:
-    assert tab_order({}) == ["system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"]
+    assert tab_order({}) == [
+        "system",
+        "containers",
+        "watchdog",
+        "marketplace",
+        "batteries",
+        "git_sync",
+        "automations",
+        "orphans",
+    ]
     assert tab_order({"tabs": ["git_sync", "unknown", "git_sync", "system"]}) == [
         "git_sync",
         "system",
@@ -202,6 +222,7 @@ def test_tab_order() -> None:
         "watchdog",
         "marketplace",
         "batteries",
+        "automations",
         "orphans",
     ]
 

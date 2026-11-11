@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
@@ -18,7 +19,8 @@
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
-          "orphans": "Zobrazuje entity, ktoré ich integrácia už neposkytuje, aby ste ich mohli hromadne odstrániť."
+          "orphans": "Zobrazuje entity, ktoré ich integrácia už neposkytuje, aby ste ich mohli hromadne odstrániť.",
+          "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
-          "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…)."
+          "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
+          "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Typ batérie",
         "stock_count": "Počet",
         "search_batteries": "Hľadať: názov, miestnosť, typ",
-        "no_match": "Žiadna batéria nezodpovedá"
+        "no_match": "Žiadna batéria nezodpovedá",
+        "auto_failed": "Neúspešné automatizácie",
+        "auto_linked": "Nedostupné prepojené entity",
+        "auto_sensor_unavailable": "Senzor nedostupný",
+        "auto_unavailable": "Senzory Automation Monitor sú nedostupné.",
+        "auto_not_found": "Automation Monitor sa nenašiel. Je integrácia Automation Monitor nainštalovaná?",
+        "auto_all_ok": "Všetko OK",
+        "auto_step": "Krok",
+        "auto_streak": "Zlyhania po sebe: {n}",
+        "auto_used_by": "Použitá v",
+        "auto_trace": "Stopa",
+        "auto_edit": "Upraviť",
+        "auto_clear": "Vymazať",
+        "auto_clear_all": "Vymazať všetko",
+        "auto_rebuild": "Obnoviť",
+        "auto_rebuild_title": "Znova zostaviť zoznam entít používaných automatizáciami, skriptmi a scénami",
+        "auto_confirm_clear": "Vymazať zlyhanie {name}? Pri ďalšom zlyhaní bude znova nahlásené.",
+        "auto_confirm_clear_all": "Vymazať všetky neúspešné automatizácie? Pri ďalšom zlyhaní budú znova nahlásené.",
+        "auto_show_more": "Zobraziť ďalšie ({n})",
+        "auto_show_less": "Zobraziť menej",
+        "auto_last_failure": "Posledné zlyhanie"
       }
     },
     "battery_type": {

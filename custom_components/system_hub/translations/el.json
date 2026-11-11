@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
@@ -18,7 +19,8 @@
           "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες.",
           "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή.",
           "git_sync": "Φάκελος του Home Assistant με έλεγχο εκδόσεων Git, που γίνεται push σε remote (GitHub, Gitea…).",
-          "orphans": "Εμφανίζει τις οντότητες που η ενσωμάτωσή τους δεν παρέχει πλέον, ώστε να μπορείτε να τις αφαιρέσετε μαζικά."
+          "orphans": "Εμφανίζει τις οντότητες που η ενσωμάτωσή τους δεν παρέχει πλέον, ώστε να μπορείτε να τις αφαιρέσετε μαζικά.",
+          "automations": "Εμφανίζει τους αυτοματισμούς που απέτυχαν και τις μη διαθέσιμες οντότητες που αναφέρει η ενσωμάτωση Automation Monitor (εγκαθίσταται ξεχωριστά). Χωρίς δικές της οντότητες."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
           "watchdog": "Επαναφορτώνει τις ενσωματώσεις των οποίων όλες οι οντότητες δεν είναι διαθέσιμες.",
           "marketplace": "Ελέγχει στον διακομιστή για ενημερώσεις όλα τα αποθετήρια που έχουν ληφθεί με το Marketplace. Το ίδιο το Marketplace ελέγχει τα προσαρμοσμένα αποθετήρια μόνο κάθε 48 ώρες.",
           "batteries": "Ειδοποιεί δύο φορές την ημέρα για τις συσκευές των οποίων η μπαταρία παραμένει χαμηλή.",
-          "git_sync": "Φάκελος του Home Assistant με έλεγχο εκδόσεων Git, που γίνεται push σε remote (GitHub, Gitea…)."
+          "git_sync": "Φάκελος του Home Assistant με έλεγχο εκδόσεων Git, που γίνεται push σε remote (GitHub, Gitea…).",
+          "automations": "Εμφανίζει τους αυτοματισμούς που απέτυχαν και τις μη διαθέσιμες οντότητες που αναφέρει η ενσωμάτωση Automation Monitor (εγκαθίσταται ξεχωριστά). Χωρίς δικές της οντότητες."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Τύπος μπαταρίας",
         "stock_count": "Πλήθος",
         "search_batteries": "Αναζήτηση: όνομα, χώρος, τύπος",
-        "no_match": "Καμία μπαταρία δεν ταιριάζει"
+        "no_match": "Καμία μπαταρία δεν ταιριάζει",
+        "auto_failed": "Αυτοματισμοί που απέτυχαν",
+        "auto_linked": "Μη διαθέσιμες συνδεδεμένες οντότητες",
+        "auto_sensor_unavailable": "Αισθητήρας μη διαθέσιμος",
+        "auto_unavailable": "Οι αισθητήρες του Automation Monitor δεν είναι διαθέσιμοι.",
+        "auto_not_found": "Δεν βρέθηκε το Automation Monitor. Είναι εγκατεστημένη η ενσωμάτωση Automation Monitor;",
+        "auto_all_ok": "Όλα εντάξει",
+        "auto_step": "Βήμα",
+        "auto_streak": "{n} διαδοχικές αποτυχίες",
+        "auto_used_by": "Χρησιμοποιείται από",
+        "auto_trace": "Ίχνος",
+        "auto_edit": "Αλλαγή",
+        "auto_clear": "Απαλοιφή",
+        "auto_clear_all": "Απαλοιφή όλων",
+        "auto_rebuild": "Ανανέωση",
+        "auto_rebuild_title": "Ανακατασκευή της λίστας οντοτήτων που χρησιμοποιούνται από αυτοματισμούς, σενάρια και σκηνές",
+        "auto_confirm_clear": "Απαλοιφή της αποτυχίας του {name}; Θα αναφερθεί ξανά στην επόμενη αποτυχία.",
+        "auto_confirm_clear_all": "Απαλοιφή όλων των αυτοματισμών που απέτυχαν; Θα αναφερθούν ξανά στην επόμενη αποτυχία.",
+        "auto_show_more": "Εμφάνιση {n} ακόμη",
+        "auto_show_less": "Εμφάνιση λιγότερων",
+        "auto_last_failure": "Τελευταία αποτυχία"
       }
     },
     "battery_type": {

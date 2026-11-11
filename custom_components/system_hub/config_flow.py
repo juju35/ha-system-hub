@@ -19,6 +19,7 @@ from homeassistant.helpers.selector import (
     SelectSelectorMode,
 )
 
+from .automations import AUTOMATION_MONITOR
 from .batteries import flow as batteries_flow
 from .batteries import importer as batteries_importer
 from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
@@ -28,6 +29,7 @@ from .const import (
     DEFAULT_THRESHOLDS,
     DOMAIN,
     MARKETPLACE_DOMAIN,
+    MODULE_AUTOMATIONS,
     MODULE_BATTERIES,
     MODULE_CONTAINERS,
     MODULE_GIT_SYNC,
@@ -67,6 +69,8 @@ def _available(hass: HomeAssistant) -> list[str]:
         for m in MODULES
         if (m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in hass.config.components)
         and (m != MODULE_CONTAINERS or supervisor_available(hass))
+        # Shows what Automation Monitor reports: on by default where it is set up.
+        and (m != MODULE_AUTOMATIONS or AUTOMATION_MONITOR in hass.config.components)
         # Needs a repository set up first: turned on by choice.
         and m != MODULE_GIT_SYNC
     ]

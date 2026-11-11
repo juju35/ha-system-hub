@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
@@ -18,7 +19,8 @@
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
           "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
-          "orphans": "Prikazuje entitete koje njihova integracija više ne obezbeđuje, kako biste mogli da ih uklonite odjednom."
+          "orphans": "Prikazuje entitete koje njihova integracija više ne obezbeđuje, kako biste mogli da ih uklonite odjednom.",
+          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
-          "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…)."
+          "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
+          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Tip baterije",
         "stock_count": "Broj",
         "search_batteries": "Pretraga: naziv, prostorija, tip",
-        "no_match": "Nijedna baterija ne odgovara"
+        "no_match": "Nijedna baterija ne odgovara",
+        "auto_failed": "Neuspele automatizacije",
+        "auto_linked": "Nedostupni povezani entiteti",
+        "auto_sensor_unavailable": "Senzor nedostupan",
+        "auto_unavailable": "Senzori Automation Monitor-a su nedostupni.",
+        "auto_not_found": "Automation Monitor nije pronađen. Da li je integracija Automation Monitor instalirana?",
+        "auto_all_ok": "Sve je u redu",
+        "auto_step": "Korak",
+        "auto_streak": "{n} neuspeha zaredom",
+        "auto_used_by": "Koristi se u",
+        "auto_trace": "Trag",
+        "auto_edit": "Uredi",
+        "auto_clear": "Obriši",
+        "auto_clear_all": "Obriši sve",
+        "auto_rebuild": "Osveži",
+        "auto_rebuild_title": "Ponovo napravi listu entiteta koje koriste automatizacije, skripte i scene",
+        "auto_confirm_clear": "Obrisati neuspeh za {name}? Biće ponovo prijavljen pri sledećem neuspehu.",
+        "auto_confirm_clear_all": "Obrisati sve neuspele automatizacije? Biće ponovo prijavljene pri sledećem neuspehu.",
+        "auto_show_more": "Prikaži još {n}",
+        "auto_show_less": "Prikaži manje",
+        "auto_last_failure": "Poslednji neuspeh"
       }
     },
     "battery_type": {

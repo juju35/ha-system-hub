@@ -50,6 +50,7 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
         "marketplace": False,
         "batteries": True,
         "git_sync": False,
+        "automations": False,
         "orphans": True,
     }
     result = await hass.config_entries.flow.async_configure(

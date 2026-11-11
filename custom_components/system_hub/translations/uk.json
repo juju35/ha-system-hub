@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
@@ -18,7 +19,8 @@
           "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
           "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою.",
           "git_sync": "Тека Home Assistant під керуванням Git, що надсилається до remote (GitHub, Gitea…).",
-          "orphans": "Показує сутності, які їхня інтеграція більше не надає, щоб їх можна було видалити масово."
+          "orphans": "Показує сутності, які їхня інтеграція більше не надає, щоб їх можна було видалити масово.",
+          "automations": "Показує невдалі автоматизації та недоступні сутності, про які повідомляє інтеграція Automation Monitor (встановлюється окремо). Власних сутностей немає."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Відстежує Home Assistant Core, Supervisor і доповнення: стан, версію, CPU та пам'ять. Лише моніторинг: нічого не перезапускається.",
           "watchdog": "Перезавантажує інтеграції, усі сутності яких недоступні.",
           "marketplace": "Перевіряє на сервері наявність оновлень для всіх репозиторіїв, завантажених через Marketplace. Сам Marketplace перевіряє користувацькі репозиторії лише раз на 48 годин.",
           "batteries": "Двічі на день сповіщає про пристрої, батарея яких залишається розрядженою.",
-          "git_sync": "Тека Home Assistant під керуванням Git, що надсилається до remote (GitHub, Gitea…)."
+          "git_sync": "Тека Home Assistant під керуванням Git, що надсилається до remote (GitHub, Gitea…).",
+          "automations": "Показує невдалі автоматизації та недоступні сутності, про які повідомляє інтеграція Automation Monitor (встановлюється окремо). Власних сутностей немає."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Тип батарейки",
         "stock_count": "Кількість",
         "search_batteries": "Пошук: назва, кімната, тип",
-        "no_match": "Немає відповідних батарейок"
+        "no_match": "Немає відповідних батарейок",
+        "auto_failed": "Автоматизації з помилками",
+        "auto_linked": "Недоступні пов’язані сутності",
+        "auto_sensor_unavailable": "Датчик недоступний",
+        "auto_unavailable": "Датчики Automation Monitor недоступні.",
+        "auto_not_found": "Automation Monitor не знайдено. Чи встановлено інтеграцію Automation Monitor?",
+        "auto_all_ok": "Усе гаразд",
+        "auto_step": "Крок",
+        "auto_streak": "Помилок поспіль: {n}",
+        "auto_used_by": "Використано в",
+        "auto_trace": "Слід",
+        "auto_edit": "Змінити",
+        "auto_clear": "Скинути",
+        "auto_clear_all": "Скинути все",
+        "auto_rebuild": "Оновити",
+        "auto_rebuild_title": "Заново побудувати список сутностей, які використовують автоматизації, скрипти та сцени",
+        "auto_confirm_clear": "Скинути помилку {name}? Про неї знову буде повідомлено під час наступної помилки.",
+        "auto_confirm_clear_all": "Скинути всі автоматизації з помилками? Про них знову буде повідомлено під час наступної помилки.",
+        "auto_show_more": "Показати ще {n}",
+        "auto_show_less": "Показати менше",
+        "auto_last_failure": "Остання помилка"
       }
     },
     "battery_type": {

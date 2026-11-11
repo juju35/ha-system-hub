@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
@@ -18,7 +19,8 @@
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
           "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
-          "orphans": "Muestra las entidades que su integración ya no proporciona, para que puedas eliminarlas en bloque."
+          "orphans": "Muestra las entidades que su integración ya no proporciona, para que puedas eliminarlas en bloque.",
+          "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
           "watchdog": "Recarga las integraciones en las que ninguna entidad está disponible.",
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
-          "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…)."
+          "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
+          "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Tipo de pila",
         "stock_count": "Cantidad",
         "search_batteries": "Buscar: nombre, habitación, tipo",
-        "no_match": "Ninguna pila coincide"
+        "no_match": "Ninguna pila coincide",
+        "auto_failed": "Automatizaciones fallidas",
+        "auto_linked": "Entidades vinculadas no disponibles",
+        "auto_sensor_unavailable": "Sensor no disponible",
+        "auto_unavailable": "Los sensores de Automation Monitor no están disponibles.",
+        "auto_not_found": "No se encontró Automation Monitor. ¿Está instalada la integración Automation Monitor?",
+        "auto_all_ok": "Todo bien",
+        "auto_step": "Paso",
+        "auto_streak": "{n} fallos seguidos",
+        "auto_used_by": "Usada por",
+        "auto_trace": "Traza",
+        "auto_edit": "Editar",
+        "auto_clear": "Borrar",
+        "auto_clear_all": "Borrar todo",
+        "auto_rebuild": "Actualizar",
+        "auto_rebuild_title": "Reconstruir la lista de entidades usadas por automatizaciones, scripts y escenas",
+        "auto_confirm_clear": "¿Borrar el fallo de {name}? Se volverá a notificar en su próximo fallo.",
+        "auto_confirm_clear_all": "¿Borrar todas las automatizaciones fallidas? Se volverán a notificar en su próximo fallo.",
+        "auto_show_more": "Mostrar {n} más",
+        "auto_show_less": "Mostrar menos",
+        "auto_last_failure": "Último fallo"
       }
     },
     "battery_type": {

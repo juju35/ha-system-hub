@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
@@ -18,7 +19,8 @@
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
           "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
-          "orphans": "Lists the entities that their integration no longer provides, so that you can remove them in bulk."
+          "orphans": "Lists the entities that their integration no longer provides, so that you can remove them in bulk.",
+          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
-          "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…)."
+          "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
+          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Battery type",
         "stock_count": "Count",
         "search_batteries": "Search: name, room, type",
-        "no_match": "No battery matches"
+        "no_match": "No battery matches",
+        "auto_failed": "Failed automations",
+        "auto_linked": "Unavailable linked entities",
+        "auto_sensor_unavailable": "Sensor unavailable",
+        "auto_unavailable": "The Automation Monitor sensors are unavailable.",
+        "auto_not_found": "Automation Monitor not found. Is the Automation Monitor integration installed?",
+        "auto_all_ok": "All good",
+        "auto_step": "Step",
+        "auto_streak": "{n} failures in a row",
+        "auto_used_by": "Used by",
+        "auto_trace": "Trace",
+        "auto_edit": "Edit",
+        "auto_clear": "Clear",
+        "auto_clear_all": "Clear all",
+        "auto_rebuild": "Refresh",
+        "auto_rebuild_title": "Rebuild the list of entities used by automations, scripts and scenes",
+        "auto_confirm_clear": "Clear the failure of {name}? It will be reported again on its next failure.",
+        "auto_confirm_clear_all": "Clear all failed automations? They will be reported again on their next failure.",
+        "auto_show_more": "Show {n} more",
+        "auto_show_less": "Show less",
+        "auto_last_failure": "Last failure"
       }
     },
     "battery_type": {

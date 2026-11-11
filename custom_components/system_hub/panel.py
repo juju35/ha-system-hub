@@ -19,12 +19,14 @@ from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 
+from . import automations
 from .const import (
     CONF_MODULES,
     CONF_SYSTEM,
     CONF_TABS,
     DEFAULT_THRESHOLDS,
     DOMAIN,
+    MODULE_AUTOMATIONS,
     MODULE_GIT_SYNC,
     MODULES,
     TAB_SYSTEM,
@@ -350,6 +352,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["batteries"] = _batteries(data.batteries)
     if data.git_sync is not None:
         result["git_sync"] = _git_sync(data.git_sync)
+    if MODULE_AUTOMATIONS in result["modules"]:
+        result["automations"] = automations.state(hass)
     if data.orphans is not None:
         result["orphans"] = orphans_panel.summary(data.orphans)
     connection.send_result(msg["id"], result)

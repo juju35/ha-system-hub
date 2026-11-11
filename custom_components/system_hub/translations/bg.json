@@ -10,7 +10,8 @@
           "marketplace": "Marketplace",
           "batteries": "Batteries",
           "git_sync": "Git Sync",
-          "orphans": "Orphans"
+          "orphans": "Orphans",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
@@ -18,7 +19,8 @@
           "marketplace": "Проверява на сървъра за актуализации на всички хранилища, изтеглени с Marketplace. Самият Marketplace проверява потребителските хранилища само веднъж на 48 часа.",
           "batteries": "Изпраща известие два пъти на ден за устройствата, чиято батерия е останала изтощена.",
           "git_sync": "Папка на Home Assistant, версионирана с Git и изпращана към remote (GitHub, Gitea…).",
-          "orphans": "Показва обектите, които интеграцията им вече не предоставя, за да можете да ги премахнете наведнъж."
+          "orphans": "Показва обектите, които интеграцията им вече не предоставя, за да можете да ги премахнете наведнъж.",
+          "automations": "Показва неуспешните автоматизации и недостъпните обекти, докладвани от интеграцията Automation Monitor (инсталира се отделно). Без собствени обекти."
         }
       },
       "git_sync_repository": {
@@ -83,14 +85,16 @@
           "watchdog": "Watchdog",
           "marketplace": "Marketplace",
           "batteries": "Batteries",
-          "git_sync": "Git Sync"
+          "git_sync": "Git Sync",
+          "automations": "Automations"
         },
         "data_description": {
           "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
           "watchdog": "Презарежда интеграциите, чиито обекти са всички недостъпни.",
           "marketplace": "Проверява на сървъра за актуализации на всички хранилища, изтеглени с Marketplace. Самият Marketplace проверява потребителските хранилища само веднъж на 48 часа.",
           "batteries": "Изпраща известие два пъти на ден за устройствата, чиято батерия е останала изтощена.",
-          "git_sync": "Папка на Home Assistant, версионирана с Git и изпращана към remote (GitHub, Gitea…)."
+          "git_sync": "Папка на Home Assistant, версионирана с Git и изпращана към remote (GitHub, Gitea…).",
+          "automations": "Показва неуспешните автоматизации и недостъпните обекти, докладвани от интеграцията Automation Monitor (инсталира се отделно). Без собствени обекти."
         }
       },
       "containers": {
@@ -1245,7 +1249,27 @@
         "stock_type": "Тип батерия",
         "stock_count": "Брой",
         "search_batteries": "Търсене: име, стая, тип",
-        "no_match": "Няма съвпадащи батерии"
+        "no_match": "Няма съвпадащи батерии",
+        "auto_failed": "Неуспешни автоматизации",
+        "auto_linked": "Недостъпни свързани обекти",
+        "auto_sensor_unavailable": "Сензор недостъпен",
+        "auto_unavailable": "Сензорите на Automation Monitor са недостъпни.",
+        "auto_not_found": "Automation Monitor не е намерен. Инсталирана ли е интеграцията Automation Monitor?",
+        "auto_all_ok": "Всичко наред",
+        "auto_step": "Стъпка",
+        "auto_streak": "{n} поредни неуспеха",
+        "auto_used_by": "Използван от",
+        "auto_trace": "Следа",
+        "auto_edit": "Промени",
+        "auto_clear": "Изчисти",
+        "auto_clear_all": "Изчисти всички",
+        "auto_rebuild": "Опресняване",
+        "auto_rebuild_title": "Повторно изграждане на списъка с обекти, използвани от автоматизации, скриптове и сцени",
+        "auto_confirm_clear": "Да се изчисти ли неуспехът на {name}? Ще бъде докладван отново при следващия неуспех.",
+        "auto_confirm_clear_all": "Да се изчистят ли всички неуспешни автоматизации? Ще бъдат докладвани отново при следващия неуспех.",
+        "auto_show_more": "Покажи още {n}",
+        "auto_show_less": "Покажи по-малко",
+        "auto_last_failure": "Последен неуспех"
       }
     },
     "battery_type": {
