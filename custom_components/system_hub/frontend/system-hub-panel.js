@@ -14,6 +14,8 @@
 var SYSTEM_HUB_PANEL_VERSION = '0.5.5';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
+// A state that could not be read (Home Assistant restarting, connection lost): read again after
+var SH_RETRY_MS = 3000;
 var SH_MODULE_ICONS = {
   status: 'mdi:heart-pulse',
   system: 'mdi:chip',
@@ -82,6 +84,15 @@ function shFocusSelector(el) {
   var esc = (v) => (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, '\\$&'));
   var parts = attrs.filter((a) => el.hasAttribute?.(a)).map((a) => `[${a}="${esc(el.getAttribute(a))}"]`);
   return parts.length ? parts.join('') : null;
+}
+
+// The words of an error: a WebSocket one is {code, message}, or {error: {code, message}} when the connection was lost;
+// a REST one carries its body
+function shErr(err) {
+  if (err == null) return '';
+  if (typeof err !== 'object') return String(err);
+  var text = err.message || err.error?.message || err.body?.message || err.error?.code || err.code;
+  return text ? String(text) : String(err);
 }
 
 function shEsc(value) {
@@ -182,7 +193,7 @@ class SystemHubDiffDialog extends HTMLElement {
     try {
       this._diff = await request();
     } catch (err) {
-      this._error = err?.message || String(err);
+      this._error = shErr(err);
     } finally {
       this._loading = false;
       if (this._open) {
@@ -847,6 +858,10 @@ class SystemHubPanel extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    // The page shown again (the app back from the background): read again at once
+    this._onVisible = () => {
+      if (!document.hidden && this._hass) this._load();
+    };
     this._tab = null;
     this._state = null;
     this._error = null;
@@ -866,6 +881,11 @@ class SystemHubPanel extends HTMLElement {
 
   set hass(hass) {
     var first = !this._hass;
+    // The connection back (Home Assistant restarted, the app back from the background): read again at once
+    if (hass?.connection && hass.connection !== this._conn) {
+      this._conn = hass.connection;
+      hass.connection.addEventListener?.('ready', () => this.isConnected && this._load());
+    }
     var language = this._hass?.language;
     this._hass = hass;
     if (this._menu) this._menu.hass = hass;
@@ -904,12 +924,15 @@ class SystemHubPanel extends HTMLElement {
       if (!document.hidden) this._load();
     }, SH_REFRESH_MS);
     if (this._hass && this._state) this._load();
+    document.addEventListener?.('visibilitychange', this._onVisible);
   }
 
   disconnectedCallback() {
     clearInterval(this._timer);
     clearTimeout(this._fast);
+    clearTimeout(this._retry);
     this._timer = null;
+    document.removeEventListener?.('visibilitychange', this._onVisible);
   }
 
   async _start() {
@@ -969,8 +992,14 @@ class SystemHubPanel extends HTMLElement {
       }
       // The Orphans tab shown: its whole list, read again with the state
       if (this._state?.orphans && (this._routeTab || this._tab) === 'orphans') await this._orphLoad();
+      clearTimeout(this._retry);
     } catch (err) {
-      this._error = err?.message || String(err);
+      // Home Assistant restarting, the connection lost (the app back from the background): what is shown stays, read
+      // again in a few seconds; the message only when nothing could be read yet
+      if (!this._state?.loaded) this._error = shErr(err);
+      clearTimeout(this._retry);
+      if (this.isConnected) this._retry = setTimeout(() => this._load(), SH_RETRY_MS);
+      if (this._state?.loaded) return;
     }
     // A settings form open: left as it is, what is being typed included
     if (this._tab === 'settings' && (this._cfg?.flow || this._drag)) return;
@@ -2202,7 +2231,7 @@ class SystemHubPanel extends HTMLElement {
       this._toast(this._t('done'));
       done?.();
     } catch (err) {
-      this._messages[messageKey] = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages[messageKey] = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     await this._load();
     delete this._busy[busyKey];
@@ -2350,7 +2379,7 @@ class SystemHubPanel extends HTMLElement {
       if (message) this._draft.message = message;
       else this._messages.git_sync = { text: this._t('clean'), tone: '' };
     } catch (err) {
-      this._messages.git_sync = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages.git_sync = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     delete this._busy[service];
     this._render();
@@ -2386,7 +2415,7 @@ class SystemHubPanel extends HTMLElement {
         }
         return;
       }
-      this._messages.save = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages.save = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     delete this._busy.save;
     this._render();
@@ -2452,7 +2481,7 @@ var SH_ORPHANS_METHODS = {
       o.sel = new Set([...o.sel].filter((id) => ids.has(id)));
       o.dsel = new Set([...o.dsel].filter((id) => devices.has(id)));
     } catch (err) {
-      o.error = err?.message || String(err);
+      o.error = shErr(err);
     }
     o.loading = false;
   },
@@ -2690,7 +2719,7 @@ var SH_ORPHANS_METHODS = {
       }
       if (text) this._toast(text);
     } catch (err) {
-      this._messages.orphans = { text: this._t('failed', { error: err?.message || String(err) }), tone: 'bad' };
+      this._messages.orphans = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
     await this._load();
     delete this._busy.orph;
@@ -2933,7 +2962,7 @@ var SH_SETTINGS_METHODS = {
       cfg.flowId = menu.flow_id;
       await this._cfgGo(cfg.step);
     } catch (err) {
-      cfg.error = this._t('failed', { error: err?.body?.message || err?.message || String(err) });
+      cfg.error = this._t('failed', { error: shErr(err) });
       this._render();
     }
   },
@@ -2990,7 +3019,7 @@ var SH_SETTINGS_METHODS = {
       this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, cfg.data));
     } catch (err) {
       cfg.busy = false;
-      cfg.errors = { base: err?.body?.message || err?.message || String(err) };
+      cfg.errors = { base: shErr(err) };
       this._render();
     }
   },
@@ -3018,7 +3047,7 @@ var SH_SETTINGS_METHODS = {
     }
     if (action === 'cfg_step') {
       this._cfgGo(button.dataset.step).catch((err) => {
-        cfg.error = this._t('failed', { error: err?.message || String(err) });
+        cfg.error = this._t('failed', { error: shErr(err) });
         this._render();
       });
       return true;
@@ -3049,16 +3078,6 @@ Object.assign(SystemHubPanel.prototype, SH_SETTINGS_METHODS);
 // area to watch, 1 per area with something to know), then one tile per area in the order of the tabs: its level, what
 // it says in a few words, its details; a click opens its tab. Worked out here from what the panel already reads.
 var SH_STATUS_WEIGHTS = { bad: 15, warn: 5, info: 1, good: 0 };
-var SH_STATUS_ICONS = {
-  system: 'mdi:chip',
-  containers: 'mdi:docker',
-  watchdog: 'mdi:shield-search',
-  marketplace: 'mdi:package-up',
-  batteries: 'mdi:battery-alert-variant-outline',
-  git_sync: 'mdi:source-branch',
-  automations: 'mdi:robot-confused-outline',
-  orphans: 'mdi:ghost-outline',
-};
 
 var SH_STATUS_METHODS = {
   // One area: [tone, value, details] or null when there is nothing to show (module off, nothing read yet)
@@ -3208,7 +3227,7 @@ var SH_STATUS_METHODS = {
     var tiles = areas
       .map(([tab, [tone, value, details]]) => `<button class="sttile ${tone}" data-action="st_open" data-tab="${tab}" aria-label="${shEsc(`${this._stName(tab)}: ${value}`)}">
         <span class="stglow"></span>
-        <span class="sthead"><span class="stic"><ha-icon icon="${SH_STATUS_ICONS[tab] || SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._stName(tab))}</span><span class="stdot"></span></span>
+        <span class="sthead"><span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._stName(tab))}</span><span class="stdot"></span></span>
         <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</button>`)
       .join('');
     return `${hero}<div class="stgrid">${tiles}</div>`;

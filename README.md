@@ -175,6 +175,16 @@ System Hub also serves the cards of the integrations it replaces, with the same 
 | [Git Sync](#git-sync-card) | `custom:git-sync-card`, `custom:git-sync-mini-card` | [ha-git-sync](https://github.com/juju35/ha-git-sync)'s cards |
 | [Orphan Entities](#cards) | `custom:orphan-entities-card`, `custom:orphan-entities-mini-card` | [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities)'s cards |
 
+| System Monitor | Watchdog | Marketplace Refresh |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="System Monitor card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-watchdog.png" alt="Watchdog card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace.png" alt="Marketplace Refresh card" width="400"> |
+
+| Battery Monitor | Git Sync | Orphan Entities |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="Battery Monitor card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Git Sync card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="400"> |
+
+Each card's section below shows its mini card, its states and its dark theme.
+
 ## System Monitor cards
 
 System Hub ships two Lovelace cards to monitor the machine running Home Assistant itself — CPU, RAM, disk, temperature, network, storage, backups and processes at a glance: the full **System Monitor Card** and the compact **System Monitor Mini Card** (formerly [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card)).
@@ -1250,9 +1260,15 @@ The Orphan Entities card and mini card are served by System Hub (`custom:orphan-
 | Card | Light | Dark |
 |---|---|---|
 | Card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-dark.png" alt="Orphan Entities card, dark theme" width="300"> |
+| Two entities selected | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-selected.png" alt="Orphan Entities card, two entities selected" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-selected-dark.png" alt="Orphan Entities card, two entities selected, dark theme" width="300"> |
+| Used by an automation or a dashboard | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-used.png" alt="Orphan Entities card, entity used by an automation" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-used-dark.png" alt="Orphan Entities card, entity used by an automation, dark theme" width="300"> |
+| Filtered on a reason | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-filtered.png" alt="Orphan Entities card filtered on a reason" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-filtered-dark.png" alt="Orphan Entities card filtered on a reason, dark theme" width="300"> |
+| No orphan | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-ok.png" alt="Orphan Entities card, no orphan" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-ok-dark.png" alt="Orphan Entities card, no orphan, dark theme" width="300"> |
 | Remove, confirmed | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-confirm.png" alt="Orphan Entities card asking to confirm" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-confirm-dark.png" alt="Orphan Entities card asking to confirm, dark theme" width="300"> |
 | Orphan devices | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-devices.png" alt="Orphan Entities card, orphan devices" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card-devices-dark.png" alt="Orphan Entities card, orphan devices, dark theme" width="300"> |
 | Mini card | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini.png" alt="Orphan Entities mini card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-dark.png" alt="Orphan Entities mini card, dark theme" width="300"> |
+| Mini card, no orphan | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-ok.png" alt="Orphan Entities mini card, no orphan" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-ok-dark.png" alt="Orphan Entities mini card, no orphan, dark theme" width="300"> |
+| Mini card zoomed in | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-zoom.png" alt="Orphan Entities mini card zoomed in to the full card" width="300"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-mini-zoom-dark.png" alt="Orphan Entities mini card zoomed in to the full card, dark theme" width="300"> |
 
 #### Entities
 

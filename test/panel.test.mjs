@@ -28,10 +28,11 @@ const context = {
   setInterval: () => 0,
   clearInterval() {},
   setTimeout: () => 0,
+  clearTimeout() {},
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc };`, context);
-const { SystemHubPanel, shBytes, shTone, shSpark, shEsc } = context.panel;
+vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr };`, context);
+const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr } = context.panel;
 
 // The strings as Home Assistant's localize returns them from the integration's English translations
 function localize(key, vars = {}) {
@@ -795,4 +796,30 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   p._render = () => {};
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'st_open', tab: 'watchdog' } } : null) } });
   assert.equal(p._tab, 'watchdog');
+});
+
+test('load: the words of the error, and what is shown kept while the connection is lost', async () => {
+  // A command cut by a lost connection: {error: {code, message}}, not [object Object]
+  assert.equal(shErr({ type: 'result', success: false, error: { code: 3, message: 'Connection lost' } }), 'Connection lost');
+  assert.equal(shErr({ code: 'unknown_command', message: 'Unknown command.' }), 'Unknown command.');
+  assert.equal(shErr({ body: { message: 'Invalid flow' } }), 'Invalid flow');
+  assert.equal(shErr(3), '3');
+  const lost = async () => {
+    throw { type: 'result', success: false, error: { code: 3, message: 'Connection lost' } };
+  };
+  // Nothing read yet: the message, in words
+  const first = panel(null);
+  first._hass.callWS = lost;
+  first._render = () => {};
+  await first._load();
+  assert.equal(first._error, 'Connection lost');
+  // Already shown: kept, no message
+  const shown = panel({ loaded: true, modules: [], tabs: ['system'] });
+  shown._hass.callWS = lost;
+  let renders = 0;
+  shown._render = () => renders++;
+  await shown._load();
+  assert.ok(!shown._error);
+  assert.equal(shown._state.loaded, true);
+  assert.equal(renders, 0);
 });
