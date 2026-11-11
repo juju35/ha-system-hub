@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Effacer toutes les automatisations en échec ? Elles seront de nouveau signalées au prochain échec.",
         "auto_show_more": "Afficher {n} de plus",
         "auto_show_less": "Afficher moins",
-        "auto_last_failure": "Dernier échec"
+        "auto_last_failure": "Dernier échec",
+        "unsaved": "Modifications non enregistrées",
+        "discard": "Annuler les modifications"
       }
     },
     "battery_type": {

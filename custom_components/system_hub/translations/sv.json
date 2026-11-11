@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Rensa alla misslyckade automatiseringar? De rapporteras igen vid nästa fel.",
         "auto_show_more": "Visa {n} till",
         "auto_show_less": "Visa färre",
-        "auto_last_failure": "Senaste felet"
+        "auto_last_failure": "Senaste felet",
+        "unsaved": "Osparade ändringar",
+        "discard": "Ignorera"
       }
     },
     "battery_type": {

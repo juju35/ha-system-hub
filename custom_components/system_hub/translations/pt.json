@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Limpar todas as automatizações falhadas? Voltarão a ser comunicadas na próxima falha.",
         "auto_show_more": "Mostrar mais {n}",
         "auto_show_less": "Mostrar menos",
-        "auto_last_failure": "Última falha"
+        "auto_last_failure": "Última falha",
+        "unsaved": "Alterações não guardadas",
+        "discard": "Descartar"
       }
     },
     "battery_type": {

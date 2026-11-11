@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Clear all failed automations? They will be reported again on their next failure.",
         "auto_show_more": "Show {n} more",
         "auto_show_less": "Show less",
-        "auto_last_failure": "Last failure"
+        "auto_last_failure": "Last failure",
+        "unsaved": "Unsaved changes",
+        "discard": "Discard"
       }
     },
     "battery_type": {

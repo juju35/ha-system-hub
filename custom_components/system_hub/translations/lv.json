@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Notīrīt visas neizdevušās automatizācijas? Par tām atkal tiks ziņots nākamās kļūmes gadījumā.",
         "auto_show_more": "Rādīt vēl {n}",
         "auto_show_less": "Rādīt mazāk",
-        "auto_last_failure": "Pēdējā kļūme"
+        "auto_last_failure": "Pēdējā kļūme",
+        "unsaved": "Nesaglabātas izmaiņas",
+        "discard": "Atmest"
       }
     },
     "battery_type": {

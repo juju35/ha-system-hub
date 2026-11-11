@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Vymazat všechny neúspěšné automatizace? Při dalším selhání budou znovu nahlášeny.",
         "auto_show_more": "Zobrazit další ({n})",
         "auto_show_less": "Zobrazit méně",
-        "auto_last_failure": "Poslední selhání"
+        "auto_last_failure": "Poslední selhání",
+        "unsaved": "Neuložené změny",
+        "discard": "Zahodit"
       }
     },
     "battery_type": {

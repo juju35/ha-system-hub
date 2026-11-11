@@ -8,12 +8,22 @@ const source = readFileSync(new URL('../custom_components/system_hub/frontend/sy
 const en = JSON.parse(readFileSync(new URL('../custom_components/system_hub/translations/en.json', import.meta.url), 'utf8'));
 const context = {
   HTMLElement: class {
+    // The events the panel sends (hass-notification: its toasts)
+    dispatchEvent(ev) {
+      this.events = [...(this.events || []), ev];
+    }
     attachShadow() {
       this.shadowRoot = { querySelector: () => null };
       return this.shadowRoot;
     }
   },
   customElements: { get: () => undefined, define() {} },
+  CustomEvent: class {
+    constructor(type, init = {}) {
+      this.type = type;
+      this.detail = init.detail;
+    }
+  },
   document: { hidden: false },
   setInterval: () => 0,
   clearInterval() {},
@@ -341,7 +351,15 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   for (const m of ['containers', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations']) assert.match(html, new RegExp(`data-module="${m}"`));
   assert.match(html, /data-module="watchdog" checked/);
   assert.match(html, /data-tab-move="system" data-dir="-1"[^>]*disabled/);
-  assert.match(html, /data-action="save" disabled/);
+  // Nothing changed: no save bar; a change brings it, with Discard
+  assert.doesNotMatch(html, /data-action="save"/);
+  const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
+  p._draft.tabs = ['watchdog', 'system'];
+  const changed = p._content();
+  assert.match(changed, /class="savebar"/);
+  assert.match(changed, /Unsaved changes/);
+  assert.match(changed, /data-action="save">/);
+  assert.match(changed, /data-action="discard"/);
 });
 
 test('automations tab: failures and unavailable linked entities from Automation Monitor, or how to add it', () => {
@@ -533,4 +551,37 @@ test('batteries tab: search, spares and their stock, CSV export', async () => {
   await click({ action: 'set_stock' });
   assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['system_hub', 'batteries_set_stock', { battery_type: 'AAA', count: 4 }]]);
   assert.equal(p._stockForm, false);
+});
+
+test('a running action spins its own button until the state is read again; done in a toast, a failure stays', async () => {
+  const state = { loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'], watchdog: { unavailable: [{ entry_id: 'e1', title: 'Plugs', domain: 'tuya', count: 1, max: 5 }] } };
+  const p = panel(state, 'watchdog');
+  const seen = [];
+  p._render = () => seen.push(p._content());
+  p._load = async () => {};
+  let fail = false;
+  p._hass.callService = async () => {
+    if (fail) throw new Error('Nope');
+  };
+  await p._run('watchdog_reset', 'watchdog_reset', { entry_id: 'e1' }, null, 'system_hub', 'watchdog_reset:e1');
+  // While it ran: that button spun and was disabled, the others did not
+  assert.match(seen[0], /data-action="watchdog_reset:e1" disabled aria-busy="true">\s*<ha-icon class="spin" icon="mdi:loading">/);
+  assert.doesNotMatch(seen[0], /data-action="watchdog_check"[^>]*aria-busy/);
+  assert.doesNotMatch(seen.at(-1), /aria-busy="true"/);
+  assert.equal(p.events.at(-1).type, 'hass-notification');
+  assert.equal(p.events.at(-1).detail.message, 'Done');
+  fail = true;
+  await p._run('watchdog_check', 'watchdog_check', {});
+  assert.match(p._content(), /Failed: Nope/);
+});
+
+test('times near now in words, the date beyond a week', () => {
+  const p = panel({ loaded: true });
+  const at = (ms) => new Date(Date.now() + ms).toISOString();
+  assert.equal(p._rel(at(-5000)), 'now');
+  assert.equal(p._rel(at(-5 * 60000)), '5 minutes ago');
+  assert.equal(p._rel(at(3 * 3600000)), 'in 3 hours');
+  assert.equal(p._rel(at(-3 * 86400000)), '3 days ago');
+  assert.equal(p._rel(at(-10 * 86400000)), p._ago(at(-10 * 86400000)));
+  assert.equal(p._rel(null), 'Never');
 });

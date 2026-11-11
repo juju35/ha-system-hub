@@ -1269,7 +1269,9 @@
         "auto_confirm_clear_all": "Ryd alle mislykkede automatiseringer? De bliver rapporteret igen ved næste fejl.",
         "auto_show_more": "Vis {n} flere",
         "auto_show_less": "Vis færre",
-        "auto_last_failure": "Seneste fejl"
+        "auto_last_failure": "Seneste fejl",
+        "unsaved": "Ikke-gemte ændringer",
+        "discard": "Kassér"
       }
     },
     "battery_type": {
