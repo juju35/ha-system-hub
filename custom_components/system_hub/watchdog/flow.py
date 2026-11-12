@@ -132,7 +132,9 @@ async def settings_schema(hass: HomeAssistant, current: dict[str, Any]) -> vol.S
                 SelectSelectorConfig(options=entry_options, multiple=True, mode=SelectSelectorMode.DROPDOWN)
             ),
             vol.Optional(
-                CONF_PAUSE_ENTITY, description={"suggested_value": current.get(CONF_PAUSE_ENTITY)}
+                # Suggested only when chosen: a null one is refused by the entity check (#63)
+                CONF_PAUSE_ENTITY,
+                description={"suggested_value": current[CONF_PAUSE_ENTITY]} if current.get(CONF_PAUSE_ENTITY) else None,
             ): EntitySelector(EntitySelectorConfig(domain=PAUSE_DOMAINS)),
             vol.Optional(CONF_NOTIFY, default=notify): SelectSelector(
                 SelectSelectorConfig(

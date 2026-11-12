@@ -3843,9 +3843,11 @@ function shFormData(schema) {
   return data;
 }
 
-// The values sent: the empty ones (an entity cleared) left out, as Home Assistant's own forms do
-function shFormSubmit(data) {
-  return Object.fromEntries(Object.entries(data || {}).filter(([, value]) => value !== null && value !== undefined));
+// The values sent: the empty ones left out, as Home Assistant's own forms do: null or undefined, and an empty string
+// but in a text field (an entity or a device picker cleared gives one, which its check refuses)
+function shFormSubmit(data, schema) {
+  var text = new Set((schema || []).filter((f) => f.selector && ('text' in f.selector || 'template' in f.selector)).map((f) => f.name));
+  return Object.fromEntries(Object.entries(data || {}).filter(([key, value]) => value !== null && value !== undefined && (value !== '' || text.has(key))));
 }
 
 // A form refused by Home Assistant (400: the values did not pass the checks): its errors by field, as the form shows
@@ -4121,7 +4123,7 @@ var SH_SETTINGS_METHODS = {
     cfg.busy = true;
     this._render();
     try {
-      this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, shFormSubmit(cfg.data)));
+      this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, shFormSubmit(cfg.data, cfg.flow?.data_schema)));
     } catch (err) {
       cfg.busy = false;
       cfg.errors = shFormErrors(err);

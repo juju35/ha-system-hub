@@ -19,9 +19,10 @@ async def test_sentinel_settings_saved_with_ignored_integrations(hass: HomeAssis
     flow = await (await client.post("/api/config/config_entries/options/flow", json={"handler": entry.entry_id})).json()
     url = f"/api/config/config_entries/options/flow/{flow['flow_id']}"
     form = await (await client.post(url, json={"next_step_id": "watchdog"})).json()
-    # The pause entity is suggested as null: sent back as is, it is refused, field by field
+    # No pause entity chosen: none suggested (a null one would be sent back); sent as null anyway, it is refused, field
+    # by field
     pause = next(f for f in form["data_schema"] if f["name"] == "pause_entity")
-    assert pause["description"]["suggested_value"] is None
+    assert "description" not in pause
     data = {"scan_interval": 5, "grace_period": 10, "max_reloads": 3, "ignored_integrations": ["mqtt"]}
     refused = await client.post(url, json={**data, "pause_entity": None})
     assert refused.status == 400

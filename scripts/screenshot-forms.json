@@ -431,9 +431,6 @@
           }
         },
         "name": "pause_entity",
-        "description": {
-          "suggested_value": null
-        },
         "required": false,
         "optional": true
       },
