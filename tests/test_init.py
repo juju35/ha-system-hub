@@ -90,7 +90,7 @@ async def test_only_watchdog(hass: HomeAssistant, fake_marketplace) -> None:
     with pytest.raises(ServiceValidationError) as err:
         await hass.services.async_call(DOMAIN, "marketplace_check_updates", {}, blocking=True)
     assert err.value.translation_key == "module_disabled"
-    assert err.value.translation_placeholders == {"module": "Marketplace"}
+    assert err.value.translation_placeholders == {"module": "Updates"}
     with pytest.raises(ServiceValidationError) as err:
         await hass.services.async_call(DOMAIN, "batteries_notify", {}, blocking=True)
     assert err.value.translation_placeholders == {"module": "Batteries"}

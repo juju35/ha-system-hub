@@ -6,12 +6,12 @@
         "description": "Vyberte moduly, ktoré chcete zapnúť. Každý modul sa nastavuje v možnostiach.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Strážca",
+          "marketplace": "Aktualizácie",
+          "batteries": "Batérie",
+          "git_sync": "Verziovanie",
+          "orphans": "Čistenie",
+          "automations": "Automatizácie"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Moduly",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Pridať reštart cez zásuvku",
-          "watchdog_remove_power_cycle": "Watchdog: Odstrániť reštarty cez zásuvku",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Nastavenia repozitára",
-          "git_sync": "Git Sync",
+          "watchdog": "Strážca",
+          "watchdog_add_power_cycle": "Strážca: Pridať reštart cez zásuvku",
+          "watchdog_remove_power_cycle": "Strážca: Odstrániť reštarty cez zásuvku",
+          "marketplace": "Aktualizácie",
+          "batteries": "Batérie",
+          "git_sync_repository": "Verziovanie: Nastavenia repozitára",
+          "git_sync": "Verziovanie",
           "batteries_types": "Batérie: typy batérií",
           "batteries_import": "Batérie: import z Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Čistenie",
           "system": "Systém: prahy",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Pridať repozitár",
-          "git_sync_other": "Git Sync: Iný repozitár",
-          "git_sync_remove_repository": "Git Sync: Odstrániť repozitáre"
+          "automations": "Automatizácie",
+          "git_sync_add_repository": "Verziovanie: Pridať repozitár",
+          "git_sync_other": "Verziovanie: Iný repozitár",
+          "git_sync_remove_repository": "Verziovanie: Odstrániť repozitáre"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Zapnite alebo vypnite moduly. Vypnutý modul zastaví svoje kontroly a jeho entity sa odstránia; jeho nastavenia sa zachovajú.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Strážca",
+          "marketplace": "Aktualizácie",
+          "batteries": "Batérie",
+          "git_sync": "Verziovanie",
+          "automations": "Automatizácie"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Strážca",
         "data": {
           "scan_interval": "Interval kontroly",
           "grace_period": "Ochranná lehota",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Aktualizácie",
         "data": {
           "scan_interval": "Interval kontroly",
           "backup_before_install": "Zálohovať pred inštaláciou aktualizácií"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Batérie",
         "data": {
           "threshold": "Prah slabej batérie",
           "duration": "Slabá aspoň",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Verziovanie",
         "description": "Správa commitu, plány, oznámenia a export dashboardov.",
         "data": {
           "ai_task_entity": "Entita úlohy AI",
@@ -271,7 +271,7 @@
         "description": "Nájdené v Battery Monitor: nastavenia: {settings}, typy batérií nastavené v jeho kartách: {types}, typy náhradných batérií: {stock}. Odoslaním ich prenesiete do System Hub: jeho nastavenia nahradia nastavenia modulu Batérie a typy batérií už nastavené tu zostanú zachované."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Čistenie",
         "data": {
           "scan_interval": "Interval skenovania",
           "grace_period": "Čakacia doba po spustení",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatizácie",
         "data": {
           "exclude_devices": "Ignorované zariadenia",
           "exclude_entities": "Ignorované entity"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Verziovanie",
         "description": "Repozitár {repository}",
         "data": {
           "ai_task_entity": "Entita úlohy AI",
@@ -1062,7 +1062,7 @@
       "message": "Náhradné batérie na kúpu: {spares}"
     },
     "no_ai_task": {
-      "message": "V možnostiach Git Sync nie je nastavená entita úlohy AI."
+      "message": "V možnostiach Verziovanie nie je nastavená entita úlohy AI."
     },
     "ai_task_failed": {
       "message": "Úloha AI nevrátila žiadnu správu commitu."
@@ -1077,10 +1077,10 @@
       "message": "Commit je v konflikte s novými commitmi {upstream}: rebase bol prerušený a nič sa neodoslalo. Pozri Nastavenia → Opravy."
     },
     "sensitive_files": {
-      "message": "Odmietnuté: zmeny obsahujú citlivé súbory ({files}), ktoré sa necommitujú ani neposielajú do AI task. Pridaj ich do .gitignore alebo povoľ sledované v možnostiach Git Sync."
+      "message": "Odmietnuté: zmeny obsahujú citlivé súbory ({files}), ktoré sa necommitujú ani neposielajú do AI task. Pridaj ich do .gitignore alebo povoľ sledované v možnostiach Verziovanie."
     },
     "export_dir_not_allowed": {
-      "message": "Priečinok exportu {path} je mimo priečinka konfigurácie a allowlist_external_dirs: vyberte iný v možnostiach Git Sync."
+      "message": "Priečinok exportu {path} je mimo priečinka konfigurácie a allowlist_external_dirs: vyberte iný v možnostiach Verziovanie."
     },
     "orphans_starting": {
       "message": "Home Assistant sa ešte spúšťa: po spustení spustite skenovanie znova."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync nemôže odoslať push {repo}",
-      "description": "Vetva má {ahead} lokálnych commitov, ktoré nie sú na {upstream}, a {upstream} má {behind} commitov, ktoré tu nie sú. Git Sync sám nezlučuje rozchádzajúce sa histórie, preto sa nič neodošle.\n\nNa vyriešenie otvor terminál v {repo} a spusti:\n\n```\ngit pull --rebase\n```\n\nVyrieš prípadné konflikty (uprav súbory, `git add`, potom `git rebase --continue`) a potom znova stlač **Commit a push**. Táto oprava zmizne pri ďalšom úspešnom push."
+      "title": "Verziovanie nemôže odoslať push {repo}",
+      "description": "Vetva má {ahead} lokálnych commitov, ktoré nie sú na {upstream}, a {upstream} má {behind} commitov, ktoré tu nie sú. Verziovanie sám nezlučuje rozchádzajúce sa histórie, preto sa nič neodošle.\n\nNa vyriešenie otvor terminál v {repo} a spusti:\n\n```\ngit pull --rebase\n```\n\nVyrieš prípadné konflikty (uprav súbory, `git add`, potom `git rebase --continue`) a potom znova stlač **Commit a push**. Táto oprava zmizne pri ďalšom úspešnom push."
     },
     "behind_remote": {
-      "title": "Git Sync nemôže odoslať push {repo}",
-      "description": "{upstream} má {behind} commitov, ktoré tu nie sú, a **Pull pred push** je vypnutý v možnostiach Git Sync, preto sa nič neodošle. Zapni ho alebo spusti `git pull --rebase` v termináli v {repo}. Táto oprava zmizne pri ďalšom úspešnom push."
+      "title": "Verziovanie nemôže odoslať push {repo}",
+      "description": "{upstream} má {behind} commitov, ktoré tu nie sú, a **Pull pred push** je vypnutý v možnostiach Verziovanie, preto sa nič neodošle. Zapni ho alebo spusti `git pull --rebase` v termináli v {repo}. Táto oprava zmizne pri ďalšom úspešnom push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore v {repo} nevylučuje tajomstvá",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Pridať chýbajúce riadky do .gitignore",
-            "description": "Bez týchto riadkov by Git Sync commitoval a odoslal heslá, tokeny a úložisko overovania Home Assistant:\n\n{lines}\n\nOdošli, aby sa pripojili do {repo}/.gitignore. Súbor, ktorý sa už sleduje, zostane sledovaný: odstráň ho z repozitára príkazom `git rm -r --cached secrets.yaml .storage` (súbory zostanú na disku)."
+            "description": "Bez týchto riadkov by Verziovanie commitoval a odoslal heslá, tokeny a úložisko overovania Home Assistant:\n\n{lines}\n\nOdošli, aby sa pripojili do {repo}/.gitignore. Súbor, ktorý sa už sleduje, zostane sledovaný: odstráň ho z repozitára príkazom `git rm -r --cached secrets.yaml .storage` (súbory zostanú na disku)."
           }
         },
         "abort": {
-          "not_loaded": "Repozitár Git Sync nie je načítaný."
+          "not_loaded": "Repozitár Verziovanie nie je načítaný."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Zásuvka nedostupná",
         "unknown_device": "Zariadenie odstránené",
         "open_device": "Zariadenie",
-        "pc_none": "Zatiaľ žiadny reštart cez zásuvku: pridajte ho v Konfigurovať → Watchdog: pridať reštart cez zásuvku.",
+        "pc_none": "Zatiaľ žiadny reštart cez zásuvku: pridajte ho v Konfigurovať → Strážca: pridať reštart cez zásuvku.",
         "pc_configure": "Pridať alebo odstrániť v Konfigurovať",
         "orph_reason_entry_removed": "Integrácia odstránená",
         "orph_reason_integration_missing": "Integrácia nenačítaná",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Info: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "beží {time}",
-        "st_updates": "Aktualizácie",
         "st_normal": "Všetko normálne",
         "st_high": "Vysoké: {what}",
         "st_stopped": "Zastavené: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "skontrolované {when}",
         "st_device": "Zariadenia: 1",
         "modules_tabs": "Moduly a karty",
-        "modules_tabs_hint": "Potiahnutím ═ zoraďte karty; prvá sa otvorí predvolene.",
+        "modules_tabs_hint": "Skupiny zoraďte pomocou ↑ ↓ a moduly skupiny potiahnutím ═; prvá karta sa otvorí predvolene.",
         "enabled": "Zapnuté",
         "disabled": "Vypnuté",
         "tab_default": "predvolená",
         "drag": "Presunúť",
         "st_hint": "Stav inštancie na prvý pohľad",
-        "stopped_allowed": "Zastavené (povolené)"
+        "stopped_allowed": "Zastavené (povolené)",
+        "tab_system": "Prostriedky",
+        "tab_watchdog": "Strážca",
+        "tab_marketplace": "Aktualizácie",
+        "tab_orphans": "Čistenie",
+        "tab_automations": "Automatizácie",
+        "tab_batteries": "Batérie",
+        "tab_git_sync": "Verziovanie",
+        "group_reliability": "Spoľahlivosť",
+        "group_maintenance": "Údržba",
+        "group_devices": "Zariadenia",
+        "move_up": "Posunúť hore",
+        "move_down": "Posunúť dole"
       }
     },
     "battery_type": {

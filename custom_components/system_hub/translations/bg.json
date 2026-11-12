@@ -6,12 +6,12 @@
         "description": "Изберете модулите за включване. Всеки модул се настройва в опциите.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Страж",
+          "marketplace": "Актуализации",
+          "batteries": "Батерии",
+          "git_sync": "Версиониране",
+          "orphans": "Почистване",
+          "automations": "Автоматизации"
         },
         "data_description": {
           "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Модули",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Добавяне на рестарт чрез контакт",
-          "watchdog_remove_power_cycle": "Watchdog: Премахване на рестарти чрез контакт",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Настройки на хранилището",
-          "git_sync": "Git Sync",
+          "watchdog": "Страж",
+          "watchdog_add_power_cycle": "Страж: Добавяне на рестарт чрез контакт",
+          "watchdog_remove_power_cycle": "Страж: Премахване на рестарти чрез контакт",
+          "marketplace": "Актуализации",
+          "batteries": "Батерии",
+          "git_sync_repository": "Версиониране: Настройки на хранилището",
+          "git_sync": "Версиониране",
           "batteries_types": "Батерии: типове батерии",
           "batteries_import": "Батерии: импорт от Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Почистване",
           "system": "Система: прагове",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Добавяне на хранилище",
-          "git_sync_other": "Git Sync: Друго хранилище",
-          "git_sync_remove_repository": "Git Sync: Премахване на хранилища"
+          "automations": "Автоматизации",
+          "git_sync_add_repository": "Версиониране: Добавяне на хранилище",
+          "git_sync_other": "Версиониране: Друго хранилище",
+          "git_sync_remove_repository": "Версиониране: Премахване на хранилища"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Включете или изключете модули. Изключен модул спира проверките си и обектите му се премахват; настройките му се запазват.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Страж",
+          "marketplace": "Актуализации",
+          "batteries": "Батерии",
+          "git_sync": "Версиониране",
+          "automations": "Автоматизации"
         },
         "data_description": {
           "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Страж",
         "data": {
           "scan_interval": "Интервал на проверка",
           "grace_period": "Гратисен период",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Актуализации",
         "data": {
           "scan_interval": "Интервал на проверка",
           "backup_before_install": "Резервно копие преди инсталиране на обновления"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Батерии",
         "data": {
           "threshold": "Праг за изтощена батерия",
           "duration": "Изтощена поне",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Версиониране",
         "description": "Commit съобщение, графици, известия и експорт на таблата.",
         "data": {
           "ai_task_entity": "Обект за AI задача",
@@ -271,7 +271,7 @@
         "description": "Намерено в Battery Monitor: {settings} настройки, {types} типа батерии, зададени в картите му, и {stock} типа резервни батерии. Изпратете, за да ги пренесете в System Hub: настройките му заменят тези на модула Батерии, а вече зададените тук типове батерии се запазват."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Почистване",
         "data": {
           "scan_interval": "Интервал на сканиране",
           "grace_period": "Гратисен период след стартиране",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Автоматизации",
         "data": {
           "exclude_devices": "Игнорирани устройства",
           "exclude_entities": "Игнорирани обекти"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Версиониране",
         "description": "Хранилище {repository}",
         "data": {
           "ai_task_entity": "Обект за AI задача",
@@ -1062,7 +1062,7 @@
       "message": "Резервни батерии за купуване: {spares}"
     },
     "no_ai_task": {
-      "message": "В опциите на Git Sync не е зададен обект за AI задача."
+      "message": "В опциите на Версиониране не е зададен обект за AI задача."
     },
     "ai_task_failed": {
       "message": "AI задачата не върна commit съобщение."
@@ -1077,10 +1077,10 @@
       "message": "Commit-ът е в конфликт с новите commit-и на {upstream}: rebase е прекратен и нищо не е изпратено. Вижте Настройки → Поправки."
     },
     "sensitive_files": {
-      "message": "Отказано: промените включват чувствителни файлове ({files}), които нито влизат в commit, нито се изпращат на AI task. Добавете ги в .gitignore или разрешете следените в опциите на Git Sync."
+      "message": "Отказано: промените включват чувствителни файлове ({files}), които нито влизат в commit, нито се изпращат на AI task. Добавете ги в .gitignore или разрешете следените в опциите на Версиониране."
     },
     "export_dir_not_allowed": {
-      "message": "Папката за експорт {path} е извън папката с конфигурацията и allowlist_external_dirs: изберете друга в опциите на Git Sync."
+      "message": "Папката за експорт {path} е извън папката с конфигурацията и allowlist_external_dirs: изберете друга в опциите на Версиониране."
     },
     "orphans_starting": {
       "message": "Home Assistant все още стартира: сканирайте отново, щом стартира."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync не може да направи push на {repo}",
-      "description": "Клонът има {ahead} локални commit-а, които ги няма в {upstream}, а {upstream} има {behind} commit-а, които ги няма тук. Git Sync не обединява сам разклонени истории, затова нищо не се изпраща.\n\nЗа да го решите, отворете терминал в {repo} и изпълнете:\n\n```\ngit pull --rebase\n```\n\nОтстранете евентуалните конфликти (редактирайте файловете, `git add`, после `git rebase --continue`), след което натиснете отново **Commit и push**. Тази поправка изчезва при следващия успешен push."
+      "title": "Версиониране не може да направи push на {repo}",
+      "description": "Клонът има {ahead} локални commit-а, които ги няма в {upstream}, а {upstream} има {behind} commit-а, които ги няма тук. Версиониране не обединява сам разклонени истории, затова нищо не се изпраща.\n\nЗа да го решите, отворете терминал в {repo} и изпълнете:\n\n```\ngit pull --rebase\n```\n\nОтстранете евентуалните конфликти (редактирайте файловете, `git add`, после `git rebase --continue`), след което натиснете отново **Commit и push**. Тази поправка изчезва при следващия успешен push."
     },
     "behind_remote": {
-      "title": "Git Sync не може да направи push на {repo}",
-      "description": "{upstream} има {behind} commit-а, които ги няма тук, а **Pull преди push** е изключено в опциите на Git Sync, затова нищо не се изпраща. Включете го или изпълнете `git pull --rebase` в терминал в {repo}. Тази поправка изчезва при следващия успешен push."
+      "title": "Версиониране не може да направи push на {repo}",
+      "description": "{upstream} има {behind} commit-а, които ги няма тук, а **Pull преди push** е изключено в опциите на Версиониране, затова нищо не се изпраща. Включете го или изпълнете `git pull --rebase` в терминал в {repo}. Тази поправка изчезва при следващия успешен push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore на {repo} не изключва тайните",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Добавяне на липсващите редове в .gitignore",
-            "description": "Без тези редове Git Sync би направил commit и push на паролите, токените и хранилището за удостоверяване на Home Assistant:\n\n{lines}\n\nИзпратете, за да ги добавите в {repo}/.gitignore. Файл, който вече се следи, остава следен: премахнете го от хранилището с `git rm -r --cached secrets.yaml .storage` (файловете остават на диска)."
+            "description": "Без тези редове Версиониране би направил commit и push на паролите, токените и хранилището за удостоверяване на Home Assistant:\n\n{lines}\n\nИзпратете, за да ги добавите в {repo}/.gitignore. Файл, който вече се следи, остава следен: премахнете го от хранилището с `git rm -r --cached secrets.yaml .storage` (файловете остават на диска)."
           }
         },
         "abort": {
-          "not_loaded": "Хранилището на Git Sync не е заредено."
+          "not_loaded": "Хранилището на Версиониране не е заредено."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Контактът е недостъпен",
         "unknown_device": "Устройството е премахнато",
         "open_device": "Устройство",
-        "pc_none": "Все още няма рестартиране чрез контакт: добавете в Конфигуриране → Watchdog: добавяне на рестартиране чрез контакт.",
+        "pc_none": "Все още няма рестартиране чрез контакт: добавете в Конфигуриране → Страж: добавяне на рестартиране чрез контакт.",
         "pc_configure": "Добавяне или премахване в Конфигуриране",
         "orph_reason_entry_removed": "Премахната интеграция",
         "orph_reason_integration_missing": "Незаредена интеграция",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Инфо: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "работи от {time}",
-        "st_updates": "Актуализации",
         "st_normal": "Всичко е нормално",
         "st_high": "Високо: {what}",
         "st_stopped": "Спрени: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "проверено {when}",
         "st_device": "Устройства: 1",
         "modules_tabs": "Модули и раздели",
-        "modules_tabs_hint": "Плъзнете ═, за да подредите разделите; първият се отваря по подразбиране.",
+        "modules_tabs_hint": "Подредете групите с ↑ ↓, а модулите в група – като плъзнете ═; първият раздел се отваря по подразбиране.",
         "enabled": "Включени",
         "disabled": "Изключени",
         "tab_default": "по подразбиране",
         "drag": "Преместване",
         "st_hint": "Състоянието на инстанцията с един поглед",
-        "stopped_allowed": "Спрян (позволено)"
+        "stopped_allowed": "Спрян (позволено)",
+        "tab_system": "Ресурси",
+        "tab_watchdog": "Страж",
+        "tab_marketplace": "Актуализации",
+        "tab_orphans": "Почистване",
+        "tab_automations": "Автоматизации",
+        "tab_batteries": "Батерии",
+        "tab_git_sync": "Версиониране",
+        "group_reliability": "Надеждност",
+        "group_maintenance": "Поддръжка",
+        "group_devices": "Устройства",
+        "move_up": "Нагоре",
+        "move_down": "Надолу"
       }
     },
     "battery_type": {

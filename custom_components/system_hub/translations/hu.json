@@ -6,12 +6,12 @@
         "description": "Válassza ki a bekapcsolandó modulokat. Minden modult a beállításokban lehet megadni.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Őrszem",
+          "marketplace": "Frissítések",
+          "batteries": "Elemek",
+          "git_sync": "Verziókezelés",
+          "orphans": "Takarítás",
+          "automations": "Automatizálások"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Modulok",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Újraindítás hozzáadása konnektorral",
-          "watchdog_remove_power_cycle": "Watchdog: Konnektoros újraindítások eltávolítása",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Tároló beállításai",
-          "git_sync": "Git Sync",
+          "watchdog": "Őrszem",
+          "watchdog_add_power_cycle": "Őrszem: Újraindítás hozzáadása konnektorral",
+          "watchdog_remove_power_cycle": "Őrszem: Konnektoros újraindítások eltávolítása",
+          "marketplace": "Frissítések",
+          "batteries": "Elemek",
+          "git_sync_repository": "Verziókezelés: Tároló beállításai",
+          "git_sync": "Verziókezelés",
           "batteries_types": "Elemek: elemtípusok",
           "batteries_import": "Elemek: importálás a Battery Monitorból",
-          "orphans": "Orphans",
+          "orphans": "Takarítás",
           "system": "Rendszer: küszöbök",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Tároló hozzáadása",
-          "git_sync_other": "Git Sync: Másik tároló",
-          "git_sync_remove_repository": "Git Sync: Tárolók eltávolítása"
+          "automations": "Automatizálások",
+          "git_sync_add_repository": "Verziókezelés: Tároló hozzáadása",
+          "git_sync_other": "Verziókezelés: Másik tároló",
+          "git_sync_remove_repository": "Verziókezelés: Tárolók eltávolítása"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Kapcsolja be vagy ki a modulokat. A kikapcsolt modul leállítja az ellenőrzéseit, és az entitásai törlődnek; a beállításai megmaradnak.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Őrszem",
+          "marketplace": "Frissítések",
+          "batteries": "Elemek",
+          "git_sync": "Verziókezelés",
+          "automations": "Automatizálások"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Őrszem",
         "data": {
           "scan_interval": "Ellenőrzési időköz",
           "grace_period": "Türelmi idő",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Frissítések",
         "data": {
           "scan_interval": "Ellenőrzési időköz",
           "backup_before_install": "Biztonsági mentés a frissítések telepítése előtt"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Elemek",
         "data": {
           "threshold": "Gyenge elem küszöbértéke",
           "duration": "Legalább ennyi ideje gyenge",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Verziókezelés",
         "description": "Commitüzenet, ütemezések, értesítések és irányítópult-exportálás.",
         "data": {
           "ai_task_entity": "MI-feladat entitás",
@@ -271,7 +271,7 @@
         "description": "A Battery Monitorban találtak: {settings} beállítás, {types} kártyáiban beállított elemtípus és {stock} tartalékelem-típus. Küldje el, hogy átkerüljenek a System Hubba: beállításai felváltják az Elemek modul beállításait, az itt már beállított elemtípusok megmaradnak."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Takarítás",
         "data": {
           "scan_interval": "Vizsgálati időköz",
           "grace_period": "Türelmi idő indulás után",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatizálások",
         "data": {
           "exclude_devices": "Figyelmen kívül hagyott eszközök",
           "exclude_entities": "Figyelmen kívül hagyott entitások"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Verziókezelés",
         "description": "Tároló: {repository}",
         "data": {
           "ai_task_entity": "MI-feladat entitás",
@@ -1062,7 +1062,7 @@
       "message": "Vásárolandó tartalék elemek: {spares}"
     },
     "no_ai_task": {
-      "message": "Nincs MI-feladat entitás megadva a Git Sync beállításaiban."
+      "message": "Nincs MI-feladat entitás megadva a Verziókezelés beállításaiban."
     },
     "ai_task_failed": {
       "message": "Az MI-feladat nem adott vissza commitüzenetet."
@@ -1077,10 +1077,10 @@
       "message": "A commit ütközik a(z) {upstream} új commitjaival: a rebase megszakadt, és semmi sem lett pusholva. Lásd: Beállítások → Javítások."
     },
     "sensitive_files": {
-      "message": "Elutasítva: a módosítások érzékeny fájlokat tartalmaznak ({files}), amelyek nem kerülnek commitba, és az AI task sem kapja meg őket. Vedd fel őket a .gitignore-ba, vagy engedélyezd a követetteket a Git Sync beállításaiban."
+      "message": "Elutasítva: a módosítások érzékeny fájlokat tartalmaznak ({files}), amelyek nem kerülnek commitba, és az AI task sem kapja meg őket. Vedd fel őket a .gitignore-ba, vagy engedélyezd a követetteket a Verziókezelés beállításaiban."
     },
     "export_dir_not_allowed": {
-      "message": "A(z) {path} exportmappa a konfigurációs mappán és az allowlist_external_dirs mappáin kívül van: válassz másikat a Git Sync beállításaiban."
+      "message": "A(z) {path} exportmappa a konfigurációs mappán és az allowlist_external_dirs mappáin kívül van: válassz másikat a Verziókezelés beállításaiban."
     },
     "orphans_starting": {
       "message": "A Home Assistant még indul: indítsa újra a vizsgálatot, ha elindult."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "A Git Sync nem tudja pusholni ezt: {repo}",
-      "description": "Az ágon {ahead} helyi commit van, amely nincs a(z) {upstream} ágon, a(z) {upstream} ágon pedig {behind} commit van, amely itt hiányzik. A Git Sync magától nem egyesít elágazott előzményeket, ezért semmi sem kerül push-ra.\n\nA megoldáshoz nyiss egy terminált itt: {repo}, és futtasd:\n\n```\ngit pull --rebase\n```\n\nOldd fel az esetleges ütközéseket (szerkeszd a fájlokat, `git add`, majd `git rebase --continue`), aztán nyomd meg újra a **Commit és push** gombot. Ez a javítás a következő sikeres push után eltűnik."
+      "title": "A Verziókezelés nem tudja pusholni ezt: {repo}",
+      "description": "Az ágon {ahead} helyi commit van, amely nincs a(z) {upstream} ágon, a(z) {upstream} ágon pedig {behind} commit van, amely itt hiányzik. A Verziókezelés magától nem egyesít elágazott előzményeket, ezért semmi sem kerül push-ra.\n\nA megoldáshoz nyiss egy terminált itt: {repo}, és futtasd:\n\n```\ngit pull --rebase\n```\n\nOldd fel az esetleges ütközéseket (szerkeszd a fájlokat, `git add`, majd `git rebase --continue`), aztán nyomd meg újra a **Commit és push** gombot. Ez a javítás a következő sikeres push után eltűnik."
     },
     "behind_remote": {
-      "title": "A Git Sync nem tudja pusholni ezt: {repo}",
-      "description": "A(z) {upstream} ágon {behind} commit van, amely itt hiányzik, és a **Pull a push előtt** ki van kapcsolva a Git Sync beállításaiban, ezért semmi sem kerül push-ra. Kapcsold be, vagy futtasd a `git pull --rebase` parancsot egy terminálban itt: {repo}. Ez a javítás a következő sikeres push után eltűnik."
+      "title": "A Verziókezelés nem tudja pusholni ezt: {repo}",
+      "description": "A(z) {upstream} ágon {behind} commit van, amely itt hiányzik, és a **Pull a push előtt** ki van kapcsolva a Verziókezelés beállításaiban, ezért semmi sem kerül push-ra. Kapcsold be, vagy futtasd a `git pull --rebase` parancsot egy terminálban itt: {repo}. Ez a javítás a következő sikeres push után eltűnik."
     },
     "git_sync_gitignore_missing": {
       "title": "A(z) {repo} .gitignore fájlja nem zárja ki a titkokat",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "A hiányzó sorok hozzáadása a .gitignore-hoz",
-            "description": "Ezek nélkül a sorok nélkül a Git Sync commitolná és pusholná a Home Assistant jelszavait, tokenjeit és hitelesítési tárolóját:\n\n{lines}\n\nKüldd el, hogy hozzáfűzze őket ehhez: {repo}/.gitignore. A már követett fájl követett marad: vedd ki a tárolóból a `git rm -r --cached secrets.yaml .storage` paranccsal (a fájlok a lemezen maradnak)."
+            "description": "Ezek nélkül a sorok nélkül a Verziókezelés commitolná és pusholná a Home Assistant jelszavait, tokenjeit és hitelesítési tárolóját:\n\n{lines}\n\nKüldd el, hogy hozzáfűzze őket ehhez: {repo}/.gitignore. A már követett fájl követett marad: vedd ki a tárolóból a `git rm -r --cached secrets.yaml .storage` paranccsal (a fájlok a lemezen maradnak)."
           }
         },
         "abort": {
-          "not_loaded": "A Git Sync tároló nincs betöltve."
+          "not_loaded": "A Verziókezelés tároló nincs betöltve."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Konnektor elérhetetlen",
         "unknown_device": "Eszköz eltávolítva",
         "open_device": "Eszköz",
-        "pc_none": "Még nincs aljzatos újraindítás: adjon hozzá egyet: Konfigurálás → Watchdog: aljzatos újraindítás hozzáadása.",
+        "pc_none": "Még nincs aljzatos újraindítás: adjon hozzá egyet: Konfigurálás → Őrszem: aljzatos újraindítás hozzáadása.",
         "pc_configure": "Hozzáadás vagy eltávolítás a Konfigurálásban",
         "orph_reason_entry_removed": "Integráció eltávolítva",
         "orph_reason_integration_missing": "Integráció nincs betöltve",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} info",
         "st_n_good": "{n} OK",
         "st_up": "{time} óta fut",
-        "st_updates": "Frissítések",
         "st_normal": "Minden normális",
         "st_high": "Magas: {what}",
         "st_stopped": "{n} leállt",
@@ -1470,13 +1469,25 @@
         "st_scanned": "átvizsgálva {when}",
         "st_device": "1 eszköz",
         "modules_tabs": "Modulok és lapok",
-        "modules_tabs_hint": "Húzza a ═ jelet a lapok sorrendjéhez; az első nyílik meg alapértelmezésként.",
+        "modules_tabs_hint": "A csoportokat a ↑ ↓ gombokkal, egy csoport moduljait a ═ húzásával rendezheti; az első lap nyílik meg alapértelmezésként.",
         "enabled": "Bekapcsolva",
         "disabled": "Kikapcsolva",
         "tab_default": "alapértelmezett",
         "drag": "Áthelyezés",
         "st_hint": "A példány állapota egy pillantással",
-        "stopped_allowed": "Leállítva (engedélyezett)"
+        "stopped_allowed": "Leállítva (engedélyezett)",
+        "tab_system": "Erőforrások",
+        "tab_watchdog": "Őrszem",
+        "tab_marketplace": "Frissítések",
+        "tab_orphans": "Takarítás",
+        "tab_automations": "Automatizálások",
+        "tab_batteries": "Elemek",
+        "tab_git_sync": "Verziókezelés",
+        "group_reliability": "Megbízhatóság",
+        "group_maintenance": "Karbantartás",
+        "group_devices": "Eszközök",
+        "move_up": "Fel",
+        "move_down": "Le"
       }
     },
     "battery_type": {

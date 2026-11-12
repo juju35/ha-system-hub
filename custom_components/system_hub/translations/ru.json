@@ -6,12 +6,12 @@
         "description": "Выберите модули для включения. Каждый модуль настраивается в параметрах.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Страж",
+          "marketplace": "Обновления",
+          "batteries": "Батареи",
+          "git_sync": "Версионирование",
+          "orphans": "Очистка",
+          "automations": "Автоматизации"
         },
         "data_description": {
           "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Модули",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Добавить перезапуск через розетку",
-          "watchdog_remove_power_cycle": "Watchdog: Удалить перезапуски через розетку",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Настройки репозитория",
-          "git_sync": "Git Sync",
+          "watchdog": "Страж",
+          "watchdog_add_power_cycle": "Страж: Добавить перезапуск через розетку",
+          "watchdog_remove_power_cycle": "Страж: Удалить перезапуски через розетку",
+          "marketplace": "Обновления",
+          "batteries": "Батареи",
+          "git_sync_repository": "Версионирование: Настройки репозитория",
+          "git_sync": "Версионирование",
           "batteries_types": "Батареи: типы батарей",
           "batteries_import": "Батареи: импорт из Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Очистка",
           "system": "Система: пороги",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Добавить репозиторий",
-          "git_sync_other": "Git Sync: Другой репозиторий",
-          "git_sync_remove_repository": "Git Sync: Удалить репозитории"
+          "automations": "Автоматизации",
+          "git_sync_add_repository": "Версионирование: Добавить репозиторий",
+          "git_sync_other": "Версионирование: Другой репозиторий",
+          "git_sync_remove_repository": "Версионирование: Удалить репозитории"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Включите или отключите модули. Отключённый модуль прекращает проверки, а его объекты удаляются; его настройки сохраняются.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Страж",
+          "marketplace": "Обновления",
+          "batteries": "Батареи",
+          "git_sync": "Версионирование",
+          "automations": "Автоматизации"
         },
         "data_description": {
           "containers": "Отслеживает Home Assistant Core, Supervisor и дополнения: состояние, версию, CPU и память. Только мониторинг: ничего не перезапускается.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Страж",
         "data": {
           "scan_interval": "Интервал проверки",
           "grace_period": "Период ожидания",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Обновления",
         "data": {
           "scan_interval": "Интервал проверки",
           "backup_before_install": "Резервная копия перед установкой обновлений"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Батареи",
         "data": {
           "threshold": "Порог разряда батареи",
           "duration": "Разряжена не менее",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Версионирование",
         "description": "Сообщение commit, расписания, уведомления и экспорт панелей.",
         "data": {
           "ai_task_entity": "Объект AI-задачи",
@@ -271,7 +271,7 @@
         "description": "Найдено в Battery Monitor: настроек — {settings}, типов батарей, заданных в его карточках, — {types}, типов запасных батарей — {stock}. Отправьте, чтобы перенести их в System Hub: его настройки заменят настройки модуля «Батареи», а уже заданные здесь типы батарей сохранятся."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Очистка",
         "data": {
           "scan_interval": "Интервал сканирования",
           "grace_period": "Задержка после запуска",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Автоматизации",
         "data": {
           "exclude_devices": "Игнорируемые устройства",
           "exclude_entities": "Игнорируемые объекты"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Версионирование",
         "description": "Репозиторий {repository}",
         "data": {
           "ai_task_entity": "Объект AI-задачи",
@@ -1062,7 +1062,7 @@
       "message": "Купить запасные батарейки: {spares}"
     },
     "no_ai_task": {
-      "message": "В параметрах Git Sync не задан объект AI-задачи."
+      "message": "В параметрах Версионирование не задан объект AI-задачи."
     },
     "ai_task_failed": {
       "message": "AI-задача не вернула сообщение commit."
@@ -1077,10 +1077,10 @@
       "message": "Commit конфликтует с новыми commit в {upstream}: rebase отменён, ничего не отправлено. См. Настройки → Исправления."
     },
     "sensitive_files": {
-      "message": "Отклонено: изменения содержат конфиденциальные файлы ({files}), которые не попадают в commit и не отправляются AI-задаче. Добавьте их в .gitignore или разрешите отслеживаемые в параметрах Git Sync."
+      "message": "Отклонено: изменения содержат конфиденциальные файлы ({files}), которые не попадают в commit и не отправляются AI-задаче. Добавьте их в .gitignore или разрешите отслеживаемые в параметрах Версионирование."
     },
     "export_dir_not_allowed": {
-      "message": "Папка экспорта {path} находится вне папки конфигурации и allowlist_external_dirs: выберите другую в параметрах Git Sync."
+      "message": "Папка экспорта {path} находится вне папки конфигурации и allowlist_external_dirs: выберите другую в параметрах Версионирование."
     },
     "orphans_starting": {
       "message": "Home Assistant ещё запускается: повторите сканирование после запуска."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync не может выполнить push {repo}",
-      "description": "В ветке {ahead} локальных commit, которых нет в {upstream}, а в {upstream} {behind} commit, которых нет здесь. Git Sync сам не объединяет разошедшиеся истории, поэтому ничего не отправляется.\n\nЧтобы это исправить, откройте терминал в {repo} и выполните:\n\n```\ngit pull --rebase\n```\n\nУстраните конфликты, если они есть (отредактируйте файлы, `git add`, затем `git rebase --continue`), и снова нажмите **Commit и push**. Это исправление исчезнет после следующего успешного push."
+      "title": "Версионирование не может выполнить push {repo}",
+      "description": "В ветке {ahead} локальных commit, которых нет в {upstream}, а в {upstream} {behind} commit, которых нет здесь. Версионирование сам не объединяет разошедшиеся истории, поэтому ничего не отправляется.\n\nЧтобы это исправить, откройте терминал в {repo} и выполните:\n\n```\ngit pull --rebase\n```\n\nУстраните конфликты, если они есть (отредактируйте файлы, `git add`, затем `git rebase --continue`), и снова нажмите **Commit и push**. Это исправление исчезнет после следующего успешного push."
     },
     "behind_remote": {
-      "title": "Git Sync не может выполнить push {repo}",
-      "description": "В {upstream} {behind} commit, которых нет здесь, а **Pull перед push** выключен в параметрах Git Sync, поэтому ничего не отправляется. Включите его или выполните `git pull --rebase` в терминале в {repo}. Это исправление исчезнет после следующего успешного push."
+      "title": "Версионирование не может выполнить push {repo}",
+      "description": "В {upstream} {behind} commit, которых нет здесь, а **Pull перед push** выключен в параметрах Версионирование, поэтому ничего не отправляется. Включите его или выполните `git pull --rebase` в терминале в {repo}. Это исправление исчезнет после следующего успешного push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore в {repo} не исключает секреты",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Добавить недостающие строки в .gitignore",
-            "description": "Без этих строк Git Sync выполнил бы commit и push паролей, токенов и хранилища аутентификации Home Assistant:\n\n{lines}\n\nОтправьте, чтобы дописать их в {repo}/.gitignore. Уже отслеживаемый файл остаётся отслеживаемым: удалите его из репозитория командой `git rm -r --cached secrets.yaml .storage` (файлы останутся на диске)."
+            "description": "Без этих строк Версионирование выполнил бы commit и push паролей, токенов и хранилища аутентификации Home Assistant:\n\n{lines}\n\nОтправьте, чтобы дописать их в {repo}/.gitignore. Уже отслеживаемый файл остаётся отслеживаемым: удалите его из репозитория командой `git rm -r --cached secrets.yaml .storage` (файлы останутся на диске)."
           }
         },
         "abort": {
-          "not_loaded": "Репозиторий Git Sync не загружен."
+          "not_loaded": "Репозиторий Версионирование не загружен."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Розетка недоступна",
         "unknown_device": "Устройство удалено",
         "open_device": "Устройство",
-        "pc_none": "Перезапусков через розетку пока нет: добавьте в «Настроить» → Watchdog: добавить перезапуск через розетку.",
+        "pc_none": "Перезапусков через розетку пока нет: добавьте в «Настроить» → Страж: добавить перезапуск через розетку.",
         "pc_configure": "Добавить или удалить в «Настроить»",
         "orph_reason_entry_removed": "Интеграция удалена",
         "orph_reason_integration_missing": "Интеграция не загружена",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Инфо: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "работает {time}",
-        "st_updates": "Обновления",
         "st_normal": "Всё в норме",
         "st_high": "Высоко: {what}",
         "st_stopped": "Остановлено: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "проверено {when}",
         "st_device": "Устройств: 1",
         "modules_tabs": "Модули и вкладки",
-        "modules_tabs_hint": "Перетащите ═, чтобы упорядочить вкладки; первая открывается по умолчанию.",
+        "modules_tabs_hint": "Упорядочьте группы кнопками ↑ ↓, а модули группы — перетаскивая ═; первая вкладка открывается по умолчанию.",
         "enabled": "Включены",
         "disabled": "Отключены",
         "tab_default": "по умолчанию",
         "drag": "Переместить",
         "st_hint": "Состояние экземпляра с первого взгляда",
-        "stopped_allowed": "Остановлен (допустимо)"
+        "stopped_allowed": "Остановлен (допустимо)",
+        "tab_system": "Ресурсы",
+        "tab_watchdog": "Страж",
+        "tab_marketplace": "Обновления",
+        "tab_orphans": "Очистка",
+        "tab_automations": "Автоматизации",
+        "tab_batteries": "Батареи",
+        "tab_git_sync": "Версионирование",
+        "group_reliability": "Надёжность",
+        "group_maintenance": "Обслуживание",
+        "group_devices": "Устройства",
+        "move_up": "Вверх",
+        "move_down": "Вниз"
       }
     },
     "battery_type": {

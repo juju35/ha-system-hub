@@ -135,7 +135,7 @@ def loaded_git_sync(hass: HomeAssistant) -> GitSyncCoordinator:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
             translation_key="module_disabled",
-            translation_placeholders={"module": "Git Sync"},
+            translation_placeholders={"module": "Versioning"},
         )
     return coordinator
 
@@ -155,7 +155,7 @@ def loaded_orphans(hass: HomeAssistant) -> tuple[ConfigEntry, OrphanScanner]:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
             translation_key="module_disabled",
-            translation_placeholders={"module": "Orphans"},
+            translation_placeholders={"module": "Cleanup"},
         )
     return entry, scanner
 
@@ -166,7 +166,7 @@ def loaded_watchdog(hass: HomeAssistant) -> IntegrationWatchdog:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
             translation_key="module_disabled",
-            translation_placeholders={"module": "Watchdog"},
+            translation_placeholders={"module": "Sentinel"},
         )
     return watchdog
 
@@ -176,7 +176,7 @@ def loaded_refresher(hass: HomeAssistant) -> MarketplaceRefresher:
         raise ServiceValidationError(
             translation_domain=DOMAIN,
             translation_key="module_disabled",
-            translation_placeholders={"module": "Marketplace"},
+            translation_placeholders={"module": "Updates"},
         )
     return refresher
 

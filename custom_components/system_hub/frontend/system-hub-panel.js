@@ -1,8 +1,9 @@
 /*
- * System Hub sidebar panel (administrators): the System tab, one tab per module turned on, and Settings.
+ * System Hub sidebar panel (administrators): Status, the modules in four groups (System, Reliability, Maintenance,
+ * Devices), and Settings.
  *
- * Tabs under the toolbar, as in Smart Comfort: text, the active one underlined, Settings last; the tab is in the
- * address (/system-hub/<tab>). The panel draws its own content from the system_hub/state WebSocket command, read
+ * Tabs under the toolbar, as in Smart Comfort: text, the active one underlined, Settings last; a group's modules turned
+ * on are sub-tabs under it. The module shown is in the address (/system-hub/<module>, or a group's name for its first). The panel draws its own content from the system_hub/state WebSocket command, read
  * again every 10 seconds while it is shown and after each action; its buttons call the integration's own actions.
  * Settings turns modules on or off and orders the tabs (system_hub/update_settings).
  *
@@ -11,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.4.1';
+var SYSTEM_HUB_PANEL_VERSION = '1.5.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -28,6 +29,7 @@ var SH_MODULE_ICONS = {
   orphans: 'mdi:ghost-outline',
   settings: 'mdi:cog-outline',
 };
+// The modules (their names when the translations are not loaded yet; the panel shows tab_<module>)
 var SH_MODULE_NAMES = {
   containers: 'Containers',
   watchdog: 'Watchdog',
@@ -37,10 +39,26 @@ var SH_MODULE_NAMES = {
   automations: 'Automations',
   orphans: 'Orphans',
 };
-// Every tab in its order, the ones not in it yet after
+// The tabs under the toolbar: Status, one per group of modules (its modules as sub-tabs), Settings last
+var SH_GROUPS = {
+  system: ['system', 'containers'],
+  reliability: ['watchdog', 'automations'],
+  maintenance: ['marketplace', 'git_sync'],
+  devices: ['batteries', 'orphans'],
+};
+// The group of a tab; Status and Settings are groups of their own
+function shGroupOf(tab) {
+  return Object.keys(SH_GROUPS).find((g) => SH_GROUPS[g].includes(tab)) || tab;
+}
+// The tabs with the ones of a group side by side: the groups in the order of their first tab
+function shGroupTabs(tabs) {
+  var order = [...new Set(tabs || [])];
+  return [...new Set(order.map(shGroupOf))].flatMap((g) => order.filter((t) => shGroupOf(t) === g));
+}
+// Every tab in its order, the ones not in it yet after (each in its group)
 function shAllTabs(tabs) {
   var order = [...(tabs || [])];
-  return [...order, ...['status', 'system', ...Object.keys(SH_MODULE_NAMES)].filter((t) => !order.includes(t))];
+  return shGroupTabs([...order, ...['status', 'system', ...Object.keys(SH_MODULE_NAMES)].filter((t) => !order.includes(t))]);
 }
 // Automations tab: the items shown per list before "Show more", as in the Automation Monitor card
 var SH_AUTO_MAX = 5;
@@ -80,7 +98,7 @@ function shHue(name) {
 
 // A selector finding the same button or row again once the panel is drawn anew (null when nothing names it)
 function shFocusSelector(el) {
-  var attrs = ['data-action', 'data-more', 'data-entity', 'data-act', 'data-tab-move', 'data-dir', 'data-view', 'data-chart', 'data-hours', 'data-kind'];
+  var attrs = ['data-subtab', 'data-action', 'data-more', 'data-entity', 'data-act', 'data-tab-move', 'data-dir', 'data-view', 'data-chart', 'data-hours', 'data-kind'];
   var esc = (v) => (typeof CSS !== 'undefined' && CSS.escape ? CSS.escape(v) : String(v).replace(/["\\]/g, '\\$&'));
   var parts = attrs.filter((a) => el.hasAttribute?.(a)).map((a) => `[${a}="${esc(el.getAttribute(a))}"]`);
   return parts.length ? parts.join('') : null;
@@ -574,6 +592,24 @@ class SystemHubPanel extends HTMLElement {
            padding:12px 14px; font:inherit; font-size:14px; cursor:pointer; white-space:nowrap; }
     .tab:hover, .tab:focus-visible { opacity:1; outline:none; }
     .tab.active { opacity:1; border-bottom-color:var(--app-header-text-color, #fff); }
+    .tbadge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px; margin-left:6px;
+              box-sizing:border-box; border-radius:9px; font-size:11px; font-weight:600; line-height:1; color:rgba(0,0,0,.87); background:var(--tone-warn); }
+    .tbadge.bad { color:#fff; background:var(--tone-bad); }
+    .tbadge.info { background:var(--info-color, #039be5); }
+    .subtabs { display:flex; flex-wrap:wrap; gap:8px; }
+    .subtab { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:0 16px; border-radius:20px; cursor:pointer; font:inherit;
+              font-size:14px; color:var(--primary-text-color); background:var(--card-background-color, #fff); --mdc-icon-size:18px;
+              border:1px solid var(--divider-color, rgba(127,127,127,.2)); }
+    .subtab ha-icon { color:var(--secondary-text-color); }
+    .subtab:hover { border-color:color-mix(in srgb, var(--primary-color) 50%, transparent); }
+    .subtab:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
+    .subtab.active { font-weight:500; color:var(--primary-color); border-color:var(--primary-color);
+                     background:color-mix(in srgb, var(--primary-color) 12%, var(--card-background-color, #fff)); }
+    .subtab.active ha-icon { color:var(--primary-color); }
+    .subdot { width:8px; height:8px; border-radius:50%; background:var(--tone-warn); }
+    .subdot.bad { background:var(--tone-bad); }
+    .subdot.info { background:var(--info-color, #039be5); }
+    .stsec { margin:8px 0 -2px; font-size:12px; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--secondary-text-color); }
     main { max-width:1040px; margin:0 auto; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; }
     .note { padding:16px; color:var(--secondary-text-color); display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
     .note.error { color:var(--primary-text-color); border-left:3px solid var(--tone-bad); }
@@ -1032,24 +1068,60 @@ class SystemHubPanel extends HTMLElement {
     if (!this._state) return [];
     if (!this._state.loaded) return ['system', 'settings'];
     var modules = this._state.modules || [];
-    return [...(this._state.tabs || []).filter((t) => t === 'status' || t === 'system' || modules.includes(t)), 'settings'];
+    return [...shGroupTabs(this._state.tabs).filter((t) => t === 'status' || t === 'system' || modules.includes(t)), 'settings'];
+  }
+
+  // The tabs under the toolbar: Status, the groups with a tab shown, Settings
+  _groups() {
+    return [...new Set(this._tabs().map(shGroupOf))];
+  }
+
+  // The sub-tabs of a group: its modules turned on
+  _groupTabs(group) {
+    return this._tabs().filter((t) => shGroupOf(t) === group);
   }
 
   _tabName(tab) {
-    if (tab === 'system' || tab === 'settings') return this._t(tab);
-    if (tab === 'status') return this._t('tab_status');
-    if (tab === 'containers') return this._t('tab_containers');
-    return SH_MODULE_NAMES[tab] || tab;
+    if (tab === 'settings') return this._t('settings');
+    var key = `tab_${tab}`;
+    var name = this._t(key);
+    return name !== key ? name : SH_MODULE_NAMES[tab] || tab;
   }
 
+  _groupName(group) {
+    if (!SH_GROUPS[group]) return this._tabName(group);
+    return group === 'system' ? this._t('system') : this._t(`group_${group}`);
+  }
+
+  // A group's badge: how many of its modules need a look, in the colour of the worst
+  _groupBadge(group) {
+    if (!SH_GROUPS[group] || !this._state?.loaded) return '';
+    var tones = this._groupTabs(group)
+      .map((t) => this._stArea(t)?.[0])
+      .filter((t) => t && t !== 'good');
+    if (!tones.length) return '';
+    var tone = ['bad', 'warn', 'info'].find((t) => tones.includes(t));
+    return `<span class="tbadge ${tone}" aria-label="${shEsc(this._t(tones.length === 1 ? 'st_point' : 'st_points', { n: tones.length }))}">${tones.length}</span>`;
+  }
+
+  // A tab, or a group (its sub-tab shown last, else its first)
   _selectTab(tab, focus) {
     var tabs = this._tabs();
+    if (!tabs.includes(tab) && SH_GROUPS[tab]) tab = this._groupTabs(tab)[0];
     var chosen = tabs.includes(tab) ? tab : tabs[0];
+    this._lastTab ??= {};
+    this._lastTab[shGroupOf(chosen)] = chosen;
     if (chosen !== this._tab) {
       this._tab = chosen;
       this._render();
     }
-    if (focus) this.shadowRoot.querySelector(`[data-tab="${chosen}"]`)?.focus({ preventScroll: true });
+    if (focus) this.shadowRoot.querySelector(focus === 'sub' ? `[data-subtab="${chosen}"]` : `[data-group="${shGroupOf(chosen)}"]`)?.focus({ preventScroll: true });
+  }
+
+  // A group's tab clicked: the sub-tab shown last in it
+  _goGroup(group, focus) {
+    var last = this._lastTab?.[group];
+    this._goTab(last && this._tabs().includes(last) ? last : this._groupTabs(group)[0], focus);
   }
 
   _goTab(tab, focus) {
@@ -1076,17 +1148,28 @@ class SystemHubPanel extends HTMLElement {
       this._menu.narrow = this._narrow;
     }
     root.querySelector('.tabs').addEventListener('click', (ev) => {
-      var tab = ev.target.closest?.('[data-tab]')?.dataset.tab;
-      if (tab) this._goTab(tab);
+      var group = ev.target.closest?.('[data-group]')?.dataset.group;
+      if (group) this._goGroup(group);
     });
     root.querySelector('.tabs').addEventListener('keydown', (ev) => {
       if (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') return;
-      var tabs = this._tabs();
-      var i = tabs.indexOf(this._tab) + (ev.key === 'ArrowRight' ? 1 : -1);
-      this._goTab(tabs[(i + tabs.length) % tabs.length], true);
+      var groups = this._groups();
+      var i = groups.indexOf(shGroupOf(this._tab)) + (ev.key === 'ArrowRight' ? 1 : -1);
+      this._goGroup(groups[(i + groups.length) % groups.length], 'group');
       ev.preventDefault();
     });
-    root.querySelector('main').addEventListener('click', (ev) => this._onClick(ev));
+    root.querySelector('main').addEventListener('click', (ev) => {
+      var sub = ev.target.closest?.('[data-subtab]')?.dataset.subtab;
+      if (sub) return this._goTab(sub);
+      this._onClick(ev);
+    });
+    root.querySelector('main').addEventListener('keydown', (ev) => {
+      if ((ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft') || !ev.target.dataset?.subtab) return;
+      var subs = this._groupTabs(shGroupOf(this._tab));
+      var i = subs.indexOf(this._tab) + (ev.key === 'ArrowRight' ? 1 : -1);
+      this._goTab(subs[(i + subs.length) % subs.length], 'sub');
+      ev.preventDefault();
+    });
     root.querySelector('main').addEventListener('pointerdown', (ev) => this._cfgDragStart?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => this._cfgDragKey?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => {
@@ -1114,13 +1197,16 @@ class SystemHubPanel extends HTMLElement {
     if (this._routeTab && this._state) {
       var wanted = this._routeTab;
       this._routeTab = null;
+      // A group in the address (/system-hub/devices) opens its first sub-tab
+      if (SH_GROUPS[wanted] && !this._tabs().includes(wanted)) wanted = this._groupTabs(wanted)[0];
       if (this._tabs().includes(wanted)) this._tab = wanted;
     }
     if (!this._tabs().includes(this._tab)) this._tab = this._tabs()[0];
-    root.querySelector('.tabs').innerHTML = this._tabs()
-      .map((tab) => {
-        var selected = tab === this._tab;
-        return `<button class="tab${selected ? ' active' : ''}" role="tab" data-tab="${tab}" aria-selected="${selected}" tabindex="${selected ? 0 : -1}">${shEsc(this._tabName(tab))}</button>`;
+    var current = shGroupOf(this._tab);
+    root.querySelector('.tabs').innerHTML = this._groups()
+      .map((group) => {
+        var selected = group === current;
+        return `<button class="tab${selected ? ' active' : ''}" role="tab" data-group="${group}" aria-selected="${selected}" tabindex="${selected ? 0 : -1}">${shEsc(this._groupName(group))}${this._groupBadge(group)}</button>`;
       })
       .join('');
     var main = root.querySelector('main');
@@ -1128,7 +1214,7 @@ class SystemHubPanel extends HTMLElement {
     var focusKey = active?.dataset?.draft;
     // The button or row with the focus keeps it through the refresh every few seconds
     var focusSel = !focusKey && active && main.contains(active) ? shFocusSelector(active) : null;
-    main.innerHTML = this._content();
+    main.innerHTML = this._subtabs() + this._content();
     if (this._tab === 'settings') this._cfgMount(main);
     // Rows and tiles that open the entity's dialog: reached and opened from the keyboard too
     main.querySelectorAll('[data-more]:not(button):not(a)').forEach((el) => {
@@ -1142,6 +1228,20 @@ class SystemHubPanel extends HTMLElement {
     } else if (focusSel) {
       main.querySelector(focusSel)?.focus?.({ preventScroll: true });
     }
+  }
+
+  // The sub-tabs of the group shown, when it has more than one module turned on
+  _subtabs() {
+    var subs = this._state?.loaded ? this._groupTabs(shGroupOf(this._tab)) : [];
+    if (subs.length < 2) return '';
+    return `<nav class="subtabs" role="tablist" aria-label="${shEsc(this._groupName(shGroupOf(this._tab)))}">${subs
+      .map((tab) => {
+        var selected = tab === this._tab;
+        var tone = this._stArea(tab)?.[0];
+        var dot = tone && tone !== 'good' ? `<span class="subdot ${tone}" aria-hidden="true"></span>` : '';
+        return `<button class="subtab${selected ? ' active' : ''}" role="tab" data-subtab="${tab}" aria-selected="${selected}" tabindex="${selected ? 0 : -1}"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>${shEsc(this._tabName(tab))}${dot}</button>`;
+      })
+      .join('')}</nav>`;
   }
 
   _content() {
@@ -2277,7 +2377,7 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'batt_csv') return this._battDownload();
-    if (action === 'st_open') return this._selectTab(button.dataset.tab);
+    if (action === 'st_open') return this._goTab(button.dataset.tab);
     if (action === 'git_files_fold') {
       var shown = this._gitData() || {};
       var shownNow = this._gitFilesOpen ?? Math.max(shown.changed ?? 0, (shown.files || []).length) <= SH_GIT_FILES_MAX;
@@ -2947,7 +3047,8 @@ var SH_SETTINGS_METHODS = {
             ? this._t('settings_system_hint')
             : this._l(`component.${SH_DOMAIN}.config.step.user.data_description.${tab}`);
       var first = enabled && tabs.find(on) === tab;
-      var handle = enabled
+      // A handle only where there is something to order: two modules or more of the group turned on
+      var handle = enabled && tabs.filter((t) => on(t) && shGroupOf(t) === shGroupOf(tab)).length > 1
         ? `<button class="icon-btn dragh" data-tab="${tab}" title="${shEsc(this._t('drag'))}" aria-label="${shEsc(`${this._t('drag')} · ${name}`)}"><ha-icon icon="mdi:drag-horizontal-variant"></ha-icon></button>`
         : '<span class="cfgpad"></span>';
       var head = `<div class="row cfgrow${open ? ' open' : ''}${enabled ? '' : ' off'}" data-row-tab="${tab}">${handle}<ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>
@@ -2960,23 +3061,48 @@ var SH_SETTINGS_METHODS = {
         }</div>`;
       return head + (open ? this._cfgBody(tab) : '');
     };
-    var enabled = tabs.filter(on);
-    var disabled = tabs.filter((t) => !on(t));
+    // One section per group, moved with ↑ ↓; its modules turned on (dragged among themselves), then the ones turned off
+    var groups = [...new Set(tabs.map(shGroupOf))];
+    var sections = groups.map((group, i) => {
+      var mine = tabs.filter((t) => shGroupOf(t) === group);
+      var gname = this._groupName(group);
+      var arrow = (dir, icon, disabled) =>
+        `<button class="icon-btn" data-action="cfg_group" data-group="${group}" data-dir="${dir}"${disabled ? ' disabled' : ''} title="${shEsc(this._t(dir < 0 ? 'move_up' : 'move_down'))}" aria-label="${shEsc(`${this._t(dir < 0 ? 'move_up' : 'move_down')} · ${gname}`)}"><ha-icon icon="${icon}"></ha-icon></button>`;
+      var enabledRows = mine.filter(on).map((t) => row(t, true)).join('');
+      var disabledRows = mine.filter((t) => !on(t)).map((t) => row(t, false)).join('');
+      return `<div class="cfgsec cfggroup"><span class="grow">${shEsc(gname)}</span>${arrow(-1, 'mdi:arrow-up', i === 0)}${arrow(1, 'mdi:arrow-down', i === groups.length - 1)}</div>
+        ${enabledRows ? `<div class="cfglist" data-group="${group}">${enabledRows}</div>` : ''}${disabledRows ? `<div class="cfglist off">${disabledRows}</div>` : ''}`;
+    });
     return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules_tabs'))}</h2><span class="msg">${shEsc(this._t('modules_tabs_hint'))}</span>
-      <div class="cfgsec">${shEsc(this._t('enabled'))}</div><div class="cfglist">${enabled.map((t) => row(t, true)).join('')}</div>
-      ${disabled.length ? `<div class="cfgsec">${shEsc(this._t('disabled'))}</div><div class="cfglist off">${disabled.map((t) => row(t, false)).join('')}</div>` : ''}</ha-card>`;
+      ${sections.join('')}</ha-card>`;
   },
 
-  // Moves a tab among those turned on (the ones turned off keep their place): to the index `to` of that list
+  // Moves a tab among the ones of its group turned on (the ones turned off keep their place): to the index `to` of that list
   _cfgMove(tab, to) {
     var modules = this._draft.modules || this._state.modules || [];
     var tabs = shAllTabs(this._draft.tabs || this._state.tabs);
     var on = (t) => t === 'status' || t === 'system' || modules.includes(t);
-    var enabled = tabs.filter(on).filter((t) => t !== tab);
+    var group = shGroupOf(tab);
+    var mine = tabs.filter((t) => shGroupOf(t) === group);
+    var enabled = mine.filter(on).filter((t) => t !== tab);
     enabled.splice(Math.max(0, Math.min(to, enabled.length)), 0, tab);
-    var next = [...enabled, ...tabs.filter((t) => !on(t))];
+    var block = [...enabled, ...mine.filter((t) => !on(t))];
+    var next = [...new Set(tabs.map(shGroupOf))].flatMap((g) => (g === group ? block : tabs.filter((t) => shGroupOf(t) === g)));
     if (next.join() !== tabs.join()) this._draft.tabs = next;
     this._render();
+  },
+
+  // Moves a whole group one place up (-1) or down (1) among the tabs
+  _cfgMoveGroup(group, dir) {
+    var tabs = shAllTabs(this._draft.tabs || this._state.tabs);
+    var groups = [...new Set(tabs.map(shGroupOf))];
+    var i = groups.indexOf(group);
+    var j = i + dir;
+    if (i < 0 || j < 0 || j >= groups.length) return;
+    [groups[i], groups[j]] = [groups[j], groups[i]];
+    this._draft.tabs = groups.flatMap((g) => tabs.filter((t) => shGroupOf(t) === g));
+    this._render();
+    this.shadowRoot.querySelector(`[data-action="cfg_group"][data-group="${group}"][data-dir="${dir}"]:not([disabled])`)?.focus();
   },
 
   // Dragging a row by its handle (mouse, finger, pen): the row follows among those turned on, the order is kept once
@@ -3021,7 +3147,9 @@ var SH_SETTINGS_METHODS = {
     ev.preventDefault();
     var tab = handle.dataset.tab;
     var modules = this._draft.modules || this._state.modules || [];
-    var enabled = shAllTabs(this._draft.tabs || this._state.tabs).filter((t) => t === 'status' || t === 'system' || modules.includes(t));
+    var enabled = shAllTabs(this._draft.tabs || this._state.tabs).filter(
+      (t) => shGroupOf(t) === shGroupOf(tab) && (t === 'status' || t === 'system' || modules.includes(t)),
+    );
     this._cfgMove(tab, enabled.indexOf(tab) + (ev.key === 'ArrowUp' ? -1 : 1));
     this.shadowRoot.querySelector(`.dragh[data-tab="${tab}"]`)?.focus();
   },
@@ -3177,6 +3305,10 @@ var SH_SETTINGS_METHODS = {
   _cfgClick(button) {
     var action = button.dataset.action;
     var cfg = this._cfgState();
+    if (action === 'cfg_group') {
+      this._cfgMoveGroup(button.dataset.group, Number(button.dataset.dir));
+      return true;
+    }
     if (action === 'cfg_toggle') {
       var module = button.dataset.module;
       if (cfg.module === module) {
@@ -3395,18 +3527,18 @@ var SH_STATUS_METHODS = {
       <div class="stbadge ${ringTone}" aria-hidden="true">${shStatusEmblem(ringTone)}</div>
       <div class="who"><div class="sttitle">${shEsc(points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good'))}</div>
         ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}<div class="stpills">${pills}</div></div></ha-card>`;
-    var tiles = areas
-      .map(([tab, [tone, value, details]]) => `<button class="sttile ${tone}" data-action="st_open" data-tab="${tab}" aria-label="${shEsc(`${this._stName(tab)}: ${value}`)}">
+    var tile = ([tab, [tone, value, details]]) => `<button class="sttile ${tone}" data-action="st_open" data-tab="${tab}" aria-label="${shEsc(`${this._tabName(tab)}: ${value}`)}">
         <span class="stglow"></span>
-        <span class="sthead"><span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._stName(tab))}</span><span class="stdot"></span></span>
-        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</button>`)
+        <span class="sthead"><span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._tabName(tab))}</span><span class="stdot"></span></span>
+        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</button>`;
+    // The tiles by group, under the group's name, in the order of the tabs
+    var sections = this._groups()
+      .map((group) => {
+        var mine = areas.filter(([tab]) => shGroupOf(tab) === group);
+        return mine.length ? `<h2 class="stsec">${shEsc(this._groupName(group))}</h2><div class="stgrid">${mine.map(tile).join('')}</div>` : '';
+      })
       .join('');
-    return `${hero}<div class="stgrid">${tiles}</div>`;
-  },
-
-  _stName(tab) {
-    if (tab === 'marketplace') return this._t('st_updates');
-    return this._tabName(tab);
+    return `${hero}${sections}`;
   },
 };
 

@@ -6,12 +6,12 @@
         "description": "Изаберите модуле које желите да укључите. Сваки модул се подешава у опцијама.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Стражар",
+          "marketplace": "Ажурирања",
+          "batteries": "Батерије",
+          "git_sync": "Верзионисање",
+          "orphans": "Чишћење",
+          "automations": "Аутоматизације"
         },
         "data_description": {
           "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Модули",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Додај рестарт преко утичнице",
-          "watchdog_remove_power_cycle": "Watchdog: Уклони рестарте преко утичнице",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Подешавања репозиторијума",
-          "git_sync": "Git Sync",
+          "watchdog": "Стражар",
+          "watchdog_add_power_cycle": "Стражар: Додај рестарт преко утичнице",
+          "watchdog_remove_power_cycle": "Стражар: Уклони рестарте преко утичнице",
+          "marketplace": "Ажурирања",
+          "batteries": "Батерије",
+          "git_sync_repository": "Верзионисање: Подешавања репозиторијума",
+          "git_sync": "Верзионисање",
           "batteries_types": "Батерије: типови батерија",
           "batteries_import": "Батерије: увоз из Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Чишћење",
           "system": "Систем: прагови",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Додај репозиторијум",
-          "git_sync_other": "Git Sync: Други репозиторијум",
-          "git_sync_remove_repository": "Git Sync: Уклони репозиторијуме"
+          "automations": "Аутоматизације",
+          "git_sync_add_repository": "Верзионисање: Додај репозиторијум",
+          "git_sync_other": "Верзионисање: Други репозиторијум",
+          "git_sync_remove_repository": "Верзионисање: Уклони репозиторијуме"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Укључите или искључите модуле. Искључен модул зауставља своје провере и његови ентитети се уклањају; његова подешавања се чувају.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Стражар",
+          "marketplace": "Ажурирања",
+          "batteries": "Батерије",
+          "git_sync": "Верзионисање",
+          "automations": "Аутоматизације"
         },
         "data_description": {
           "containers": "Прати Home Assistant Core, Supervisor и додатке: стање, верзију, CPU и меморију. Само праћење: ништа се не покреће поново.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Стражар",
         "data": {
           "scan_interval": "Интервал провере",
           "grace_period": "Период чекања",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Ажурирања",
         "data": {
           "scan_interval": "Интервал провере",
           "backup_before_install": "Резервна копија пре инсталирања ажурирања"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Батерије",
         "data": {
           "threshold": "Праг слабе батерије",
           "duration": "Слаба најмање",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Верзионисање",
         "description": "Commit порука, распореди, обавештења и извоз контролних табли.",
         "data": {
           "ai_task_entity": "AI task ентитет",
@@ -271,7 +271,7 @@
         "description": "Пронађено у Battery Monitor: подешавања: {settings}, типови батерија подешени у његовим картицама: {types}, типови резервних батерија: {stock}. Пошаљите да бисте их пренели у System Hub: његова подешавања замењују подешавања модула Батерије, а типови батерија већ подешени овде се задржавају."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Чишћење",
         "data": {
           "scan_interval": "Интервал скенирања",
           "grace_period": "Период чекања након покретања",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Аутоматизације",
         "data": {
           "exclude_devices": "Занемарени уређаји",
           "exclude_entities": "Занемарени ентитети"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Верзионисање",
         "description": "Репозиторијум {repository}",
         "data": {
           "ai_task_entity": "AI task ентитет",
@@ -1062,7 +1062,7 @@
       "message": "Резервне батерије за куповину: {spares}"
     },
     "no_ai_task": {
-      "message": "Ниједан AI task ентитет није подешен у Git Sync опцијама."
+      "message": "Ниједан AI task ентитет није подешен у Верзионисање опцијама."
     },
     "ai_task_failed": {
       "message": "AI task није вратио commit поруку."
@@ -1077,10 +1077,10 @@
       "message": "Commit је у конфликту са новим commit-овима из {upstream}: rebase је прекинут и ништа није послато. Погледај Подешавања → Поправке."
     },
     "sensitive_files": {
-      "message": "Одбијено: измене садрже осетљиве датотеке ({files}), које се не укључују у commit нити шаљу AI task-у. Додај их у .gitignore или дозволи праћене у Git Sync опцијама."
+      "message": "Одбијено: измене садрже осетљиве датотеке ({files}), које се не укључују у commit нити шаљу AI task-у. Додај их у .gitignore или дозволи праћене у Верзионисање опцијама."
     },
     "export_dir_not_allowed": {
-      "message": "Фасцикла за извоз {path} је ван фасцикле конфигурације и allowlist_external_dirs: изаберите другу у опцијама Git Sync-а."
+      "message": "Фасцикла за извоз {path} је ван фасцикле конфигурације и allowlist_external_dirs: изаберите другу у опцијама Верзионисање-а."
     },
     "orphans_starting": {
       "message": "Home Assistant се још покреће: скенирајте поново када буде спреман."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync не може да уради push за {repo}",
-      "description": "Грана има {ahead} локалних commit-ова којих нема на {upstream}, а {upstream} има {behind} commit-ова којих овде нема. Git Sync сам не спаја историје које се разилазе, па се ништа не шаље.\n\nДа би то решио, отвори терминал у {repo} и покрени:\n\n```\ngit pull --rebase\n```\n\nРеши евентуалне конфликте (измени датотеке, `git add`, затим `git rebase --continue`), па поново притисни **Commit и push**. Ова поправка нестаје са следећим успешним push."
+      "title": "Верзионисање не може да уради push за {repo}",
+      "description": "Грана има {ahead} локалних commit-ова којих нема на {upstream}, а {upstream} има {behind} commit-ова којих овде нема. Верзионисање сам не спаја историје које се разилазе, па се ништа не шаље.\n\nДа би то решио, отвори терминал у {repo} и покрени:\n\n```\ngit pull --rebase\n```\n\nРеши евентуалне конфликте (измени датотеке, `git add`, затим `git rebase --continue`), па поново притисни **Commit и push**. Ова поправка нестаје са следећим успешним push."
     },
     "behind_remote": {
-      "title": "Git Sync не може да уради push за {repo}",
-      "description": "{upstream} има {behind} commit-ова којих овде нема, а **Pull пре push** је искључен у Git Sync опцијама, па се ништа не шаље. Укључи га или покрени `git pull --rebase` у терминалу у {repo}. Ова поправка нестаје са следећим успешним push."
+      "title": "Верзионисање не може да уради push за {repo}",
+      "description": "{upstream} има {behind} commit-ова којих овде нема, а **Pull пре push** је искључен у Верзионисање опцијама, па се ништа не шаље. Укључи га или покрени `git pull --rebase` у терминалу у {repo}. Ова поправка нестаје са следећим успешним push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore у {repo} не искључује тајне",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Додај недостајуће редове у .gitignore",
-            "description": "Без ових редова Git Sync би урадио commit и push лозинки, токена и складишта за аутентификацију Home Assistant-а:\n\n{lines}\n\nПошаљи да се додају у {repo}/.gitignore. Датотека која се већ прати остаје праћена: уклони је из репозиторијума командом `git rm -r --cached secrets.yaml .storage` (датотеке остају на диску)."
+            "description": "Без ових редова Верзионисање би урадио commit и push лозинки, токена и складишта за аутентификацију Home Assistant-а:\n\n{lines}\n\nПошаљи да се додају у {repo}/.gitignore. Датотека која се већ прати остаје праћена: уклони је из репозиторијума командом `git rm -r --cached secrets.yaml .storage` (датотеке остају на диску)."
           }
         },
         "abort": {
-          "not_loaded": "Git Sync репозиторијум није учитан."
+          "not_loaded": "Верзионисање репозиторијум није учитан."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Утичница недоступна",
         "unknown_device": "Уређај уклоњен",
         "open_device": "Уређај",
-        "pc_none": "Још нема поновног покретања преко утичнице: додајте га у Конфигуриши → Watchdog: додај поновно покретање преко утичнице.",
+        "pc_none": "Још нема поновног покретања преко утичнице: додајте га у Конфигуриши → Стражар: додај поновно покретање преко утичнице.",
         "pc_configure": "Додај или уклони у Конфигуриши",
         "orph_reason_entry_removed": "Интеграција уклоњена",
         "orph_reason_integration_missing": "Интеграција није учитана",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Инфо: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "ради {time}",
-        "st_updates": "Ажурирања",
         "st_normal": "Све нормално",
         "st_high": "Високо: {what}",
         "st_stopped": "Заустављено: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "проверено {when}",
         "st_device": "Уређаји: 1",
         "modules_tabs": "Модули и картице",
-        "modules_tabs_hint": "Превуците ═ да поређате картице; прва се отвара подразумевано.",
+        "modules_tabs_hint": "Поређајте групе помоћу ↑ ↓, а модуле групе превлачењем ═; прва картица се отвара подразумевано.",
         "enabled": "Укључени",
         "disabled": "Искључени",
         "tab_default": "подразумевана",
         "drag": "Помери",
         "st_hint": "Стање инстанце на први поглед",
-        "stopped_allowed": "Заустављен (дозвољено)"
+        "stopped_allowed": "Заустављен (дозвољено)",
+        "tab_system": "Ресурси",
+        "tab_watchdog": "Стражар",
+        "tab_marketplace": "Ажурирања",
+        "tab_orphans": "Чишћење",
+        "tab_automations": "Аутоматизације",
+        "tab_batteries": "Батерије",
+        "tab_git_sync": "Верзионисање",
+        "group_reliability": "Поузданост",
+        "group_maintenance": "Одржавање",
+        "group_devices": "Уређаји",
+        "move_up": "Помери горе",
+        "move_down": "Помери доле"
       }
     },
     "battery_type": {

@@ -6,12 +6,12 @@
         "description": "Välj vilka moduler som ska aktiveras. Varje modul ställs in under alternativen.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Väktare",
+          "marketplace": "Uppdateringar",
+          "batteries": "Batterier",
+          "git_sync": "Versionshantering",
+          "orphans": "Städning",
+          "automations": "Automationer"
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Moduler",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Lägg till omstart via uttag",
-          "watchdog_remove_power_cycle": "Watchdog: Ta bort omstarter via uttag",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Inställningar för förrådet",
-          "git_sync": "Git Sync",
+          "watchdog": "Väktare",
+          "watchdog_add_power_cycle": "Väktare: Lägg till omstart via uttag",
+          "watchdog_remove_power_cycle": "Väktare: Ta bort omstarter via uttag",
+          "marketplace": "Uppdateringar",
+          "batteries": "Batterier",
+          "git_sync_repository": "Versionshantering: Inställningar för förrådet",
+          "git_sync": "Versionshantering",
           "batteries_types": "Batterier: batterityper",
           "batteries_import": "Batterier: importera från Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Städning",
           "system": "System: tröskelvärden",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Lägg till ett repository",
-          "git_sync_other": "Git Sync: Annat repository",
-          "git_sync_remove_repository": "Git Sync: Ta bort repositories"
+          "automations": "Automationer",
+          "git_sync_add_repository": "Versionshantering: Lägg till ett repository",
+          "git_sync_other": "Versionshantering: Annat repository",
+          "git_sync_remove_repository": "Versionshantering: Ta bort repositories"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Aktivera eller inaktivera moduler. En inaktiverad modul slutar med sina kontroller och dess entiteter tas bort; dess inställningar sparas.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Väktare",
+          "marketplace": "Uppdateringar",
+          "batteries": "Batterier",
+          "git_sync": "Versionshantering",
+          "automations": "Automationer"
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Väktare",
         "data": {
           "scan_interval": "Kontrollintervall",
           "grace_period": "Respittid",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Uppdateringar",
         "data": {
           "scan_interval": "Kontrollintervall",
           "backup_before_install": "Säkerhetskopiera före installation av uppdateringar"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Batterier",
         "data": {
           "threshold": "Tröskel för lågt batteri",
           "duration": "Lågt i minst",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Versionshantering",
         "description": "Commitmeddelande, scheman, aviseringar och export av instrumentpaneler.",
         "data": {
           "ai_task_entity": "AI-uppgiftsentitet",
@@ -271,7 +271,7 @@
         "description": "Hittat i Battery Monitor: {settings} inställningar, {types} batterityper angivna i dess kort och {stock} typer av reservbatterier. Skicka för att hämta dem till System Hub: dess inställningar ersätter Batterier-modulens och de batterityper som redan angetts här behålls."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Städning",
         "data": {
           "scan_interval": "Skanningsintervall",
           "grace_period": "Väntetid efter start",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automationer",
         "data": {
           "exclude_devices": "Ignorerade enheter",
           "exclude_entities": "Ignorerade entiteter"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Versionshantering",
         "description": "Repository {repository}",
         "data": {
           "ai_task_entity": "AI-uppgiftsentitet",
@@ -1062,7 +1062,7 @@
       "message": "Reservbatterier att köpa: {spares}"
     },
     "no_ai_task": {
-      "message": "Ingen AI-uppgiftsentitet är angiven i alternativen för Git Sync."
+      "message": "Ingen AI-uppgiftsentitet är angiven i alternativen för Versionshantering."
     },
     "ai_task_failed": {
       "message": "AI-uppgiften returnerade inget commitmeddelande."
@@ -1077,10 +1077,10 @@
       "message": "Committen är i konflikt med de nya commits i {upstream}: rebasen avbröts och inget pushades. Se Inställningar → Reparationer."
     },
     "sensitive_files": {
-      "message": "Avvisat: ändringarna innehåller känsliga filer ({files}) som varken committas eller skickas till AI-uppgiften. Lägg till dem i .gitignore, eller tillåt de spårade i Git Sync-alternativen."
+      "message": "Avvisat: ändringarna innehåller känsliga filer ({files}) som varken committas eller skickas till AI-uppgiften. Lägg till dem i .gitignore, eller tillåt de spårade i Versionshantering-alternativen."
     },
     "export_dir_not_allowed": {
-      "message": "Exportmappen {path} ligger utanför konfigurationsmappen och allowlist_external_dirs: välj en annan i Git Sync-alternativen."
+      "message": "Exportmappen {path} ligger utanför konfigurationsmappen och allowlist_external_dirs: välj en annan i Versionshantering-alternativen."
     },
     "orphans_starting": {
       "message": "Home Assistant startar fortfarande: skanna igen när det är igång."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync kan inte pusha {repo}",
-      "description": "Grenen har {ahead} lokala commits som inte finns på {upstream}, och {upstream} har {behind} commits som inte finns här. Git Sync slår inte själv ihop divergerade historiker, så inget pushas.\n\nLös det genom att öppna en terminal i {repo} och köra:\n\n```\ngit pull --rebase\n```\n\nLös eventuella konflikter (redigera filerna, `git add`, sedan `git rebase --continue`) och tryck sedan på **Commit och push** igen. Den här reparationen försvinner vid nästa lyckade push."
+      "title": "Versionshantering kan inte pusha {repo}",
+      "description": "Grenen har {ahead} lokala commits som inte finns på {upstream}, och {upstream} har {behind} commits som inte finns här. Versionshantering slår inte själv ihop divergerade historiker, så inget pushas.\n\nLös det genom att öppna en terminal i {repo} och köra:\n\n```\ngit pull --rebase\n```\n\nLös eventuella konflikter (redigera filerna, `git add`, sedan `git rebase --continue`) och tryck sedan på **Commit och push** igen. Den här reparationen försvinner vid nästa lyckade push."
     },
     "behind_remote": {
-      "title": "Git Sync kan inte pusha {repo}",
-      "description": "{upstream} har {behind} commits som inte finns här och **Pull före push** är avstängt i Git Sync-alternativen, så inget pushas. Slå på det, eller kör `git pull --rebase` i en terminal i {repo}. Den här reparationen försvinner vid nästa lyckade push."
+      "title": "Versionshantering kan inte pusha {repo}",
+      "description": "{upstream} har {behind} commits som inte finns här och **Pull före push** är avstängt i Versionshantering-alternativen, så inget pushas. Slå på det, eller kör `git pull --rebase` i en terminal i {repo}. Den här reparationen försvinner vid nästa lyckade push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore i {repo} utesluter inte hemligheterna",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Lägg till de saknade raderna i .gitignore",
-            "description": "Utan dessa rader skulle Git Sync committa och pusha lösenorden, token och autentiseringslagret i Home Assistant:\n\n{lines}\n\nSkicka för att lägga till dem i {repo}/.gitignore. En fil som redan spåras fortsätter att spåras: ta bort den från repositoryt med `git rm -r --cached secrets.yaml .storage` (filerna ligger kvar på disken)."
+            "description": "Utan dessa rader skulle Versionshantering committa och pusha lösenorden, token och autentiseringslagret i Home Assistant:\n\n{lines}\n\nSkicka för att lägga till dem i {repo}/.gitignore. En fil som redan spåras fortsätter att spåras: ta bort den från repositoryt med `git rm -r --cached secrets.yaml .storage` (filerna ligger kvar på disken)."
           }
         },
         "abort": {
-          "not_loaded": "Git Sync-repositoryt är inte inläst."
+          "not_loaded": "Versionshantering-repositoryt är inte inläst."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Uttag otillgängligt",
         "unknown_device": "Enhet borttagen",
         "open_device": "Enhet",
-        "pc_none": "Ingen omstart via uttag ännu: lägg till en i Konfigurera → Watchdog: lägg till en omstart via uttag.",
+        "pc_none": "Ingen omstart via uttag ännu: lägg till en i Konfigurera → Väktare: lägg till en omstart via uttag.",
         "pc_configure": "Lägg till eller ta bort i Konfigurera",
         "orph_reason_entry_removed": "Integration borttagen",
         "orph_reason_integration_missing": "Integration inte inläst",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} info",
         "st_n_good": "{n} OK",
         "st_up": "igång i {time}",
-        "st_updates": "Uppdateringar",
         "st_normal": "Allt normalt",
         "st_high": "Högt: {what}",
         "st_stopped": "{n} stoppade",
@@ -1470,13 +1469,25 @@
         "st_scanned": "skannad {when}",
         "st_device": "1 enhet",
         "modules_tabs": "Moduler och flikar",
-        "modules_tabs_hint": "Dra ═ för att ordna flikarna; den första öppnas som standard.",
+        "modules_tabs_hint": "Ordna grupperna med ↑ ↓ och modulerna i en grupp genom att dra i ═; den första fliken öppnas som standard.",
         "enabled": "Aktiverade",
         "disabled": "Inaktiverade",
         "tab_default": "standard",
         "drag": "Flytta",
         "st_hint": "Instansens hälsa i en blick",
-        "stopped_allowed": "Stoppad (tillåtet)"
+        "stopped_allowed": "Stoppad (tillåtet)",
+        "tab_system": "Resurser",
+        "tab_watchdog": "Väktare",
+        "tab_marketplace": "Uppdateringar",
+        "tab_orphans": "Städning",
+        "tab_automations": "Automationer",
+        "tab_batteries": "Batterier",
+        "tab_git_sync": "Versionshantering",
+        "group_reliability": "Tillförlitlighet",
+        "group_maintenance": "Underhåll",
+        "group_devices": "Enheter",
+        "move_up": "Flytta upp",
+        "move_down": "Flytta ned"
       }
     },
     "battery_type": {

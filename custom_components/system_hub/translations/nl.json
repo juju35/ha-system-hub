@@ -6,12 +6,12 @@
         "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Wachter",
+          "marketplace": "Updates",
+          "batteries": "Batterijen",
+          "git_sync": "Versiebeheer",
+          "orphans": "Opruimen",
+          "automations": "Automatiseringen"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Herstart via stekker toevoegen",
-          "watchdog_remove_power_cycle": "Watchdog: Herstarts via stekker verwijderen",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Instellingen van de repository",
-          "git_sync": "Git Sync",
+          "watchdog": "Wachter",
+          "watchdog_add_power_cycle": "Wachter: Herstart via stekker toevoegen",
+          "watchdog_remove_power_cycle": "Wachter: Herstarts via stekker verwijderen",
+          "marketplace": "Updates",
+          "batteries": "Batterijen",
+          "git_sync_repository": "Versiebeheer: Instellingen van de repository",
+          "git_sync": "Versiebeheer",
           "batteries_types": "Batterijen: batterijtypen",
           "batteries_import": "Batterijen: importeren uit Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Opruimen",
           "system": "Systeem: drempels",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Repository toevoegen",
-          "git_sync_other": "Git Sync: Andere repository",
-          "git_sync_remove_repository": "Git Sync: Repository's verwijderen"
+          "automations": "Automatiseringen",
+          "git_sync_add_repository": "Versiebeheer: Repository toevoegen",
+          "git_sync_other": "Versiebeheer: Andere repository",
+          "git_sync_remove_repository": "Versiebeheer: Repository's verwijderen"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Schakel modules in of uit. Een uitgeschakelde module stopt met controleren en haar entiteiten worden verwijderd; haar instellingen blijven bewaard.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Wachter",
+          "marketplace": "Updates",
+          "batteries": "Batterijen",
+          "git_sync": "Versiebeheer",
+          "automations": "Automatiseringen"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Wachter",
         "data": {
           "scan_interval": "Controle-interval",
           "grace_period": "Wachttijd",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Updates",
         "data": {
           "scan_interval": "Controle-interval",
           "backup_before_install": "Back-up maken vóór het installeren van updates"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Batterijen",
         "data": {
           "threshold": "Drempel voor bijna lege batterij",
           "duration": "Minstens zo lang bijna leeg",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Versiebeheer",
         "description": "Commitbericht, planning, meldingen en export van de dashboards.",
         "data": {
           "ai_task_entity": "AI-taakentiteit",
@@ -271,7 +271,7 @@
         "description": "Gevonden in Battery Monitor: {settings} instellingen, {types} batterijtypen ingesteld in zijn kaarten en {stock} typen reservebatterijen. Verzend om ze over te nemen in System Hub: zijn instellingen vervangen die van de module Batterijen, de hier al ingestelde batterijtypen blijven behouden."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Opruimen",
         "data": {
           "scan_interval": "Scaninterval",
           "grace_period": "Wachttijd na het opstarten",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatiseringen",
         "data": {
           "exclude_devices": "Genegeerde apparaten",
           "exclude_entities": "Genegeerde entiteiten"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Versiebeheer",
         "description": "Repository {repository}",
         "data": {
           "ai_task_entity": "AI-taakentiteit",
@@ -1062,7 +1062,7 @@
       "message": "Te kopen reservebatterijen: {spares}"
     },
     "no_ai_task": {
-      "message": "Er is geen AI-taakentiteit ingesteld in de Git Sync-opties."
+      "message": "Er is geen AI-taakentiteit ingesteld in de Versiebeheer-opties."
     },
     "ai_task_failed": {
       "message": "De AI-taak gaf geen commitbericht terug."
@@ -1077,10 +1077,10 @@
       "message": "De commit conflicteert met de nieuwe commits van {upstream}: de rebase is afgebroken en er is niets gepusht. Zie Instellingen → Reparaties."
     },
     "sensitive_files": {
-      "message": "Geweigerd: de wijzigingen bevatten gevoelige bestanden ({files}), die niet gecommit en niet naar de AI-taak gestuurd worden. Voeg ze toe aan .gitignore, of sta de gevolgde toe in de Git Sync-opties."
+      "message": "Geweigerd: de wijzigingen bevatten gevoelige bestanden ({files}), die niet gecommit en niet naar de AI-taak gestuurd worden. Voeg ze toe aan .gitignore, of sta de gevolgde toe in de Versiebeheer-opties."
     },
     "export_dir_not_allowed": {
-      "message": "De exportmap {path} ligt buiten de configuratiemap en allowlist_external_dirs: kies een andere in de opties van Git Sync."
+      "message": "De exportmap {path} ligt buiten de configuratiemap en allowlist_external_dirs: kies een andere in de opties van Versiebeheer."
     },
     "orphans_starting": {
       "message": "Home Assistant is nog aan het opstarten: scan opnieuw zodra het draait."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync kan {repo} niet pushen",
-      "description": "De branch heeft {ahead} lokale commits die niet op {upstream} staan, en {upstream} heeft {behind} commits die hier ontbreken. Git Sync voegt uiteengelopen geschiedenissen niet zelf samen, dus er wordt niets gepusht.\n\nOpen om het op te lossen een terminal in {repo} en voer uit:\n\n```\ngit pull --rebase\n```\n\nLos eventuele conflicten op (bewerk de bestanden, `git add`, daarna `git rebase --continue`) en druk opnieuw op **Commit en push**. Deze reparatie verdwijnt bij de volgende geslaagde push."
+      "title": "Versiebeheer kan {repo} niet pushen",
+      "description": "De branch heeft {ahead} lokale commits die niet op {upstream} staan, en {upstream} heeft {behind} commits die hier ontbreken. Versiebeheer voegt uiteengelopen geschiedenissen niet zelf samen, dus er wordt niets gepusht.\n\nOpen om het op te lossen een terminal in {repo} en voer uit:\n\n```\ngit pull --rebase\n```\n\nLos eventuele conflicten op (bewerk de bestanden, `git add`, daarna `git rebase --continue`) en druk opnieuw op **Commit en push**. Deze reparatie verdwijnt bij de volgende geslaagde push."
     },
     "behind_remote": {
-      "title": "Git Sync kan {repo} niet pushen",
-      "description": "{upstream} heeft {behind} commits die hier ontbreken en **Pull vóór de push** staat uit in de Git Sync-opties, dus er wordt niets gepusht. Zet het aan, of voer `git pull --rebase` uit in een terminal in {repo}. Deze reparatie verdwijnt bij de volgende geslaagde push."
+      "title": "Versiebeheer kan {repo} niet pushen",
+      "description": "{upstream} heeft {behind} commits die hier ontbreken en **Pull vóór de push** staat uit in de Versiebeheer-opties, dus er wordt niets gepusht. Zet het aan, of voer `git pull --rebase` uit in een terminal in {repo}. Deze reparatie verdwijnt bij de volgende geslaagde push."
     },
     "git_sync_gitignore_missing": {
       "title": "De .gitignore van {repo} sluit de geheimen niet uit",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Ontbrekende regels aan .gitignore toevoegen",
-            "description": "Zonder deze regels zou Git Sync de wachtwoorden, de tokens en de authenticatieopslag van Home Assistant committen en pushen:\n\n{lines}\n\nVerstuur om ze aan {repo}/.gitignore toe te voegen. Een bestand dat al gevolgd wordt, blijft gevolgd: haal het uit de repository met `git rm -r --cached secrets.yaml .storage` (de bestanden blijven op de schijf)."
+            "description": "Zonder deze regels zou Versiebeheer de wachtwoorden, de tokens en de authenticatieopslag van Home Assistant committen en pushen:\n\n{lines}\n\nVerstuur om ze aan {repo}/.gitignore toe te voegen. Een bestand dat al gevolgd wordt, blijft gevolgd: haal het uit de repository met `git rm -r --cached secrets.yaml .storage` (de bestanden blijven op de schijf)."
           }
         },
         "abort": {
-          "not_loaded": "De Git Sync-repository is niet geladen."
+          "not_loaded": "De Versiebeheer-repository is niet geladen."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Stekker onbeschikbaar",
         "unknown_device": "Apparaat verwijderd",
         "open_device": "Apparaat",
-        "pc_none": "Nog geen herstart via stekker: voeg er een toe via Configureren → Watchdog: herstart via stekker toevoegen.",
+        "pc_none": "Nog geen herstart via stekker: voeg er een toe via Configureren → Wachter: herstart via stekker toevoegen.",
         "pc_configure": "Toevoegen of verwijderen in Configureren",
         "orph_reason_entry_removed": "Integratie verwijderd",
         "orph_reason_integration_missing": "Integratie niet geladen",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} info",
         "st_n_good": "{n} OK",
         "st_up": "draait al {time}",
-        "st_updates": "Updates",
         "st_normal": "Alles normaal",
         "st_high": "Hoog: {what}",
         "st_stopped": "{n} gestopt",
@@ -1470,13 +1469,25 @@
         "st_scanned": "gescand {when}",
         "st_device": "1 apparaat",
         "modules_tabs": "Modules en tabbladen",
-        "modules_tabs_hint": "Sleep ═ om de tabbladen te ordenen; het eerste opent standaard.",
+        "modules_tabs_hint": "Orden de groepen met ↑ ↓ en de modules van een groep door ═ te slepen; het eerste tabblad opent standaard.",
         "enabled": "Ingeschakeld",
         "disabled": "Uitgeschakeld",
         "tab_default": "standaard",
         "drag": "Verplaatsen",
         "st_hint": "De gezondheid van de instantie in één oogopslag",
-        "stopped_allowed": "Gestopt (toegestaan)"
+        "stopped_allowed": "Gestopt (toegestaan)",
+        "tab_system": "Bronnen",
+        "tab_watchdog": "Wachter",
+        "tab_marketplace": "Updates",
+        "tab_orphans": "Opruimen",
+        "tab_automations": "Automatiseringen",
+        "tab_batteries": "Batterijen",
+        "tab_git_sync": "Versiebeheer",
+        "group_reliability": "Betrouwbaarheid",
+        "group_maintenance": "Onderhoud",
+        "group_devices": "Apparaten",
+        "move_up": "Omhoog",
+        "move_down": "Omlaag"
       }
     },
     "battery_type": {

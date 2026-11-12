@@ -6,12 +6,12 @@
         "description": "Elija los módulos que desea activar. Cada módulo se configura en las opciones.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Centinela",
+          "marketplace": "Actualizaciones",
+          "batteries": "Baterías",
+          "git_sync": "Versionado",
+          "orphans": "Limpieza",
+          "automations": "Automatizaciones"
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Módulos",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Añadir un reinicio por enchufe",
-          "watchdog_remove_power_cycle": "Watchdog: Quitar reinicios por enchufe",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Ajustes del repositorio",
-          "git_sync": "Git Sync",
+          "watchdog": "Centinela",
+          "watchdog_add_power_cycle": "Centinela: Añadir un reinicio por enchufe",
+          "watchdog_remove_power_cycle": "Centinela: Quitar reinicios por enchufe",
+          "marketplace": "Actualizaciones",
+          "batteries": "Baterías",
+          "git_sync_repository": "Versionado: Ajustes del repositorio",
+          "git_sync": "Versionado",
           "batteries_types": "Baterías: tipos de pila",
           "batteries_import": "Baterías: importar desde Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Limpieza",
           "system": "Sistema: umbrales",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Añadir un repositorio",
-          "git_sync_other": "Git Sync: Otro repositorio",
-          "git_sync_remove_repository": "Git Sync: Quitar repositorios"
+          "automations": "Automatizaciones",
+          "git_sync_add_repository": "Versionado: Añadir un repositorio",
+          "git_sync_other": "Versionado: Otro repositorio",
+          "git_sync_remove_repository": "Versionado: Quitar repositorios"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Active o desactive los módulos. Un módulo desactivado detiene sus comprobaciones y sus entidades se eliminan; sus ajustes se conservan.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Centinela",
+          "marketplace": "Actualizaciones",
+          "batteries": "Baterías",
+          "git_sync": "Versionado",
+          "automations": "Automatizaciones"
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Centinela",
         "data": {
           "scan_interval": "Intervalo de comprobación",
           "grace_period": "Periodo de gracia",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Actualizaciones",
         "data": {
           "scan_interval": "Intervalo de comprobación",
           "backup_before_install": "Hacer copia de seguridad antes de instalar actualizaciones"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Baterías",
         "data": {
           "threshold": "Umbral de batería baja",
           "duration": "Baja durante al menos",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Versionado",
         "description": "Mensaje de commit, programación, notificaciones y exportación de paneles.",
         "data": {
           "ai_task_entity": "Entidad AI task",
@@ -271,7 +271,7 @@
         "description": "Encontrado en Battery Monitor: {settings} ajustes, {types} tipos de pila definidos en sus tarjetas y {stock} tipos de pilas de repuesto. Envía para traerlos a System Hub: sus ajustes sustituyen a los del módulo Baterías y se conservan los tipos de pila ya definidos aquí."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Limpieza",
         "data": {
           "scan_interval": "Intervalo de escaneo",
           "grace_period": "Periodo de gracia tras el inicio",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatizaciones",
         "data": {
           "exclude_devices": "Dispositivos ignorados",
           "exclude_entities": "Entidades ignoradas"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Versionado",
         "description": "Repositorio {repository}",
         "data": {
           "ai_task_entity": "Entidad AI task",
@@ -1062,7 +1062,7 @@
       "message": "Pilas de repuesto que comprar: {spares}"
     },
     "no_ai_task": {
-      "message": "No hay ninguna entidad AI task definida en las opciones de Git Sync."
+      "message": "No hay ninguna entidad AI task definida en las opciones de Versionado."
     },
     "ai_task_failed": {
       "message": "La AI task no devolvió ningún mensaje de commit."
@@ -1077,10 +1077,10 @@
       "message": "El commit entra en conflicto con los commits nuevos de {upstream}: el rebase se canceló y no se envió nada. Consulta Ajustes → Reparaciones."
     },
     "sensitive_files": {
-      "message": "Rechazado: los cambios incluyen archivos sensibles ({files}), que ni se incluyen en el commit ni se envían a la AI task. Añádelos al .gitignore o permite los seguidos en las opciones de Git Sync."
+      "message": "Rechazado: los cambios incluyen archivos sensibles ({files}), que ni se incluyen en el commit ni se envían a la AI task. Añádelos al .gitignore o permite los seguidos en las opciones de Versionado."
     },
     "export_dir_not_allowed": {
-      "message": "La carpeta de exportación {path} está fuera de la carpeta de configuración y de allowlist_external_dirs: elige otra en las opciones de Git Sync."
+      "message": "La carpeta de exportación {path} está fuera de la carpeta de configuración y de allowlist_external_dirs: elige otra en las opciones de Versionado."
     },
     "orphans_starting": {
       "message": "Home Assistant todavía está arrancando: vuelve a escanear cuando esté listo."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync no puede hacer push de {repo}",
-      "description": "La rama tiene {ahead} commits locales que no están en {upstream}, y {upstream} tiene {behind} commits que no están aquí. Git Sync no fusiona por sí solo historiales divergidos, así que no se envía nada.\n\nPara resolverlo, abre un terminal en {repo} y ejecuta:\n\n```\ngit pull --rebase\n```\n\nCorrige los conflictos que haya (edita los archivos, `git add` y luego `git rebase --continue`) y pulsa de nuevo **Commit y push**. Esta reparación desaparece con el siguiente push correcto."
+      "title": "Versionado no puede hacer push de {repo}",
+      "description": "La rama tiene {ahead} commits locales que no están en {upstream}, y {upstream} tiene {behind} commits que no están aquí. Versionado no fusiona por sí solo historiales divergidos, así que no se envía nada.\n\nPara resolverlo, abre un terminal en {repo} y ejecuta:\n\n```\ngit pull --rebase\n```\n\nCorrige los conflictos que haya (edita los archivos, `git add` y luego `git rebase --continue`) y pulsa de nuevo **Commit y push**. Esta reparación desaparece con el siguiente push correcto."
     },
     "behind_remote": {
-      "title": "Git Sync no puede hacer push de {repo}",
-      "description": "{upstream} tiene {behind} commits que no están aquí y **Pull antes del push** está desactivado en las opciones de Git Sync, así que no se envía nada. Actívalo o ejecuta `git pull --rebase` en un terminal en {repo}. Esta reparación desaparece con el siguiente push correcto."
+      "title": "Versionado no puede hacer push de {repo}",
+      "description": "{upstream} tiene {behind} commits que no están aquí y **Pull antes del push** está desactivado en las opciones de Versionado, así que no se envía nada. Actívalo o ejecuta `git pull --rebase` en un terminal en {repo}. Esta reparación desaparece con el siguiente push correcto."
     },
     "git_sync_gitignore_missing": {
       "title": "El .gitignore de {repo} no excluye los secretos",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Añadir las líneas que faltan al .gitignore",
-            "description": "Sin estas líneas, Git Sync haría commit y push de las contraseñas, los tokens y el almacén de autenticación de Home Assistant:\n\n{lines}\n\nEnvía para añadirlas a {repo}/.gitignore. Un archivo ya seguido sigue seguido: quítalo del repositorio con `git rm -r --cached secrets.yaml .storage` (los archivos se quedan en el disco)."
+            "description": "Sin estas líneas, Versionado haría commit y push de las contraseñas, los tokens y el almacén de autenticación de Home Assistant:\n\n{lines}\n\nEnvía para añadirlas a {repo}/.gitignore. Un archivo ya seguido sigue seguido: quítalo del repositorio con `git rm -r --cached secrets.yaml .storage` (los archivos se quedan en el disco)."
           }
         },
         "abort": {
-          "not_loaded": "El repositorio de Git Sync no está cargado."
+          "not_loaded": "El repositorio de Versionado no está cargado."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Enchufe no disponible",
         "unknown_device": "Dispositivo eliminado",
         "open_device": "Dispositivo",
-        "pc_none": "Aún no hay reinicios por enchufe: añade uno en Configurar → Watchdog: añadir un reinicio por enchufe.",
+        "pc_none": "Aún no hay reinicios por enchufe: añade uno en Configurar → Centinela: añadir un reinicio por enchufe.",
         "pc_configure": "Añadir o quitar en Configurar",
         "orph_reason_entry_removed": "Integración eliminada",
         "orph_reason_integration_missing": "Integración no cargada",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} info",
         "st_n_good": "{n} OK",
         "st_up": "en marcha desde hace {time}",
-        "st_updates": "Actualizaciones",
         "st_normal": "Todo normal",
         "st_high": "Alto: {what}",
         "st_stopped": "{n} detenidos",
@@ -1470,13 +1469,25 @@
         "st_scanned": "analizado {when}",
         "st_device": "1 dispositivo",
         "modules_tabs": "Módulos y pestañas",
-        "modules_tabs_hint": "Arrastra ═ para ordenar las pestañas; la primera se abre por defecto.",
+        "modules_tabs_hint": "Ordena los grupos con ↑ ↓ y los módulos de un grupo arrastrando ═; la primera pestaña se abre por defecto.",
         "enabled": "Activados",
         "disabled": "Desactivados",
         "tab_default": "predeterminada",
         "drag": "Mover",
         "st_hint": "El estado de la instancia de un vistazo",
-        "stopped_allowed": "Detenido (permitido)"
+        "stopped_allowed": "Detenido (permitido)",
+        "tab_system": "Recursos",
+        "tab_watchdog": "Centinela",
+        "tab_marketplace": "Actualizaciones",
+        "tab_orphans": "Limpieza",
+        "tab_automations": "Automatizaciones",
+        "tab_batteries": "Baterías",
+        "tab_git_sync": "Versionado",
+        "group_reliability": "Fiabilidad",
+        "group_maintenance": "Mantenimiento",
+        "group_devices": "Dispositivos",
+        "move_up": "Subir",
+        "move_down": "Bajar"
       }
     },
     "battery_type": {

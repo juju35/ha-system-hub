@@ -352,18 +352,24 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   const html = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings')._content();
   for (const m of ['containers', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations']) assert.match(html, new RegExp(`data-module="${m}"`));
   assert.match(html, /data-module="watchdog" checked/);
-  // Sections Enabled / Disabled, a handle on the ones turned on, the first one opened by default
-  assert.match(html, /Enabled<\/div><div class="cfglist"><div class="row cfgrow" data-row-tab="system"><button class="icon-btn dragh"/);
+  // One section per group with ↑ ↓; in each, its modules turned on, then the ones turned off; the first one opened by
+  // default; no handle where there is nothing to order
+  assert.match(html, /System<\/span><button class="icon-btn" data-action="cfg_group" data-group="system" data-dir="-1" disabled/);
+  assert.match(html, /<div class="cfglist" data-group="system"><div class="row cfgrow" data-row-tab="system"><span class="cfgpad">/);
   assert.match(html, /data-row-tab="system">.*?<span class="pill cfgdef">default/s);
-  assert.match(html, /Disabled<\/div><div class="cfglist off">.*data-row-tab="containers"/s);
+  assert.match(html, /data-row-tab="system">.*?<div class="cfglist off"><div class="row cfgrow off" data-row-tab="containers"/s);
+  assert.match(html, /Reliability<\/span>.*?data-row-tab="watchdog".*?Devices<\/span>/s);
   assert.doesNotMatch(html, /data-module="status"|data-module="system" checked/);
-  // A row dragged, or moved with ↓ from its handle: the order in the draft, the ones turned off after
-  const q = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
+  // A group moved with ↑: its modules side by side, before the group above it
+  const q = panel({ loaded: true, modules: ['watchdog', 'automations'], tabs: ['system', 'watchdog'] }, 'settings');
   q._render = () => {};
-  q._cfgMove('watchdog', 0);
-  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['watchdog', 'system', 'status']);
-  q._cfgDragKey({ key: 'ArrowDown', preventDefault() {}, target: { closest: () => ({ dataset: { tab: 'watchdog' } }) } });
-  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['system', 'watchdog', 'status']);
+  q._cfgMoveGroup('reliability', -1);
+  assert.deepEqual([...q._draft.tabs.slice(0, 4)], ['watchdog', 'automations', 'system', 'containers']);
+  // A row dragged, or moved with ↓ from its handle: the order inside its group
+  q._cfgMove('automations', 0);
+  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['automations', 'watchdog', 'system']);
+  q._cfgDragKey({ key: 'ArrowDown', preventDefault() {}, target: { closest: () => ({ dataset: { tab: 'automations' } }) } });
+  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['watchdog', 'automations', 'system']);
   // Nothing changed: no save bar; a change brings it, with Discard
   assert.doesNotMatch(html, /data-action="save"/);
   const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
@@ -880,6 +886,41 @@ test('git sync tab: the count of changed files always; more than 5 folded until 
   assert.match(many, /aria-expanded="true"/);
 });
 
+test('groups: Status, the groups with a module turned on, Settings; the modules of a group as sub-tabs', () => {
+  const state = {
+    loaded: true,
+    modules: ['watchdog', 'automations', 'batteries'],
+    tabs: ['status', 'system', 'watchdog', 'automations', 'batteries'],
+    watchdog: { unavailable: [{ title: 'Printer', gave_up: true }], max_reloads: 5 },
+    automations: { available: true, failures: [], linked: [] },
+    batteries: { batteries: [] },
+  };
+  const p = panel(state, 'automations');
+  assert.deepEqual([...p._groups()], ['status', 'system', 'reliability', 'devices', 'settings']);
+  assert.equal(p._groupName('reliability'), 'Reliability');
+  assert.equal(p._groupName('system'), 'System');
+  assert.equal(p._tabName('system'), 'Resources');
+  assert.equal(p._tabName('watchdog'), 'Sentinel');
+  assert.equal(p._tabName('git_sync'), 'Versioning');
+  // Two modules in Reliability: sub-tabs, the one shown selected, a dot on the one needing action
+  const subs = p._subtabs();
+  assert.match(subs, /data-subtab="watchdog" aria-selected="false"[^>]*>.*?Sentinel<span class="subdot bad"/);
+  assert.match(subs, /class="subtab active" role="tab" data-subtab="automations" aria-selected="true"/);
+  // One module: no sub-tabs
+  assert.equal(panel(state, 'batteries')._subtabs(), '');
+  // The group's badge: one module to look at, in the colour of the worst
+  assert.match(p._groupBadge('reliability'), /class="tbadge bad"[^>]*>1</);
+  assert.equal(p._groupBadge('devices'), '');
+  // A group chosen: the sub-tab shown last in it, else its first
+  p._render = () => {};
+  p._selectTab('reliability');
+  assert.equal(p._tab, 'watchdog');
+  p._selectTab('automations');
+  p._selectTab('batteries');
+  p._goGroup('reliability');
+  assert.equal(p._tab, 'automations');
+});
+
 test('status tab: a score, one tile per area in the order of the tabs, each opening its tab', () => {
   const state = {
     loaded: true,
@@ -904,7 +945,10 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   assert.deepEqual([...p._tabs()].slice(0, 2), ['status', 'batteries']);
   const html = p._content();
   const order = [...html.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
-  assert.deepEqual(order, ['batteries', 'system', 'watchdog', 'git_sync', 'containers', 'marketplace', 'orphans']);
+  // By group, in the order of their first tab, under the group's name
+  assert.deepEqual(order, ['batteries', 'orphans', 'system', 'containers', 'watchdog', 'git_sync', 'marketplace']);
+  const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
+  assert.deepEqual(sections, ['Devices', 'System', 'Reliability', 'Maintenance']);
   // Batteries to watch, the disk above its red threshold, a given-up integration and a process stopped: needing action
   assert.match(html, /sttile warn" data-action="st_open" data-tab="batteries"/);
   assert.match(html, /sttile bad" data-action="st_open" data-tab="system"/);
