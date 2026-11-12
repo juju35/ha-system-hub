@@ -157,13 +157,15 @@
           "notify": "Powiadamiaj o odrzuconych logowaniach z Internetu",
           "notify_services": "Akcje powiadomień",
           "token_unused_days": "Token nieużywany po",
-          "ignored_ips": "Ignorowane adresy"
+          "ignored_ips": "Ignorowane adresy",
+          "allowed_addons": "Dodatki dozwolone bez ochrony"
         },
         "data_description": {
           "notify": "Trwałe powiadomienie, najwyżej raz na godzinę na adres; adresy lokalne nigdy nie są powiadamiane.",
           "notify_services": "Wysyłane też do tych akcji powiadomień.",
           "token_unused_days": "Token długoterminowy nieużywany od tylu dni jest oznaczany.",
-          "ignored_ips": "Ich odrzucone logowania są oznaczane jako ignorowane i nigdy nie są powiadamiane."
+          "ignored_ips": "Ich odrzucone logowania są oznaczane jako ignorowane i nigdy nie są powiadamiane.",
+          "allowed_addons": "Dodatki, które mogą działać z wyłączonym trybem chronionym (np. terminal SSH): nadal na liście, ale nie są już problemem."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Grupy",
         "card_hide_ok": "Ukryj to, co w porządku",
         "card_show_title": "Pokaż tytuł",
-        "card_show_subtitle": "Pokaż podtytuł"
+        "card_show_subtitle": "Pokaż podtytuł",
+        "sc_allowed": "Dozwolony",
+        "sc_allow": "Zezwól",
+        "sc_disallow": "Cofnij"
       }
     },
     "battery_type": {

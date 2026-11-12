@@ -33,6 +33,8 @@ CONF_NOTIFY: Final = "notify"
 CONF_NOTIFY_SERVICES: Final = "notify_services"
 CONF_TOKEN_DAYS: Final = "token_unused_days"
 CONF_IGNORED_IPS: Final = "ignored_ips"
+# Add-ons allowed to run with their protection mode off (an SSH terminal, say): flagged, not counted as a problem
+CONF_ALLOWED_ADDONS: Final = "allowed_addons"
 DEFAULT_TOKEN_DAYS: Final = 90
 KEEP_SECONDS: Final = 7 * 86400
 MAX_ATTEMPTS: Final = 1000
@@ -65,6 +67,7 @@ def settings(options: Any) -> dict[str, Any]:
         CONF_NOTIFY_SERVICES: [str(s) for s in options.get(CONF_NOTIFY_SERVICES) or []],
         CONF_TOKEN_DAYS: int(options.get(CONF_TOKEN_DAYS) or DEFAULT_TOKEN_DAYS),
         CONF_IGNORED_IPS: [str(s) for s in options.get(CONF_IGNORED_IPS) or []],
+        CONF_ALLOWED_ADDONS: [str(s) for s in options.get(CONF_ALLOWED_ADDONS) or []],
     }
 
 
@@ -335,13 +338,15 @@ async def security_state(
             addons = cached["addons"] if cached else None
         config = await hass.async_add_executor_job(scan_config, hass.config.config_dir)
         cached = store[CACHE_KEY] = {"at": time.time(), "addons": addons, "config": config}
+    allowed = set(chosen[CONF_ALLOWED_ADDONS])
+    addons = None if cached["addons"] is None else [{**a, "allowed": a["slug"] in allowed} for a in cached["addons"]]
     return {
         "refused": watcher.refused() if watcher else [],
         "bans": bans,
         "exposure": exposure,
         "users": users,
         "tokens": tokens,
-        "addons": cached["addons"],
+        "addons": addons,
         "config": cached["config"],
         "scanned_at": cached["at"],
         "token_unused_days": chosen[CONF_TOKEN_DAYS],

@@ -621,10 +621,11 @@ class SystemHubOptionsFlow(OptionsFlow):
     # Security
 
     async def async_step_security(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
-        """Notifications of refused logins, unused tokens, ignored addresses."""
+        """Notifications of refused logins, unused tokens, ignored addresses, add-ons allowed unprotected."""
         if user_input is not None:
             return self._save(**{MODULE_SECURITY: security_flow.settings_options(user_input)})
-        schema = security_flow.settings_schema(self.hass, self._module(MODULE_SECURITY))
+        addons = await security_flow.installed_addons(self.hass)
+        schema = security_flow.settings_schema(self.hass, self._module(MODULE_SECURITY), addons)
         return self.async_show_form(step_id="security", data_schema=schema)
 
     # Logs

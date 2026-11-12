@@ -157,13 +157,15 @@
           "notify": "Notifică autentificările refuzate din Internet",
           "notify_services": "Acțiuni de notificare",
           "token_unused_days": "Token nefolosit după",
-          "ignored_ips": "Adrese ignorate"
+          "ignored_ips": "Adrese ignorate",
+          "allowed_addons": "Suplimente permise neprotejate"
         },
         "data_description": {
           "notify": "O notificare persistentă, cel mult o dată pe oră pe adresă; adresele locale nu sunt notificate niciodată.",
           "notify_services": "Trimisă și acestor acțiuni de notificare.",
           "token_unused_days": "Un token de lungă durată nefolosit de atâtea zile este semnalat.",
-          "ignored_ips": "Autentificările lor refuzate sunt marcate ignorate și nu sunt notificate niciodată."
+          "ignored_ips": "Autentificările lor refuzate sunt marcate ignorate și nu sunt notificate niciodată.",
+          "allowed_addons": "Suplimente care pot rula cu modul protejat dezactivat (un terminal SSH, de exemplu): tot listate, nu mai sunt o problemă."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Grupuri",
         "card_hide_ok": "Ascunde ce e în regulă",
         "card_show_title": "Afișează titlul",
-        "card_show_subtitle": "Afișează subtitlul"
+        "card_show_subtitle": "Afișează subtitlul",
+        "sc_allowed": "Permis",
+        "sc_allow": "Permite",
+        "sc_disallow": "Retrage"
       }
     },
     "battery_type": {

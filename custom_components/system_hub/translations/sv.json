@@ -157,13 +157,15 @@
           "notify": "Avisera nekade inloggningar från internet",
           "notify_services": "Aviseringsåtgärder",
           "token_unused_days": "Token oanvänd efter",
-          "ignored_ips": "Ignorerade adresser"
+          "ignored_ips": "Ignorerade adresser",
+          "allowed_addons": "Tillägg tillåtna utan skydd"
         },
         "data_description": {
           "notify": "En beständig avisering, högst en gång i timmen per adress; lokala adresser aviseras aldrig.",
           "notify_services": "Skickas även till dessa aviseringsåtgärder.",
           "token_unused_days": "En långlivad token som inte använts på så många dagar markeras.",
-          "ignored_ips": "Deras nekade inloggningar markeras som ignorerade och aviseras aldrig."
+          "ignored_ips": "Deras nekade inloggningar markeras som ignorerade och aviseras aldrig.",
+          "allowed_addons": "Tillägg som får köras utan skyddat läge (till exempel en SSH-terminal): listas fortfarande, men är inte längre ett problem."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Grupper",
         "card_hide_ok": "Dölj det som är okej",
         "card_show_title": "Visa rubrik",
-        "card_show_subtitle": "Visa underrubrik"
+        "card_show_subtitle": "Visa underrubrik",
+        "sc_allowed": "Tillåtet",
+        "sc_allow": "Tillåt",
+        "sc_disallow": "Återkalla"
       }
     },
     "battery_type": {

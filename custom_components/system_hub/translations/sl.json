@@ -157,13 +157,15 @@
           "notify": "Obveščaj o zavrnjenih prijavah z interneta",
           "notify_services": "Dejanja obveščanja",
           "token_unused_days": "Žeton neuporabljen po",
-          "ignored_ips": "Prezrti naslovi"
+          "ignored_ips": "Prezrti naslovi",
+          "allowed_addons": "Dodatki, dovoljeni brez zaščite"
         },
         "data_description": {
           "notify": "Trajno obvestilo, največ enkrat na uro na naslov; o lokalnih naslovih ni obvestil.",
           "notify_services": "Pošlje se tudi tem dejanjem obveščanja.",
           "token_unused_days": "Dolgotrajni žeton, ki ni bil uporabljen toliko dni, je označen.",
-          "ignored_ips": "Njihove zavrnjene prijave so označene kot prezrte in brez obvestil."
+          "ignored_ips": "Njihove zavrnjene prijave so označene kot prezrte in brez obvestil.",
+          "allowed_addons": "Dodatki, ki lahko tečejo z izklopljenim zaščitenim načinom (na primer terminal SSH): še vedno na seznamu, a niso več težava."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Skupine",
         "card_hide_ok": "Skrij, kar je v redu",
         "card_show_title": "Prikaži naslov",
-        "card_show_subtitle": "Prikaži podnaslov"
+        "card_show_subtitle": "Prikaži podnaslov",
+        "sc_allowed": "Dovoljen",
+        "sc_allow": "Dovoli",
+        "sc_disallow": "Prekliči"
       }
     },
     "battery_type": {
