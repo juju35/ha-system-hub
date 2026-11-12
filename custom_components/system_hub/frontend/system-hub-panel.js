@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.5.0';
+var SYSTEM_HUB_PANEL_VERSION = '1.6.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1887,16 +1887,53 @@ class SystemHubPanel extends HTMLElement {
       )
       .join('');
     if (list.length) this._mkFetchNotes(list);
-    return `${header}${running ? this._progress(data) : ''}${confirm}
+    var system = this._state.system_updates;
+    return `${system ? this._sysUpdates(system) : ''}${system ? `<h2 class="stsec">${shEsc(this._t('upd_marketplace'))}</h2>` : ''}${header}${running ? this._progress(data) : ''}${confirm}
       ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
       ${cards ? `<div class="mkgrid">${cards}</div>` : ''}
       ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
   }
 
-  // One update: its logo (else its initial), the versions and the size of the change, the start of its release notes
-  _mkCard(u) {
+  // The updates outside the Marketplace: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and services;
+  // one card each, installed one at a time with Home Assistant's update.install, a backup first when chosen
+  _sysUpdates(data) {
+    var available = data.available || [];
+    var backupDefault = Boolean(this._state.marketplace?.backup_before_install);
+    var backup = this._updBackup ?? backupDefault;
+    var sections = [
+      ['upd_system', available.filter((u) => ['core', 'supervisor', 'os'].includes(u.kind))],
+      ['upd_addons', available.filter((u) => u.kind === 'addon')],
+      ['upd_devices', available.filter((u) => u.kind === 'device')],
+    ].filter(([, items]) => items.length);
+    if (available.length) this._mkFetchNotes(available);
+    var ok = data.up_to_date || {};
+    var toggle = available.some((u) => u.backup)
+      ? `<button class="act quiet" data-action="upd_backup" aria-pressed="${backup}"><ha-icon icon="mdi:checkbox-${backup ? 'marked' : 'blank-outline'}"></ha-icon>${shEsc(this._t('upd_backup'))}</button>`
+      : '';
+    var summary = [
+      available.length ? this._t('upd_available', { n: available.length }) : '',
+      this._t('upd_uptodate', { system: ok.system ?? 0, addons: ok.addon ?? 0, devices: ok.device ?? 0 }),
+    ].filter(Boolean);
+    var head = `<div class="actions"><span class="s grow">${shEsc(summary.join(' · '))}</span>${toggle}</div>${this._message('upd')}`;
+    return `${head}${sections
+      .map(([key, items]) => `<h2 class="stsec">${shEsc(this._t(key))}</h2><div class="mkgrid">${items.map((u) => this._mkCard(u, backup)).join('')}</div>`)
+      .join('')}`;
+  }
+
+  // One update: its logo (else its initial), the versions and the size of the change, the start of its release notes.
+  // A Marketplace repository is installed by System Hub (one at a time with the others); any other update by Home
+  // Assistant's update.install, asked first (Home Assistant itself restarts), with a backup when `backup` and supported
+  _mkCard(u, backup) {
     var change = shChange(u.installed, u.latest);
-    var busy = u.installing || this._busy[`mk_install:${u.entity_id}`];
+    var system = Boolean(u.kind);
+    var busy = u.installing || this._busy[`${system ? 'upd' : 'mk'}_install:${u.entity_id}`];
+    var restart = { core: 'upd_restart_core', supervisor: 'upd_restart_supervisor', os: 'upd_restart_os' }[u.kind];
+    var install = system
+      ? this._confirm === `upd:${u.entity_id}`
+        ? `${this._button('upd_install', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id, backup: backup && u.backup ? '1' : '' }, busy })}
+           ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}`
+        : this._button('upd_confirm', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy })
+      : this._button('mk_install', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy, disabled: this._state.marketplace?.installing_updates });
     var notes = u.release_summary || this._mkNotes?.[`${u.entity_id}@${u.latest}`];
     var initial = `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
     var picture = this._mkPicture(u.picture);
@@ -1910,8 +1947,9 @@ class SystemHubPanel extends HTMLElement {
         ${change ? `<span class="pill ${change === 'major' ? 'bad' : change === 'minor' ? 'warn' : 'good'}">${shEsc(this._t(`mk_${change}`))}</span>` : ''}</div>
       <div class="mkver"><span class="muted">${shEsc(u.installed || '—')}</span><ha-icon icon="mdi:arrow-right"></ha-icon><b>${shEsc(u.latest || '—')}</b></div>
       ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
-      <div class="actions">${link}<span class="grow"></span>
-        ${this._button('mk_install', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy, disabled: this._state.marketplace?.installing_updates })}</div></ha-card>`;
+      ${restart ? `<div class="s warn-text"><ha-icon icon="mdi:restart-alert"></ha-icon> ${shEsc(this._t(restart))}</div>` : ''}
+      ${this._confirm === `upd:${u.entity_id}` ? `<div class="s" role="alert">${shEsc(this._t('upd_confirm', { name: u.title, version: u.latest || '' }))}</div>` : ''}
+      <div class="actions">${link}<span class="grow"></span>${install}</div></ha-card>`;
   }
 
   // A brand image of Home Assistant (/api/brands/…) needs its access token, read once (brands/access_token)
@@ -2441,6 +2479,19 @@ class SystemHubPanel extends HTMLElement {
       });
     }
     if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', this._gitTarget(), null, SH_DOMAIN, action);
+    if (action === 'upd_backup') {
+      this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));
+      return this._render();
+    }
+    if (action === 'upd_confirm') {
+      this._confirm = `upd:${button.dataset.entity}`;
+      return this._render();
+    }
+    if (action === 'upd_install') {
+      var entity = button.dataset.entity;
+      this._confirm = null;
+      return this._run('install', 'upd', { entity_id: entity, ...(button.dataset.backup ? { backup: true } : {}) }, null, 'update', `upd_install:${entity}`);
+    }
     if (action === 'mk_install') {
       var target = button.dataset.entity;
       return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target] }, null, SH_DOMAIN, `mk_install:${target}`);
@@ -3419,14 +3470,17 @@ var SH_STATUS_METHODS = {
     }
     if (tab === 'marketplace') {
       var market = s.marketplace;
-      var core = (s.updates || []).filter((u) => u.state === 'on');
-      if (!market && !core.length) return null;
+      // Home Assistant, the add-ons and the devices when the module reads them; else Core and OS alone
+      var others = s.system_updates
+        ? (s.system_updates.available || []).map((u) => `${u.title} ${u.latest}`)
+        : (s.updates || []).filter((u) => u.state === 'on').map((u) => `${u.key === 'core' ? 'Core' : 'OS'} ${u.latest}`);
+      if (!market && !others.length) return null;
       var repos = market?.list || [];
-      var count = repos.length + core.length;
+      var count = repos.length + others.length;
       return [
         market?.state === 'error' ? 'bad' : count ? 'warn' : 'good',
         count ? n('st_available', count) : this._t('up_to_date'),
-        join([...core.map((u) => `${u.key === 'core' ? 'Core' : 'OS'} ${u.latest}`), ...repos.map((u) => `${u.title} ${u.latest}`)]),
+        join([...others, ...repos.map((u) => `${u.title} ${u.latest}`)]),
       ];
     }
     if (tab === 'watchdog') {

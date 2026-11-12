@@ -1487,7 +1487,18 @@
         "group_maintenance": "Обслуговування",
         "group_devices": "Пристрої",
         "move_up": "Вгору",
-        "move_down": "Вниз"
+        "move_down": "Вниз",
+        "upd_addons": "Доповнення",
+        "upd_devices": "Пристрої та служби",
+        "upd_backup": "Створити резервну копію перед встановленням",
+        "upd_available": "Доступно: {n}",
+        "upd_uptodate": "Актуально: Home Assistant {system}, доповнення {addons}, пристрої та служби {devices}",
+        "upd_restart_core": "Перезапускає Home Assistant",
+        "upd_restart_supervisor": "Перезапускає Supervisor",
+        "upd_restart_os": "Перезапускає хост",
+        "upd_confirm": "Встановити {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {

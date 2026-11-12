@@ -1487,7 +1487,18 @@
         "group_maintenance": "Údržba",
         "group_devices": "Zariadenia",
         "move_up": "Posunúť hore",
-        "move_down": "Posunúť dole"
+        "move_down": "Posunúť dole",
+        "upd_addons": "Doplnky",
+        "upd_devices": "Zariadenia a služby",
+        "upd_backup": "Zálohovať pred inštaláciou",
+        "upd_available": "Dostupné: {n}",
+        "upd_uptodate": "Aktuálne: Home Assistant {system}, doplnky {addons}, zariadenia a služby {devices}",
+        "upd_restart_core": "Reštartuje Home Assistant",
+        "upd_restart_supervisor": "Reštartuje Supervisor",
+        "upd_restart_os": "Reštartuje hostiteľa",
+        "upd_confirm": "Nainštalovať {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {

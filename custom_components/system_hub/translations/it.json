@@ -1487,7 +1487,18 @@
         "group_maintenance": "Manutenzione",
         "group_devices": "Dispositivi",
         "move_up": "Sposta su",
-        "move_down": "Sposta giù"
+        "move_down": "Sposta giù",
+        "upd_addons": "Add-on",
+        "upd_devices": "Dispositivi e servizi",
+        "upd_backup": "Esegui un backup prima di installare",
+        "upd_available": "Disponibili: {n}",
+        "upd_uptodate": "Aggiornati: Home Assistant {system}, add-on {addons}, dispositivi e servizi {devices}",
+        "upd_restart_core": "Riavvia Home Assistant",
+        "upd_restart_supervisor": "Riavvia il Supervisor",
+        "upd_restart_os": "Riavvia l'host",
+        "upd_confirm": "Installare {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {

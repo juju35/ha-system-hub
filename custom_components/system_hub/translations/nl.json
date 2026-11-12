@@ -1487,7 +1487,18 @@
         "group_maintenance": "Onderhoud",
         "group_devices": "Apparaten",
         "move_up": "Omhoog",
-        "move_down": "Omlaag"
+        "move_down": "Omlaag",
+        "upd_addons": "Add-ons",
+        "upd_devices": "Apparaten en diensten",
+        "upd_backup": "Back-up maken vóór installatie",
+        "upd_available": "Beschikbaar: {n}",
+        "upd_uptodate": "Bijgewerkt: Home Assistant {system}, add-ons {addons}, apparaten en diensten {devices}",
+        "upd_restart_core": "Herstart Home Assistant",
+        "upd_restart_supervisor": "Herstart de Supervisor",
+        "upd_restart_os": "Herstart de host",
+        "upd_confirm": "{name} {version} installeren?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {

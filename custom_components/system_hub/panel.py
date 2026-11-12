@@ -209,6 +209,54 @@ def _updates(hass: HomeAssistant) -> list[dict[str, Any]]:
     return updates
 
 
+# The Supervisor's update entities of Home Assistant itself, by unique id; its other ones are the add-ons'.
+HASSIO_KINDS = {
+    "home_assistant_core_version_latest": "core",
+    "home_assistant_supervisor_version_latest": "supervisor",
+    "home_assistant_os_version_latest": "os",
+}
+# Their order in the Updates tab, then the add-ons, then the devices and services
+UPDATE_KIND_ORDER = ("core", "supervisor", "os", "addon", "device")
+# UpdateEntityFeature.BACKUP: the update can make a backup first
+UPDATE_FEATURE_BACKUP = 8
+# Repositories of the Marketplace or of HACS: the Updates tab lists them with the Marketplace
+REPOSITORY_PLATFORMS = ("marketplace", "hacs")
+
+
+def _system_updates(hass: HomeAssistant) -> dict[str, Any]:
+    """Every update entity but the Marketplace's: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and
+    services (firmware of a Zigbee device, of an ESPHome node…). Those with an update, and how many are up to date."""
+    available = []
+    up_to_date = {"system": 0, "addon": 0, "device": 0}
+    for entry in er.async_get(hass).entities.values():
+        if entry.domain != "update" or entry.platform in REPOSITORY_PLATFORMS or entry.disabled_by:
+            continue
+        state = hass.states.get(entry.entity_id)
+        if state is None or state.state not in ("on", "off"):
+            continue
+        kind = HASSIO_KINDS.get(entry.unique_id, "addon") if entry.platform == "hassio" else "device"
+        if state.state == "off":
+            up_to_date[kind if kind in up_to_date else "system"] += 1
+            continue
+        attrs = state.attributes
+        available.append(
+            {
+                "entity_id": entry.entity_id,
+                "kind": kind,
+                "title": attrs.get("title") or state.name,
+                "installed": attrs.get("installed_version"),
+                "latest": attrs.get("latest_version"),
+                "release_url": attrs.get("release_url"),
+                "release_summary": attrs.get("release_summary"),
+                "picture": attrs.get("entity_picture"),
+                "installing": bool(attrs.get("in_progress")),
+                "backup": bool(int(attrs.get("supported_features") or 0) & UPDATE_FEATURE_BACKUP),
+            }
+        )
+    available.sort(key=lambda u: (UPDATE_KIND_ORDER.index(u["kind"]), str(u["title"]).lower()))
+    return {"available": available, "up_to_date": up_to_date}
+
+
 def _system(hass: HomeAssistant, stoppable: set[str] | None = None) -> list[dict[str, Any]]:
     """System Monitor sensors and processes, backups, database size: key, entity id, name, state, unit; a process
     that may be stopped says so."""
@@ -330,6 +378,7 @@ def _marketplace(refresher: Any) -> dict[str, Any]:
         "last_check": refresher.last_check.isoformat() if refresher.last_check else None,
         "next_due": refresher.next_due.isoformat() if refresher.next_due else None,
         "scan_interval": refresher.scan_interval,
+        "backup_before_install": refresher.backup_before_install,
     }
 
 
@@ -407,6 +456,7 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["watchdog"] = _watchdog(hass, data.watchdog)
     if data.marketplace is not None:
         result["marketplace"] = _marketplace(data.marketplace)
+        result["system_updates"] = _system_updates(hass)
     if data.batteries is not None:
         result["batteries"] = _batteries(data.batteries)
     if data.git_sync is not None:

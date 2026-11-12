@@ -1487,7 +1487,18 @@
         "group_maintenance": "Karbantartás",
         "group_devices": "Eszközök",
         "move_up": "Fel",
-        "move_down": "Le"
+        "move_down": "Le",
+        "upd_addons": "Kiegészítők",
+        "upd_devices": "Eszközök és szolgáltatások",
+        "upd_backup": "Mentés telepítés előtt",
+        "upd_available": "Elérhető: {n}",
+        "upd_uptodate": "Naprakész: Home Assistant {system}, kiegészítők {addons}, eszközök és szolgáltatások {devices}",
+        "upd_restart_core": "Újraindítja a Home Assistantot",
+        "upd_restart_supervisor": "Újraindítja a Supervisort",
+        "upd_restart_os": "Újraindítja a gazdagépet",
+        "upd_confirm": "Telepíti: {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {

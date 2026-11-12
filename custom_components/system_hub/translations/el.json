@@ -1487,7 +1487,18 @@
         "group_maintenance": "Συντήρηση",
         "group_devices": "Συσκευές",
         "move_up": "Μετακίνηση πάνω",
-        "move_down": "Μετακίνηση κάτω"
+        "move_down": "Μετακίνηση κάτω",
+        "upd_addons": "Πρόσθετα",
+        "upd_devices": "Συσκευές και υπηρεσίες",
+        "upd_backup": "Αντίγραφο ασφαλείας πριν από την εγκατάσταση",
+        "upd_available": "Διαθέσιμες: {n}",
+        "upd_uptodate": "Ενημερωμένα: Home Assistant {system}, πρόσθετα {addons}, συσκευές και υπηρεσίες {devices}",
+        "upd_restart_core": "Επανεκκινεί το Home Assistant",
+        "upd_restart_supervisor": "Επανεκκινεί τον Supervisor",
+        "upd_restart_os": "Επανεκκινεί τον κεντρικό υπολογιστή",
+        "upd_confirm": "Εγκατάσταση {name} {version};",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {

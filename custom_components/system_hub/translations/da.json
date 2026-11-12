@@ -1487,7 +1487,18 @@
         "group_maintenance": "Vedligeholdelse",
         "group_devices": "Enheder",
         "move_up": "Flyt op",
-        "move_down": "Flyt ned"
+        "move_down": "Flyt ned",
+        "upd_addons": "Tilføjelser",
+        "upd_devices": "Enheder og tjenester",
+        "upd_backup": "Tag backup før installation",
+        "upd_available": "Tilgængelige: {n}",
+        "upd_uptodate": "Opdateret: Home Assistant {system}, tilføjelser {addons}, enheder og tjenester {devices}",
+        "upd_restart_core": "Genstarter Home Assistant",
+        "upd_restart_supervisor": "Genstarter Supervisor",
+        "upd_restart_os": "Genstarter værten",
+        "upd_confirm": "Installér {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace"
       }
     },
     "battery_type": {
