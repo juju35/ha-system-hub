@@ -15,11 +15,11 @@ MOCK = ROOT / "test/system-monitor-card/mock-states.mjs"
 
 # One entry per light/dark pair: screenshots/<file>.png and <file>-dark.png
 PAIRS = [
-    {"file": "card-system-monitor", "type": "system-monitor-card", "width": 460, "procs_ok": True},
-    {"file": "card-system-monitor-mini", "type": "system-monitor-mini-card", "width": 380},
+    {"file": "card-system-monitor", "type": "sh-system-card", "width": 460, "procs_ok": True},
+    {"file": "card-system-monitor-mini", "type": "sh-system-mini-card", "width": 380},
     {
         "file": "card-system-monitor-mini-zoom",
-        "type": "system-monitor-mini-card",
+        "type": "sh-system-mini-card",
         "width": 460,
         "procs_ok": True,
         "zoom": True,

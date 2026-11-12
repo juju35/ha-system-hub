@@ -512,6 +512,29 @@
       "nothing_to_import": "Няма какво да се импортира от Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Страж"
+    },
+    "marketplace": {
+      "name": "System Hub Актуализации"
+    },
+    "batteries": {
+      "name": "System Hub Батерии"
+    },
+    "git_sync": {
+      "name": "System Hub Версиониране"
+    },
+    "orphans": {
+      "name": "System Hub Почистване"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Версиониране ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Хранилището на Версиониране не е заредено."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Карти на System Hub за промяна в {path}",
+      "description": "System Hub 2.0 има една карта и една мини карта; `module:` избира какво показват. {count} карти в {path} още използват тип, който вече не съществува, а System Hub не презаписва YAML файл. Променете ги така (опциите остават същите):\n\n{types}\n\nТози ремонт изчезва при следващото стартиране, когато не остане нито една."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} незащитени добавки",
         "sc_n_no_mfa": "{n} администратори без 2FA",
         "sc_n_in_clear": "{n} данни в чист текст",
-        "sc_n_unused": "{n} неизползвани токена"
+        "sc_n_unused": "{n} неизползвани токена",
+        "card_admin_only": "System Hub: само за администратори",
+        "card_module": "Модул",
+        "card_groups": "Групи",
+        "card_hide_ok": "Скрий наред"
       }
     },
     "battery_type": {

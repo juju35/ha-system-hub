@@ -512,6 +512,29 @@
       "nothing_to_import": "Nimic de importat din Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Santinelă"
+    },
+    "marketplace": {
+      "name": "System Hub Actualizări"
+    },
+    "batteries": {
+      "name": "System Hub Baterii"
+    },
+    "git_sync": {
+      "name": "System Hub Versionare"
+    },
+    "orphans": {
+      "name": "System Hub Curățenie"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versionare ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Depozitul Versionare nu este încărcat."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Carduri System Hub de modificat în {path}",
+      "description": "System Hub 2.0 are un card și un mini card; `module:` alege ce afișează. {count} carduri din {path} folosesc încă un tip care nu mai există, iar System Hub nu rescrie un fișier YAML. Modificați-le astfel (opțiunile rămân aceleași):\n\n{types}\n\nAceastă reparație dispare la pornirea următoare când nu mai rămâne niciunul."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} suplimente neprotejate",
         "sc_n_no_mfa": "{n} admini fără 2FA",
         "sc_n_in_clear": "{n} credențiale în clar",
-        "sc_n_unused": "{n} tokenuri nefolosite"
+        "sc_n_unused": "{n} tokenuri nefolosite",
+        "card_admin_only": "System Hub: doar pentru administratori",
+        "card_module": "Modul",
+        "card_groups": "Grupuri",
+        "card_hide_ok": "Ascunde ce e în regulă"
       }
     },
     "battery_type": {

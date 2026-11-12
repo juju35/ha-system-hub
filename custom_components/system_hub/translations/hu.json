@@ -512,6 +512,29 @@
       "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Őrszem"
+    },
+    "marketplace": {
+      "name": "System Hub Frissítések"
+    },
+    "batteries": {
+      "name": "System Hub Elemek"
+    },
+    "git_sync": {
+      "name": "System Hub Verziókezelés"
+    },
+    "orphans": {
+      "name": "System Hub Takarítás"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Verziókezelés ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "A Verziókezelés tároló nincs betöltve."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Módosítandó System Hub kártyák itt: {path}",
+      "description": "A System Hub 2.0-nak egy kártyája és egy minikártyája van; a `module:` választja ki, mit mutatnak. {path} {count} kártyája még olyan típust használ, amely már nem létezik, és a System Hub nem írja át a YAML-fájlokat. Módosítsa őket így (a beállítások ugyanazok):\n\n{types}\n\nEz a javítás a következő indításkor eltűnik, ha már nem marad egy sem."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} nem védett bővítmény",
         "sc_n_no_mfa": "{n} admin 2FA nélkül",
         "sc_n_in_clear": "{n} nyílt szöveges hitelesítő adat",
-        "sc_n_unused": "{n} használatlan token"
+        "sc_n_unused": "{n} használatlan token",
+        "card_admin_only": "System Hub: csak rendszergazdáknak",
+        "card_module": "Modul",
+        "card_groups": "Csoportok",
+        "card_hide_ok": "Rendben lévők elrejtése"
       }
     },
     "battery_type": {

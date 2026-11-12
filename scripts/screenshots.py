@@ -19,6 +19,8 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parent.parent
 COMPONENT = ROOT / "custom_components/system_hub"
 PANEL_JS = (COMPONENT / "frontend/system-hub-panel.js").read_text(encoding="utf-8")
+ICONS_JS = (COMPONENT / "frontend/system-hub-icons.js").read_text(encoding="utf-8")
+CARD_JS = (COMPONENT / "frontend/cards/system-hub-card.js").read_text(encoding="utf-8")
 ICONS = json.loads((ROOT / "scripts/screenshot-icons.json").read_text(encoding="utf-8"))
 NOW = "2026-11-10T09:00:00+01:00"
 WIDTH = 1100
@@ -86,7 +88,17 @@ customElements.define("ha-icon", class extends HTMLElement {
   connectedCallback() { this._draw(); }
   attributeChangedCallback() { this._draw(); }
   _draw() {
-    const path = ICONS[(this.getAttribute("icon") || "").replace("mdi:", "")] || "";
+    const icon = this.getAttribute("icon") || "";
+    // An icon set of its own (system-hub:good…, the sidebar emblem): drawn from window.customIcons, as Home Assistant does
+    const [set, name] = icon.split(":");
+    if (set !== "mdi" && window.customIcons?.[set]) {
+      window.customIcons[set].getIcon(name).then(({ path, viewBox }) => {
+        this.style.display = "inline-flex";
+        this.innerHTML = '<svg viewBox="' + (viewBox || "0 0 24 24") + '" style="width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px);fill:currentColor"><path d="' + path + '"/></svg>';
+      });
+      return;
+    }
+    const path = ICONS[icon.replace("mdi:", "")] || "";
     this.style.display = "inline-flex";
     this.innerHTML = '<svg viewBox="0 0 24 24" style="width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px);fill:currentColor"><path d="' + path + '"/></svg>';
   }
@@ -1405,6 +1417,20 @@ ORPHANS_CONFIRM = """async () => {
     root.querySelector('[data-action="orph_confirm"][data-act="remove"]').click();
 }"""
 
+# A status card on its own, next to the panel (hidden): the panel's hass, as a dashboard gives it.
+CARD_MOUNT = """async (type) => {
+    const panel = document.querySelector("system-hub-panel");
+    const hass = { ...panel._hass, panels: { "system-hub": { config: { _panel_custom: { module_url: "" } } } } };
+    panel.style.display = "none";
+    const card = document.createElement(type);
+    card.id = "card";
+    card.style.cssText = "display:block;width:" + (type.includes("mini") ? 420 : 520) + "px;padding:16px";
+    card.setConfig({ type: "custom:" + type });
+    document.querySelector("#root").appendChild(card);
+    card.hass = hass;
+    await card._read();
+}"""
+
 # Opens the diff viewer from the Git Sync tab.
 OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
@@ -1474,6 +1500,18 @@ SHOTS = [
             ("automations", "automations"),
             ("orphans", "orphans"),
         )
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
+    # The status cards (system-hub-card, system-hub-mini-card), reading the panel as on a dashboard
+    *(
+        {
+            "file": f"card-status{mini}{suffix}",
+            "theme": theme,
+            "tab": "status",
+            "card": f"system-hub{mini}-card",
+            "automations": True,
+        }
+        for mini in ("", "-mini")
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
@@ -1646,6 +1684,16 @@ def main():
             shown = automations_state(shown) if shot.get("automations") else shown
             page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view"), FORMS])
             page.wait_for_timeout(400)
+            if shot.get("card"):
+                page.add_script_tag(content=ICONS_JS)
+                page.add_script_tag(content=CARD_JS)
+                page.evaluate(CARD_MOUNT, shot["card"])
+                page.wait_for_timeout(400)
+                capture(
+                    page, out / f"{shot['file']}.png", clip=page.locator("#card").bounding_box(), animations="disabled"
+                )
+                page.close()
+                continue
             if shot.get("form"):
                 clip = page.evaluate(OPEN_FORM, list(shot["form"]))
                 capture(page, out / f"{shot['file']}.png", clip=clip, full_page=True, animations="disabled")

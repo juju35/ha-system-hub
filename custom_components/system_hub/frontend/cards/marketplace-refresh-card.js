@@ -6,7 +6,7 @@
  */
 // Requests left under which the card says the checks may wait for GitHub's limit to reset.
 const MR_RATE_LOW = 1500;
-var MARKETPLACE_REFRESH_CARD_VERSION = '1.10.0';
+var MARKETPLACE_REFRESH_CARD_VERSION = '2.0.0';
 // System Hub: its entities (platform system_hub, translation keys marketplace_*) and actions (system_hub.marketplace_*)
 var HR_DOMAIN = 'system_hub';
 var HR_PREFIX = 'marketplace_';
@@ -1216,7 +1216,7 @@ const hrMarketplaceUpdates = (registry) =>
 
 class MarketplaceRefreshCard extends HTMLElement {
   static getConfigElement() {
-    return document.createElement('marketplace-refresh-card-editor');
+    return document.createElement('sh-marketplace-card-editor');
   }
 
   static getStubConfig() {
@@ -1886,12 +1886,12 @@ class MarketplaceRefreshCardEditor extends HTMLElement {
   }
 }
 
-if (!customElements.get('marketplace-refresh-card')) {
-  customElements.define('marketplace-refresh-card', MarketplaceRefreshCard);
-  customElements.define('marketplace-refresh-card-editor', MarketplaceRefreshCardEditor);
-  window.customCards = window.customCards || [];
-  window.customCards.push({
-    type: 'marketplace-refresh-card',
+if (!customElements.get('sh-marketplace-card')) {
+  customElements.define('sh-marketplace-card', MarketplaceRefreshCard);
+  customElements.define('sh-marketplace-card-editor', MarketplaceRefreshCardEditor);
+  window.systemHubCards = window.systemHubCards || [];
+  window.systemHubCards.push({
+    type: 'sh-marketplace-card',
     name: 'Marketplace Refresh Card',
     description: 'The update check of Marketplace Refresh: status, last and next check, updates available and failed repositories',
     preview: true,

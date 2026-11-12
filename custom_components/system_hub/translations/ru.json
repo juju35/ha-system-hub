@@ -512,6 +512,29 @@
       "nothing_to_import": "Нечего импортировать из Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Страж"
+    },
+    "marketplace": {
+      "name": "System Hub Обновления"
+    },
+    "batteries": {
+      "name": "System Hub Батареи"
+    },
+    "git_sync": {
+      "name": "System Hub Версионирование"
+    },
+    "orphans": {
+      "name": "System Hub Очистка"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Версионирование ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Репозиторий Версионирование не загружен."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Карточки System Hub для изменения в {path}",
+      "description": "В System Hub 2.0 одна карточка и одна мини-карточка; `module:` выбирает, что они показывают. {count} карточек в {path} всё ещё используют тип, которого больше нет, а System Hub не переписывает YAML-файлы. Измените их так (параметры те же):\n\n{types}\n\nЭто исправление исчезнет при следующем запуске, когда таких карточек не останется."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} незащищённых дополнений",
         "sc_n_no_mfa": "{n} админов без 2FA",
         "sc_n_in_clear": "{n} учётных данных открытым текстом",
-        "sc_n_unused": "{n} неиспользуемых токенов"
+        "sc_n_unused": "{n} неиспользуемых токенов",
+        "card_admin_only": "System Hub: только для администраторов",
+        "card_module": "Модуль",
+        "card_groups": "Группы",
+        "card_hide_ok": "Скрыть то, что в порядке"
       }
     },
     "battery_type": {

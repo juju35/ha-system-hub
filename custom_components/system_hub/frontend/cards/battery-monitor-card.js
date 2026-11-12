@@ -4,7 +4,7 @@
  * Served and added to the dashboard resources by System Hub; the card types are those of Battery Monitor, so its
  * dashboards keep working. https://github.com/juju35/ha-system-hub
  */
-var BATTERY_MONITOR_CARD_VERSION = '1.10.0';
+var BATTERY_MONITOR_CARD_VERSION = '2.0.0';
 
 const BM_I18N = {
   en: {
@@ -1700,7 +1700,7 @@ const bmFindButton = (registry, entity) => {
 
 class BatteryMonitorCard extends HTMLElement {
   static getConfigElement() {
-    return document.createElement('battery-monitor-card-editor');
+    return document.createElement('sh-batteries-card-editor');
   }
 
   static getStubConfig() {
@@ -2802,21 +2802,21 @@ function bmTypeSection(name, icon, names, options, lang) {
   return [{ name, type: 'expandable', title: bmT(lang, `ed_${name}`), icon, schema: names.map((n) => ({ name: n, selector })) }];
 }
 
-if (!customElements.get('battery-monitor-card')) {
-  customElements.define('battery-monitor-card', BatteryMonitorCard);
-  customElements.define('battery-monitor-card-editor', BatteryMonitorCardEditor);
-  customElements.define('battery-monitor-mini-card', BatteryMonitorMiniCard);
-  window.customCards = window.customCards || [];
-  window.customCards.push(
+if (!customElements.get('sh-batteries-card')) {
+  customElements.define('sh-batteries-card', BatteryMonitorCard);
+  customElements.define('sh-batteries-card-editor', BatteryMonitorCardEditor);
+  customElements.define('sh-batteries-mini-card', BatteryMonitorMiniCard);
+  window.systemHubCards = window.systemHubCards || [];
+  window.systemHubCards.push(
     {
-      type: 'battery-monitor-card',
+      type: 'sh-batteries-card',
       name: 'Battery Monitor Card',
       description: 'The batteries watched by System Hub: icon, name and level, the lowest first',
       preview: true,
       documentationURL: 'https://github.com/juju35/ha-system-hub',
     },
     {
-      type: 'battery-monitor-mini-card',
+      type: 'sh-batteries-mini-card',
       name: 'Battery Monitor Mini Card',
       description: 'Compact: the status and only the batteries needing attention, with a button for the full card',
       preview: true,

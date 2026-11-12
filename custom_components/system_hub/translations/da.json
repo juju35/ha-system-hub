@@ -512,6 +512,29 @@
       "nothing_to_import": "Intet at importere fra Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Vagtpost"
+    },
+    "marketplace": {
+      "name": "System Hub Opdateringer"
+    },
+    "batteries": {
+      "name": "System Hub Batterier"
+    },
+    "git_sync": {
+      "name": "System Hub Versionering"
+    },
+    "orphans": {
+      "name": "System Hub Oprydning"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versionering ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Versionering-repositoriet er ikke indlæst."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "System Hub-kort, der skal ændres i {path}",
+      "description": "System Hub 2.0 har ét kort og ét minikort; `module:` vælger, hvad de viser. {count} kort i {path} bruger stadig en type, der ikke findes længere, og System Hub omskriver ikke en YAML-fil. Ret dem sådan (indstillingerne er de samme):\n\n{types}\n\nDenne reparation forsvinder ved næste start, når der ikke er flere tilbage."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} tilføjelser ikke beskyttet",
         "sc_n_no_mfa": "{n} admins uden 2FA",
         "sc_n_in_clear": "{n} loginoplysninger i klartekst",
-        "sc_n_unused": "{n} ubrugte tokens"
+        "sc_n_unused": "{n} ubrugte tokens",
+        "card_admin_only": "System Hub: kun for administratorer",
+        "card_module": "Modul",
+        "card_groups": "Grupper",
+        "card_hide_ok": "Skjul det, der er i orden"
       }
     },
     "battery_type": {

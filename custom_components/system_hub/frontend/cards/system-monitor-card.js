@@ -2751,7 +2751,7 @@ const FULL_STYLE = `
 
 class SystemMonitorCard extends SystemMonitorBase {
   static getConfigElement() {
-    return document.createElement("system-monitor-card-editor");
+    return document.createElement("sh-system-card-editor");
   }
 
   static getStubConfig() {
@@ -3072,7 +3072,7 @@ const MINI_STYLE = `
  */
 class SystemMonitorMiniCard extends SystemMonitorZoomCard {
   static getConfigElement() {
-    return document.createElement("system-monitor-mini-card-editor");
+    return document.createElement("sh-system-mini-card-editor");
   }
 
   _compactSize() {
@@ -3352,26 +3352,26 @@ class SystemMonitorMiniCardEditor extends SystemMonitorEditorBase {
 const define = (name, cls) => {
   if (!customElements.get(name)) customElements.define(name, cls);
 };
-define("system-monitor-card", SystemMonitorCard);
-define("system-monitor-mini-card", SystemMonitorMiniCard);
-define("system-monitor-card-editor", SystemMonitorCardEditor);
-define("system-monitor-mini-card-editor", SystemMonitorMiniCardEditor);
+define("sh-system-card", SystemMonitorCard);
+define("sh-system-mini-card", SystemMonitorMiniCard);
+define("sh-system-card-editor", SystemMonitorCardEditor);
+define("sh-system-mini-card-editor", SystemMonitorMiniCardEditor);
 
-window.customCards = window.customCards || [];
+window.systemHubCards = window.systemHubCards || [];
 for (const card of [
   {
-    type: "system-monitor-card",
+    type: "sh-system-card",
     name: "System Monitor Card",
     description: "Monitor the machine running Home Assistant: CPU, RAM, disk, temperature, network, storage and processes.",
   },
   {
-    type: "system-monitor-mini-card",
+    type: "sh-system-mini-card",
     name: "System Monitor Mini Card",
     description: "Compact Home Assistant host overview: CPU, RAM, disk, temperature, network and uptime.",
   },
 ]) {
-  if (!window.customCards.some((c) => c.type === card.type))
-    window.customCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub#system-monitor-cards" });
+  if (!window.systemHubCards.some((c) => c.type === card.type))
+    window.systemHubCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub#system-monitor-cards" });
 }
 
 console.info(

@@ -6,7 +6,7 @@
  * integration, same card types: dashboards using it keep working.
  * https://github.com/juju35/ha-system-hub
  */
-var GIT_SYNC_CARD_VERSION = '1.10.0';
+var GIT_SYNC_CARD_VERSION = '2.0.0';
 // System Hub: its entities (platform system_hub, translation keys git_sync_*) and actions (system_hub.git_sync_*)
 var GS_DOMAIN = 'system_hub';
 var GS_PREFIX = 'git_sync_';
@@ -1642,7 +1642,7 @@ const gsRepo = (url) => {
 
 class GitSyncCard extends HTMLElement {
   static getConfigElement() {
-    return document.createElement('git-sync-card-editor');
+    return document.createElement('sh-git-sync-card-editor');
   }
 
   static getStubConfig() {
@@ -2282,7 +2282,7 @@ class GitSyncCard extends HTMLElement {
 // full card's content, same configuration, and back; a click anywhere outside the card brings it back too.
 class GitSyncMiniCard extends GitSyncCard {
   static getConfigElement() {
-    return document.createElement('git-sync-mini-card-editor');
+    return document.createElement('sh-git-sync-mini-card-editor');
   }
 
   constructor() {
@@ -2728,23 +2728,23 @@ class GitSyncMiniCardEditor extends GitSyncCardEditor {
   }
 }
 
-if (!customElements.get('git-sync-card')) {
-  customElements.define('git-sync-card', GitSyncCard);
-  customElements.define('git-sync-card-editor', GitSyncCardEditor);
-  customElements.define('git-sync-mini-card', GitSyncMiniCard);
-  customElements.define('git-sync-mini-card-editor', GitSyncMiniCardEditor);
+if (!customElements.get('sh-git-sync-card')) {
+  customElements.define('sh-git-sync-card', GitSyncCard);
+  customElements.define('sh-git-sync-card-editor', GitSyncCardEditor);
+  customElements.define('sh-git-sync-mini-card', GitSyncMiniCard);
+  customElements.define('sh-git-sync-mini-card-editor', GitSyncMiniCardEditor);
   customElements.define('git-sync-diff-dialog', GitSyncDiffDialog);
-  window.customCards = window.customCards || [];
-  window.customCards.push(
+  window.systemHubCards = window.systemHubCards || [];
+  window.systemHubCards.push(
     {
-      type: 'git-sync-card',
+      type: 'sh-git-sync-card',
       name: 'Git Sync Card',
       description: 'Git status of the configuration, Commit & push and dashboard export',
       preview: true,
       documentationURL: 'https://github.com/juju35/ha-system-hub',
     },
     {
-      type: 'git-sync-mini-card',
+      type: 'sh-git-sync-mini-card',
       name: 'Git Sync Mini Card',
       description: 'Compact Git status with Commit & push; its zoom button shows the full card',
       preview: true,

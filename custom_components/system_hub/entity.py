@@ -10,15 +10,6 @@ from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN, PANEL_PATH
 
-DEVICE_NAMES = {
-    "containers": "System Hub Containers",
-    "watchdog": "System Hub Watchdog",
-    "marketplace": "System Hub Marketplace",
-    "batteries": "System Hub Batteries",
-    "git_sync": "System Hub Git Sync",
-    "orphans": "System Hub Orphans",
-}
-
 
 class Listenable(Protocol):
     def async_add_listener(self, update: Callable[[], None]) -> Callable[[], None]: ...
@@ -40,7 +31,8 @@ class SystemHubEntity(Entity):
         self._attr_unique_id = unique_id(entry_id, module, key)
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, f"{entry_id}_{module}")},
-            name=DEVICE_NAMES[module],
+            # Its name translated (device.<module>.name): Sentinel, Updates, Versioning, Cleanup…
+            translation_key=module,
             manufacturer="juju35",
             entry_type=DeviceEntryType.SERVICE,
             # "Visit" on the device page: the panel's Settings tab

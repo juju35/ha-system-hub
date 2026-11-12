@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub (formerly bundled with Orphan Entities).
  * https://github.com/juju35/ha-system-hub
  */
-var ORPHAN_ENTITIES_CARD_VERSION = '1.10.0';
+var ORPHAN_ENTITIES_CARD_VERSION = '2.0.0';
 // The integration, its module and the prefix of the module's actions
 const OE_DOMAIN = 'system_hub';
 
@@ -2234,7 +2234,7 @@ function oeFilter(items, { q = '', platform = '', reason = '' } = {}) {
 
 class OrphanEntitiesCard extends HTMLElement {
   static getConfigElement() {
-    return document.createElement('orphan-entities-card-editor');
+    return document.createElement('sh-orphans-card-editor');
   }
 
   static getStubConfig() {
@@ -3185,7 +3185,7 @@ class OrphanEntitiesCard extends HTMLElement {
 // reason's chip opens the full card filtered on that reason.
 class OrphanEntitiesMiniCard extends OrphanEntitiesCard {
   static getConfigElement() {
-    return document.createElement('orphan-entities-mini-card-editor');
+    return document.createElement('sh-orphans-mini-card-editor');
   }
 
   constructor() {
@@ -3421,12 +3421,12 @@ class OrphanEntitiesMiniCardEditor extends OrphanEntitiesCardEditor {
 }
 
 // Each card is registered on its own: a page that already loaded an older copy of this file still gets the other.
-window.customCards = window.customCards || [];
-if (!customElements.get('orphan-entities-card')) {
-  customElements.define('orphan-entities-card', OrphanEntitiesCard);
-  customElements.define('orphan-entities-card-editor', OrphanEntitiesCardEditor);
-  window.customCards.push({
-    type: 'orphan-entities-card',
+window.systemHubCards = window.systemHubCards || [];
+if (!customElements.get('sh-orphans-card')) {
+  customElements.define('sh-orphans-card', OrphanEntitiesCard);
+  customElements.define('sh-orphans-card-editor', OrphanEntitiesCardEditor);
+  window.systemHubCards.push({
+    type: 'sh-orphans-card',
     name: 'Orphan Entities Card',
     description: 'The entities their integration no longer provides: filter, select and remove them in bulk',
     preview: true,
@@ -3434,11 +3434,11 @@ if (!customElements.get('orphan-entities-card')) {
   });
   console.info(`%c ORPHAN-ENTITIES-CARD %c v${ORPHAN_ENTITIES_CARD_VERSION} `, 'background:#7e57c2;color:#fff;font-weight:700', '');
 }
-if (!customElements.get('orphan-entities-mini-card')) {
-  customElements.define('orphan-entities-mini-card', OrphanEntitiesMiniCard);
-  customElements.define('orphan-entities-mini-card-editor', OrphanEntitiesMiniCardEditor);
-  window.customCards.push({
-    type: 'orphan-entities-mini-card',
+if (!customElements.get('sh-orphans-mini-card')) {
+  customElements.define('sh-orphans-mini-card', OrphanEntitiesMiniCard);
+  customElements.define('sh-orphans-mini-card-editor', OrphanEntitiesMiniCardEditor);
+  window.systemHubCards.push({
+    type: 'sh-orphans-mini-card',
     name: 'Orphan Entities Mini Card',
     description: 'Orphaned entities by reason on two lines, with a detail button showing the full card',
     preview: true,

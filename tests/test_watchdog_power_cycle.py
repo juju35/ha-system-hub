@@ -155,7 +155,7 @@ async def test_power_cycle_after_delay_then_backoff_then_give_up(
     freezer.tick(timedelta(hours=5))
     await _check(hass)
     assert len(plug) == 4
-    history = hass.states.get("sensor.system_hub_watchdog_last_reload").attributes["history"]
+    history = hass.states.get("sensor.system_hub_sentinel_last_reload").attributes["history"]
     assert [h["kind"] for h in history] == ["power_cycle_gave_up", "power_cycled", "power_cycled"]
     assert history[1]["device_id"] == device_id
     assert history[1]["switch"] == PLUG
@@ -225,7 +225,7 @@ async def test_plug_switched_on_even_when_switching_off_fails(
     hass.services.async_register("switch", "turn_off", broken)
     no_wait.side_effect = None
     await _check(hass)
-    history = hass.states.get("sensor.system_hub_watchdog_last_reload").attributes["history"]
+    history = hass.states.get("sensor.system_hub_sentinel_last_reload").attributes["history"]
     assert history[0]["kind"] == "power_cycle_failed"
     assert plug[-1] == "turn_on"
     assert "Box plug" in _notification(hass, device_id)["message"]

@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub.
  * https://github.com/juju35/ha-system-hub
  */
-var INTEGRATION_WATCHDOG_CARD_VERSION = '1.10.0';
+var INTEGRATION_WATCHDOG_CARD_VERSION = '2.0.0';
 
 const IW_I18N = {
   en: {
@@ -1423,7 +1423,7 @@ function iwHistoryLabel(kind) {
 
 class IntegrationWatchdogCard extends HTMLElement {
   static getConfigElement() {
-    return document.createElement('integration-watchdog-card-editor');
+    return document.createElement('sh-watchdog-card-editor');
   }
 
   static getStubConfig() {
@@ -1924,7 +1924,7 @@ class IntegrationWatchdogCard extends HTMLElement {
 // else brings it back too, unless it lands in a dialog opened from the card (more-info).
 class IntegrationWatchdogMiniCard extends IntegrationWatchdogCard {
   static getConfigElement() {
-    return document.createElement('integration-watchdog-mini-card-editor');
+    return document.createElement('sh-watchdog-mini-card-editor');
   }
 
   constructor() {
@@ -2210,12 +2210,12 @@ class IntegrationWatchdogMiniCardEditor extends IntegrationWatchdogCardEditor {
 
 // Each card is registered on its own: a page that already loaded an older copy of this file (a stale resource or a
 // cached version without the mini card) still gets the mini card from this one.
-window.customCards = window.customCards || [];
-if (!customElements.get('integration-watchdog-card')) {
-  customElements.define('integration-watchdog-card', IntegrationWatchdogCard);
-  customElements.define('integration-watchdog-card-editor', IntegrationWatchdogCardEditor);
-  window.customCards.push({
-    type: 'integration-watchdog-card',
+window.systemHubCards = window.systemHubCards || [];
+if (!customElements.get('sh-watchdog-card')) {
+  customElements.define('sh-watchdog-card', IntegrationWatchdogCard);
+  customElements.define('sh-watchdog-card-editor', IntegrationWatchdogCardEditor);
+  window.systemHubCards.push({
+    type: 'sh-watchdog-card',
     name: 'Watchdog Card (System Hub)',
     description: 'The overall status of the System Hub Watchdog: unavailable integrations and recent reloads',
     preview: true,
@@ -2227,11 +2227,11 @@ if (!customElements.get('integration-watchdog-card')) {
     '',
   );
 }
-if (!customElements.get('integration-watchdog-mini-card')) {
-  customElements.define('integration-watchdog-mini-card', IntegrationWatchdogMiniCard);
-  customElements.define('integration-watchdog-mini-card-editor', IntegrationWatchdogMiniCardEditor);
-  window.customCards.push({
-    type: 'integration-watchdog-mini-card',
+if (!customElements.get('sh-watchdog-mini-card')) {
+  customElements.define('sh-watchdog-mini-card', IntegrationWatchdogMiniCard);
+  customElements.define('sh-watchdog-mini-card-editor', IntegrationWatchdogMiniCardEditor);
+  window.systemHubCards.push({
+    type: 'sh-watchdog-mini-card',
     name: 'Watchdog Mini Card (System Hub)',
     description: 'The System Hub Watchdog status and unavailable integrations on two lines, with a detail button showing the full card',
     preview: true,

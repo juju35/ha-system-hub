@@ -2086,7 +2086,7 @@ const FULL_STYLE = `
 
 class AutomationMonitorCard extends AutomationMonitorBase {
   static getConfigElement() {
-    return document.createElement("automation-monitor-card-editor");
+    return document.createElement("sh-automations-card-editor");
   }
 
   static getStubConfig() {
@@ -2264,7 +2264,7 @@ class AutomationMonitorMiniCard extends AutomationMonitorCard {
   }
 
   static getConfigElement() {
-    return document.createElement("automation-monitor-mini-card-editor");
+    return document.createElement("sh-automations-mini-card-editor");
   }
 
   // Short counter labels, and no automation count in the signature, while compact.
@@ -2486,26 +2486,26 @@ class AutomationMonitorMiniCardEditor extends AutomationMonitorEditorBase {
 const define = (name, cls) => {
   if (!customElements.get(name)) customElements.define(name, cls);
 };
-define("automation-monitor-card", AutomationMonitorCard);
-define("automation-monitor-mini-card", AutomationMonitorMiniCard);
-define("automation-monitor-card-editor", AutomationMonitorCardEditor);
-define("automation-monitor-mini-card-editor", AutomationMonitorMiniCardEditor);
+define("sh-automations-card", AutomationMonitorCard);
+define("sh-automations-mini-card", AutomationMonitorMiniCard);
+define("sh-automations-card-editor", AutomationMonitorCardEditor);
+define("sh-automations-mini-card-editor", AutomationMonitorMiniCardEditor);
 
-window.customCards = window.customCards || [];
+window.systemHubCards = window.systemHubCards || [];
 for (const card of [
   {
-    type: "automation-monitor-card",
+    type: "sh-automations-card",
     name: "Automation Monitor Card",
     description: "Failed automations and unavailable linked entities reported by Automation Monitor, with error details, trace and editor links.",
   },
   {
-    type: "automation-monitor-mini-card",
+    type: "sh-automations-mini-card",
     name: "Automation Monitor Mini Card",
     description: "Compact Automation Monitor overview: number of failed automations and unavailable linked entities.",
   },
 ]) {
-  if (!window.customCards.some((c) => c.type === card.type))
-    window.customCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub#automation-monitor-cards" });
+  if (!window.systemHubCards.some((c) => c.type === card.type))
+    window.systemHubCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub#automation-monitor-cards" });
 }
 
 console.info(

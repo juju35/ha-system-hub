@@ -27,9 +27,9 @@ from custom_components.system_hub.marketplace.refresher import STORAGE_KEY
 
 from .conftest import make_repo
 
-STATUS = "sensor.system_hub_marketplace_status"
-LAST_CHECK = "sensor.system_hub_marketplace_last_check"
-BUTTON = "button.system_hub_marketplace_check_for_updates"
+STATUS = "sensor.system_hub_updates_status"
+LAST_CHECK = "sensor.system_hub_updates_last_check"
+BUTTON = "button.system_hub_updates_check_for_updates"
 
 
 async def _setup(hass: HomeAssistant, hours: int = 24) -> MockConfigEntry:

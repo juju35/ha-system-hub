@@ -512,6 +512,29 @@
       "nothing_to_import": "Τίποτα για εισαγωγή από το Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Φρουρός"
+    },
+    "marketplace": {
+      "name": "System Hub Ενημερώσεις"
+    },
+    "batteries": {
+      "name": "System Hub Μπαταρίες"
+    },
+    "git_sync": {
+      "name": "System Hub Διαχείριση εκδόσεων"
+    },
+    "orphans": {
+      "name": "System Hub Καθαρισμός"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Διαχείριση εκδόσεων ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Το αποθετήριο Διαχείριση εκδόσεων δεν έχει φορτωθεί."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Κάρτες System Hub προς αλλαγή στο {path}",
+      "description": "Το System Hub 2.0 έχει μία κάρτα και μία μίνι κάρτα· το `module:` επιλέγει τι δείχνουν. {count} κάρτες στο {path} χρησιμοποιούν ακόμη τύπο που δεν υπάρχει πια, και το System Hub δεν ξαναγράφει αρχεία YAML. Αλλάξτε τες έτσι (οι επιλογές μένουν ίδιες):\n\n{types}\n\nΑυτή η επιδιόρθωση εξαφανίζεται στην επόμενη εκκίνηση όταν δεν μείνει καμία."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} μη προστατευμένα πρόσθετα",
         "sc_n_no_mfa": "{n} διαχειριστές χωρίς 2FA",
         "sc_n_in_clear": "{n} διαπιστευτήρια σε απλό κείμενο",
-        "sc_n_unused": "{n} αχρησιμοποίητα διακριτικά"
+        "sc_n_unused": "{n} αχρησιμοποίητα διακριτικά",
+        "card_admin_only": "System Hub: μόνο για διαχειριστές",
+        "card_module": "Ενότητα",
+        "card_groups": "Ομάδες",
+        "card_hide_ok": "Απόκρυψη όσων είναι εντάξει"
       }
     },
     "battery_type": {

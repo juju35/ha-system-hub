@@ -83,10 +83,10 @@ async def test_two_repositories_each_with_its_device_and_entities(hass: HomeAssi
     statuses = _statuses(hass)
     assert set(statuses) == {str(first), str(second)}
     # The first one keeps the module's entity ids; the further one is named after its folder
-    assert statuses[str(first)] == "sensor.system_hub_git_sync_status"
-    assert statuses[str(second)] == "sensor.system_hub_git_sync_esphome_status"
+    assert statuses[str(first)] == "sensor.system_hub_versioning_status"
+    assert statuses[str(second)] == "sensor.system_hub_versioning_esphome_status"
     devices = {d.name for d in dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)}
-    assert {"System Hub Git Sync", "System Hub Git Sync (esphome)"} <= devices
+    assert {"System Hub Versioning", "System Hub Versioning (esphome)"} <= devices
     assert [c.repo_id for c in entry.runtime_data.git_syncs] == ["", "esp1"]
 
 
@@ -190,8 +190,8 @@ async def test_add_set_and_remove_a_repository(hass: HomeAssistant, tmp_path: Pa
     assert entry.options[CONF_REPOSITORIES] == []
     assert set(_statuses(hass)) == {str(first)}
     names = {d.name for d in dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)}
-    assert "System Hub Git Sync (esphome)" not in names
-    assert "System Hub Git Sync" in names
+    assert "System Hub Versioning (esphome)" not in names
+    assert "System Hub Versioning" in names
 
 
 async def test_every_standalone_repository_is_taken_over(hass: HomeAssistant, tmp_path: Path) -> None:

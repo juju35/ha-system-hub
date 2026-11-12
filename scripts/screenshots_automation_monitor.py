@@ -9,17 +9,17 @@ MOCK = ROOT / "test/automation-monitor-card/mock-states.mjs"
 
 # One entry per light/dark pair: screenshots/<file>.png and <file>-dark.png
 PAIRS = [
-    {"file": "card-automation-monitor", "type": "automation-monitor-card", "width": 460},
+    {"file": "card-automation-monitor", "type": "sh-automations-card", "width": 460},
     {
         "file": "card-automation-monitor-open",
-        "type": "automation-monitor-card",
+        "type": "sh-automations-card",
         "width": 460,
         "clicks": ['[data-section="failed"]', '[data-section="linked"]'],
     },
-    {"file": "card-automation-monitor-ok", "type": "automation-monitor-card", "width": 460, "ok": True},
-    {"file": "card-automation-monitor-mini", "type": "automation-monitor-mini-card", "width": 380},
-    {"file": "card-automation-monitor-mini-ok", "type": "automation-monitor-mini-card", "width": 380, "ok": True},
-    {"file": "card-automation-monitor-mini-zoom", "type": "automation-monitor-mini-card", "width": 460, "zoom": True},
+    {"file": "card-automation-monitor-ok", "type": "sh-automations-card", "width": 460, "ok": True},
+    {"file": "card-automation-monitor-mini", "type": "sh-automations-mini-card", "width": 380},
+    {"file": "card-automation-monitor-mini-ok", "type": "sh-automations-mini-card", "width": 380, "ok": True},
+    {"file": "card-automation-monitor-mini-zoom", "type": "sh-automations-mini-card", "width": 460, "zoom": True},
 ]
 SHOTS = light_dark(PAIRS)
 
