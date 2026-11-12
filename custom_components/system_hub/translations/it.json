@@ -157,13 +157,15 @@
           "notify": "Notifica gli accessi rifiutati da Internet",
           "notify_services": "Azioni di notifica",
           "token_unused_days": "Token inutilizzato dopo",
-          "ignored_ips": "Indirizzi ignorati"
+          "ignored_ips": "Indirizzi ignorati",
+          "allowed_addons": "Componenti consentiti non protetti"
         },
         "data_description": {
           "notify": "Una notifica persistente, al massimo una volta all'ora per indirizzo; gli indirizzi locali non sono mai notificati.",
           "notify_services": "Inviata anche a queste azioni di notifica.",
           "token_unused_days": "Un token di lunga durata non usato da questo numero di giorni viene segnalato.",
-          "ignored_ips": "I loro accessi rifiutati sono segnati come ignorati e mai notificati."
+          "ignored_ips": "I loro accessi rifiutati sono segnati come ignorati e mai notificati.",
+          "allowed_addons": "Componenti che possono funzionare con la modalità protetta disattivata (un terminale SSH, per esempio): ancora elencati, non sono più un problema."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub: solo per gli amministratori",
         "card_module": "Modulo",
         "card_groups": "Gruppi",
-        "card_hide_ok": "Nascondi ciò che va bene"
+        "card_hide_ok": "Nascondi ciò che va bene",
+        "sc_allowed": "Consentito",
+        "sc_allow": "Consenti",
+        "sc_disallow": "Revoca"
       }
     },
     "battery_type": {

@@ -157,13 +157,15 @@
           "notify": "Notify refused logins from the Internet",
           "notify_services": "Notify actions",
           "token_unused_days": "Token unused after",
-          "ignored_ips": "Ignored addresses"
+          "ignored_ips": "Ignored addresses",
+          "allowed_addons": "Add-ons allowed unprotected"
         },
         "data_description": {
           "notify": "A persistent notification, once an hour at most per address; local addresses are never notified.",
           "notify_services": "Also sent to these notify actions.",
           "token_unused_days": "A long-lived token not used for this many days is flagged.",
-          "ignored_ips": "Their refused logins are flagged as ignored and never notified."
+          "ignored_ips": "Their refused logins are flagged as ignored and never notified.",
+          "allowed_addons": "Add-ons that may run with their protection mode off (an SSH terminal, say): still listed, no longer a problem."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub: for administrators only",
         "card_module": "Module",
         "card_groups": "Groups",
-        "card_hide_ok": "Hide what is fine"
+        "card_hide_ok": "Hide what is fine",
+        "sc_allowed": "Allowed",
+        "sc_allow": "Allow",
+        "sc_disallow": "Withdraw"
       }
     },
     "battery_type": {

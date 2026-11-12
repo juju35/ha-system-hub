@@ -157,13 +157,15 @@
           "notify": "Obaveštavaj o odbijenim prijavama sa interneta",
           "notify_services": "Radnje obaveštenja",
           "token_unused_days": "Token nekorišćen posle",
-          "ignored_ips": "Ignorisane adrese"
+          "ignored_ips": "Ignorisane adrese",
+          "allowed_addons": "Dodaci dozvoljeni bez zaštite"
         },
         "data_description": {
           "notify": "Trajno obaveštenje, najviše jednom na sat po adresi; o lokalnim adresama nema obaveštenja.",
           "notify_services": "Šalje se i ovim radnjama obaveštenja.",
           "token_unused_days": "Dugotrajni token nekorišćen toliko dana se označava.",
-          "ignored_ips": "Njihove odbijene prijave se označavaju kao ignorisane, bez obaveštenja."
+          "ignored_ips": "Njihove odbijene prijave se označavaju kao ignorisane, bez obaveštenja.",
+          "allowed_addons": "Dodaci koji smeju da rade sa isključenim zaštićenim režimom (na primer SSH terminal): i dalje na spisku, ali više nisu problem."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub: samo za administratore",
         "card_module": "Modul",
         "card_groups": "Grupe",
-        "card_hide_ok": "Sakrij ono što je u redu"
+        "card_hide_ok": "Sakrij ono što je u redu",
+        "sc_allowed": "Dozvoljeno",
+        "sc_allow": "Dozvoli",
+        "sc_disallow": "Opozovi"
       }
     },
     "battery_type": {

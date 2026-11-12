@@ -157,13 +157,15 @@
           "notify": "Meld afviste logins fra internettet",
           "notify_services": "Notifikationshandlinger",
           "token_unused_days": "Token ubrugt efter",
-          "ignored_ips": "Ignorerede adresser"
+          "ignored_ips": "Ignorerede adresser",
+          "allowed_addons": "Tilføjelser tilladt uden beskyttelse"
         },
         "data_description": {
           "notify": "En vedvarende notifikation, højst én gang i timen pr. adresse; lokale adresser meldes aldrig.",
           "notify_services": "Sendes også til disse notifikationshandlinger.",
           "token_unused_days": "Et langtidstoken, der ikke er brugt i så mange dage, markeres.",
-          "ignored_ips": "Deres afviste logins markeres som ignoreret og meldes aldrig."
+          "ignored_ips": "Deres afviste logins markeres som ignoreret og meldes aldrig.",
+          "allowed_addons": "Tilføjelser, der må køre uden beskyttet tilstand (f.eks. en SSH-terminal): vises stadig, men er ikke længere et problem."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub: kun for administratorer",
         "card_module": "Modul",
         "card_groups": "Grupper",
-        "card_hide_ok": "Skjul det, der er i orden"
+        "card_hide_ok": "Skjul det, der er i orden",
+        "sc_allowed": "Tilladt",
+        "sc_allow": "Tillad",
+        "sc_disallow": "Tilbagekald"
       }
     },
     "battery_type": {

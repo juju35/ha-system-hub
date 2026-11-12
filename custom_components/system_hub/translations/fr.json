@@ -157,13 +157,15 @@
           "notify": "Notifier les connexions refusées depuis Internet",
           "notify_services": "Actions de notification",
           "token_unused_days": "Jeton inutilisé après",
-          "ignored_ips": "Adresses ignorées"
+          "ignored_ips": "Adresses ignorées",
+          "allowed_addons": "Add-ons autorisés non protégés"
         },
         "data_description": {
           "notify": "Une notification persistante, une fois par heure au plus par adresse ; les adresses locales ne sont jamais notifiées.",
           "notify_services": "Envoyée aussi à ces actions de notification.",
           "token_unused_days": "Un jeton longue durée inutilisé depuis ce nombre de jours est signalé.",
-          "ignored_ips": "Leurs connexions refusées sont marquées ignorées et jamais notifiées."
+          "ignored_ips": "Leurs connexions refusées sont marquées ignorées et jamais notifiées.",
+          "allowed_addons": "Add-ons qui peuvent tourner avec le mode protégé désactivé (un terminal SSH, par exemple) : toujours listés, ils ne sont plus un problème."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub : réservé aux administrateurs",
         "card_module": "Module",
         "card_groups": "Groupes",
-        "card_hide_ok": "Masquer ce qui va bien"
+        "card_hide_ok": "Masquer ce qui va bien",
+        "sc_allowed": "Autorisé",
+        "sc_allow": "Autoriser",
+        "sc_disallow": "Retirer"
       }
     },
     "battery_type": {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 - 2026-11-12
+
+### New
+- **Security: add-ons allowed unprotected.** An add-on that needs its protection mode off (an SSH terminal, say) can be allowed, with **Allow** in the add-ons of the Security tab (saved at once, no reload) or in **Add-ons allowed unprotected** of **Settings → Security ⚙** (the installed add-ons by name). It stays listed, marked **Allowed**, with **Withdraw**, and is no longer a problem on the Status tab, the sidebar icon and the status cards; its other flags (full hardware access, host network) are still shown.
+
 ## 2.0.2 - 2026-11-12
 
 ### Fixed

@@ -49,7 +49,7 @@ from .logs import CONF_IGNORED_MESSAGES
 from .logs import settings as logs_settings
 from .orphans import panel as orphans_panel
 from .orphans.services import NO_RELOAD_KEY
-from .security import CONF_IGNORED_IPS, security_state
+from .security import CONF_ALLOWED_ADDONS, CONF_IGNORED_IPS, security_state
 from .security import settings as security_settings
 from .silent import CONF_IGNORED_DEVICES, silent_state
 from .silent import settings as silent_settings
@@ -119,6 +119,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_security)
         websocket_api.async_register_command(hass, ws_security_revoke)
         websocket_api.async_register_command(hass, ws_security_ignore)
+        websocket_api.async_register_command(hass, ws_security_allow_addon)
         data["version"] = await hass.async_add_executor_job(_version)
         frontend.add_extra_js_url(hass, f"{STATIC_URL}/{ICONS_MODULE}?v={data['version']}")
         data["panel_registered"] = True
@@ -655,6 +656,28 @@ def ws_security_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConn
     if (watcher := getattr(entry.runtime_data, "security", None)) is not None:
         watcher.options[CONF_IGNORED_IPS] = ignored
     connection.send_result(msg["id"], {"ignored": ignored})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "system_hub/security_allow_addon",
+        vol.Required("slug"): str,
+        vol.Optional("allow", default=True): bool,
+    }
+)
+@callback
+def ws_security_allow_addon(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """An add-on allowed to run with its protection mode off (no longer a problem), or no longer, without a reload."""
+    entry = _entry(hass)
+    if entry is None:
+        connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
+        return
+    current = security_settings(entry.options.get(MODULE_SECURITY))
+    allowed = _ignore(hass, entry, MODULE_SECURITY, current, CONF_ALLOWED_ADDONS, msg["slug"], msg["allow"])
+    connection.send_result(msg["id"], {"allowed": allowed})
 
 
 def _enabled(entry: ConfigEntry) -> list[str]:

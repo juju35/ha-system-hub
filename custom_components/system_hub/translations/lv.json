@@ -157,13 +157,15 @@
           "notify": "Paziņot par noraidītām pieteikšanās no interneta",
           "notify_services": "Paziņojumu darbības",
           "token_unused_days": "Marķieris neizmantots pēc",
-          "ignored_ips": "Ignorētās adreses"
+          "ignored_ips": "Ignorētās adreses",
+          "allowed_addons": "Bez aizsardzības atļautie papildinājumi"
         },
         "data_description": {
           "notify": "Pastāvīgs paziņojums, ne biežāk kā reizi stundā katrai adresei; par lokālām adresēm paziņojumu nav.",
           "notify_services": "Sūtīts arī šīm paziņojumu darbībām.",
           "token_unused_days": "Ilgtermiņa marķieris, kas nav izmantots tik dienas, tiek atzīmēts.",
-          "ignored_ips": "To noraidītās pieteikšanās tiek atzīmētas kā ignorētas, bez paziņojumiem."
+          "ignored_ips": "To noraidītās pieteikšanās tiek atzīmētas kā ignorētas, bez paziņojumiem.",
+          "allowed_addons": "Papildinājumi, kas drīkst darboties ar izslēgtu aizsargāto režīmu (piemēram, SSH terminālis): joprojām sarakstā, bet vairs nav problēma."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub: tikai administratoriem",
         "card_module": "Modulis",
         "card_groups": "Grupas",
-        "card_hide_ok": "Paslēpt to, kas ir kārtībā"
+        "card_hide_ok": "Paslēpt to, kas ir kārtībā",
+        "sc_allowed": "Atļauts",
+        "sc_allow": "Atļaut",
+        "sc_disallow": "Atsaukt"
       }
     },
     "battery_type": {

@@ -157,13 +157,15 @@
           "notify": "Abgelehnte Anmeldungen aus dem Internet melden",
           "notify_services": "Benachrichtigungsaktionen",
           "token_unused_days": "Token ungenutzt nach",
-          "ignored_ips": "Ignorierte Adressen"
+          "ignored_ips": "Ignorierte Adressen",
+          "allowed_addons": "Ungeschützt erlaubte Add-ons"
         },
         "data_description": {
           "notify": "Eine dauerhafte Benachrichtigung, höchstens einmal pro Stunde je Adresse; lokale Adressen werden nie gemeldet.",
           "notify_services": "Auch an diese Benachrichtigungsaktionen gesendet.",
           "token_unused_days": "Ein langlebiger Token, der so viele Tage nicht genutzt wurde, wird markiert.",
-          "ignored_ips": "Ihre abgelehnten Anmeldungen werden als ignoriert markiert und nie gemeldet."
+          "ignored_ips": "Ihre abgelehnten Anmeldungen werden als ignoriert markiert und nie gemeldet.",
+          "allowed_addons": "Add-ons, die ohne Schutzmodus laufen dürfen (etwa ein SSH-Terminal): weiter aufgelistet, aber kein Problem mehr."
         }
       },
       "logs": {
@@ -1780,7 +1782,10 @@
         "card_admin_only": "System Hub: nur für Administratoren",
         "card_module": "Modul",
         "card_groups": "Gruppen",
-        "card_hide_ok": "Was in Ordnung ist ausblenden"
+        "card_hide_ok": "Was in Ordnung ist ausblenden",
+        "sc_allowed": "Erlaubt",
+        "sc_allow": "Erlauben",
+        "sc_disallow": "Zurücknehmen"
       }
     },
     "battery_type": {
