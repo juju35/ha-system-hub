@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni.",
+        "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni. Pentru a folosi doar cardurile Lovelace, dezactivează toate modulele: cardurile sunt servite de System Hub, așa că păstrează-l adăugat.",
         "data": {
           "containers": "Containers",
           "database": "Bază de date",

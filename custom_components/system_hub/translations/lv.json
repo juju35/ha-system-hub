@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās.",
+        "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās. Lai izmantotu tikai Lovelace kartītes, izslēdziet visus moduļus: kartītes nodrošina System Hub, tāpēc paturiet to pievienotu.",
         "data": {
           "containers": "Containers",
           "database": "Datubāze",

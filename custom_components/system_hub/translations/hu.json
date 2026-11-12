@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Válassza ki a bekapcsolandó modulokat. Minden modult a beállításokban lehet megadni.",
+        "description": "Válassza ki a bekapcsolandó modulokat. Minden modult a beállításokban lehet megadni. Ha csak a Lovelace-kártyákat használnád, kapcsold ki az összes modult: a kártyákat a System Hub szolgáltatja, ezért hagyd hozzáadva.",
         "data": {
           "containers": "Containers",
           "database": "Adatbázis",

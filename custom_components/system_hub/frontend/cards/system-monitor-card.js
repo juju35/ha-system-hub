@@ -73,6 +73,7 @@ const STRINGS = {
     // Editor
     title: "Title (optional, defaults to Home Assistant)",
     show_system: "Show system (CPU, RAM, disk, temperature)",
+    show_disk: "Show the disk gauge (also in Storage)",
     show_title: "Show title",
     show_subtitle: "Show subtitle",
     show_network: "Show network",
@@ -144,6 +145,7 @@ const STRINGS = {
     zoom_out: "Revenir à la vue compacte",
     title: "Titre (facultatif, Home Assistant par défaut)",
     show_system: "Afficher le système (CPU, RAM, disque, température)",
+    show_disk: "Afficher la jauge du disque (aussi dans Stockage)",
     show_title: "Afficher le titre",
     show_subtitle: "Afficher le sous-titre",
     show_network: "Afficher le réseau",
@@ -215,6 +217,7 @@ const STRINGS = {
     zoom_out: "Zurück zur kompakten Ansicht",
     title: "Titel (optional, standardmäßig Home Assistant)",
     show_system: "System anzeigen (CPU, RAM, Datenträger, Temperatur)",
+    show_disk: "Festplattenanzeige anzeigen (auch unter Speicher)",
     show_title: "Titel anzeigen",
     show_subtitle: "Untertitel anzeigen",
     show_network: "Netzwerk anzeigen",
@@ -286,6 +289,7 @@ const STRINGS = {
     zoom_out: "Volver a la vista compacta",
     title: "Título (opcional, Home Assistant por defecto)",
     show_system: "Mostrar el sistema (CPU, RAM, disco, temperatura)",
+    show_disk: "Mostrar el indicador del disco (también en Almacenamiento)",
     show_title: "Mostrar el título",
     show_subtitle: "Mostrar el subtítulo",
     show_network: "Mostrar la red",
@@ -358,6 +362,7 @@ const STRINGS = {
     // Editor
     title: "Наслов (опционо, подразумевано је Home Assistant)",
     show_system: "Прикажи систем (CPU, RAM, диск, температура)",
+    show_disk: "Прикажи мерач диска (и у Складишту)",
     show_title: "Прикажи наслов",
     show_subtitle: "Прикажи поднаслов",
     show_network: "Прикажи мрежу",
@@ -430,6 +435,7 @@ const STRINGS = {
     // Editor
     title: "Naslov (opciono, podrazumevano je Home Assistant)",
     show_system: "Prikaži sistem (CPU, RAM, disk, temperatura)",
+    show_disk: "Prikaži merač diska (i u Skladištu)",
     show_title: "Prikaži naslov",
     show_subtitle: "Prikaži podnaslov",
     show_network: "Prikaži mrežu",
@@ -502,6 +508,7 @@ const STRINGS = {
     // Editor
     title: "Titolo (facoltativo, predefinito: Home Assistant)",
     show_system: "Mostra il sistema (CPU, RAM, disco, temperatura)",
+    show_disk: "Mostra l'indicatore del disco (anche in Archiviazione)",
     show_title: "Mostra il titolo",
     show_subtitle: "Mostra il sottotitolo",
     show_network: "Mostra la rete",
@@ -574,6 +581,7 @@ const STRINGS = {
     // Editor
     title: "Titel (optioneel, standaard Home Assistant)",
     show_system: "Systeem tonen (CPU, RAM, schijf, temperatuur)",
+    show_disk: "Schijfmeter tonen (ook onder Opslag)",
     show_title: "Titel tonen",
     show_subtitle: "Ondertitel tonen",
     show_network: "Netwerk tonen",
@@ -646,6 +654,7 @@ const STRINGS = {
     // Editor
     title: "Título (opcional, Home Assistant por predefinição)",
     show_system: "Mostrar o sistema (CPU, RAM, disco, temperatura)",
+    show_disk: "Mostrar o indicador do disco (também em Armazenamento)",
     show_title: "Mostrar o título",
     show_subtitle: "Mostrar o subtítulo",
     show_network: "Mostrar a rede",
@@ -718,6 +727,7 @@ const STRINGS = {
     // Editor
     title: "Tytuł (opcjonalny, domyślnie Home Assistant)",
     show_system: "Pokaż system (CPU, RAM, dysk, temperatura)",
+    show_disk: "Pokaż wskaźnik dysku (także w Pamięci)",
     show_title: "Pokaż tytuł",
     show_subtitle: "Pokaż podtytuł",
     show_network: "Pokaż sieć",
@@ -790,6 +800,7 @@ const STRINGS = {
     // Editor
     title: "Titlu (opțional, implicit Home Assistant)",
     show_system: "Afișează sistemul (CPU, RAM, disc, temperatură)",
+    show_disk: "Afișează indicatorul discului (și în Stocare)",
     show_title: "Afișează titlul",
     show_subtitle: "Afișează subtitlul",
     show_network: "Afișează rețeaua",
@@ -862,6 +873,7 @@ const STRINGS = {
     // Editor
     title: "Titel (valgfri, Home Assistant som standard)",
     show_system: "Vis system (CPU, RAM, disk, temperatur)",
+    show_disk: "Vis diskmåleren (også under Lager)",
     show_title: "Vis titel",
     show_subtitle: "Vis undertitel",
     show_network: "Vis netværk",
@@ -934,6 +946,7 @@ const STRINGS = {
     // Editor
     title: "Titel (valfri, Home Assistant som standard)",
     show_system: "Visa system (CPU, RAM, disk, temperatur)",
+    show_disk: "Visa diskmätaren (även under Lagring)",
     show_title: "Visa rubrik",
     show_subtitle: "Visa underrubrik",
     show_network: "Visa nätverk",
@@ -1006,6 +1019,7 @@ const STRINGS = {
     // Editor
     title: "Заглавие (по избор, по подразбиране Home Assistant)",
     show_system: "Показване на системата (CPU, RAM, диск, температура)",
+    show_disk: "Показване на индикатора на диска (и в Хранилище)",
     show_title: "Показване на заглавието",
     show_subtitle: "Показване на подзаглавието",
     show_network: "Показване на мрежата",
@@ -1078,6 +1092,7 @@ const STRINGS = {
     // Editor
     title: "Заголовок (необязательно, по умолчанию Home Assistant)",
     show_system: "Показывать систему (CPU, RAM, диск, температура)",
+    show_disk: "Показывать индикатор диска (также в разделе Хранилище)",
     show_title: "Показывать заголовок",
     show_subtitle: "Показывать подзаголовок",
     show_network: "Показывать сеть",
@@ -1150,6 +1165,7 @@ const STRINGS = {
     // Editor
     title: "Заголовок (необов’язково, типово Home Assistant)",
     show_system: "Показувати систему (CPU, RAM, диск, температура)",
+    show_disk: "Показувати індикатор диска (також у розділі Сховище)",
     show_title: "Показувати заголовок",
     show_subtitle: "Показувати підзаголовок",
     show_network: "Показувати мережу",
@@ -1222,6 +1238,7 @@ const STRINGS = {
     // Editor
     title: "Cím (nem kötelező, alapértelmezés: Home Assistant)",
     show_system: "Rendszer megjelenítése (CPU, RAM, lemez, hőmérséklet)",
+    show_disk: "Lemezmérő megjelenítése (a Tárhelyben is)",
     show_title: "Cím megjelenítése",
     show_subtitle: "Alcím megjelenítése",
     show_network: "Hálózat megjelenítése",
@@ -1294,6 +1311,7 @@ const STRINGS = {
     // Editor
     title: "Názov (voliteľný, predvolene Home Assistant)",
     show_system: "Zobraziť systém (CPU, RAM, disk, teplota)",
+    show_disk: "Zobraziť ukazovateľ disku (aj v Úložisku)",
     show_title: "Zobraziť názov",
     show_subtitle: "Zobraziť podnázov",
     show_network: "Zobraziť sieť",
@@ -1366,6 +1384,7 @@ const STRINGS = {
     // Editor
     title: "Název (volitelný, výchozí Home Assistant)",
     show_system: "Zobrazit systém (CPU, RAM, disk, teplota)",
+    show_disk: "Zobrazit ukazatel disku (také v Úložišti)",
     show_title: "Zobrazit název",
     show_subtitle: "Zobrazit podnázev",
     show_network: "Zobrazit síť",
@@ -1438,6 +1457,7 @@ const STRINGS = {
     // Editor
     title: "Naslov (neobvezno, privzeto Home Assistant)",
     show_system: "Prikaži sistem (CPU, RAM, disk, temperatura)",
+    show_disk: "Prikaži merilnik diska (tudi v Shrambi)",
     show_title: "Prikaži naslov",
     show_subtitle: "Prikaži podnaslov",
     show_network: "Prikaži omrežje",
@@ -1510,6 +1530,7 @@ const STRINGS = {
     // Editor
     title: "Virsraksts (neobligāts, pēc noklusējuma Home Assistant)",
     show_system: "Rādīt sistēmu (CPU, RAM, disks, temperatūra)",
+    show_disk: "Rādīt diska rādītāju (arī Krātuvē)",
     show_title: "Rādīt virsrakstu",
     show_subtitle: "Rādīt apakšvirsrakstu",
     show_network: "Rādīt tīklu",
@@ -1582,6 +1603,7 @@ const STRINGS = {
     // Editor
     title: "Τίτλος (προαιρετικός, προεπιλογή Home Assistant)",
     show_system: "Εμφάνιση συστήματος (CPU, RAM, δίσκος, θερμοκρασία)",
+    show_disk: "Εμφάνιση του δείκτη δίσκου (και στον Αποθηκευτικό χώρο)",
     show_title: "Εμφάνιση τίτλου",
     show_subtitle: "Εμφάνιση υπότιτλου",
     show_network: "Εμφάνιση δικτύου",
@@ -1738,10 +1760,12 @@ const uptimeSec = (s) => {
 const TO_CELSIUS = { "°C": (v) => v, "°F": (v) => ((v - 32) * 5) / 9, K: (v) => v - 273.15 };
 const temperature = (s, hass) => {
   const v = num(s);
-  if (v === null) return { c: null, display: "—" };
+  if (v === null) return { c: null, display: "—", max: 100 };
   const unit = s.attributes?.unit_of_measurement || hass?.config?.unit_system?.temperature || "°C";
   const c = (TO_CELSIUS[unit] || TO_CELSIUS["°C"])(v);
-  return { c, display: `${Math.round(v)}${unit.startsWith("°") ? unit : ` ${unit}`}` };
+  // The top of its 24 h curve: 100 °C in the sensor's unit (its statistics are in that unit).
+  const max = unit === "°F" ? 212 : unit === "K" ? 373.15 : 100;
+  return { c, display: `${Math.round(v)}${unit.startsWith("°") ? unit : ` ${unit}`}`, max };
 };
 
 const level = (v, warn, crit) => (v === null ? "" : v >= crit ? "crit" : v >= warn ? "warn" : "ok");
@@ -2583,13 +2607,13 @@ class SystemMonitorBase extends HTMLElement {
   }
 
   /**
-   * The 24 h history of the CPU and RAM percentages and of the given rate sensors, in one statistics query (null
-   * with `show_history: false`). RAM only from its percentage sensor.
+   * The 24 h history of the CPU and RAM percentages, the CPU temperature and the given rate sensors, in one
+   * statistics query (null with `show_history: false`). RAM only from its percentage sensor.
    */
   _histFor(sm, rateIds = []) {
     if (this._config.show_history === false) return null;
     const sc = sm.scalars;
-    return this._history([sc.processor_use, sc.memory_use_percent, ...rateIds].filter(Boolean));
+    return this._history([sc.processor_use, sc.memory_use_percent, sc.processor_temperature, ...rateIds].filter(Boolean));
   }
 
   _header(sm, aside = "") {
@@ -2839,8 +2863,8 @@ class SystemMonitorCard extends SystemMonitorBase {
     return `<span class="label" title="${text}">${text}</span>`;
   }
 
-  _gauge(id, label, icon, value, display, cls, detail = "", hist = null) {
-    return `<div class="gauge clickable ${cls}" data-entity="${id || ""}" role="button" tabindex="0">${spark(hist?.[id], hist?.end, 100)}
+  _gauge(id, label, icon, value, display, cls, detail = "", hist = null, max = 100) {
+    return `<div class="gauge clickable ${cls}" data-entity="${id || ""}" role="button" tabindex="0">${spark(hist?.[id], hist?.end, max)}
       <div class="dial">${ring(value)}<div class="val">${svgIcon(icon)}<b>${display}</b></div></div>
       <div class="lbl" title="${label}">${label}</div>
       ${detail ? `<div class="lbl2">${detail}</div>` : ""}
@@ -2862,9 +2886,9 @@ class SystemMonitorCard extends SystemMonitorBase {
       );
     }
 
-    // Root file system, else the first mount point.
+    // Root file system, else the first mount point; `show_disk: false` leaves it to the Storage section.
     const mount = sm.disks["/"] ? "/" : Object.keys(sm.disks)[0];
-    if (mount) {
+    if (mount && this._config.show_disk !== false) {
       const d = sm.disks[mount];
       const u = diskUsage(this._hass, d);
       const detail = u.used !== null && u.total !== null ? fmtBytesPair(u.used, u.total, this._loc()) : "";
@@ -2875,7 +2899,9 @@ class SystemMonitorCard extends SystemMonitorBase {
 
     const temp = temperature(this._s(sc.processor_temperature), this._hass);
     if (sc.processor_temperature)
-      gauges.push(this._gauge(sc.processor_temperature, `${this._t("temperature")} ${this._t("cpu")}`, ICONS.temp, temp.c, esc(temp.display), metricLevel(this._config, "temp", temp.c)));
+      gauges.push(
+        this._gauge(sc.processor_temperature, `${this._t("temperature")} ${this._t("cpu")}`, ICONS.temp, temp.c, esc(temp.display), metricLevel(this._config, "temp", temp.c), "", hist, temp.max)
+      );
 
     const facts = [];
     const up = uptimeSec(this._s(sc.last_boot));
@@ -3132,8 +3158,8 @@ class SystemMonitorMiniCard extends SystemMonitorZoomCard {
     return !this._zoomed && this._config.show_processes !== false && this._stopped(sm).length > 0;
   }
 
-  _metric(id, icon, label, p, display, cls, hist = null) {
-    return `<div class="metric clickable ${cls}" data-entity="${id || ""}" role="button" tabindex="0">${spark(hist?.[id], hist?.end, 100)}
+  _metric(id, icon, label, p, display, cls, hist = null, max = 100) {
+    return `<div class="metric clickable ${cls}" data-entity="${id || ""}" role="button" tabindex="0">${spark(hist?.[id], hist?.end, max)}
       ${svgIcon(icon)}<span>${label}</span>
       <div class="bar"><div style="width:${p === null ? 0 : Math.max(0, Math.min(100, p))}%"></div></div>
       <span class="v">${display}</span>
@@ -3170,7 +3196,7 @@ class SystemMonitorMiniCard extends SystemMonitorZoomCard {
     }
     const temp = temperature(this._s(sc.processor_temperature), this._hass);
     if (sc.processor_temperature)
-      rows.push(this._metric(sc.processor_temperature, ICONS.temp, this._t("temperature"), temp.c, esc(temp.display), metricLevel(this._config, "temp", temp.c)));
+      rows.push(this._metric(sc.processor_temperature, ICONS.temp, this._t("temperature"), temp.c, esc(temp.display), metricLevel(this._config, "temp", temp.c), hist, temp.max));
 
     const foot = [];
     const core = this._s(sm.core_update);
@@ -3383,7 +3409,7 @@ class SystemMonitorEditorBase extends HTMLElement {
 
 class SystemMonitorCardEditor extends SystemMonitorEditorBase {
   static get toggles() {
-    return ["show_system", "show_network", "show_history", "show_storage", "show_backups", "show_processes"];
+    return ["show_system", "show_disk", "show_network", "show_history", "show_storage", "show_backups", "show_processes"];
   }
 }
 

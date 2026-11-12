@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Scegli i moduli da attivare. Ogni modulo si configura nelle opzioni.",
+        "description": "Scegli i moduli da attivare. Ogni modulo si configura nelle opzioni. Per usare solo le schede Lovelace, disattiva tutti i moduli: le schede sono fornite da System Hub, quindi tienilo aggiunto.",
         "data": {
           "containers": "Containers",
           "database": "Database",

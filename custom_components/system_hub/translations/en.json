@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Choose the modules to turn on. Each module is set up in the options.",
+        "description": "Choose the modules to turn on. Each module is set up in the options. To use only the Lovelace cards, turn every module off: the cards are served by System Hub, so keep it added.",
         "data": {
           "containers": "Containers",
           "database": "Database",

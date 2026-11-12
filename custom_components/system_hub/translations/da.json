@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Vælg de moduler, der skal slås til. Hvert modul indstilles under indstillingerne.",
+        "description": "Vælg de moduler, der skal slås til. Hvert modul indstilles under indstillingerne. For kun at bruge Lovelace-kortene skal du slå alle moduler fra: kortene leveres af System Hub, så behold den tilføjet.",
         "data": {
           "containers": "Containers",
           "database": "Database",
