@@ -6,12 +6,12 @@
         "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Sargs",
+          "marketplace": "Atjauninājumi",
+          "batteries": "Baterijas",
+          "git_sync": "Versiju pārvaldība",
+          "orphans": "Tīrīšana",
+          "automations": "Automatizācijas"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Moduļi",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Pievienot restartēšanu ar kontaktligzdu",
-          "watchdog_remove_power_cycle": "Watchdog: Noņemt restartēšanas ar kontaktligzdu",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Repozitorija iestatījumi",
-          "git_sync": "Git Sync",
+          "watchdog": "Sargs",
+          "watchdog_add_power_cycle": "Sargs: Pievienot restartēšanu ar kontaktligzdu",
+          "watchdog_remove_power_cycle": "Sargs: Noņemt restartēšanas ar kontaktligzdu",
+          "marketplace": "Atjauninājumi",
+          "batteries": "Baterijas",
+          "git_sync_repository": "Versiju pārvaldība: Repozitorija iestatījumi",
+          "git_sync": "Versiju pārvaldība",
           "batteries_types": "Baterijas: bateriju veidi",
           "batteries_import": "Baterijas: importēt no Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Tīrīšana",
           "system": "Sistēma: sliekšņi",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Pievienot repozitoriju",
-          "git_sync_other": "Git Sync: Cits repozitorijs",
-          "git_sync_remove_repository": "Git Sync: Noņemt repozitorijus"
+          "automations": "Automatizācijas",
+          "git_sync_add_repository": "Versiju pārvaldība: Pievienot repozitoriju",
+          "git_sync_other": "Versiju pārvaldība: Cits repozitorijs",
+          "git_sync_remove_repository": "Versiju pārvaldība: Noņemt repozitorijus"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Ieslēdziet vai izslēdziet moduļus. Izslēgts modulis pārtrauc pārbaudes, un tā entītijas tiek noņemtas; tā iestatījumi tiek saglabāti.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Sargs",
+          "marketplace": "Atjauninājumi",
+          "batteries": "Baterijas",
+          "git_sync": "Versiju pārvaldība",
+          "automations": "Automatizācijas"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Sargs",
         "data": {
           "scan_interval": "Pārbaudes intervāls",
           "grace_period": "Nogaidīšanas laiks",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Atjauninājumi",
         "data": {
           "scan_interval": "Pārbaudes intervāls",
           "backup_before_install": "Rezerves kopija pirms atjauninājumu instalēšanas"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Baterijas",
         "data": {
           "threshold": "Izlādētas baterijas slieksnis",
           "duration": "Izlādēta vismaz",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Versiju pārvaldība",
         "description": "Commit ziņojums, grafiki, paziņojumi un paneļu eksports.",
         "data": {
           "ai_task_entity": "AI uzdevuma vienība",
@@ -271,7 +271,7 @@
         "description": "Atrasts Battery Monitor: iestatījumi: {settings}, tā kartītēs iestatītie bateriju veidi: {types}, rezerves bateriju veidi: {stock}. Iesniedziet, lai tos pārņemtu System Hub: tā iestatījumi aizstāj moduļa Baterijas iestatījumus, bet šeit jau iestatītie bateriju veidi tiek saglabāti."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Tīrīšana",
         "data": {
           "scan_interval": "Skenēšanas intervāls",
           "grace_period": "Nogaidīšanas laiks pēc palaišanas",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatizācijas",
         "data": {
           "exclude_devices": "Ignorētās ierīces",
           "exclude_entities": "Ignorētās vienības"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Versiju pārvaldība",
         "description": "Repozitorijs {repository}",
         "data": {
           "ai_task_entity": "AI uzdevuma vienība",
@@ -1062,7 +1062,7 @@
       "message": "Pērkamās rezerves baterijas: {spares}"
     },
     "no_ai_task": {
-      "message": "Git Sync opcijās nav iestatīta AI uzdevuma vienība."
+      "message": "Versiju pārvaldība opcijās nav iestatīta AI uzdevuma vienība."
     },
     "ai_task_failed": {
       "message": "AI uzdevums neatgrieza commit ziņojumu."
@@ -1077,10 +1077,10 @@
       "message": "Commit ir konfliktā ar {upstream} jaunajiem commit: rebase tika pārtraukts, un nekas netika nosūtīts. Skatiet Iestatījumi → Labojumi."
     },
     "sensitive_files": {
-      "message": "Noraidīts: izmaiņās ir sensitīvi faili ({files}), kas netiek ne iekļauti commit, ne nosūtīti AI task. Pievienojiet tos .gitignore vai atļaujiet izsekotos Git Sync opcijās."
+      "message": "Noraidīts: izmaiņās ir sensitīvi faili ({files}), kas netiek ne iekļauti commit, ne nosūtīti AI task. Pievienojiet tos .gitignore vai atļaujiet izsekotos Versiju pārvaldība opcijās."
     },
     "export_dir_not_allowed": {
-      "message": "Eksporta mape {path} ir ārpus konfigurācijas mapes un allowlist_external_dirs: izvēlieties citu Git Sync opcijās."
+      "message": "Eksporta mape {path} ir ārpus konfigurācijas mapes un allowlist_external_dirs: izvēlieties citu Versiju pārvaldība opcijās."
     },
     "orphans_starting": {
       "message": "Home Assistant vēl startē: pēc startēšanas skenējiet vēlreiz."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync nevar veikt push {repo}",
-      "description": "Zaram ir {ahead} lokāli commit, kuru nav {upstream}, un {upstream} ir {behind} commit, kuru šeit nav. Git Sync pats neapvieno atšķirīgas vēstures, tāpēc nekas netiek nosūtīts.\n\nLai to atrisinātu, atveriet termināli mapē {repo} un izpildiet:\n\n```\ngit pull --rebase\n```\n\nNovērsiet konfliktus, ja tādi ir (rediģējiet failus, `git add`, pēc tam `git rebase --continue`), un tad vēlreiz nospiediet **Commit un push**. Šis labojums pazūd pēc nākamā veiksmīgā push."
+      "title": "Versiju pārvaldība nevar veikt push {repo}",
+      "description": "Zaram ir {ahead} lokāli commit, kuru nav {upstream}, un {upstream} ir {behind} commit, kuru šeit nav. Versiju pārvaldība pats neapvieno atšķirīgas vēstures, tāpēc nekas netiek nosūtīts.\n\nLai to atrisinātu, atveriet termināli mapē {repo} un izpildiet:\n\n```\ngit pull --rebase\n```\n\nNovērsiet konfliktus, ja tādi ir (rediģējiet failus, `git add`, pēc tam `git rebase --continue`), un tad vēlreiz nospiediet **Commit un push**. Šis labojums pazūd pēc nākamā veiksmīgā push."
     },
     "behind_remote": {
-      "title": "Git Sync nevar veikt push {repo}",
-      "description": "{upstream} ir {behind} commit, kuru šeit nav, un **Pull pirms push** ir izslēgts Git Sync opcijās, tāpēc nekas netiek nosūtīts. Ieslēdziet to vai izpildiet `git pull --rebase` terminālī mapē {repo}. Šis labojums pazūd pēc nākamā veiksmīgā push."
+      "title": "Versiju pārvaldība nevar veikt push {repo}",
+      "description": "{upstream} ir {behind} commit, kuru šeit nav, un **Pull pirms push** ir izslēgts Versiju pārvaldība opcijās, tāpēc nekas netiek nosūtīts. Ieslēdziet to vai izpildiet `git pull --rebase` terminālī mapē {repo}. Šis labojums pazūd pēc nākamā veiksmīgā push."
     },
     "git_sync_gitignore_missing": {
       "title": "{repo} .gitignore neizslēdz noslēpumus",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Pievienot trūkstošās rindas .gitignore",
-            "description": "Bez šīm rindām Git Sync veiktu commit un push Home Assistant parolēm, marķieriem un autentifikācijas krātuvei:\n\n{lines}\n\nIesniedziet, lai tās pievienotu {repo}/.gitignore. Jau izsekots fails paliek izsekots: izņemiet to no repozitorija ar `git rm -r --cached secrets.yaml .storage` (faili paliek diskā)."
+            "description": "Bez šīm rindām Versiju pārvaldība veiktu commit un push Home Assistant parolēm, marķieriem un autentifikācijas krātuvei:\n\n{lines}\n\nIesniedziet, lai tās pievienotu {repo}/.gitignore. Jau izsekots fails paliek izsekots: izņemiet to no repozitorija ar `git rm -r --cached secrets.yaml .storage` (faili paliek diskā)."
           }
         },
         "abort": {
-          "not_loaded": "Git Sync repozitorijs nav ielādēts."
+          "not_loaded": "Versiju pārvaldība repozitorijs nav ielādēts."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Kontaktligzda nepieejama",
         "unknown_device": "Ierīce noņemta",
         "open_device": "Ierīce",
-        "pc_none": "Vēl nav restartēšanas ar kontaktligzdu: pievienojiet to sadaļā Konfigurēt → Watchdog: pievienot restartēšanu ar kontaktligzdu.",
+        "pc_none": "Vēl nav restartēšanas ar kontaktligzdu: pievienojiet to sadaļā Konfigurēt → Sargs: pievienot restartēšanu ar kontaktligzdu.",
         "pc_configure": "Pievienot vai noņemt sadaļā Konfigurēt",
         "orph_reason_entry_removed": "Integrācija noņemta",
         "orph_reason_integration_missing": "Integrācija nav ielādēta",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Info: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "darbojas {time}",
-        "st_updates": "Atjauninājumi",
         "st_normal": "Viss normāli",
         "st_high": "Augsts: {what}",
         "st_stopped": "Apturēti: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "pārbaudīts {when}",
         "st_device": "Ierīces: 1",
         "modules_tabs": "Moduļi un cilnes",
-        "modules_tabs_hint": "Velciet ═, lai sakārtotu cilnes; pirmā atveras pēc noklusējuma.",
+        "modules_tabs_hint": "Sakārtojiet grupas ar ↑ ↓, bet grupas moduļus, velkot ═; pirmā cilne atveras pēc noklusējuma.",
         "enabled": "Ieslēgti",
         "disabled": "Izslēgti",
         "tab_default": "noklusējuma",
         "drag": "Pārvietot",
         "st_hint": "Instances stāvoklis vienā mirklī",
-        "stopped_allowed": "Apturēts (atļauts)"
+        "stopped_allowed": "Apturēts (atļauts)",
+        "tab_system": "Resursi",
+        "tab_watchdog": "Sargs",
+        "tab_marketplace": "Atjauninājumi",
+        "tab_orphans": "Tīrīšana",
+        "tab_automations": "Automatizācijas",
+        "tab_batteries": "Baterijas",
+        "tab_git_sync": "Versiju pārvaldība",
+        "group_reliability": "Uzticamība",
+        "group_maintenance": "Apkope",
+        "group_devices": "Ierīces",
+        "move_up": "Pārvietot uz augšu",
+        "move_down": "Pārvietot uz leju"
       }
     },
     "battery_type": {

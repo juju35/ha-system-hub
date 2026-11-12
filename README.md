@@ -31,16 +31,16 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 ## Features
 
-- **System**: CPU, memory, disks, network and temperatures from the System Monitor integration, with **Restart Home Assistant** (once the configuration is checked) and **Reload configuration**, each confirmed first.
+- **Resources**: CPU, memory, disks, network and temperatures from the System Monitor integration, with **Restart Home Assistant** (once the configuration is checked) and **Reload configuration**, each confirmed first.
 - **Containers**: Home Assistant Core, the Supervisor and every add-on, monitored on their own — state, version, CPU and memory, with their history. Monitoring only: nothing is restarted.
-- **Marketplace**: server-side check of the Marketplace updates, at an interval you choose.
-- **Watchdog**: reloads the integrations whose entities are all unavailable, with ignored integrations, power cycles through a smart plug and a notification on each reload.
+- **Updates** (formerly Marketplace): server-side check of the Marketplace updates, at an interval you choose.
+- **Sentinel** (formerly Watchdog): reloads the integrations whose entities are all unavailable, with ignored integrations, power cycles through a smart plug and a notification on each reload.
 - **Batteries**: battery levels of every device, low-battery notifications.
-- **Git sync**: commit and push your configuration and export the dashboards to a Git repository.
+- **Versioning** (formerly Git Sync): commit and push your configuration and export the dashboards to a Git repository.
 - **Automations**: the failed automations and the unavailable entities they use, as reported by [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor), with their trace and editor.
-- **Orphans**: the entities their integration no longer provides and the devices left behind, with what still uses them, removed or ignored in bulk.
-- **Modules**: Containers, Marketplace, Watchdog, Batteries, Git sync, Automations and Orphans can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
-- **Admin panel**: one sidebar panel with the System tab and a tab per module turned on, which you can order.
+- **Cleanup** (formerly Orphans): the entities their integration no longer provides and the devices left behind, with what still uses them, removed or ignored in bulk.
+- **Modules**: Containers, Updates, Sentinel, Batteries, Versioning, Automations and Cleanup can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
+- **Admin panel**: one sidebar panel with a **Status** tab and the modules in four groups, each a tab with its modules as sub-tabs: **System** (Resources, Containers), **Reliability** (Sentinel, Automations), **Maintenance** (Updates, Versioning) and **Devices** (Batteries, Cleanup); the groups and the modules inside them can be ordered.
 
 ## Supported integrations
 
@@ -134,20 +134,20 @@ Each module's settings, opened in place:
 
 ## Sidebar panel
 
-**System Hub** in the sidebar (administrators only) gathers everything on one page, with a tab per module turned on; the tab is in the address (`/system-hub/watchdog`), so a link or a reload opens it again. The panel reads the modules every 10 seconds while it is shown.
+**System Hub** in the sidebar (administrators only) gathers everything on one page. Under the toolbar: **Status**, then four groups, **System** (Resources, Containers), **Reliability** (Sentinel, Automations), **Maintenance** (Updates, Versioning) and **Devices** (Batteries, Cleanup), and **Settings**. A group shows only when one of its modules is turned on; with two modules or more, they are sub-tabs under it, and the group's tab carries a badge with how many of them need a look, in the colour of the worst. The module shown is in the address (`/system-hub/watchdog`, or a group's name such as `/system-hub/devices` for its first module), so a link or a reload opens it again. The panel reads the modules every 10 seconds while it is shown.
 
 | Tab | Content |
 |---|---|
-| Status | The health of the instance at a glance: a score out of 100 (100, less 15 per area needing action, 5 per area to watch, 1 per area with something to know) with a home beside it, in the colour of the score (healthy, alert, problem) and one tile per area, in the order of the tabs: System, Containers & process, Updates (Core, OS and the Marketplace), Watchdog, Automations, Batteries, Git Sync, Orphans; each tile says its level and its details, and opens its tab |
-| System | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap (from its percentage, or its use and free), load, received and sent since the boot, the Home Assistant Core and OS versions (orange with the version available when an update is, a click opens Settings → Updates), uptime, IP address, download and upload, the database size (the [File Size](https://www.home-assistant.io/integrations/filesize/) integration on `home-assistant_v2.db`), the last and next automatic backups (orange after 2 days, red after 7 or when the last one failed); history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; the network figures leave out the virtual interfaces (loopback, Docker, `hassio`, `veth…`, bridges, tunnels, WireGuard, Tailscale); CPU, RAM, disk, temperature and swap turn orange then red from the thresholds of **Settings → System ⚙** (70/90 %, 70/90 %, 80/90 %, 70/85 °C, 50/80 % by default); every disk and the processes System Monitor watches (the stopped ones first), from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
+| Status | The health of the instance at a glance: a score out of 100 (100, less 15 per area needing action, 5 per area to watch, 1 per area with something to know) with a home beside it, in the colour of the score (healthy, alert, problem) and one tile per area, by group under the group's name, in the order of the tabs: Resources, Containers & process, Sentinel, Automations, Updates (Core, OS and the Marketplace), Versioning, Batteries, Cleanup; each tile says its level and its details, and opens its tab |
+| Resources | CPU, RAM, temperature and disk as rings with their last 24 hours behind them; swap (from its percentage, or its use and free), load, received and sent since the boot, the Home Assistant Core and OS versions (orange with the version available when an update is, a click opens Settings → Updates), uptime, IP address, download and upload, the database size (the [File Size](https://www.home-assistant.io/integrations/filesize/) integration on `home-assistant_v2.db`), the last and next automatic backups (orange after 2 days, red after 7 or when the last one failed); history charts of CPU, RAM and temperature, of the network and of the disks, over 1 hour, 6 hours, 24 hours or 7 days (from the recorder), each kind of data in its own colour; the network figures leave out the virtual interfaces (loopback, Docker, `hassio`, `veth…`, bridges, tunnels, WireGuard, Tailscale); CPU, RAM, disk, temperature and swap turn orange then red from the thresholds of **Settings → System ⚙** (70/90 %, 70/90 %, 80/90 %, 70/85 °C, 50/80 % by default); every disk and the processes System Monitor watches (the stopped ones first), from the [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) sensors; a ring, tile or legend opens its entity |
 | Containers | Running and stopped containers, last read; every container with its state, version and update, CPU, RAM and the last 24 hours of CPU; **Refresh** |
-| Watchdog | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the power cycles set up (device and room, plug and its state, delays, status, count, the device's page; added and removed in **Settings → Watchdog ⚙**); the recent reloads and power cycles |
-| Marketplace | A header with the updates available, the last and next check, the repositories that could not be checked and GitHub (account connected, requests left, next try after the limit); **Check for updates**, **Update all** (asked first); while a check runs, its progress bar, the share done, the time left and the failures (read every 2 seconds); then a card per update: logo, installed → latest version with the size of the change (major, minor, patch), the start of its release notes, **Release notes** and its own **Update**; the repositories that could not be checked with a link to GitHub |
+| Sentinel | Unavailable and given-up integrations, reloads, last check; **Check now**, **Try again** on each integration; the power cycles set up (device and room, plug and its state, delays, status, count, the device's page; added and removed in **Settings → Sentinel ⚙**); the recent reloads and power cycles |
+| Updates | A header with the updates available, the last and next check, the repositories that could not be checked and GitHub (account connected, requests left, next try after the limit); **Check for updates**, **Update all** (asked first); while a check runs, its progress bar, the share done, the time left and the failures (read every 2 seconds); then a card per update: logo, installed → latest version with the size of the change (major, minor, patch), the start of its release notes, **Release notes** and its own **Update**; the repositories that could not be checked with a link to GitHub |
 | Batteries | Low and unavailable batteries, last notification; every battery **by level** (the ones in error first, then the lowest), **by room**, **by battery type** or **by replacement date** (the view chosen is remembered by the browser); a search by name, room or type; the spare batteries by type (in stock, to buy for the batteries low or due within 30 days), a click sets a type's stock; **Export CSV**; **Notify now** |
-| Git Sync | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
+| Versioning | Branch and status, changed files, last commit and push; a commit message (or **Write with AI**), **Commit and push**, **View changes** (the diff of each file, as in an editor's source control view), **Pull**, **Export dashboards** |
 | Automations | Failed automations, unavailable linked entities, last failure; each failure with its error, failed step and failures in a row, **Trace**, **Edit**, **Clear**; each unavailable entity with the automations, scripts and scenes using it; **Clear all** (asked first), **Refresh** (rebuilds the list of linked entities); lists folded from their title, 5 items then **Show more** |
-| Orphans | A counter per reason (a click filters on it), orphan devices, removed since start, last scan; **Scan now**; the orphaned entities with a search, integration and reason filters, what uses each (with links); tick them one by one or every match, then **Remove** or **Ignore** (asked first); the orphan devices, removed or ignored the same way |
-| Settings | The modules and the tabs in one list, as Home Assistant's sidebar editor: **Enabled** then **Disabled**; a handle ═ to drag a row (or ↑ ↓ from it with the keyboard) to set the order of the tabs, the first one opening by default; each module with its switch and its settings ⚙ opened in place (the System thresholds in the System row), Save and Cancel per module; Save and Discard for the modules and tabs changed |
+| Cleanup | A counter per reason (a click filters on it), orphan devices, removed since start, last scan; **Scan now**; the orphaned entities with a search, integration and reason filters, what uses each (with links); tick them one by one or every match, then **Remove** or **Ignore** (asked first); the orphan devices, removed or ignored the same way |
+| Settings | The modules by group, as Home Assistant's sidebar editor: ↑ ↓ on a group to move it, and in a group its modules turned on then the ones turned off; a handle ═ to drag a module among the ones of its group (or ↑ ↓ from it with the keyboard), the first tab opening by default; each module with its switch and its settings ⚙ opened in place (the System thresholds in the System row), Save and Cancel per module; Save and Discard for the modules and tabs changed |
 
 Turning Git Sync on the first time asks for its repository: its form opens in the **Settings** tab, and the module is saved once the repository is checked.
 
@@ -505,7 +505,7 @@ actions:
 
 #### Power cycles
 
-A device that hangs (a router, a hub, a camera) often only comes back once its power is cut. Associate it with the smart plug that powers it, in **Settings → Watchdog ⚙ → Add a power cycle**:
+A device that hangs (a router, a hub, a camera) often only comes back once its power is cut. Associate it with the smart plug that powers it, in **Settings → Sentinel ⚙ → Add a power cycle**:
 
 | Field | Default | Description |
 |---|---|---|
@@ -1067,11 +1067,11 @@ type: custom:automation-monitor-card
 
 Commits and pushes the Home Assistant configuration to a Git remote (GitHub, Gitea…), with commit messages written by an AI task, and exports the dashboards. One repository or several, as the former Git Sync integration had one entry per repository.
 
-Turning the module on (in the setup or with its switch in the panel's **Settings** tab) asks for the repository first: it is checked with Git (work tree, remote, branch name, commit author) before it is saved. Change it later with **Settings → Git Sync ⚙ → Repository settings**, the options with **Settings → Git Sync ⚙**.
+Turning the module on (in the setup or with its switch in the panel's **Settings** tab) asks for the repository first: it is checked with Git (work tree, remote, branch name, commit author) before it is saved. Change it later with **Settings → Versioning ⚙ → Repository settings**, the options with **Settings → Versioning ⚙**.
 
 #### Several repositories
 
-**Settings → Git Sync ⚙ → Add a repository** adds another one (an ESPHome folder, a `/share` folder…), checked the same way; **Another repository** sets one of them (its repository settings, then its options: schedule, export, notifications…, its own as an entry of the former integration had them), **Remove repositories** removes some. Each further repository has its own device, **System Hub Git Sync (folder)**, with the same entities named after its folder (`sensor.system_hub_git_sync_esphome_status`…), its own repairs and its own saved state; the first repository keeps the module's entities. Turned on next to the former Git Sync integration, the module takes over every one of its repositories: the configuration folder's first, the others as further repositories.
+**Settings → Versioning ⚙ → Add a repository** adds another one (an ESPHome folder, a `/share` folder…), checked the same way; **Another repository** sets one of them (its repository settings, then its options: schedule, export, notifications…, its own as an entry of the former integration had them), **Remove repositories** removes some. Each further repository has its own device, **System Hub Git Sync (folder)**, with the same entities named after its folder (`sensor.system_hub_git_sync_esphome_status`…), its own repairs and its own saved state; the first repository keeps the module's entities. Turned on next to the former Git Sync integration, the module takes over every one of its repositories: the configuration folder's first, the others as further repositories.
 
 In the panel, the **Git Sync** tab shows one repository at a time, with a chip per repository; the **Status** tab shows the one most in need of action. The [card](#git-sync-card) shows the repository of the sensor it is given (`entity`), the first one by default.
 
@@ -1405,7 +1405,7 @@ Removes orphan devices of the last scan with their entities; without `devices`, 
 
 #### Action `system_hub.orphans_ignore`
 
-Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are dropped from the list at once and saved in **Settings → Orphans ⚙** (System Hub is not reloaded for it). Administrators only.
+Adds entities (`entities`) or devices (`devices`) to the ignored ones: they are dropped from the list at once and saved in **Settings → Cleanup ⚙** (System Hub is not reloaded for it). Administrators only.
 
 #### Events
 

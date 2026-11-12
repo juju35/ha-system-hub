@@ -6,12 +6,12 @@
         "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Santinelă",
+          "marketplace": "Actualizări",
+          "batteries": "Baterii",
+          "git_sync": "Versionare",
+          "orphans": "Curățenie",
+          "automations": "Automatizări"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Module",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Adaugă o repornire prin priză",
-          "watchdog_remove_power_cycle": "Watchdog: Elimină reporniri prin priză",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Setările depozitului",
-          "git_sync": "Git Sync",
+          "watchdog": "Santinelă",
+          "watchdog_add_power_cycle": "Santinelă: Adaugă o repornire prin priză",
+          "watchdog_remove_power_cycle": "Santinelă: Elimină reporniri prin priză",
+          "marketplace": "Actualizări",
+          "batteries": "Baterii",
+          "git_sync_repository": "Versionare: Setările depozitului",
+          "git_sync": "Versionare",
           "batteries_types": "Baterii: tipuri de baterii",
           "batteries_import": "Baterii: import din Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Curățenie",
           "system": "Sistem: praguri",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Adaugă un depozit",
-          "git_sync_other": "Git Sync: Alt depozit",
-          "git_sync_remove_repository": "Git Sync: Elimină depozite"
+          "automations": "Automatizări",
+          "git_sync_add_repository": "Versionare: Adaugă un depozit",
+          "git_sync_other": "Versionare: Alt depozit",
+          "git_sync_remove_repository": "Versionare: Elimină depozite"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Activați sau dezactivați modulele. Un modul dezactivat își oprește verificările, iar entitățile sale sunt eliminate; setările sale sunt păstrate.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Santinelă",
+          "marketplace": "Actualizări",
+          "batteries": "Baterii",
+          "git_sync": "Versionare",
+          "automations": "Automatizări"
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Santinelă",
         "data": {
           "scan_interval": "Interval de verificare",
           "grace_period": "Perioadă de grație",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Actualizări",
         "data": {
           "scan_interval": "Interval de verificare",
           "backup_before_install": "Copie de rezervă înainte de instalarea actualizărilor"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Baterii",
         "data": {
           "threshold": "Prag de baterie scăzută",
           "duration": "Descărcată de cel puțin",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Versionare",
         "description": "Mesajul de commit, programări, notificări și exportul tablourilor de bord.",
         "data": {
           "ai_task_entity": "Entitate sarcină AI",
@@ -271,7 +271,7 @@
         "description": "Găsit în Battery Monitor: {settings} setări, {types} tipuri de baterii setate în cardurile sale și {stock} tipuri de baterii de rezervă. Trimiteți pentru a le aduce în System Hub: setările sale le înlocuiesc pe cele ale modulului Baterii, iar tipurile de baterii deja setate aici se păstrează."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Curățenie",
         "data": {
           "scan_interval": "Interval de scanare",
           "grace_period": "Perioadă de grație după pornire",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatizări",
         "data": {
           "exclude_devices": "Dispozitive ignorate",
           "exclude_entities": "Entități ignorate"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Versionare",
         "description": "Depozit {repository}",
         "data": {
           "ai_task_entity": "Entitate sarcină AI",
@@ -1062,7 +1062,7 @@
       "message": "Baterii de rezervă de cumpărat: {spares}"
     },
     "no_ai_task": {
-      "message": "Nicio entitate de sarcină AI nu este setată în opțiunile Git Sync."
+      "message": "Nicio entitate de sarcină AI nu este setată în opțiunile Versionare."
     },
     "ai_task_failed": {
       "message": "Sarcina AI nu a returnat niciun mesaj de commit."
@@ -1077,10 +1077,10 @@
       "message": "Commit-ul intră în conflict cu commit-urile noi din {upstream}: rebase-ul a fost anulat și nu s-a trimis nimic. Vezi Setări → Reparații."
     },
     "sensitive_files": {
-      "message": "Refuzat: modificările includ fișiere sensibile ({files}), care nu sunt nici incluse în commit, nici trimise la AI task. Adaugă-le în .gitignore sau permite-le pe cele urmărite în opțiunile Git Sync."
+      "message": "Refuzat: modificările includ fișiere sensibile ({files}), care nu sunt nici incluse în commit, nici trimise la AI task. Adaugă-le în .gitignore sau permite-le pe cele urmărite în opțiunile Versionare."
     },
     "export_dir_not_allowed": {
-      "message": "Dosarul de export {path} este în afara dosarului de configurare și a allowlist_external_dirs: alege altul în opțiunile Git Sync."
+      "message": "Dosarul de export {path} este în afara dosarului de configurare și a allowlist_external_dirs: alege altul în opțiunile Versionare."
     },
     "orphans_starting": {
       "message": "Home Assistant încă pornește: scanați din nou după ce a pornit."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync nu poate face push pentru {repo}",
-      "description": "Ramura are {ahead} commit-uri locale care nu sunt în {upstream}, iar {upstream} are {behind} commit-uri care nu sunt aici. Git Sync nu unește singur istorii divergente, așa că nu se trimite nimic.\n\nPentru a rezolva, deschide un terminal în {repo} și rulează:\n\n```\ngit pull --rebase\n```\n\nRezolvă eventualele conflicte (editează fișierele, `git add`, apoi `git rebase --continue`), apoi apasă din nou **Commit și push**. Această reparație dispare la următorul push reușit."
+      "title": "Versionare nu poate face push pentru {repo}",
+      "description": "Ramura are {ahead} commit-uri locale care nu sunt în {upstream}, iar {upstream} are {behind} commit-uri care nu sunt aici. Versionare nu unește singur istorii divergente, așa că nu se trimite nimic.\n\nPentru a rezolva, deschide un terminal în {repo} și rulează:\n\n```\ngit pull --rebase\n```\n\nRezolvă eventualele conflicte (editează fișierele, `git add`, apoi `git rebase --continue`), apoi apasă din nou **Commit și push**. Această reparație dispare la următorul push reușit."
     },
     "behind_remote": {
-      "title": "Git Sync nu poate face push pentru {repo}",
-      "description": "{upstream} are {behind} commit-uri care nu sunt aici și **Pull înainte de push** este dezactivat în opțiunile Git Sync, așa că nu se trimite nimic. Activează-l sau rulează `git pull --rebase` într-un terminal în {repo}. Această reparație dispare la următorul push reușit."
+      "title": "Versionare nu poate face push pentru {repo}",
+      "description": "{upstream} are {behind} commit-uri care nu sunt aici și **Pull înainte de push** este dezactivat în opțiunile Versionare, așa că nu se trimite nimic. Activează-l sau rulează `git pull --rebase` într-un terminal în {repo}. Această reparație dispare la următorul push reușit."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore din {repo} nu exclude secretele",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Adaugă liniile lipsă în .gitignore",
-            "description": "Fără aceste linii, Git Sync ar face commit și push parolelor, token-urilor și stocării de autentificare din Home Assistant:\n\n{lines}\n\nTrimite pentru a le adăuga la {repo}/.gitignore. Un fișier deja urmărit rămâne urmărit: scoate-l din depozit cu `git rm -r --cached secrets.yaml .storage` (fișierele rămân pe disc)."
+            "description": "Fără aceste linii, Versionare ar face commit și push parolelor, token-urilor și stocării de autentificare din Home Assistant:\n\n{lines}\n\nTrimite pentru a le adăuga la {repo}/.gitignore. Un fișier deja urmărit rămâne urmărit: scoate-l din depozit cu `git rm -r --cached secrets.yaml .storage` (fișierele rămân pe disc)."
           }
         },
         "abort": {
-          "not_loaded": "Depozitul Git Sync nu este încărcat."
+          "not_loaded": "Depozitul Versionare nu este încărcat."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Priză indisponibilă",
         "unknown_device": "Dispozitiv eliminat",
         "open_device": "Dispozitiv",
-        "pc_none": "Încă nicio repornire prin priză: adăugați una în Configurare → Watchdog: adăugați o repornire prin priză.",
+        "pc_none": "Încă nicio repornire prin priză: adăugați una în Configurare → Santinelă: adăugați o repornire prin priză.",
         "pc_configure": "Adăugați sau eliminați în Configurare",
         "orph_reason_entry_removed": "Integrare eliminată",
         "orph_reason_integration_missing": "Integrare neîncărcată",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} info",
         "st_n_good": "{n} OK",
         "st_up": "pornit de {time}",
-        "st_updates": "Actualizări",
         "st_normal": "Totul normal",
         "st_high": "Ridicat: {what}",
         "st_stopped": "{n} oprite",
@@ -1470,13 +1469,25 @@
         "st_scanned": "scanat {when}",
         "st_device": "1 dispozitiv",
         "modules_tabs": "Module și file",
-        "modules_tabs_hint": "Trageți ═ pentru a ordona filele; prima se deschide implicit.",
+        "modules_tabs_hint": "Ordonați grupurile cu ↑ ↓ și modulele unui grup trăgând ═; prima filă se deschide implicit.",
         "enabled": "Activate",
         "disabled": "Dezactivate",
         "tab_default": "implicită",
         "drag": "Mută",
         "st_hint": "Starea instanței dintr-o privire",
-        "stopped_allowed": "Oprit (permis)"
+        "stopped_allowed": "Oprit (permis)",
+        "tab_system": "Resurse",
+        "tab_watchdog": "Santinelă",
+        "tab_marketplace": "Actualizări",
+        "tab_orphans": "Curățenie",
+        "tab_automations": "Automatizări",
+        "tab_batteries": "Baterii",
+        "tab_git_sync": "Versionare",
+        "group_reliability": "Fiabilitate",
+        "group_maintenance": "Întreținere",
+        "group_devices": "Dispozitive",
+        "move_up": "Mută în sus",
+        "move_down": "Mută în jos"
       }
     },
     "battery_type": {

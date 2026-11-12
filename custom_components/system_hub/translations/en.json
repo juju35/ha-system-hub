@@ -6,11 +6,11 @@
         "description": "Choose the modules to turn on. Each module is set up in the options.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
+          "watchdog": "Sentinel",
+          "marketplace": "Updates",
           "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
+          "git_sync": "Versioning",
+          "orphans": "Cleanup",
           "automations": "Automations"
         },
         "data_description": {
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Add a power cycle",
-          "watchdog_remove_power_cycle": "Watchdog: Remove power cycles",
-          "marketplace": "Marketplace",
+          "watchdog": "Sentinel",
+          "watchdog_add_power_cycle": "Sentinel: Add a power cycle",
+          "watchdog_remove_power_cycle": "Sentinel: Remove power cycles",
+          "marketplace": "Updates",
           "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Repository settings",
-          "git_sync": "Git Sync",
+          "git_sync_repository": "Versioning: Repository settings",
+          "git_sync": "Versioning",
           "batteries_types": "Batteries: Battery types",
           "batteries_import": "Batteries: Import from Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Cleanup",
           "system": "System: thresholds",
           "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Add a repository",
-          "git_sync_other": "Git Sync: Another repository",
-          "git_sync_remove_repository": "Git Sync: Remove repositories"
+          "git_sync_add_repository": "Versioning: Add a repository",
+          "git_sync_other": "Versioning: Another repository",
+          "git_sync_remove_repository": "Versioning: Remove repositories"
         }
       },
       "modules": {
@@ -86,10 +86,10 @@
         "description": "Turn modules on or off. A module turned off stops its checks and its entities are removed; its settings are kept.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
+          "watchdog": "Sentinel",
+          "marketplace": "Updates",
           "batteries": "Batteries",
-          "git_sync": "Git Sync",
+          "git_sync": "Versioning",
           "automations": "Automations"
         },
         "data_description": {
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Sentinel",
         "data": {
           "scan_interval": "Check interval",
           "grace_period": "Grace period",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Updates",
         "data": {
           "scan_interval": "Check interval",
           "backup_before_install": "Back up before installing updates"
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Versioning",
         "description": "Commit message, schedules, notifications and dashboard export.",
         "data": {
           "ai_task_entity": "AI task entity",
@@ -271,7 +271,7 @@
         "description": "Found in Battery Monitor: {settings} settings, {types} battery types set in its cards and {stock} types of spare batteries. Submit to bring them into System Hub: its settings replace those of the Batteries module, and the battery types already set here are kept."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Cleanup",
         "data": {
           "scan_interval": "Scan interval",
           "grace_period": "Grace period after startup",
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Versioning",
         "description": "Repository {repository}",
         "data": {
           "ai_task_entity": "AI task entity",
@@ -1062,7 +1062,7 @@
       "message": "Spare batteries to buy: {spares}"
     },
     "no_ai_task": {
-      "message": "No AI task entity is set in the Git Sync options."
+      "message": "No AI task entity is set in the Versioning options."
     },
     "ai_task_failed": {
       "message": "The AI task returned no commit message."
@@ -1077,10 +1077,10 @@
       "message": "The commit conflicts with the new commits of {upstream}: the rebase was aborted and nothing was pushed. See Settings → Repairs."
     },
     "sensitive_files": {
-      "message": "Refused: the changes include sensitive files ({files}), which are neither committed nor sent to the AI task. Add them to .gitignore, or allow the tracked ones in the Git Sync options."
+      "message": "Refused: the changes include sensitive files ({files}), which are neither committed nor sent to the AI task. Add them to .gitignore, or allow the tracked ones in the Versioning options."
     },
     "export_dir_not_allowed": {
-      "message": "The export folder {path} is outside the configuration folder and allowlist_external_dirs: choose another one in the Git Sync options."
+      "message": "The export folder {path} is outside the configuration folder and allowlist_external_dirs: choose another one in the Versioning options."
     },
     "orphans_starting": {
       "message": "Home Assistant is still starting: scan again once it is up."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync cannot push {repo}",
-      "description": "The branch has {ahead} local commits that are not on {upstream}, and {upstream} has {behind} commits that are not here. Git Sync does not merge diverged histories by itself, so nothing is pushed.\n\nTo resolve it, open a terminal in {repo} and run:\n\n```\ngit pull --rebase\n```\n\nFix any conflict (edit the files, `git add` them, then `git rebase --continue`), then press **Commit and push** again. This repair goes away with the next successful push."
+      "title": "Versioning cannot push {repo}",
+      "description": "The branch has {ahead} local commits that are not on {upstream}, and {upstream} has {behind} commits that are not here. Versioning does not merge diverged histories by itself, so nothing is pushed.\n\nTo resolve it, open a terminal in {repo} and run:\n\n```\ngit pull --rebase\n```\n\nFix any conflict (edit the files, `git add` them, then `git rebase --continue`), then press **Commit and push** again. This repair goes away with the next successful push."
     },
     "behind_remote": {
-      "title": "Git Sync cannot push {repo}",
-      "description": "{upstream} has {behind} commits that are not here and **Pull before push** is off in the Git Sync options, so nothing is pushed. Turn it on, or run `git pull --rebase` in a terminal in {repo}. This repair goes away with the next successful push."
+      "title": "Versioning cannot push {repo}",
+      "description": "{upstream} has {behind} commits that are not here and **Pull before push** is off in the Versioning options, so nothing is pushed. Turn it on, or run `git pull --rebase` in a terminal in {repo}. This repair goes away with the next successful push."
     },
     "git_sync_gitignore_missing": {
       "title": "The .gitignore of {repo} does not exclude secrets",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Add the missing lines to .gitignore",
-            "description": "Without these lines, Git Sync would commit and push the passwords, the tokens and the authentication store of Home Assistant:\n\n{lines}\n\nSubmit to append them to {repo}/.gitignore. A file already tracked stays tracked: remove it from the repository with `git rm -r --cached secrets.yaml .storage` (the files stay on disk)."
+            "description": "Without these lines, Versioning would commit and push the passwords, the tokens and the authentication store of Home Assistant:\n\n{lines}\n\nSubmit to append them to {repo}/.gitignore. A file already tracked stays tracked: remove it from the repository with `git rm -r --cached secrets.yaml .storage` (the files stay on disk)."
           }
         },
         "abort": {
-          "not_loaded": "The Git Sync repository is not loaded."
+          "not_loaded": "The Versioning repository is not loaded."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Plug unavailable",
         "unknown_device": "Device removed",
         "open_device": "Device",
-        "pc_none": "No power cycle yet: add one in Configure → Watchdog: Add a power cycle.",
+        "pc_none": "No power cycle yet: add one in Configure → Sentinel: Add a power cycle.",
         "pc_configure": "Add or remove in Configure",
         "orph_reason_entry_removed": "Integration removed",
         "orph_reason_integration_missing": "Integration not loaded",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} info",
         "st_n_good": "{n} OK",
         "st_up": "up for {time}",
-        "st_updates": "Updates",
         "st_normal": "All normal",
         "st_high": "High: {what}",
         "st_stopped": "{n} stopped",
@@ -1470,13 +1469,25 @@
         "st_scanned": "scanned {when}",
         "st_device": "1 device",
         "modules_tabs": "Modules and tabs",
-        "modules_tabs_hint": "Drag ═ to set the order of the tabs; the first one opens by default.",
+        "modules_tabs_hint": "Order the groups with ↑ ↓ and the modules of a group by dragging ═; the first tab opens by default.",
         "enabled": "Enabled",
         "disabled": "Disabled",
         "tab_default": "default",
         "drag": "Move",
         "st_hint": "The health of the instance at a glance",
-        "stopped_allowed": "Stopped (allowed)"
+        "stopped_allowed": "Stopped (allowed)",
+        "tab_system": "Resources",
+        "tab_watchdog": "Sentinel",
+        "tab_marketplace": "Updates",
+        "tab_orphans": "Cleanup",
+        "tab_automations": "Automations",
+        "tab_batteries": "Batteries",
+        "tab_git_sync": "Versioning",
+        "group_reliability": "Reliability",
+        "group_maintenance": "Maintenance",
+        "group_devices": "Devices",
+        "move_up": "Move up",
+        "move_down": "Move down"
       }
     },
     "battery_type": {

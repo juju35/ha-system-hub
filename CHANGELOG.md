@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 - 2026-11-12
+
+### Changed
+- **Panel in four groups**: under the toolbar, **Status**, **System** (Resources, Containers), **Reliability** (Sentinel, Automations), **Maintenance** (Updates, Versioning), **Devices** (Batteries, Cleanup) and **Settings**, instead of a tab per module. A group shows only when one of its modules is turned on; with two or more, they are sub-tabs under it, and the group's tab has a badge with how many of them need a look, in the colour of the worst. The address still names the module (`/system-hub/watchdog`), or a group for its first module (`/system-hub/devices`).
+- **Status** tab: the tiles are grouped under the name of their group.
+- **Settings**: the modules by group; ↑ ↓ move a group, the handle ═ orders the modules inside it. The order saved before is kept, each module brought next to the others of its group.
+- **New names**, in every language: **Watchdog** is now **Sentinel**, **Marketplace** is **Updates**, **Git Sync** is **Versioning**, **Orphans** is **Cleanup**, the **System** tab is **Resources**; **Automations** and **Batteries** are translated. Only the names shown change: the modules' ids, options, entities, actions and cards stay the same.
+
 ## 1.4.1 - 2026-11-12
 
 ### Fixed

@@ -6,12 +6,12 @@
         "description": "Επιλέξτε τις μονάδες που θα ενεργοποιηθούν. Κάθε μονάδα ρυθμίζεται στις επιλογές.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Φρουρός",
+          "marketplace": "Ενημερώσεις",
+          "batteries": "Μπαταρίες",
+          "git_sync": "Διαχείριση εκδόσεων",
+          "orphans": "Καθαρισμός",
+          "automations": "Αυτοματισμοί"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Μονάδες",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Προσθήκη επανεκκίνησης μέσω πρίζας",
-          "watchdog_remove_power_cycle": "Watchdog: Αφαίρεση επανεκκινήσεων μέσω πρίζας",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Ρυθμίσεις αποθετηρίου",
-          "git_sync": "Git Sync",
+          "watchdog": "Φρουρός",
+          "watchdog_add_power_cycle": "Φρουρός: Προσθήκη επανεκκίνησης μέσω πρίζας",
+          "watchdog_remove_power_cycle": "Φρουρός: Αφαίρεση επανεκκινήσεων μέσω πρίζας",
+          "marketplace": "Ενημερώσεις",
+          "batteries": "Μπαταρίες",
+          "git_sync_repository": "Διαχείριση εκδόσεων: Ρυθμίσεις αποθετηρίου",
+          "git_sync": "Διαχείριση εκδόσεων",
           "batteries_types": "Μπαταρίες: τύποι μπαταρίας",
           "batteries_import": "Μπαταρίες: εισαγωγή από το Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Καθαρισμός",
           "system": "Σύστημα: όρια",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Προσθήκη αποθετηρίου",
-          "git_sync_other": "Git Sync: Άλλο αποθετήριο",
-          "git_sync_remove_repository": "Git Sync: Αφαίρεση αποθετηρίων"
+          "automations": "Αυτοματισμοί",
+          "git_sync_add_repository": "Διαχείριση εκδόσεων: Προσθήκη αποθετηρίου",
+          "git_sync_other": "Διαχείριση εκδόσεων: Άλλο αποθετήριο",
+          "git_sync_remove_repository": "Διαχείριση εκδόσεων: Αφαίρεση αποθετηρίων"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Ενεργοποιήστε ή απενεργοποιήστε μονάδες. Μια απενεργοποιημένη μονάδα σταματά τους ελέγχους της και οι οντότητές της αφαιρούνται· οι ρυθμίσεις της διατηρούνται.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Φρουρός",
+          "marketplace": "Ενημερώσεις",
+          "batteries": "Μπαταρίες",
+          "git_sync": "Διαχείριση εκδόσεων",
+          "automations": "Αυτοματισμοί"
         },
         "data_description": {
           "containers": "Παρακολουθεί το Home Assistant Core, τον Supervisor και τα πρόσθετα: κατάσταση, έκδοση, CPU και μνήμη. Μόνο παρακολούθηση: τίποτα δεν επανεκκινείται.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Φρουρός",
         "data": {
           "scan_interval": "Διάστημα ελέγχου",
           "grace_period": "Περίοδος χάριτος",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Ενημερώσεις",
         "data": {
           "scan_interval": "Διάστημα ελέγχου",
           "backup_before_install": "Αντίγραφο ασφαλείας πριν από την εγκατάσταση ενημερώσεων"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Μπαταρίες",
         "data": {
           "threshold": "Όριο χαμηλής μπαταρίας",
           "duration": "Χαμηλή για τουλάχιστον",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Διαχείριση εκδόσεων",
         "description": "Μήνυμα commit, χρονοδιαγράμματα, ειδοποιήσεις και εξαγωγή πινάκων ελέγχου.",
         "data": {
           "ai_task_entity": "Οντότητα εργασίας AI",
@@ -271,7 +271,7 @@
         "description": "Βρέθηκαν στο Battery Monitor: ρυθμίσεις: {settings}, τύποι μπαταρίας ορισμένοι στις κάρτες του: {types}, τύποι εφεδρικών μπαταριών: {stock}. Υποβάλετε για να μεταφερθούν στο System Hub: οι ρυθμίσεις του αντικαθιστούν αυτές της ενότητας Μπαταρίες και οι τύποι μπαταρίας που έχουν ήδη οριστεί εδώ διατηρούνται."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Καθαρισμός",
         "data": {
           "scan_interval": "Διάστημα σάρωσης",
           "grace_period": "Περίοδος χάριτος μετά την εκκίνηση",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Αυτοματισμοί",
         "data": {
           "exclude_devices": "Συσκευές που αγνοούνται",
           "exclude_entities": "Οντότητες που αγνοούνται"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Διαχείριση εκδόσεων",
         "description": "Αποθετήριο {repository}",
         "data": {
           "ai_task_entity": "Οντότητα εργασίας AI",
@@ -1062,7 +1062,7 @@
       "message": "Εφεδρικές μπαταρίες για αγορά: {spares}"
     },
     "no_ai_task": {
-      "message": "Δεν έχει οριστεί οντότητα εργασίας AI στις επιλογές του Git Sync."
+      "message": "Δεν έχει οριστεί οντότητα εργασίας AI στις επιλογές του Διαχείριση εκδόσεων."
     },
     "ai_task_failed": {
       "message": "Η εργασία AI δεν επέστρεψε μήνυμα commit."
@@ -1077,10 +1077,10 @@
       "message": "Το commit συγκρούεται με τα νέα commit του {upstream}: το rebase ακυρώθηκε και δεν στάλθηκε τίποτα. Δείτε Ρυθμίσεις → Επιδιορθώσεις."
     },
     "sensitive_files": {
-      "message": "Απορρίφθηκε: οι αλλαγές περιλαμβάνουν ευαίσθητα αρχεία ({files}), που ούτε μπαίνουν σε commit ούτε στέλνονται στην εργασία AI. Προσθέστε τα στο .gitignore ή επιτρέψτε τα παρακολουθούμενα στις επιλογές του Git Sync."
+      "message": "Απορρίφθηκε: οι αλλαγές περιλαμβάνουν ευαίσθητα αρχεία ({files}), που ούτε μπαίνουν σε commit ούτε στέλνονται στην εργασία AI. Προσθέστε τα στο .gitignore ή επιτρέψτε τα παρακολουθούμενα στις επιλογές του Διαχείριση εκδόσεων."
     },
     "export_dir_not_allowed": {
-      "message": "Ο φάκελος εξαγωγής {path} είναι εκτός του φακέλου ρυθμίσεων και του allowlist_external_dirs: επιλέξτε άλλον στις επιλογές του Git Sync."
+      "message": "Ο φάκελος εξαγωγής {path} είναι εκτός του φακέλου ρυθμίσεων και του allowlist_external_dirs: επιλέξτε άλλον στις επιλογές του Διαχείριση εκδόσεων."
     },
     "orphans_starting": {
       "message": "Το Home Assistant ξεκινά ακόμη: σαρώστε ξανά μόλις ξεκινήσει."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Το Git Sync δεν μπορεί να κάνει push το {repo}",
-      "description": "Ο κλάδος έχει {ahead} τοπικά commit που δεν υπάρχουν στο {upstream}, και το {upstream} έχει {behind} commit που δεν υπάρχουν εδώ. Το Git Sync δεν συγχωνεύει μόνο του ιστορικά που απέκλιναν, οπότε δεν στέλνεται τίποτα.\n\nΓια να το λύσετε, ανοίξτε ένα τερματικό στο {repo} και εκτελέστε:\n\n```\ngit pull --rebase\n```\n\nΔιορθώστε τυχόν συγκρούσεις (επεξεργαστείτε τα αρχεία, `git add`, μετά `git rebase --continue`) και πατήστε ξανά **Commit και push**. Αυτή η επιδιόρθωση φεύγει με το επόμενο επιτυχές push."
+      "title": "Το Διαχείριση εκδόσεων δεν μπορεί να κάνει push το {repo}",
+      "description": "Ο κλάδος έχει {ahead} τοπικά commit που δεν υπάρχουν στο {upstream}, και το {upstream} έχει {behind} commit που δεν υπάρχουν εδώ. Το Διαχείριση εκδόσεων δεν συγχωνεύει μόνο του ιστορικά που απέκλιναν, οπότε δεν στέλνεται τίποτα.\n\nΓια να το λύσετε, ανοίξτε ένα τερματικό στο {repo} και εκτελέστε:\n\n```\ngit pull --rebase\n```\n\nΔιορθώστε τυχόν συγκρούσεις (επεξεργαστείτε τα αρχεία, `git add`, μετά `git rebase --continue`) και πατήστε ξανά **Commit και push**. Αυτή η επιδιόρθωση φεύγει με το επόμενο επιτυχές push."
     },
     "behind_remote": {
-      "title": "Το Git Sync δεν μπορεί να κάνει push το {repo}",
-      "description": "Το {upstream} έχει {behind} commit που δεν υπάρχουν εδώ και το **Pull πριν από το push** είναι ανενεργό στις επιλογές του Git Sync, οπότε δεν στέλνεται τίποτα. Ενεργοποιήστε το ή εκτελέστε `git pull --rebase` σε ένα τερματικό στο {repo}. Αυτή η επιδιόρθωση φεύγει με το επόμενο επιτυχές push."
+      "title": "Το Διαχείριση εκδόσεων δεν μπορεί να κάνει push το {repo}",
+      "description": "Το {upstream} έχει {behind} commit που δεν υπάρχουν εδώ και το **Pull πριν από το push** είναι ανενεργό στις επιλογές του Διαχείριση εκδόσεων, οπότε δεν στέλνεται τίποτα. Ενεργοποιήστε το ή εκτελέστε `git pull --rebase` σε ένα τερματικό στο {repo}. Αυτή η επιδιόρθωση φεύγει με το επόμενο επιτυχές push."
     },
     "git_sync_gitignore_missing": {
       "title": "Το .gitignore του {repo} δεν εξαιρεί τα μυστικά",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Προσθήκη των γραμμών που λείπουν στο .gitignore",
-            "description": "Χωρίς αυτές τις γραμμές, το Git Sync θα έκανε commit και push τους κωδικούς πρόσβασης, τα διακριτικά και τον χώρο ελέγχου ταυτότητας του Home Assistant:\n\n{lines}\n\nΥποβάλετε για να προστεθούν στο {repo}/.gitignore. Ένα αρχείο που ήδη παρακολουθείται παραμένει παρακολουθούμενο: αφαιρέστε το από το αποθετήριο με `git rm -r --cached secrets.yaml .storage` (τα αρχεία μένουν στον δίσκο)."
+            "description": "Χωρίς αυτές τις γραμμές, το Διαχείριση εκδόσεων θα έκανε commit και push τους κωδικούς πρόσβασης, τα διακριτικά και τον χώρο ελέγχου ταυτότητας του Home Assistant:\n\n{lines}\n\nΥποβάλετε για να προστεθούν στο {repo}/.gitignore. Ένα αρχείο που ήδη παρακολουθείται παραμένει παρακολουθούμενο: αφαιρέστε το από το αποθετήριο με `git rm -r --cached secrets.yaml .storage` (τα αρχεία μένουν στον δίσκο)."
           }
         },
         "abort": {
-          "not_loaded": "Το αποθετήριο Git Sync δεν έχει φορτωθεί."
+          "not_loaded": "Το αποθετήριο Διαχείριση εκδόσεων δεν έχει φορτωθεί."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Πρίζα μη διαθέσιμη",
         "unknown_device": "Η συσκευή αφαιρέθηκε",
         "open_device": "Συσκευή",
-        "pc_none": "Δεν υπάρχει ακόμη επανεκκίνηση μέσω πρίζας: προσθέστε μία στο Διαμόρφωση → Watchdog: προσθήκη επανεκκίνησης μέσω πρίζας.",
+        "pc_none": "Δεν υπάρχει ακόμη επανεκκίνηση μέσω πρίζας: προσθέστε μία στο Διαμόρφωση → Φρουρός: προσθήκη επανεκκίνησης μέσω πρίζας.",
         "pc_configure": "Προσθήκη ή αφαίρεση στη Διαμόρφωση",
         "orph_reason_entry_removed": "Η ενσωμάτωση αφαιρέθηκε",
         "orph_reason_integration_missing": "Η ενσωμάτωση δεν φορτώθηκε",
@@ -1449,7 +1449,6 @@
         "st_n_info": "{n} πληροφορίες",
         "st_n_good": "{n} OK",
         "st_up": "σε λειτουργία {time}",
-        "st_updates": "Ενημερώσεις",
         "st_normal": "Όλα κανονικά",
         "st_high": "Υψηλό: {what}",
         "st_stopped": "{n} σταματημένα",
@@ -1470,13 +1469,25 @@
         "st_scanned": "ελέγχθηκε {when}",
         "st_device": "1 συσκευή",
         "modules_tabs": "Ενότητες και καρτέλες",
-        "modules_tabs_hint": "Σύρετε το ═ για να ταξινομήσετε τις καρτέλες· η πρώτη ανοίγει από προεπιλογή.",
+        "modules_tabs_hint": "Ταξινομήστε τις ομάδες με ↑ ↓ και τις μονάδες μιας ομάδας σύροντας το ═· η πρώτη καρτέλα ανοίγει από προεπιλογή.",
         "enabled": "Ενεργές",
         "disabled": "Ανενεργές",
         "tab_default": "προεπιλογή",
         "drag": "Μετακίνηση",
         "st_hint": "Η υγεία της εγκατάστασης με μια ματιά",
-        "stopped_allowed": "Σταματημένη (επιτρέπεται)"
+        "stopped_allowed": "Σταματημένη (επιτρέπεται)",
+        "tab_system": "Πόροι",
+        "tab_watchdog": "Φρουρός",
+        "tab_marketplace": "Ενημερώσεις",
+        "tab_orphans": "Καθαρισμός",
+        "tab_automations": "Αυτοματισμοί",
+        "tab_batteries": "Μπαταρίες",
+        "tab_git_sync": "Διαχείριση εκδόσεων",
+        "group_reliability": "Αξιοπιστία",
+        "group_maintenance": "Συντήρηση",
+        "group_devices": "Συσκευές",
+        "move_up": "Μετακίνηση πάνω",
+        "move_down": "Μετακίνηση κάτω"
       }
     },
     "battery_type": {

@@ -6,12 +6,12 @@
         "description": "Izberite module, ki jih želite vklopiti. Vsak modul se nastavi v možnostih.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Stražar",
+          "marketplace": "Posodobitve",
+          "batteries": "Baterije",
+          "git_sync": "Upravljanje različic",
+          "orphans": "Čiščenje",
+          "automations": "Avtomatizacije"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Moduli",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Dodaj ponovni zagon prek vtičnice",
-          "watchdog_remove_power_cycle": "Watchdog: Odstrani ponovne zagone prek vtičnice",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Nastavitve repozitorija",
-          "git_sync": "Git Sync",
+          "watchdog": "Stražar",
+          "watchdog_add_power_cycle": "Stražar: Dodaj ponovni zagon prek vtičnice",
+          "watchdog_remove_power_cycle": "Stražar: Odstrani ponovne zagone prek vtičnice",
+          "marketplace": "Posodobitve",
+          "batteries": "Baterije",
+          "git_sync_repository": "Upravljanje različic: Nastavitve repozitorija",
+          "git_sync": "Upravljanje različic",
           "batteries_types": "Baterije: vrste baterij",
           "batteries_import": "Baterije: uvoz iz Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Čiščenje",
           "system": "Sistem: pragovi",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Dodaj repozitorij",
-          "git_sync_other": "Git Sync: Drug repozitorij",
-          "git_sync_remove_repository": "Git Sync: Odstrani repozitorije"
+          "automations": "Avtomatizacije",
+          "git_sync_add_repository": "Upravljanje različic: Dodaj repozitorij",
+          "git_sync_other": "Upravljanje različic: Drug repozitorij",
+          "git_sync_remove_repository": "Upravljanje različic: Odstrani repozitorije"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Vklopite ali izklopite module. Izklopljen modul ustavi svoja preverjanja in njegove entitete se odstranijo; njegove nastavitve se ohranijo.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Stražar",
+          "marketplace": "Posodobitve",
+          "batteries": "Baterije",
+          "git_sync": "Upravljanje različic",
+          "automations": "Avtomatizacije"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Stražar",
         "data": {
           "scan_interval": "Interval preverjanja",
           "grace_period": "Čakalna doba",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Posodobitve",
         "data": {
           "scan_interval": "Interval preverjanja",
           "backup_before_install": "Varnostna kopija pred namestitvijo posodobitev"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Baterije",
         "data": {
           "threshold": "Prag šibke baterije",
           "duration": "Šibka vsaj",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Upravljanje različic",
         "description": "Sporočilo commita, urniki, obvestila in izvoz nadzornih plošč.",
         "data": {
           "ai_task_entity": "Entiteta opravila AI",
@@ -271,7 +271,7 @@
         "description": "Najdeno v Battery Monitor: nastavitve: {settings}, vrste baterij, nastavljene v njegovih karticah: {types}, vrste rezervnih baterij: {stock}. Pošljite, da jih prenesete v System Hub: njegove nastavitve zamenjajo nastavitve modula Baterije, vrste baterij, že nastavljene tukaj, pa ostanejo."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Čiščenje",
         "data": {
           "scan_interval": "Interval pregleda",
           "grace_period": "Čakalni čas po zagonu",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Avtomatizacije",
         "data": {
           "exclude_devices": "Prezrte naprave",
           "exclude_entities": "Prezrte entitete"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Upravljanje različic",
         "description": "Repozitorij {repository}",
         "data": {
           "ai_task_entity": "Entiteta opravila AI",
@@ -1062,7 +1062,7 @@
       "message": "Rezervne baterije za nakup: {spares}"
     },
     "no_ai_task": {
-      "message": "V možnostih Git Sync ni nastavljena entiteta opravila AI."
+      "message": "V možnostih Upravljanje različic ni nastavljena entiteta opravila AI."
     },
     "ai_task_failed": {
       "message": "Opravilo AI ni vrnilo sporočila commita."
@@ -1077,10 +1077,10 @@
       "message": "Commit je v konfliktu z novimi commiti {upstream}: rebase je bil prekinjen in nič ni bilo poslano. Glej Nastavitve → Popravila."
     },
     "sensitive_files": {
-      "message": "Zavrnjeno: spremembe vsebujejo občutljive datoteke ({files}), ki niso ne commitane ne poslane AI task. Dodaj jih v .gitignore ali dovoli sledene v možnostih Git Sync."
+      "message": "Zavrnjeno: spremembe vsebujejo občutljive datoteke ({files}), ki niso ne commitane ne poslane AI task. Dodaj jih v .gitignore ali dovoli sledene v možnostih Upravljanje različic."
     },
     "export_dir_not_allowed": {
-      "message": "Mapa za izvoz {path} je zunaj mape konfiguracije in allowlist_external_dirs: izberite drugo v možnostih Git Sync."
+      "message": "Mapa za izvoz {path} je zunaj mape konfiguracije in allowlist_external_dirs: izberite drugo v možnostih Upravljanje različic."
     },
     "orphans_starting": {
       "message": "Home Assistant se še zaganja: po zagonu znova zaženite pregled."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync ne more izvesti push za {repo}",
-      "description": "Veja ima {ahead} lokalnih commitov, ki jih ni na {upstream}, {upstream} pa ima {behind} commitov, ki jih tu ni. Git Sync sam ne združuje razhajajočih se zgodovin, zato se nič ne pošlje.\n\nZa rešitev odpri terminal v {repo} in zaženi:\n\n```\ngit pull --rebase\n```\n\nOdpravi morebitne konflikte (uredi datoteke, `git add`, nato `git rebase --continue`) in nato znova pritisni **Commit in push**. To popravilo izgine ob naslednjem uspešnem push."
+      "title": "Upravljanje različic ne more izvesti push za {repo}",
+      "description": "Veja ima {ahead} lokalnih commitov, ki jih ni na {upstream}, {upstream} pa ima {behind} commitov, ki jih tu ni. Upravljanje različic sam ne združuje razhajajočih se zgodovin, zato se nič ne pošlje.\n\nZa rešitev odpri terminal v {repo} in zaženi:\n\n```\ngit pull --rebase\n```\n\nOdpravi morebitne konflikte (uredi datoteke, `git add`, nato `git rebase --continue`) in nato znova pritisni **Commit in push**. To popravilo izgine ob naslednjem uspešnem push."
     },
     "behind_remote": {
-      "title": "Git Sync ne more izvesti push za {repo}",
-      "description": "{upstream} ima {behind} commitov, ki jih tu ni, **Pull pred push** pa je izklopljen v možnostih Git Sync, zato se nič ne pošlje. Vklopi ga ali zaženi `git pull --rebase` v terminalu v {repo}. To popravilo izgine ob naslednjem uspešnem push."
+      "title": "Upravljanje različic ne more izvesti push za {repo}",
+      "description": "{upstream} ima {behind} commitov, ki jih tu ni, **Pull pred push** pa je izklopljen v možnostih Upravljanje različic, zato se nič ne pošlje. Vklopi ga ali zaženi `git pull --rebase` v terminalu v {repo}. To popravilo izgine ob naslednjem uspešnem push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore v {repo} ne izključuje skrivnosti",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Dodaj manjkajoče vrstice v .gitignore",
-            "description": "Brez teh vrstic bi Git Sync commital in poslal gesla, žetone in shrambo za preverjanje pristnosti Home Assistant:\n\n{lines}\n\nPošlji, da se dodajo v {repo}/.gitignore. Datoteka, ki je že sledena, ostane sledena: odstrani jo iz repozitorija z ukazom `git rm -r --cached secrets.yaml .storage` (datoteke ostanejo na disku)."
+            "description": "Brez teh vrstic bi Upravljanje različic commital in poslal gesla, žetone in shrambo za preverjanje pristnosti Home Assistant:\n\n{lines}\n\nPošlji, da se dodajo v {repo}/.gitignore. Datoteka, ki je že sledena, ostane sledena: odstrani jo iz repozitorija z ukazom `git rm -r --cached secrets.yaml .storage` (datoteke ostanejo na disku)."
           }
         },
         "abort": {
-          "not_loaded": "Repozitorij Git Sync ni naložen."
+          "not_loaded": "Repozitorij Upravljanje različic ni naložen."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Vtičnica nedosegljiva",
         "unknown_device": "Naprava odstranjena",
         "open_device": "Naprava",
-        "pc_none": "Še ni ponovnega zagona prek vtičnice: dodajte ga v Konfiguriraj → Watchdog: dodaj ponovni zagon prek vtičnice.",
+        "pc_none": "Še ni ponovnega zagona prek vtičnice: dodajte ga v Konfiguriraj → Stražar: dodaj ponovni zagon prek vtičnice.",
         "pc_configure": "Dodaj ali odstrani v Konfiguriraj",
         "orph_reason_entry_removed": "Integracija odstranjena",
         "orph_reason_integration_missing": "Integracija ni naložena",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Info: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "teče {time}",
-        "st_updates": "Posodobitve",
         "st_normal": "Vse normalno",
         "st_high": "Visoko: {what}",
         "st_stopped": "Ustavljeno: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "pregledano {when}",
         "st_device": "Naprave: 1",
         "modules_tabs": "Moduli in zavihki",
-        "modules_tabs_hint": "Povlecite ═ za razvrstitev zavihkov; prvi se odpre privzeto.",
+        "modules_tabs_hint": "Skupine razvrstite z ↑ ↓, module skupine pa tako, da povlečete ═; prvi zavihek se odpre privzeto.",
         "enabled": "Omogočeni",
         "disabled": "Onemogočeni",
         "tab_default": "privzeto",
         "drag": "Premakni",
         "st_hint": "Stanje instance na prvi pogled",
-        "stopped_allowed": "Ustavljen (dovoljeno)"
+        "stopped_allowed": "Ustavljen (dovoljeno)",
+        "tab_system": "Viri",
+        "tab_watchdog": "Stražar",
+        "tab_marketplace": "Posodobitve",
+        "tab_orphans": "Čiščenje",
+        "tab_automations": "Avtomatizacije",
+        "tab_batteries": "Baterije",
+        "tab_git_sync": "Upravljanje različic",
+        "group_reliability": "Zanesljivost",
+        "group_maintenance": "Vzdrževanje",
+        "group_devices": "Naprave",
+        "move_up": "Premakni gor",
+        "move_down": "Premakni dol"
       }
     },
     "battery_type": {

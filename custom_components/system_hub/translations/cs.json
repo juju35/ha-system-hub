@@ -6,12 +6,12 @@
         "description": "Vyberte moduly, které chcete zapnout. Každý modul se nastavuje v možnostech.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "orphans": "Orphans",
-          "automations": "Automations"
+          "watchdog": "Strážce",
+          "marketplace": "Aktualizace",
+          "batteries": "Baterie",
+          "git_sync": "Verzování",
+          "orphans": "Úklid",
+          "automations": "Automatizace"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
@@ -64,21 +64,21 @@
         "menu_options": {
           "modules": "Moduly",
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "watchdog_add_power_cycle": "Watchdog: Přidat restart přes zásuvku",
-          "watchdog_remove_power_cycle": "Watchdog: Odebrat restarty přes zásuvku",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync_repository": "Git Sync: Nastavení repozitáře",
-          "git_sync": "Git Sync",
+          "watchdog": "Strážce",
+          "watchdog_add_power_cycle": "Strážce: Přidat restart přes zásuvku",
+          "watchdog_remove_power_cycle": "Strážce: Odebrat restarty přes zásuvku",
+          "marketplace": "Aktualizace",
+          "batteries": "Baterie",
+          "git_sync_repository": "Verzování: Nastavení repozitáře",
+          "git_sync": "Verzování",
           "batteries_types": "Baterie: typy baterií",
           "batteries_import": "Baterie: import z Battery Monitor",
-          "orphans": "Orphans",
+          "orphans": "Úklid",
           "system": "Systém: prahy",
-          "automations": "Automations",
-          "git_sync_add_repository": "Git Sync: Přidat repozitář",
-          "git_sync_other": "Git Sync: Jiný repozitář",
-          "git_sync_remove_repository": "Git Sync: Odebrat repozitáře"
+          "automations": "Automatizace",
+          "git_sync_add_repository": "Verzování: Přidat repozitář",
+          "git_sync_other": "Verzování: Jiný repozitář",
+          "git_sync_remove_repository": "Verzování: Odebrat repozitáře"
         }
       },
       "modules": {
@@ -86,11 +86,11 @@
         "description": "Zapněte nebo vypněte moduly. Vypnutý modul zastaví své kontroly a jeho entity jsou odstraněny; jeho nastavení zůstává zachováno.",
         "data": {
           "containers": "Containers",
-          "watchdog": "Watchdog",
-          "marketplace": "Marketplace",
-          "batteries": "Batteries",
-          "git_sync": "Git Sync",
-          "automations": "Automations"
+          "watchdog": "Strážce",
+          "marketplace": "Aktualizace",
+          "batteries": "Baterie",
+          "git_sync": "Verzování",
+          "automations": "Automatizace"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
@@ -117,7 +117,7 @@
         }
       },
       "watchdog": {
-        "title": "Watchdog",
+        "title": "Strážce",
         "data": {
           "scan_interval": "Interval kontroly",
           "grace_period": "Ochranná lhůta",
@@ -165,7 +165,7 @@
         }
       },
       "marketplace": {
-        "title": "Marketplace",
+        "title": "Aktualizace",
         "data": {
           "scan_interval": "Interval kontroly",
           "backup_before_install": "Zálohovat před instalací aktualizací"
@@ -176,7 +176,7 @@
         }
       },
       "batteries": {
-        "title": "Batteries",
+        "title": "Baterie",
         "data": {
           "threshold": "Práh slabé baterie",
           "duration": "Slabá alespoň",
@@ -218,7 +218,7 @@
         }
       },
       "git_sync": {
-        "title": "Git Sync",
+        "title": "Verzování",
         "description": "Zpráva commitu, plány, oznámení a export dashboardů.",
         "data": {
           "ai_task_entity": "Entita úlohy AI",
@@ -271,7 +271,7 @@
         "description": "Nalezeno v Battery Monitor: nastavení: {settings}, typy baterií nastavené v jeho kartách: {types}, typy náhradních baterií: {stock}. Odesláním je převezmete do System Hub: jeho nastavení nahradí nastavení modulu Baterie a typy baterií již nastavené zde zůstanou zachovány."
       },
       "orphans": {
-        "title": "Orphans",
+        "title": "Úklid",
         "data": {
           "scan_interval": "Interval skenování",
           "grace_period": "Čekací doba po spuštění",
@@ -307,7 +307,7 @@
         "data_description": {}
       },
       "automations": {
-        "title": "Automations",
+        "title": "Automatizace",
         "data": {
           "exclude_devices": "Ignorovaná zařízení",
           "exclude_entities": "Ignorované entity"
@@ -363,7 +363,7 @@
         }
       },
       "git_sync_other_options": {
-        "title": "Git Sync",
+        "title": "Verzování",
         "description": "Repozitář {repository}",
         "data": {
           "ai_task_entity": "Entita úlohy AI",
@@ -1062,7 +1062,7 @@
       "message": "Náhradní baterie ke koupi: {spares}"
     },
     "no_ai_task": {
-      "message": "V možnostech Git Sync není nastavena entita úlohy AI."
+      "message": "V možnostech Verzování není nastavena entita úlohy AI."
     },
     "ai_task_failed": {
       "message": "Úloha AI nevrátila žádnou zprávu commitu."
@@ -1077,10 +1077,10 @@
       "message": "Commit je v konfliktu s novými commity {upstream}: rebase byl přerušen a nic nebylo odesláno. Viz Nastavení → Opravy."
     },
     "sensitive_files": {
-      "message": "Odmítnuto: změny obsahují citlivé soubory ({files}), které se necommitují ani neposílají do AI task. Přidejte je do .gitignore nebo povolte sledované v možnostech Git Sync."
+      "message": "Odmítnuto: změny obsahují citlivé soubory ({files}), které se necommitují ani neposílají do AI task. Přidejte je do .gitignore nebo povolte sledované v možnostech Verzování."
     },
     "export_dir_not_allowed": {
-      "message": "Složka exportu {path} je mimo složku konfigurace a allowlist_external_dirs: vyberte jinou v možnostech Git Sync."
+      "message": "Složka exportu {path} je mimo složku konfigurace a allowlist_external_dirs: vyberte jinou v možnostech Verzování."
     },
     "orphans_starting": {
       "message": "Home Assistant se stále spouští: po spuštění skenování spusťte znovu."
@@ -1126,12 +1126,12 @@
       }
     },
     "diverged": {
-      "title": "Git Sync nemůže provést push {repo}",
-      "description": "Větev má {ahead} lokálních commitů, které nejsou na {upstream}, a {upstream} má {behind} commitů, které tu nejsou. Git Sync sám neslučuje rozcházející se historie, proto se nic neodešle.\n\nPro vyřešení otevřete terminál v {repo} a spusťte:\n\n```\ngit pull --rebase\n```\n\nVyřešte případné konflikty (upravte soubory, `git add`, potom `git rebase --continue`) a pak znovu stiskněte **Commit a push**. Tato oprava zmizí při dalším úspěšném push."
+      "title": "Verzování nemůže provést push {repo}",
+      "description": "Větev má {ahead} lokálních commitů, které nejsou na {upstream}, a {upstream} má {behind} commitů, které tu nejsou. Verzování sám neslučuje rozcházející se historie, proto se nic neodešle.\n\nPro vyřešení otevřete terminál v {repo} a spusťte:\n\n```\ngit pull --rebase\n```\n\nVyřešte případné konflikty (upravte soubory, `git add`, potom `git rebase --continue`) a pak znovu stiskněte **Commit a push**. Tato oprava zmizí při dalším úspěšném push."
     },
     "behind_remote": {
-      "title": "Git Sync nemůže provést push {repo}",
-      "description": "{upstream} má {behind} commitů, které tu nejsou, a **Pull před push** je vypnutý v možnostech Git Sync, proto se nic neodešle. Zapněte jej nebo spusťte `git pull --rebase` v terminálu v {repo}. Tato oprava zmizí při dalším úspěšném push."
+      "title": "Verzování nemůže provést push {repo}",
+      "description": "{upstream} má {behind} commitů, které tu nejsou, a **Pull před push** je vypnutý v možnostech Verzování, proto se nic neodešle. Zapněte jej nebo spusťte `git pull --rebase` v terminálu v {repo}. Tato oprava zmizí při dalším úspěšném push."
     },
     "git_sync_gitignore_missing": {
       "title": ".gitignore v {repo} nevylučuje tajemství",
@@ -1139,11 +1139,11 @@
         "step": {
           "confirm": {
             "title": "Přidat chybějící řádky do .gitignore",
-            "description": "Bez těchto řádků by Git Sync commitnul a odeslal hesla, tokeny a úložiště ověřování Home Assistant:\n\n{lines}\n\nOdešlete pro jejich připojení do {repo}/.gitignore. Soubor, který se už sleduje, zůstane sledovaný: odstraňte jej z repozitáře příkazem `git rm -r --cached secrets.yaml .storage` (soubory zůstanou na disku)."
+            "description": "Bez těchto řádků by Verzování commitnul a odeslal hesla, tokeny a úložiště ověřování Home Assistant:\n\n{lines}\n\nOdešlete pro jejich připojení do {repo}/.gitignore. Soubor, který se už sleduje, zůstane sledovaný: odstraňte jej z repozitáře příkazem `git rm -r --cached secrets.yaml .storage` (soubory zůstanou na disku)."
           }
         },
         "abort": {
-          "not_loaded": "Repozitář Git Sync není načten."
+          "not_loaded": "Repozitář Verzování není načten."
         }
       }
     }
@@ -1329,7 +1329,7 @@
         "plug_unavailable": "Zásuvka nedostupná",
         "unknown_device": "Zařízení odebráno",
         "open_device": "Zařízení",
-        "pc_none": "Zatím žádný restart přes zásuvku: přidejte ho v Konfigurovat → Watchdog: přidat restart přes zásuvku.",
+        "pc_none": "Zatím žádný restart přes zásuvku: přidejte ho v Konfigurovat → Strážce: přidat restart přes zásuvku.",
         "pc_configure": "Přidat nebo odebrat v Konfigurovat",
         "orph_reason_entry_removed": "Integrace odebrána",
         "orph_reason_integration_missing": "Integrace nenačtena",
@@ -1449,7 +1449,6 @@
         "st_n_info": "Info: {n}",
         "st_n_good": "OK: {n}",
         "st_up": "běží {time}",
-        "st_updates": "Aktualizace",
         "st_normal": "Vše normální",
         "st_high": "Vysoké: {what}",
         "st_stopped": "Zastaveno: {n}",
@@ -1470,13 +1469,25 @@
         "st_scanned": "prověřeno {when}",
         "st_device": "Zařízení: 1",
         "modules_tabs": "Moduly a karty",
-        "modules_tabs_hint": "Přetažením ═ seřaďte karty; první se otevře ve výchozím stavu.",
+        "modules_tabs_hint": "Skupiny seřaďte pomocí ↑ ↓ a moduly skupiny přetažením ═; první karta se otevře ve výchozím stavu.",
         "enabled": "Zapnuté",
         "disabled": "Vypnuté",
         "tab_default": "výchozí",
         "drag": "Přesunout",
         "st_hint": "Stav instance na první pohled",
-        "stopped_allowed": "Zastaveno (povoleno)"
+        "stopped_allowed": "Zastaveno (povoleno)",
+        "tab_system": "Prostředky",
+        "tab_watchdog": "Strážce",
+        "tab_marketplace": "Aktualizace",
+        "tab_orphans": "Úklid",
+        "tab_automations": "Automatizace",
+        "tab_batteries": "Baterie",
+        "tab_git_sync": "Verzování",
+        "group_reliability": "Spolehlivost",
+        "group_maintenance": "Údržba",
+        "group_devices": "Zařízení",
+        "move_up": "Posunout nahoru",
+        "move_down": "Posunout dolů"
       }
     },
     "battery_type": {
