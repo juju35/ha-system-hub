@@ -6,6 +6,7 @@
         "description": "Izaberite module koje želite da uključite. Svaki modul se podešava u opcijama.",
         "data": {
           "containers": "Containers",
+          "logs": "Dnevnici",
           "watchdog": "Stražar",
           "marketplace": "Ažuriranja",
           "backups": "Rezervne kopije",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
+          "logs": "Dnevnik Home Assistant-a po integracijama: greške i upozorenja, koliko puta su se pojavili, trag poziva; ponovno učitavanje integracije, ignorisanje poruke. Bez sopstvenih entiteta.",
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "backups": "Prati rezervne kopije Home Assistant-a: poslednju uspešnu, sledeću, svaku lokaciju i poslednjih 30 dana. Bez sopstvenih entiteta.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Moduli",
           "containers": "Containers",
+          "logs": "Dnevnici",
           "watchdog": "Stražar",
           "watchdog_add_power_cycle": "Stražar: Dodaj restart preko utičnice",
           "watchdog_remove_power_cycle": "Stražar: Ukloni restarte preko utičnice",
@@ -93,6 +96,7 @@
         "description": "Uključite ili isključite module. Isključen modul zaustavlja svoje provere i njegovi entiteti se uklanjaju; njegova podešavanja se čuvaju.",
         "data": {
           "containers": "Containers",
+          "logs": "Dnevnici",
           "watchdog": "Stražar",
           "marketplace": "Ažuriranja",
           "backups": "Rezervne kopije",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
+          "logs": "Dnevnik Home Assistant-a po integracijama: greške i upozorenja, koliko puta su se pojavili, trag poziva; ponovno učitavanje integracije, ignorisanje poruke. Bez sopstvenih entiteta.",
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "backups": "Prati rezervne kopije Home Assistant-a: poslednju uspešnu, sledeću, svaku lokaciju i poslednjih 30 dana. Bez sopstvenih entiteta.",
@@ -125,6 +130,17 @@
           "notify": "Obavesti kada se kontejner koji bi trebalo da radi (dodatak koji se pokreće pri startu) zaustavi, i kada se vrati.",
           "notify_services": "Svako obaveštenje pošalji i ovim akcijama (notify.mobile_app_…). Trajno obaveštenje se uvek kreira.",
           "stoppable_processes": "Procesi System Monitor-a koji mogu biti zaustavljeni: ne računaju se kao problem na kartici Status, prikazuju se sivo."
+        }
+      },
+      "logs": {
+        "title": "Dnevnici",
+        "data": {
+          "error_threshold": "Greške koje su problem",
+          "ignored_messages": "Ignorisane poruke"
+        },
+        "data_description": {
+          "error_threshold": "Greške jedne integracije za 24 sata od kojih kartica Status prikazuje problem.",
+          "ignored_messages": "Ignorisane sa kartice Dnevnici (logger|početak poruke): uklonite jednu da biste je ponovo videli."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "mreža",
         "sl_ignore": "Ignoriši",
         "sl_hint": "Tih: ništa primljeno duže od {battery} h na bateriji, {mains} h iz mreže. Slab signal: LQI ispod 50, RSSI ispod −80 dBm.",
-        "sl_ignored_done": "Ignorisano: {name}"
+        "sl_ignored_done": "Ignorisano: {name}",
+        "tab_logs": "Dnevnici",
+        "lg_n_errors": "Greške: {n}",
+        "lg_n_warnings": "Upozorenja: {n}",
+        "lg_no_errors": "Nema grešaka",
+        "lg_errors": "Greške",
+        "lg_warnings": "Upozorenja",
+        "lg_integrations": "Integracije",
+        "lg_ignored": "Ignorisani",
+        "lg_level": "Nivo",
+        "lg_period": "Period",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Od pokretanja",
+        "lg_clear": "Očisti dnevnik",
+        "lg_clear_confirm": "Očistiti dnevnik Home Assistant-a? Poruke od pokretanja biće obrisane.",
+        "lg_full": "Ceo dnevnik",
+        "lg_reload": "Ponovo učitaj",
+        "lg_traceback": "Trag poziva",
+        "lg_none": "Nema upozorenja ni grešaka u ovom periodu.",
+        "lg_no_entry": "Nema unosa ove integracije za ponovno učitavanje."
       }
     },
     "battery_type": {

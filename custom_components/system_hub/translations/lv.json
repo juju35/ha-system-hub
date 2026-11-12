@@ -6,6 +6,7 @@
         "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās.",
         "data": {
           "containers": "Containers",
+          "logs": "Žurnāli",
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
           "backups": "Dublējumi",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
+          "logs": "Home Assistant žurnāls pa integrācijām: kļūdas un brīdinājumi, cik reizes tie radās, izsaukumu kaudze; integrācijas pārlādēšana, ziņojuma ignorēšana. Bez savām entītijām.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "backups": "Seko Home Assistant dublējumiem: pēdējam veiksmīgajam, nākamajam, katrai atrašanās vietai un pēdējām 30 dienām. Bez savām entītijām.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Moduļi",
           "containers": "Containers",
+          "logs": "Žurnāli",
           "watchdog": "Sargs",
           "watchdog_add_power_cycle": "Sargs: Pievienot restartēšanu ar kontaktligzdu",
           "watchdog_remove_power_cycle": "Sargs: Noņemt restartēšanas ar kontaktligzdu",
@@ -93,6 +96,7 @@
         "description": "Ieslēdziet vai izslēdziet moduļus. Izslēgts modulis pārtrauc pārbaudes, un tā entītijas tiek noņemtas; tā iestatījumi tiek saglabāti.",
         "data": {
           "containers": "Containers",
+          "logs": "Žurnāli",
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
           "backups": "Dublējumi",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
+          "logs": "Home Assistant žurnāls pa integrācijām: kļūdas un brīdinājumi, cik reizes tie radās, izsaukumu kaudze; integrācijas pārlādēšana, ziņojuma ignorēšana. Bez savām entītijām.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "backups": "Seko Home Assistant dublējumiem: pēdējam veiksmīgajam, nākamajam, katrai atrašanās vietai un pēdējām 30 dienām. Bez savām entītijām.",
@@ -125,6 +130,17 @@
           "notify": "Paziņot, kad konteiners, kam vajadzētu darboties (papildinājums, kas palaists ielādējot), apstājas, un kad tas atgriežas.",
           "notify_services": "Sūtīt katru paziņojumu arī ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr.",
           "stoppable_processes": "System Monitor procesi, kas drīkst būt apturēti: cilnē Statuss netiek uzskatīti par problēmu, tiek rādīti pelēkā krāsā."
+        }
+      },
+      "logs": {
+        "title": "Žurnāli",
+        "data": {
+          "error_threshold": "Kļūdas, kas ir problēma",
+          "ignored_messages": "Ignorētie ziņojumi"
+        },
+        "data_description": {
+          "error_threshold": "Vienas integrācijas kļūdas 24 stundās, no kurām cilne Statuss rāda problēmu.",
+          "ignored_messages": "Ignorēti no cilnes Žurnāli (logger|ziņojuma sākums): noņemiet vienu, lai to atkal redzētu."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "tīkls",
         "sl_ignore": "Ignorēt",
         "sl_hint": "Klusa: nekas nav saņemts vairāk nekā {battery} h ar bateriju, {mains} h no tīkla. Vājš signāls: LQI zem 50, RSSI zem −80 dBm.",
-        "sl_ignored_done": "Ignorēta: {name}"
+        "sl_ignored_done": "Ignorēta: {name}",
+        "tab_logs": "Žurnāli",
+        "lg_n_errors": "Kļūdas: {n}",
+        "lg_n_warnings": "Brīdinājumi: {n}",
+        "lg_no_errors": "Nav kļūdu",
+        "lg_errors": "Kļūdas",
+        "lg_warnings": "Brīdinājumi",
+        "lg_integrations": "Integrācijas",
+        "lg_ignored": "Ignorētie",
+        "lg_level": "Līmenis",
+        "lg_period": "Periods",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Kopš palaišanas",
+        "lg_clear": "Notīrīt žurnālu",
+        "lg_clear_confirm": "Notīrīt Home Assistant žurnālu? Ziņojumi kopš palaišanas tiks dzēsti.",
+        "lg_full": "Pilns žurnāls",
+        "lg_reload": "Pārlādēt",
+        "lg_traceback": "Izsaukumu kaudze",
+        "lg_none": "Šajā periodā nav brīdinājumu un kļūdu.",
+        "lg_no_entry": "Šai integrācijai nav ieraksta, ko pārlādēt."
       }
     },
     "battery_type": {

@@ -6,6 +6,7 @@
         "description": "Choisissez les modules à activer. Chaque module se règle dans les options.",
         "data": {
           "containers": "Containers",
+          "logs": "Journaux",
           "watchdog": "Sentinelle",
           "marketplace": "Mises à jour",
           "backups": "Sauvegardes",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
+          "logs": "Le journal de Home Assistant regroupé par intégration : erreurs et avertissements, nombre d'occurrences, trace ; recharger une intégration, ignorer un message. Aucune entité propre.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "backups": "Suit les sauvegardes de Home Assistant : la dernière réussie, la prochaine, chaque emplacement et les 30 derniers jours. Aucune entité propre.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
+          "logs": "Journaux",
           "watchdog": "Sentinelle",
           "watchdog_add_power_cycle": "Sentinelle : Ajouter un redémarrage par prise",
           "watchdog_remove_power_cycle": "Sentinelle : Retirer des redémarrages par prise",
@@ -93,6 +96,7 @@
         "description": "Activez ou désactivez les modules. Un module désactivé arrête ses vérifications et ses entités sont supprimées ; ses réglages sont conservés.",
         "data": {
           "containers": "Containers",
+          "logs": "Journaux",
           "watchdog": "Sentinelle",
           "marketplace": "Mises à jour",
           "backups": "Sauvegardes",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
+          "logs": "Le journal de Home Assistant regroupé par intégration : erreurs et avertissements, nombre d'occurrences, trace ; recharger une intégration, ignorer un message. Aucune entité propre.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "backups": "Suit les sauvegardes de Home Assistant : la dernière réussie, la prochaine, chaque emplacement et les 30 derniers jours. Aucune entité propre.",
@@ -125,6 +130,17 @@
           "notify": "Notifier quand un conteneur qui devrait tourner (un add-on lancé au démarrage) s'arrête, et quand il revient.",
           "notify_services": "Envoyer aussi chaque notification avec ces actions (notify.mobile_app_…). Une notification persistante est toujours créée.",
           "stoppable_processes": "Processus de System Monitor qui peuvent être à l'arrêt : ils ne comptent pas comme un problème dans l'onglet Statut et s'affichent en gris."
+        }
+      },
+      "logs": {
+        "title": "Journaux",
+        "data": {
+          "error_threshold": "Erreurs qui font un problème",
+          "ignored_messages": "Messages ignorés"
+        },
+        "data_description": {
+          "error_threshold": "Erreurs d'une intégration en 24 heures à partir desquelles l'onglet Statut signale un problème.",
+          "ignored_messages": "Ignorés depuis l'onglet Journaux (logger|début du message) : retirez-en un pour le revoir."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "secteur",
         "sl_ignore": "Ignorer",
         "sl_hint": "Muet : rien reçu depuis plus de {battery} h sur pile, {mains} h sur secteur. Signal faible : LQI sous 50, RSSI sous −80 dBm.",
-        "sl_ignored_done": "Ignoré : {name}"
+        "sl_ignored_done": "Ignoré : {name}",
+        "tab_logs": "Journaux",
+        "lg_n_errors": "{n} erreurs",
+        "lg_n_warnings": "{n} avertissements",
+        "lg_no_errors": "Aucune erreur",
+        "lg_errors": "Erreurs",
+        "lg_warnings": "Avertissements",
+        "lg_integrations": "Intégrations",
+        "lg_ignored": "Ignorés",
+        "lg_level": "Niveau",
+        "lg_period": "Période",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Depuis le démarrage",
+        "lg_clear": "Vider le journal",
+        "lg_clear_confirm": "Vider le journal de Home Assistant ? Les messages gardés depuis son démarrage sont effacés.",
+        "lg_full": "Journal complet",
+        "lg_reload": "Recharger",
+        "lg_traceback": "Trace",
+        "lg_none": "Aucun avertissement ni erreur sur cette période.",
+        "lg_no_entry": "Aucune entrée de cette intégration à recharger."
       }
     },
     "battery_type": {

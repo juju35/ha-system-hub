@@ -6,6 +6,7 @@
         "description": "Vælg de moduler, der skal slås til. Hvert modul indstilles under indstillingerne.",
         "data": {
           "containers": "Containers",
+          "logs": "Logfiler",
           "watchdog": "Vagtpost",
           "marketplace": "Opdateringer",
           "backups": "Sikkerhedskopier",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
+          "logs": "Home Assistants log grupperet efter integration: fejl og advarsler, hvor mange gange de kom, deres traceback; genindlæs en integration, ignorer en besked. Ingen egne entiteter.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
           "backups": "Følger Home Assistants sikkerhedskopier: den seneste vellykkede, den næste, hver placering og de seneste 30 dage. Ingen egne entiteter.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Moduler",
           "containers": "Containers",
+          "logs": "Logfiler",
           "watchdog": "Vagtpost",
           "watchdog_add_power_cycle": "Vagtpost: Tilføj genstart via stik",
           "watchdog_remove_power_cycle": "Vagtpost: Fjern genstarter via stik",
@@ -93,6 +96,7 @@
         "description": "Slå moduler til eller fra. Et modul, der er slået fra, stopper sine kontroller, og dets enheder fjernes; dets indstillinger bevares.",
         "data": {
           "containers": "Containers",
+          "logs": "Logfiler",
           "watchdog": "Vagtpost",
           "marketplace": "Opdateringer",
           "backups": "Sikkerhedskopier",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
+          "logs": "Home Assistants log grupperet efter integration: fejl og advarsler, hvor mange gange de kom, deres traceback; genindlæs en integration, ignorer en besked. Ingen egne entiteter.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
           "backups": "Følger Home Assistants sikkerhedskopier: den seneste vellykkede, den næste, hver placering og de seneste 30 dage. Ingen egne entiteter.",
@@ -125,6 +130,17 @@
           "notify": "Giv besked, når en container, der burde køre (en tilføjelse startet ved opstart), stopper, og når den er tilbage.",
           "notify_services": "Send også hver notifikation med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation.",
           "stoppable_processes": "System Monitor-processer, der må være stoppet: tæller ikke som et problem på fanen Status og vises gråt."
+        }
+      },
+      "logs": {
+        "title": "Logfiler",
+        "data": {
+          "error_threshold": "Fejl der er et problem",
+          "ignored_messages": "Ignorerede beskeder"
+        },
+        "data_description": {
+          "error_threshold": "Fejl fra én integration på 24 timer, hvorfra fanen Status viser et problem.",
+          "ignored_messages": "Ignoreret fra fanen Logfiler (logger|starten af beskeden): fjern en for at se den igen."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "lysnet",
         "sl_ignore": "Ignorer",
         "sl_hint": "Tavs: intet modtaget i over {battery} t på batteri, {mains} t på lysnet. Svagt signal: LQI under 50, RSSI under −80 dBm.",
-        "sl_ignored_done": "Ignoreret: {name}"
+        "sl_ignored_done": "Ignoreret: {name}",
+        "tab_logs": "Logfiler",
+        "lg_n_errors": "{n} fejl",
+        "lg_n_warnings": "{n} advarsler",
+        "lg_no_errors": "Ingen fejl",
+        "lg_errors": "Fejl",
+        "lg_warnings": "Advarsler",
+        "lg_integrations": "Integrationer",
+        "lg_ignored": "Ignoreret",
+        "lg_level": "Niveau",
+        "lg_period": "Periode",
+        "lg_hour": "1 t",
+        "lg_day": "24 t",
+        "lg_since_start": "Siden start",
+        "lg_clear": "Ryd loggen",
+        "lg_clear_confirm": "Ryd Home Assistants log? Beskederne siden start slettes.",
+        "lg_full": "Hele loggen",
+        "lg_reload": "Genindlæs",
+        "lg_traceback": "Traceback",
+        "lg_none": "Ingen advarsler eller fejl i denne periode.",
+        "lg_no_entry": "Ingen post fra denne integration at genindlæse."
       }
     },
     "battery_type": {

@@ -24,6 +24,7 @@ var SH_MODULE_ICONS = {
   watchdog: 'mdi:shield-search',
   marketplace: 'mdi:storefront-outline',
   backups: 'mdi:backup-restore',
+  logs: 'mdi:text-box-search-outline',
   silent: 'mdi:access-point-off',
   batteries: 'mdi:battery-heart-variant',
   git_sync: 'mdi:source-branch-sync',
@@ -37,6 +38,7 @@ var SH_MODULE_NAMES = {
   watchdog: 'Watchdog',
   marketplace: 'Marketplace',
   backups: 'Backups',
+  logs: 'Logs',
   silent: 'Silent devices',
   batteries: 'Batteries',
   git_sync: 'Git Sync',
@@ -46,7 +48,7 @@ var SH_MODULE_NAMES = {
 // The tabs under the toolbar: Status, one per group of modules (its modules as sub-tabs), Settings last
 var SH_GROUPS = {
   system: ['system', 'containers'],
-  reliability: ['watchdog', 'automations'],
+  reliability: ['logs', 'watchdog', 'automations'],
   maintenance: ['marketplace', 'backups', 'git_sync'],
   devices: ['silent', 'batteries', 'orphans'],
 };
@@ -717,6 +719,12 @@ class SystemHubPanel extends HTMLElement {
     .cfgtabs { align-self:flex-start; }
     .cfgdesc { white-space:pre-line; }
     @media (max-width:600px) { .cfgbody { padding-left:0; } }
+    .lgentry { padding:10px 14px; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); display:flex; flex-direction:column; gap:4px; }
+    .lgentry .actions { margin:0; }
+    .lgentry .s, .lgentry summary { font-size:12px; color:var(--secondary-text-color); }
+    .lgentry summary { cursor:pointer; }
+    .lgmsg { font-family:var(--code-font-family, monospace); font-size:13px; white-space:pre-wrap; word-break:break-word; }
+    .lgpre { margin:6px 0 0; padding:10px; border-radius:8px; overflow-x:auto; font-size:12px; background:var(--secondary-background-color, rgba(127,127,127,.08)); }
     .bkdays { display:flex; flex-wrap:wrap; gap:5px; }
     .bkday { width:20px; height:20px; border-radius:5px; background:var(--divider-color, rgba(127,127,127,.2)); }
     .bkday.ok { background:var(--tone-good); }
@@ -1066,6 +1074,8 @@ class SystemHubPanel extends HTMLElement {
       }
       // The Orphans tab shown: its whole list, read again with the state
       if (this._state?.orphans && (this._routeTab || this._tab) === 'orphans') await this._orphLoad();
+      // The log, for the Logs tab and the Status tab: read again every minute at most
+      if (this._state?.logs) await this._lgLoad();
       // The Backups tab shown: Home Assistant's backups, read again every minute at most
       if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
       clearTimeout(this._retry);
@@ -1277,6 +1287,7 @@ class SystemHubPanel extends HTMLElement {
       watchdog: () => this._watchdog(),
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
+      logs: () => this._logs(),
       silent: () => this._silent(),
       batteries: () => this._batteries(),
       git_sync: () => this._gitSync(),
@@ -1913,6 +1924,130 @@ class SystemHubPanel extends HTMLElement {
       ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
       ${cards ? `<div class="mkgrid">${cards}</div>` : ''}
       ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
+  }
+
+  // Home Assistant's log (system_log/list): the warnings and errors kept since it started, read every minute at most
+  async _lgLoad(force) {
+    if (!this._hass?.callWS || (!force && this._lg?.at && Date.now() - this._lg.at < 60000)) return;
+    this._lg = { ...(this._lg || {}), at: Date.now() };
+    try {
+      this._lg = { entries: await this._hass.callWS({ type: 'system_log/list' }), at: Date.now(), error: null };
+    } catch (err) {
+      this._lg = { ...this._lg, error: shErr(err) };
+    }
+  }
+
+  // A message's key for Ignore: its logger and the start of its first line
+  _lgKey(e) {
+    return `${e.name}|${String(e.message?.[0] ?? '').slice(0, 160)}`;
+  }
+
+  // The messages by integration (homeassistant.components.<x>, custom_components.<x>, else the logger's root), the
+  // ones ignored left out: level 'error' (errors only), 'warning' or 'all'; period 'hour', 'day' or 'all' (since start)
+  _lgGroups(level, period) {
+    var ignored = new Set(this._state.logs?.ignored_messages || []);
+    var since = { hour: 3600, day: 86400 }[period];
+    var now = Date.now() / 1000;
+    var isError = (e) => e.level === 'ERROR' || e.level === 'CRITICAL';
+    var groups = {};
+    for (var e of this._lg?.entries || []) {
+      if (ignored.has(this._lgKey(e)) || (since && now - e.timestamp > since)) continue;
+      if ((level === 'error' && !isError(e)) || (level === 'warning' && isError(e))) continue;
+      var m = /^(?:homeassistant\.components|custom_components)\.([^.]+)/.exec(e.name || '');
+      var domain = m ? m[1] : (e.name || '').split('.')[0] || '?';
+      var g = (groups[domain] ??= { domain, errors: 0, warnings: 0, last: 0, entries: [], custom: (e.name || '').startsWith('custom_components.') });
+      g[isError(e) ? 'errors' : 'warnings'] += e.count || 1;
+      g.last = Math.max(g.last, e.timestamp);
+      g.entries.push(e);
+    }
+    return Object.values(groups)
+      .map((g) => ({ ...g, entries: g.entries.sort((a, b) => b.timestamp - a.timestamp) }))
+      .sort((a, b) => b.errors - a.errors || b.warnings - a.warnings || b.last - a.last);
+  }
+
+  // Logs: the errors and warnings by integration, a level and a period; each message with how many times it came, its
+  // source and its traceback; Reload an integration, Ignore a message, Clear the log
+  _logs() {
+    if (!this._lg?.entries) {
+      if (this._lg?.error) return `<ha-card class="note error" role="alert">${shEsc(this._t('failed', { error: this._lg.error }))}</ha-card>`;
+      if (!this._lg) this._lgLoad().then(() => this._render());
+      return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
+    }
+    var level = this._lgLevel || 'all';
+    var period = this._lgPeriod || 'day';
+    var groups = this._lgGroups(level, period);
+    var all = this._lgGroups('all', period);
+    var errors = all.reduce((sum, g) => sum + g.errors, 0);
+    var warnings = all.reduce((sum, g) => sum + g.warnings, 0);
+    var threshold = this._state.logs?.error_threshold ?? 10;
+    var ignored = (this._state.logs?.ignored_messages || []).length;
+    var tiles = [
+      this._tile('mdi:alert-circle-outline', `<b>${errors}</b>`, this._t('lg_errors'), errors ? (all.some((g) => g.errors >= threshold) ? 'bad' : 'warn') : 'good'),
+      this._tile('mdi:alert-outline', `<b>${warnings}</b>`, this._t('lg_warnings'), warnings ? 'warn' : 'good'),
+      this._tile('mdi:puzzle-outline', `<b>${all.filter((g) => g.errors || g.warnings).length}</b>`, this._t('lg_integrations'), ''),
+      this._tile('mdi:eye-off-outline', `<b>${ignored}</b>`, this._t('lg_ignored'), ''),
+    ];
+    var seg = (action, value, current, label) =>
+      `<button class="btab${value === current ? ' on' : ''}" data-action="${action}" data-value="${value}" aria-pressed="${value === current}">${shEsc(label)}</button>`;
+    var filters = `<div class="btabs" role="group" aria-label="${shEsc(this._t('lg_level'))}">${seg('lg_level', 'error', level, this._t('lg_errors'))}${seg('lg_level', 'warning', level, this._t('lg_warnings'))}${seg('lg_level', 'all', level, this._t('sl_all'))}</div>
+      <div class="btabs" role="group" aria-label="${shEsc(this._t('lg_period'))}">${seg('lg_period', 'hour', period, this._t('lg_hour'))}${seg('lg_period', 'day', period, this._t('lg_day'))}${seg('lg_period', 'all', period, this._t('lg_since_start'))}</div>`;
+    var confirm =
+      this._confirm === 'lg_clear'
+        ? `<div class="confirm" role="alertdialog">${shEsc(this._t('lg_clear_confirm'))}
+          ${this._button('lg_clear', 'mdi:delete-sweep-outline', this._t('lg_clear'))}${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
+        : '';
+    var actions = `<div class="actions">${filters}${this._message('lg')}
+      <a class="act quiet" href="/config/logs"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('lg_full'))}</a>
+      ${this._button('lg_clear_confirm', 'mdi:delete-sweep-outline', this._t('lg_clear'), { quiet: true, busy: this._busy.lg_clear })}${this._configure()}</div>${confirm}`;
+    var cards = groups
+      .map((g) => {
+        var tone = g.errors >= threshold ? 'bad' : g.errors ? 'warn' : 'info';
+        var counts = [g.errors ? this._t('lg_n_errors', { n: g.errors }) : '', g.warnings ? this._t('lg_n_warnings', { n: g.warnings }) : ''].filter(Boolean).join(' · ');
+        var reload = g.domain !== 'homeassistant' ? this._button('lg_reload', 'mdi:reload', this._t('lg_reload'), { quiet: true, data: { domain: g.domain }, busy: this._busy[`lg_reload:${g.domain}`] }) : '';
+        var entries = g.entries
+          .map((e) => {
+            var first = String(e.message?.[0] ?? '');
+            var source = Array.isArray(e.source) ? `${String(e.source[0]).split('/').slice(-2).join('/')}:${e.source[1]}` : '';
+            var trace = e.exception ? `<details><summary class="s">${shEsc(this._t('lg_traceback'))}</summary><pre class="lgpre">${shEsc(e.exception)}</pre></details>` : '';
+            return `<div class="lgentry"><div class="lgmsg">${shEsc(first)}</div>
+              <div class="s">${shEsc([`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name, source].filter(Boolean).join(' · '))}</div>${trace}
+              <div class="actions">${this._button('lg_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { key: this._lgKey(e) }, busy: this._busy[`lg_ignore:${this._lgKey(e)}`] })}</div></div>`;
+          })
+          .join('');
+        return `<ha-card class="list lggroup ${tone}"><div class="lhead"><ha-icon icon="${g.custom ? 'mdi:puzzle-outline' : 'mdi:home-assistant'}"></ha-icon><span class="lname">${shEsc(shIntegration(g.domain))} <span class="pill ${tone}">${shEsc(counts)}</span></span>${reload}</div>${entries}</ha-card>`;
+      })
+      .join('');
+    return `<div class="tiles">${tiles.join('')}</div>${actions}
+      ${cards || `<ha-card class="list"><div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('lg_none'))}</div></ha-card>`}`;
+  }
+
+  // A message left out: saved in the module's settings at once, gone from the list
+  async _lgIgnore(key) {
+    this._busy[`lg_ignore:${key}`] = true;
+    this._render();
+    try {
+      await this._hass.callWS({ type: 'system_hub/logs_ignore', key });
+    } catch (err) {
+      this._messages.lg = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    delete this._busy[`lg_ignore:${key}`];
+    await this._load();
+  }
+
+  // Reloads every entry of an integration (its errors often come from a lost connection)
+  async _lgReload(domain) {
+    this._busy[`lg_reload:${domain}`] = true;
+    this._render();
+    try {
+      var entries = await this._hass.callWS({ type: 'config_entries/get', domain });
+      if (!entries?.length) throw new Error(this._t('lg_no_entry'));
+      for (var entry of entries) await this._hass.callService('homeassistant', 'reload_config_entry', { entry_id: entry.entry_id });
+      this._toast(this._t('done'));
+    } catch (err) {
+      this._messages.lg = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    delete this._busy[`lg_reload:${domain}`];
+    this._render();
   }
 
   // Silent devices: the devices of the radio integrations not heard from beyond the hours set, then the weak signals
@@ -2723,6 +2858,20 @@ class SystemHubPanel extends HTMLElement {
       });
     }
     if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', this._gitTarget(), null, SH_DOMAIN, action);
+    if (action === 'lg_level' || action === 'lg_period') {
+      this[action === 'lg_level' ? '_lgLevel' : '_lgPeriod'] = button.dataset.value;
+      return this._render();
+    }
+    if (action === 'lg_ignore') return this._lgIgnore(button.dataset.key);
+    if (action === 'lg_reload') return this._lgReload(button.dataset.domain);
+    if (action === 'lg_clear_confirm') {
+      this._confirm = 'lg_clear';
+      return this._render();
+    }
+    if (action === 'lg_clear') {
+      this._confirm = null;
+      return this._run('clear', 'lg', {}, () => this._lgLoad(true), 'system_log', 'lg_clear');
+    }
     if (action === 'sl_filter') {
       this._slFilter = button.dataset.kind || null;
       return this._render();
@@ -3292,6 +3441,7 @@ var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   backups: ['backups'],
+  logs: ['logs'],
   silent: ['silent'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
   git_sync: ['git_sync', 'git_sync_repository', 'git_sync_add_repository', 'git_sync_other', 'git_sync_remove_repository'],
@@ -3738,6 +3888,17 @@ var SH_STATUS_METHODS = {
         market?.state === 'error' ? 'bad' : count ? 'warn' : 'good',
         count ? n('st_available', count) : this._t('up_to_date'),
         join([...others, ...repos.map((u) => `${u.title} ${u.latest}`)]),
+      ];
+    }
+    if (tab === 'logs') {
+      if (!s.logs || !this._lg?.entries) return null;
+      var day = this._lgGroups('error', 'day');
+      var errors = day.reduce((sum, g) => sum + g.errors, 0);
+      var worst = day.filter((g) => g.errors >= (s.logs.error_threshold ?? 10));
+      return [
+        worst.length ? 'bad' : errors ? 'warn' : 'good',
+        errors ? n('lg_n_errors', errors) : this._t('lg_no_errors'),
+        join(day.slice(0, 3).map((g) => `${shIntegration(g.domain)} ×${g.errors}`)),
       ];
     }
     if (tab === 'silent') {

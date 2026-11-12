@@ -6,6 +6,7 @@
         "description": "Choose the modules to turn on. Each module is set up in the options.",
         "data": {
           "containers": "Containers",
+          "logs": "Logs",
           "watchdog": "Sentinel",
           "marketplace": "Updates",
           "backups": "Backups",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
+          "logs": "Home Assistant's log grouped by integration: the errors and warnings, how many times each came, its traceback; reload an integration, ignore a message. No entities of its own.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "backups": "Follows Home Assistant's backups: the last successful one, the next one, each location and the last 30 days. No entities of its own.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
+          "logs": "Logs",
           "watchdog": "Sentinel",
           "watchdog_add_power_cycle": "Sentinel: Add a power cycle",
           "watchdog_remove_power_cycle": "Sentinel: Remove power cycles",
@@ -93,6 +96,7 @@
         "description": "Turn modules on or off. A module turned off stops its checks and its entities are removed; its settings are kept.",
         "data": {
           "containers": "Containers",
+          "logs": "Logs",
           "watchdog": "Sentinel",
           "marketplace": "Updates",
           "backups": "Backups",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
+          "logs": "Home Assistant's log grouped by integration: the errors and warnings, how many times each came, its traceback; reload an integration, ignore a message. No entities of its own.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "backups": "Follows Home Assistant's backups: the last successful one, the next one, each location and the last 30 days. No entities of its own.",
@@ -125,6 +130,17 @@
           "notify": "Notify when a container that should run (an add-on started at boot) stops, and when it is back.",
           "notify_services": "Also send each notification with these actions (notify.mobile_app_…). A persistent notification is always created.",
           "stoppable_processes": "System Monitor processes that may be stopped: not counted as a problem on the Status tab, shown in grey."
+        }
+      },
+      "logs": {
+        "title": "Logs",
+        "data": {
+          "error_threshold": "Errors that make a problem",
+          "ignored_messages": "Ignored messages"
+        },
+        "data_description": {
+          "error_threshold": "Errors of one integration in 24 hours from which the Status tab shows a problem.",
+          "ignored_messages": "Ignored from the Logs tab (logger|start of the message): remove one to see it again."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "mains",
         "sl_ignore": "Ignore",
         "sl_hint": "Silent: nothing heard for more than {battery} h on a battery, {mains} h on mains. Weak signal: LQI below 50, RSSI below −80 dBm.",
-        "sl_ignored_done": "Ignored: {name}"
+        "sl_ignored_done": "Ignored: {name}",
+        "tab_logs": "Logs",
+        "lg_n_errors": "{n} errors",
+        "lg_n_warnings": "{n} warnings",
+        "lg_no_errors": "No errors",
+        "lg_errors": "Errors",
+        "lg_warnings": "Warnings",
+        "lg_integrations": "Integrations",
+        "lg_ignored": "Ignored",
+        "lg_level": "Level",
+        "lg_period": "Period",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Since start",
+        "lg_clear": "Clear the log",
+        "lg_clear_confirm": "Clear Home Assistant's log? The messages kept since it started are removed.",
+        "lg_full": "Full log",
+        "lg_reload": "Reload",
+        "lg_traceback": "Traceback",
+        "lg_none": "No warning nor error in this period.",
+        "lg_no_entry": "No entry of this integration to reload."
       }
     },
     "battery_type": {

@@ -6,6 +6,7 @@
         "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni.",
         "data": {
           "containers": "Containers",
+          "logs": "Jurnale",
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
           "backups": "Copii de rezervă",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
+          "logs": "Jurnalul Home Assistant grupat pe integrări: erori și avertismente, de câte ori au apărut, traceback-ul; reîncărcarea unei integrări, ignorarea unui mesaj. Fără entități proprii.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "backups": "Urmărește copiile de rezervă Home Assistant: ultima reușită, următoarea, fiecare locație și ultimele 30 de zile. Fără entități proprii.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Module",
           "containers": "Containers",
+          "logs": "Jurnale",
           "watchdog": "Santinelă",
           "watchdog_add_power_cycle": "Santinelă: Adaugă o repornire prin priză",
           "watchdog_remove_power_cycle": "Santinelă: Elimină reporniri prin priză",
@@ -93,6 +96,7 @@
         "description": "Activați sau dezactivați modulele. Un modul dezactivat își oprește verificările, iar entitățile sale sunt eliminate; setările sale sunt păstrate.",
         "data": {
           "containers": "Containers",
+          "logs": "Jurnale",
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
           "backups": "Copii de rezervă",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
+          "logs": "Jurnalul Home Assistant grupat pe integrări: erori și avertismente, de câte ori au apărut, traceback-ul; reîncărcarea unei integrări, ignorarea unui mesaj. Fără entități proprii.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "backups": "Urmărește copiile de rezervă Home Assistant: ultima reușită, următoarea, fiecare locație și ultimele 30 de zile. Fără entități proprii.",
@@ -125,6 +130,17 @@
           "notify": "Notifică atunci când un container care ar trebui să ruleze (un add-on pornit la boot) se oprește și când revine.",
           "notify_services": "Trimite fiecare notificare și prin aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna.",
           "stoppable_processes": "Procese System Monitor care pot fi oprite: nu contează ca problemă în fila Stare și apar cu gri."
+        }
+      },
+      "logs": {
+        "title": "Jurnale",
+        "data": {
+          "error_threshold": "Erori care sunt o problemă",
+          "ignored_messages": "Mesaje ignorate"
+        },
+        "data_description": {
+          "error_threshold": "Erori ale unei integrări în 24 de ore de la care fila Stare arată o problemă.",
+          "ignored_messages": "Ignorate din fila Jurnale (logger|începutul mesajului): eliminați unul pentru a-l revedea."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "rețea",
         "sl_ignore": "Ignoră",
         "sl_hint": "Tăcut: nimic primit de peste {battery} h pe baterie, {mains} h la rețea. Semnal slab: LQI sub 50, RSSI sub −80 dBm.",
-        "sl_ignored_done": "Ignorat: {name}"
+        "sl_ignored_done": "Ignorat: {name}",
+        "tab_logs": "Jurnale",
+        "lg_n_errors": "{n} erori",
+        "lg_n_warnings": "{n} avertismente",
+        "lg_no_errors": "Nicio eroare",
+        "lg_errors": "Erori",
+        "lg_warnings": "Avertismente",
+        "lg_integrations": "Integrări",
+        "lg_ignored": "Ignorate",
+        "lg_level": "Nivel",
+        "lg_period": "Perioadă",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "De la pornire",
+        "lg_clear": "Golește jurnalul",
+        "lg_clear_confirm": "Goliți jurnalul Home Assistant? Mesajele păstrate de la pornire sunt șterse.",
+        "lg_full": "Jurnal complet",
+        "lg_reload": "Reîncarcă",
+        "lg_traceback": "Traceback",
+        "lg_none": "Niciun avertisment sau eroare în această perioadă.",
+        "lg_no_entry": "Nicio intrare a acestei integrări de reîncărcat."
       }
     },
     "battery_type": {

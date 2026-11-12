@@ -439,6 +439,59 @@ def mock_orphans():
     }
 
 
+def mock_system_log():
+    """Home Assistant's log: a custom integration timing out, the MQTT broker dropping, a slow weather update."""
+    now = datetime.fromisoformat(NOW).timestamp()
+
+    def entry(name, level, message, count, minutes, source, exception=None):
+        return {
+            "name": name,
+            "message": [message],
+            "level": level,
+            "source": source,
+            "timestamp": now - minutes * 60,
+            "exception": exception or "",
+            "count": count,
+            "first_occurred": now - 20 * 3600,
+        }
+
+    return [
+        entry(
+            "custom_components.tapo_cameras.coordinator",
+            "ERROR",
+            "Error fetching Living room camera data: TimeoutError",
+            21,
+            3,
+            ["custom_components/tapo_cameras/coordinator.py", 142],
+            'Traceback (most recent call last):\n  File "/config/custom_components/tapo_cameras/coordinator.py", line 142, in _async_update_data\n    data = await self.api.get_status()\nTimeoutError',
+        ),
+        entry(
+            "homeassistant.components.mqtt.client",
+            "ERROR",
+            "Disconnected from MQTT server core-mosquitto:1883 (7)",
+            9,
+            64,
+            ["components/mqtt/client.py", 1093],
+        ),
+        entry(
+            "homeassistant.components.hp",
+            "ERROR",
+            "Unable to reach 192.168.1.40: the printer is asleep",
+            4,
+            360,
+            ["custom_components/hp/coordinator.py", 88],
+        ),
+        entry(
+            "homeassistant.components.meteo_france.weather",
+            "WARNING",
+            "Update of weather.home is taking over 10 seconds",
+            38,
+            12,
+            ["helpers/entity_platform.py", 1005],
+        ),
+    ]
+
+
 def mock_silent():
     """The Silent devices module: a cellar sensor quiet for 3 days, a plug gone, two weak signals."""
 
@@ -643,11 +696,22 @@ def mock_state():
     return {
         "loaded": True,
         "entry_id": "system_hub",
-        "modules": ["containers", "watchdog", "marketplace", "backups", "silent", "batteries", "git_sync", "orphans"],
+        "modules": [
+            "containers",
+            "logs",
+            "watchdog",
+            "marketplace",
+            "backups",
+            "silent",
+            "batteries",
+            "git_sync",
+            "orphans",
+        ],
         "tabs": [
             "status",
             "system",
             "containers",
+            "logs",
             "watchdog",
             "marketplace",
             "backups",
@@ -657,6 +721,12 @@ def mock_state():
             "orphans",
         ],
         "backups": {"max_age": 3},
+        "logs": {
+            "error_threshold": 10,
+            "ignored_messages": ["homeassistant.components.recorder.core|Setup of platform"],
+        },
+        # The Logs tab: what system_log/list answers
+        "system_log": mock_system_log(),
         # The Silent devices tab: two silent devices, two weak signals
         "silent": mock_silent(),
         # The Orphans tab: the counts with the state, the whole list from its own command
@@ -1079,6 +1149,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                 ? state
                 : msg.type === "system_hub/orphans"
                   ? state.orphans_list
+                  : msg.type === "system_log/list"
+                  ? state.system_log
                   : msg.type === "backup/info"
                   ? state.backup_info
                   : msg.type === "backup/agents/info"
@@ -1124,6 +1196,7 @@ TABS = [
     "status",
     "system",
     "containers",
+    "logs",
     "watchdog",
     "marketplace",
     "backups",
@@ -1167,6 +1240,7 @@ SHOTS = [
         for module, step in (
             ("system", "system"),
             ("containers", "containers"),
+            ("logs", "logs"),
             ("watchdog", "watchdog"),
             ("watchdog", "watchdog_add_power_cycle"),
             ("marketplace", "marketplace"),

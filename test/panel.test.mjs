@@ -445,12 +445,12 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   const q = panel({ loaded: true, modules: ['watchdog', 'automations'], tabs: ['system', 'watchdog'] }, 'settings');
   q._render = () => {};
   q._cfgMoveGroup('reliability', -1);
-  assert.deepEqual([...q._draft.tabs.slice(0, 4)], ['watchdog', 'automations', 'system', 'containers']);
-  // A row dragged, or moved with ↓ from its handle: the order inside its group
+  assert.deepEqual([...q._draft.tabs.slice(0, 4)], ['watchdog', 'logs', 'automations', 'system']);
+  // A row dragged, or moved with ↓ from its handle: the order inside its group, the ones turned off after
   q._cfgMove('automations', 0);
-  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['automations', 'watchdog', 'system']);
+  assert.deepEqual([...q._draft.tabs.slice(0, 4)], ['automations', 'watchdog', 'logs', 'system']);
   q._cfgDragKey({ key: 'ArrowDown', preventDefault() {}, target: { closest: () => ({ dataset: { tab: 'automations' } }) } });
-  assert.deepEqual([...q._draft.tabs.slice(0, 3)], ['watchdog', 'automations', 'system']);
+  assert.deepEqual([...q._draft.tabs.slice(0, 4)], ['watchdog', 'automations', 'logs', 'system']);
   // Nothing changed: no save bar; a change brings it, with Discard
   assert.doesNotMatch(html, /data-action="save"/);
   const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'] }, 'settings');
@@ -1198,4 +1198,64 @@ test('silent devices tab: the silent devices then the weak signals, a filter per
   };
   await p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_ignore', device: 'd1', name: 'Cellar sensor' } } : null) } });
   assert.equal(calls[0], 'system_hub/silent_ignore d1');
+});
+
+test('logs tab: the errors and warnings by integration, a level and a period; Ignore, Reload, Clear', async () => {
+  const now = Date.now() / 1000;
+  const entry = (name, level, message, count, hoursAgo, exception = '') => ({
+    name, level, message: [message], count, timestamp: now - hoursAgo * 3600, first_occurred: now - 48 * 3600, source: ['/config/custom_components/x/coordinator.py', 142], exception,
+  });
+  const entries = [
+    entry('custom_components.tapo_cameras.coordinator', 'ERROR', 'Error fetching Salon C200 data: TimeoutError', 21, 0.05, 'Traceback (most recent call last):\n  File "coordinator.py"'),
+    entry('homeassistant.components.mqtt.client', 'ERROR', 'Disconnected from MQTT server', 9, 1.5),
+    entry('homeassistant.components.meteo_france', 'WARNING', 'Update of weather.rennes is taking over 10 seconds', 38, 0.2),
+    entry('homeassistant.components.hue', 'ERROR', 'Old error', 3, 30),
+  ];
+  const state = { loaded: true, modules: ['logs'], tabs: ['logs'], logs: { error_threshold: 10, ignored_messages: [] } };
+  const p = panel(state, 'logs');
+  p._hass.callWS = async (msg) => (msg.type === 'system_log/list' ? entries : []);
+  await p._lgLoad(true);
+  // 24 h by default: hue left out; the most errors first
+  const groups = p._lgGroups('all', 'day');
+  assert.deepEqual([...groups.map((g) => g.domain)], ['tapo_cameras', 'mqtt', 'meteo_france']);
+  assert.equal(groups[0].errors, 21);
+  assert.ok(groups[0].custom);
+  const html = p._content();
+  assert.match(html, /<b>30<\/b>[\s\S]*?Errors/);
+  assert.match(html, /lggroup bad[\s\S]*?tapo_cameras[\s\S]*?21 errors/);
+  assert.match(html, /<details><summary class="s">Traceback/);
+  assert.match(html, /×21 · [^·]+ · custom_components\.tapo_cameras\.coordinator · x\/coordinator\.py:142/);
+  // Status: one integration beyond the threshold
+  assert.deepEqual([...p._stArea('logs')].slice(0, 2), ['bad', '30 errors']);
+  // Errors only, since start: hue back, meteo_france out
+  p._render = () => {};
+  const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
+  click('lg_level', { value: 'error' });
+  click('lg_period', { value: 'all' });
+  assert.match(p._content(), /hue/);
+  assert.doesNotMatch(p._content(), /meteo_france/);
+  // An ignored message is left out everywhere
+  state.logs.ignored_messages = ['homeassistant.components.mqtt.client|Disconnected from MQTT server'];
+  assert.deepEqual([...p._lgGroups('all', 'day').map((g) => g.domain)], ['tapo_cameras', 'meteo_france']);
+  // Ignore, Reload and Clear call Home Assistant
+  const calls = [];
+  p._hass.callWS = async (msg) => {
+    calls.push(`${msg.type}${msg.key ? ` ${msg.key}` : ''}${msg.domain ? ` ${msg.domain}` : ''}`);
+    return msg.type === 'config_entries/get' ? [{ entry_id: 'e1' }] : msg.type === 'system_log/list' ? entries : state;
+  };
+  p._hass.callService = async (domain, service, data) => calls.push(`${domain}.${service}${data.entry_id ? ` ${data.entry_id}` : ''}`);
+  await click('lg_ignore', { key: 'custom_components.tapo_cameras.coordinator|Error fetching Salon C200 data: TimeoutError' });
+  await click('lg_reload', { domain: 'tapo_cameras' });
+  click('lg_clear_confirm');
+  assert.match(p._content(), /Clear Home Assistant&#39;s log\?/);
+  await click('lg_clear');
+  assert.equal(
+    JSON.stringify(calls.filter((c) => !c.startsWith('system_hub/state') && !c.startsWith('system_log/list'))),
+    JSON.stringify([
+      'system_hub/logs_ignore custom_components.tapo_cameras.coordinator|Error fetching Salon C200 data: TimeoutError',
+      'config_entries/get tapo_cameras',
+      'homeassistant.reload_config_entry e1',
+      'system_log.clear',
+    ]),
+  );
 });

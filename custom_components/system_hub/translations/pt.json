@@ -6,6 +6,7 @@
         "description": "Escolha os módulos a ativar. Cada módulo é configurado nas opções.",
         "data": {
           "containers": "Containers",
+          "logs": "Registos",
           "watchdog": "Sentinela",
           "marketplace": "Atualizações",
           "backups": "Cópias de segurança",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Monitoriza o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitorização: nada é reiniciado.",
+          "logs": "O registo do Home Assistant agrupado por integração: erros e avisos, quantas vezes surgiram, o rastreio; recarregar uma integração, ignorar uma mensagem. Sem entidades próprias.",
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "backups": "Acompanha as cópias de segurança do Home Assistant: a última bem-sucedida, a próxima, cada localização e os últimos 30 dias. Sem entidades próprias.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Módulos",
           "containers": "Containers",
+          "logs": "Registos",
           "watchdog": "Sentinela",
           "watchdog_add_power_cycle": "Sentinela: Adicionar um reinício por tomada",
           "watchdog_remove_power_cycle": "Sentinela: Remover reinícios por tomada",
@@ -93,6 +96,7 @@
         "description": "Ative ou desative os módulos. Um módulo desativado deixa de fazer verificações e as suas entidades são removidas; as suas definições são mantidas.",
         "data": {
           "containers": "Containers",
+          "logs": "Registos",
           "watchdog": "Sentinela",
           "marketplace": "Atualizações",
           "backups": "Cópias de segurança",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Monitoriza o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitorização: nada é reiniciado.",
+          "logs": "O registo do Home Assistant agrupado por integração: erros e avisos, quantas vezes surgiram, o rastreio; recarregar uma integração, ignorar uma mensagem. Sem entidades próprias.",
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "backups": "Acompanha as cópias de segurança do Home Assistant: a última bem-sucedida, a próxima, cada localização e os últimos 30 dias. Sem entidades próprias.",
@@ -125,6 +130,17 @@
           "notify": "Notificar quando um contentor que devia estar a correr (um add-on iniciado no arranque) para, e quando volta.",
           "notify_services": "Enviar também cada notificação com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente.",
           "stoppable_processes": "Processos do System Monitor que podem estar parados: não contam como problema no separador Estado e aparecem a cinzento."
+        }
+      },
+      "logs": {
+        "title": "Registos",
+        "data": {
+          "error_threshold": "Erros que são um problema",
+          "ignored_messages": "Mensagens ignoradas"
+        },
+        "data_description": {
+          "error_threshold": "Erros de uma integração em 24 horas a partir dos quais o separador Estado mostra um problema.",
+          "ignored_messages": "Ignoradas a partir do separador Registos (logger|início da mensagem): remova uma para a voltar a ver."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "rede",
         "sl_ignore": "Ignorar",
         "sl_hint": "Silencioso: nada recebido há mais de {battery} h a bateria, {mains} h na rede. Sinal fraco: LQI abaixo de 50, RSSI abaixo de −80 dBm.",
-        "sl_ignored_done": "Ignorado: {name}"
+        "sl_ignored_done": "Ignorado: {name}",
+        "tab_logs": "Registos",
+        "lg_n_errors": "{n} erros",
+        "lg_n_warnings": "{n} avisos",
+        "lg_no_errors": "Sem erros",
+        "lg_errors": "Erros",
+        "lg_warnings": "Avisos",
+        "lg_integrations": "Integrações",
+        "lg_ignored": "Ignorados",
+        "lg_level": "Nível",
+        "lg_period": "Período",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Desde o arranque",
+        "lg_clear": "Limpar o registo",
+        "lg_clear_confirm": "Limpar o registo do Home Assistant? As mensagens guardadas desde o arranque são apagadas.",
+        "lg_full": "Registo completo",
+        "lg_reload": "Recarregar",
+        "lg_traceback": "Rastreio",
+        "lg_none": "Nenhum aviso nem erro neste período.",
+        "lg_no_entry": "Nenhuma entrada desta integração para recarregar."
       }
     },
     "battery_type": {

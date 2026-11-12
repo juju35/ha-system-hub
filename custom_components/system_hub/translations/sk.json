@@ -6,6 +6,7 @@
         "description": "Vyberte moduly, ktoré chcete zapnúť. Každý modul sa nastavuje v možnostiach.",
         "data": {
           "containers": "Containers",
+          "logs": "Záznamy",
           "watchdog": "Strážca",
           "marketplace": "Aktualizácie",
           "backups": "Zálohy",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
+          "logs": "Záznam Home Assistant zoskupený podľa integrácií: chyby a upozornenia, koľkokrát prišli, výpis zásobníka; opätovné načítanie integrácie, ignorovanie správy. Bez vlastných entít.",
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "backups": "Sleduje zálohy Home Assistant: poslednú úspešnú, nasledujúcu, každé umiestnenie a posledných 30 dní. Bez vlastných entít.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Moduly",
           "containers": "Containers",
+          "logs": "Záznamy",
           "watchdog": "Strážca",
           "watchdog_add_power_cycle": "Strážca: Pridať reštart cez zásuvku",
           "watchdog_remove_power_cycle": "Strážca: Odstrániť reštarty cez zásuvku",
@@ -93,6 +96,7 @@
         "description": "Zapnite alebo vypnite moduly. Vypnutý modul zastaví svoje kontroly a jeho entity sa odstránia; jeho nastavenia sa zachovajú.",
         "data": {
           "containers": "Containers",
+          "logs": "Záznamy",
           "watchdog": "Strážca",
           "marketplace": "Aktualizácie",
           "backups": "Zálohy",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
+          "logs": "Záznam Home Assistant zoskupený podľa integrácií: chyby a upozornenia, koľkokrát prišli, výpis zásobníka; opätovné načítanie integrácie, ignorovanie správy. Bez vlastných entít.",
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "backups": "Sleduje zálohy Home Assistant: poslednú úspešnú, nasledujúcu, každé umiestnenie a posledných 30 dní. Bez vlastných entít.",
@@ -125,6 +130,17 @@
           "notify": "Upozorniť, keď sa kontajner, ktorý by mal bežať (doplnok spúšťaný pri štarte), zastaví, a keď sa vráti.",
           "notify_services": "Každé upozornenie odoslať aj pomocou týchto akcií (notify.mobile_app_…). Trvalé upozornenie sa vytvorí vždy.",
           "stoppable_processes": "Procesy System Monitor, ktoré môžu byť zastavené: na karte Stav sa nepočítajú ako problém, zobrazia sa sivo."
+        }
+      },
+      "logs": {
+        "title": "Záznamy",
+        "data": {
+          "error_threshold": "Chyby, ktoré sú problém",
+          "ignored_messages": "Ignorované správy"
+        },
+        "data_description": {
+          "error_threshold": "Chyby jednej integrácie za 24 hodín, od ktorých karta Stav ukazuje problém.",
+          "ignored_messages": "Ignorované z karty Záznamy (logger|začiatok správy): odstráňte jednu, aby ste ju znova videli."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "sieť",
         "sl_ignore": "Ignorovať",
         "sl_hint": "Tiché: nič neprišlo viac ako {battery} h na batérii, {mains} h zo siete. Slabý signál: LQI pod 50, RSSI pod −80 dBm.",
-        "sl_ignored_done": "Ignorované: {name}"
+        "sl_ignored_done": "Ignorované: {name}",
+        "tab_logs": "Záznamy",
+        "lg_n_errors": "Chyby: {n}",
+        "lg_n_warnings": "Upozornenia: {n}",
+        "lg_no_errors": "Žiadne chyby",
+        "lg_errors": "Chyby",
+        "lg_warnings": "Upozornenia",
+        "lg_integrations": "Integrácie",
+        "lg_ignored": "Ignorované",
+        "lg_level": "Úroveň",
+        "lg_period": "Obdobie",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Od spustenia",
+        "lg_clear": "Vymazať záznam",
+        "lg_clear_confirm": "Vymazať záznam Home Assistant? Správy od spustenia budú odstránené.",
+        "lg_full": "Celý záznam",
+        "lg_reload": "Znova načítať",
+        "lg_traceback": "Výpis zásobníka",
+        "lg_none": "Žiadne upozornenie ani chyba v tomto období.",
+        "lg_no_entry": "Žiadna položka tejto integrácie na opätovné načítanie."
       }
     },
     "battery_type": {

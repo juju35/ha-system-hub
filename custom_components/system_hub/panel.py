@@ -13,7 +13,7 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.components import websocket_api
-from homeassistant.config_entries import ConfigEntryState
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import area_registry as ar
@@ -32,6 +32,7 @@ from .const import (
     MODULE_AUTOMATIONS,
     MODULE_BACKUPS,
     MODULE_GIT_SYNC,
+    MODULE_LOGS,
     MODULE_SILENT,
     MODULES,
     PANEL_PATH,
@@ -40,6 +41,8 @@ from .const import (
     TAB_SYSTEM,
 )
 from .containers.flow import stoppable_processes
+from .logs import CONF_IGNORED_MESSAGES
+from .logs import settings as logs_settings
 from .orphans import panel as orphans_panel
 from .orphans.services import NO_RELOAD_KEY
 from .silent import CONF_IGNORED_DEVICES, silent_state
@@ -101,6 +104,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_stoppable_processes)
         websocket_api.async_register_command(hass, orphans_panel.ws_orphans)
         websocket_api.async_register_command(hass, ws_silent_ignore)
+        websocket_api.async_register_command(hass, ws_logs_ignore)
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         return
@@ -472,6 +476,9 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         backups = entry.options.get(MODULE_BACKUPS)
         max_age = backups.get(CONF_BACKUP_MAX_AGE) if isinstance(backups, dict) else None
         result["backups"] = {"max_age": int(max_age or DEFAULT_BACKUP_MAX_AGE)}
+    if MODULE_LOGS in result["modules"]:
+        # The panel reads the log itself (system_log/list); the state carries the settings
+        result["logs"] = logs_settings(entry.options.get(MODULE_LOGS))
     if MODULE_SILENT in result["modules"]:
         result["silent"] = silent_state(hass, entry.options.get(MODULE_SILENT))
     if MODULE_AUTOMATIONS in result["modules"]:
@@ -530,13 +537,41 @@ def ws_silent_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnec
         connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
         return
     current = silent_settings(entry.options.get(MODULE_SILENT))
-    ignored = set(current[CONF_IGNORED_DEVICES])
-    ignored = ignored | {msg["device_id"]} if msg["ignore"] else ignored - {msg["device_id"]}
-    options = {**entry.options, MODULE_SILENT: {**current, CONF_IGNORED_DEVICES: sorted(ignored)}}
-    # Read again on the next state: nothing to reload
+    ignored = _ignore(hass, entry, MODULE_SILENT, current, CONF_IGNORED_DEVICES, msg["device_id"], msg["ignore"])
+    connection.send_result(msg["id"], {"ignored": ignored})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "system_hub/logs_ignore",
+        vol.Required("key"): str,
+        vol.Optional("ignore", default=True): bool,
+    }
+)
+@callback
+def ws_logs_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """A message left out of the Logs module (a logger and the start of the message), or back in, without a reload."""
+    entry = _entry(hass)
+    if entry is None:
+        connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
+        return
+    current = logs_settings(entry.options.get(MODULE_LOGS))
+    ignored = _ignore(hass, entry, MODULE_LOGS, current, CONF_IGNORED_MESSAGES, msg["key"], msg["ignore"])
+    connection.send_result(msg["id"], {"ignored": ignored})
+
+
+def _ignore(
+    hass: HomeAssistant, entry: ConfigEntry, module: str, current: dict[str, Any], key: str, value: str, ignore: bool
+) -> list[str]:
+    """A value added to (or taken from) a module's list in its settings, saved without a reload: read again on the
+    next state."""
+    values = set(current[key])
+    values = values | {value} if ignore else values - {value}
+    options = {**entry.options, module: {**current, key: sorted(values)}}
     hass.data.setdefault(DOMAIN, {})[NO_RELOAD_KEY] = options
     hass.config_entries.async_update_entry(entry, options=options)
-    connection.send_result(msg["id"], {"ignored": sorted(ignored)})
+    return sorted(values)
 
 
 @websocket_api.require_admin

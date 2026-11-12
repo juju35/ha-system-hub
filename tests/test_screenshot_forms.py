@@ -29,6 +29,7 @@ FORMS = Path(__file__).parent.parent / "scripts/screenshot-forms.json"
 STEPS = (
     "system",
     "containers",
+    "logs",
     "watchdog",
     "watchdog_add_power_cycle",
     "marketplace",

@@ -208,6 +208,44 @@
     "errors": {},
     "description_placeholders": {}
   },
+  "logs": {
+    "type": "form",
+    "step_id": "logs",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 1000.0,
+            "step": 1.0,
+            "mode": "box"
+          }
+        },
+        "name": "error_threshold",
+        "required": true,
+        "default": 10
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "ignored_messages",
+        "description": {
+          "suggested_value": []
+        },
+        "required": false,
+        "optional": true
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
   "watchdog": {
     "type": "form",
     "step_id": "watchdog",

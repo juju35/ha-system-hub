@@ -6,6 +6,7 @@
         "description": "Wybierz moduły do włączenia. Każdy moduł konfiguruje się w opcjach.",
         "data": {
           "containers": "Containers",
+          "logs": "Dzienniki",
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
+          "logs": "Dziennik Home Assistant pogrupowany według integracji: błędy i ostrzeżenia, ile razy wystąpiły, ślad stosu; przeładowanie integracji, ignorowanie komunikatu. Bez własnych encji.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Moduły",
           "containers": "Containers",
+          "logs": "Dzienniki",
           "watchdog": "Strażnik",
           "watchdog_add_power_cycle": "Strażnik: Dodaj restart przez gniazdko",
           "watchdog_remove_power_cycle": "Strażnik: Usuń restarty przez gniazdko",
@@ -93,6 +96,7 @@
         "description": "Włącz lub wyłącz moduły. Wyłączony moduł przestaje wykonywać sprawdzenia, a jego encje są usuwane; jego ustawienia zostają zachowane.",
         "data": {
           "containers": "Containers",
+          "logs": "Dzienniki",
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
+          "logs": "Dziennik Home Assistant pogrupowany według integracji: błędy i ostrzeżenia, ile razy wystąpiły, ślad stosu; przeładowanie integracji, ignorowanie komunikatu. Bez własnych encji.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
@@ -125,6 +130,17 @@
           "notify": "Powiadamiaj, gdy kontener, który powinien działać (dodatek uruchamiany przy starcie), zatrzyma się i gdy wróci.",
           "notify_services": "Wysyłaj też każde powiadomienie za pomocą tych akcji (notify.mobile_app_…). Trwałe powiadomienie jest tworzone zawsze.",
           "stoppable_processes": "Procesy System Monitor, które mogą być zatrzymane: nie są liczone jako problem na karcie Status, wyświetlane na szaro."
+        }
+      },
+      "logs": {
+        "title": "Dzienniki",
+        "data": {
+          "error_threshold": "Błędy oznaczające problem",
+          "ignored_messages": "Ignorowane komunikaty"
+        },
+        "data_description": {
+          "error_threshold": "Liczba błędów jednej integracji w 24 godziny, od której karta Status pokazuje problem.",
+          "ignored_messages": "Zignorowane w karcie Dzienniki (logger|początek komunikatu): usuń, aby znów go widzieć."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "sieć",
         "sl_ignore": "Ignoruj",
         "sl_hint": "Ciche: brak sygnału od ponad {battery} h na baterii, {mains} h z sieci. Słaby sygnał: LQI poniżej 50, RSSI poniżej −80 dBm.",
-        "sl_ignored_done": "Zignorowano: {name}"
+        "sl_ignored_done": "Zignorowano: {name}",
+        "tab_logs": "Dzienniki",
+        "lg_n_errors": "Błędy: {n}",
+        "lg_n_warnings": "Ostrzeżenia: {n}",
+        "lg_no_errors": "Brak błędów",
+        "lg_errors": "Błędy",
+        "lg_warnings": "Ostrzeżenia",
+        "lg_integrations": "Integracje",
+        "lg_ignored": "Ignorowane",
+        "lg_level": "Poziom",
+        "lg_period": "Okres",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Od uruchomienia",
+        "lg_clear": "Wyczyść dziennik",
+        "lg_clear_confirm": "Wyczyścić dziennik Home Assistant? Komunikaty zachowane od uruchomienia zostaną usunięte.",
+        "lg_full": "Pełny dziennik",
+        "lg_reload": "Przeładuj",
+        "lg_traceback": "Ślad stosu",
+        "lg_none": "Brak ostrzeżeń i błędów w tym okresie.",
+        "lg_no_entry": "Brak wpisu tej integracji do przeładowania."
       }
     },
     "battery_type": {

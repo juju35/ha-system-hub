@@ -6,6 +6,7 @@
         "description": "Välj vilka moduler som ska aktiveras. Varje modul ställs in under alternativen.",
         "data": {
           "containers": "Containers",
+          "logs": "Loggar",
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
           "backups": "Säkerhetskopior",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
+          "logs": "Home Assistants logg grupperad per integration: fel och varningar, hur många gånger de kom, spårningen; ladda om en integration, ignorera ett meddelande. Inga egna entiteter.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
           "backups": "Följer Home Assistants säkerhetskopior: den senaste lyckade, nästa, varje plats och de senaste 30 dagarna. Inga egna entiteter.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Moduler",
           "containers": "Containers",
+          "logs": "Loggar",
           "watchdog": "Väktare",
           "watchdog_add_power_cycle": "Väktare: Lägg till omstart via uttag",
           "watchdog_remove_power_cycle": "Väktare: Ta bort omstarter via uttag",
@@ -93,6 +96,7 @@
         "description": "Aktivera eller inaktivera moduler. En inaktiverad modul slutar med sina kontroller och dess entiteter tas bort; dess inställningar sparas.",
         "data": {
           "containers": "Containers",
+          "logs": "Loggar",
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
           "backups": "Säkerhetskopior",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
+          "logs": "Home Assistants logg grupperad per integration: fel och varningar, hur många gånger de kom, spårningen; ladda om en integration, ignorera ett meddelande. Inga egna entiteter.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
           "backups": "Följer Home Assistants säkerhetskopior: den senaste lyckade, nästa, varje plats och de senaste 30 dagarna. Inga egna entiteter.",
@@ -125,6 +130,17 @@
           "notify": "Meddela när en container som borde köra (ett tillägg som startas vid uppstart) stoppar, och när den är tillbaka.",
           "notify_services": "Skicka även varje avisering med dessa åtgärder (notify.mobile_app_…). En beständig avisering skapas alltid.",
           "stoppable_processes": "System Monitor-processer som får vara stoppade: räknas inte som ett problem på fliken Status och visas i grått."
+        }
+      },
+      "logs": {
+        "title": "Loggar",
+        "data": {
+          "error_threshold": "Fel som är ett problem",
+          "ignored_messages": "Ignorerade meddelanden"
+        },
+        "data_description": {
+          "error_threshold": "Fel från en integration under 24 timmar från vilka fliken Status visar ett problem.",
+          "ignored_messages": "Ignorerade från fliken Loggar (logger|början av meddelandet): ta bort ett för att se det igen."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "elnät",
         "sl_ignore": "Ignorera",
         "sl_hint": "Tyst: inget mottaget på över {battery} h på batteri, {mains} h på elnät. Svag signal: LQI under 50, RSSI under −80 dBm.",
-        "sl_ignored_done": "Ignorerad: {name}"
+        "sl_ignored_done": "Ignorerad: {name}",
+        "tab_logs": "Loggar",
+        "lg_n_errors": "{n} fel",
+        "lg_n_warnings": "{n} varningar",
+        "lg_no_errors": "Inga fel",
+        "lg_errors": "Fel",
+        "lg_warnings": "Varningar",
+        "lg_integrations": "Integrationer",
+        "lg_ignored": "Ignorerade",
+        "lg_level": "Nivå",
+        "lg_period": "Period",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Sedan start",
+        "lg_clear": "Töm loggen",
+        "lg_clear_confirm": "Töm Home Assistants logg? Meddelandena sedan start raderas.",
+        "lg_full": "Hela loggen",
+        "lg_reload": "Ladda om",
+        "lg_traceback": "Spårning",
+        "lg_none": "Inga varningar eller fel under perioden.",
+        "lg_no_entry": "Ingen post för integrationen att ladda om."
       }
     },
     "battery_type": {

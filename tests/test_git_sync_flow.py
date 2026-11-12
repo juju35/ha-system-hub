@@ -30,6 +30,7 @@ from .conftest import git, git_sync_entry
 
 ONLY_GIT_SYNC = {
     "containers": False,
+    "logs": False,
     "watchdog": False,
     "marketplace": False,
     "batteries": False,

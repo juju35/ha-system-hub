@@ -6,6 +6,7 @@
         "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties.",
         "data": {
           "containers": "Containers",
+          "logs": "Logboeken",
           "watchdog": "Wachter",
           "marketplace": "Updates",
           "backups": "Back-ups",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
+          "logs": "Het logboek van Home Assistant per integratie: fouten en waarschuwingen, hoe vaak ze kwamen, hun traceback; een integratie herladen, een bericht negeren. Geen eigen entiteiten.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "backups": "Volgt de back-ups van Home Assistant: de laatste geslaagde, de volgende, elke locatie en de laatste 30 dagen. Geen eigen entiteiten.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
+          "logs": "Logboeken",
           "watchdog": "Wachter",
           "watchdog_add_power_cycle": "Wachter: Herstart via stekker toevoegen",
           "watchdog_remove_power_cycle": "Wachter: Herstarts via stekker verwijderen",
@@ -93,6 +96,7 @@
         "description": "Schakel modules in of uit. Een uitgeschakelde module stopt met controleren en haar entiteiten worden verwijderd; haar instellingen blijven bewaard.",
         "data": {
           "containers": "Containers",
+          "logs": "Logboeken",
           "watchdog": "Wachter",
           "marketplace": "Updates",
           "backups": "Back-ups",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
+          "logs": "Het logboek van Home Assistant per integratie: fouten en waarschuwingen, hoe vaak ze kwamen, hun traceback; een integratie herladen, een bericht negeren. Geen eigen entiteiten.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "backups": "Volgt de back-ups van Home Assistant: de laatste geslaagde, de volgende, elke locatie en de laatste 30 dagen. Geen eigen entiteiten.",
@@ -125,6 +130,17 @@
           "notify": "Melden wanneer een container die zou moeten draaien (een add-on die bij het opstarten start) stopt, en wanneer hij terug is.",
           "notify_services": "Stuur elke melding ook met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt.",
           "stoppable_processes": "System Monitor-processen die gestopt mogen zijn: geen probleem op het tabblad Status, grijs weergegeven."
+        }
+      },
+      "logs": {
+        "title": "Logboeken",
+        "data": {
+          "error_threshold": "Fouten die een probleem zijn",
+          "ignored_messages": "Genegeerde berichten"
+        },
+        "data_description": {
+          "error_threshold": "Fouten van één integratie in 24 uur vanaf waar het tabblad Status een probleem toont.",
+          "ignored_messages": "Genegeerd vanuit het tabblad Logboeken (logger|begin van het bericht): verwijder er een om het weer te zien."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "net",
         "sl_ignore": "Negeren",
         "sl_hint": "Stil: niets ontvangen sinds meer dan {battery} u op batterij, {mains} u op het net. Zwak signaal: LQI onder 50, RSSI onder −80 dBm.",
-        "sl_ignored_done": "Genegeerd: {name}"
+        "sl_ignored_done": "Genegeerd: {name}",
+        "tab_logs": "Logboeken",
+        "lg_n_errors": "{n} fouten",
+        "lg_n_warnings": "{n} waarschuwingen",
+        "lg_no_errors": "Geen fouten",
+        "lg_errors": "Fouten",
+        "lg_warnings": "Waarschuwingen",
+        "lg_integrations": "Integraties",
+        "lg_ignored": "Genegeerd",
+        "lg_level": "Niveau",
+        "lg_period": "Periode",
+        "lg_hour": "1 u",
+        "lg_day": "24 u",
+        "lg_since_start": "Sinds de start",
+        "lg_clear": "Logboek wissen",
+        "lg_clear_confirm": "Het logboek van Home Assistant wissen? De berichten sinds de start worden verwijderd.",
+        "lg_full": "Volledig logboek",
+        "lg_reload": "Herladen",
+        "lg_traceback": "Traceback",
+        "lg_none": "Geen waarschuwing of fout in deze periode.",
+        "lg_no_entry": "Geen item van deze integratie om te herladen."
       }
     },
     "battery_type": {

@@ -6,6 +6,7 @@
         "description": "Escolha os módulos a ativar. Cada módulo é configurado nas opções.",
         "data": {
           "containers": "Containers",
+          "logs": "Logs",
           "watchdog": "Sentinela",
           "marketplace": "Atualizações",
           "backups": "Backups",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Monitora o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitoramento: nada é reiniciado.",
+          "logs": "O log do Home Assistant agrupado por integração: erros e avisos, quantas vezes apareceram, o rastreamento; recarregar uma integração, ignorar uma mensagem. Sem entidades próprias.",
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "backups": "Acompanha os backups do Home Assistant: o último bem-sucedido, o próximo, cada local e os últimos 30 dias. Sem entidades próprias.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Módulos",
           "containers": "Containers",
+          "logs": "Logs",
           "watchdog": "Sentinela",
           "watchdog_add_power_cycle": "Sentinela: Adicionar um reinício por tomada",
           "watchdog_remove_power_cycle": "Sentinela: Remover reinícios por tomada",
@@ -93,6 +96,7 @@
         "description": "Ative ou desative os módulos. Um módulo desativado para de fazer verificações e suas entidades são removidas; suas configurações são mantidas.",
         "data": {
           "containers": "Containers",
+          "logs": "Logs",
           "watchdog": "Sentinela",
           "marketplace": "Atualizações",
           "backups": "Backups",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Monitora o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitoramento: nada é reiniciado.",
+          "logs": "O log do Home Assistant agrupado por integração: erros e avisos, quantas vezes apareceram, o rastreamento; recarregar uma integração, ignorar uma mensagem. Sem entidades próprias.",
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "backups": "Acompanha os backups do Home Assistant: o último bem-sucedido, o próximo, cada local e os últimos 30 dias. Sem entidades próprias.",
@@ -125,6 +130,17 @@
           "notify": "Notificar quando um contêiner que deveria estar rodando (um add-on iniciado na inicialização) para, e quando volta.",
           "notify_services": "Enviar também cada notificação com estas ações (notify.mobile_app_…). É sempre criada uma notificação persistente.",
           "stoppable_processes": "Processos do System Monitor que podem estar parados: não contam como problema na aba Status e aparecem em cinza."
+        }
+      },
+      "logs": {
+        "title": "Logs",
+        "data": {
+          "error_threshold": "Erros que são um problema",
+          "ignored_messages": "Mensagens ignoradas"
+        },
+        "data_description": {
+          "error_threshold": "Erros de uma integração em 24 horas a partir dos quais a aba Status mostra um problema.",
+          "ignored_messages": "Ignoradas pela aba Logs (logger|início da mensagem): remova uma para vê-la de novo."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "tomada",
         "sl_ignore": "Ignorar",
         "sl_hint": "Silencioso: nada recebido há mais de {battery} h na bateria, {mains} h na tomada. Sinal fraco: LQI abaixo de 50, RSSI abaixo de −80 dBm.",
-        "sl_ignored_done": "Ignorado: {name}"
+        "sl_ignored_done": "Ignorado: {name}",
+        "tab_logs": "Logs",
+        "lg_n_errors": "{n} erros",
+        "lg_n_warnings": "{n} avisos",
+        "lg_no_errors": "Sem erros",
+        "lg_errors": "Erros",
+        "lg_warnings": "Avisos",
+        "lg_integrations": "Integrações",
+        "lg_ignored": "Ignorados",
+        "lg_level": "Nível",
+        "lg_period": "Período",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Desde a inicialização",
+        "lg_clear": "Limpar o log",
+        "lg_clear_confirm": "Limpar o log do Home Assistant? As mensagens guardadas desde a inicialização são apagadas.",
+        "lg_full": "Log completo",
+        "lg_reload": "Recarregar",
+        "lg_traceback": "Rastreamento",
+        "lg_none": "Nenhum aviso nem erro neste período.",
+        "lg_no_entry": "Nenhuma entrada desta integração para recarregar."
       }
     },
     "battery_type": {

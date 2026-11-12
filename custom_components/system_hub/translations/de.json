@@ -6,6 +6,7 @@
         "description": "Wählen Sie die zu aktivierenden Module. Jedes Modul wird in den Optionen eingerichtet.",
         "data": {
           "containers": "Containers",
+          "logs": "Protokolle",
           "watchdog": "Wächter",
           "marketplace": "Updates",
           "backups": "Backups",
@@ -17,6 +18,7 @@
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
+          "logs": "Das Protokoll von Home Assistant nach Integration gruppiert: Fehler und Warnungen, wie oft sie kamen, ihr Traceback; eine Integration neu laden, eine Meldung ignorieren. Keine eigenen Entitäten.",
           "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
           "backups": "Verfolgt die Backups von Home Assistant: das letzte erfolgreiche, das nächste, jeden Speicherort und die letzten 30 Tage. Keine eigenen Entitäten.",
@@ -69,6 +71,7 @@
         "menu_options": {
           "modules": "Module",
           "containers": "Containers",
+          "logs": "Protokolle",
           "watchdog": "Wächter",
           "watchdog_add_power_cycle": "Wächter: Neustart per Steckdose hinzufügen",
           "watchdog_remove_power_cycle": "Wächter: Neustarts per Steckdose entfernen",
@@ -93,6 +96,7 @@
         "description": "Module ein- oder ausschalten. Ein ausgeschaltetes Modul beendet seine Prüfungen und seine Entitäten werden entfernt; seine Einstellungen bleiben erhalten.",
         "data": {
           "containers": "Containers",
+          "logs": "Protokolle",
           "watchdog": "Wächter",
           "marketplace": "Updates",
           "backups": "Backups",
@@ -103,6 +107,7 @@
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
+          "logs": "Das Protokoll von Home Assistant nach Integration gruppiert: Fehler und Warnungen, wie oft sie kamen, ihr Traceback; eine Integration neu laden, eine Meldung ignorieren. Keine eigenen Entitäten.",
           "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
           "backups": "Verfolgt die Backups von Home Assistant: das letzte erfolgreiche, das nächste, jeden Speicherort und die letzten 30 Tage. Keine eigenen Entitäten.",
@@ -125,6 +130,17 @@
           "notify": "Benachrichtigen, wenn ein Container, der laufen sollte (ein beim Start gestartetes Add-on), stoppt und wenn er wieder läuft.",
           "notify_services": "Jede Benachrichtigung zusätzlich mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt.",
           "stoppable_processes": "System-Monitor-Prozesse, die gestoppt sein dürfen: kein Problem im Status-Tab, grau angezeigt."
+        }
+      },
+      "logs": {
+        "title": "Protokolle",
+        "data": {
+          "error_threshold": "Fehler, die ein Problem sind",
+          "ignored_messages": "Ignorierte Meldungen"
+        },
+        "data_description": {
+          "error_threshold": "Fehler einer Integration in 24 Stunden, ab denen der Status-Tab ein Problem zeigt.",
+          "ignored_messages": "Im Tab Protokolle ignoriert (Logger|Anfang der Meldung): eine entfernen, um sie wieder zu sehen."
         }
       },
       "watchdog": {
@@ -1575,7 +1591,27 @@
         "sl_mains": "Netz",
         "sl_ignore": "Ignorieren",
         "sl_hint": "Stumm: nichts gehört seit mehr als {battery} h mit Batterie, {mains} h am Netz. Schwaches Signal: LQI unter 50, RSSI unter −80 dBm.",
-        "sl_ignored_done": "Ignoriert: {name}"
+        "sl_ignored_done": "Ignoriert: {name}",
+        "tab_logs": "Protokolle",
+        "lg_n_errors": "{n} Fehler",
+        "lg_n_warnings": "{n} Warnungen",
+        "lg_no_errors": "Keine Fehler",
+        "lg_errors": "Fehler",
+        "lg_warnings": "Warnungen",
+        "lg_integrations": "Integrationen",
+        "lg_ignored": "Ignoriert",
+        "lg_level": "Stufe",
+        "lg_period": "Zeitraum",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Seit dem Start",
+        "lg_clear": "Protokoll leeren",
+        "lg_clear_confirm": "Das Protokoll von Home Assistant leeren? Die seit dem Start gespeicherten Meldungen werden gelöscht.",
+        "lg_full": "Vollständiges Protokoll",
+        "lg_reload": "Neu laden",
+        "lg_traceback": "Traceback",
+        "lg_none": "Keine Warnung und kein Fehler in diesem Zeitraum.",
+        "lg_no_entry": "Kein Eintrag dieser Integration zum Neuladen."
       }
     },
     "battery_type": {

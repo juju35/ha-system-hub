@@ -12,6 +12,8 @@ VERSION: Final = "1.8.0"
 CONF_MODULES: Final = "modules"
 MODULE_CONTAINERS: Final = "containers"
 MODULE_WATCHDOG: Final = "watchdog"
+# Home Assistant's log grouped by integration; no entities of its own.
+MODULE_LOGS: Final = "logs"
 MODULE_MARKETPLACE: Final = "marketplace"
 # Reads Home Assistant's own backups (the Backup integration); no entities of its own.
 MODULE_BACKUPS: Final = "backups"
@@ -24,6 +26,7 @@ MODULE_AUTOMATIONS: Final = "automations"
 MODULE_ORPHANS: Final = "orphans"
 MODULES: Final = (
     MODULE_CONTAINERS,
+    MODULE_LOGS,
     MODULE_WATCHDOG,
     MODULE_MARKETPLACE,
     MODULE_BACKUPS,
