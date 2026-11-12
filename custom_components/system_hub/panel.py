@@ -19,6 +19,7 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
+from homeassistant.helpers.storage import Store
 
 from . import automations
 from .const import (
@@ -63,6 +64,8 @@ ELEMENT = "system-hub-panel"
 ICONS_MODULE = "system-hub-icons.js"
 ICON_TONES = ("good", "warn", "bad")
 TONE_KEY = "sidebar_tone"
+# The last tone kept across restarts: the sidebar shows it at once, until a page reads the status again
+TONE_STORE = f"{DOMAIN}.sidebar"
 TITLE = "System Hub"
 TABS = (TAB_STATUS, TAB_SYSTEM, *MODULES)
 
@@ -121,6 +124,9 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_security_revoke)
         websocket_api.async_register_command(hass, ws_security_ignore)
         data["version"] = await hass.async_add_executor_job(_version)
+        data["tone_store"] = Store(hass, 1, TONE_STORE)
+        tone = (await data["tone_store"].async_load() or {}).get("tone")
+        data[TONE_KEY] = tone if tone in ICON_TONES else ICON_TONES[0]
         frontend.add_extra_js_url(hass, f"{STATIC_URL}/{ICONS_MODULE}?v={data['version']}")
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
@@ -626,6 +632,8 @@ def ws_sidebar_icon(hass: HomeAssistant, connection: websocket_api.ActiveConnect
     data[TONE_KEY] = msg["tone"]
     if changed and "version" in data and PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         _add_panel(hass, update=True)
+    if changed and (store := data.get("tone_store")) is not None:
+        store.async_delay_save(lambda: {"tone": msg["tone"]}, 5)
     connection.send_result(msg["id"], {"changed": changed})
 
 

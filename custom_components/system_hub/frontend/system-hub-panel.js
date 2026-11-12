@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.0.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.0.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -120,7 +120,15 @@ function shErr(err) {
   if (err == null) return '';
   if (typeof err !== 'object') return String(err);
   var text = err.message || err.error?.message || err.body?.message || err.error?.code || err.code;
-  return text ? String(text) : String(err);
+  if (typeof text === 'string' && text) return text;
+  // A form's errors by field (a 400 of a flow), never "[object Object]"
+  var errors = err.body?.errors;
+  if (errors && typeof errors === 'object') return Object.values(errors).flat().map(String).join(' · ');
+  try {
+    return JSON.stringify(text || err.body || err);
+  } catch (_err) {
+    return String(err);
+  }
 }
 
 // An integration's name as its users know it
@@ -1093,8 +1101,11 @@ class SystemHubPanel extends HTMLElement {
       if (this._state?.orphans && (this._routeTab || this._tab) === 'orphans') await this._orphLoad();
       // The log, for the Logs tab and the Status tab: read again every minute at most
       if (this._state?.logs) await this._lgLoad();
-      if (this._state?.database) await this._dbLoad();
-      if (this._state?.security) await this._scLoad();
+      // The database count and the security scan can take seconds: the panel is drawn without waiting for them, then
+      // again once they are read (read for the sidebar icon or a card, they are waited for)
+      var slow = [this._state?.database && this._dbLoad(), this._state?.security && this._scLoad()].filter(Boolean);
+      if (this._headless) await Promise.all(slow);
+      else if (slow.length) Promise.all(slow).then(() => this._idleRender());
       // The Backups tab shown: Home Assistant's backups, read again every minute at most
       if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
       this._reportTone();
@@ -1107,7 +1118,11 @@ class SystemHubPanel extends HTMLElement {
       if (this.isConnected) this._retry = setTimeout(() => this._load(), SH_RETRY_MS);
       if (this._state?.loaded) return;
     }
-    // A settings form open: left as it is, what is being typed included
+    this._idleRender();
+  }
+
+  // Drawn again, unless a settings form is open: left as it is, what is being typed included
+  _idleRender() {
     if (this._tab === 'settings' && (this._cfg?.flow || this._drag)) return;
     this._render();
   }
@@ -2631,7 +2646,8 @@ class SystemHubPanel extends HTMLElement {
     var picture = this._mkPicture(u.picture);
     // A picture that doesn't load gives way to the initial
     var logo = picture ? `<span class="mklogos"><img class="mklogo" src="${shEsc(picture)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('broken')">${initial}</span>` : initial;
-    var link = u.release_url
+    // Release notes on the web only (an integration's release_url could be any link)
+    var link = /^https?:\/\//i.test(u.release_url || '')
       ? `<a class="act quiet" href="${shEsc(u.release_url)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</a>`
       : `<button class="act quiet" data-more="${shEsc(u.entity_id)}"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</button>`;
     return `<ha-card class="mkcard link" data-more="${shEsc(u.entity_id)}">
@@ -3815,13 +3831,31 @@ async function shLoadHaForm() {
 }
 
 // The values a form starts from: those it suggests, else its defaults
+// A form's values to start with: its suggested values, else its defaults; an empty suggestion (an entity not chosen)
+// is left out, as Home Assistant's own forms do: sent as null, it would not pass the field's check (#63)
 function shFormData(schema) {
   var data = {};
   for (var field of schema || []) {
-    if (field.description && field.description.suggested_value !== undefined) data[field.name] = field.description.suggested_value;
-    else if (field.default !== undefined) data[field.name] = field.default;
+    var suggested = field.description?.suggested_value;
+    if (suggested !== undefined && suggested !== null) data[field.name] = suggested;
+    else if (field.default !== undefined && field.default !== null) data[field.name] = field.default;
   }
   return data;
+}
+
+// The values sent: the empty ones left out, as Home Assistant's own forms do: null or undefined, and an empty string
+// but in a text field (an entity or a device picker cleared gives one, which its check refuses)
+function shFormSubmit(data, schema) {
+  var text = new Set((schema || []).filter((f) => f.selector && ('text' in f.selector || 'template' in f.selector)).map((f) => f.name));
+  return Object.fromEntries(Object.entries(data || {}).filter(([key, value]) => value !== null && value !== undefined && (value !== '' || text.has(key))));
+}
+
+// A form refused by Home Assistant (400: the values did not pass the checks): its errors by field, as the form shows
+// them; "base" for those of the whole form
+function shFormErrors(err) {
+  var errors = err?.body?.errors;
+  if (!errors || typeof errors !== 'object') return { base: shErr(err) };
+  return Object.fromEntries(Object.entries(errors).map(([key, value]) => [key, Array.isArray(value) ? value.join(' · ') : String(value)]));
 }
 
 var SH_SETTINGS_METHODS = {
@@ -4089,10 +4123,10 @@ var SH_SETTINGS_METHODS = {
     cfg.busy = true;
     this._render();
     try {
-      this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, cfg.data));
+      this._cfgShow(await this._hass.callApi('POST', `config/config_entries/options/flow/${cfg.flowId}`, shFormSubmit(cfg.data, cfg.flow?.data_schema)));
     } catch (err) {
       cfg.busy = false;
-      cfg.errors = { base: shErr(err) };
+      cfg.errors = shFormErrors(err);
       this._render();
     }
   },

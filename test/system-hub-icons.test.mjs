@@ -22,7 +22,7 @@ function load(hass) {
     setInterval: () => 0,
   };
   vm.createContext(context);
-  vm.runInContext(`${source}\nthis.follow = shIconFollow;`, context);
+  vm.runInContext(`${source}\nthis.follow = shIconFollow;\nthis.redraw = shIconRedraw;`, context);
   return { context, loads };
 }
 
@@ -52,4 +52,22 @@ test('status followed for an administrator with the panel, read without being sh
   delete hass.panels['system-hub'];
   await context.follow();
   assert.equal(loads.length, 1);
+});
+
+test('icons drawn before the set was known are drawn again, each with its own icon', () => {
+  const { context } = load(null);
+  const frames = [];
+  context.requestAnimationFrame = (fn) => frames.push(fn);
+  const sidebar = { localName: 'ha-icon', icon: 'system-hub:warn' };
+  const other = { localName: 'ha-icon', icon: 'mdi:cog' };
+  const inner = { localName: 'ha-icon', icon: 'system-hub:bad' };
+  const after = { localName: 'div' };
+  const root = { querySelectorAll: () => [sidebar, other, { localName: 'ha-sidebar', shadowRoot: { querySelectorAll: () => [inner] } }, after] };
+  assert.equal(context.redraw(root), 2);
+  assert.equal(sidebar.icon, '');
+  for (const fn of frames) fn();
+  assert.equal(sidebar.icon, 'system-hub:warn');
+  assert.equal(inner.icon, 'system-hub:bad');
+  assert.equal(other.icon, 'mdi:cog');
+  assert.equal(after.icon, undefined);
 });

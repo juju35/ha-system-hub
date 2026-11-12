@@ -40,6 +40,7 @@ CACHE_SECONDS: Final = 3600
 # A refusal from one IP notified once an hour at most
 NOTIFY_EVERY: Final = 3600
 STORE_KEY: Final = f"{DOMAIN}.security"
+NOTIFICATION_ID: Final = f"{DOMAIN}_security_refused"
 CACHE_KEY: Final = "security_cache"
 
 _REFUSED = re.compile(
@@ -147,7 +148,7 @@ class SecurityWatcher:
         self.hass.async_create_task(self._async_notify(ip, url))
 
     async def _async_notify(self, ip: str, url: str | None) -> None:
-        """A persistent notification (one per address, replaced) and the notify actions chosen."""
+        """The persistent notification (the latest refusal) and the notify actions chosen."""
         strings = await async_get_translations(self.hass, self.hass.config.language, "common", [DOMAIN])
         prefix = f"component.{DOMAIN}.common.security_refused"
         title = strings.get(f"{prefix}_title", "Login refused from the Internet")
@@ -155,7 +156,8 @@ class SecurityWatcher:
             message = strings.get(prefix, "Refused login from {ip}.").format(ip=ip, url=url or "/")
         except (KeyError, IndexError, ValueError):
             message = f"Refused login from {ip}."
-        persistent_notification.async_create(self.hass, message, title=title, notification_id=f"{DOMAIN}_security_{ip}")
+        # One persistent notification, replaced by the latest refusal: a scan from many addresses does not pile them up
+        persistent_notification.async_create(self.hass, message, title=title, notification_id=NOTIFICATION_ID)
         await async_send_notify(self.hass, self.options[CONF_NOTIFY_SERVICES], title, message)
 
     def refused(self) -> list[dict[str, Any]]:
@@ -306,7 +308,7 @@ def scan_config(folder: str) -> list[dict[str, Any]]:
             value = match["value"].split(" #")[0].strip().strip("'\"")
             if (
                 not value
-                or value.startswith(("!secret", "!env_var", "!include", "{{", "{%", "|", ">"))
+                or value.startswith(("!secret", "!env_var", "!include", "!input", "{{", "{%", "|", ">"))
                 or value.lower() in ("null", "none", "true", "false", "~")
                 or value.replace(".", "", 1).isdigit()
             ):

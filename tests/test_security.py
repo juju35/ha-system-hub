@@ -54,8 +54,7 @@ async def test_refused_logins_from_the_log(hass: HomeAssistant, hass_ws_client) 
     client = await hass_ws_client(hass)
     await client.send_json({"id": 1, "type": "persistent_notification/get"})
     ids = [n["notification_id"] for n in (await client.receive_json())["result"]]
-    assert "system_hub_security_8.8.8.8" in ids
-    assert "system_hub_security_192.168.1.37" not in ids
+    assert "system_hub_security_refused" in ids
     # Ignored from the panel: no reload, flagged in the list
     data = entry.runtime_data
     await client.send_json({"id": 2, "type": "system_hub/security_ignore", "ip": "192.168.1.37"})

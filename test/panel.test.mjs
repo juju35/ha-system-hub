@@ -31,8 +31,8 @@ const context = {
   clearTimeout() {},
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr };`, context);
-const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr } = context.panel;
+vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors };`, context);
+const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors } = context.panel;
 
 // The strings as Home Assistant's localize returns them from the integration's English translations
 function localize(key, vars = {}) {
@@ -1420,4 +1420,40 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
   data.addons = [];
   await p._scLoad(true);
   assert.deepEqual([...p._stArea('security')].slice(0, 2), ['warn', '3 points to check']);
+});
+
+test('settings form (#63): no null for an entity not chosen; the errors of a refused form by field', async () => {
+  // The Sentinel form as Home Assistant sends it: the pause entity suggested as null
+  const schema = [
+    { name: 'scan_interval', default: 5 },
+    { name: 'grace_overrides', selector: { text: { multiline: true } }, description: { suggested_value: '' } },
+    { name: 'ignored_integrations', default: [] },
+    { name: 'pause_entity', description: { suggested_value: null } },
+  ];
+  const data = shFormData(schema);
+  assert.equal(JSON.stringify(data), JSON.stringify({ scan_interval: 5, grace_overrides: '', ignored_integrations: [] }));
+  assert.equal(JSON.stringify(shFormSubmit({ ...data, ignored_integrations: ['mqtt'], pause_entity: undefined, x: null }, schema)), JSON.stringify({ scan_interval: 5, grace_overrides: '', ignored_integrations: ['mqtt'] }));
+  // An entity picker cleared gives an empty string: left out; an empty text field is kept (it clears the value)
+  const typed = [
+    { name: 'grace_overrides', selector: { text: { multiline: true } } },
+    { name: 'pause_entity', selector: { entity: {} } },
+  ];
+  assert.equal(JSON.stringify(shFormSubmit({ grace_overrides: '', pause_entity: '' }, typed)), JSON.stringify({ grace_overrides: '' }));
+  // Refused anyway: each error under its field, never "[object Object]"
+  const refused = { error: 'Bad Request', status_code: 400, body: { errors: { base: ['extra keys not allowed'], pause_entity: 'Entity None is not valid' } } };
+  assert.equal(JSON.stringify(shFormErrors(refused)), JSON.stringify({ base: 'extra keys not allowed', pause_entity: 'Entity None is not valid' }));
+  assert.equal(shErr({ body: { errors: { pause_entity: 'Entity None is not valid' } } }), 'Entity None is not valid');
+  assert.doesNotMatch(shErr({ body: { x: 1 } }), /object Object/);
+  // Saving the Sentinel settings: what is sent, then the errors shown under the fields
+  const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['watchdog'] }, 'settings');
+  const sent = [];
+  p._render = () => {};
+  p._hass.callApi = async (_method, _path, body) => {
+    sent.push(body);
+    throw refused;
+  };
+  Object.assign(p._cfgState(), { flowId: 'f1', flow: { data_schema: schema }, data: { ...data, pause_entity: null } });
+  await p._cfgSubmit();
+  assert.equal(JSON.stringify(sent[0]), JSON.stringify(data));
+  assert.equal(p._cfgState().errors.pause_entity, 'Entity None is not valid');
 });

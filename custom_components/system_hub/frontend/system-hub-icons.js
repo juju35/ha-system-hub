@@ -15,19 +15,28 @@ window.customIcons['system-hub'] = {
   getIconList: async () => Object.keys(SH_ICON_PATHS).map((name) => ({ name })),
 };
 
-// The icons drawn before this set was known (shown blank): drawn again
+// The icons drawn before this set was known (shown blank until their icon changes): drawn again. The number found.
 function shIconRedraw(root, depth = 0) {
-  if (!root || depth > 8) return;
-  for (var el of root.querySelectorAll('*')) {
+  if (!root || depth > 8) return 0;
+  let found = 0;
+  for (const el of root.querySelectorAll('*')) {
     if (el.localName === 'ha-icon' && String(el.icon || '').startsWith('system-hub:')) {
-      var icon = el.icon;
+      const icon = el.icon;
       el.icon = '';
       requestAnimationFrame(() => {
         el.icon = icon;
       });
+      found += 1;
     }
-    if (el.shadowRoot) shIconRedraw(el.shadowRoot, depth + 1);
+    if (el.shadowRoot) found += shIconRedraw(el.shadowRoot, depth + 1);
   }
+  return found;
+}
+
+// At once, then until the sidebar has drawn the icon (it may come after this module): every 250 ms for 5 seconds
+function shIconRedrawSoon(tries = 20) {
+  if (shIconRedraw(document.querySelector('home-assistant')?.shadowRoot) || tries <= 1) return;
+  setTimeout(() => shIconRedrawSoon(tries - 1), 250);
 }
 
 // The status, read as the panel reads it (its module, without showing it), reported for the sidebar icon
@@ -50,7 +59,8 @@ async function shIconFollow() {
 
 if (!window.__systemHubIcons) {
   window.__systemHubIcons = true;
-  setTimeout(() => shIconRedraw(document.querySelector('home-assistant')?.shadowRoot), 1500);
-  setTimeout(shIconFollow, 20000);
+  shIconRedrawSoon();
+  // The status read a few seconds after the page, once Home Assistant has drawn it, then every 5 minutes
+  setTimeout(shIconFollow, 5000);
   setInterval(shIconFollow, SH_ICON_EVERY_MS);
 }

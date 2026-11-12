@@ -92,6 +92,12 @@ async def test_sidebar_icon_follows_the_status(hass: HomeAssistant, hass_ws_clie
     assert not (await client.receive_json())["success"]
 
 
+async def test_sidebar_icon_kept_across_restarts(hass: HomeAssistant, hass_storage) -> None:
+    hass_storage["system_hub.sidebar"] = {"version": 1, "key": "system_hub.sidebar", "data": {"tone": "bad"}}
+    await _setup(hass, [])
+    assert hass.data[frontend.DATA_PANELS][PANEL_PATH].sidebar_icon == "system-hub:bad"
+
+
 async def test_panel_removed_with_the_integration(hass: HomeAssistant) -> None:
     entry = await _setup(hass, [])
     assert await hass.config_entries.async_remove(entry.entry_id)
