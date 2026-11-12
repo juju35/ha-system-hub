@@ -6,6 +6,8 @@
         "description": "Válassza ki a bekapcsolandó modulokat. Minden modult a beállításokban lehet megadni.",
         "data": {
           "containers": "Containers",
+          "database": "Adatbázis",
+          "logs": "Naplók",
           "watchdog": "Őrszem",
           "marketplace": "Frissítések",
           "backups": "Biztonsági mentések",
@@ -17,6 +19,8 @@
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
+          "database": "A rögzítő adatbázisa: mérete, megőrzése, a legtöbbet író entitások; előzményeik törlése, kizárásuk, törlés és tömörítés. Nincsenek saját entitásai.",
+          "logs": "A Home Assistant naplója integrációnként: hibák és figyelmeztetések, hányszor fordultak elő, a hívási lánc; integráció újratöltése, üzenet kihagyása. Saját entitások nélkül.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
           "backups": "Követi a Home Assistant mentéseit: az utolsó sikereset, a következőt, minden helyet és az utolsó 30 napot. Saját entitások nélkül.",
@@ -69,6 +73,8 @@
         "menu_options": {
           "modules": "Modulok",
           "containers": "Containers",
+          "database": "Adatbázis",
+          "logs": "Naplók",
           "watchdog": "Őrszem",
           "watchdog_add_power_cycle": "Őrszem: Újraindítás hozzáadása konnektorral",
           "watchdog_remove_power_cycle": "Őrszem: Konnektoros újraindítások eltávolítása",
@@ -93,6 +99,8 @@
         "description": "Kapcsolja be vagy ki a modulokat. A kikapcsolt modul leállítja az ellenőrzéseit, és az entitásai törlődnek; a beállításai megmaradnak.",
         "data": {
           "containers": "Containers",
+          "database": "Adatbázis",
+          "logs": "Naplók",
           "watchdog": "Őrszem",
           "marketplace": "Frissítések",
           "backups": "Biztonsági mentések",
@@ -103,6 +111,8 @@
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
+          "database": "A rögzítő adatbázisa: mérete, megőrzése, a legtöbbet író entitások; előzményeik törlése, kizárásuk, törlés és tömörítés. Nincsenek saját entitásai.",
+          "logs": "A Home Assistant naplója integrációnként: hibák és figyelmeztetések, hányszor fordultak elő, a hívási lánc; integráció újratöltése, üzenet kihagyása. Saját entitások nélkül.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
           "backups": "Követi a Home Assistant mentéseit: az utolsó sikereset, a következőt, minden helyet és az utolsó 30 napot. Saját entitások nélkül.",
@@ -125,6 +135,26 @@
           "notify": "Értesítés, ha egy konténer, amelynek futnia kellene (rendszerinduláskor induló kiegészítő), leáll, és amikor újra fut.",
           "notify_services": "Minden értesítés elküldése ezekkel a műveletekkel is (notify.mobile_app_…). Állandó értesítés mindig létrejön.",
           "stoppable_processes": "System Monitor folyamatok, amelyek leállhatnak: az Állapot lapon nem számítanak hibának, szürkén jelennek meg."
+        }
+      },
+      "database": {
+        "title": "Adatbázis",
+        "data": {
+          "max_size": "Figyelmeztetési méret"
+        },
+        "data_description": {
+          "max_size": "E méret felett az Állapot lap figyelmeztetést mutat (csak SQLite)."
+        }
+      },
+      "logs": {
+        "title": "Naplók",
+        "data": {
+          "error_threshold": "Problémát jelentő hibák",
+          "ignored_messages": "Kihagyott üzenetek"
+        },
+        "data_description": {
+          "error_threshold": "Egy integráció hibái 24 óra alatt, amelytől az Állapot lap problémát jelez.",
+          "ignored_messages": "A Naplók lapon kihagyva (logger|az üzenet eleje): töröljön egyet, hogy újra lássa."
         }
       },
       "watchdog": {
@@ -1575,7 +1605,51 @@
         "sl_mains": "hálózat",
         "sl_ignore": "Kihagyás",
         "sl_hint": "Néma: semmi nem érkezett több mint {battery} órája elemről, {mains} órája hálózatról. Gyenge jel: LQI 50 alatt, RSSI −80 dBm alatt.",
-        "sl_ignored_done": "Kihagyva: {name}"
+        "sl_ignored_done": "Kihagyva: {name}",
+        "tab_logs": "Naplók",
+        "lg_n_errors": "{n} hiba",
+        "lg_n_warnings": "{n} figyelmeztetés",
+        "lg_no_errors": "Nincs hiba",
+        "lg_errors": "Hibák",
+        "lg_warnings": "Figyelmeztetések",
+        "lg_integrations": "Integrációk",
+        "lg_ignored": "Kihagyva",
+        "lg_level": "Szint",
+        "lg_period": "Időszak",
+        "lg_hour": "1 óra",
+        "lg_day": "24 óra",
+        "lg_since_start": "Indítás óta",
+        "lg_clear": "Napló törlése",
+        "lg_clear_confirm": "Törli a Home Assistant naplóját? Az indítás óta megőrzött üzenetek törlődnek.",
+        "lg_full": "Teljes napló",
+        "lg_reload": "Újratöltés",
+        "lg_traceback": "Hívási lánc",
+        "lg_none": "Nincs figyelmeztetés és hiba ebben az időszakban.",
+        "lg_no_entry": "Ennek az integrációnak nincs újratölthető bejegyzése.",
+        "tab_database": "Adatbázis",
+        "db_size": "Méret",
+        "db_limit": "{n} GiB felett figyelmeztet",
+        "db_no_size": "A méret ismeretlen ennél a motornál",
+        "db_days": "{n} nap",
+        "db_retention": "Megőrzés",
+        "db_no_auto_purge": "Megőrzés, automatikus törlés nélkül",
+        "db_states_day": "Állapotok 24 óra alatt",
+        "db_engine": "Motor",
+        "db_repack": "Törlés és tömörítés",
+        "db_repack_confirm": "Törli a {n} napnál régebbi előzményeket és tömöríti az adatbázist? Az adatbázis közben foglalt.",
+        "db_over": "{n} GiB felett",
+        "db_recount": "Újraszámolás",
+        "db_excluded": "Kizárva",
+        "db_purge": "Előzményeik törlése",
+        "db_purge_confirm": "Törli a {n} kiválasztott entitás teljes előzményét? Nem vonható vissza.",
+        "db_exclude": "Hogy ne rögzítse őket, adja hozzá a configuration.yaml-hoz:",
+        "db_copy": "Másolás",
+        "db_copied": "Másolva",
+        "db_pick_hint": "Válasszon entitásokat az előzményeik törléséhez vagy a rögzítőből való kizárásukhoz.",
+        "db_none": "Nincs rögzített állapot 24 órán belül.",
+        "db_top": "A legtöbbet író entitások (24 óra)",
+        "db_counted": "számolva {when}",
+        "db_n_states": "{n} állapot 24 óra alatt"
       }
     },
     "battery_type": {

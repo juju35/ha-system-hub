@@ -6,6 +6,8 @@
         "description": "Wybierz moduły do włączenia. Każdy moduł konfiguruje się w opcjach.",
         "data": {
           "containers": "Containers",
+          "database": "Baza danych",
+          "logs": "Dzienniki",
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
@@ -17,6 +19,8 @@
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
+          "database": "Baza rejestratora: rozmiar, przechowywanie, encje, które zapisują najwięcej; wyczyść ich historię, wyklucz je, wyczyść i skompaktuj. Brak własnych encji.",
+          "logs": "Dziennik Home Assistant pogrupowany według integracji: błędy i ostrzeżenia, ile razy wystąpiły, ślad stosu; przeładowanie integracji, ignorowanie komunikatu. Bez własnych encji.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
@@ -69,6 +73,8 @@
         "menu_options": {
           "modules": "Moduły",
           "containers": "Containers",
+          "database": "Baza danych",
+          "logs": "Dzienniki",
           "watchdog": "Strażnik",
           "watchdog_add_power_cycle": "Strażnik: Dodaj restart przez gniazdko",
           "watchdog_remove_power_cycle": "Strażnik: Usuń restarty przez gniazdko",
@@ -93,6 +99,8 @@
         "description": "Włącz lub wyłącz moduły. Wyłączony moduł przestaje wykonywać sprawdzenia, a jego encje są usuwane; jego ustawienia zostają zachowane.",
         "data": {
           "containers": "Containers",
+          "database": "Baza danych",
+          "logs": "Dzienniki",
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
@@ -103,6 +111,8 @@
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
+          "database": "Baza rejestratora: rozmiar, przechowywanie, encje, które zapisują najwięcej; wyczyść ich historię, wyklucz je, wyczyść i skompaktuj. Brak własnych encji.",
+          "logs": "Dziennik Home Assistant pogrupowany według integracji: błędy i ostrzeżenia, ile razy wystąpiły, ślad stosu; przeładowanie integracji, ignorowanie komunikatu. Bez własnych encji.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
@@ -125,6 +135,26 @@
           "notify": "Powiadamiaj, gdy kontener, który powinien działać (dodatek uruchamiany przy starcie), zatrzyma się i gdy wróci.",
           "notify_services": "Wysyłaj też każde powiadomienie za pomocą tych akcji (notify.mobile_app_…). Trwałe powiadomienie jest tworzone zawsze.",
           "stoppable_processes": "Procesy System Monitor, które mogą być zatrzymane: nie są liczone jako problem na karcie Status, wyświetlane na szaro."
+        }
+      },
+      "database": {
+        "title": "Baza danych",
+        "data": {
+          "max_size": "Rozmiar wywołujący ostrzeżenie"
+        },
+        "data_description": {
+          "max_size": "Powyżej tego rozmiaru karta Status pokazuje ostrzeżenie (tylko SQLite)."
+        }
+      },
+      "logs": {
+        "title": "Dzienniki",
+        "data": {
+          "error_threshold": "Błędy oznaczające problem",
+          "ignored_messages": "Ignorowane komunikaty"
+        },
+        "data_description": {
+          "error_threshold": "Liczba błędów jednej integracji w 24 godziny, od której karta Status pokazuje problem.",
+          "ignored_messages": "Zignorowane w karcie Dzienniki (logger|początek komunikatu): usuń, aby znów go widzieć."
         }
       },
       "watchdog": {
@@ -1575,7 +1605,51 @@
         "sl_mains": "sieć",
         "sl_ignore": "Ignoruj",
         "sl_hint": "Ciche: brak sygnału od ponad {battery} h na baterii, {mains} h z sieci. Słaby sygnał: LQI poniżej 50, RSSI poniżej −80 dBm.",
-        "sl_ignored_done": "Zignorowano: {name}"
+        "sl_ignored_done": "Zignorowano: {name}",
+        "tab_logs": "Dzienniki",
+        "lg_n_errors": "Błędy: {n}",
+        "lg_n_warnings": "Ostrzeżenia: {n}",
+        "lg_no_errors": "Brak błędów",
+        "lg_errors": "Błędy",
+        "lg_warnings": "Ostrzeżenia",
+        "lg_integrations": "Integracje",
+        "lg_ignored": "Ignorowane",
+        "lg_level": "Poziom",
+        "lg_period": "Okres",
+        "lg_hour": "1 h",
+        "lg_day": "24 h",
+        "lg_since_start": "Od uruchomienia",
+        "lg_clear": "Wyczyść dziennik",
+        "lg_clear_confirm": "Wyczyścić dziennik Home Assistant? Komunikaty zachowane od uruchomienia zostaną usunięte.",
+        "lg_full": "Pełny dziennik",
+        "lg_reload": "Przeładuj",
+        "lg_traceback": "Ślad stosu",
+        "lg_none": "Brak ostrzeżeń i błędów w tym okresie.",
+        "lg_no_entry": "Brak wpisu tej integracji do przeładowania.",
+        "tab_database": "Baza danych",
+        "db_size": "Rozmiar",
+        "db_limit": "Ostrzega powyżej {n} GiB",
+        "db_no_size": "Rozmiar nieznany dla tego silnika",
+        "db_days": "{n} dni",
+        "db_retention": "Przechowywanie",
+        "db_no_auto_purge": "Przechowywanie, bez automatycznego czyszczenia",
+        "db_states_day": "Stany w 24 h",
+        "db_engine": "Silnik",
+        "db_repack": "Wyczyść i skompaktuj",
+        "db_repack_confirm": "Usunąć historię starszą niż {n} dni i skompaktować bazę? Baza jest w tym czasie zajęta.",
+        "db_over": "Powyżej {n} GiB",
+        "db_recount": "Policz ponownie",
+        "db_excluded": "Wykluczona",
+        "db_purge": "Wyczyść ich historię",
+        "db_purge_confirm": "Usunąć całą historię {n} wybranych encji? Tego nie można cofnąć.",
+        "db_exclude": "Aby przestać je zapisywać, dodaj do configuration.yaml:",
+        "db_copy": "Kopiuj",
+        "db_copied": "Skopiowano",
+        "db_pick_hint": "Wybierz encje, aby wyczyścić ich historię lub wykluczyć je z rejestratora.",
+        "db_none": "Brak stanów zapisanych w 24 godziny.",
+        "db_top": "Encje, które zapisują najwięcej (24 h)",
+        "db_counted": "policzono {when}",
+        "db_n_states": "{n} stanów w 24 h"
       }
     },
     "battery_type": {

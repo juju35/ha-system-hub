@@ -39,7 +39,9 @@ from .const import (
     MODULE_BACKUPS,
     MODULE_BATTERIES,
     MODULE_CONTAINERS,
+    MODULE_DATABASE,
     MODULE_GIT_SYNC,
+    MODULE_LOGS,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
     MODULE_SILENT,
@@ -49,11 +51,15 @@ from .const import (
 from .containers import flow as containers_flow
 from .containers.flow import stoppable_processes
 from .containers.monitor import supervisor_available
+from .database import RECORDER_DOMAIN
+from .database import flow as database_flow
 from .git_sync import configured as git_sync_configured
 from .git_sync import flow as git_sync_flow
 from .git_sync import further_repositories
 from .git_sync.const import CONF_REPO_ID, CONF_REPO_PATH, CONF_REPOSITORIES
 from .git_sync.coordinator import GitSyncCoordinator
+from .logs import SYSTEM_LOG_DOMAIN
+from .logs import flow as logs_flow
 from .marketplace import flow as marketplace_flow
 from .orphans import flow as orphans_flow
 from .silent import DEFAULT_INTEGRATIONS
@@ -87,6 +93,8 @@ def _available(hass: HomeAssistant) -> list[str]:
         if (m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in hass.config.components)
         and (m != MODULE_CONTAINERS or supervisor_available(hass))
         and (m != MODULE_BACKUPS or BACKUP_DOMAIN in hass.config.components)
+        and (m != MODULE_LOGS or SYSTEM_LOG_DOMAIN in hass.config.components)
+        and (m != MODULE_DATABASE or RECORDER_DOMAIN in hass.config.components)
         # Follows radio devices: on by default where one of their integrations is set up
         and (m != MODULE_SILENT or any(i in hass.config.components for i in DEFAULT_INTEGRATIONS))
         # Shows what Automation Monitor reports: on by default where it is set up.
@@ -208,6 +216,10 @@ class SystemHubOptionsFlow(OptionsFlow):
         modules = self._modules()
         if MODULE_CONTAINERS in modules:
             menu.append("containers")
+        if MODULE_DATABASE in modules:
+            menu.append("database")
+        if MODULE_LOGS in modules:
+            menu.append("logs")
         if MODULE_WATCHDOG in modules:
             menu += ["watchdog", "watchdog_add_power_cycle"]
             if self._cycles():
@@ -591,6 +603,24 @@ class SystemHubOptionsFlow(OptionsFlow):
             }
         )
         return self.async_show_form(step_id="backups", data_schema=schema)
+
+    # Database
+
+    async def async_step_database(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The size from which the Status tab warns."""
+        if user_input is not None:
+            return self._save(**{MODULE_DATABASE: database_flow.settings_options(user_input)})
+        return self.async_show_form(
+            step_id="database", data_schema=database_flow.settings_schema(self._module(MODULE_DATABASE))
+        )
+
+    # Logs
+
+    async def async_step_logs(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The errors of one integration in 24 hours that make a problem, the messages ignored."""
+        if user_input is not None:
+            return self._save(**{MODULE_LOGS: logs_flow.settings_options(user_input)})
+        return self.async_show_form(step_id="logs", data_schema=logs_flow.settings_schema(self._module(MODULE_LOGS)))
 
     # Silent devices
 

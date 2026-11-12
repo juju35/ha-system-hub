@@ -13,7 +13,7 @@ from typing import Any
 
 import voluptuous as vol
 from homeassistant.components import websocket_api
-from homeassistant.config_entries import ConfigEntryState
+from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import __version__ as HA_VERSION
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import area_registry as ar
@@ -31,7 +31,9 @@ from .const import (
     DOMAIN,
     MODULE_AUTOMATIONS,
     MODULE_BACKUPS,
+    MODULE_DATABASE,
     MODULE_GIT_SYNC,
+    MODULE_LOGS,
     MODULE_SILENT,
     MODULES,
     PANEL_PATH,
@@ -40,6 +42,10 @@ from .const import (
     TAB_SYSTEM,
 )
 from .containers.flow import stoppable_processes
+from .database import database_state
+from .database import settings as database_settings
+from .logs import CONF_IGNORED_MESSAGES
+from .logs import settings as logs_settings
 from .orphans import panel as orphans_panel
 from .orphans.services import NO_RELOAD_KEY
 from .silent import CONF_IGNORED_DEVICES, silent_state
@@ -49,7 +55,11 @@ STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
 MODULE = "system-hub-panel.js"
 ELEMENT = "system-hub-panel"
-PANEL_ICON = "mdi:home-analytics"
+# The sidebar icon: the Status tab's emblem (frontend/system-hub-icons.js, loaded on every page), its badge following
+# the Status tab: good, warn or bad, as an open panel reports it (system_hub/sidebar_icon)
+ICONS_MODULE = "system-hub-icons.js"
+ICON_TONES = ("good", "warn", "bad")
+TONE_KEY = "sidebar_tone"
 TITLE = "System Hub"
 TABS = (TAB_STATUS, TAB_SYSTEM, *MODULES)
 
@@ -101,15 +111,29 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_stoppable_processes)
         websocket_api.async_register_command(hass, orphans_panel.ws_orphans)
         websocket_api.async_register_command(hass, ws_silent_ignore)
+        websocket_api.async_register_command(hass, ws_logs_ignore)
+        websocket_api.async_register_command(hass, ws_database)
+        websocket_api.async_register_command(hass, ws_sidebar_icon)
+        data["version"] = await hass.async_add_executor_job(_version)
+        frontend.add_extra_js_url(hass, f"{STATIC_URL}/{ICONS_MODULE}?v={data['version']}")
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         return
-    version = await hass.async_add_executor_job(_version)
+    _add_panel(hass)
+
+
+def _add_panel(hass: HomeAssistant, update: bool = False) -> None:
+    """The panel in the sidebar, its icon the last status reported (good until one is)."""
+    from homeassistant.components import frontend  # noqa: PLC0415
+
+    data = hass.data[DOMAIN]
+    version = data["version"]
     frontend.async_register_built_in_panel(
         hass,
         component_name="custom",
         sidebar_title=TITLE,
-        sidebar_icon=PANEL_ICON,
+        sidebar_icon=f"system-hub:{data.get(TONE_KEY, ICON_TONES[0])}",
+        update=update,
         frontend_url_path=PANEL_PATH,
         require_admin=True,
         config={
@@ -472,6 +496,12 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         backups = entry.options.get(MODULE_BACKUPS)
         max_age = backups.get(CONF_BACKUP_MAX_AGE) if isinstance(backups, dict) else None
         result["backups"] = {"max_age": int(max_age or DEFAULT_BACKUP_MAX_AGE)}
+    if MODULE_DATABASE in result["modules"]:
+        # The tab asks for the database itself (system_hub/database); the state carries the setting
+        result["database"] = database_settings(entry.options.get(MODULE_DATABASE))
+    if MODULE_LOGS in result["modules"]:
+        # The panel reads the log itself (system_log/list); the state carries the settings
+        result["logs"] = logs_settings(entry.options.get(MODULE_LOGS))
     if MODULE_SILENT in result["modules"]:
         result["silent"] = silent_state(hass, entry.options.get(MODULE_SILENT))
     if MODULE_AUTOMATIONS in result["modules"]:
@@ -530,13 +560,83 @@ def ws_silent_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnec
         connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
         return
     current = silent_settings(entry.options.get(MODULE_SILENT))
-    ignored = set(current[CONF_IGNORED_DEVICES])
-    ignored = ignored | {msg["device_id"]} if msg["ignore"] else ignored - {msg["device_id"]}
-    options = {**entry.options, MODULE_SILENT: {**current, CONF_IGNORED_DEVICES: sorted(ignored)}}
-    # Read again on the next state: nothing to reload
+    ignored = _ignore(hass, entry, MODULE_SILENT, current, CONF_IGNORED_DEVICES, msg["device_id"], msg["ignore"])
+    connection.send_result(msg["id"], {"ignored": ignored})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "system_hub/logs_ignore",
+        vol.Required("key"): str,
+        vol.Optional("ignore", default=True): bool,
+    }
+)
+@callback
+def ws_logs_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """A message left out of the Logs module (a logger and the start of the message), or back in, without a reload."""
+    entry = _entry(hass)
+    if entry is None:
+        connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
+        return
+    current = logs_settings(entry.options.get(MODULE_LOGS))
+    ignored = _ignore(hass, entry, MODULE_LOGS, current, CONF_IGNORED_MESSAGES, msg["key"], msg["ignore"])
+    connection.send_result(msg["id"], {"ignored": ignored})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "system_hub/database", vol.Optional("force", default=False): bool}
+)
+@websocket_api.async_response
+async def ws_database(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The recorder's database: size, retention, the states of the day and the entities that wrote the most."""
+    entry = _entry(hass)
+    if entry is None or MODULE_DATABASE not in _enabled(entry):
+        connection.send_error(msg["id"], "not_enabled", "The Database module is not turned on")
+        return
+    try:
+        result = await database_state(hass, hass.data.setdefault(DOMAIN, {}), msg["force"])
+    except Exception as err:  # noqa: BLE001 - shown in the tab
+        connection.send_error(msg["id"], "failed", str(err))
+        return
+    connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "system_hub/sidebar_icon", vol.Required("tone"): vol.In(ICON_TONES)}
+)
+@callback
+def ws_sidebar_icon(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The Status tab's tone, from a panel open or a page that follows it: the sidebar icon changes with it."""
+    from homeassistant.components import frontend  # noqa: PLC0415
+
+    data = hass.data.setdefault(DOMAIN, {})
+    changed = data.get(TONE_KEY, ICON_TONES[0]) != msg["tone"]
+    data[TONE_KEY] = msg["tone"]
+    if changed and "version" in data and PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
+        _add_panel(hass, update=True)
+    connection.send_result(msg["id"], {"changed": changed})
+
+
+def _enabled(entry: ConfigEntry) -> list[str]:
+    from . import enabled_modules  # noqa: PLC0415 - avoids a circular import
+
+    return enabled_modules(entry)
+
+
+def _ignore(
+    hass: HomeAssistant, entry: ConfigEntry, module: str, current: dict[str, Any], key: str, value: str, ignore: bool
+) -> list[str]:
+    """A value added to (or taken from) a module's list in its settings, saved without a reload: read again on the
+    next state."""
+    values = set(current[key])
+    values = values | {value} if ignore else values - {value}
+    options = {**entry.options, module: {**current, key: sorted(values)}}
     hass.data.setdefault(DOMAIN, {})[NO_RELOAD_KEY] = options
     hass.config_entries.async_update_entry(entry, options=options)
-    connection.send_result(msg["id"], {"ignored": sorted(ignored)})
+    return sorted(values)
 
 
 @websocket_api.require_admin

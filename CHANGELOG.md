@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.0 - 2026-11-12
+
+### New
+- **Logs** module, in the **Reliability** group (Logs · Sentinel · Automations): Home Assistant's log grouped by integration. The errors and warnings, by level (errors, warnings, all) and period (1 h, 24 h, since start), the most errors first; each message with how many times it came, when, its logger and source, its traceback; **Reload** the integration, **Ignore** a message (saved at once, no reload), **Full log**, **Clear the log** (asked first). On the **Status** tab, the errors of the last 24 hours, a problem from **Errors that make a problem** (10 by default) for one integration. No entities of its own; on by default.
+- **Database** module, in the **System** group (Resources · Containers · Database): the recorder's database. Its size (SQLite) against **Size that makes a warning** (2 GiB by default), the retention, the states written in 24 hours and the engine; the entities that wrote the most in 24 hours with their share; tick some to **Purge their history** or copy the `recorder: exclude:` lines for `configuration.yaml`; **Purge and repack**. On the **Status** tab, the size, the retention and the top writer. No entities of its own; turn it on in **Settings**.
+- **Sidebar icon**: the **Status** tab's emblem, its badge following the status (pulse, **!**, **×**), instead of a generic icon.
+
 ## 1.8.0 - 2026-11-12
 
 ### New
