@@ -6,6 +6,7 @@
         "description": "Elija los módulos que desea activar. Cada módulo se configura en las opciones.",
         "data": {
           "containers": "Containers",
+          "database": "Base de datos",
           "logs": "Registros",
           "watchdog": "Centinela",
           "marketplace": "Actualizaciones",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
+          "database": "La base del registrador: su tamaño, su retención, las entidades que más escriben; purgar su historial, excluirlas, purgar y compactar. Sin entidades propias.",
           "logs": "El registro de Home Assistant agrupado por integración: errores y avisos, cuántas veces aparecieron, su traza; recargar una integración, ignorar un mensaje. Sin entidades propias.",
           "watchdog": "Recarga las integraciones en las que ninguna entidad está disponible.",
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Módulos",
           "containers": "Containers",
+          "database": "Base de datos",
           "logs": "Registros",
           "watchdog": "Centinela",
           "watchdog_add_power_cycle": "Centinela: Añadir un reinicio por enchufe",
@@ -96,6 +99,7 @@
         "description": "Active o desactive los módulos. Un módulo desactivado detiene sus comprobaciones y sus entidades se eliminan; sus ajustes se conservan.",
         "data": {
           "containers": "Containers",
+          "database": "Base de datos",
           "logs": "Registros",
           "watchdog": "Centinela",
           "marketplace": "Actualizaciones",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
+          "database": "La base del registrador: su tamaño, su retención, las entidades que más escriben; purgar su historial, excluirlas, purgar y compactar. Sin entidades propias.",
           "logs": "El registro de Home Assistant agrupado por integración: errores y avisos, cuántas veces aparecieron, su traza; recargar una integración, ignorar un mensaje. Sin entidades propias.",
           "watchdog": "Recarga las integraciones en las que ninguna entidad está disponible.",
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
@@ -130,6 +135,15 @@
           "notify": "Notificar cuando un contenedor que debería funcionar (un complemento iniciado al arrancar) se detiene, y cuando vuelve.",
           "notify_services": "Enviar también cada notificación con estas acciones (notify.mobile_app_…). Siempre se crea una notificación persistente.",
           "stoppable_processes": "Procesos de System Monitor que pueden estar detenidos: no cuentan como problema en la pestaña Estado y se muestran en gris."
+        }
+      },
+      "database": {
+        "title": "Base de datos",
+        "data": {
+          "max_size": "Tamaño que genera un aviso"
+        },
+        "data_description": {
+          "max_size": "Por encima de este tamaño la pestaña Estado muestra un aviso (solo SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Recargar",
         "lg_traceback": "Traza",
         "lg_none": "Ningún aviso ni error en este periodo.",
-        "lg_no_entry": "Ninguna entrada de esta integración que recargar."
+        "lg_no_entry": "Ninguna entrada de esta integración que recargar.",
+        "tab_database": "Base de datos",
+        "db_size": "Tamaño",
+        "db_limit": "Avisa por encima de {n} GiB",
+        "db_no_size": "Tamaño desconocido para este motor",
+        "db_days": "{n} días",
+        "db_retention": "Retención",
+        "db_no_auto_purge": "Retención, sin purga automática",
+        "db_states_day": "Estados en 24 h",
+        "db_engine": "Motor",
+        "db_repack": "Purgar y compactar",
+        "db_repack_confirm": "¿Borrar el historial de más de {n} días y compactar la base? La base está ocupada mientras tanto.",
+        "db_over": "Por encima de {n} GiB",
+        "db_recount": "Volver a contar",
+        "db_excluded": "Excluida",
+        "db_purge": "Purgar su historial",
+        "db_purge_confirm": "¿Borrar todo el historial de las {n} entidades elegidas? No se puede deshacer.",
+        "db_exclude": "Para dejar de registrarlas, añade a configuration.yaml:",
+        "db_copy": "Copiar",
+        "db_copied": "Copiado",
+        "db_pick_hint": "Elige entidades para purgar su historial o excluirlas del registrador.",
+        "db_none": "Ningún estado registrado en 24 horas.",
+        "db_top": "Entidades que más escriben (24 h)",
+        "db_counted": "contado {when}",
+        "db_n_states": "{n} estados en 24 h"
       }
     },
     "battery_type": {

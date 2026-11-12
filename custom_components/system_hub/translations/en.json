@@ -6,6 +6,7 @@
         "description": "Choose the modules to turn on. Each module is set up in the options.",
         "data": {
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logs",
           "watchdog": "Sentinel",
           "marketplace": "Updates",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
+          "database": "The recorder's database: its size, its retention, the entities that write the most; purge their history, leave them out, purge and repack. No entities of its own.",
           "logs": "Home Assistant's log grouped by integration: the errors and warnings, how many times each came, its traceback; reload an integration, ignore a message. No entities of its own.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logs",
           "watchdog": "Sentinel",
           "watchdog_add_power_cycle": "Sentinel: Add a power cycle",
@@ -96,6 +99,7 @@
         "description": "Turn modules on or off. A module turned off stops its checks and its entities are removed; its settings are kept.",
         "data": {
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logs",
           "watchdog": "Sentinel",
           "marketplace": "Updates",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
+          "database": "The recorder's database: its size, its retention, the entities that write the most; purge their history, leave them out, purge and repack. No entities of its own.",
           "logs": "Home Assistant's log grouped by integration: the errors and warnings, how many times each came, its traceback; reload an integration, ignore a message. No entities of its own.",
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
@@ -130,6 +135,15 @@
           "notify": "Notify when a container that should run (an add-on started at boot) stops, and when it is back.",
           "notify_services": "Also send each notification with these actions (notify.mobile_app_…). A persistent notification is always created.",
           "stoppable_processes": "System Monitor processes that may be stopped: not counted as a problem on the Status tab, shown in grey."
+        }
+      },
+      "database": {
+        "title": "Database",
+        "data": {
+          "max_size": "Size that makes a warning"
+        },
+        "data_description": {
+          "max_size": "Beyond this size the Status tab shows a warning (SQLite only)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Reload",
         "lg_traceback": "Traceback",
         "lg_none": "No warning nor error in this period.",
-        "lg_no_entry": "No entry of this integration to reload."
+        "lg_no_entry": "No entry of this integration to reload.",
+        "tab_database": "Database",
+        "db_size": "Size",
+        "db_limit": "Warns beyond {n} GiB",
+        "db_no_size": "Size unknown for this engine",
+        "db_days": "{n} days",
+        "db_retention": "Retention",
+        "db_no_auto_purge": "Retention, no auto purge",
+        "db_states_day": "States in 24 h",
+        "db_engine": "Engine",
+        "db_repack": "Purge and repack",
+        "db_repack_confirm": "Remove the history older than {n} days and repack the database? The database is busy while it runs.",
+        "db_over": "Beyond {n} GiB",
+        "db_recount": "Count again",
+        "db_excluded": "Excluded",
+        "db_purge": "Purge their history",
+        "db_purge_confirm": "Remove the whole history of the {n} entities chosen? It cannot be undone.",
+        "db_exclude": "To stop recording them, add to configuration.yaml:",
+        "db_copy": "Copy",
+        "db_copied": "Copied",
+        "db_pick_hint": "Choose entities to purge their history or to leave them out of the recorder.",
+        "db_none": "No state recorded in 24 hours.",
+        "db_top": "Entities that write the most (24 h)",
+        "db_counted": "counted {when}",
+        "db_n_states": "{n} states in 24 h"
       }
     },
     "battery_type": {

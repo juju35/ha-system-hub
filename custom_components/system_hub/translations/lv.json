@@ -6,6 +6,7 @@
         "description": "Izvēlieties ieslēdzamos moduļus. Katru moduli iestata opcijās.",
         "data": {
           "containers": "Containers",
+          "database": "Datubāze",
           "logs": "Žurnāli",
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
+          "database": "Ierakstītāja datubāze: izmērs, glabāšana, vienības, kas raksta visvairāk; dzēst to vēsturi, izslēgt tās, iztīrīt un saspiest. Nav savu vienību.",
           "logs": "Home Assistant žurnāls pa integrācijām: kļūdas un brīdinājumi, cik reizes tie radās, izsaukumu kaudze; integrācijas pārlādēšana, ziņojuma ignorēšana. Bez savām entītijām.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Moduļi",
           "containers": "Containers",
+          "database": "Datubāze",
           "logs": "Žurnāli",
           "watchdog": "Sargs",
           "watchdog_add_power_cycle": "Sargs: Pievienot restartēšanu ar kontaktligzdu",
@@ -96,6 +99,7 @@
         "description": "Ieslēdziet vai izslēdziet moduļus. Izslēgts modulis pārtrauc pārbaudes, un tā entītijas tiek noņemtas; tā iestatījumi tiek saglabāti.",
         "data": {
           "containers": "Containers",
+          "database": "Datubāze",
           "logs": "Žurnāli",
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
+          "database": "Ierakstītāja datubāze: izmērs, glabāšana, vienības, kas raksta visvairāk; dzēst to vēsturi, izslēgt tās, iztīrīt un saspiest. Nav savu vienību.",
           "logs": "Home Assistant žurnāls pa integrācijām: kļūdas un brīdinājumi, cik reizes tie radās, izsaukumu kaudze; integrācijas pārlādēšana, ziņojuma ignorēšana. Bez savām entītijām.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
@@ -130,6 +135,15 @@
           "notify": "Paziņot, kad konteiners, kam vajadzētu darboties (papildinājums, kas palaists ielādējot), apstājas, un kad tas atgriežas.",
           "notify_services": "Sūtīt katru paziņojumu arī ar šīm darbībām (notify.mobile_app_…). Pastāvīgs paziņojums tiek izveidots vienmēr.",
           "stoppable_processes": "System Monitor procesi, kas drīkst būt apturēti: cilnē Statuss netiek uzskatīti par problēmu, tiek rādīti pelēkā krāsā."
+        }
+      },
+      "database": {
+        "title": "Datubāze",
+        "data": {
+          "max_size": "Izmērs brīdinājumam"
+        },
+        "data_description": {
+          "max_size": "Virs šī izmēra cilne Statuss rāda brīdinājumu (tikai SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Pārlādēt",
         "lg_traceback": "Izsaukumu kaudze",
         "lg_none": "Šajā periodā nav brīdinājumu un kļūdu.",
-        "lg_no_entry": "Šai integrācijai nav ieraksta, ko pārlādēt."
+        "lg_no_entry": "Šai integrācijai nav ieraksta, ko pārlādēt.",
+        "tab_database": "Datubāze",
+        "db_size": "Izmērs",
+        "db_limit": "Brīdina virs {n} GiB",
+        "db_no_size": "Izmērs nav zināms šim dzinējam",
+        "db_days": "{n} dienas",
+        "db_retention": "Glabāšana",
+        "db_no_auto_purge": "Glabāšana, bez automātiskas tīrīšanas",
+        "db_states_day": "Stāvokļi 24 h",
+        "db_engine": "Dzinējs",
+        "db_repack": "Iztīrīt un saspiest",
+        "db_repack_confirm": "Dzēst vēsturi, kas vecāka par {n} dienām, un saspiest datubāzi? Datubāze tikmēr ir aizņemta.",
+        "db_over": "Virs {n} GiB",
+        "db_recount": "Saskaitīt vēlreiz",
+        "db_excluded": "Izslēgta",
+        "db_purge": "Dzēst to vēsturi",
+        "db_purge_confirm": "Dzēst visu {n} izvēlēto vienību vēsturi? To nevar atsaukt.",
+        "db_exclude": "Lai tās vairs nereģistrētu, pievienojiet configuration.yaml:",
+        "db_copy": "Kopēt",
+        "db_copied": "Nokopēts",
+        "db_pick_hint": "Izvēlieties vienības, lai dzēstu to vēsturi vai izslēgtu tās no ierakstītāja.",
+        "db_none": "Neviens stāvoklis nav ierakstīts 24 stundās.",
+        "db_top": "Vienības, kas raksta visvairāk (24 h)",
+        "db_counted": "saskaitīts {when}",
+        "db_n_states": "{n} stāvokļi 24 h"
       }
     },
     "battery_type": {

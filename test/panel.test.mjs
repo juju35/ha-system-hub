@@ -1259,3 +1259,103 @@ test('logs tab: the errors and warnings by integration, a level and a period; Ig
     ]),
   );
 });
+
+test('database tab: size against the limit, retention, the top writers; purge, exclude, purge and repack', async () => {
+  const data = {
+    engine: 'sqlite',
+    size: 2.4 * 1073741824,
+    keep_days: 10,
+    auto_purge: true,
+    total_day: 20000,
+    counted_at: Date.now() / 1000 - 600,
+    top: [
+      { entity_id: 'sensor.power', name: 'Power', count: 8000, excluded: false },
+      { entity_id: 'sensor.uptime', name: 'Uptime', count: 2000, excluded: true },
+    ],
+  };
+  const state = { loaded: true, modules: ['database'], tabs: ['database'], database: { max_size: 2 } };
+  const p = panel(state, 'database');
+  const calls = [];
+  p._hass.callWS = async (msg) => {
+    calls.push(`${msg.type}${msg.force ? ' force' : ''}`);
+    return msg.type === 'system_hub/database' ? data : state;
+  };
+  p._hass.callService = async (domain, service, d) => calls.push(`${domain}.${service} ${JSON.stringify(d)}`);
+  p._render = () => {};
+  await p._dbLoad(true);
+  let html = p._content();
+  assert.match(html, /tile bad[\s\S]*?2\.40 GiB[\s\S]*?Size/);
+  assert.match(html, /Beyond 2 GiB/);
+  assert.match(html, /10 days[\s\S]*?Retention/);
+  assert.match(html, /Power[\s\S]*?sensor\.power[\s\S]*?width:40%[\s\S]*?<b>8,000<\/b><span class="s">40 %/);
+  assert.match(html, /Uptime <span class="pill">Excluded/);
+  assert.match(html, /Choose entities/);
+  assert.deepEqual([...p._stArea('database')].slice(0, 2), ['warn', '2.40 GiB']);
+  // Two picked: purge their history (confirmed), the YAML to leave them out
+  const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
+  click('db_pick', { entity: 'sensor.power' });
+  click('db_pick', { entity: 'sensor.uptime' });
+  html = p._content();
+  assert.match(html, /Purge their history \(2\)/);
+  assert.match(html, /recorder:\n {2}exclude:\n {4}entities:\n {6}- sensor\.power\n {6}- sensor\.uptime/);
+  click('db_purge_confirm');
+  assert.match(p._content(), /Remove the whole history of the 2 entities chosen\?/);
+  await click('db_purge');
+  click('db_repack_confirm');
+  assert.match(p._content(), /older than 10 days and repack/);
+  await click('db_repack');
+  assert.deepEqual(
+    calls.filter((c) => c.startsWith('recorder')),
+    ['recorder.purge_entities {"entity_id":["sensor.power","sensor.uptime"],"keep_days":0}', 'recorder.purge {"keep_days":10,"repack":true}'],
+  );
+  assert.ok(calls.includes('system_hub/database force'));
+  // Another engine: no size, the tile says so
+  data.engine = 'postgresql';
+  data.size = null;
+  await p._dbLoad(true);
+  assert.match(p._content(), /title="Size unknown for this engine"[\s\S]*?—/);
+  assert.match(p._content(), /PostgreSQL/);
+});
+
+test('sidebar icon: the Status tab tone sent when the sidebar shows another one; nothing drawn when read for it', async () => {
+  const state = { loaded: true, modules: ['logs'], tabs: ['logs'], logs: { error_threshold: 10, ignored_messages: [] } };
+  const p = panel(state, 'status');
+  const sent = [];
+  p._hass.panels = { 'system-hub': { icon: 'system-hub:good' } };
+  p._hass.callWS = async (msg) => {
+    if (msg.type === 'system_hub/sidebar_icon') sent.push(msg.tone);
+    return msg.type === 'system_log/list' ? [] : state;
+  };
+  p._lg = { entries: [], at: Date.now() };
+  assert.equal(p._stTone().tone, 'good');
+  await p._reportTone();
+  assert.deepEqual(sent, []);
+  // Errors beyond the threshold: one problem, the score still good; two: warn, sent once
+  const now = Date.now() / 1000;
+  p._lg.entries = [{ name: 'custom_components.x', level: 'ERROR', message: ['Boom'], count: 40, timestamp: now }];
+  assert.equal(p._stTone().score, 85);
+  assert.equal(p._stTone().tone, 'good');
+  state.modules = ['logs', 'silent'];
+  state.tabs = ['logs', 'silent'];
+  state.silent = { devices: [{ name: 'Cave', silent: true }], tracked: 1 };
+  state.silent.devices.push({ name: 'Garage', silent: true });
+  p._stArea = (tab) => (tab === 'logs' || tab === 'silent' ? ['bad', '', ''] : null);
+  assert.equal(p._stTone().tone, 'warn');
+  await p._reportTone();
+  assert.deepEqual(sent, ['warn']);
+  p._hass.panels['system-hub'].icon = 'system-hub:warn';
+  await p._reportTone();
+  assert.deepEqual(sent, ['warn']);
+  // Read without being shown (system-hub-icons.js): nothing rendered, the tone sent with the read
+  const probe = panel(state, 'status');
+  probe._headless = true;
+  probe._renderShell = () => assert.fail('rendered');
+  probe._hass.panels = { 'system-hub': { icon: 'system-hub:warn' } };
+  probe._hass.callWS = async (msg) => {
+    if (msg.type === 'system_hub/sidebar_icon') sent.push(msg.tone);
+    return msg.type === 'system_log/list' ? [] : { loaded: true, modules: [], tabs: [] };
+  };
+  await probe._load();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(sent, ['warn', 'good']);
+});

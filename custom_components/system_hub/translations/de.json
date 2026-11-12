@@ -6,6 +6,7 @@
         "description": "Wählen Sie die zu aktivierenden Module. Jedes Modul wird in den Optionen eingerichtet.",
         "data": {
           "containers": "Containers",
+          "database": "Datenbank",
           "logs": "Protokolle",
           "watchdog": "Wächter",
           "marketplace": "Updates",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
+          "database": "Die Datenbank des Recorders: Größe, Aufbewahrung, die Entitäten, die am meisten schreiben; ihren Verlauf löschen, sie ausschließen, bereinigen und komprimieren. Keine eigenen Entitäten.",
           "logs": "Das Protokoll von Home Assistant nach Integration gruppiert: Fehler und Warnungen, wie oft sie kamen, ihr Traceback; eine Integration neu laden, eine Meldung ignorieren. Keine eigenen Entitäten.",
           "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Module",
           "containers": "Containers",
+          "database": "Datenbank",
           "logs": "Protokolle",
           "watchdog": "Wächter",
           "watchdog_add_power_cycle": "Wächter: Neustart per Steckdose hinzufügen",
@@ -96,6 +99,7 @@
         "description": "Module ein- oder ausschalten. Ein ausgeschaltetes Modul beendet seine Prüfungen und seine Entitäten werden entfernt; seine Einstellungen bleiben erhalten.",
         "data": {
           "containers": "Containers",
+          "database": "Datenbank",
           "logs": "Protokolle",
           "watchdog": "Wächter",
           "marketplace": "Updates",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
+          "database": "Die Datenbank des Recorders: Größe, Aufbewahrung, die Entitäten, die am meisten schreiben; ihren Verlauf löschen, sie ausschließen, bereinigen und komprimieren. Keine eigenen Entitäten.",
           "logs": "Das Protokoll von Home Assistant nach Integration gruppiert: Fehler und Warnungen, wie oft sie kamen, ihr Traceback; eine Integration neu laden, eine Meldung ignorieren. Keine eigenen Entitäten.",
           "watchdog": "Lädt die Integrationen neu, deren Entitäten alle nicht verfügbar sind.",
           "marketplace": "Sucht serverseitig nach Updates für alle mit Marketplace heruntergeladenen Repositorys. Marketplace selbst prüft benutzerdefinierte Repositorys nur alle 48 Stunden.",
@@ -130,6 +135,15 @@
           "notify": "Benachrichtigen, wenn ein Container, der laufen sollte (ein beim Start gestartetes Add-on), stoppt und wenn er wieder läuft.",
           "notify_services": "Jede Benachrichtigung zusätzlich mit diesen Aktionen senden (notify.mobile_app_…). Eine dauerhafte Benachrichtigung wird immer erstellt.",
           "stoppable_processes": "System-Monitor-Prozesse, die gestoppt sein dürfen: kein Problem im Status-Tab, grau angezeigt."
+        }
+      },
+      "database": {
+        "title": "Datenbank",
+        "data": {
+          "max_size": "Größe, ab der gewarnt wird"
+        },
+        "data_description": {
+          "max_size": "Über dieser Größe zeigt der Status-Tab eine Warnung (nur SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Neu laden",
         "lg_traceback": "Traceback",
         "lg_none": "Keine Warnung und kein Fehler in diesem Zeitraum.",
-        "lg_no_entry": "Kein Eintrag dieser Integration zum Neuladen."
+        "lg_no_entry": "Kein Eintrag dieser Integration zum Neuladen.",
+        "tab_database": "Datenbank",
+        "db_size": "Größe",
+        "db_limit": "Warnt über {n} GiB",
+        "db_no_size": "Größe für diese Engine unbekannt",
+        "db_days": "{n} Tage",
+        "db_retention": "Aufbewahrung",
+        "db_no_auto_purge": "Aufbewahrung, ohne automatisches Bereinigen",
+        "db_states_day": "Zustände in 24 h",
+        "db_engine": "Engine",
+        "db_repack": "Bereinigen und komprimieren",
+        "db_repack_confirm": "Den Verlauf älter als {n} Tage löschen und die Datenbank komprimieren? Die Datenbank ist währenddessen belegt.",
+        "db_over": "Über {n} GiB",
+        "db_recount": "Neu zählen",
+        "db_excluded": "Ausgeschlossen",
+        "db_purge": "Ihren Verlauf löschen",
+        "db_purge_confirm": "Den gesamten Verlauf der {n} gewählten Entitäten löschen? Das kann nicht rückgängig gemacht werden.",
+        "db_exclude": "Um sie nicht mehr aufzuzeichnen, in configuration.yaml ergänzen:",
+        "db_copy": "Kopieren",
+        "db_copied": "Kopiert",
+        "db_pick_hint": "Entitäten wählen, um ihren Verlauf zu löschen oder sie vom Recorder auszuschließen.",
+        "db_none": "Kein Zustand in 24 Stunden aufgezeichnet.",
+        "db_top": "Entitäten, die am meisten schreiben (24 h)",
+        "db_counted": "gezählt {when}",
+        "db_n_states": "{n} Zustände in 24 h"
       }
     },
     "battery_type": {

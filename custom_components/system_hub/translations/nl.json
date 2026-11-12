@@ -6,6 +6,7 @@
         "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties.",
         "data": {
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logboeken",
           "watchdog": "Wachter",
           "marketplace": "Updates",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
+          "database": "De database van de recorder: grootte, bewaartermijn, de entiteiten die het meest schrijven; hun geschiedenis wissen, ze uitsluiten, opschonen en comprimeren. Geen eigen entiteiten.",
           "logs": "Het logboek van Home Assistant per integratie: fouten en waarschuwingen, hoe vaak ze kwamen, hun traceback; een integratie herladen, een bericht negeren. Geen eigen entiteiten.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Modules",
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logboeken",
           "watchdog": "Wachter",
           "watchdog_add_power_cycle": "Wachter: Herstart via stekker toevoegen",
@@ -96,6 +99,7 @@
         "description": "Schakel modules in of uit. Een uitgeschakelde module stopt met controleren en haar entiteiten worden verwijderd; haar instellingen blijven bewaard.",
         "data": {
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logboeken",
           "watchdog": "Wachter",
           "marketplace": "Updates",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
+          "database": "De database van de recorder: grootte, bewaartermijn, de entiteiten die het meest schrijven; hun geschiedenis wissen, ze uitsluiten, opschonen en comprimeren. Geen eigen entiteiten.",
           "logs": "Het logboek van Home Assistant per integratie: fouten en waarschuwingen, hoe vaak ze kwamen, hun traceback; een integratie herladen, een bericht negeren. Geen eigen entiteiten.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
@@ -130,6 +135,15 @@
           "notify": "Melden wanneer een container die zou moeten draaien (een add-on die bij het opstarten start) stopt, en wanneer hij terug is.",
           "notify_services": "Stuur elke melding ook met deze acties (notify.mobile_app_…). Er wordt altijd een blijvende melding aangemaakt.",
           "stoppable_processes": "System Monitor-processen die gestopt mogen zijn: geen probleem op het tabblad Status, grijs weergegeven."
+        }
+      },
+      "database": {
+        "title": "Database",
+        "data": {
+          "max_size": "Grootte die een waarschuwing geeft"
+        },
+        "data_description": {
+          "max_size": "Boven deze grootte toont het tabblad Status een waarschuwing (alleen SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Herladen",
         "lg_traceback": "Traceback",
         "lg_none": "Geen waarschuwing of fout in deze periode.",
-        "lg_no_entry": "Geen item van deze integratie om te herladen."
+        "lg_no_entry": "Geen item van deze integratie om te herladen.",
+        "tab_database": "Database",
+        "db_size": "Grootte",
+        "db_limit": "Waarschuwt boven {n} GiB",
+        "db_no_size": "Grootte onbekend voor deze engine",
+        "db_days": "{n} dagen",
+        "db_retention": "Bewaartermijn",
+        "db_no_auto_purge": "Bewaartermijn, zonder automatisch opschonen",
+        "db_states_day": "Statussen in 24 u",
+        "db_engine": "Engine",
+        "db_repack": "Opschonen en comprimeren",
+        "db_repack_confirm": "De geschiedenis ouder dan {n} dagen verwijderen en de database comprimeren? De database is intussen bezet.",
+        "db_over": "Boven {n} GiB",
+        "db_recount": "Opnieuw tellen",
+        "db_excluded": "Uitgesloten",
+        "db_purge": "Hun geschiedenis wissen",
+        "db_purge_confirm": "De volledige geschiedenis van de {n} gekozen entiteiten wissen? Dit kan niet ongedaan worden.",
+        "db_exclude": "Om ze niet meer op te slaan, voeg toe aan configuration.yaml:",
+        "db_copy": "Kopiëren",
+        "db_copied": "Gekopieerd",
+        "db_pick_hint": "Kies entiteiten om hun geschiedenis te wissen of ze uit de recorder te sluiten.",
+        "db_none": "Geen status opgeslagen in 24 uur.",
+        "db_top": "Entiteiten die het meest schrijven (24 u)",
+        "db_counted": "geteld {when}",
+        "db_n_states": "{n} statussen in 24 u"
       }
     },
     "battery_type": {

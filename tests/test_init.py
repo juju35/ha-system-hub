@@ -47,6 +47,7 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
     assert defaults == {
         "containers": False,
         "logs": True,
+        "database": False,
         "watchdog": True,
         "marketplace": False,
         "backups": False,

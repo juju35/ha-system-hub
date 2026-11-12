@@ -439,6 +439,28 @@ def mock_orphans():
     }
 
 
+def mock_database():
+    """What system_hub/database answers: a SQLite database near its limit, the entities that wrote the most."""
+    top = [
+        ("sensor.linky_papp", "Linky Apparent power", 17280),
+        ("sensor.shelly_em_power", "Shelly EM Power", 8640),
+        ("sensor.processor_use", "Processor use", 2880),
+        ("sensor.uptime_seconds", "Uptime", 2880),
+        ("sensor.salon_temperature", "Salon Temperature", 1420),
+        ("sensor.zigbee2mqtt_bridge_state", "Zigbee2MQTT Bridge state", 960),
+        ("weather.rennes", "Rennes", 288),
+    ]
+    return {
+        "engine": "sqlite",
+        "size": int(1.78 * 1024**3),
+        "keep_days": 10,
+        "auto_purge": True,
+        "total_day": 41250,
+        "counted_at": datetime.fromisoformat(NOW).timestamp() - 1500,
+        "top": [{"entity_id": e, "name": n, "count": c, "excluded": e == "sensor.uptime_seconds"} for e, n, c in top],
+    }
+
+
 def mock_system_log():
     """Home Assistant's log: a custom integration timing out, the MQTT broker dropping, a slow weather update."""
     now = datetime.fromisoformat(NOW).timestamp()
@@ -698,6 +720,7 @@ def mock_state():
         "entry_id": "system_hub",
         "modules": [
             "containers",
+            "database",
             "logs",
             "watchdog",
             "marketplace",
@@ -711,6 +734,7 @@ def mock_state():
             "status",
             "system",
             "containers",
+            "database",
             "logs",
             "watchdog",
             "marketplace",
@@ -721,6 +745,9 @@ def mock_state():
             "orphans",
         ],
         "backups": {"max_age": 3},
+        "database": {"max_size": 2},
+        # The Database tab: what system_hub/database answers
+        "database_info": mock_database(),
         "logs": {
             "error_threshold": 10,
             "ignored_messages": ["homeassistant.components.recorder.core|Setup of platform"],
@@ -1149,6 +1176,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                 ? state
                 : msg.type === "system_hub/orphans"
                   ? state.orphans_list
+                  : msg.type === "system_hub/database"
+                  ? state.database_info
                   : msg.type === "system_log/list"
                   ? state.system_log
                   : msg.type === "backup/info"
@@ -1196,6 +1225,7 @@ TABS = [
     "status",
     "system",
     "containers",
+    "database",
     "logs",
     "watchdog",
     "marketplace",
@@ -1240,6 +1270,7 @@ SHOTS = [
         for module, step in (
             ("system", "system"),
             ("containers", "containers"),
+            ("database", "database"),
             ("logs", "logs"),
             ("watchdog", "watchdog"),
             ("watchdog", "watchdog_add_power_cycle"),

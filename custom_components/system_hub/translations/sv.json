@@ -6,6 +6,7 @@
         "description": "Välj vilka moduler som ska aktiveras. Varje modul ställs in under alternativen.",
         "data": {
           "containers": "Containers",
+          "database": "Databas",
           "logs": "Loggar",
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
+          "database": "Inspelarens databas: storlek, lagringstid, entiteterna som skriver mest; rensa deras historik, uteslut dem, rensa och komprimera. Inga egna entiteter.",
           "logs": "Home Assistants logg grupperad per integration: fel och varningar, hur många gånger de kom, spårningen; ladda om en integration, ignorera ett meddelande. Inga egna entiteter.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Moduler",
           "containers": "Containers",
+          "database": "Databas",
           "logs": "Loggar",
           "watchdog": "Väktare",
           "watchdog_add_power_cycle": "Väktare: Lägg till omstart via uttag",
@@ -96,6 +99,7 @@
         "description": "Aktivera eller inaktivera moduler. En inaktiverad modul slutar med sina kontroller och dess entiteter tas bort; dess inställningar sparas.",
         "data": {
           "containers": "Containers",
+          "database": "Databas",
           "logs": "Loggar",
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
+          "database": "Inspelarens databas: storlek, lagringstid, entiteterna som skriver mest; rensa deras historik, uteslut dem, rensa och komprimera. Inga egna entiteter.",
           "logs": "Home Assistants logg grupperad per integration: fel och varningar, hur många gånger de kom, spårningen; ladda om en integration, ignorera ett meddelande. Inga egna entiteter.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
@@ -130,6 +135,15 @@
           "notify": "Meddela när en container som borde köra (ett tillägg som startas vid uppstart) stoppar, och när den är tillbaka.",
           "notify_services": "Skicka även varje avisering med dessa åtgärder (notify.mobile_app_…). En beständig avisering skapas alltid.",
           "stoppable_processes": "System Monitor-processer som får vara stoppade: räknas inte som ett problem på fliken Status och visas i grått."
+        }
+      },
+      "database": {
+        "title": "Databas",
+        "data": {
+          "max_size": "Storlek som ger en varning"
+        },
+        "data_description": {
+          "max_size": "Över denna storlek visar fliken Status en varning (endast SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Ladda om",
         "lg_traceback": "Spårning",
         "lg_none": "Inga varningar eller fel under perioden.",
-        "lg_no_entry": "Ingen post för integrationen att ladda om."
+        "lg_no_entry": "Ingen post för integrationen att ladda om.",
+        "tab_database": "Databas",
+        "db_size": "Storlek",
+        "db_limit": "Varnar över {n} GiB",
+        "db_no_size": "Storlek okänd för denna motor",
+        "db_days": "{n} dagar",
+        "db_retention": "Lagringstid",
+        "db_no_auto_purge": "Lagringstid, utan automatisk rensning",
+        "db_states_day": "Tillstånd på 24 h",
+        "db_engine": "Motor",
+        "db_repack": "Rensa och komprimera",
+        "db_repack_confirm": "Ta bort historiken äldre än {n} dagar och komprimera databasen? Databasen är upptagen under tiden.",
+        "db_over": "Över {n} GiB",
+        "db_recount": "Räkna igen",
+        "db_excluded": "Utesluten",
+        "db_purge": "Rensa deras historik",
+        "db_purge_confirm": "Ta bort hela historiken för de {n} valda entiteterna? Det kan inte ångras.",
+        "db_exclude": "För att sluta spela in dem, lägg till i configuration.yaml:",
+        "db_copy": "Kopiera",
+        "db_copied": "Kopierat",
+        "db_pick_hint": "Välj entiteter för att rensa deras historik eller utesluta dem från inspelaren.",
+        "db_none": "Inget tillstånd inspelat på 24 timmar.",
+        "db_top": "Entiteter som skriver mest (24 h)",
+        "db_counted": "räknat {when}",
+        "db_n_states": "{n} tillstånd på 24 h"
       }
     },
     "battery_type": {

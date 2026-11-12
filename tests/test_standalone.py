@@ -23,6 +23,7 @@ PANEL = {"source": "system_hub_panel"}
 NONE_ON = {
     "containers": False,
     "logs": False,
+    "database": False,
     "watchdog": False,
     "marketplace": False,
     "batteries": False,

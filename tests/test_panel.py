@@ -76,6 +76,22 @@ async def test_panel_is_registered_for_administrators(hass: HomeAssistant) -> No
     assert panel.config["_panel_custom"]["module_url"].startswith("/system_hub_static/system-hub-panel.js?v=")
 
 
+async def test_sidebar_icon_follows_the_status(hass: HomeAssistant, hass_ws_client) -> None:
+    await _setup(hass, [])
+    assert hass.data[frontend.DATA_PANELS][PANEL_PATH].sidebar_icon == "system-hub:good"
+    assert any(
+        "/system_hub_static/system-hub-icons.js?v=" in url for url in hass.data[frontend.DATA_EXTRA_MODULE_URL].urls
+    )
+    client = await hass_ws_client(hass)
+    await client.send_json({"id": 1, "type": "system_hub/sidebar_icon", "tone": "warn"})
+    assert (await client.receive_json())["result"] == {"changed": True}
+    assert hass.data[frontend.DATA_PANELS][PANEL_PATH].sidebar_icon == "system-hub:warn"
+    await client.send_json({"id": 2, "type": "system_hub/sidebar_icon", "tone": "warn"})
+    assert (await client.receive_json())["result"] == {"changed": False}
+    await client.send_json({"id": 3, "type": "system_hub/sidebar_icon", "tone": "purple"})
+    assert not (await client.receive_json())["success"]
+
+
 async def test_panel_removed_with_the_integration(hass: HomeAssistant) -> None:
     entry = await _setup(hass, [])
     assert await hass.config_entries.async_remove(entry.entry_id)
@@ -107,6 +123,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
         "status",
         "system",
         "containers",
+        "database",
         "logs",
         "watchdog",
         "marketplace",
@@ -234,6 +251,7 @@ async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
         "batteries",
         "system",
         "containers",
+        "database",
         "logs",
         "watchdog",
         "marketplace",
@@ -260,6 +278,7 @@ def test_tab_order() -> None:
         "status",
         "system",
         "containers",
+        "database",
         "logs",
         "watchdog",
         "marketplace",
@@ -276,6 +295,7 @@ def test_tab_order() -> None:
         "git_sync",
         "system",
         "containers",
+        "database",
         "logs",
         "watchdog",
         "marketplace",

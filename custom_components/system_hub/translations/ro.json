@@ -6,6 +6,7 @@
         "description": "Alegeți modulele de activat. Fiecare modul se configurează în opțiuni.",
         "data": {
           "containers": "Containers",
+          "database": "Bază de date",
           "logs": "Jurnale",
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
+          "database": "Baza înregistratorului: mărimea, păstrarea, entitățile care scriu cel mai mult; ștergeți istoricul, excludeți-le, curățați și compactați. Fără entități proprii.",
           "logs": "Jurnalul Home Assistant grupat pe integrări: erori și avertismente, de câte ori au apărut, traceback-ul; reîncărcarea unei integrări, ignorarea unui mesaj. Fără entități proprii.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Module",
           "containers": "Containers",
+          "database": "Bază de date",
           "logs": "Jurnale",
           "watchdog": "Santinelă",
           "watchdog_add_power_cycle": "Santinelă: Adaugă o repornire prin priză",
@@ -96,6 +99,7 @@
         "description": "Activați sau dezactivați modulele. Un modul dezactivat își oprește verificările, iar entitățile sale sunt eliminate; setările sale sunt păstrate.",
         "data": {
           "containers": "Containers",
+          "database": "Bază de date",
           "logs": "Jurnale",
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
+          "database": "Baza înregistratorului: mărimea, păstrarea, entitățile care scriu cel mai mult; ștergeți istoricul, excludeți-le, curățați și compactați. Fără entități proprii.",
           "logs": "Jurnalul Home Assistant grupat pe integrări: erori și avertismente, de câte ori au apărut, traceback-ul; reîncărcarea unei integrări, ignorarea unui mesaj. Fără entități proprii.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
@@ -130,6 +135,15 @@
           "notify": "Notifică atunci când un container care ar trebui să ruleze (un add-on pornit la boot) se oprește și când revine.",
           "notify_services": "Trimite fiecare notificare și prin aceste acțiuni (notify.mobile_app_…). O notificare persistentă este creată întotdeauna.",
           "stoppable_processes": "Procese System Monitor care pot fi oprite: nu contează ca problemă în fila Stare și apar cu gri."
+        }
+      },
+      "database": {
+        "title": "Bază de date",
+        "data": {
+          "max_size": "Mărime care generează un avertisment"
+        },
+        "data_description": {
+          "max_size": "Peste această mărime fila Stare arată un avertisment (doar SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Reîncarcă",
         "lg_traceback": "Traceback",
         "lg_none": "Niciun avertisment sau eroare în această perioadă.",
-        "lg_no_entry": "Nicio intrare a acestei integrări de reîncărcat."
+        "lg_no_entry": "Nicio intrare a acestei integrări de reîncărcat.",
+        "tab_database": "Bază de date",
+        "db_size": "Mărime",
+        "db_limit": "Avertizează peste {n} GiB",
+        "db_no_size": "Mărime necunoscută pentru acest motor",
+        "db_days": "{n} zile",
+        "db_retention": "Păstrare",
+        "db_no_auto_purge": "Păstrare, fără curățare automată",
+        "db_states_day": "Stări în 24 h",
+        "db_engine": "Motor",
+        "db_repack": "Curăță și compactează",
+        "db_repack_confirm": "Ștergeți istoricul mai vechi de {n} zile și compactați baza? Baza este ocupată între timp.",
+        "db_over": "Peste {n} GiB",
+        "db_recount": "Numără din nou",
+        "db_excluded": "Exclusă",
+        "db_purge": "Șterge istoricul lor",
+        "db_purge_confirm": "Ștergeți tot istoricul celor {n} entități alese? Nu se poate anula.",
+        "db_exclude": "Pentru a nu le mai înregistra, adăugați în configuration.yaml:",
+        "db_copy": "Copiază",
+        "db_copied": "Copiat",
+        "db_pick_hint": "Alegeți entități pentru a le șterge istoricul sau a le exclude din înregistrator.",
+        "db_none": "Nicio stare înregistrată în 24 de ore.",
+        "db_top": "Entitățile care scriu cel mai mult (24 h)",
+        "db_counted": "numărat {when}",
+        "db_n_states": "{n} stări în 24 h"
       }
     },
     "battery_type": {

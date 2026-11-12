@@ -6,6 +6,7 @@
         "description": "Izberite module, ki jih želite vklopiti. Vsak modul se nastavi v možnostih.",
         "data": {
           "containers": "Containers",
+          "database": "Podatkovna baza",
           "logs": "Dnevniki",
           "watchdog": "Stražar",
           "marketplace": "Posodobitve",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
+          "database": "Baza snemalnika: velikost, hramba, entitete, ki pišejo največ; počisti njihovo zgodovino, izključi jih, počisti in stisni. Brez lastnih entitet.",
           "logs": "Dnevnik Home Assistanta po integracijah: napake in opozorila, kolikokrat so se pojavila, sled klicev; ponovno nalaganje integracije, prezrtje sporočila. Brez lastnih entitet.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Moduli",
           "containers": "Containers",
+          "database": "Podatkovna baza",
           "logs": "Dnevniki",
           "watchdog": "Stražar",
           "watchdog_add_power_cycle": "Stražar: Dodaj ponovni zagon prek vtičnice",
@@ -96,6 +99,7 @@
         "description": "Vklopite ali izklopite module. Izklopljen modul ustavi svoja preverjanja in njegove entitete se odstranijo; njegove nastavitve se ohranijo.",
         "data": {
           "containers": "Containers",
+          "database": "Podatkovna baza",
           "logs": "Dnevniki",
           "watchdog": "Stražar",
           "marketplace": "Posodobitve",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
+          "database": "Baza snemalnika: velikost, hramba, entitete, ki pišejo največ; počisti njihovo zgodovino, izključi jih, počisti in stisni. Brez lastnih entitet.",
           "logs": "Dnevnik Home Assistanta po integracijah: napake in opozorila, kolikokrat so se pojavila, sled klicev; ponovno nalaganje integracije, prezrtje sporočila. Brez lastnih entitet.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
@@ -130,6 +135,15 @@
           "notify": "Obvesti, ko se vsebnik, ki bi moral delovati (dodatek, ki se zažene ob zagonu), ustavi, in ko se vrne.",
           "notify_services": "Vsako obvestilo pošlji tudi s temi dejanji (notify.mobile_app_…). Trajno obvestilo se ustvari vedno.",
           "stoppable_processes": "Procesi System Monitor, ki so lahko ustavljeni: na zavihku Stanje ne štejejo kot težava, prikazani so sivo."
+        }
+      },
+      "database": {
+        "title": "Podatkovna baza",
+        "data": {
+          "max_size": "Velikost za opozorilo"
+        },
+        "data_description": {
+          "max_size": "Nad to velikostjo zavihek Stanje pokaže opozorilo (samo SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Znova naloži",
         "lg_traceback": "Sled klicev",
         "lg_none": "V tem obdobju ni opozoril ne napak.",
-        "lg_no_entry": "Te integracije ni vnosa za ponovno nalaganje."
+        "lg_no_entry": "Te integracije ni vnosa za ponovno nalaganje.",
+        "tab_database": "Podatkovna baza",
+        "db_size": "Velikost",
+        "db_limit": "Opozori nad {n} GiB",
+        "db_no_size": "Velikost neznana za ta pogon",
+        "db_days": "{n} dni",
+        "db_retention": "Hramba",
+        "db_no_auto_purge": "Hramba, brez samodejnega čiščenja",
+        "db_states_day": "Stanja v 24 h",
+        "db_engine": "Pogon",
+        "db_repack": "Počisti in stisni",
+        "db_repack_confirm": "Izbrisati zgodovino, starejšo od {n} dni, in stisniti bazo? Baza je medtem zasedena.",
+        "db_over": "Nad {n} GiB",
+        "db_recount": "Preštej znova",
+        "db_excluded": "Izključena",
+        "db_purge": "Počisti njihovo zgodovino",
+        "db_purge_confirm": "Izbrisati celotno zgodovino {n} izbranih entitet? Tega ni mogoče razveljaviti.",
+        "db_exclude": "Da jih ne beležite več, dodajte v configuration.yaml:",
+        "db_copy": "Kopiraj",
+        "db_copied": "Kopirano",
+        "db_pick_hint": "Izberite entitete, da počistite njihovo zgodovino ali jih izključite iz snemalnika.",
+        "db_none": "Nobeno stanje ni zabeleženo v 24 urah.",
+        "db_top": "Entitete, ki pišejo največ (24 h)",
+        "db_counted": "prešteto {when}",
+        "db_n_states": "{n} stanj v 24 h"
       }
     },
     "battery_type": {

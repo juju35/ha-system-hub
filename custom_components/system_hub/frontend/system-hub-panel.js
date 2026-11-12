@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.8.0';
+var SYSTEM_HUB_PANEL_VERSION = '1.9.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -23,6 +23,7 @@ var SH_MODULE_ICONS = {
   containers: 'mdi:docker',
   watchdog: 'mdi:shield-search',
   marketplace: 'mdi:storefront-outline',
+  database: 'mdi:database-outline',
   backups: 'mdi:backup-restore',
   logs: 'mdi:text-box-search-outline',
   silent: 'mdi:access-point-off',
@@ -35,6 +36,7 @@ var SH_MODULE_ICONS = {
 // The modules (their names when the translations are not loaded yet; the panel shows tab_<module>)
 var SH_MODULE_NAMES = {
   containers: 'Containers',
+  database: 'Database',
   watchdog: 'Watchdog',
   marketplace: 'Marketplace',
   backups: 'Backups',
@@ -47,7 +49,7 @@ var SH_MODULE_NAMES = {
 };
 // The tabs under the toolbar: Status, one per group of modules (its modules as sub-tabs), Settings last
 var SH_GROUPS = {
-  system: ['system', 'containers'],
+  system: ['system', 'containers', 'database'],
   reliability: ['logs', 'watchdog', 'automations'],
   maintenance: ['marketplace', 'backups', 'git_sync'],
   devices: ['silent', 'batteries', 'orphans'],
@@ -724,6 +726,15 @@ class SystemHubPanel extends HTMLElement {
     .lgentry .s, .lgentry summary { font-size:12px; color:var(--secondary-text-color); }
     .lgentry summary { cursor:pointer; }
     .lgmsg { font-family:var(--code-font-family, monospace); font-size:13px; white-space:pre-wrap; word-break:break-word; }
+    .dbrow { width:100%; border:0; background:none; font:inherit; color:inherit; text-align:left; cursor:pointer; }
+    .dbrow.on { background:rgba(var(--rgb-primary-color, 3,169,244), .08); }
+    .dbrow .who { flex:1; min-width:0; }
+    .dbbar { height:4px; margin-top:6px; border-radius:2px; background:var(--divider-color, rgba(127,127,127,.2)); overflow:hidden; }
+    .dbbar span { display:block; height:100%; background:var(--primary-color); }
+    .dbcount { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+    .dbpick { padding:8px 16px 14px; display:flex; flex-direction:column; gap:8px; }
+    .dbyaml { display:flex; gap:8px; align-items:flex-start; }
+    .dbyaml pre { flex:1; margin:0; }
     .lgpre { margin:6px 0 0; padding:10px; border-radius:8px; overflow-x:auto; font-size:12px; background:var(--secondary-background-color, rgba(127,127,127,.08)); }
     .bkdays { display:flex; flex-wrap:wrap; gap:5px; }
     .bkday { width:20px; height:20px; border-radius:5px; background:var(--divider-color, rgba(127,127,127,.2)); }
@@ -1076,8 +1087,10 @@ class SystemHubPanel extends HTMLElement {
       if (this._state?.orphans && (this._routeTab || this._tab) === 'orphans') await this._orphLoad();
       // The log, for the Logs tab and the Status tab: read again every minute at most
       if (this._state?.logs) await this._lgLoad();
+      if (this._state?.database) await this._dbLoad();
       // The Backups tab shown: Home Assistant's backups, read again every minute at most
       if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
+      this._reportTone();
       clearTimeout(this._retry);
     } catch (err) {
       // Home Assistant restarting, the connection lost (the app back from the background): what is shown stays, read
@@ -1221,6 +1234,8 @@ class SystemHubPanel extends HTMLElement {
   }
 
   _render() {
+    // Read for the sidebar icon only (system-hub-icons.js): nothing shown
+    if (this._headless) return;
     this._renderShell();
     var root = this.shadowRoot;
     if (this._routeTab && this._state) {
@@ -1287,6 +1302,7 @@ class SystemHubPanel extends HTMLElement {
       watchdog: () => this._watchdog(),
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
+      database: () => this._database(),
       logs: () => this._logs(),
       silent: () => this._silent(),
       batteries: () => this._batteries(),
@@ -2203,6 +2219,104 @@ class SystemHubPanel extends HTMLElement {
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:archive-outline"></ha-icon><span class="lname">${shEsc(this._t('bk_list'))}</span><span class="muted">${bk.backups.length}</span></div>${list || `<div class="item"><div class="who"><div class="s">${shEsc(this._t('bk_none'))}</div></div></div>`}</ha-card>`;
   }
 
+  // The recorder's database (system_hub/database): read every 5 minutes at most; the server counts the states once an
+  // hour, force counts them again
+  async _dbLoad(force, recount) {
+    if (!this._hass?.callWS || (!force && this._db?.at && Date.now() - this._db.at < 300000)) return;
+    this._db = { ...(this._db || {}), at: Date.now() };
+    if (recount) this._busy.db_refresh = true;
+    try {
+      this._db = { data: await this._hass.callWS({ type: 'system_hub/database', force: Boolean(recount) }), at: Date.now(), error: null };
+    } catch (err) {
+      this._db = { ...this._db, error: shErr(err) };
+    }
+    delete this._busy.db_refresh;
+    if (this._tab === 'database' || recount) this._render();
+  }
+
+  // The size against the limit set: bad beyond it, warn from 80 %
+  _dbTone(size) {
+    var max = (this._state.database?.max_size ?? 2) * 1073741824;
+    return typeof size !== 'number' ? '' : size > max ? 'bad' : size > max * 0.8 ? 'warn' : 'good';
+  }
+
+  // The lines to add to configuration.yaml so that the recorder no longer records the entities chosen
+  _dbYaml(entities) {
+    return ['recorder:', '  exclude:', '    entities:', ...entities.map((e) => `      - ${e}`)].join('\n');
+  }
+
+  async _dbCopy() {
+    try {
+      await navigator.clipboard.writeText(this._dbYaml([...(this._dbSel || [])]));
+      this._toast(this._t('db_copied'));
+    } catch (err) {
+      this._messages.db = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+      this._render();
+    }
+  }
+
+  // Database: its size, its retention, the states of the day; the entities that wrote the most, to purge their history
+  // or to leave out of the recorder; Purge and repack
+  _database() {
+    var data = this._db?.data;
+    if (!data) {
+      if (this._db?.error) {
+        return `<ha-card class="note error" role="alert">${shEsc(this._t('failed', { error: this._db.error }))}
+          <button class="act" data-action="db_refresh"><ha-icon icon="mdi:refresh"></ha-icon>${shEsc(this._t('refresh'))}</button></ha-card>`;
+      }
+      if (!this._db) this._dbLoad();
+      return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
+    }
+    var max = this._state.database?.max_size ?? 2;
+    var sel = (this._dbSel ??= new Set());
+    var top = data.top || [];
+    for (var id of [...sel]) if (!top.some((e) => e.entity_id === id)) sel.delete(id);
+    var tone = this._dbTone(data.size);
+    var tiles = [
+      this._tile('mdi:database-outline', shEsc(typeof data.size === 'number' ? shBytes(data.size) : '—'), this._t('db_size'), tone, {
+        title: typeof data.size === 'number' ? this._t('db_limit', { n: max }) : this._t('db_no_size'),
+      }),
+      this._tile('mdi:calendar-range', shEsc(this._t('db_days', { n: data.keep_days })), this._t(data.auto_purge ? 'db_retention' : 'db_no_auto_purge'), data.auto_purge ? '' : 'warn'),
+      this._tile('mdi:chart-timeline-variant', `<b>${(data.total_day ?? 0).toLocaleString(this._hass?.language)}</b>`, this._t('db_states_day'), ''),
+      this._tile('mdi:database-cog-outline', shEsc(data.engine === 'sqlite' ? 'SQLite' : data.engine === 'postgresql' ? 'PostgreSQL' : data.engine === 'mysql' ? 'MariaDB / MySQL' : data.engine), this._t('db_engine'), ''),
+    ];
+    var confirm =
+      this._confirm === 'db_repack'
+        ? `<div class="confirm" role="alertdialog">${shEsc(this._t('db_repack_confirm', { n: data.keep_days }))}
+          ${this._button('db_repack', 'mdi:database-refresh-outline', this._t('db_repack'))}${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
+        : '';
+    var actions = `<div class="actions">${tone === 'bad' ? `<span class="msg warn-text">${shEsc(this._t('db_over', { n: max }))}</span>` : ''}${this._message('db')}
+      <span class="grow"></span>
+      ${this._button('db_refresh', 'mdi:refresh', this._t('db_recount'), { quiet: true, busy: this._busy.db_refresh })}
+      ${this._button('db_repack_confirm', 'mdi:database-refresh-outline', this._t('db_repack'), { quiet: true, busy: this._busy.db_repack })}${this._configure()}</div>${confirm}`;
+    var total = data.total_day || 0;
+    var rows = top
+      .map((e) => {
+        var on = sel.has(e.entity_id);
+        var share = total ? Math.round((e.count / total) * 100) : 0;
+        return `<button class="item dbrow${on ? ' on' : ''}" data-action="db_pick" data-entity="${shEsc(e.entity_id)}" aria-pressed="${on}">
+          <ha-icon icon="mdi:checkbox-${on ? 'marked' : 'blank-outline'}"></ha-icon>
+          <div class="who"><div class="n">${shEsc(e.name)}${e.excluded ? ` <span class="pill">${shEsc(this._t('db_excluded'))}</span>` : ''}</div>
+            <div class="s">${shEsc(e.entity_id)}</div><div class="dbbar"><span style="width:${Math.max(share, 1)}%"></span></div></div>
+          <span class="dbcount"><b>${e.count.toLocaleString(this._hass?.language)}</b><span class="s">${share} %</span></span></button>`;
+      })
+      .join('');
+    var chosen = [...sel];
+    var purge =
+      this._confirm === 'db_purge'
+        ? `<div class="confirm" role="alertdialog">${shEsc(this._t('db_purge_confirm', { n: chosen.length }))}
+          ${this._button('db_purge', 'mdi:delete-clock-outline', this._t('db_purge'))}${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
+        : '';
+    var picked = chosen.length
+      ? `<div class="dbpick"><div class="actions">${this._button('db_purge_confirm', 'mdi:delete-clock-outline', `${this._t('db_purge')} (${chosen.length})`, { busy: this._busy.db_purge })}</div>${purge}
+        <div class="s">${shEsc(this._t('db_exclude'))}</div>
+        <div class="dbyaml"><pre class="lgpre">${shEsc(this._dbYaml(chosen))}</pre>${this._button('db_copy', 'mdi:content-copy', this._t('db_copy'), { quiet: true })}</div></div>`
+      : `<div class="item"><div class="who"><div class="s">${shEsc(this._t(top.length ? 'db_pick_hint' : 'db_none'))}</div></div></div>`;
+    return `<div class="tiles">${tiles.join('')}</div>${actions}
+      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:chart-bar"></ha-icon><span class="lname">${shEsc(this._t('db_top'))}</span>
+        <span class="muted">${shEsc(this._t('db_counted', { when: this._rel(new Date(data.counted_at * 1000).toISOString()) }))}</span></div>${rows}${picked}</ha-card>`;
+  }
+
   // The updates outside the Marketplace: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and services;
   // one card each, installed one at a time with Home Assistant's update.install, a backup first when chosen
   _sysUpdates(data) {
@@ -2877,6 +2991,29 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'sl_ignore') return this._slIgnore(button.dataset.device, button.dataset.name);
+    if (action === 'db_pick') {
+      var picked = (this._dbSel ??= new Set());
+      if (picked.has(button.dataset.entity)) picked.delete(button.dataset.entity);
+      else picked.add(button.dataset.entity);
+      if (this._confirm === 'db_purge') this._confirm = null;
+      return this._render();
+    }
+    if (action === 'db_refresh') return this._dbLoad(true, true);
+    if (action === 'db_copy') return this._dbCopy();
+    if (action === 'db_purge_confirm' || action === 'db_repack_confirm') {
+      this._confirm = action.replace('_confirm', '');
+      return this._render();
+    }
+    if (action === 'db_purge') {
+      this._confirm = null;
+      var entities = [...(this._dbSel || [])];
+      this._dbSel = new Set();
+      return this._run('purge_entities', 'db', { entity_id: entities, keep_days: 0 }, () => this._dbLoad(true, true), 'recorder', 'db_purge');
+    }
+    if (action === 'db_repack') {
+      this._confirm = null;
+      return this._run('purge', 'db', { keep_days: this._db?.data?.keep_days ?? 10, repack: true }, () => this._dbLoad(true, true), 'recorder', 'db_repack');
+    }
     if (action === 'bk_now') return this._run('create_automatic', 'bk', {}, () => this._bkLoad(true), 'backup', 'bk_now');
     if (action === 'upd_backup') {
       this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));
@@ -3441,6 +3578,7 @@ var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   backups: ['backups'],
+  database: ['database'],
   logs: ['logs'],
   silent: ['silent'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
@@ -3890,6 +4028,21 @@ var SH_STATUS_METHODS = {
         join([...others, ...repos.map((u) => `${u.title} ${u.latest}`)]),
       ];
     }
+    if (tab === 'database') {
+      var db = this._db?.data;
+      if (!s.database || !db) return null;
+      var dbTone = this._dbTone(db.size);
+      return [
+        dbTone === 'bad' ? 'warn' : dbTone || 'good',
+        typeof db.size === 'number' ? shBytes(db.size) : this._t('db_days', { n: db.keep_days }),
+        join([
+          dbTone === 'bad' ? this._t('db_over', { n: s.database.max_size }) : '',
+          this._t('db_days', { n: db.keep_days }),
+          this._t('db_n_states', { n: (db.total_day ?? 0).toLocaleString(this._hass?.language) }),
+          db.top?.[0] ? `${db.top[0].name} ×${db.top[0].count}` : '',
+        ]),
+      ];
+    }
     if (tab === 'logs') {
       if (!s.logs || !this._lg?.entries) return null;
       var day = this._lgGroups('error', 'day');
@@ -3984,7 +4137,8 @@ var SH_STATUS_METHODS = {
     return null;
   },
 
-  _status() {
+  // The areas of the Status tab, how many of each tone, the score and its tone (the ring, the emblem, the sidebar icon)
+  _stTone() {
     var areas = this._tabs()
       .filter((t) => t !== 'status' && t !== 'settings')
       .map((tab) => [tab, this._stArea(tab)])
@@ -3992,8 +4146,27 @@ var SH_STATUS_METHODS = {
     var counts = { bad: 0, warn: 0, info: 0, good: 0 };
     for (var [, [tone]] of areas) counts[tone] += 1;
     var score = Math.max(0, 100 - Object.entries(counts).reduce((sum, [tone, k]) => sum + SH_STATUS_WEIGHTS[tone] * k, 0));
+    return { areas, counts, score, tone: score >= 80 ? 'good' : score >= 50 ? 'warn' : 'bad' };
+  },
+
+  // The sidebar icon follows the Status tab: its tone sent when the sidebar shows another one
+  async _reportTone() {
+    if (!this._state?.loaded || !this._hass?.callWS) return;
+    var tone = this._stTone().tone;
+    var shown = this._hass.panels?.['system-hub']?.icon;
+    if (!shown || shown === `system-hub:${tone}` || this._toneSending === tone) return;
+    this._toneSending = tone;
+    try {
+      await this._hass.callWS({ type: 'system_hub/sidebar_icon', tone });
+    } catch (_err) {
+      // sent again with the next read
+    }
+    this._toneSending = null;
+  },
+
+  _status() {
+    var { areas, counts, score, tone: ringTone } = this._stTone();
     var points = counts.bad + counts.warn + counts.info;
-    var ringTone = score >= 80 ? 'good' : score >= 50 ? 'warn' : 'bad';
     var r = 84;
     var circ = 2 * Math.PI * r;
     var core = (this._state.updates || []).find((u) => u.key === 'core');

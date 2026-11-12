@@ -6,6 +6,7 @@
         "description": "Vælg de moduler, der skal slås til. Hvert modul indstilles under indstillingerne.",
         "data": {
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logfiler",
           "watchdog": "Vagtpost",
           "marketplace": "Opdateringer",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
+          "database": "Recorderens database: størrelse, opbevaring, de entiteter der skriver mest; slet deres historik, udeluk dem, ryd op og komprimer. Ingen egne entiteter.",
           "logs": "Home Assistants log grupperet efter integration: fejl og advarsler, hvor mange gange de kom, deres traceback; genindlæs en integration, ignorer en besked. Ingen egne entiteter.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Moduler",
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logfiler",
           "watchdog": "Vagtpost",
           "watchdog_add_power_cycle": "Vagtpost: Tilføj genstart via stik",
@@ -96,6 +99,7 @@
         "description": "Slå moduler til eller fra. Et modul, der er slået fra, stopper sine kontroller, og dets enheder fjernes; dets indstillinger bevares.",
         "data": {
           "containers": "Containers",
+          "database": "Database",
           "logs": "Logfiler",
           "watchdog": "Vagtpost",
           "marketplace": "Opdateringer",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
+          "database": "Recorderens database: størrelse, opbevaring, de entiteter der skriver mest; slet deres historik, udeluk dem, ryd op og komprimer. Ingen egne entiteter.",
           "logs": "Home Assistants log grupperet efter integration: fejl og advarsler, hvor mange gange de kom, deres traceback; genindlæs en integration, ignorer en besked. Ingen egne entiteter.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
@@ -130,6 +135,15 @@
           "notify": "Giv besked, når en container, der burde køre (en tilføjelse startet ved opstart), stopper, og når den er tilbage.",
           "notify_services": "Send også hver notifikation med disse handlinger (notify.mobile_app_…). Der oprettes altid en vedvarende notifikation.",
           "stoppable_processes": "System Monitor-processer, der må være stoppet: tæller ikke som et problem på fanen Status og vises gråt."
+        }
+      },
+      "database": {
+        "title": "Database",
+        "data": {
+          "max_size": "Størrelse der giver en advarsel"
+        },
+        "data_description": {
+          "max_size": "Over denne størrelse viser fanen Status en advarsel (kun SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Genindlæs",
         "lg_traceback": "Traceback",
         "lg_none": "Ingen advarsler eller fejl i denne periode.",
-        "lg_no_entry": "Ingen post fra denne integration at genindlæse."
+        "lg_no_entry": "Ingen post fra denne integration at genindlæse.",
+        "tab_database": "Database",
+        "db_size": "Størrelse",
+        "db_limit": "Advarer over {n} GiB",
+        "db_no_size": "Størrelse ukendt for denne motor",
+        "db_days": "{n} dage",
+        "db_retention": "Opbevaring",
+        "db_no_auto_purge": "Opbevaring, uden automatisk oprydning",
+        "db_states_day": "Tilstande på 24 t",
+        "db_engine": "Motor",
+        "db_repack": "Ryd op og komprimer",
+        "db_repack_confirm": "Slette historikken ældre end {n} dage og komprimere databasen? Databasen er optaget imens.",
+        "db_over": "Over {n} GiB",
+        "db_recount": "Tæl igen",
+        "db_excluded": "Udelukket",
+        "db_purge": "Slet deres historik",
+        "db_purge_confirm": "Slette hele historikken for de {n} valgte entiteter? Det kan ikke fortrydes.",
+        "db_exclude": "For at stoppe med at gemme dem, tilføj til configuration.yaml:",
+        "db_copy": "Kopiér",
+        "db_copied": "Kopieret",
+        "db_pick_hint": "Vælg entiteter for at slette deres historik eller udelukke dem fra recorderen.",
+        "db_none": "Ingen tilstand gemt på 24 timer.",
+        "db_top": "Entiteter der skriver mest (24 t)",
+        "db_counted": "talt {when}",
+        "db_n_states": "{n} tilstande på 24 t"
       }
     },
     "battery_type": {

@@ -6,6 +6,7 @@
         "description": "Vyberte moduly, které chcete zapnout. Každý modul se nastavuje v možnostech.",
         "data": {
           "containers": "Containers",
+          "database": "Databáze",
           "logs": "Protokoly",
           "watchdog": "Strážce",
           "marketplace": "Aktualizace",
@@ -18,6 +19,7 @@
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
+          "database": "Databáze zapisovače: velikost, uchování, entity, které zapisují nejvíc; vyčistit jejich historii, vyloučit je, vyčistit a zhutnit. Žádné vlastní entity.",
           "logs": "Protokol Home Assistantu seskupený podle integrací: chyby a upozornění, kolikrát přišly, výpis zásobníku; opětovné načtení integrace, ignorování zprávy. Bez vlastních entit.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
@@ -71,6 +73,7 @@
         "menu_options": {
           "modules": "Moduly",
           "containers": "Containers",
+          "database": "Databáze",
           "logs": "Protokoly",
           "watchdog": "Strážce",
           "watchdog_add_power_cycle": "Strážce: Přidat restart přes zásuvku",
@@ -96,6 +99,7 @@
         "description": "Zapněte nebo vypněte moduly. Vypnutý modul zastaví své kontroly a jeho entity jsou odstraněny; jeho nastavení zůstává zachováno.",
         "data": {
           "containers": "Containers",
+          "database": "Databáze",
           "logs": "Protokoly",
           "watchdog": "Strážce",
           "marketplace": "Aktualizace",
@@ -107,6 +111,7 @@
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
+          "database": "Databáze zapisovače: velikost, uchování, entity, které zapisují nejvíc; vyčistit jejich historii, vyloučit je, vyčistit a zhutnit. Žádné vlastní entity.",
           "logs": "Protokol Home Assistantu seskupený podle integrací: chyby a upozornění, kolikrát přišly, výpis zásobníku; opětovné načtení integrace, ignorování zprávy. Bez vlastních entit.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
@@ -130,6 +135,15 @@
           "notify": "Upozornit, když se kontejner, který by měl běžet (doplněk spouštěný při startu), zastaví, a když se vrátí.",
           "notify_services": "Každé oznámení odeslat také pomocí těchto akcí (notify.mobile_app_…). Trvalé oznámení se vytvoří vždy.",
           "stoppable_processes": "Procesy System Monitor, které mohou být zastavené: na kartě Stav se nepočítají jako problém, zobrazí se šedě."
+        }
+      },
+      "database": {
+        "title": "Databáze",
+        "data": {
+          "max_size": "Velikost pro upozornění"
+        },
+        "data_description": {
+          "max_size": "Nad touto velikostí karta Stav zobrazí upozornění (jen SQLite)."
         }
       },
       "logs": {
@@ -1611,7 +1625,31 @@
         "lg_reload": "Znovu načíst",
         "lg_traceback": "Výpis zásobníku",
         "lg_none": "Žádné upozornění ani chyba v tomto období.",
-        "lg_no_entry": "Žádná položka této integrace k opětovnému načtení."
+        "lg_no_entry": "Žádná položka této integrace k opětovnému načtení.",
+        "tab_database": "Databáze",
+        "db_size": "Velikost",
+        "db_limit": "Upozorní nad {n} GiB",
+        "db_no_size": "Velikost neznámá pro tento engine",
+        "db_days": "{n} dní",
+        "db_retention": "Uchování",
+        "db_no_auto_purge": "Uchování, bez automatického čištění",
+        "db_states_day": "Stavy za 24 h",
+        "db_engine": "Engine",
+        "db_repack": "Vyčistit a zhutnit",
+        "db_repack_confirm": "Odstranit historii starší než {n} dní a zhutnit databázi? Databáze je mezitím zaneprázdněná.",
+        "db_over": "Nad {n} GiB",
+        "db_recount": "Přepočítat",
+        "db_excluded": "Vyloučená",
+        "db_purge": "Vyčistit jejich historii",
+        "db_purge_confirm": "Odstranit celou historii {n} vybraných entit? Nelze vrátit.",
+        "db_exclude": "Chcete-li je přestat zaznamenávat, přidejte do configuration.yaml:",
+        "db_copy": "Kopírovat",
+        "db_copied": "Zkopírováno",
+        "db_pick_hint": "Vyberte entity k vyčištění historie nebo vyloučení ze zapisovače.",
+        "db_none": "Žádný stav zaznamenaný za 24 hodin.",
+        "db_top": "Entity, které zapisují nejvíc (24 h)",
+        "db_counted": "spočítáno {when}",
+        "db_n_states": "{n} stavů za 24 h"
       }
     },
     "battery_type": {
