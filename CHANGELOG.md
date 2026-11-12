@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.10.0 - 2026-11-12
+
+### New
+- **Security** module, in the **System** group (Resources · Containers · Database · Security):
+  - **Refused logins** over 7 days by address (Internet or local network, how many, the last one, banned or not), recorded as Home Assistant logs them; **Ignore** an address. Each refusal from the Internet makes a notification (once an hour per address, also to the notify actions chosen), which can be turned off.
+  - **Accounts** with their role, 2FA, local login only, last activity and sessions.
+  - **Long-lived tokens** with their last use and where from, the unused ones flagged (90 days by default); **Revoke** from the panel, asked first.
+  - **Exposure**: external URL over HTTPS, trusted proxies, IP ban, Home Assistant Cloud.
+  - **Add-ons** not protected, with full hardware access or on the host network (Home Assistant OS and Supervised).
+  - **Configuration**: credentials written in clear in the YAML files (the file, the line and the key, never the value).
+  - On the **Status** tab, a problem for refusals from the Internet, recent bans and add-ons not protected; to watch for administrators without 2FA, credentials in clear, an external URL without HTTPS and unused tokens. No entities of its own; on by default.
+
 ## 1.9.0 - 2026-11-12
 
 ### New

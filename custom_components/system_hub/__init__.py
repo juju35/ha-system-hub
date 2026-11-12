@@ -35,6 +35,7 @@ from .const import (
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
+    MODULE_SECURITY,
     MODULE_WATCHDOG,
     MODULES,
 )
@@ -53,6 +54,7 @@ from .orphans import async_setup_orphans
 from .orphans.scanner import OrphanScanner
 from .orphans.services import NO_RELOAD_KEY, async_setup_orphans_services
 from .panel import async_register_panel, async_remove_panel
+from .security import SecurityWatcher
 from .watchdog import async_disable_watchdog, async_remove_watchdog, async_setup_watchdog, async_wait_idle
 from .watchdog.const import ATTR_ENTRY_ID, SERVICE_CHECK, SERVICE_RESET
 from .watchdog.core import IntegrationWatchdog
@@ -87,6 +89,7 @@ class SystemHubData:
     # Every repository of the Git Sync module: the first one (git_sync), then the further ones.
     git_syncs: list[GitSyncCoordinator] = field(default_factory=list)
     orphans: OrphanScanner | None = None
+    security: SecurityWatcher | None = None
 
 
 type SystemHubConfigEntry = ConfigEntry[SystemHubData]
@@ -345,6 +348,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
             _LOGGER.warning("Git Sync module turned on without a repository: set it up in Configure → Git Sync")
     if MODULE_ORPHANS in modules:
         data.orphans = await async_setup_orphans(hass, entry, module_options(entry, MODULE_ORPHANS))
+    if MODULE_SECURITY in modules:
+        data.security = SecurityWatcher(hass, module_options(entry, MODULE_SECURITY))
+        await data.security.async_start()
     entry.runtime_data = data
     # Added again after a removal (which drops the panel and the cards) without a restart: they come back.
     await async_register_panel(hass)
@@ -390,6 +396,8 @@ def _async_remove_disabled(hass: HomeAssistant, entry: ConfigEntry, modules: lis
 async def async_unload_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -> bool:
     if (batteries := entry.runtime_data.batteries) is not None:
         await batteries.async_save()
+    if (security := entry.runtime_data.security) is not None:
+        await security.async_stop()
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 

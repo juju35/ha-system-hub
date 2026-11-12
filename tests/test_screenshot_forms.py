@@ -30,6 +30,7 @@ STEPS = (
     "system",
     "containers",
     "database",
+    "security",
     "logs",
     "watchdog",
     "watchdog_add_power_cycle",

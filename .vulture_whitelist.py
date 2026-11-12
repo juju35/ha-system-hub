@@ -77,6 +77,7 @@ _.async_step_git_sync_other  # unused method (custom_components/system_hub/confi
 _.async_step_git_sync_remove_repository  # unused method (custom_components/system_hub/config_flow.py:344)
 _.async_step_logs  # unused method (custom_components/system_hub/config_flow.py)
 _.async_step_database  # unused method (custom_components/system_hub/config_flow.py)
+_.async_step_security  # unused method (custom_components/system_hub/config_flow.py)
 _.async_step_silent  # unused method (custom_components/system_hub/config_flow.py)
 _.async_step_backups  # unused method (custom_components/system_hub/config_flow.py:574)
 _.async_step_automations  # unused method (custom_components/system_hub/config_flow.py:344)

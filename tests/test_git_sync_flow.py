@@ -32,6 +32,7 @@ ONLY_GIT_SYNC = {
     "containers": False,
     "logs": False,
     "database": False,
+    "security": False,
     "watchdog": False,
     "marketplace": False,
     "batteries": False,

@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.9.0';
+var SYSTEM_HUB_PANEL_VERSION = '1.10.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -24,6 +24,7 @@ var SH_MODULE_ICONS = {
   watchdog: 'mdi:shield-search',
   marketplace: 'mdi:storefront-outline',
   database: 'mdi:database-outline',
+  security: 'mdi:shield-lock-outline',
   backups: 'mdi:backup-restore',
   logs: 'mdi:text-box-search-outline',
   silent: 'mdi:access-point-off',
@@ -37,6 +38,7 @@ var SH_MODULE_ICONS = {
 var SH_MODULE_NAMES = {
   containers: 'Containers',
   database: 'Database',
+  security: 'Security',
   watchdog: 'Watchdog',
   marketplace: 'Marketplace',
   backups: 'Backups',
@@ -49,7 +51,7 @@ var SH_MODULE_NAMES = {
 };
 // The tabs under the toolbar: Status, one per group of modules (its modules as sub-tabs), Settings last
 var SH_GROUPS = {
-  system: ['system', 'containers', 'database'],
+  system: ['system', 'containers', 'database', 'security'],
   reliability: ['logs', 'watchdog', 'automations'],
   maintenance: ['marketplace', 'backups', 'git_sync'],
   devices: ['silent', 'batteries', 'orphans'],
@@ -726,6 +728,10 @@ class SystemHubPanel extends HTMLElement {
     .lgentry .s, .lgentry summary { font-size:12px; color:var(--secondary-text-color); }
     .lgentry summary { cursor:pointer; }
     .lgmsg { font-family:var(--code-font-family, monospace); font-size:13px; white-space:pre-wrap; word-break:break-word; }
+    .scnote { font-size:12.5px; color:var(--secondary-text-color); }
+    .list .scnote { padding:6px 14px 12px; }
+    .sctwo { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:12px; align-items:start; }
+    .list code { font-family:var(--code-font-family, monospace); font-size:12px; }
     .dbrow { width:100%; border:0; background:none; font:inherit; color:inherit; text-align:left; cursor:pointer; }
     .dbrow.on { background:rgba(var(--rgb-primary-color, 3,169,244), .08); }
     .dbrow .who { flex:1; min-width:0; }
@@ -1088,6 +1094,7 @@ class SystemHubPanel extends HTMLElement {
       // The log, for the Logs tab and the Status tab: read again every minute at most
       if (this._state?.logs) await this._lgLoad();
       if (this._state?.database) await this._dbLoad();
+      if (this._state?.security) await this._scLoad();
       // The Backups tab shown: Home Assistant's backups, read again every minute at most
       if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
       this._reportTone();
@@ -1303,6 +1310,7 @@ class SystemHubPanel extends HTMLElement {
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
       database: () => this._database(),
+      security: () => this._security(),
       logs: () => this._logs(),
       silent: () => this._silent(),
       batteries: () => this._batteries(),
@@ -2317,6 +2325,202 @@ class SystemHubPanel extends HTMLElement {
         <span class="muted">${shEsc(this._t('db_counted', { when: this._rel(new Date(data.counted_at * 1000).toISOString()) }))}</span></div>${rows}${picked}</ha-card>`;
   }
 
+  // Security (system_hub/security): read every 5 minutes at most; the add-ons and the YAML files are read again by the
+  // server once an hour, force (Scan now) reads them at once
+  async _scLoad(force, rescan) {
+    if (!this._hass?.callWS || (!force && this._sc?.at && Date.now() - this._sc.at < 300000)) return;
+    this._sc = { ...(this._sc || {}), at: Date.now() };
+    if (rescan) this._busy.sc_scan = true;
+    try {
+      this._sc = { data: await this._hass.callWS({ type: 'system_hub/security', force: Boolean(rescan) }), at: Date.now(), error: null };
+    } catch (err) {
+      this._sc = { ...this._sc, error: shErr(err) };
+    }
+    delete this._busy.sc_scan;
+    if (this._tab === 'security' || rescan) this._render();
+  }
+
+  // What needs a look: refusals from the Internet in 24 h, recent bans, add-ons not protected (bad); administrators
+  // without 2FA, credentials in clear, an external URL without HTTPS, unused tokens (warn)
+  _scSummary() {
+    var d = this._sc?.data;
+    if (!d) return null;
+    var day = Date.now() / 1000 - 86400;
+    var refused = (d.refused || []).filter((r) => r.internet && !r.ignored && r.day > 0);
+    var bans = (d.bans || []).filter((b) => b.at > day);
+    var unprotected = (d.addons || []).filter((a) => !a.protected);
+    var noMfa = (d.users || []).filter((u) => u.admin && u.active && !u.mfa);
+    var admins = (d.users || []).filter((u) => u.admin && u.active);
+    var unused = (d.tokens || []).filter((t) => t.unused);
+    var clear = d.config || [];
+    var http = d.exposure?.https === false;
+    var bad = refused.length + bans.length + unprotected.length;
+    var warn = noMfa.length + unused.length + clear.length + (http ? 1 : 0);
+    return { refused, bans, unprotected, noMfa, admins, unused, clear, http, bad, warn, tone: bad ? 'bad' : warn ? 'warn' : 'good' };
+  }
+
+  _scWhen(ts) {
+    return ts ? this._rel(new Date(ts * 1000).toISOString()) : this._t('never');
+  }
+
+  async _scIgnore(ip, ignore) {
+    this._busy[`sc_ignore:${ip}`] = true;
+    this._render();
+    try {
+      await this._hass.callWS({ type: 'system_hub/security_ignore', ip, ignore });
+      await this._scLoad(true);
+    } catch (err) {
+      this._messages.sc = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    delete this._busy[`sc_ignore:${ip}`];
+    await this._load();
+  }
+
+  async _scRevoke(token) {
+    this._confirm = null;
+    this._busy[`sc_revoke:${token}`] = true;
+    this._render();
+    try {
+      await this._hass.callWS({ type: 'system_hub/security_revoke', token_id: token });
+      this._toast(this._t('done'));
+      await this._scLoad(true);
+    } catch (err) {
+      this._messages.sc = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    delete this._busy[`sc_revoke:${token}`];
+    this._render();
+  }
+
+  _scList(icon, title, count, rows, note) {
+    return `<ha-card class="list"><div class="lhead"><ha-icon icon="${icon}"></ha-icon><span class="lname">${shEsc(title)}</span><span class="muted">${shEsc(count)}</span></div>${rows}${
+      note ? `<div class="scnote">${note}</div>` : ''
+    }</ha-card>`;
+  }
+
+  _scRow(icon, name, sub, tone = '', end = '') {
+    return `<div class="item${tone ? ` ${tone}` : ''}"><ha-icon icon="${icon}"></ha-icon><div class="who"><div class="n">${name}</div><div class="s">${sub}</div></div>${end}</div>`;
+  }
+
+  // Security: refused logins, accounts, long-lived tokens (Revoke), exposure, add-ons and credentials in clear
+  _security() {
+    var d = this._sc?.data;
+    if (!d) {
+      if (this._sc?.error) {
+        return `<ha-card class="note error" role="alert">${shEsc(this._t('failed', { error: this._sc.error }))}
+          <button class="act" data-action="sc_scan"><ha-icon icon="mdi:refresh"></ha-icon>${shEsc(this._t('refresh'))}</button></ha-card>`;
+      }
+      if (!this._sc) this._scLoad();
+      return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
+    }
+    var sum = this._scSummary();
+    var pill = (text, tone = '') => `<span class="pill${tone ? ` ${tone}` : ''}">${shEsc(text)}</span>`;
+    var day = (d.refused || []).filter((r) => !r.ignored).reduce((n, r) => n + r.day, 0);
+    var ex = d.exposure || {};
+    var tiles = [
+      this._tile('mdi:shield-alert-outline', `<b>${day}</b>`, this._t('sc_refused_day'), sum.refused.length || sum.bans.length ? 'bad' : day ? 'warn' : 'good'),
+      this._tile('mdi:account-key-outline', shEsc(this._t('sc_n_of', { n: sum.noMfa.length, total: sum.admins.length })), this._t('sc_admins_no_mfa'), sum.noMfa.length ? 'warn' : 'good'),
+      this._tile(
+        'mdi:key-chain-variant',
+        `<b>${(d.tokens || []).length}</b>${sum.unused.length ? ` · ${shEsc(this._t('sc_tokens_unused', { n: sum.unused.length }))}` : ''}`,
+        this._t('sc_tokens'),
+        sum.unused.length ? 'warn' : '',
+      ),
+      this._tile(
+        'mdi:web',
+        shEsc(ex.external_url ? (ex.https ? 'HTTPS' : 'HTTP') : '—'),
+        ex.external_url ? ex.external_url.replace(/^https?:\/\//, '') : this._t('sc_no_external'),
+        ex.external_url ? (ex.https ? 'good' : 'warn') : '',
+      ),
+    ];
+    var actions = `<div class="actions">${this._message('sc')}<span class="grow"></span>
+      <span class="scnote">${shEsc(this._t('sc_scanned', { when: this._scWhen(d.scanned_at) }))}</span>
+      ${this._button('sc_scan', 'mdi:magnify-scan', this._t('sc_scan'), { quiet: true, busy: this._busy.sc_scan })}${this._configure()}</div>`;
+
+    var banned = new Set((d.bans || []).map((b) => b.ip));
+    var refused = (d.refused || [])
+      .map((r) => {
+        var tone = r.ignored ? '' : banned.has(r.ip) ? 'bad' : r.internet ? 'warn' : '';
+        var sub = [r.host, this._t(r.internet ? 'sc_internet' : 'sc_local'), this._t('sc_attempts', { n: r.count }), this._t('sc_last', { when: this._scWhen(r.last) }), r.url].filter(Boolean);
+        var end = banned.has(r.ip) ? pill(this._t('sc_banned'), 'bad') : r.ignored ? pill(this._t('sc_ignored')) : r.internet ? pill(this._t('sc_internet'), 'warn') : '';
+        var button = this._button('sc_ignore', r.ignored ? 'mdi:eye-outline' : 'mdi:eye-off-outline', this._t(r.ignored ? 'sc_unignore' : 'sc_ignore'), {
+          quiet: true,
+          busy: this._busy[`sc_ignore:${r.ip}`],
+          data: { ip: r.ip, ignore: String(!r.ignored) },
+        });
+        return this._scRow(r.internet ? 'mdi:shield-alert-outline' : 'mdi:lan', shEsc(r.ip), shEsc(sub.join(' · ')), tone, end + button);
+      })
+      .join('');
+    var banNote = [ex.ip_ban ? this._t('sc_ban_on', { n: ex.login_threshold }) : this._t('sc_ban_off'), (d.bans || []).length ? this._t('sc_n_bans', { n: d.bans.length }) : ''].filter(Boolean).join(' ');
+    var refusedCard = this._scList('mdi:login-variant', this._t('sc_refused'), this._t('sc_days7'), refused || this._scRow('mdi:check-circle-outline', '', shEsc(this._t('sc_none_refused'))), shEsc(banNote));
+
+    var users = (d.users || [])
+      .map((u) => {
+        var role = this._t(u.owner ? 'sc_owner' : u.admin ? 'sc_admin' : 'sc_user');
+        var sub = [role, u.local_only ? this._t('sc_local_only') : '', u.last_used ? this._t('sc_active_when', { when: this._scWhen(u.last_used) }) : this._t('sc_never_active'), this._t('sc_sessions', { n: u.sessions })].filter(Boolean);
+        var warn = u.admin && u.active && !u.mfa;
+        var end = !u.active ? pill(this._t('sc_disabled')) : u.mfa ? pill(this._t('sc_mfa'), 'good') : warn ? pill(this._t('sc_no_mfa'), 'warn') : u.local_only ? pill(this._t('sc_local_pill')) : '';
+        var icon = !u.active ? 'mdi:account-off-outline' : warn ? 'mdi:account-alert-outline' : 'mdi:account-circle-outline';
+        return this._scRow(icon, shEsc(u.name), shEsc(sub.join(' · ')), warn ? 'warn' : '', end);
+      })
+      .join('');
+
+    var tokens = (d.tokens || [])
+      .map((t) => {
+        var used = t.last_used ? (t.last_ip ? this._t('sc_used_from', { when: this._scWhen(t.last_used), ip: t.last_ip }) : this._t('sc_used', { when: this._scWhen(t.last_used) })) : this._t('sc_never_used');
+        var confirm = this._confirm === `sc_revoke:${t.id}`;
+        var end = (t.unused ? pill(this._t('sc_unused'), 'warn') : '') + this._button('sc_revoke_confirm', 'mdi:delete-outline', this._t('sc_revoke'), {
+          quiet: true,
+          busy: this._busy[`sc_revoke:${t.id}`],
+          data: { token: t.id },
+        });
+        var row = this._scRow(t.unused ? 'mdi:key-alert-outline' : 'mdi:key-outline', shEsc(t.name), shEsc([t.user, this._t('sc_created', { when: this._scWhen(t.created) }), used].join(' · ')), t.unused ? 'warn' : '', end);
+        return confirm
+          ? `${row}<div class="confirm" role="alertdialog">${shEsc(this._t('sc_revoke_confirm', { name: t.name }))}${this._button('sc_revoke', 'mdi:delete-outline', this._t('sc_revoke'), { danger: true, data: { token: t.id } })}${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
+          : row;
+      })
+      .join('');
+
+    var check = (ok, title, sub, tone) =>
+      this._scRow(ok === null ? 'mdi:information-outline' : ok ? 'mdi:check-circle-outline' : 'mdi:alert-outline', shEsc(title), shEsc(sub), ok === false ? tone || 'warn' : '', pill(this._t(ok === null ? 'sc_info' : ok ? 'sc_ok' : 'sc_check'), ok === null ? 'info' : ok ? 'good' : tone || 'warn'));
+    var exposure = [
+      ex.external_url ? check(ex.https, this._t(ex.https ? 'sc_https_ok' : 'sc_https_no'), ex.external_url) : check(null, this._t('sc_no_external'), ex.cloud ? this._t('sc_cloud') : ''),
+      check(ex.trusted_proxies?.length ? true : null, this._t(ex.trusted_proxies?.length ? 'sc_proxy' : 'sc_no_proxy'), (ex.trusted_proxies || []).join(', ')),
+      check(ex.ip_ban, this._t('sc_ip_ban'), ex.ip_ban ? this._t('sc_on_n', { n: ex.login_threshold }) : this._t('sc_off')),
+      check(null, this._t('sc_cloud'), this._t(ex.cloud ? 'sc_connected' : 'sc_not_connected')),
+    ].join('');
+
+    var addons = d.addons
+      ? d.addons
+          .filter((a) => !a.protected || a.full_access || a.host_network)
+          .sort((a, b) => a.protected - b.protected || (a.rating ?? 9) - (b.rating ?? 9))
+          .map((a) => {
+            var tone = !a.protected ? 'bad' : a.full_access ? 'warn' : '';
+            var sub = [!a.protected ? this._t('sc_protection_off') : '', a.full_access ? this._t('sc_full_access_s') : '', a.host_network ? this._t('sc_host_network_s') : '', a.rating != null ? this._t('sc_rating', { n: a.rating }) : ''].filter(Boolean);
+            var end = !a.protected ? pill(this._t('sc_unprotected'), 'bad') : a.full_access ? pill(this._t('sc_full_access'), 'warn') : pill(this._t('sc_host_network'), 'info');
+            return this._scRow(!a.protected ? 'mdi:alert-circle-outline' : 'mdi:alert-outline', shEsc(a.name), shEsc(sub.join(' · ')), tone, end);
+          })
+          .join('')
+      : '';
+    var flagged = d.addons ? d.addons.filter((a) => !a.protected || a.full_access || a.host_network).length : 0;
+    var addonsCard = d.addons ? this._scList('mdi:puzzle-outline', this._t('sc_addons'), this._t('sc_addons_ok', { total: d.addons.length, ok: d.addons.length - flagged }), addons) : '';
+
+    var clear = (d.config || [])
+      .map((c) => this._scRow('mdi:form-textbox-password', shEsc(this._t('sc_in_clear')), `<code>${shEsc(c.file)}</code> ${shEsc(this._t('sc_line', { n: c.line }))} · <code>${shEsc(c.key)}</code>`, 'warn', pill('!secret', 'warn')))
+      .join('');
+    var configCard = this._scList(
+      'mdi:file-lock-outline',
+      this._t('sc_config'),
+      String((d.config || []).length),
+      clear || this._scRow('mdi:check-circle-outline', '', shEsc(this._t('sc_config_none'))),
+      clear ? shEsc(this._t('sc_config_note')) : '',
+    );
+
+    return `<div class="tiles">${tiles.join('')}</div>${actions}${refusedCard}
+      ${this._scList('mdi:account-group-outline', this._t('sc_accounts'), String((d.users || []).length), users)}
+      ${(d.tokens || []).length ? this._scList('mdi:key-chain-variant', this._t('sc_tokens'), String(d.tokens.length), tokens, shEsc(this._t('sc_tokens_note'))) : ''}
+      <div class="sctwo">${this._scList('mdi:web', this._t('sc_exposure'), '', exposure)}${addonsCard}</div>${configCard}`;
+  }
+
   // The updates outside the Marketplace: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and services;
   // one card each, installed one at a time with Home Assistant's update.install, a backup first when chosen
   _sysUpdates(data) {
@@ -2991,6 +3195,13 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'sl_ignore') return this._slIgnore(button.dataset.device, button.dataset.name);
+    if (action === 'sc_scan') return this._scLoad(true, true);
+    if (action === 'sc_ignore') return this._scIgnore(button.dataset.ip, button.dataset.ignore !== 'false');
+    if (action === 'sc_revoke_confirm') {
+      this._confirm = `sc_revoke:${button.dataset.token}`;
+      return this._render();
+    }
+    if (action === 'sc_revoke') return this._scRevoke(button.dataset.token);
     if (action === 'db_pick') {
       var picked = (this._dbSel ??= new Set());
       if (picked.has(button.dataset.entity)) picked.delete(button.dataset.entity);
@@ -3579,6 +3790,7 @@ var SH_SETTINGS_STEPS = {
   marketplace: ['marketplace'],
   backups: ['backups'],
   database: ['database'],
+  security: ['security'],
   logs: ['logs'],
   silent: ['silent'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
@@ -4040,6 +4252,23 @@ var SH_STATUS_METHODS = {
           this._t('db_days', { n: db.keep_days }),
           this._t('db_n_states', { n: (db.total_day ?? 0).toLocaleString(this._hass?.language) }),
           db.top?.[0] ? `${db.top[0].name} ×${db.top[0].count}` : '',
+        ]),
+      ];
+    }
+    if (tab === 'security') {
+      var sc = s.security && this._scSummary();
+      if (!sc) return null;
+      var refusedN = sc.refused.reduce((sum, r) => sum + r.day, 0);
+      return [
+        sc.tone,
+        sc.refused.length ? n('sc_n_refused', refusedN) : sc.unprotected.length ? n('sc_n_unprotected', sc.unprotected.length) : sc.warn ? n('sc_n_points', sc.warn) : this._t('sc_all_good'),
+        join([
+          ...sc.refused.slice(0, 2).map((r) => `${r.ip} ×${r.day}`),
+          sc.refused.length && sc.unprotected.length ? n('sc_n_unprotected', sc.unprotected.length) : '',
+          sc.noMfa.length ? n('sc_n_no_mfa', sc.noMfa.length) : '',
+          sc.clear.length ? n('sc_n_in_clear', sc.clear.length) : '',
+          sc.unused.length ? n('sc_n_unused', sc.unused.length) : '',
+          sc.http ? this._t('sc_https_no') : '',
         ]),
       ];
     }

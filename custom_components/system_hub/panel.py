@@ -34,6 +34,7 @@ from .const import (
     MODULE_DATABASE,
     MODULE_GIT_SYNC,
     MODULE_LOGS,
+    MODULE_SECURITY,
     MODULE_SILENT,
     MODULES,
     PANEL_PATH,
@@ -48,6 +49,8 @@ from .logs import CONF_IGNORED_MESSAGES
 from .logs import settings as logs_settings
 from .orphans import panel as orphans_panel
 from .orphans.services import NO_RELOAD_KEY
+from .security import CONF_IGNORED_IPS, security_state
+from .security import settings as security_settings
 from .silent import CONF_IGNORED_DEVICES, silent_state
 from .silent import settings as silent_settings
 
@@ -114,6 +117,9 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_logs_ignore)
         websocket_api.async_register_command(hass, ws_database)
         websocket_api.async_register_command(hass, ws_sidebar_icon)
+        websocket_api.async_register_command(hass, ws_security)
+        websocket_api.async_register_command(hass, ws_security_revoke)
+        websocket_api.async_register_command(hass, ws_security_ignore)
         data["version"] = await hass.async_add_executor_job(_version)
         frontend.add_extra_js_url(hass, f"{STATIC_URL}/{ICONS_MODULE}?v={data['version']}")
         data["panel_registered"] = True
@@ -499,6 +505,9 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     if MODULE_DATABASE in result["modules"]:
         # The tab asks for the database itself (system_hub/database); the state carries the setting
         result["database"] = database_settings(entry.options.get(MODULE_DATABASE))
+    if MODULE_SECURITY in result["modules"]:
+        # The tab asks for the rest itself (system_hub/security)
+        result["security"] = security_settings(entry.options.get(MODULE_SECURITY))
     if MODULE_LOGS in result["modules"]:
         # The panel reads the log itself (system_log/list); the state carries the settings
         result["logs"] = logs_settings(entry.options.get(MODULE_LOGS))
@@ -618,6 +627,61 @@ def ws_sidebar_icon(hass: HomeAssistant, connection: websocket_api.ActiveConnect
     if changed and "version" in data and PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         _add_panel(hass, update=True)
     connection.send_result(msg["id"], {"changed": changed})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "system_hub/security", vol.Optional("force", default=False): bool}
+)
+@websocket_api.async_response
+async def ws_security(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Refused logins, bans, exposure, accounts, long-lived tokens, add-ons and credentials in clear."""
+    entry = _entry(hass)
+    if entry is None or MODULE_SECURITY not in _enabled(entry):
+        connection.send_error(msg["id"], "not_enabled", "The Security module is not turned on")
+        return
+    watcher = getattr(entry.runtime_data, "security", None)
+    result = await security_state(
+        hass, hass.data.setdefault(DOMAIN, {}), watcher, entry.options.get(MODULE_SECURITY), msg["force"]
+    )
+    connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "system_hub/security_revoke", vol.Required("token_id"): str})
+@callback
+def ws_security_revoke(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """Revoke a long-lived access token, of any account (an administrator only); sessions are not revoked here."""
+    from homeassistant.auth.models import TOKEN_TYPE_LONG_LIVED_ACCESS_TOKEN  # noqa: PLC0415
+
+    token = hass.auth.async_get_refresh_token(msg["token_id"])
+    if token is None or token.token_type != TOKEN_TYPE_LONG_LIVED_ACCESS_TOKEN:
+        connection.send_error(msg["id"], "not_found", "No such long-lived access token")
+        return
+    hass.auth.async_remove_refresh_token(token)
+    connection.send_result(msg["id"], {"revoked": msg["token_id"]})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "system_hub/security_ignore",
+        vol.Required("ip"): str,
+        vol.Optional("ignore", default=True): bool,
+    }
+)
+@callback
+def ws_security_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """An address whose refused logins are left out (and not notified), or back in, without a reload."""
+    entry = _entry(hass)
+    if entry is None:
+        connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
+        return
+    current = security_settings(entry.options.get(MODULE_SECURITY))
+    ignored = _ignore(hass, entry, MODULE_SECURITY, current, CONF_IGNORED_IPS, msg["ip"], msg["ignore"])
+    if (watcher := getattr(entry.runtime_data, "security", None)) is not None:
+        watcher.options[CONF_IGNORED_IPS] = ignored
+    connection.send_result(msg["id"], {"ignored": ignored})
 
 
 def _enabled(entry: ConfigEntry) -> list[str]:
