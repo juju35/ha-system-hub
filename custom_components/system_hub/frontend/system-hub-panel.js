@@ -1916,10 +1916,75 @@ class SystemHubPanel extends HTMLElement {
       available.length ? this._t('upd_available', { n: available.length }) : '',
       this._t('upd_uptodate', { system: ok.system ?? 0, addons: ok.addon ?? 0, devices: ok.device ?? 0 }),
     ].filter(Boolean);
-    var head = `<div class="actions"><span class="s grow">${shEsc(summary.join(' · '))}</span>${toggle}</div>${this._message('upd')}`;
+    // Update all: every update of the tab, the Marketplace's included, in the order of _updPlan
+    var plan = this._updPlan();
+    var running = Boolean(this._busy.upd_all);
+    var all = plan.count
+      ? this._button('upd_all_confirm', 'mdi:package-down', `${this._t('install_all')} (${plan.count})`, {
+          busy: running,
+          disabled: this._state.marketplace?.state === 'running' || this._state.marketplace?.installing_updates,
+        })
+      : '';
+    var confirm =
+      this._confirm === 'upd_all'
+        ? `<div class="confirm" role="alertdialog">${shEsc(
+            [this._t('upd_all_confirm', { n: plan.count }), plan.restarts ? this._t('upd_all_restart') : '', plan.osLater ? this._t('upd_all_os_later') : '']
+              .filter(Boolean)
+              .join(' '),
+          )}
+          ${this._button('upd_all', 'mdi:package-down', this._t('install_all'))}
+          ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
+        : '';
+    var head = `<div class="actions"><span class="s grow">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${this._message('upd')}`;
     return `${head}${sections
       .map(([key, items]) => `<h2 class="stsec">${shEsc(this._t(key))}</h2><div class="mkgrid">${items.map((u) => this._mkCard(u, backup)).join('')}</div>`)
       .join('')}`;
+  }
+
+  // Update all, one step after the other: the Marketplace repositories (System Hub's own install, waited for), the
+  // add-ons, the devices and services, the Supervisor, then Home Assistant itself last as it restarts: Core, or OS when
+  // Core is up to date (both would need two restarts, so OS is left for afterwards)
+  _updPlan() {
+    var available = this._state.system_updates?.available || [];
+    var repos = (this._state.marketplace?.list || []).map((u) => u.entity_id);
+    var of = (kind) => available.filter((u) => u.kind === kind);
+    var core = of('core');
+    var last = core.length ? core : of('os');
+    var items = [...of('addon'), ...of('device'), ...of('supervisor'), ...last];
+    return {
+      repos,
+      items,
+      count: repos.length + items.length,
+      restarts: last.length > 0,
+      osLater: core.length > 0 && of('os').length > 0,
+    };
+  }
+
+  async _updAll() {
+    var plan = this._updPlan();
+    var backup = this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install);
+    this._confirm = null;
+    this._busy.upd_all = true;
+    delete this._messages.upd;
+    this._render();
+    try {
+      if (plan.repos.length) {
+        await this._hass.callService(SH_DOMAIN, 'marketplace_install_updates', { entity_id: plan.repos, wait: true, backup });
+      }
+      for (var u of plan.items) {
+        this._busy[`upd_install:${u.entity_id}`] = true;
+        this._render();
+        await this._hass.callService('update', 'install', { entity_id: u.entity_id, ...(backup && u.backup ? { backup: true } : {}) });
+        delete this._busy[`upd_install:${u.entity_id}`];
+      }
+      this._toast(this._t('done'));
+    } catch (err) {
+      this._messages.upd = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    for (var key of Object.keys(this._busy)) if (key.startsWith('upd_install:')) delete this._busy[key];
+    delete this._busy.upd_all;
+    await this._load();
+    this._render();
   }
 
   // One update: its logo (else its initial), the versions and the size of the change, the start of its release notes.
@@ -2486,6 +2551,11 @@ class SystemHubPanel extends HTMLElement {
       this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));
       return this._render();
     }
+    if (action === 'upd_all_confirm') {
+      this._confirm = 'upd_all';
+      return this._render();
+    }
+    if (action === 'upd_all') return this._updAll();
     if (action === 'upd_confirm') {
       this._confirm = `upd:${button.dataset.entity}`;
       return this._render();

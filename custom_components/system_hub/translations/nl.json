@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Herstart de host",
         "upd_confirm": "{name} {version} installeren?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "De {n} updates na elkaar installeren?",
+        "upd_all_restart": "Home Assistant herstart aan het einde.",
+        "upd_all_os_later": "Home Assistant OS blijft voor daarna: installeer het zodra Home Assistant terug is."
       }
     },
     "battery_type": {

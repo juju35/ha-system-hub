@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Újraindítja a gazdagépet",
         "upd_confirm": "Telepíti: {name} {version}?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Telepíti a(z) {n} frissítést egymás után?",
+        "upd_all_restart": "A Home Assistant a végén újraindul.",
+        "upd_all_os_later": "A Home Assistant OS későbbre marad: telepítse, amikor a Home Assistant újra elérhető."
       }
     },
     "battery_type": {

@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Znova zažene gostitelja",
         "upd_confirm": "Namestim {name} {version}?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Namestim {n} posodobitev eno za drugo?",
+        "upd_all_restart": "Home Assistant se na koncu znova zažene.",
+        "upd_all_os_later": "Home Assistant OS ostane za pozneje: namestite ga, ko se Home Assistant vrne."
       }
     },
     "battery_type": {

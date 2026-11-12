@@ -4,6 +4,7 @@
 
 ### New
 - **Updates** tab: every update, not only the Marketplace's. **Home Assistant** (Core, Supervisor, OS), **Add-ons** and **Devices and services** (every other update entity: the firmware of a Zigbee, ESPHome or Matter device, an integration's software…) come first, a card each with its versions, the size of the change, the start of its release notes and what it restarts. **Install** asks first and runs Home Assistant's `update.install`, with a backup first when **Back up before installing** is ticked and the update can make one; the box starts as the Updates settings' **Back up before installing**. A line counts the ones up to date. The Marketplace repositories follow, as before.
+- **Update all** at the top of the **Updates** tab, asked first: every update of the tab one after the other — the Marketplace repositories, the add-ons, the devices and services, the Supervisor, then Home Assistant itself last as it restarts (Core, or OS when Core is up to date; with both, OS is left for afterwards).
 - **Status** tab: the **Updates** tile counts the add-ons and devices too, not only Core and OS.
 
 ## 1.5.0 - 2026-11-12

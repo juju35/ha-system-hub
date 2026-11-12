@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Επανεκκινεί τον κεντρικό υπολογιστή",
         "upd_confirm": "Εγκατάσταση {name} {version};",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Εγκατάσταση των {n} ενημερώσεων τη μία μετά την άλλη;",
+        "upd_all_restart": "Το Home Assistant επανεκκινείται στο τέλος.",
+        "upd_all_os_later": "Το Home Assistant OS μένει για μετά: εγκαταστήστε το όταν επιστρέψει το Home Assistant."
       }
     },
     "battery_type": {

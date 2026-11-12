@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Рестартира хоста",
         "upd_confirm": "Да се инсталира ли {name} {version}?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Да се инсталират ли {n} актуализации една след друга?",
+        "upd_all_restart": "Home Assistant се рестартира накрая.",
+        "upd_all_os_later": "Home Assistant OS остава за после: инсталирайте го, след като Home Assistant се върне."
       }
     },
     "battery_type": {

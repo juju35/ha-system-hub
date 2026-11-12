@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Genstarter værten",
         "upd_confirm": "Installér {name} {version}?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Installér de {n} opdateringer efter hinanden?",
+        "upd_all_restart": "Home Assistant genstarter til sidst.",
+        "upd_all_os_later": "Home Assistant OS venter til bagefter: installér det, når Home Assistant er tilbage."
       }
     },
     "battery_type": {

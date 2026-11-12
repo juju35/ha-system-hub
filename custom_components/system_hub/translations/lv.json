@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Restartē resursdatoru",
         "upd_confirm": "Instalēt {name} {version}?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Instalēt {n} atjauninājumus vienu pēc otra?",
+        "upd_all_restart": "Beigās Home Assistant tiek restartēts.",
+        "upd_all_os_later": "Home Assistant OS paliek vēlākam: instalējiet to, kad Home Assistant atkal darbojas."
       }
     },
     "battery_type": {

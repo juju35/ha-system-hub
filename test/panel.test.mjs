@@ -343,6 +343,41 @@ test('updates tab: Home Assistant, the add-ons and the devices before the Market
   assert.equal(p._stArea('marketplace')[1], '3 available');
 });
 
+test('updates tab: Update all, the Marketplace first and Home Assistant itself last, asked first', async () => {
+  const sys = (entity_id, kind, backup = true) => ({ entity_id, kind, title: entity_id, installed: '1', latest: '2', backup });
+  const state = {
+    loaded: true,
+    modules: ['marketplace'],
+    tabs: ['marketplace'],
+    marketplace: { state: 'idle', list: [{ entity_id: 'update.mushroom', title: 'Mushroom' }], backup_before_install: false },
+    system_updates: {
+      available: [sys('update.core', 'core'), sys('update.os', 'os'), sys('update.sup', 'supervisor'), sys('update.mqtt', 'addon'), sys('update.plug', 'device', false)],
+      up_to_date: {},
+    },
+  };
+  const p = panel(state, 'marketplace');
+  // OS left out while Core waits: two restarts
+  assert.match(p._content(), /data-action="upd_all_confirm"[^>]*>[\s\S]*?Update all \(5\)/);
+  p._render = () => {};
+  const click = (action) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action } } : null) } });
+  click('upd_all_confirm');
+  assert.match(p._content(), /Install the 5 updates one after the other\? Home Assistant restarts at the end\. Home Assistant OS is left for afterwards/);
+  const calls = [];
+  p._hass.callService = async (domain, service, data) => calls.push(`${domain}.${service} ${data.entity_id}${data.wait ? ' wait' : ''}`);
+  p._hass.callWS = async () => state;
+  await click('upd_all');
+  assert.equal(
+    JSON.stringify(calls),
+    JSON.stringify([
+      'system_hub.marketplace_install_updates update.mushroom wait',
+      'update.install update.mqtt',
+      'update.install update.plug',
+      'update.install update.sup',
+      'update.install update.core',
+    ]),
+  );
+});
+
 test('marketplace tab: the progress of a check running', () => {
   const started = new Date(Date.now() - 40000).toISOString();
   const html = panel(

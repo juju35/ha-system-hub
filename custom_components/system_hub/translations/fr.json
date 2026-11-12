@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Redémarre l'hôte",
         "upd_confirm": "Installer {name} {version} ?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Installer les {n} mises à jour l'une après l'autre ?",
+        "upd_all_restart": "Home Assistant redémarre à la fin.",
+        "upd_all_os_later": "Home Assistant OS est laissé pour après : installez-le une fois Home Assistant revenu."
       }
     },
     "battery_type": {

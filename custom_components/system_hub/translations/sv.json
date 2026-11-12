@@ -1498,7 +1498,10 @@
         "upd_restart_os": "Startar om värden",
         "upd_confirm": "Installera {name} {version}?",
         "upd_system": "Home Assistant",
-        "upd_marketplace": "Marketplace"
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Installera de {n} uppdateringarna efter varandra?",
+        "upd_all_restart": "Home Assistant startar om i slutet.",
+        "upd_all_os_later": "Home Assistant OS väntar till efteråt: installera det när Home Assistant är tillbaka."
       }
     },
     "battery_type": {
