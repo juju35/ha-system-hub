@@ -75,5 +75,6 @@ _.extra_state_attributes  # unused property (custom_components/system_hub/sensor
 _.async_step_git_sync_add_repository  # unused method (custom_components/system_hub/config_flow.py:344)
 _.async_step_git_sync_other  # unused method (custom_components/system_hub/config_flow.py:344)
 _.async_step_git_sync_remove_repository  # unused method (custom_components/system_hub/config_flow.py:344)
+_.async_step_backups  # unused method (custom_components/system_hub/config_flow.py:574)
 _.async_step_automations  # unused method (custom_components/system_hub/config_flow.py:344)
 _.async_step_orphans  # unused method (custom_components/system_hub/config_flow.py:344)

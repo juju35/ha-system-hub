@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Strážca",
           "marketplace": "Aktualizácie",
+          "backups": "Zálohy",
           "batteries": "Batérie",
           "git_sync": "Verziovanie",
           "orphans": "Čistenie",
@@ -17,6 +18,7 @@
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
+          "backups": "Sleduje zálohy Home Assistant: poslednú úspešnú, nasledujúcu, každé umiestnenie a posledných 30 dní. Bez vlastných entít.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
           "orphans": "Zobrazuje entity, ktoré ich integrácia už neposkytuje, aby ste ich mohli hromadne odstrániť.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Tento priečinok nie je pracovný strom Gitu.",
       "unknown_remote": "Tento remote v repozitári neexistuje.",
       "invalid_branch": "Git neprijíma tento názov vetvy.",
-      "author_required": "Git nevie, kto tu podpisuje commity: zadajte e-mail (a meno) autora."
+      "author_required": "Git nevie, kto tu podpisuje commity: zadajte e-mail (a meno) autora.",
+      "backup_not_loaded": "Integrácia Backup nie je načítaná."
     },
     "abort": {
       "already_configured": "System Hub je už nakonfigurovaný.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Strážca: Pridať reštart cez zásuvku",
           "watchdog_remove_power_cycle": "Strážca: Odstrániť reštarty cez zásuvku",
           "marketplace": "Aktualizácie",
+          "backups": "Zálohy",
           "batteries": "Batérie",
           "git_sync_repository": "Verziovanie: Nastavenia repozitára",
           "git_sync": "Verziovanie",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Strážca",
           "marketplace": "Aktualizácie",
+          "backups": "Zálohy",
           "batteries": "Batérie",
           "git_sync": "Verziovanie",
           "automations": "Automatizácie"
@@ -96,6 +101,7 @@
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
+          "backups": "Sleduje zálohy Home Assistant: poslednú úspešnú, nasledujúcu, každé umiestnenie a posledných 30 dní. Bez vlastných entít.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
           "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Počet hodín medzi dvoma automatickými kontrolami. 0 vypne automatickú kontrolu: použite tlačidlo alebo akciu.",
           "backup_before_install": "Pred Aktualizovať všetko (alebo akciou bez backup) sa vytvorí automatická záloha Home Assistant s nastaveniami z Nastavenia > Systém > Zálohy; ak zlyhá, nič sa nenainštaluje."
+        }
+      },
+      "backups": {
+        "title": "Zálohy",
+        "data": {
+          "max_age": "Upozorniť po"
+        },
+        "data_description": {
+          "max_age": "Počet dní bez úspešnej automatickej zálohy, kým karta Stav upozorní."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Vyberte alebo zadajte typ.",
       "no_model": "Zariadenie tejto batérie nemá model: nastavte typ pre samotnú batériu.",
       "critical_below_warning": "Červený prah musí byť nad oranžovým.",
-      "repository_exists": "Tento repozitár je už nastavený."
+      "repository_exists": "Tento repozitár je už nastavený.",
+      "backup_not_loaded": "Integrácia Backup nie je načítaná."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor nie je čo importovať."
@@ -1488,8 +1504,6 @@
         "group_devices": "Zariadenia",
         "move_up": "Posunúť hore",
         "move_down": "Posunúť dole",
-        "upd_addons": "Doplnky",
-        "upd_devices": "Zariadenia a služby",
         "upd_backup": "Zálohovať pred inštaláciou",
         "upd_available": "Dostupné: {n}",
         "upd_uptodate": "Aktuálne: Home Assistant {system}, doplnky {addons}, zariadenia a služby {devices}",
@@ -1497,11 +1511,32 @@
         "upd_restart_supervisor": "Reštartuje Supervisor",
         "upd_restart_os": "Reštartuje hostiteľa",
         "upd_confirm": "Nainštalovať {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Nainštalovať {n} aktualizácií jednu po druhej?",
         "upd_all_restart": "Home Assistant sa na konci reštartuje.",
-        "upd_all_os_later": "Home Assistant OS zostáva na potom: nainštalujte ho, keď sa Home Assistant vráti."
+        "upd_all_os_later": "Home Assistant OS zostáva na potom: nainštalujte ho, keď sa Home Assistant vráti.",
+        "tab_backups": "Zálohy",
+        "bk_ago": "Posledná záloha {when}",
+        "bk_none": "Zatiaľ žiadna záloha",
+        "bk_size": "Veľkosť poslednej",
+        "bk_locations": "Umiestnenia",
+        "bk_locations_ok": "{ok} / {total} aktuálne",
+        "bk_days": "Posledných 30 dní",
+        "bk_list": "Zálohy",
+        "bk_auto": "Automatická",
+        "bk_manual": "Ručná",
+        "bk_now": "Zálohovať teraz",
+        "bk_settings": "Nastavenia záloh",
+        "bk_old": "Posledná úspešná záloha je staršia ako {n} dní.",
+        "bk_failed_location": "Zlyhala",
+        "bk_ok_location": "Aktuálne",
+        "bk_kept": "Uchované: {n}",
+        "bk_read_failed": "Zálohy sa nepodarilo načítať: {error}",
+        "upd_heading": "Home Assistant, doplnky a zariadenia",
+        "upd_device": "Zariadenie",
+        "mk_update_marketplace": "Aktualizovať Marketplace",
+        "upd_available_detail": "Dostupné: {n} ({system} mimo Marketplace, {marketplace} z Marketplace)",
+        "upd_uptodate_short": "Aktuálne: {n}"
       }
     },
     "battery_type": {

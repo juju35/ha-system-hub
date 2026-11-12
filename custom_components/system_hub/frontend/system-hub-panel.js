@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.6.0';
+var SYSTEM_HUB_PANEL_VERSION = '1.7.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -23,6 +23,7 @@ var SH_MODULE_ICONS = {
   containers: 'mdi:docker',
   watchdog: 'mdi:shield-search',
   marketplace: 'mdi:storefront-outline',
+  backups: 'mdi:backup-restore',
   batteries: 'mdi:battery-heart-variant',
   git_sync: 'mdi:source-branch-sync',
   automations: 'mdi:robot-confused-outline',
@@ -34,6 +35,7 @@ var SH_MODULE_NAMES = {
   containers: 'Containers',
   watchdog: 'Watchdog',
   marketplace: 'Marketplace',
+  backups: 'Backups',
   batteries: 'Batteries',
   git_sync: 'Git Sync',
   automations: 'Automations',
@@ -43,7 +45,7 @@ var SH_MODULE_NAMES = {
 var SH_GROUPS = {
   system: ['system', 'containers'],
   reliability: ['watchdog', 'automations'],
-  maintenance: ['marketplace', 'git_sync'],
+  maintenance: ['marketplace', 'backups', 'git_sync'],
   devices: ['batteries', 'orphans'],
 };
 // The group of a tab; Status and Settings are groups of their own
@@ -633,6 +635,7 @@ class SystemHubPanel extends HTMLElement {
     .lhead .lname { flex:1; font-size:14px; font-weight:500; color:var(--primary-text-color); }
     .item { display:flex; align-items:center; gap:12px; padding:8px 14px; min-width:0; }
     .item.link { cursor:pointer; }
+    a.item { color:inherit; text-decoration:none; }
     .item.link:hover { background:var(--secondary-background-color, rgba(127,127,127,.08)); }
     .item > ha-icon { flex:none; --mdc-icon-size:22px; color:var(--tone-text, var(--secondary-text-color)); }
     .side { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:4px; font-size:12px; text-align:right; min-width:90px; }
@@ -706,6 +709,10 @@ class SystemHubPanel extends HTMLElement {
     .cfgtabs { align-self:flex-start; }
     .cfgdesc { white-space:pre-line; }
     @media (max-width:600px) { .cfgbody { padding-left:0; } }
+    .bkdays { display:flex; flex-wrap:wrap; gap:5px; }
+    .bkday { width:20px; height:20px; border-radius:5px; background:var(--divider-color, rgba(127,127,127,.2)); }
+    .bkday.ok { background:var(--tone-good); }
+    .bkday.bad { background:var(--tone-bad); }
     .mkrestart { display:flex; align-items:center; gap:6px; font-size:13px; --mdc-icon-size:16px;
                  color:color-mix(in srgb, var(--tone-warn) 50%, var(--primary-text-color)); }
     .mkhead { display:flex; align-items:center; gap:14px; padding:14px 16px; flex-wrap:wrap; }
@@ -1051,6 +1058,8 @@ class SystemHubPanel extends HTMLElement {
       }
       // The Orphans tab shown: its whole list, read again with the state
       if (this._state?.orphans && (this._routeTab || this._tab) === 'orphans') await this._orphLoad();
+      // The Backups tab shown: Home Assistant's backups, read again every minute at most
+      if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
       clearTimeout(this._retry);
     } catch (err) {
       // Home Assistant restarting, the connection lost (the app back from the background): what is shown stays, read
@@ -1259,6 +1268,7 @@ class SystemHubPanel extends HTMLElement {
       containers: () => this._containers(),
       watchdog: () => this._watchdog(),
       marketplace: () => this._marketplace(),
+      backups: () => this._backups(),
       batteries: () => this._batteries(),
       git_sync: () => this._gitSync(),
       automations: () => this._automations(),
@@ -1879,7 +1889,7 @@ class SystemHubPanel extends HTMLElement {
         disabled: data.installing_updates,
         busy: running || this._busy.marketplace_check_updates,
       })}
-      ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t('install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
+      ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t(this._state.system_updates ? 'mk_update_marketplace' : 'install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
       <button class="act quiet mkgear" data-action="open_settings:marketplace" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></button></div></ha-card>`;
     var cards = list.map((u) => this._mkCard(u)).join('');
     var failed = failedNames
@@ -1896,24 +1906,125 @@ class SystemHubPanel extends HTMLElement {
       ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
   }
 
+  // Home Assistant's backups (the Backup integration's backup/info and its locations), read when the tab is shown
+  async _bkLoad(force) {
+    if (!this._hass?.callWS || (!force && this._bk?.at && Date.now() - this._bk.at < 60000)) return;
+    this._bk = { ...(this._bk || {}), at: Date.now() };
+    try {
+      var [info, agents] = await Promise.all([
+        this._hass.callWS({ type: 'backup/info' }),
+        this._hass.callWS({ type: 'backup/agents/info' }).catch(() => ({ agents: [] })),
+      ]);
+      this._bk = { info, agents: agents?.agents || [], at: Date.now(), error: null };
+    } catch (err) {
+      this._bk = { ...this._bk, error: shErr(err) };
+    }
+    if (this._tab === 'backups') this._render();
+  }
+
+  // The last automatic backups and the locations: from backup/info once read, else from the Backup sensors
+  _bkSummary() {
+    var max = this._state.backups?.max_age ?? 3;
+    var info = this._bk?.info;
+    var sensor = (key) => (this._state.system || []).find((x) => x.key === key)?.state;
+    var valid = (v) => (v && !Number.isNaN(Date.parse(v)) ? v : null);
+    var lastOk = valid(info ? info.last_completed_automatic_backup : sensor('backup_last_successful_automatic_backup'));
+    var lastTry = valid(info ? info.last_attempted_automatic_backup : sensor('backup_last_attempted_automatic_backup'));
+    var next = valid(info ? info.next_automatic_backup : sensor('backup_next_scheduled_automatic_backup'));
+    if (!info && !lastOk && !lastTry && !next) return null;
+    var failed = Boolean(lastTry && (!lastOk || Date.parse(lastTry) > Date.parse(lastOk)));
+    var old = !lastOk || Date.now() - Date.parse(lastOk) > max * 86400000;
+    var backups = [...(info?.backups || [])].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+    var names = Object.fromEntries((this._bk?.agents || []).map((a) => [a.agent_id, a.name || a.agent_id]));
+    var ids = [...new Set([...Object.keys(names), ...backups.flatMap((b) => Object.keys(b.agents || {}))])];
+    var lastAuto = backups.find((b) => b.with_automatic_settings);
+    var agents = ids.map((id) => {
+      var mine = backups.filter((b) => b.agents?.[id]);
+      var error = info?.agent_errors?.[id] || '';
+      return { id, name: names[id] || id, last: mine[0]?.date || null, count: mine.length, error, failed: Boolean(error) || Boolean(lastAuto?.failed_agent_ids?.includes(id)) };
+    });
+    var failing = agents.filter((a) => a.failed);
+    var tone = failed ? 'bad' : old || failing.length ? 'warn' : 'good';
+    return { max, lastOk, lastTry, next, failed, old, backups, agents, failing, tone };
+  }
+
+  // The size of a backup: the largest copy among its locations
+  _bkSize(b) {
+    var sizes = Object.values(b?.agents || {}).map((a) => a?.size).filter((v) => typeof v === 'number');
+    return sizes.length ? shBytes(Math.max(...sizes)) : '—';
+  }
+
+  // Backups: the last success, the next one, the size, each location and the last 30 days; Back up now
+  _backups() {
+    if (!this._bk?.info) {
+      if (!this._bk) this._bkLoad();
+      if (this._bk?.error) {
+        return `<ha-card class="note error" role="alert">${shEsc(this._t('bk_read_failed', { error: this._bk.error }))}
+          <button class="act" data-action="reload"><ha-icon icon="mdi:refresh"></ha-icon>${shEsc(this._t('refresh'))}</button></ha-card>`;
+      }
+      return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
+    }
+    var bk = this._bkSummary();
+    var running = this._bk.info.state && this._bk.info.state !== 'idle';
+    var okAgents = bk.agents.filter((a) => !a.failed).length;
+    var tiles = [
+      this._tile('mdi:backup-restore', shEsc(bk.lastOk ? this._rel(bk.lastOk) : this._t('never')), bk.failed ? this._t('backup_failed') : this._t('last_backup'), bk.failed ? 'bad' : bk.old ? 'warn' : 'good'),
+      this._tile('mdi:calendar-clock', shEsc(running ? this._t('backing_up') : bk.next ? this._rel(bk.next) : '—'), this._t('next_backup'), running ? 'warn' : ''),
+      this._tile('mdi:harddisk', shEsc(this._bkSize(bk.backups[0])), this._t('bk_size'), ''),
+      this._tile('mdi:server-network', shEsc(this._t('bk_locations_ok', { ok: okAgents, total: bk.agents.length })), this._t('bk_locations'), bk.failing.length ? 'warn' : bk.agents.length ? 'good' : ''),
+    ];
+    var actions = `<div class="actions">${bk.old && !bk.failed ? `<span class="msg warn-text">${shEsc(this._t('bk_old', { n: bk.max }))}</span>` : ''}${this._message('bk')}
+      <span class="grow"></span>
+      <a class="act quiet" href="/config/backup/settings"><ha-icon icon="mdi:cog-outline"></ha-icon>${shEsc(this._t('bk_settings'))}</a>
+      ${this._button('bk_now', 'mdi:content-save-outline', this._t('bk_now'), { busy: running || this._busy.bk_now })}</div>`;
+    var agents = bk.agents
+      .map(
+        (a) => `<div class="item${a.failed ? ' warn' : ''}"><ha-icon icon="${a.failed ? 'mdi:alert-outline' : 'mdi:check-circle-outline'}"></ha-icon>
+        <div class="who"><div class="n">${shEsc(a.name)}</div><div class="s">${shEsc([a.last ? `${this._t('last_backup')} ${this._rel(a.last)}` : this._t('never'), this._t('bk_kept', { n: a.count }), a.error].filter(Boolean).join(' · '))}</div></div>
+        <span class="pill ${a.failed ? 'bad' : 'good'}">${shEsc(this._t(a.failed ? 'bk_failed_location' : 'bk_ok_location'))}</span></div>`,
+      )
+      .join('');
+    // The last 30 days, oldest first: a backup that day, the last attempt failed that day, or nothing
+    var day = (v) => new Date(v).toDateString();
+    var done = new Set(bk.backups.map((b) => day(b.date)));
+    var days = Array.from({ length: 30 }, (_v, i) => {
+      var d = new Date(Date.now() - (29 - i) * 86400000);
+      var cls = done.has(d.toDateString()) ? 'ok' : bk.failed && day(bk.lastTry) === d.toDateString() ? 'bad' : '';
+      return `<span class="bkday ${cls}" title="${shEsc(d.toLocaleDateString(this._hass?.language))}"></span>`;
+    }).join('');
+    var list = bk.backups
+      .slice(0, 10)
+      .map(
+        (b) => `<a class="item link" href="/config/backup/details/${encodeURIComponent(b.backup_id)}"><ha-icon icon="mdi:archive-outline"></ha-icon>
+        <div class="who"><div class="n">${shEsc(b.name || b.backup_id)}</div><div class="s">${shEsc(
+          [this._rel(b.date), this._t(b.with_automatic_settings ? 'bk_auto' : 'bk_manual'), Object.keys(b.agents || {}).map((id) => bk.agents.find((a) => a.id === id)?.name || id).join(', ')].join(' · '),
+        )}</div></div><span class="pill">${shEsc(this._bkSize(b))}</span></a>`,
+      )
+      .join('');
+    return `<div class="tiles">${tiles.join('')}</div>${actions}
+      ${agents ? `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:server-network"></ha-icon><span class="lname">${shEsc(this._t('bk_locations'))}</span></div>${agents}</ha-card>` : ''}
+      <ha-card class="block"><h2>${shEsc(this._t('bk_days'))}</h2><div class="bkdays" role="img" aria-label="${shEsc(this._t('bk_days'))}">${days}</div></ha-card>
+      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:archive-outline"></ha-icon><span class="lname">${shEsc(this._t('bk_list'))}</span><span class="muted">${bk.backups.length}</span></div>${list || `<div class="item"><div class="who"><div class="s">${shEsc(this._t('bk_none'))}</div></div></div>`}</ha-card>`;
+  }
+
   // The updates outside the Marketplace: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and services;
   // one card each, installed one at a time with Home Assistant's update.install, a backup first when chosen
   _sysUpdates(data) {
     var available = data.available || [];
     var backupDefault = Boolean(this._state.marketplace?.backup_before_install);
     var backup = this._updBackup ?? backupDefault;
-    var sections = [
-      ['upd_system', available.filter((u) => ['core', 'supervisor', 'os'].includes(u.kind))],
-      ['upd_addons', available.filter((u) => u.kind === 'addon')],
-      ['upd_devices', available.filter((u) => u.kind === 'device')],
-    ].filter(([, items]) => items.length);
     if (available.length) this._mkFetchNotes(available);
     var ok = data.up_to_date || {};
     var toggle = available.some((u) => u.backup)
       ? `<button class="act quiet" data-action="upd_backup" aria-pressed="${backup}"><ha-icon icon="mdi:checkbox-${backup ? 'marked' : 'blank-outline'}"></ha-icon>${shEsc(this._t('upd_backup'))}</button>`
       : '';
-    var summary = [
-      available.length ? this._t('upd_available', { n: available.length }) : '',
+    // Every update of the tab: these and the Marketplace's
+    var repos = (this._state.marketplace?.list || []).length;
+    // Short on one line; the detail by kind in its tooltip
+    var total = available.length + repos;
+    var summary = [total ? this._t('upd_available', { n: total }) : '', this._t('upd_uptodate_short', { n: (ok.system ?? 0) + (ok.addon ?? 0) + (ok.device ?? 0) })].filter(Boolean);
+    var detail = [
+      total ? this._t('upd_available_detail', { n: total, system: available.length, marketplace: repos }) : '',
       this._t('upd_uptodate', { system: ok.system ?? 0, addons: ok.addon ?? 0, devices: ok.device ?? 0 }),
     ].filter(Boolean);
     // Update all: every update of the tab, the Marketplace's included, in the order of _updPlan
@@ -1935,10 +2046,14 @@ class SystemHubPanel extends HTMLElement {
           ${this._button('upd_all', 'mdi:package-down', this._t('install_all'))}
           ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
         : '';
-    var head = `<div class="actions"><span class="s grow">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${this._message('upd')}`;
-    return `${head}${sections
-      .map(([key, items]) => `<h2 class="stsec">${shEsc(this._t(key))}</h2><div class="mkgrid">${items.map((u) => this._mkCard(u, backup)).join('')}</div>`)
-      .join('')}`;
+    var head = `<div class="actions"><span class="s grow" title="${shEsc(detail.join('\n'))}">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${this._message('upd')}`;
+    // One grid, in the order of the server (Core, Supervisor, OS, add-ons, devices); each card says what it is
+    return `${head}${available.length ? `<h2 class="stsec">${shEsc(this._t('upd_heading'))}</h2><div class="mkgrid">${available.map((u) => this._mkCard(u, backup)).join('')}</div>` : ''}`;
+  }
+
+  // What an update outside the Marketplace is: Core, Supervisor, OS, an add-on, a device or service
+  _updKind(kind) {
+    return { core: this._t('core'), supervisor: this._t('supervisor'), os: 'OS', addon: this._t('addon'), device: this._t('upd_device') }[kind] || kind;
   }
 
   // Update all, one step after the other: the Marketplace repositories (System Hub's own install, waited for), the
@@ -2010,7 +2125,7 @@ class SystemHubPanel extends HTMLElement {
       ? `<a class="act quiet" href="${shEsc(u.release_url)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</a>`
       : `<button class="act quiet" data-more="${shEsc(u.entity_id)}"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</button>`;
     return `<ha-card class="mkcard link" data-more="${shEsc(u.entity_id)}">
-      <div class="mktop">${logo}<div class="who"><div class="n">${shEsc(u.title)}</div><div class="s">${shEsc(u.entity_id)}</div></div>
+      <div class="mktop">${logo}<div class="who"><div class="n">${shEsc(u.title)}</div><div class="s">${shEsc(system ? `${this._updKind(u.kind)} · ${u.entity_id}` : u.entity_id)}</div></div>
         ${change ? `<span class="pill ${change === 'major' ? 'bad' : change === 'minor' ? 'warn' : 'good'}">${shEsc(this._t(`mk_${change}`))}</span>` : ''}</div>
       <div class="mkver"><span class="muted">${shEsc(u.installed || '—')}</span><ha-icon icon="mdi:arrow-right"></ha-icon><b>${shEsc(u.latest || '—')}</b></div>
       ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
@@ -2547,6 +2662,7 @@ class SystemHubPanel extends HTMLElement {
       });
     }
     if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', this._gitTarget(), null, SH_DOMAIN, action);
+    if (action === 'bk_now') return this._run('create_automatic', 'bk', {}, () => this._bkLoad(true), 'backup', 'bk_now');
     if (action === 'upd_backup') {
       this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));
       return this._render();
@@ -3109,6 +3225,7 @@ var SH_SETTINGS_STEPS = {
   containers: ['containers'],
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
+  backups: ['backups'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
   git_sync: ['git_sync', 'git_sync_repository', 'git_sync_add_repository', 'git_sync_other', 'git_sync_remove_repository'],
   automations: ['automations'],
@@ -3554,6 +3671,16 @@ var SH_STATUS_METHODS = {
         market?.state === 'error' ? 'bad' : count ? 'warn' : 'good',
         count ? n('st_available', count) : this._t('up_to_date'),
         join([...others, ...repos.map((u) => `${u.title} ${u.latest}`)]),
+      ];
+    }
+    if (tab === 'backups') {
+      if (!s.backups) return null;
+      var bk = this._bkSummary();
+      if (!bk) return null;
+      return [
+        bk.tone,
+        bk.lastOk ? this._t('bk_ago', { when: this._rel(bk.lastOk) }) : this._t('bk_none'),
+        join([bk.failed ? this._t('backup_failed') : '', ...bk.failing.map((a) => a.name), bk.next ? `${this._t('next_backup')} ${this._rel(bk.next)}` : '']),
       ];
     }
     if (tab === 'watchdog') {

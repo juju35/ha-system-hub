@@ -322,8 +322,13 @@ test('updates tab: Home Assistant, the add-ons and the devices before the Market
   const p = panel(state, 'marketplace');
   const html = p._content();
   const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
-  assert.deepEqual(sections, ['Home Assistant', 'Add-ons', 'Devices and services', 'Marketplace']);
-  assert.match(html, /Available: 3 · Up to date: Home Assistant 1, add-ons 10, devices and services 23/);
+  // One grid before the Marketplace, each card saying what it is
+  assert.deepEqual(sections, ['Home Assistant, add-ons and devices', 'Marketplace']);
+  assert.match(html, /Core · update\.core/);
+  assert.match(html, /Add-on · update\.mosquitto/);
+  assert.match(html, /Device · update\.lamp/);
+  // Short on one line, the detail in its tooltip
+  assert.match(html, /title="Available: 3 \(3 outside the Marketplace, 0 Marketplace\)\nUp to date: Home Assistant 1, add-ons 10, devices and services 23">Available: 3 · Up to date: 34</);
   assert.match(html, /Restarts Home Assistant/);
   // The backup chosen in the Updates settings, switched here
   assert.match(html, /data-action="upd_backup" aria-pressed="true"/);
@@ -358,6 +363,8 @@ test('updates tab: Update all, the Marketplace first and Home Assistant itself l
   const p = panel(state, 'marketplace');
   // OS left out while Core waits: two restarts
   assert.match(p._content(), /data-action="upd_all_confirm"[^>]*>[\s\S]*?Update all \(5\)/);
+  // The Marketplace's own button says it is the Marketplace's
+  assert.match(p._content(), /Update the Marketplace \(1\)/);
   p._render = () => {};
   const click = (action) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action } } : null) } });
   click('upd_all_confirm');
@@ -1105,4 +1112,49 @@ test('status: the house of the logo beside the score, with the colour of the rin
   const hot = { ...base, system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '99' }] };
   // One area critical: 85, still green
   assert.match(panel(hot, 'status')._content(), pulse);
+});
+
+test('backups tab: the last success, the locations and their failures, the last 30 days; Back up now', async () => {
+  const now = Date.now();
+  const iso = (hours) => new Date(now - hours * 3600000).toISOString();
+  const state = { loaded: true, modules: ['backups'], tabs: ['backups'], backups: { max_age: 3 }, system: [] };
+  const info = {
+    state: 'idle',
+    last_completed_automatic_backup: iso(9),
+    last_attempted_automatic_backup: iso(9),
+    next_automatic_backup: new Date(now + 10 * 3600000).toISOString(),
+    agent_errors: { 'cloud.cloud': 'Token expired' },
+    backups: [
+      { backup_id: 'a1', name: 'Automatic', date: iso(9), with_automatic_settings: true, failed_agent_ids: ['cloud.cloud'], agents: { 'backup.local': { size: 1073741824 }, 'hassio.nas': { size: 1073741824 } } },
+      { backup_id: 'm1', name: 'Before an update', date: iso(30), with_automatic_settings: false, agents: { 'backup.local': { size: 314572800 } } },
+    ],
+  };
+  const agents = { agents: [{ agent_id: 'backup.local', name: 'Local' }, { agent_id: 'hassio.nas', name: 'NAS' }, { agent_id: 'cloud.cloud', name: 'Cloud' }] };
+  const p = panel(state, 'backups');
+  p._hass.callWS = async (msg) => (msg.type === 'backup/info' ? info : agents);
+  p._render = () => {};
+  await p._bkLoad(true);
+  const html = p._content();
+  assert.match(html, /2 \/ 3 up to date/);
+  assert.match(html, /Cloud<\/div><div class="s">[^<]*Token expired/);
+  assert.match(html, /1.00 GiB/);
+  assert.equal((html.match(/class="bkday ok"/g) || []).length, 2);
+  assert.match(html, /href="\/config\/backup\/details\/a1"/);
+  // Status: a location failing, the last backup recent
+  const area = p._stArea('backups');
+  assert.equal(area[0], 'warn');
+  assert.match(area[2], /Cloud/);
+  // Too old: a problem from the age set
+  info.last_completed_automatic_backup = iso(24 * 4);
+  info.last_attempted_automatic_backup = iso(24 * 4);
+  info.agent_errors = {};
+  info.backups[0].failed_agent_ids = [];
+  assert.equal(p._stArea('backups')[0], 'warn');
+  assert.match(p._content(), /older than 3 days/);
+  // Back up now: Home Assistant's automatic backup
+  const calls = [];
+  p._hass.callService = async (domain, service) => calls.push(`${domain}.${service}`);
+  p._load = async () => {};
+  await p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'bk_now' } } : null) } });
+  assert.equal(JSON.stringify(calls), JSON.stringify(['backup.create_automatic']));
 });

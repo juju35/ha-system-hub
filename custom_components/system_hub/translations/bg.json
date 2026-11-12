@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Страж",
           "marketplace": "Актуализации",
+          "backups": "Резервни копия",
           "batteries": "Батерии",
           "git_sync": "Версиониране",
           "orphans": "Почистване",
@@ -17,6 +18,7 @@
           "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
           "watchdog": "Презарежда интеграциите, чиито обекти са всички недостъпни.",
           "marketplace": "Проверява на сървъра за актуализации на всички хранилища, изтеглени с Marketplace. Самият Marketplace проверява потребителските хранилища само веднъж на 48 часа.",
+          "backups": "Следи резервните копия на Home Assistant: последното успешно, следващото, всяко местоположение и последните 30 дни. Без собствени обекти.",
           "batteries": "Изпраща известие два пъти на ден за устройствата, чиято батерия е останала изтощена.",
           "git_sync": "Папка на Home Assistant, версионирана с Git и изпращана към remote (GitHub, Gitea…).",
           "orphans": "Показва обектите, които интеграцията им вече не предоставя, за да можете да ги премахнете наведнъж.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Тази папка не е работно дърво на Git.",
       "unknown_remote": "Този remote не съществува в хранилището.",
       "invalid_branch": "Git не приема това име на клон.",
-      "author_required": "Git не знае кой подписва commit-ите тук: въведете имейла (и името) на автора."
+      "author_required": "Git не знае кой подписва commit-ите тук: въведете имейла (и името) на автора.",
+      "backup_not_loaded": "Интеграцията Backup не е заредена."
     },
     "abort": {
       "already_configured": "System Hub вече е конфигуриран.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Страж: Добавяне на рестарт чрез контакт",
           "watchdog_remove_power_cycle": "Страж: Премахване на рестарти чрез контакт",
           "marketplace": "Актуализации",
+          "backups": "Резервни копия",
           "batteries": "Батерии",
           "git_sync_repository": "Версиониране: Настройки на хранилището",
           "git_sync": "Версиониране",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Страж",
           "marketplace": "Актуализации",
+          "backups": "Резервни копия",
           "batteries": "Батерии",
           "git_sync": "Версиониране",
           "automations": "Автоматизации"
@@ -96,6 +101,7 @@
           "containers": "Наблюдава Home Assistant Core, Supervisor и добавките: състояние, версия, CPU и памет. Само наблюдение: нищо не се рестартира.",
           "watchdog": "Презарежда интеграциите, чиито обекти са всички недостъпни.",
           "marketplace": "Проверява на сървъра за актуализации на всички хранилища, изтеглени с Marketplace. Самият Marketplace проверява потребителските хранилища само веднъж на 48 часа.",
+          "backups": "Следи резервните копия на Home Assistant: последното успешно, следващото, всяко местоположение и последните 30 дни. Без собствени обекти.",
           "batteries": "Изпраща известие два пъти на ден за устройствата, чиято батерия е останала изтощена.",
           "git_sync": "Папка на Home Assistant, версионирана с Git и изпращана към remote (GitHub, Gitea…).",
           "automations": "Показва неуспешните автоматизации и недостъпните обекти, докладвани от интеграцията Automation Monitor (инсталира се отделно). Без собствени обекти."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Часове между две автоматични проверки. 0 изключва автоматичната проверка: използвайте бутона или действието.",
           "backup_before_install": "Преди Обнови всички (или действието без backup) се създава автоматичното резервно копие на Home Assistant с настройките от Настройки > Система > Резервни копия; ако не успее, нищо не се инсталира."
+        }
+      },
+      "backups": {
+        "title": "Резервни копия",
+        "data": {
+          "max_age": "Предупреждение след"
+        },
+        "data_description": {
+          "max_age": "Дни без успешно автоматично копие, преди разделът Състояние да предупреди."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Изберете или въведете типа.",
       "no_model": "Устройството на тази батерия няма модел: задайте типа за самата батерия.",
       "critical_below_warning": "Червеният праг трябва да е над оранжевия.",
-      "repository_exists": "Това хранилище вече е настроено."
+      "repository_exists": "Това хранилище вече е настроено.",
+      "backup_not_loaded": "Интеграцията Backup не е заредена."
     },
     "abort": {
       "nothing_to_import": "Няма какво да се импортира от Battery Monitor."
@@ -1488,8 +1504,6 @@
         "group_devices": "Устройства",
         "move_up": "Нагоре",
         "move_down": "Надолу",
-        "upd_addons": "Добавки",
-        "upd_devices": "Устройства и услуги",
         "upd_backup": "Резервно копие преди инсталиране",
         "upd_available": "Налични: {n}",
         "upd_uptodate": "Актуални: Home Assistant {system}, добавки {addons}, устройства и услуги {devices}",
@@ -1497,11 +1511,32 @@
         "upd_restart_supervisor": "Рестартира Supervisor",
         "upd_restart_os": "Рестартира хоста",
         "upd_confirm": "Да се инсталира ли {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Да се инсталират ли {n} актуализации една след друга?",
         "upd_all_restart": "Home Assistant се рестартира накрая.",
-        "upd_all_os_later": "Home Assistant OS остава за после: инсталирайте го, след като Home Assistant се върне."
+        "upd_all_os_later": "Home Assistant OS остава за после: инсталирайте го, след като Home Assistant се върне.",
+        "tab_backups": "Резервни копия",
+        "bk_ago": "Последно копие {when}",
+        "bk_none": "Още няма копие",
+        "bk_size": "Размер на последното",
+        "bk_locations": "Местоположения",
+        "bk_locations_ok": "{ok} / {total} актуални",
+        "bk_days": "Последните 30 дни",
+        "bk_list": "Резервни копия",
+        "bk_auto": "Автоматично",
+        "bk_manual": "Ръчно",
+        "bk_now": "Създай копие сега",
+        "bk_settings": "Настройки на копията",
+        "bk_old": "Последното успешно копие е по-старо от {n} дни.",
+        "bk_failed_location": "Неуспешно",
+        "bk_ok_location": "Актуално",
+        "bk_kept": "Запазени: {n}",
+        "bk_read_failed": "Копията не можаха да бъдат прочетени: {error}",
+        "upd_heading": "Home Assistant, добавки и устройства",
+        "upd_device": "Устройство",
+        "mk_update_marketplace": "Актуализиране на Marketplace",
+        "upd_available_detail": "Налични: {n} ({system} извън Marketplace, {marketplace} от Marketplace)",
+        "upd_uptodate_short": "Актуални: {n}"
       }
     },
     "battery_type": {

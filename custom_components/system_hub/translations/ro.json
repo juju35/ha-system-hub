@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
+          "backups": "Copii de rezervă",
           "batteries": "Baterii",
           "git_sync": "Versionare",
           "orphans": "Curățenie",
@@ -17,6 +18,7 @@
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
+          "backups": "Urmărește copiile de rezervă Home Assistant: ultima reușită, următoarea, fiecare locație și ultimele 30 de zile. Fără entități proprii.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
           "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
           "orphans": "Listează entitățile pe care integrarea lor nu le mai furnizează, pentru a le putea elimina în masă.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Acest folder nu este un arbore de lucru Git.",
       "unknown_remote": "Acest remote nu există în depozit.",
       "invalid_branch": "Git nu acceptă acest nume de ramură.",
-      "author_required": "Git nu știe cine semnează aici commiturile: introduceți e-mailul (și numele) autorului."
+      "author_required": "Git nu știe cine semnează aici commiturile: introduceți e-mailul (și numele) autorului.",
+      "backup_not_loaded": "Integrarea Backup nu este încărcată."
     },
     "abort": {
       "already_configured": "System Hub este deja configurat.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Santinelă: Adaugă o repornire prin priză",
           "watchdog_remove_power_cycle": "Santinelă: Elimină reporniri prin priză",
           "marketplace": "Actualizări",
+          "backups": "Copii de rezervă",
           "batteries": "Baterii",
           "git_sync_repository": "Versionare: Setările depozitului",
           "git_sync": "Versionare",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
+          "backups": "Copii de rezervă",
           "batteries": "Baterii",
           "git_sync": "Versionare",
           "automations": "Automatizări"
@@ -96,6 +101,7 @@
           "containers": "Monitorizează Home Assistant Core, Supervisor și add-on-urile: stare, versiune, CPU și memorie. Doar monitorizare: nimic nu este repornit.",
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
+          "backups": "Urmărește copiile de rezervă Home Assistant: ultima reușită, următoarea, fiecare locație și ultimele 30 de zile. Fără entități proprii.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
           "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
           "automations": "Afișează automatizările eșuate și entitățile indisponibile raportate de integrarea Automation Monitor (instalată separat). Fără entități proprii."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Ore între două verificări automate. 0 dezactivează verificarea automată: folosiți butonul sau acțiunea.",
           "backup_before_install": "Înainte de Actualizează tot (sau de acțiunea fără backup), creează copia de rezervă automată a Home Assistant, cu setările din Setări > Sistem > Copii de rezervă; dacă eșuează, nu se instalează nimic."
+        }
+      },
+      "backups": {
+        "title": "Copii de rezervă",
+        "data": {
+          "max_age": "Alertă după"
+        },
+        "data_description": {
+          "max_age": "Zile fără o copie automată reușită înainte ca fila Stare să avertizeze."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Alegeți sau scrieți tipul.",
       "no_model": "Dispozitivul acestei baterii nu are model: setați tipul pentru baterie.",
       "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu.",
-      "repository_exists": "Acest depozit este deja configurat."
+      "repository_exists": "Acest depozit este deja configurat.",
+      "backup_not_loaded": "Integrarea Backup nu este încărcată."
     },
     "abort": {
       "nothing_to_import": "Nimic de importat din Battery Monitor."
@@ -1488,8 +1504,6 @@
         "group_devices": "Dispozitive",
         "move_up": "Mută în sus",
         "move_down": "Mută în jos",
-        "upd_addons": "Add-on-uri",
-        "upd_devices": "Dispozitive și servicii",
         "upd_backup": "Copie de rezervă înainte de instalare",
         "upd_available": "Disponibile: {n}",
         "upd_uptodate": "La zi: Home Assistant {system}, add-on-uri {addons}, dispozitive și servicii {devices}",
@@ -1497,11 +1511,32 @@
         "upd_restart_supervisor": "Repornește Supervisorul",
         "upd_restart_os": "Repornește gazda",
         "upd_confirm": "Instalați {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Instalați cele {n} actualizări una după alta?",
         "upd_all_restart": "Home Assistant repornește la final.",
-        "upd_all_os_later": "Home Assistant OS rămâne pentru după: instalați-l când Home Assistant revine."
+        "upd_all_os_later": "Home Assistant OS rămâne pentru după: instalați-l când Home Assistant revine.",
+        "tab_backups": "Copii de rezervă",
+        "bk_ago": "Ultima copie {when}",
+        "bk_none": "Nicio copie încă",
+        "bk_size": "Dimensiunea ultimei",
+        "bk_locations": "Locații",
+        "bk_locations_ok": "{ok} / {total} la zi",
+        "bk_days": "Ultimele 30 de zile",
+        "bk_list": "Copii de rezervă",
+        "bk_auto": "Automată",
+        "bk_manual": "Manuală",
+        "bk_now": "Fă o copie acum",
+        "bk_settings": "Setări copii",
+        "bk_old": "Ultima copie reușită este mai veche de {n} zile.",
+        "bk_failed_location": "Eșuată",
+        "bk_ok_location": "La zi",
+        "bk_kept": "{n} păstrate",
+        "bk_read_failed": "Copiile nu au putut fi citite: {error}",
+        "upd_heading": "Home Assistant, add-on-uri și dispozitive",
+        "upd_device": "Dispozitiv",
+        "mk_update_marketplace": "Actualizează Marketplace",
+        "upd_available_detail": "Disponibile: {n} ({system} în afara Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "La zi: {n}"
       }
     },
     "battery_type": {

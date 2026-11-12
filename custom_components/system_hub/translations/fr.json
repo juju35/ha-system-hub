@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Sentinelle",
           "marketplace": "Mises à jour",
+          "backups": "Sauvegardes",
           "batteries": "Batteries",
           "git_sync": "Versionnage",
           "orphans": "Nettoyage",
@@ -17,6 +18,7 @@
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
+          "backups": "Suit les sauvegardes de Home Assistant : la dernière réussie, la prochaine, chaque emplacement et les 30 derniers jours. Aucune entité propre.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
           "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
           "orphans": "Liste les entités que leur intégration ne fournit plus, pour pouvoir les supprimer en masse.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Ce dossier n'est pas un dépôt Git.",
       "unknown_remote": "Ce remote n'existe pas dans le dépôt.",
       "invalid_branch": "Git n'accepte pas ce nom de branche.",
-      "author_required": "Git ne sait pas qui signe les commits ici : renseignez l'e-mail (et le nom) de l'auteur."
+      "author_required": "Git ne sait pas qui signe les commits ici : renseignez l'e-mail (et le nom) de l'auteur.",
+      "backup_not_loaded": "L'intégration Backup n'est pas chargée."
     },
     "abort": {
       "already_configured": "System Hub est déjà configuré.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Sentinelle : Ajouter un redémarrage par prise",
           "watchdog_remove_power_cycle": "Sentinelle : Retirer des redémarrages par prise",
           "marketplace": "Mises à jour",
+          "backups": "Sauvegardes",
           "batteries": "Batteries",
           "git_sync_repository": "Versionnage : Paramètres du dépôt",
           "git_sync": "Versionnage",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Sentinelle",
           "marketplace": "Mises à jour",
+          "backups": "Sauvegardes",
           "batteries": "Batteries",
           "git_sync": "Versionnage",
           "automations": "Automatisations"
@@ -96,6 +101,7 @@
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
+          "backups": "Suit les sauvegardes de Home Assistant : la dernière réussie, la prochaine, chaque emplacement et les 30 derniers jours. Aucune entité propre.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
           "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
           "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Heures entre deux vérifications automatiques. 0 désactive la vérification automatique : utilisez le bouton ou l'action.",
           "backup_before_install": "Avant Tout mettre à jour (ou l'action sans backup), créer la sauvegarde automatique de Home Assistant, avec ses réglages de Paramètres > Système > Sauvegardes ; si elle échoue, rien n'est installé."
+        }
+      },
+      "backups": {
+        "title": "Sauvegardes",
+        "data": {
+          "max_age": "Alerte après"
+        },
+        "data_description": {
+          "max_age": "Jours sans sauvegarde automatique réussie avant que l'onglet Statut ne signale un problème."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Choisissez ou saisissez le type.",
       "no_model": "L'appareil de cette batterie n'a pas de modèle : réglez le type pour la batterie elle-même.",
       "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange.",
-      "repository_exists": "Ce dépôt est déjà configuré."
+      "repository_exists": "Ce dépôt est déjà configuré.",
+      "backup_not_loaded": "L'intégration Backup n'est pas chargée."
     },
     "abort": {
       "nothing_to_import": "Rien à importer depuis Battery Monitor."
@@ -1488,8 +1504,6 @@
         "group_devices": "Appareils",
         "move_up": "Monter",
         "move_down": "Descendre",
-        "upd_addons": "Add-ons",
-        "upd_devices": "Appareils et services",
         "upd_backup": "Sauvegarder avant d'installer",
         "upd_available": "Disponibles : {n}",
         "upd_uptodate": "À jour : Home Assistant {system}, add-ons {addons}, appareils et services {devices}",
@@ -1497,11 +1511,32 @@
         "upd_restart_supervisor": "Redémarre le Supervisor",
         "upd_restart_os": "Redémarre l'hôte",
         "upd_confirm": "Installer {name} {version} ?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installer les {n} mises à jour l'une après l'autre ?",
         "upd_all_restart": "Home Assistant redémarre à la fin.",
-        "upd_all_os_later": "Home Assistant OS est laissé pour après : installez-le une fois Home Assistant revenu."
+        "upd_all_os_later": "Home Assistant OS est laissé pour après : installez-le une fois Home Assistant revenu.",
+        "tab_backups": "Sauvegardes",
+        "bk_ago": "Dernière sauvegarde {when}",
+        "bk_none": "Aucune sauvegarde",
+        "bk_size": "Taille de la dernière",
+        "bk_locations": "Emplacements",
+        "bk_locations_ok": "{ok} / {total} à jour",
+        "bk_days": "30 derniers jours",
+        "bk_list": "Sauvegardes",
+        "bk_auto": "Automatique",
+        "bk_manual": "Manuelle",
+        "bk_now": "Sauvegarder maintenant",
+        "bk_settings": "Réglages des sauvegardes",
+        "bk_old": "La dernière sauvegarde réussie date de plus de {n} jours.",
+        "bk_failed_location": "En échec",
+        "bk_ok_location": "À jour",
+        "bk_kept": "{n} conservées",
+        "bk_read_failed": "Les sauvegardes n'ont pas pu être lues : {error}",
+        "upd_heading": "Home Assistant, add-ons et appareils",
+        "upd_device": "Appareil",
+        "mk_update_marketplace": "Mettre à jour le Marketplace",
+        "upd_available_detail": "Disponibles : {n} ({system} hors Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "À jour : {n}"
       }
     },
     "battery_type": {

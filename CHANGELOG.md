@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.7.0 - 2026-11-12
+
+### New
+- **Backups** module, in the **Maintenance** group: Home Assistant's own backups at a glance. The last successful automatic backup, the next one, the size of the last one and the locations up to date; each location (local, network storage, cloud…) with its last copy, the backups it keeps and its error; the last 30 days, a square per day with a backup; the 10 latest backups, each opening its page in **Settings → Backups**; **Back up now** runs Home Assistant's automatic backup. On the **Status** tab, a problem when the last attempt failed, and to watch when a location fails or the last success is older than **Alert after** (**Settings → Backups ⚙**, 3 days by default). It needs the Backup integration and has no entities of its own; turn it on in **Settings**.
+
+### Changed
+- **Updates** tab: the updates outside the Marketplace in one grid instead of a section each, every card saying what it is (Core, Supervisor, OS, Add-on, Device · its entity); the count at the top covers the Marketplace too and fits on one line (`Available: 6 · Up to date: 34`, the detail by kind in its tooltip); the Marketplace's own button reads **Update the Marketplace (3)**, next to **Update all** at the top.
+
 ## 1.6.0 - 2026-11-12
 
 ### New

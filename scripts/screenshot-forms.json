@@ -424,6 +424,28 @@
     "errors": {},
     "description_placeholders": {}
   },
+  "backups": {
+    "type": "form",
+    "step_id": "backups",
+    "data_schema": [
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 60.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "d"
+          }
+        },
+        "name": "max_age",
+        "required": true,
+        "default": 3
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
   "batteries": {
     "type": "form",
     "step_id": "batteries",

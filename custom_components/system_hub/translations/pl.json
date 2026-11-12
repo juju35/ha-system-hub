@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
+          "backups": "Kopie zapasowe",
           "batteries": "Baterie",
           "git_sync": "Wersjonowanie",
           "orphans": "Porządki",
@@ -17,6 +18,7 @@
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
+          "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
           "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
           "orphans": "Wyświetla encje, których ich integracja już nie dostarcza, aby można je było usunąć zbiorczo.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Ten folder nie jest repozytorium Git.",
       "unknown_remote": "Ten remote nie istnieje w repozytorium.",
       "invalid_branch": "Git nie akceptuje tej nazwy gałęzi.",
-      "author_required": "Git nie wie, kto podpisuje tu commity: podaj e-mail (oraz imię i nazwisko) autora."
+      "author_required": "Git nie wie, kto podpisuje tu commity: podaj e-mail (oraz imię i nazwisko) autora.",
+      "backup_not_loaded": "Integracja Backup nie jest załadowana."
     },
     "abort": {
       "already_configured": "System Hub jest już skonfigurowany.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Strażnik: Dodaj restart przez gniazdko",
           "watchdog_remove_power_cycle": "Strażnik: Usuń restarty przez gniazdko",
           "marketplace": "Aktualizacje",
+          "backups": "Kopie zapasowe",
           "batteries": "Baterie",
           "git_sync_repository": "Wersjonowanie: Ustawienia repozytorium",
           "git_sync": "Wersjonowanie",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
+          "backups": "Kopie zapasowe",
           "batteries": "Baterie",
           "git_sync": "Wersjonowanie",
           "automations": "Automatyzacje"
@@ -96,6 +101,7 @@
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
+          "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
           "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
           "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Liczba godzin między dwoma automatycznymi sprawdzeniami. 0 wyłącza automatyczne sprawdzanie: użyj przycisku lub akcji.",
           "backup_before_install": "Przed Aktualizuj wszystko (lub akcją bez backup) utwórz automatyczną kopię zapasową Home Assistant, z jej ustawieniami w Ustawienia > System > Kopie zapasowe; jeśli się nie powiedzie, nic nie zostanie zainstalowane."
+        }
+      },
+      "backups": {
+        "title": "Kopie zapasowe",
+        "data": {
+          "max_age": "Ostrzegaj po"
+        },
+        "data_description": {
+          "max_age": "Liczba dni bez udanej automatycznej kopii, po której karta Status ostrzega."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Wybierz lub wpisz typ.",
       "no_model": "Urządzenie tej baterii nie ma modelu: ustaw typ dla samej baterii.",
       "critical_below_warning": "Próg czerwony musi być wyższy niż pomarańczowy.",
-      "repository_exists": "To repozytorium jest już skonfigurowane."
+      "repository_exists": "To repozytorium jest już skonfigurowane.",
+      "backup_not_loaded": "Integracja Backup nie jest załadowana."
     },
     "abort": {
       "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
@@ -1488,8 +1504,6 @@
         "group_devices": "Urządzenia",
         "move_up": "W górę",
         "move_down": "W dół",
-        "upd_addons": "Dodatki",
-        "upd_devices": "Urządzenia i usługi",
         "upd_backup": "Utwórz kopię przed instalacją",
         "upd_available": "Dostępne: {n}",
         "upd_uptodate": "Aktualne: Home Assistant {system}, dodatki {addons}, urządzenia i usługi {devices}",
@@ -1497,11 +1511,32 @@
         "upd_restart_supervisor": "Uruchamia ponownie Supervisor",
         "upd_restart_os": "Uruchamia ponownie hosta",
         "upd_confirm": "Zainstalować {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Zainstalować {n} aktualizacji jedna po drugiej?",
         "upd_all_restart": "Home Assistant uruchomi się ponownie na końcu.",
-        "upd_all_os_later": "Home Assistant OS zostaje na później: zainstaluj go, gdy Home Assistant wróci."
+        "upd_all_os_later": "Home Assistant OS zostaje na później: zainstaluj go, gdy Home Assistant wróci.",
+        "tab_backups": "Kopie zapasowe",
+        "bk_ago": "Ostatnia kopia {when}",
+        "bk_none": "Brak kopii",
+        "bk_size": "Rozmiar ostatniej",
+        "bk_locations": "Lokalizacje",
+        "bk_locations_ok": "{ok} / {total} aktualne",
+        "bk_days": "Ostatnie 30 dni",
+        "bk_list": "Kopie zapasowe",
+        "bk_auto": "Automatyczna",
+        "bk_manual": "Ręczna",
+        "bk_now": "Utwórz kopię teraz",
+        "bk_settings": "Ustawienia kopii",
+        "bk_old": "Ostatnia udana kopia jest starsza niż {n} dni.",
+        "bk_failed_location": "Błąd",
+        "bk_ok_location": "Aktualna",
+        "bk_kept": "Zachowane: {n}",
+        "bk_read_failed": "Nie udało się odczytać kopii: {error}",
+        "upd_heading": "Home Assistant, dodatki i urządzenia",
+        "upd_device": "Urządzenie",
+        "mk_update_marketplace": "Aktualizuj Marketplace",
+        "upd_available_detail": "Dostępne: {n} ({system} spoza Marketplace, {marketplace} z Marketplace)",
+        "upd_uptodate_short": "Aktualne: {n}"
       }
     },
     "battery_type": {

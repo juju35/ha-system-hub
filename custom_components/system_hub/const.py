@@ -6,13 +6,15 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "1.6.0"
+VERSION: Final = "1.7.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
 MODULE_CONTAINERS: Final = "containers"
 MODULE_WATCHDOG: Final = "watchdog"
 MODULE_MARKETPLACE: Final = "marketplace"
+# Reads Home Assistant's own backups (the Backup integration); no entities of its own.
+MODULE_BACKUPS: Final = "backups"
 MODULE_BATTERIES: Final = "batteries"
 MODULE_GIT_SYNC: Final = "git_sync"
 # Shows what Automation Monitor reports; no entities of its own.
@@ -22,6 +24,7 @@ MODULES: Final = (
     MODULE_CONTAINERS,
     MODULE_WATCHDOG,
     MODULE_MARKETPLACE,
+    MODULE_BACKUPS,
     MODULE_BATTERIES,
     MODULE_GIT_SYNC,
     MODULE_AUTOMATIONS,
@@ -43,6 +46,11 @@ DEFAULT_THRESHOLDS: Final = {
     "temperature": (70, 85),
     "swap": (50, 80),
 }
+
+# Backups: the age from which the last successful backup is a problem, in days.
+CONF_BACKUP_MAX_AGE: Final = "max_age"
+DEFAULT_BACKUP_MAX_AGE: Final = 3
+BACKUP_DOMAIN: Final = "backup"
 
 # Home Assistant's own Marketplace integration, which the Marketplace module drives.
 MARKETPLACE_DOMAIN: Final = "marketplace"

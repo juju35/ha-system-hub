@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Wachter",
           "marketplace": "Updates",
+          "backups": "Back-ups",
           "batteries": "Batterijen",
           "git_sync": "Versiebeheer",
           "orphans": "Opruimen",
@@ -17,6 +18,7 @@
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
+          "backups": "Volgt de back-ups van Home Assistant: de laatste geslaagde, de volgende, elke locatie en de laatste 30 dagen. Geen eigen entiteiten.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
           "orphans": "Toont de entiteiten die hun integratie niet meer levert, zodat je ze in één keer kunt verwijderen.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Deze map is geen Git-repository.",
       "unknown_remote": "Deze remote bestaat niet in de repository.",
       "invalid_branch": "Git accepteert deze branchnaam niet.",
-      "author_required": "Git weet hier niet wie de commits ondertekent: vul het e-mailadres (en de naam) van de auteur in."
+      "author_required": "Git weet hier niet wie de commits ondertekent: vul het e-mailadres (en de naam) van de auteur in.",
+      "backup_not_loaded": "De Backup-integratie is niet geladen."
     },
     "abort": {
       "already_configured": "System Hub is al geconfigureerd.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Wachter: Herstart via stekker toevoegen",
           "watchdog_remove_power_cycle": "Wachter: Herstarts via stekker verwijderen",
           "marketplace": "Updates",
+          "backups": "Back-ups",
           "batteries": "Batterijen",
           "git_sync_repository": "Versiebeheer: Instellingen van de repository",
           "git_sync": "Versiebeheer",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Wachter",
           "marketplace": "Updates",
+          "backups": "Back-ups",
           "batteries": "Batterijen",
           "git_sync": "Versiebeheer",
           "automations": "Automatiseringen"
@@ -96,6 +101,7 @@
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
+          "backups": "Volgt de back-ups van Home Assistant: de laatste geslaagde, de volgende, elke locatie en de laatste 30 dagen. Geen eigen entiteiten.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
           "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Uren tussen twee automatische controles. 0 zet de automatische controle uit: gebruik de knop of de actie.",
           "backup_before_install": "Vóór Alles bijwerken (of de actie zonder backup) de automatische back-up van Home Assistant maken, met de instellingen onder Instellingen > Systeem > Back-ups; mislukt die, dan wordt niets geïnstalleerd."
+        }
+      },
+      "backups": {
+        "title": "Back-ups",
+        "data": {
+          "max_age": "Waarschuwen na"
+        },
+        "data_description": {
+          "max_age": "Dagen zonder geslaagde automatische back-up voordat het tabblad Status waarschuwt."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Kies of typ het type.",
       "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf.",
       "critical_below_warning": "De rode drempel moet boven de oranje liggen.",
-      "repository_exists": "Deze repository is al ingesteld."
+      "repository_exists": "Deze repository is al ingesteld.",
+      "backup_not_loaded": "De Backup-integratie is niet geladen."
     },
     "abort": {
       "nothing_to_import": "Niets te importeren uit Battery Monitor."
@@ -1488,8 +1504,6 @@
         "group_devices": "Apparaten",
         "move_up": "Omhoog",
         "move_down": "Omlaag",
-        "upd_addons": "Add-ons",
-        "upd_devices": "Apparaten en diensten",
         "upd_backup": "Back-up maken vóór installatie",
         "upd_available": "Beschikbaar: {n}",
         "upd_uptodate": "Bijgewerkt: Home Assistant {system}, add-ons {addons}, apparaten en diensten {devices}",
@@ -1497,11 +1511,32 @@
         "upd_restart_supervisor": "Herstart de Supervisor",
         "upd_restart_os": "Herstart de host",
         "upd_confirm": "{name} {version} installeren?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "De {n} updates na elkaar installeren?",
         "upd_all_restart": "Home Assistant herstart aan het einde.",
-        "upd_all_os_later": "Home Assistant OS blijft voor daarna: installeer het zodra Home Assistant terug is."
+        "upd_all_os_later": "Home Assistant OS blijft voor daarna: installeer het zodra Home Assistant terug is.",
+        "tab_backups": "Back-ups",
+        "bk_ago": "Laatste back-up {when}",
+        "bk_none": "Nog geen back-up",
+        "bk_size": "Grootte van de laatste",
+        "bk_locations": "Locaties",
+        "bk_locations_ok": "{ok} / {total} bijgewerkt",
+        "bk_days": "Laatste 30 dagen",
+        "bk_list": "Back-ups",
+        "bk_auto": "Automatisch",
+        "bk_manual": "Handmatig",
+        "bk_now": "Nu back-up maken",
+        "bk_settings": "Back-upinstellingen",
+        "bk_old": "De laatste geslaagde back-up is ouder dan {n} dagen.",
+        "bk_failed_location": "Mislukt",
+        "bk_ok_location": "Bijgewerkt",
+        "bk_kept": "{n} bewaard",
+        "bk_read_failed": "De back-ups konden niet worden gelezen: {error}",
+        "upd_heading": "Home Assistant, add-ons en apparaten",
+        "upd_device": "Apparaat",
+        "mk_update_marketplace": "Marketplace bijwerken",
+        "upd_available_detail": "Beschikbaar: {n} ({system} buiten de Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Bijgewerkt: {n}"
       }
     },
     "battery_type": {

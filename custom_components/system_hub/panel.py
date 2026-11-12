@@ -22,12 +22,15 @@ from homeassistant.helpers import entity_registry as er
 
 from . import automations
 from .const import (
+    CONF_BACKUP_MAX_AGE,
     CONF_MODULES,
     CONF_SYSTEM,
     CONF_TABS,
+    DEFAULT_BACKUP_MAX_AGE,
     DEFAULT_THRESHOLDS,
     DOMAIN,
     MODULE_AUTOMATIONS,
+    MODULE_BACKUPS,
     MODULE_GIT_SYNC,
     MODULES,
     PANEL_PATH,
@@ -459,6 +462,11 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["git_sync_repos"] = [
             {"id": c.repo_id, "title": c.title, "path": c.repo.path, **_git_sync(c)} for c in data.git_syncs
         ]
+    if MODULE_BACKUPS in result["modules"]:
+        # The tab reads the backups itself (backup/info); the state carries the setting for the Status tab
+        backups = entry.options.get(MODULE_BACKUPS)
+        max_age = backups.get(CONF_BACKUP_MAX_AGE) if isinstance(backups, dict) else None
+        result["backups"] = {"max_age": int(max_age or DEFAULT_BACKUP_MAX_AGE)}
     if MODULE_AUTOMATIONS in result["modules"]:
         options = entry.options.get(MODULE_AUTOMATIONS)
         result["automations"] = automations.state(hass, options if isinstance(options, dict) else None)
