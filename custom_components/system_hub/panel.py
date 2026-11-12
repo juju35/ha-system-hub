@@ -223,6 +223,21 @@ UPDATE_FEATURE_BACKUP = 8
 REPOSITORY_PLATFORMS = ("marketplace", "hacs")
 
 
+def _update(entity_id: str, state: Any) -> dict[str, Any]:
+    """An update entity with an update, as the Updates tab shows it: versions, release, picture, installing."""
+    attrs = state.attributes
+    return {
+        "entity_id": entity_id,
+        "title": attrs.get("title") or state.name,
+        "installed": attrs.get("installed_version"),
+        "latest": attrs.get("latest_version"),
+        "release_url": attrs.get("release_url"),
+        "release_summary": attrs.get("release_summary"),
+        "picture": attrs.get("entity_picture"),
+        "installing": bool(attrs.get("in_progress")),
+    }
+
+
 def _system_updates(hass: HomeAssistant) -> dict[str, Any]:
     """Every update entity but the Marketplace's: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and
     services (firmware of a Zigbee device, of an ESPHome node…). Those with an update, and how many are up to date."""
@@ -238,20 +253,9 @@ def _system_updates(hass: HomeAssistant) -> dict[str, Any]:
         if state.state == "off":
             up_to_date[kind if kind in up_to_date else "system"] += 1
             continue
-        attrs = state.attributes
+        features = int(state.attributes.get("supported_features") or 0)
         available.append(
-            {
-                "entity_id": entry.entity_id,
-                "kind": kind,
-                "title": attrs.get("title") or state.name,
-                "installed": attrs.get("installed_version"),
-                "latest": attrs.get("latest_version"),
-                "release_url": attrs.get("release_url"),
-                "release_summary": attrs.get("release_summary"),
-                "picture": attrs.get("entity_picture"),
-                "installing": bool(attrs.get("in_progress")),
-                "backup": bool(int(attrs.get("supported_features") or 0) & UPDATE_FEATURE_BACKUP),
-            }
+            {**_update(entry.entity_id, state), "kind": kind, "backup": bool(features & UPDATE_FEATURE_BACKUP)}
         )
     available.sort(key=lambda u: (UPDATE_KIND_ORDER.index(u["kind"]), str(u["title"]).lower()))
     return {"available": available, "up_to_date": up_to_date}
@@ -342,19 +346,9 @@ def _marketplace_updates(hass: HomeAssistant, installing: list[str]) -> list[dic
         state = hass.states.get(entry.entity_id)
         if state is None or state.state != "on":
             continue
-        attrs = state.attributes
-        updates.append(
-            {
-                "entity_id": entry.entity_id,
-                "title": attrs.get("title") or state.name,
-                "installed": attrs.get("installed_version"),
-                "latest": attrs.get("latest_version"),
-                "release_url": attrs.get("release_url"),
-                "release_summary": attrs.get("release_summary"),
-                "picture": attrs.get("entity_picture"),
-                "installing": bool(attrs.get("in_progress")) or entry.entity_id in installing,
-            }
-        )
+        update = _update(entry.entity_id, state)
+        update["installing"] = update["installing"] or entry.entity_id in installing
+        updates.append(update)
     return sorted(updates, key=lambda u: str(u["title"]).lower())
 
 
