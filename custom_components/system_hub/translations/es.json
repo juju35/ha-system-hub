@@ -157,13 +157,15 @@
           "notify": "Notificar los inicios rechazados desde Internet",
           "notify_services": "Acciones de notificación",
           "token_unused_days": "Token sin usar tras",
-          "ignored_ips": "Direcciones ignoradas"
+          "ignored_ips": "Direcciones ignoradas",
+          "allowed_addons": "Complementos permitidos sin protección"
         },
         "data_description": {
           "notify": "Una notificación persistente, como mucho una vez por hora por dirección; las direcciones locales nunca se notifican.",
           "notify_services": "Se envía también a estas acciones de notificación.",
           "token_unused_days": "Se marca un token de larga duración sin usar desde este número de días.",
-          "ignored_ips": "Sus inicios rechazados se marcan como ignorados y nunca se notifican."
+          "ignored_ips": "Sus inicios rechazados se marcan como ignorados y nunca se notifican.",
+          "allowed_addons": "Complementos que pueden funcionar con el modo protegido desactivado (un terminal SSH, por ejemplo): siguen en la lista, ya no son un problema."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Grupos",
         "card_hide_ok": "Ocultar lo que está bien",
         "card_show_title": "Mostrar el título",
-        "card_show_subtitle": "Mostrar el subtítulo"
+        "card_show_subtitle": "Mostrar el subtítulo",
+        "sc_allowed": "Permitido",
+        "sc_allow": "Permitir",
+        "sc_disallow": "Retirar"
       }
     },
     "battery_type": {

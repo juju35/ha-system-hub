@@ -603,6 +603,15 @@ def mock_security():
                 "rating": 4,
             },
             {
+                "slug": "terminal",
+                "name": "Terminal & SSH",
+                "protected": False,
+                "full_access": False,
+                "host_network": True,
+                "rating": 5,
+                "allowed": True,
+            },
+            {
                 "slug": "z2m",
                 "name": "Zigbee2MQTT",
                 "protected": True,

@@ -157,13 +157,15 @@
           "notify": "Geweigerde aanmeldingen vanaf internet melden",
           "notify_services": "Meldingsacties",
           "token_unused_days": "Token ongebruikt na",
-          "ignored_ips": "Genegeerde adressen"
+          "ignored_ips": "Genegeerde adressen",
+          "allowed_addons": "Add-ons toegestaan zonder bescherming"
         },
         "data_description": {
           "notify": "Een blijvende melding, hoogstens eens per uur per adres; lokale adressen worden nooit gemeld.",
           "notify_services": "Ook naar deze meldingsacties gestuurd.",
           "token_unused_days": "Een langdurig token dat zoveel dagen niet gebruikt is, wordt gemarkeerd.",
-          "ignored_ips": "Hun geweigerde aanmeldingen worden als genegeerd gemarkeerd en nooit gemeld."
+          "ignored_ips": "Hun geweigerde aanmeldingen worden als genegeerd gemarkeerd en nooit gemeld.",
+          "allowed_addons": "Add-ons die zonder beschermingsmodus mogen draaien (een SSH-terminal bijvoorbeeld): nog steeds getoond, geen probleem meer."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Groepen",
         "card_hide_ok": "Verberg wat in orde is",
         "card_show_title": "Titel tonen",
-        "card_show_subtitle": "Ondertitel tonen"
+        "card_show_subtitle": "Ondertitel tonen",
+        "sc_allowed": "Toegestaan",
+        "sc_allow": "Toestaan",
+        "sc_disallow": "Intrekken"
       }
     },
     "battery_type": {

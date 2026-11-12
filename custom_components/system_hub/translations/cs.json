@@ -157,13 +157,15 @@
           "notify": "Oznamovat odmítnutá přihlášení z internetu",
           "notify_services": "Akce oznámení",
           "token_unused_days": "Token nepoužívaný po",
-          "ignored_ips": "Ignorované adresy"
+          "ignored_ips": "Ignorované adresy",
+          "allowed_addons": "Doplňky povolené bez ochrany"
         },
         "data_description": {
           "notify": "Trvalé oznámení, nejvýše jednou za hodinu na adresu; místní adresy se nikdy neoznamují.",
           "notify_services": "Posílá se i těmto akcím oznámení.",
           "token_unused_days": "Dlouhodobý token nepoužitý tolik dní se označí.",
-          "ignored_ips": "Jejich odmítnutá přihlášení se označí jako ignorovaná a nikdy se neoznamují."
+          "ignored_ips": "Jejich odmítnutá přihlášení se označí jako ignorovaná a nikdy se neoznamují.",
+          "allowed_addons": "Doplňky, které mohou běžet s vypnutým chráněným režimem (například terminál SSH): stále v seznamu, už nejsou problém."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Skupiny",
         "card_hide_ok": "Skrýt, co je v pořádku",
         "card_show_title": "Zobrazit název",
-        "card_show_subtitle": "Zobrazit podnázev"
+        "card_show_subtitle": "Zobrazit podnázev",
+        "sc_allowed": "Povolený",
+        "sc_allow": "Povolit",
+        "sc_disallow": "Odvolat"
       }
     },
     "battery_type": {

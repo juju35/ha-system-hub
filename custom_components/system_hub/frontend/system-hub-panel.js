@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.1.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.2.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -2370,7 +2370,8 @@ class SystemHubPanel extends HTMLElement {
     var day = Date.now() / 1000 - 86400;
     var refused = (d.refused || []).filter((r) => r.internet && !r.ignored && r.day > 0);
     var bans = (d.bans || []).filter((b) => b.at > day);
-    var unprotected = (d.addons || []).filter((a) => !a.protected);
+    // An add-on allowed to run unprotected (Settings → Security, or Allow here) is not a problem
+    var unprotected = (d.addons || []).filter((a) => !a.protected && !a.allowed);
     var noMfa = (d.users || []).filter((u) => u.admin && u.active && !u.mfa);
     var admins = (d.users || []).filter((u) => u.admin && u.active);
     var unused = (d.tokens || []).filter((t) => t.unused);
@@ -2510,12 +2511,32 @@ class SystemHubPanel extends HTMLElement {
     var addons = d.addons
       ? d.addons
           .filter((a) => !a.protected || a.full_access || a.host_network)
-          .sort((a, b) => a.protected - b.protected || (a.rating ?? 9) - (b.rating ?? 9))
+          .sort((a, b) => (a.protected || a.allowed) - (b.protected || b.allowed) || (a.rating ?? 9) - (b.rating ?? 9))
           .map((a) => {
-            var tone = !a.protected ? 'bad' : a.full_access ? 'warn' : '';
-            var sub = [!a.protected ? this._t('sc_protection_off') : '', a.full_access ? this._t('sc_full_access_s') : '', a.host_network ? this._t('sc_host_network_s') : '', a.rating != null ? this._t('sc_rating', { n: a.rating }) : ''].filter(Boolean);
-            var end = !a.protected ? pill(this._t('sc_unprotected'), 'bad') : a.full_access ? pill(this._t('sc_full_access'), 'warn') : pill(this._t('sc_host_network'), 'info');
-            return this._scRow(!a.protected ? 'mdi:alert-circle-outline' : 'mdi:alert-outline', shEsc(a.name), shEsc(sub.join(' · ')), tone, end);
+            var risky = !a.protected && !a.allowed;
+            var tone = risky ? 'bad' : a.full_access ? 'warn' : '';
+            var sub = [
+              !a.protected ? this._t('sc_protection_off') : '',
+              a.full_access ? this._t('sc_full_access_s') : '',
+              a.host_network ? this._t('sc_host_network_s') : '',
+              a.rating != null ? this._t('sc_rating', { n: a.rating }) : '',
+            ].filter(Boolean);
+            var end = risky
+              ? pill(this._t('sc_unprotected'), 'bad')
+              : !a.protected
+                ? pill(this._t('sc_allowed'), 'info')
+                : a.full_access
+                  ? pill(this._t('sc_full_access'), 'warn')
+                  : pill(this._t('sc_host_network'), 'info');
+            // Unprotected: allowed from here (saved at once), or no longer
+            if (!a.protected) {
+              end += this._button('sc_allow', a.allowed ? 'mdi:shield-off-outline' : 'mdi:shield-check-outline', this._t(a.allowed ? 'sc_disallow' : 'sc_allow'), {
+                quiet: true,
+                busy: this._busy[`sc_allow:${a.slug}`],
+                data: { slug: a.slug, allow: String(!a.allowed) },
+              });
+            }
+            return this._scRow(risky ? 'mdi:alert-circle-outline' : 'mdi:alert-outline', shEsc(a.name), shEsc(sub.join(' · ')), tone, end);
           })
           .join('')
       : '';
@@ -3221,6 +3242,10 @@ class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'sc_revoke') return this._scRevoke(button.dataset.token);
+    if (action === 'sc_allow') {
+      var allow = button.dataset.allow !== 'false';
+      return this._scCall(`sc_allow:${button.dataset.slug}`, { type: 'system_hub/security_allow_addon', slug: button.dataset.slug, allow });
+    }
     if (action === 'db_pick') {
       var picked = (this._dbSel ??= new Set());
       if (picked.has(button.dataset.entity)) picked.delete(button.dataset.entity);

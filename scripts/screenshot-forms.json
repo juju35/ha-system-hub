@@ -285,6 +285,21 @@
         "required": false,
         "optional": true,
         "default": []
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "allowed_addons",
+        "required": false,
+        "optional": true,
+        "default": []
       }
     ],
     "errors": {},

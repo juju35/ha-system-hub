@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from datetime import timedelta
+from unittest.mock import AsyncMock, patch
 
 from homeassistant.auth.models import TOKEN_TYPE_LONG_LIVED_ACCESS_TOKEN
 from homeassistant.core import HomeAssistant
@@ -34,7 +35,13 @@ def test_internet_addresses() -> None:
     assert not is_internet("192.168.1.37")
     assert not is_internet("::1")
     assert not is_internet("not an ip")
-    assert settings(None) == {"notify": True, "notify_services": [], "token_unused_days": 90, "ignored_ips": []}
+    assert settings(None) == {
+        "notify": True,
+        "notify_services": [],
+        "token_unused_days": 90,
+        "ignored_ips": [],
+        "allowed_addons": [],
+    }
 
 
 async def test_refused_logins_from_the_log(hass: HomeAssistant, hass_ws_client) -> None:
@@ -127,11 +134,68 @@ async def test_settings_step(hass: HomeAssistant) -> None:
     assert "security" in result["menu_options"]
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "security"})
     result = await hass.config_entries.options.async_configure(
-        result["flow_id"], {"notify": False, "notify_services": [], "token_unused_days": 30, "ignored_ips": ["1.2.3.4"]}
+        result["flow_id"],
+        {
+            "notify": False,
+            "notify_services": [],
+            "token_unused_days": 30,
+            "ignored_ips": ["1.2.3.4"],
+            "allowed_addons": ["a0d7b954_ssh"],
+        },
     )
     assert entry.options["security"] == {
         "notify": False,
         "notify_services": [],
         "token_unused_days": 30,
         "ignored_ips": ["1.2.3.4"],
+        "allowed_addons": ["a0d7b954_ssh"],
     }
+
+
+async def test_addons_allowed_unprotected(hass: HomeAssistant, hass_ws_client) -> None:
+    entry = await _setup(hass)
+    addons = [
+        {"slug": "ssh", "name": "SSH", "protected": False, "full_access": True, "host_network": True, "rating": 2},
+        {
+            "slug": "mqtt",
+            "name": "Mosquitto",
+            "protected": True,
+            "full_access": False,
+            "host_network": False,
+            "rating": 6,
+        },
+    ]
+    client = await hass_ws_client(hass)
+    with patch("custom_components.system_hub.security._addons", AsyncMock(return_value=addons)):
+        await client.send_json({"id": 1, "type": "system_hub/security", "force": True})
+        rows = {a["slug"]: a for a in (await client.receive_json())["result"]["addons"]}
+        assert not rows["ssh"]["allowed"]
+        # Allowed from the panel: saved at once, no reload; flagged in the list
+        data = entry.runtime_data
+        await client.send_json({"id": 2, "type": "system_hub/security_allow_addon", "slug": "ssh"})
+        assert (await client.receive_json())["result"] == {"allowed": ["ssh"]}
+        await hass.async_block_till_done()
+        assert entry.runtime_data is data
+        assert entry.options["security"]["allowed_addons"] == ["ssh"]
+        await client.send_json({"id": 3, "type": "system_hub/security"})
+        rows = {a["slug"]: a for a in (await client.receive_json())["result"]["addons"]}
+        assert rows["ssh"]["allowed"] and not rows["mqtt"]["allowed"]
+        await client.send_json({"id": 4, "type": "system_hub/security_allow_addon", "slug": "ssh", "allow": False})
+        assert (await client.receive_json())["result"] == {"allowed": []}
+
+
+async def test_settings_offer_the_installed_addons(hass: HomeAssistant) -> None:
+    entry = await _setup(hass, allowed_addons=["gone"])
+    with patch(
+        "custom_components.system_hub.security.flow.installed_addons",
+        AsyncMock(return_value=[("a0d7b954_ssh", "Advanced SSH & Web Terminal")]),
+    ):
+        result = await hass.config_entries.options.async_init(entry.entry_id)
+        result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "security"})
+    field = next(k for k in result["data_schema"].schema if k == "allowed_addons")
+    options = result["data_schema"].schema[field].config["options"]
+    # The installed ones by name, one allowed before and since removed kept by its slug
+    assert options == [
+        {"value": "a0d7b954_ssh", "label": "Advanced SSH & Web Terminal"},
+        {"value": "gone", "label": "gone"},
+    ]

@@ -1373,6 +1373,7 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
     addons: [
       { slug: 'ssh', name: 'Advanced SSH', protected: false, full_access: true, host_network: true, rating: 2 },
       { slug: 'mqtt', name: 'Mosquitto', protected: true, full_access: false, host_network: false, rating: 6 },
+      { slug: 'terminal', name: 'Terminal', protected: false, full_access: false, host_network: false, rating: 5, allowed: true },
     ],
     config: [{ file: 'configuration.yaml', line: 142, key: 'password' }],
     scanned_at: now - 600,
@@ -1396,7 +1397,11 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
   assert.match(html, /Old script[\s\S]*?never used[\s\S]*?Unused/);
   assert.match(html, /Advanced SSH[\s\S]*?protection mode off · full hardware access · host network access · security rating 2\/8[\s\S]*?Not protected/);
   assert.doesNotMatch(html, /Mosquitto/);
-  assert.match(html, /2 · 1 without remark/);
+  assert.match(html, /3 · 1 without remark/);
+  // Allowed to run unprotected: listed, not a problem, Withdraw offered; the other one Allow
+  assert.match(html, /Terminal[\s\S]*?protection mode off · security rating 5\/8[\s\S]*?Allowed[\s\S]*?data-action="sc_allow"[^>]*data-slug="terminal"[^>]*data-allow="false"[\s\S]*?Withdraw/);
+  assert.match(html, /data-action="sc_allow"[^>]*data-slug="ssh"[^>]*data-allow="true"[\s\S]*?Allow/);
+  assert.equal(p._scSummary().unprotected.length, 1);
   assert.match(html, /<code>configuration\.yaml<\/code> line 142 · <code>password<\/code>/);
   assert.deepEqual([...p._stArea('security')].slice(0, 2), ['bad', '5 refused logins']);
   // Revoke asks first; Ignore and Scan now call the server
@@ -1405,10 +1410,11 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
   assert.match(p._content(), /Revoke the token “Old script”\?/);
   await click('sc_revoke', { token: 't1' });
   await click('sc_ignore', { ip: '192.168.1.37', ignore: 'true' });
+  await click('sc_allow', { slug: 'ssh', allow: 'true' });
   await click('sc_scan');
   assert.deepEqual(
     calls.filter((c) => !c.startsWith('system_hub/state') && c !== 'system_hub/security'),
-    ['system_hub/security_revoke t1', 'system_hub/security_ignore 192.168.1.37', 'system_hub/security force'],
+    ['system_hub/security_revoke t1', 'system_hub/security_ignore 192.168.1.37', 'system_hub/security_allow_addon', 'system_hub/security force'],
   );
   // Nothing from the Internet, no problem left: the points to check
   data.refused = [];

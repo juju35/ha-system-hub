@@ -157,13 +157,15 @@
           "notify": "Értesítés az internetről elutasított bejelentkezésekről",
           "notify_services": "Értesítési műveletek",
           "token_unused_days": "Token használatlan ennyi után",
-          "ignored_ips": "Mellőzött címek"
+          "ignored_ips": "Mellőzött címek",
+          "allowed_addons": "Védelem nélkül engedélyezett bővítmények"
         },
         "data_description": {
           "notify": "Állandó értesítés, címenként legfeljebb óránként egyszer; helyi címekről nincs értesítés.",
           "notify_services": "Ezekre az értesítési műveletekre is elküldve.",
           "token_unused_days": "Az ennyi napja nem használt hosszú élettartamú token meg van jelölve.",
-          "ignored_ips": "Elutasított bejelentkezéseik mellőzöttként jelennek meg, értesítés nélkül."
+          "ignored_ips": "Elutasított bejelentkezéseik mellőzöttként jelennek meg, értesítés nélkül.",
+          "allowed_addons": "Bővítmények, amelyek kikapcsolt védett móddal futhatnak (például egy SSH-terminál): továbbra is listázva, de már nem probléma."
         }
       },
       "logs": {
@@ -1782,7 +1784,10 @@
         "card_groups": "Csoportok",
         "card_hide_ok": "Rendben lévők elrejtése",
         "card_show_title": "Cím megjelenítése",
-        "card_show_subtitle": "Alcím megjelenítése"
+        "card_show_subtitle": "Alcím megjelenítése",
+        "sc_allowed": "Engedélyezve",
+        "sc_allow": "Engedélyezés",
+        "sc_disallow": "Visszavonás"
       }
     },
     "battery_type": {
