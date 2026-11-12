@@ -6,7 +6,7 @@
  */
 // Requests left under which the card says the checks may wait for GitHub's limit to reset.
 const MR_RATE_LOW = 1500;
-var MARKETPLACE_REFRESH_CARD_VERSION = '2.0.1';
+var MARKETPLACE_REFRESH_CARD_VERSION = '2.0.2';
 // System Hub: its entities (platform system_hub, translation keys marketplace_*) and actions (system_hub.marketplace_*)
 var HR_DOMAIN = 'system_hub';
 var HR_PREFIX = 'marketplace_';

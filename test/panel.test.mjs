@@ -1317,47 +1317,43 @@ test('database tab: size against the limit, retention, the top writers; purge, e
   assert.match(p._content(), /PostgreSQL/);
 });
 
-test('sidebar icon: the Status tab tone sent when the sidebar shows another one; nothing drawn when read for it', async () => {
+test('sidebar icon: the Status tab tone given to this browser at each read, the panel never registered again', async () => {
   const state = { loaded: true, modules: ['logs'], tabs: ['logs'], logs: { error_threshold: 10, ignored_messages: [] } };
   const p = panel(state, 'status');
-  const sent = [];
-  p._hass.panels = { 'system-hub': { icon: 'system-hub:good' } };
+  const tones = [];
+  context.systemHubSetTone = (tone) => tones.push(tone);
+  const ws = [];
   p._hass.callWS = async (msg) => {
-    if (msg.type === 'system_hub/sidebar_icon') sent.push(msg.tone);
+    ws.push(msg.type);
     return msg.type === 'system_log/list' ? [] : state;
   };
   p._lg = { entries: [], at: Date.now() };
-  assert.equal(p._stTone().tone, 'good');
-  await p._reportTone();
-  assert.deepEqual(sent, []);
-  // Errors beyond the threshold: one problem, the score still good; two: warn, sent once
+  p._reportTone();
+  assert.deepEqual([...tones], ['good']);
+  // Errors beyond the threshold: one problem, the score still good; two: warn
   const now = Date.now() / 1000;
   p._lg.entries = [{ name: 'custom_components.x', level: 'ERROR', message: ['Boom'], count: 40, timestamp: now }];
   assert.equal(p._stTone().score, 85);
   assert.equal(p._stTone().tone, 'good');
+  p._stArea = (tab) => (tab === 'logs' ? ['bad', '', ''] : null);
   state.modules = ['logs', 'silent'];
   state.tabs = ['logs', 'silent'];
-  state.silent = { devices: [{ name: 'Cave', silent: true }], tracked: 1 };
-  state.silent.devices.push({ name: 'Garage', silent: true });
-  p._stArea = (tab) => (tab === 'logs' || tab === 'silent' ? ['bad', '', ''] : null);
+  p._stArea = () => ['bad', '', ''];
   assert.equal(p._stTone().tone, 'warn');
-  await p._reportTone();
-  assert.deepEqual(sent, ['warn']);
-  p._hass.panels['system-hub'].icon = 'system-hub:warn';
-  await p._reportTone();
-  assert.deepEqual(sent, ['warn']);
-  // Read without being shown (system-hub-icons.js): nothing rendered, the tone sent with the read
+  p._reportTone();
+  assert.deepEqual([...tones], ['good', 'warn']);
+  // Read without being shown (system-hub-icons.js): nothing rendered, the tone given with the read; no command sent
   const probe = panel(state, 'status');
   probe._headless = true;
   probe._renderShell = () => assert.fail('rendered');
-  probe._hass.panels = { 'system-hub': { icon: 'system-hub:warn' } };
   probe._hass.callWS = async (msg) => {
-    if (msg.type === 'system_hub/sidebar_icon') sent.push(msg.tone);
+    ws.push(msg.type);
     return msg.type === 'system_log/list' ? [] : { loaded: true, modules: [], tabs: [] };
   };
   await probe._load();
-  await new Promise((resolve) => setImmediate(resolve));
-  assert.deepEqual(sent, ['warn', 'good']);
+  assert.equal(tones.at(-1), 'good');
+  assert.ok(!ws.includes('system_hub/sidebar_icon'));
+  delete context.systemHubSetTone;
 });
 
 test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons, credentials in clear', async () => {
@@ -1456,4 +1452,38 @@ test('settings form (#63): no null for an entity not chosen; the errors of a ref
   await p._cfgSubmit();
   assert.equal(JSON.stringify(sent[0]), JSON.stringify(data));
   assert.equal(p._cfgState().errors.pause_entity, 'Entity None is not valid');
+});
+
+test('a tab chosen: the address and Home Assistant\'s route follow it, so a panel built again opens on it', () => {
+  const state = { loaded: true, modules: ['logs', 'watchdog'], tabs: ['logs', 'watchdog'] };
+  const p = panel(state, 'status');
+  p._render = () => {};
+  const urls = [];
+  const events = [];
+  context.history = { state: null, replaceState: (_s, _t, url) => urls.push(url) };
+  context.window = { dispatchEvent: (ev) => events.push(ev) };
+  p._goTab('watchdog');
+  assert.deepEqual([...urls], ['/system-hub/watchdog']);
+  assert.equal(events[0].type, 'location-changed');
+  assert.equal(events[0].detail.replace, true);
+  delete context.history;
+  delete context.window;
+});
+
+test('the route given again by Home Assistant at each update does not bring the first tab back', () => {
+  const state = { loaded: true, modules: ['logs', 'watchdog'], tabs: ['logs', 'watchdog'] };
+  const p = panel(state, 'status');
+  p._render = () => {};
+  p.route = { prefix: '/system-hub', path: '' };
+  const first = p._tab;
+  assert.notEqual(first, 'watchdog');
+  // A tab chosen in the panel; Home Assistant gives its old route again (an update of its state, a reconnection)
+  p._goTab('watchdog');
+  p.route = { prefix: '/system-hub', path: '' };
+  assert.equal(p._tab, 'watchdog');
+  // A new address (the browser's back, a link): followed
+  p.route = { prefix: '/system-hub', path: '/logs' };
+  assert.equal(p._tab, 'logs');
+  p.route = { prefix: '/system-hub', path: '/logs' };
+  assert.equal(p._tab, 'logs');
 });

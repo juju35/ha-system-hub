@@ -145,7 +145,7 @@ Each module's settings, opened in place:
 
 **System Hub** in the sidebar (administrators only) gathers everything on one page. Under the toolbar: **Status**, then four groups, **System** (Resources, Containers, Database, Security), **Reliability** (Logs, Sentinel, Automations), **Maintenance** (Updates, Backups, Versioning) and **Devices** (Silent devices, Batteries, Cleanup), and **Settings**. A group shows only when one of its modules is turned on; with two modules or more, they are sub-tabs under it, and the group's tab carries a badge with how many of them need a look, in the colour of the worst. The module shown is in the address (`/system-hub/watchdog`, or a group's name such as `/system-hub/devices` for its first module), so a link or a reload opens it again. The panel reads the modules every 10 seconds while it is shown.
 
-The sidebar icon is the **Status** tab's emblem, its badge following the status: a pulse when healthy, **!** to watch, **×** for a problem. An administrator's open page reads the status every 5 minutes (the panel's own reading, without showing it) and updates the icon when it changes.
+The sidebar icon is the **Status** tab's emblem, its badge following the status: a pulse when healthy, **!** to watch, **×** for a problem. It is drawn in each browser from the status it reads: the panel when it is open, else an administrator's page every 5 minutes (the panel's own reading, without showing it); the browser keeps the last one, so the sidebar shows it at once.
 
 | Tab | Content |
 |---|---|
