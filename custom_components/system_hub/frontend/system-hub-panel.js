@@ -1010,8 +1010,13 @@ class SystemHubPanel extends HTMLElement {
   }
 
   set route(route) {
-    var path = (route?.path || '').split('/').filter(Boolean)[0];
-    this._routeTab = path || null;
+    var path = (route?.path || '').split('/').filter(Boolean)[0] || null;
+    // Home Assistant gives the route again at each of its updates, the same one: only a new address is followed, so
+    // that the panel stays on the tab shown (before 2.0.2, the address it kept was the one the panel opened with, and
+    // its first tab came back by itself)
+    if (this._routeSeen !== undefined && path === this._routeSeen) return;
+    this._routeSeen = path;
+    this._routeTab = path;
     if (this._state) this._selectTab(this._routeTab);
   }
 

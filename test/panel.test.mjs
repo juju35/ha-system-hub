@@ -1469,3 +1469,21 @@ test('a tab chosen: the address and Home Assistant\'s route follow it, so a pane
   delete context.history;
   delete context.window;
 });
+
+test('the route given again by Home Assistant at each update does not bring the first tab back', () => {
+  const state = { loaded: true, modules: ['logs', 'watchdog'], tabs: ['logs', 'watchdog'] };
+  const p = panel(state, 'status');
+  p._render = () => {};
+  p.route = { prefix: '/system-hub', path: '' };
+  const first = p._tab;
+  assert.notEqual(first, 'watchdog');
+  // A tab chosen in the panel; Home Assistant gives its old route again (an update of its state, a reconnection)
+  p._goTab('watchdog');
+  p.route = { prefix: '/system-hub', path: '' };
+  assert.equal(p._tab, 'watchdog');
+  // A new address (the browser's back, a link): followed
+  p.route = { prefix: '/system-hub', path: '/logs' };
+  assert.equal(p._tab, 'logs');
+  p.route = { prefix: '/system-hub', path: '/logs' };
+  assert.equal(p._tab, 'logs');
+});
