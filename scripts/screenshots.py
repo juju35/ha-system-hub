@@ -553,6 +553,48 @@ def mock_state():
         # The Orphans tab: the counts with the state, the whole list from its own command
         **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
         "git_sync_configured": True,
+        # The Updates tab: Home Assistant, an add-on and a device before the Marketplace
+        "system_updates": {
+            "available": [
+                {
+                    "entity_id": "update.home_assistant_core_update",
+                    "kind": "core",
+                    "title": "Home Assistant Core",
+                    "installed": "2026.10.4",
+                    "latest": "2026.11.1",
+                    "release_url": "https://www.home-assistant.io/latest-release-notes/",
+                    "release_summary": "The Marketplace, faster dashboards and new integrations.",
+                    "picture": None,
+                    "installing": False,
+                    "backup": True,
+                },
+                {
+                    "entity_id": "update.mosquitto_broker_update",
+                    "kind": "addon",
+                    "title": "Mosquitto broker",
+                    "installed": "6.5.1",
+                    "latest": "6.5.2",
+                    "release_url": None,
+                    "release_summary": "Updates the broker to Mosquitto 2.0.22.",
+                    "picture": None,
+                    "installing": False,
+                    "backup": True,
+                },
+                {
+                    "entity_id": "update.garage_plug_firmware",
+                    "kind": "device",
+                    "title": "Garage plug",
+                    "installed": "1.0.21",
+                    "latest": "1.0.24",
+                    "release_url": None,
+                    "release_summary": None,
+                    "picture": None,
+                    "installing": False,
+                    "backup": False,
+                },
+            ],
+            "up_to_date": {"system": 1, "addon": 10, "device": 23},
+        },
         "updates": [
             {
                 "key": "core",

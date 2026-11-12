@@ -304,6 +304,80 @@ test('watchdog tab: the power cycles, and the rooms of the batteries with their 
   assert.equal(p._areaIcon(''), 'mdi:home-outline');
 });
 
+test('updates tab: Home Assistant, the add-ons and the devices before the Marketplace, each installed once asked', async () => {
+  const state = {
+    loaded: true,
+    modules: ['marketplace'],
+    tabs: ['marketplace'],
+    marketplace: { state: 'idle', list: [], backup_before_install: true },
+    system_updates: {
+      available: [
+        { entity_id: 'update.core', kind: 'core', title: 'Home Assistant Core', installed: '2026.11.1', latest: '2026.11.2', release_summary: 'Fixes', backup: true },
+        { entity_id: 'update.mosquitto', kind: 'addon', title: 'Mosquitto broker', installed: '6.5.1', latest: '6.5.2', backup: true },
+        { entity_id: 'update.lamp', kind: 'device', title: 'Lamp', installed: '1.0.21', latest: '1.0.24', backup: false },
+      ],
+      up_to_date: { system: 1, addon: 10, device: 23 },
+    },
+  };
+  const p = panel(state, 'marketplace');
+  const html = p._content();
+  const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
+  assert.deepEqual(sections, ['Home Assistant', 'Add-ons', 'Devices and services', 'Marketplace']);
+  assert.match(html, /Available: 3 · Up to date: Home Assistant 1, add-ons 10, devices and services 23/);
+  assert.match(html, /Restarts Home Assistant/);
+  // The backup chosen in the Updates settings, switched here
+  assert.match(html, /data-action="upd_backup" aria-pressed="true"/);
+  // Install asks first, then calls update.install with the backup where the update can make one
+  const calls = [];
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._hass.callWS = async () => state;
+  p._render = () => {};
+  const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
+  click('upd_confirm', { entity: 'update.core' });
+  const asked = p._content();
+  assert.match(asked, /Install Home Assistant Core 2026.11.2\?/);
+  assert.match(asked, /data-action="upd_install" data-entity="update.core" data-backup="1"/);
+  await click('upd_install', { entity: 'update.core', backup: '1' });
+  assert.equal(JSON.stringify(calls), JSON.stringify([['update', 'install', { entity_id: 'update.core', backup: true }]]));
+  // Status: every update counted
+  assert.equal(p._stArea('marketplace')[1], '3 available');
+});
+
+test('updates tab: Update all, the Marketplace first and Home Assistant itself last, asked first', async () => {
+  const sys = (entity_id, kind, backup = true) => ({ entity_id, kind, title: entity_id, installed: '1', latest: '2', backup });
+  const state = {
+    loaded: true,
+    modules: ['marketplace'],
+    tabs: ['marketplace'],
+    marketplace: { state: 'idle', list: [{ entity_id: 'update.mushroom', title: 'Mushroom' }], backup_before_install: false },
+    system_updates: {
+      available: [sys('update.core', 'core'), sys('update.os', 'os'), sys('update.sup', 'supervisor'), sys('update.mqtt', 'addon'), sys('update.plug', 'device', false)],
+      up_to_date: {},
+    },
+  };
+  const p = panel(state, 'marketplace');
+  // OS left out while Core waits: two restarts
+  assert.match(p._content(), /data-action="upd_all_confirm"[^>]*>[\s\S]*?Update all \(5\)/);
+  p._render = () => {};
+  const click = (action) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action } } : null) } });
+  click('upd_all_confirm');
+  assert.match(p._content(), /Install the 5 updates one after the other\? Home Assistant restarts at the end\. Home Assistant OS is left for afterwards/);
+  const calls = [];
+  p._hass.callService = async (domain, service, data) => calls.push(`${domain}.${service} ${data.entity_id}${data.wait ? ' wait' : ''}`);
+  p._hass.callWS = async () => state;
+  await click('upd_all');
+  assert.equal(
+    JSON.stringify(calls),
+    JSON.stringify([
+      'system_hub.marketplace_install_updates update.mushroom wait',
+      'update.install update.mqtt',
+      'update.install update.plug',
+      'update.install update.sup',
+      'update.install update.core',
+    ]),
+  );
+});
+
 test('marketplace tab: the progress of a check running', () => {
   const started = new Date(Date.now() - 40000).toISOString();
   const html = panel(

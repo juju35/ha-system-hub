@@ -1487,7 +1487,21 @@
         "group_maintenance": "Apkope",
         "group_devices": "Ierīces",
         "move_up": "Pārvietot uz augšu",
-        "move_down": "Pārvietot uz leju"
+        "move_down": "Pārvietot uz leju",
+        "upd_addons": "Papildinājumi",
+        "upd_devices": "Ierīces un pakalpojumi",
+        "upd_backup": "Dublēt pirms instalēšanas",
+        "upd_available": "Pieejami: {n}",
+        "upd_uptodate": "Atjaunināti: Home Assistant {system}, papildinājumi {addons}, ierīces un pakalpojumi {devices}",
+        "upd_restart_core": "Restartē Home Assistant",
+        "upd_restart_supervisor": "Restartē Supervisor",
+        "upd_restart_os": "Restartē resursdatoru",
+        "upd_confirm": "Instalēt {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Instalēt {n} atjauninājumus vienu pēc otra?",
+        "upd_all_restart": "Beigās Home Assistant tiek restartēts.",
+        "upd_all_os_later": "Home Assistant OS paliek vēlākam: instalējiet to, kad Home Assistant atkal darbojas."
       }
     },
     "battery_type": {

@@ -343,6 +343,44 @@ async def test_marketplace_updates_for_the_panel(hass: HomeAssistant) -> None:
     }
 
 
+async def test_system_updates_for_the_panel(hass: HomeAssistant) -> None:
+    """Home Assistant, the add-ons and the devices: the ones with an update in order, the others counted."""
+    from homeassistant.helpers import entity_registry as er  # noqa: PLC0415
+
+    from custom_components.system_hub.panel import _system_updates  # noqa: PLC0415
+
+    registry = er.async_get(hass)
+    entities = (
+        ("zha", "lamp", "Lamp", "on", 0),
+        ("hassio", "mosquitto_version_latest", "Mosquitto broker", "on", 9),
+        ("hassio", "home_assistant_os_version_latest", "Home Assistant Operating System", "on", 9),
+        ("hassio", "home_assistant_core_version_latest", "Home Assistant Core", "on", 9),
+        ("hassio", "home_assistant_supervisor_version_latest", "Home Assistant Supervisor", "off", 0),
+        ("hassio", "samba_version_latest", "Samba share", "off", 0),
+        ("esphome", "node", "Node", "off", 0),
+        ("marketplace", "1", "Mushroom", "on", 0),
+        ("hacs", "2", "card-mod", "on", 0),
+    )
+    for platform, uid, title, state, features in entities:
+        entry = registry.async_get_or_create("update", platform, uid, suggested_object_id=f"{platform}_{uid}")
+        attrs = {"title": title, "installed_version": "1.0", "latest_version": "1.1", "supported_features": features}
+        hass.states.async_set(entry.entity_id, state, attrs)
+    # Unavailable: left out
+    gone = registry.async_get_or_create("update", "zha", "gone", suggested_object_id="gone")
+    hass.states.async_set(gone.entity_id, "unavailable", {"title": "Gone"})
+
+    result = _system_updates(hass)
+    assert [(u["kind"], u["title"]) for u in result["available"]] == [
+        ("core", "Home Assistant Core"),
+        ("os", "Home Assistant Operating System"),
+        ("addon", "Mosquitto broker"),
+        ("device", "Lamp"),
+    ]
+    assert result["available"][0]["backup"] is True
+    assert result["available"][3]["backup"] is False
+    assert result["up_to_date"] == {"system": 1, "addon": 1, "device": 1}
+
+
 async def test_configure_and_the_panel_drive_the_same_flow(hass: HomeAssistant, hass_ws_client) -> None:
     """Configure on the integration's page and the Settings tab start the same options flow."""
     from homeassistant.data_entry_flow import FlowResultType  # noqa: PLC0415

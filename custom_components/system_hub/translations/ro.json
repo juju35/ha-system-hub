@@ -1487,7 +1487,21 @@
         "group_maintenance": "Întreținere",
         "group_devices": "Dispozitive",
         "move_up": "Mută în sus",
-        "move_down": "Mută în jos"
+        "move_down": "Mută în jos",
+        "upd_addons": "Add-on-uri",
+        "upd_devices": "Dispozitive și servicii",
+        "upd_backup": "Copie de rezervă înainte de instalare",
+        "upd_available": "Disponibile: {n}",
+        "upd_uptodate": "La zi: Home Assistant {system}, add-on-uri {addons}, dispozitive și servicii {devices}",
+        "upd_restart_core": "Repornește Home Assistant",
+        "upd_restart_supervisor": "Repornește Supervisorul",
+        "upd_restart_os": "Repornește gazda",
+        "upd_confirm": "Instalați {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Instalați cele {n} actualizări una după alta?",
+        "upd_all_restart": "Home Assistant repornește la final.",
+        "upd_all_os_later": "Home Assistant OS rămâne pentru după: instalați-l când Home Assistant revine."
       }
     },
     "battery_type": {

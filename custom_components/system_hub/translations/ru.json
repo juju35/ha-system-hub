@@ -1487,7 +1487,21 @@
         "group_maintenance": "Обслуживание",
         "group_devices": "Устройства",
         "move_up": "Вверх",
-        "move_down": "Вниз"
+        "move_down": "Вниз",
+        "upd_addons": "Дополнения",
+        "upd_devices": "Устройства и службы",
+        "upd_backup": "Создать резервную копию перед установкой",
+        "upd_available": "Доступно: {n}",
+        "upd_uptodate": "Актуально: Home Assistant {system}, дополнения {addons}, устройства и службы {devices}",
+        "upd_restart_core": "Перезапускает Home Assistant",
+        "upd_restart_supervisor": "Перезапускает Supervisor",
+        "upd_restart_os": "Перезапускает хост",
+        "upd_confirm": "Установить {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Установить {n} обновлений одно за другим?",
+        "upd_all_restart": "В конце Home Assistant перезапустится.",
+        "upd_all_os_later": "Home Assistant OS остаётся на потом: установите его, когда Home Assistant снова заработает."
       }
     },
     "battery_type": {

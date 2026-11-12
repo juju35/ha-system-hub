@@ -1487,7 +1487,21 @@
         "group_maintenance": "Vzdrževanje",
         "group_devices": "Naprave",
         "move_up": "Premakni gor",
-        "move_down": "Premakni dol"
+        "move_down": "Premakni dol",
+        "upd_addons": "Dodatki",
+        "upd_devices": "Naprave in storitve",
+        "upd_backup": "Varnostno kopiraj pred namestitvijo",
+        "upd_available": "Na voljo: {n}",
+        "upd_uptodate": "Posodobljeno: Home Assistant {system}, dodatki {addons}, naprave in storitve {devices}",
+        "upd_restart_core": "Znova zažene Home Assistant",
+        "upd_restart_supervisor": "Znova zažene Supervisor",
+        "upd_restart_os": "Znova zažene gostitelja",
+        "upd_confirm": "Namestim {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Namestim {n} posodobitev eno za drugo?",
+        "upd_all_restart": "Home Assistant se na koncu znova zažene.",
+        "upd_all_os_later": "Home Assistant OS ostane za pozneje: namestite ga, ko se Home Assistant vrne."
       }
     },
     "battery_type": {

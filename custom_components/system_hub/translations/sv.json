@@ -1487,7 +1487,21 @@
         "group_maintenance": "Underhåll",
         "group_devices": "Enheter",
         "move_up": "Flytta upp",
-        "move_down": "Flytta ned"
+        "move_down": "Flytta ned",
+        "upd_addons": "Tillägg",
+        "upd_devices": "Enheter och tjänster",
+        "upd_backup": "Säkerhetskopiera före installation",
+        "upd_available": "Tillgängliga: {n}",
+        "upd_uptodate": "Uppdaterade: Home Assistant {system}, tillägg {addons}, enheter och tjänster {devices}",
+        "upd_restart_core": "Startar om Home Assistant",
+        "upd_restart_supervisor": "Startar om Supervisor",
+        "upd_restart_os": "Startar om värden",
+        "upd_confirm": "Installera {name} {version}?",
+        "upd_system": "Home Assistant",
+        "upd_marketplace": "Marketplace",
+        "upd_all_confirm": "Installera de {n} uppdateringarna efter varandra?",
+        "upd_all_restart": "Home Assistant startar om i slutet.",
+        "upd_all_os_later": "Home Assistant OS väntar till efteråt: installera det när Home Assistant är tillbaka."
       }
     },
     "battery_type": {
