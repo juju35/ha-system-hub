@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 - 2026-11-12
+
+### Features
+- `show_title` and `show_subtitle` options (also in the visual editors) hide a card header's title and its subtitle, separately, for a card placed under a section heading of its own (asked in juju35/ha-vehicle-card#72): System Monitor, Integration Watchdog, Marketplace, Orphan Entities, Automation Monitor, Git Sync and System Hub (status) cards; the Batteries card gets `show_title`.
+
 ## 2.0.2 - 2026-11-12
 
 ### Fixed

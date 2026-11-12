@@ -217,6 +217,6 @@ test('editor: the module first, then its own editor; another module starts its o
   const form = editor.shadowRoot.querySelector('.form').children[0];
   form.handlers['value-changed']({ stopPropagation() {}, detail: { value: { module: 'status' } } });
   assert.equal(JSON.stringify(editor.events.at(-1).detail.config), JSON.stringify({ type: 'custom:system-hub-card', module: 'status' }));
-  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,hide_ok');
+  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,show_title,show_subtitle,hide_ok');
   assert.equal(inner.children.length, 0);
 });

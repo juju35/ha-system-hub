@@ -4,7 +4,7 @@
  * Served and added to the dashboard resources by System Hub; the card types are those of Battery Monitor, so its
  * dashboards keep working. https://github.com/juju35/ha-system-hub
  */
-var BATTERY_MONITOR_CARD_VERSION = '2.0.2';
+var BATTERY_MONITOR_CARD_VERSION = '2.1.0';
 
 const BM_I18N = {
   en: {
@@ -30,6 +30,7 @@ const BM_I18N = {
     ed_entity: 'System Hub sensor',
     ed_entity_helper: 'Leave empty to find it automatically',
     ed_title: 'Title',
+    ed_show_title: 'Show title',
     ed_title_helper: 'Leave empty for “Batteries”',
     ed_columns: 'Columns',
     ed_only_low: 'Hide the batteries that are fine',
@@ -101,6 +102,7 @@ const BM_I18N = {
     ed_entity: 'Capteur System Hub',
     ed_entity_helper: 'Laisser vide pour le trouver automatiquement',
     ed_title: 'Titre',
+    ed_show_title: 'Afficher le titre',
     ed_title_helper: 'Laisser vide pour « Batteries »',
     ed_columns: 'Colonnes',
     ed_only_low: 'Masquer les batteries en bon état',
@@ -172,6 +174,7 @@ const BM_I18N = {
     ed_entity: 'Battery-Monitor-Sensor',
     ed_entity_helper: 'Leer lassen, um ihn automatisch zu finden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel anzeigen',
     ed_title_helper: 'Leer lassen für „Batterien“',
     ed_columns: 'Spalten',
     ed_only_low: 'Batterien in gutem Zustand ausblenden',
@@ -243,6 +246,7 @@ const BM_I18N = {
     ed_entity: 'Sensor de System Hub',
     ed_entity_helper: 'Déjalo vacío para encontrarlo automáticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar el título',
     ed_title_helper: 'Déjalo vacío para «Baterías»',
     ed_columns: 'Columnas',
     ed_only_low: 'Ocultar las baterías en buen estado',
@@ -314,6 +318,7 @@ const BM_I18N = {
     ed_entity: 'System Hub сензор',
     ed_entity_helper: 'Остави празно за аутоматско проналажење',
     ed_title: 'Наслов',
+    ed_show_title: 'Прикажи наслов',
     ed_title_helper: 'Остави празно за „Батерије“',
     ed_columns: 'Колоне',
     ed_only_low: 'Сакриј батерије које су у реду',
@@ -385,6 +390,7 @@ const BM_I18N = {
     ed_entity: 'System Hub senzor',
     ed_entity_helper: 'Ostavi prazno za automatsko pronalaženje',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
     ed_title_helper: 'Ostavi prazno za „Baterije“',
     ed_columns: 'Kolone',
     ed_only_low: 'Sakrij baterije koje su u redu',
@@ -456,6 +462,7 @@ const BM_I18N = {
     ed_entity: 'Sensore System Hub',
     ed_entity_helper: 'Lascia vuoto per trovarlo automaticamente',
     ed_title: 'Titolo',
+    ed_show_title: 'Mostra il titolo',
     ed_title_helper: 'Lascia vuoto per «Batterie»',
     ed_columns: 'Colonne',
     ed_only_low: 'Nascondi le batterie in buono stato',
@@ -527,6 +534,7 @@ const BM_I18N = {
     ed_entity: 'System Hub-sensor',
     ed_entity_helper: 'Leeg laten om hem automatisch te vinden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel tonen',
     ed_title_helper: 'Leeg laten voor “Batterijen”',
     ed_columns: 'Kolommen',
     ed_only_low: 'Batterijen verbergen die in orde zijn',
@@ -598,6 +606,7 @@ const BM_I18N = {
     ed_entity: 'Sensor System Hub',
     ed_entity_helper: 'Deixe vazio para o encontrar automaticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar o título',
     ed_title_helper: 'Deixe vazio para «Baterias»',
     ed_columns: 'Colunas',
     ed_only_low: 'Ocultar as baterias em bom estado',
@@ -669,6 +678,7 @@ const BM_I18N = {
     ed_entity: 'Czujnik System Hub',
     ed_entity_helper: 'Pozostaw puste, aby znaleźć go automatycznie',
     ed_title: 'Tytuł',
+    ed_show_title: 'Pokaż tytuł',
     ed_title_helper: 'Pozostaw puste dla „Baterie”',
     ed_columns: 'Kolumny',
     ed_only_low: 'Ukryj baterie w dobrym stanie',
@@ -740,6 +750,7 @@ const BM_I18N = {
     ed_entity: 'Senzor System Hub',
     ed_entity_helper: 'Lăsați gol pentru a-l găsi automat',
     ed_title: 'Titlu',
+    ed_show_title: 'Afișează titlul',
     ed_title_helper: 'Lăsați gol pentru „Baterii”',
     ed_columns: 'Coloane',
     ed_only_low: 'Ascunde bateriile în stare bună',
@@ -811,6 +822,7 @@ const BM_I18N = {
     ed_entity: 'System Hub-sensor',
     ed_entity_helper: 'Lad feltet være tomt for at finde den automatisk',
     ed_title: 'Titel',
+    ed_show_title: 'Vis titel',
     ed_title_helper: 'Lad feltet være tomt for »Batterier«',
     ed_columns: 'Kolonner',
     ed_only_low: 'Skjul batterier, der er i orden',
@@ -882,6 +894,7 @@ const BM_I18N = {
     ed_entity: 'System Hub-sensor',
     ed_entity_helper: 'Lämna tomt för att hitta den automatiskt',
     ed_title: 'Rubrik',
+    ed_show_title: 'Visa rubrik',
     ed_title_helper: 'Lämna tomt för ”Batterier”',
     ed_columns: 'Kolumner',
     ed_only_low: 'Dölj batterier som är okej',
@@ -953,6 +966,7 @@ const BM_I18N = {
     ed_entity: 'Сензор на System Hub',
     ed_entity_helper: 'Оставете празно, за да бъде открит автоматично',
     ed_title: 'Заглавие',
+    ed_show_title: 'Показване на заглавието',
     ed_title_helper: 'Оставете празно за „Батерии“',
     ed_columns: 'Колони',
     ed_only_low: 'Скриване на батериите в добро състояние',
@@ -1024,6 +1038,7 @@ const BM_I18N = {
     ed_entity: 'Датчик System Hub',
     ed_entity_helper: 'Оставьте пустым, чтобы найти его автоматически',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показывать заголовок',
     ed_title_helper: 'Оставьте пустым для «Батареи»',
     ed_columns: 'Столбцы',
     ed_only_low: 'Скрыть батареи в порядке',
@@ -1095,6 +1110,7 @@ const BM_I18N = {
     ed_entity: 'Датчик System Hub',
     ed_entity_helper: 'Залиште порожнім, щоб знайти його автоматично',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показувати заголовок',
     ed_title_helper: 'Залиште порожнім для «Батареї»',
     ed_columns: 'Стовпці',
     ed_only_low: 'Приховати батареї в доброму стані',
@@ -1166,6 +1182,7 @@ const BM_I18N = {
     ed_entity: 'System Hub érzékelő',
     ed_entity_helper: 'Hagyja üresen az automatikus kereséshez',
     ed_title: 'Cím',
+    ed_show_title: 'Cím megjelenítése',
     ed_title_helper: 'Hagyja üresen az „Elemek” címhez',
     ed_columns: 'Oszlopok',
     ed_only_low: 'A rendben lévő elemek elrejtése',
@@ -1237,6 +1254,7 @@ const BM_I18N = {
     ed_entity: 'Senzor System Hub',
     ed_entity_helper: 'Nechajte prázdne na automatické vyhľadanie',
     ed_title: 'Názov',
+    ed_show_title: 'Zobraziť názov',
     ed_title_helper: 'Nechajte prázdne pre „Batérie“',
     ed_columns: 'Stĺpce',
     ed_only_low: 'Skryť batérie v dobrom stave',
@@ -1308,6 +1326,7 @@ const BM_I18N = {
     ed_entity: 'Senzor System Hub',
     ed_entity_helper: 'Ponechte prázdné pro automatické vyhledání',
     ed_title: 'Název',
+    ed_show_title: 'Zobrazit název',
     ed_title_helper: 'Ponechte prázdné pro „Baterie“',
     ed_columns: 'Sloupce',
     ed_only_low: 'Skrýt baterie v pořádku',
@@ -1379,6 +1398,7 @@ const BM_I18N = {
     ed_entity: 'Senzor System Hub',
     ed_entity_helper: 'Pustite prazno za samodejno iskanje',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
     ed_title_helper: 'Pustite prazno za »Baterije«',
     ed_columns: 'Stolpci',
     ed_only_low: 'Skrij baterije, ki so v redu',
@@ -1450,6 +1470,7 @@ const BM_I18N = {
     ed_entity: 'System Hub sensors',
     ed_entity_helper: 'Atstājiet tukšu, lai to atrastu automātiski',
     ed_title: 'Virsraksts',
+    ed_show_title: 'Rādīt virsrakstu',
     ed_title_helper: 'Atstājiet tukšu, lai būtu “Baterijas”',
     ed_columns: 'Kolonnas',
     ed_only_low: 'Paslēpt baterijas, kas ir kārtībā',
@@ -1521,6 +1542,7 @@ const BM_I18N = {
     ed_entity: 'Αισθητήρας System Hub',
     ed_entity_helper: 'Αφήστε κενό για αυτόματο εντοπισμό',
     ed_title: 'Τίτλος',
+    ed_show_title: 'Εμφάνιση τίτλου',
     ed_title_helper: 'Αφήστε κενό για «Μπαταρίες»',
     ed_columns: 'Στήλες',
     ed_only_low: 'Απόκρυψη των μπαταριών που είναι εντάξει',
@@ -1609,7 +1631,7 @@ function bmByForecast(a, b) {
 }
 // `expanded`: the full screen view laid out in the card itself (by room / by type / by replacement date, what to replace,
 // next replacement), as the sidebar panel shows it; `csv_button` hides its CSV export.
-const BM_DEFAULTS = { columns: 1, only_low: false, hide_when_ok: false, notify_button: true, popup: true, expanded: false, csv_button: true };
+const BM_DEFAULTS = { show_title: true, columns: 1, only_low: false, hide_when_ok: false, notify_button: true, popup: true, expanded: false, csv_button: true };
 
 // ── Battery types ────────────────────────────────────────────────────────────
 // The type comes from the card's `battery_types` (set in the editor), else from Battery Notes: the `battery_type` /
@@ -1709,6 +1731,8 @@ class BatteryMonitorCard extends HTMLElement {
 
   setConfig(config) {
     this._config = { ...BM_DEFAULTS, ...config };
+    // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config.show_title === false);
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
     this._sig = null;
     this._render();
@@ -2484,6 +2508,7 @@ class BatteryMonitorCard extends HTMLElement {
       @keyframes bm-blink { 0%, 100% { opacity: 1 } 50% { opacity: .35 } }
       @keyframes bm-spin { to { transform: rotate(360deg) } }
       @media (prefers-reduced-motion: reduce) { .row.due .ic, .notify[data-state='busy'] ha-icon { animation: none; } }
+      :host([hide-title]) .main > .title { visibility: hidden; }
     `;
   }
 
@@ -2753,6 +2778,7 @@ class BatteryMonitorCardEditor extends HTMLElement {
       { name: 'entity', selector: { entity: { filter: { integration: 'system_hub', domain: 'sensor' } } } },
       { name: 'title', selector: { text: {} } },
       { name: 'columns', selector: { number: { min: 1, max: 3, mode: 'box' } } },
+      { name: 'show_title', selector: { boolean: {} } },
       { name: 'only_low', selector: { boolean: {} } },
       { name: 'hide_when_ok', selector: { boolean: {} } },
       { name: 'notify_button', selector: { boolean: {} } },

@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: μόνο για διαχειριστές",
         "card_module": "Ενότητα",
         "card_groups": "Ομάδες",
-        "card_hide_ok": "Απόκρυψη όσων είναι εντάξει"
+        "card_hide_ok": "Απόκρυψη όσων είναι εντάξει",
+        "card_show_title": "Εμφάνιση τίτλου",
+        "card_show_subtitle": "Εμφάνιση υπότιτλου"
       }
     },
     "battery_type": {

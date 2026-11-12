@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: tylko dla administratorów",
         "card_module": "Moduł",
         "card_groups": "Grupy",
-        "card_hide_ok": "Ukryj to, co w porządku"
+        "card_hide_ok": "Ukryj to, co w porządku",
+        "card_show_title": "Pokaż tytuł",
+        "card_show_subtitle": "Pokaż podtytuł"
       }
     },
     "battery_type": {

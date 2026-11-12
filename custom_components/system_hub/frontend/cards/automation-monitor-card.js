@@ -77,6 +77,8 @@ const STRINGS = {
     // Editor
     title: "Title (optional)",
     show_failed: "Show failed automations",
+    show_title: "Show title",
+    show_subtitle: "Show subtitle",
     show_linked: "Show unavailable linked entities",
     expand_failed: "Failed automations expanded by default",
     expand_linked: "Unavailable linked entities expanded by default",
@@ -129,6 +131,8 @@ const STRINGS = {
     // Editor
     title: "Titre (optionnel)",
     show_failed: "Afficher les automatisations en échec",
+    show_title: "Afficher le titre",
+    show_subtitle: "Afficher le sous-titre",
     show_linked: "Afficher les entités liées indisponibles",
     expand_failed: "Automatisations en échec dépliées par défaut",
     expand_linked: "Entités liées indisponibles dépliées par défaut",
@@ -181,6 +185,8 @@ const STRINGS = {
     // Editor
     title: "Titel (optional)",
     show_failed: "Fehlgeschlagene Automatisierungen anzeigen",
+    show_title: "Titel anzeigen",
+    show_subtitle: "Untertitel anzeigen",
     show_linked: "Nicht verfügbare verknüpfte Entitäten anzeigen",
     expand_failed: "Fehlgeschlagene Automatisierungen standardmäßig aufgeklappt",
     expand_linked: "Nicht verfügbare verknüpfte Entitäten standardmäßig aufgeklappt",
@@ -233,6 +239,8 @@ const STRINGS = {
     // Editor
     title: "Título (opcional)",
     show_failed: "Mostrar las automatizaciones fallidas",
+    show_title: "Mostrar el título",
+    show_subtitle: "Mostrar el subtítulo",
     show_linked: "Mostrar las entidades vinculadas no disponibles",
     expand_failed: "Automatizaciones fallidas desplegadas por defecto",
     expand_linked: "Entidades vinculadas no disponibles desplegadas por defecto",
@@ -287,6 +295,8 @@ const STRINGS = {
     // Editor
     title: "Наслов (опционо)",
     show_failed: "Прикажи неуспеле аутоматизације",
+    show_title: "Прикажи наслов",
+    show_subtitle: "Прикажи поднаслов",
     show_linked: "Прикажи недоступне повезане ентитете",
     expand_failed: "Неуспеле аутоматизације подразумевано проширене",
     expand_linked: "Недоступни повезани ентитети подразумевано проширени",
@@ -341,6 +351,8 @@ const STRINGS = {
     // Editor
     title: "Naslov (opciono)",
     show_failed: "Prikaži neuspele automatizacije",
+    show_title: "Prikaži naslov",
+    show_subtitle: "Prikaži podnaslov",
     show_linked: "Prikaži nedostupne povezane entitete",
     expand_failed: "Neuspele automatizacije podrazumevano proširene",
     expand_linked: "Nedostupni povezani entiteti podrazumevano prošireni",
@@ -393,6 +405,8 @@ const STRINGS = {
     // Editor
     title: "Titolo (facoltativo)",
     show_failed: "Mostra le automazioni non riuscite",
+    show_title: "Mostra il titolo",
+    show_subtitle: "Mostra il sottotitolo",
     show_linked: "Mostra le entità collegate non disponibili",
     expand_failed: "Automazioni non riuscite espanse per impostazione predefinita",
     expand_linked: "Entità collegate non disponibili espanse per impostazione predefinita",
@@ -445,6 +459,8 @@ const STRINGS = {
     // Editor
     title: "Titel (optioneel)",
     show_failed: "Mislukte automatiseringen tonen",
+    show_title: "Titel tonen",
+    show_subtitle: "Ondertitel tonen",
     show_linked: "Niet-beschikbare gekoppelde entiteiten tonen",
     expand_failed: "Mislukte automatiseringen standaard uitgeklapt",
     expand_linked: "Niet-beschikbare gekoppelde entiteiten standaard uitgeklapt",
@@ -497,6 +513,8 @@ const STRINGS = {
     // Editor
     title: "Título (opcional)",
     show_failed: "Mostrar as automatizações falhadas",
+    show_title: "Mostrar o título",
+    show_subtitle: "Mostrar o subtítulo",
     show_linked: "Mostrar as entidades associadas indisponíveis",
     expand_failed: "Automatizações falhadas expandidas por predefinição",
     expand_linked: "Entidades associadas indisponíveis expandidas por predefinição",
@@ -551,6 +569,8 @@ const STRINGS = {
     // Editor
     title: "Tytuł (opcjonalnie)",
     show_failed: "Pokaż nieudane automatyzacje",
+    show_title: "Pokaż tytuł",
+    show_subtitle: "Pokaż podtytuł",
     show_linked: "Pokaż niedostępne powiązane encje",
     expand_failed: "Nieudane automatyzacje domyślnie rozwinięte",
     expand_linked: "Niedostępne powiązane encje domyślnie rozwinięte",
@@ -606,6 +626,8 @@ const STRINGS = {
     // Editor
     title: "Titlu (opțional)",
     show_failed: "Afișează automatizările eșuate",
+    show_title: "Afișează titlul",
+    show_subtitle: "Afișează subtitlul",
     show_linked: "Afișează entitățile legate indisponibile",
     expand_failed: "Automatizări eșuate extinse implicit",
     expand_linked: "Entități legate indisponibile extinse implicit",
@@ -658,6 +680,8 @@ const STRINGS = {
     // Editor
     title: "Titel (valgfri)",
     show_failed: "Vis mislykkede automatiseringer",
+    show_title: "Vis titel",
+    show_subtitle: "Vis undertitel",
     show_linked: "Vis utilgængelige tilknyttede entiteter",
     expand_failed: "Mislykkede automatiseringer udvidet som standard",
     expand_linked: "Utilgængelige tilknyttede entiteter udvidet som standard",
@@ -710,6 +734,8 @@ const STRINGS = {
     // Editor
     title: "Titel (valfri)",
     show_failed: "Visa misslyckade automatiseringar",
+    show_title: "Visa rubrik",
+    show_subtitle: "Visa underrubrik",
     show_linked: "Visa otillgängliga länkade entiteter",
     expand_failed: "Misslyckade automatiseringar expanderade som standard",
     expand_linked: "Otillgängliga länkade entiteter expanderade som standard",
@@ -762,6 +788,8 @@ const STRINGS = {
     // Editor
     title: "Заглавие (по избор)",
     show_failed: "Показване на неуспешните автоматизации",
+    show_title: "Показване на заглавието",
+    show_subtitle: "Показване на подзаглавието",
     show_linked: "Показване на недостъпните свързани обекти",
     expand_failed: "Неуспешните автоматизации разгънати по подразбиране",
     expand_linked: "Недостъпните свързани обекти разгънати по подразбиране",
@@ -816,6 +844,8 @@ const STRINGS = {
     // Editor
     title: "Заголовок (необязательно)",
     show_failed: "Показывать автоматизации с ошибками",
+    show_title: "Показывать заголовок",
+    show_subtitle: "Показывать подзаголовок",
     show_linked: "Показывать недоступные связанные объекты",
     expand_failed: "Автоматизации с ошибками развёрнуты по умолчанию",
     expand_linked: "Недоступные связанные объекты развёрнуты по умолчанию",
@@ -870,6 +900,8 @@ const STRINGS = {
     // Editor
     title: "Заголовок (необов’язково)",
     show_failed: "Показувати автоматизації з помилками",
+    show_title: "Показувати заголовок",
+    show_subtitle: "Показувати підзаголовок",
     show_linked: "Показувати недоступні пов’язані сутності",
     expand_failed: "Автоматизації з помилками розгорнуті за замовчуванням",
     expand_linked: "Недоступні пов’язані сутності розгорнуті за замовчуванням",
@@ -922,6 +954,8 @@ const STRINGS = {
     // Editor
     title: "Cím (opcionális)",
     show_failed: "Sikertelen automatizálások megjelenítése",
+    show_title: "Cím megjelenítése",
+    show_subtitle: "Alcím megjelenítése",
     show_linked: "Nem elérhető kapcsolt entitások megjelenítése",
     expand_failed: "Sikertelen automatizálások alapértelmezetten kibontva",
     expand_linked: "Nem elérhető kapcsolt entitások alapértelmezetten kibontva",
@@ -976,6 +1010,8 @@ const STRINGS = {
     // Editor
     title: "Názov (voliteľné)",
     show_failed: "Zobraziť neúspešné automatizácie",
+    show_title: "Zobraziť názov",
+    show_subtitle: "Zobraziť podnázov",
     show_linked: "Zobraziť nedostupné prepojené entity",
     expand_failed: "Neúspešné automatizácie predvolene rozbalené",
     expand_linked: "Nedostupné prepojené entity predvolene rozbalené",
@@ -1030,6 +1066,8 @@ const STRINGS = {
     // Editor
     title: "Název (volitelné)",
     show_failed: "Zobrazit neúspěšné automatizace",
+    show_title: "Zobrazit název",
+    show_subtitle: "Zobrazit podnázev",
     show_linked: "Zobrazit nedostupné propojené entity",
     expand_failed: "Neúspěšné automatizace ve výchozím stavu rozbalené",
     expand_linked: "Nedostupné propojené entity ve výchozím stavu rozbalené",
@@ -1086,6 +1124,8 @@ const STRINGS = {
     // Editor
     title: "Naslov (neobvezno)",
     show_failed: "Pokaži neuspešne avtomatizacije",
+    show_title: "Prikaži naslov",
+    show_subtitle: "Prikaži podnaslov",
     show_linked: "Pokaži nedosegljive povezane entitete",
     expand_failed: "Neuspešne avtomatizacije privzeto razširjene",
     expand_linked: "Nedosegljive povezane entitete privzeto razširjene",
@@ -1142,6 +1182,8 @@ const STRINGS = {
     // Editor
     title: "Virsraksts (neobligāts)",
     show_failed: "Rādīt neizdevušās automatizācijas",
+    show_title: "Rādīt virsrakstu",
+    show_subtitle: "Rādīt apakšvirsrakstu",
     show_linked: "Rādīt nepieejamās saistītās vienības",
     expand_failed: "Neizdevušās automatizācijas pēc noklusējuma izvērstas",
     expand_linked: "Nepieejamās saistītās vienības pēc noklusējuma izvērstas",
@@ -1194,6 +1236,8 @@ const STRINGS = {
     // Editor
     title: "Τίτλος (προαιρετικό)",
     show_failed: "Εμφάνιση αυτοματισμών που απέτυχαν",
+    show_title: "Εμφάνιση τίτλου",
+    show_subtitle: "Εμφάνιση υπότιτλου",
     show_linked: "Εμφάνιση μη διαθέσιμων συνδεδεμένων οντοτήτων",
     expand_failed: "Αυτοματισμοί που απέτυχαν ανεπτυγμένοι από προεπιλογή",
     expand_linked: "Μη διαθέσιμες συνδεδεμένες οντότητες ανεπτυγμένες από προεπιλογή",
@@ -1583,6 +1627,7 @@ const BASE_STYLE = `
   .zoom .icon { width: 16px; height: 16px; }
   .zoom:hover { background: color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color: var(--primary-text-color); }
   .zoom:focus-visible { outline: 2px solid var(--primary-color, #03a9f4); outline-offset: 1px; }
+  :host([hide-title]) .titles > .name, :host([hide-subtitle]) .titles > .sub { display: none; }
 `;
 // In-card confirmation popup (Clear / Clear all), as in ha-vacuum-card and ha-system-monitor-card: a
 // backdrop over the card with a small dialog at the top, so it stays in view when the card is long,
@@ -1646,6 +1691,9 @@ class AutomationMonitorBase extends HTMLElement {
   setConfig(config) {
     if (!config) throw new Error("Invalid configuration");
     this._config = { ...config };
+    // show_title / show_subtitle: the header"s title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.("hide-title", config.show_title === false);
+    this.toggleAttribute?.("hide-subtitle", config.show_subtitle === false);
     this._folds = {};
     this._expanded = {};
     this._html = "";
@@ -2351,6 +2399,8 @@ class AutomationMonitorEditorBase extends HTMLElement {
   // [name, default]
   static get toggles() {
     return [
+      ["show_title", true],
+      ["show_subtitle", true],
       ["show_failed", true],
       ["show_linked", true],
       ["hide_when_ok", false],

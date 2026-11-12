@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: endast för administratörer",
         "card_module": "Modul",
         "card_groups": "Grupper",
-        "card_hide_ok": "Dölj det som är okej"
+        "card_hide_ok": "Dölj det som är okej",
+        "card_show_title": "Visa rubrik",
+        "card_show_subtitle": "Visa underrubrik"
       }
     },
     "battery_type": {

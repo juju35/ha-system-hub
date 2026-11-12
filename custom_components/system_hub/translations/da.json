@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: kun for administratorer",
         "card_module": "Modul",
         "card_groups": "Grupper",
-        "card_hide_ok": "Skjul det, der er i orden"
+        "card_hide_ok": "Skjul det, der er i orden",
+        "card_show_title": "Vis titel",
+        "card_show_subtitle": "Vis undertitel"
       }
     },
     "battery_type": {

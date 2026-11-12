@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: solo para administradores",
         "card_module": "Módulo",
         "card_groups": "Grupos",
-        "card_hide_ok": "Ocultar lo que está bien"
+        "card_hide_ok": "Ocultar lo que está bien",
+        "card_show_title": "Mostrar el título",
+        "card_show_subtitle": "Mostrar el subtítulo"
       }
     },
     "battery_type": {

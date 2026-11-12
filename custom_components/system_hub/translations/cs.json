@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: jen pro správce",
         "card_module": "Modul",
         "card_groups": "Skupiny",
-        "card_hide_ok": "Skrýt, co je v pořádku"
+        "card_hide_ok": "Skrýt, co je v pořádku",
+        "card_show_title": "Zobrazit název",
+        "card_show_subtitle": "Zobrazit podnázev"
       }
     },
     "battery_type": {

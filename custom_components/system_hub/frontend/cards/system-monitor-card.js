@@ -73,6 +73,8 @@ const STRINGS = {
     // Editor
     title: "Title (optional, defaults to Home Assistant)",
     show_system: "Show system (CPU, RAM, disk, temperature)",
+    show_title: "Show title",
+    show_subtitle: "Show subtitle",
     show_network: "Show network",
     show_history: "Show 24 h history",
     cpu_warning: "CPU warning (%)",
@@ -142,6 +144,8 @@ const STRINGS = {
     zoom_out: "Revenir à la vue compacte",
     title: "Titre (facultatif, Home Assistant par défaut)",
     show_system: "Afficher le système (CPU, RAM, disque, température)",
+    show_title: "Afficher le titre",
+    show_subtitle: "Afficher le sous-titre",
     show_network: "Afficher le réseau",
     show_history: "Afficher l’historique 24 h",
     cpu_warning: "Seuil d’alerte CPU (%)",
@@ -211,6 +215,8 @@ const STRINGS = {
     zoom_out: "Zurück zur kompakten Ansicht",
     title: "Titel (optional, standardmäßig Home Assistant)",
     show_system: "System anzeigen (CPU, RAM, Datenträger, Temperatur)",
+    show_title: "Titel anzeigen",
+    show_subtitle: "Untertitel anzeigen",
     show_network: "Netzwerk anzeigen",
     show_history: "24-h-Verlauf anzeigen",
     cpu_warning: "CPU-Warnschwelle (%)",
@@ -280,6 +286,8 @@ const STRINGS = {
     zoom_out: "Volver a la vista compacta",
     title: "Título (opcional, Home Assistant por defecto)",
     show_system: "Mostrar el sistema (CPU, RAM, disco, temperatura)",
+    show_title: "Mostrar el título",
+    show_subtitle: "Mostrar el subtítulo",
     show_network: "Mostrar la red",
     show_history: "Mostrar el historial de 24 h",
     cpu_warning: "Umbral de aviso de CPU (%)",
@@ -350,6 +358,8 @@ const STRINGS = {
     // Editor
     title: "Наслов (опционо, подразумевано је Home Assistant)",
     show_system: "Прикажи систем (CPU, RAM, диск, температура)",
+    show_title: "Прикажи наслов",
+    show_subtitle: "Прикажи поднаслов",
     show_network: "Прикажи мрежу",
     show_history: "Прикажи историју за 24 ч",
     cpu_warning: "Праг упозорења ЦПУ (%)",
@@ -420,6 +430,8 @@ const STRINGS = {
     // Editor
     title: "Naslov (opciono, podrazumevano je Home Assistant)",
     show_system: "Prikaži sistem (CPU, RAM, disk, temperatura)",
+    show_title: "Prikaži naslov",
+    show_subtitle: "Prikaži podnaslov",
     show_network: "Prikaži mrežu",
     show_history: "Prikaži istoriju za 24 č",
     cpu_warning: "Prag upozorenja CPU (%)",
@@ -490,6 +502,8 @@ const STRINGS = {
     // Editor
     title: "Titolo (facoltativo, predefinito: Home Assistant)",
     show_system: "Mostra il sistema (CPU, RAM, disco, temperatura)",
+    show_title: "Mostra il titolo",
+    show_subtitle: "Mostra il sottotitolo",
     show_network: "Mostra la rete",
     show_history: "Mostra lo storico 24 h",
     cpu_warning: "Soglia di avviso CPU (%)",
@@ -560,6 +574,8 @@ const STRINGS = {
     // Editor
     title: "Titel (optioneel, standaard Home Assistant)",
     show_system: "Systeem tonen (CPU, RAM, schijf, temperatuur)",
+    show_title: "Titel tonen",
+    show_subtitle: "Ondertitel tonen",
     show_network: "Netwerk tonen",
     show_history: "24-uursgeschiedenis weergeven",
     cpu_warning: "Waarschuwingsdrempel CPU (%)",
@@ -630,6 +646,8 @@ const STRINGS = {
     // Editor
     title: "Título (opcional, Home Assistant por predefinição)",
     show_system: "Mostrar o sistema (CPU, RAM, disco, temperatura)",
+    show_title: "Mostrar o título",
+    show_subtitle: "Mostrar o subtítulo",
     show_network: "Mostrar a rede",
     show_history: "Mostrar o histórico de 24 h",
     cpu_warning: "Limiar de aviso da CPU (%)",
@@ -700,6 +718,8 @@ const STRINGS = {
     // Editor
     title: "Tytuł (opcjonalny, domyślnie Home Assistant)",
     show_system: "Pokaż system (CPU, RAM, dysk, temperatura)",
+    show_title: "Pokaż tytuł",
+    show_subtitle: "Pokaż podtytuł",
     show_network: "Pokaż sieć",
     show_history: "Pokaż historię z 24 h",
     cpu_warning: "Próg ostrzeżenia CPU (%)",
@@ -770,6 +790,8 @@ const STRINGS = {
     // Editor
     title: "Titlu (opțional, implicit Home Assistant)",
     show_system: "Afișează sistemul (CPU, RAM, disc, temperatură)",
+    show_title: "Afișează titlul",
+    show_subtitle: "Afișează subtitlul",
     show_network: "Afișează rețeaua",
     show_history: "Afișează istoricul pe 24 h",
     cpu_warning: "Prag de avertizare CPU (%)",
@@ -840,6 +862,8 @@ const STRINGS = {
     // Editor
     title: "Titel (valgfri, Home Assistant som standard)",
     show_system: "Vis system (CPU, RAM, disk, temperatur)",
+    show_title: "Vis titel",
+    show_subtitle: "Vis undertitel",
     show_network: "Vis netværk",
     show_history: "Vis 24-timers historik",
     cpu_warning: "Advarselsgrænse for CPU (%)",
@@ -910,6 +934,8 @@ const STRINGS = {
     // Editor
     title: "Titel (valfri, Home Assistant som standard)",
     show_system: "Visa system (CPU, RAM, disk, temperatur)",
+    show_title: "Visa rubrik",
+    show_subtitle: "Visa underrubrik",
     show_network: "Visa nätverk",
     show_history: "Visa 24 h-historik",
     cpu_warning: "Varningsgräns för CPU (%)",
@@ -980,6 +1006,8 @@ const STRINGS = {
     // Editor
     title: "Заглавие (по избор, по подразбиране Home Assistant)",
     show_system: "Показване на системата (CPU, RAM, диск, температура)",
+    show_title: "Показване на заглавието",
+    show_subtitle: "Показване на подзаглавието",
     show_network: "Показване на мрежата",
     show_history: "Показване на 24-часовата история",
     cpu_warning: "Праг за предупреждение за CPU (%)",
@@ -1050,6 +1078,8 @@ const STRINGS = {
     // Editor
     title: "Заголовок (необязательно, по умолчанию Home Assistant)",
     show_system: "Показывать систему (CPU, RAM, диск, температура)",
+    show_title: "Показывать заголовок",
+    show_subtitle: "Показывать подзаголовок",
     show_network: "Показывать сеть",
     show_history: "Показать историю за 24 ч",
     cpu_warning: "Порог предупреждения CPU (%)",
@@ -1120,6 +1150,8 @@ const STRINGS = {
     // Editor
     title: "Заголовок (необов’язково, типово Home Assistant)",
     show_system: "Показувати систему (CPU, RAM, диск, температура)",
+    show_title: "Показувати заголовок",
+    show_subtitle: "Показувати підзаголовок",
     show_network: "Показувати мережу",
     show_history: "Показати історію за 24 год",
     cpu_warning: "Поріг попередження CPU (%)",
@@ -1190,6 +1222,8 @@ const STRINGS = {
     // Editor
     title: "Cím (nem kötelező, alapértelmezés: Home Assistant)",
     show_system: "Rendszer megjelenítése (CPU, RAM, lemez, hőmérséklet)",
+    show_title: "Cím megjelenítése",
+    show_subtitle: "Alcím megjelenítése",
     show_network: "Hálózat megjelenítése",
     show_history: "24 órás előzmények megjelenítése",
     cpu_warning: "CPU figyelmeztetési küszöb (%)",
@@ -1260,6 +1294,8 @@ const STRINGS = {
     // Editor
     title: "Názov (voliteľný, predvolene Home Assistant)",
     show_system: "Zobraziť systém (CPU, RAM, disk, teplota)",
+    show_title: "Zobraziť názov",
+    show_subtitle: "Zobraziť podnázov",
     show_network: "Zobraziť sieť",
     show_history: "Zobraziť 24 h históriu",
     cpu_warning: "Prah upozornenia CPU (%)",
@@ -1330,6 +1366,8 @@ const STRINGS = {
     // Editor
     title: "Název (volitelný, výchozí Home Assistant)",
     show_system: "Zobrazit systém (CPU, RAM, disk, teplota)",
+    show_title: "Zobrazit název",
+    show_subtitle: "Zobrazit podnázev",
     show_network: "Zobrazit síť",
     show_history: "Zobrazit 24h historii",
     cpu_warning: "Práh varování CPU (%)",
@@ -1400,6 +1438,8 @@ const STRINGS = {
     // Editor
     title: "Naslov (neobvezno, privzeto Home Assistant)",
     show_system: "Prikaži sistem (CPU, RAM, disk, temperatura)",
+    show_title: "Prikaži naslov",
+    show_subtitle: "Prikaži podnaslov",
     show_network: "Prikaži omrežje",
     show_history: "Prikaži 24-urno zgodovino",
     cpu_warning: "Prag opozorila CPU (%)",
@@ -1470,6 +1510,8 @@ const STRINGS = {
     // Editor
     title: "Virsraksts (neobligāts, pēc noklusējuma Home Assistant)",
     show_system: "Rādīt sistēmu (CPU, RAM, disks, temperatūra)",
+    show_title: "Rādīt virsrakstu",
+    show_subtitle: "Rādīt apakšvirsrakstu",
     show_network: "Rādīt tīklu",
     show_history: "Rādīt 24 h vēsturi",
     cpu_warning: "CPU brīdinājuma slieksnis (%)",
@@ -1540,6 +1582,8 @@ const STRINGS = {
     // Editor
     title: "Τίτλος (προαιρετικός, προεπιλογή Home Assistant)",
     show_system: "Εμφάνιση συστήματος (CPU, RAM, δίσκος, θερμοκρασία)",
+    show_title: "Εμφάνιση τίτλου",
+    show_subtitle: "Εμφάνιση υπότιτλου",
     show_network: "Εμφάνιση δικτύου",
     show_history: "Εμφάνιση ιστορικού 24 ωρών",
     cpu_warning: "Όριο προειδοποίησης CPU (%)",
@@ -2347,6 +2391,7 @@ const BASE_STYLE = `
   .zoom .icon { width: 16px; height: 16px; }
   .zoom:hover { background: color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color: var(--primary-text-color); }
   .zoom:focus-visible { outline: 2px solid var(--sm-focus); outline-offset: 1px; }
+  :host([hide-title]) .titles .name, :host([hide-subtitle]) .titles > .sub { display: none; }
 `;
 
 // Sparkline of a series of [time (ms), value] points (24 h of 5-minute means), on a real time axis: x is the
@@ -2473,6 +2518,9 @@ class SystemMonitorBase extends HTMLElement {
   setConfig(config) {
     if (!config) throw new Error("Invalid configuration");
     this._config = { ...config };
+    // show_title / show_subtitle: the header"s title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.("hide-title", config.show_title === false);
+    this.toggleAttribute?.("hide-subtitle", config.show_subtitle === false);
     this._html = "";
     this._update();
   }
@@ -3195,7 +3243,7 @@ class SystemMonitorEditorBase extends HTMLElement {
 
   /** Boolean options, all on by default. */
   _booleans() {
-    return [...this.constructor.toggles];
+    return ["show_title", "show_subtitle", ...this.constructor.toggles];
   }
 
   setConfig(config) {

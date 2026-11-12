@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: alleen voor beheerders",
         "card_module": "Module",
         "card_groups": "Groepen",
-        "card_hide_ok": "Verberg wat in orde is"
+        "card_hide_ok": "Verberg wat in orde is",
+        "card_show_title": "Titel tonen",
+        "card_show_subtitle": "Ondertitel tonen"
       }
     },
     "battery_type": {

@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: лише для адміністраторів",
         "card_module": "Модуль",
         "card_groups": "Групи",
-        "card_hide_ok": "Сховати те, що гаразд"
+        "card_hide_ok": "Сховати те, що гаразд",
+        "card_show_title": "Показувати заголовок",
+        "card_show_subtitle": "Показувати підзаголовок"
       }
     },
     "battery_type": {

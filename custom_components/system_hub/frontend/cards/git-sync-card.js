@@ -6,7 +6,7 @@
  * integration, same card types: dashboards using it keep working.
  * https://github.com/juju35/ha-system-hub
  */
-var GIT_SYNC_CARD_VERSION = '2.0.2';
+var GIT_SYNC_CARD_VERSION = '2.1.0';
 // System Hub: its entities (platform system_hub, translation keys git_sync_*) and actions (system_hub.git_sync_*)
 var GS_DOMAIN = 'system_hub';
 var GS_PREFIX = 'git_sync_';
@@ -58,6 +58,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync sensor',
     ed_entity_helper: 'Status sensor of the repository; leave empty to find it automatically',
     ed_title: 'Title',
+    ed_show_title: 'Show title',
+    ed_show_subtitle: 'Show subtitle',
     ed_title_helper: 'Leave empty for “Git Sync”',
     ed_show_files: 'Changed files',
     ed_show_files_helper: 'Collapsible list of the files not committed yet',
@@ -127,6 +129,8 @@ const GS_I18N = {
     ed_entity: 'Capteur Git Sync',
     ed_entity_helper: 'Capteur de statut du dépôt ; laisser vide pour le trouver automatiquement',
     ed_title: 'Titre',
+    ed_show_title: 'Afficher le titre',
+    ed_show_subtitle: 'Afficher le sous-titre',
     ed_title_helper: 'Laisser vide pour « Git Sync »',
     ed_show_files: 'Fichiers modifiés',
     ed_show_files_helper: 'Liste repliable des fichiers pas encore committés',
@@ -196,6 +200,8 @@ const GS_I18N = {
     ed_entity: 'Git-Sync-Sensor',
     ed_entity_helper: 'Statussensor des Repositorys; leer lassen, um ihn automatisch zu finden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel anzeigen',
+    ed_show_subtitle: 'Untertitel anzeigen',
     ed_title_helper: 'Leer lassen für „Git Sync“',
     ed_show_files: 'Geänderte Dateien',
     ed_show_files_helper: 'Aufklappbare Liste der noch nicht committeten Dateien',
@@ -265,6 +271,8 @@ const GS_I18N = {
     ed_entity: 'Sensor de Git Sync',
     ed_entity_helper: 'Sensor de estado del repositorio; déjalo vacío para encontrarlo automáticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar el título',
+    ed_show_subtitle: 'Mostrar el subtítulo',
     ed_title_helper: 'Déjalo vacío para «Git Sync»',
     ed_show_files: 'Archivos modificados',
     ed_show_files_helper: 'Lista plegable de los archivos aún sin commit',
@@ -334,6 +342,8 @@ const GS_I18N = {
     ed_entity: 'Sensore Git Sync',
     ed_entity_helper: 'Sensore di stato del repository; lascia vuoto per trovarlo automaticamente',
     ed_title: 'Titolo',
+    ed_show_title: 'Mostra il titolo',
+    ed_show_subtitle: 'Mostra il sottotitolo',
     ed_title_helper: 'Lascia vuoto per “Git Sync”',
     ed_show_files: 'File modificati',
     ed_show_files_helper: 'Elenco comprimibile dei file non ancora inclusi in un commit',
@@ -403,6 +413,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync-sensor',
     ed_entity_helper: 'Statussensor van de repository; leeg laten om hem automatisch te vinden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel tonen',
+    ed_show_subtitle: 'Ondertitel tonen',
     ed_title_helper: 'Leeg laten voor ‘Git Sync’',
     ed_show_files: 'Gewijzigde bestanden',
     ed_show_files_helper: 'Inklapbare lijst van de nog niet gecommitte bestanden',
@@ -472,6 +484,8 @@ const GS_I18N = {
     ed_entity: 'Sensor do Git Sync',
     ed_entity_helper: 'Sensor de estado do repositório; deixe vazio para o encontrar automaticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar o título',
+    ed_show_subtitle: 'Mostrar o subtítulo',
     ed_title_helper: 'Deixe vazio para «Git Sync»',
     ed_show_files: 'Ficheiros alterados',
     ed_show_files_helper: 'Lista recolhível dos ficheiros ainda sem commit',
@@ -541,6 +555,8 @@ const GS_I18N = {
     ed_entity: 'Czujnik Git Sync',
     ed_entity_helper: 'Czujnik stanu repozytorium; pozostaw puste, aby znaleźć go automatycznie',
     ed_title: 'Tytuł',
+    ed_show_title: 'Pokaż tytuł',
+    ed_show_subtitle: 'Pokaż podtytuł',
     ed_title_helper: 'Pozostaw puste, aby użyć „Git Sync”',
     ed_show_files: 'Zmienione pliki',
     ed_show_files_helper: 'Zwijana lista plików jeszcze nieobjętych commitem',
@@ -610,6 +626,8 @@ const GS_I18N = {
     ed_entity: 'Senzor Git Sync',
     ed_entity_helper: 'Senzorul de stare al depozitului; lăsați gol pentru a-l găsi automat',
     ed_title: 'Titlu',
+    ed_show_title: 'Afișează titlul',
+    ed_show_subtitle: 'Afișează subtitlul',
     ed_title_helper: 'Lăsați gol pentru „Git Sync”',
     ed_show_files: 'Fișiere modificate',
     ed_show_files_helper: 'Listă pliabilă a fișierelor încă neincluse într-un commit',
@@ -679,6 +697,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync-sensor',
     ed_entity_helper: 'Statussensor for repositoriet; lad feltet være tomt for at finde den automatisk',
     ed_title: 'Titel',
+    ed_show_title: 'Vis titel',
+    ed_show_subtitle: 'Vis undertitel',
     ed_title_helper: 'Lad feltet være tomt for “Git Sync”',
     ed_show_files: 'Ændrede filer',
     ed_show_files_helper: 'Sammenklappelig liste over filer, der endnu ikke er committet',
@@ -748,6 +768,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync-sensor',
     ed_entity_helper: 'Statussensor för förrådet; lämna tomt för att hitta den automatiskt',
     ed_title: 'Rubrik',
+    ed_show_title: 'Visa rubrik',
+    ed_show_subtitle: 'Visa underrubrik',
     ed_title_helper: 'Lämna tomt för ”Git Sync”',
     ed_show_files: 'Ändrade filer',
     ed_show_files_helper: 'Hopfällbar lista över filer som ännu inte har committats',
@@ -817,6 +839,8 @@ const GS_I18N = {
     ed_entity: 'Сензор на Git Sync',
     ed_entity_helper: 'Сензор за състоянието на хранилището; оставете празно, за да бъде открит автоматично',
     ed_title: 'Заглавие',
+    ed_show_title: 'Показване на заглавието',
+    ed_show_subtitle: 'Показване на подзаглавието',
     ed_title_helper: 'Оставете празно за „Git Sync“',
     ed_show_files: 'Променени файлове',
     ed_show_files_helper: 'Сгъваем списък на файловете, за които още няма commit',
@@ -886,6 +910,8 @@ const GS_I18N = {
     ed_entity: 'Датчик Git Sync',
     ed_entity_helper: 'Датчик состояния репозитория; оставьте пустым, чтобы найти его автоматически',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показывать заголовок',
+    ed_show_subtitle: 'Показывать подзаголовок',
     ed_title_helper: 'Оставьте пустым для «Git Sync»',
     ed_show_files: 'Изменённые файлы',
     ed_show_files_helper: 'Сворачиваемый список файлов, ещё не включённых в commit',
@@ -955,6 +981,8 @@ const GS_I18N = {
     ed_entity: 'Датчик Git Sync',
     ed_entity_helper: 'Датчик стану репозиторію; залиште порожнім, щоб знайти його автоматично',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показувати заголовок',
+    ed_show_subtitle: 'Показувати підзаголовок',
     ed_title_helper: 'Залиште порожнім для «Git Sync»',
     ed_show_files: 'Змінені файли',
     ed_show_files_helper: 'Згортуваний список файлів, ще не включених у commit',
@@ -1024,6 +1052,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync-érzékelő',
     ed_entity_helper: 'A tároló állapotérzékelője; hagyja üresen az automatikus kereséshez',
     ed_title: 'Cím',
+    ed_show_title: 'Cím megjelenítése',
+    ed_show_subtitle: 'Alcím megjelenítése',
     ed_title_helper: 'Hagyja üresen a „Git Sync” címhez',
     ed_show_files: 'Módosított fájlok',
     ed_show_files_helper: 'A még nem commitolt fájlok összecsukható listája',
@@ -1093,6 +1123,8 @@ const GS_I18N = {
     ed_entity: 'Senzor Git Sync',
     ed_entity_helper: 'Senzor stavu repozitára; nechajte prázdne na automatické vyhľadanie',
     ed_title: 'Nadpis',
+    ed_show_title: 'Zobraziť názov',
+    ed_show_subtitle: 'Zobraziť podnázov',
     ed_title_helper: 'Nechajte prázdne pre „Git Sync“',
     ed_show_files: 'Zmenené súbory',
     ed_show_files_helper: 'Zbaliteľný zoznam súborov, ktoré ešte nie sú v commite',
@@ -1162,6 +1194,8 @@ const GS_I18N = {
     ed_entity: 'Senzor Git Sync',
     ed_entity_helper: 'Senzor stavu repozitáře; ponechte prázdné pro automatické vyhledání',
     ed_title: 'Nadpis',
+    ed_show_title: 'Zobrazit název',
+    ed_show_subtitle: 'Zobrazit podnázev',
     ed_title_helper: 'Ponechte prázdné pro „Git Sync“',
     ed_show_files: 'Změněné soubory',
     ed_show_files_helper: 'Sbalitelný seznam souborů, které ještě nejsou v commitu',
@@ -1231,6 +1265,8 @@ const GS_I18N = {
     ed_entity: 'Senzor Git Sync',
     ed_entity_helper: 'Senzor stanja repozitorija; pustite prazno za samodejno iskanje',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Pustite prazno za »Git Sync«',
     ed_show_files: 'Spremenjene datoteke',
     ed_show_files_helper: 'Zložljiv seznam datotek, ki še niso v commitu',
@@ -1300,6 +1336,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync sensors',
     ed_entity_helper: 'Repozitorija statusa sensors; atstājiet tukšu, lai to atrastu automātiski',
     ed_title: 'Virsraksts',
+    ed_show_title: 'Rādīt virsrakstu',
+    ed_show_subtitle: 'Rādīt apakšvirsrakstu',
     ed_title_helper: 'Atstājiet tukšu, lai būtu “Git Sync”',
     ed_show_files: 'Mainītie faili',
     ed_show_files_helper: 'Sakļaujams saraksts ar failiem, kuriem vēl nav veikts commit',
@@ -1369,6 +1407,8 @@ const GS_I18N = {
     ed_entity: 'Αισθητήρας Git Sync',
     ed_entity_helper: 'Αισθητήρας κατάστασης του αποθετηρίου· αφήστε κενό για αυτόματο εντοπισμό',
     ed_title: 'Τίτλος',
+    ed_show_title: 'Εμφάνιση τίτλου',
+    ed_show_subtitle: 'Εμφάνιση υπότιτλου',
     ed_title_helper: 'Αφήστε κενό για «Git Sync»',
     ed_show_files: 'Αλλαγμένα αρχεία',
     ed_show_files_helper: 'Πτυσσόμενη λίστα των αρχείων που δεν έχουν γίνει ακόμη commit',
@@ -1438,6 +1478,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync сензор',
     ed_entity_helper: 'Сензор статуса репозиторијума; остави празно за аутоматско проналажење',
     ed_title: 'Наслов',
+    ed_show_title: 'Прикажи наслов',
+    ed_show_subtitle: 'Прикажи поднаслов',
     ed_title_helper: 'Остави празно за „Git Sync“',
     ed_show_files: 'Измењене датотеке',
     ed_show_files_helper: 'Склопива листа датотека које још нису commit-оване',
@@ -1507,6 +1549,8 @@ const GS_I18N = {
     ed_entity: 'Git Sync senzor',
     ed_entity_helper: 'Senzor statusa repozitorijuma; ostavi prazno za automatsko pronalaženje',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Ostavi prazno za „Git Sync“',
     ed_show_files: 'Izmenjene datoteke',
     ed_show_files_helper: 'Sklopiva lista datoteka koje još nisu commit-ovane',
@@ -1558,7 +1602,7 @@ const gsN = (lang, key, n, vars = {}) => gsT(lang, `${key}_${n === 1 ? 'one' : '
 const gsEsc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
-const GS_DEFAULTS = { show_files: true, show_export: true };
+const GS_DEFAULTS = { show_title: true, show_subtitle: true, show_files: true, show_export: true };
 const GS_MINI_DEFAULTS = { ...GS_DEFAULTS, zoom: true };
 const GS_FILES_SHOWN = 30;
 // behind: the remote has commits that are not here (the next commit pulls them first);
@@ -1694,6 +1738,9 @@ class GitSyncCard extends HTMLElement {
   // jscpd:ignore-start (each card is its own dashboard resource: the card boilerplate is theirs)
   setConfig(config) {
     this._config = { ...GS_DEFAULTS, ...config };
+    // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config.show_title === false);
+    this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
     this._sig = null;
     this._render();
@@ -2273,6 +2320,7 @@ class GitSyncCard extends HTMLElement {
         .pill.busy::before, button.action.busy ha-icon, button.icon-btn.busy ha-icon, .generating .gen ha-icon { animation: none; }
         .chevron, button.action, button.icon-btn, .gen, .zoom { transition: none; }
       }
+      :host([hide-title]) .titles > .title, :host([hide-subtitle]) .titles > .subtitle { display: none; }
     `;
   }
 }
@@ -2679,6 +2727,8 @@ class GitSyncCardEditor extends HTMLElement {
       },
       { name: 'title', selector: { text: {} } },
       ...this._options(),
+      { name: 'show_title', selector: { boolean: {} } },
+      { name: 'show_subtitle', selector: { boolean: {} } },
       { name: 'show_files', selector: { boolean: {} } },
       { name: 'show_export', selector: { boolean: {} } },
       {

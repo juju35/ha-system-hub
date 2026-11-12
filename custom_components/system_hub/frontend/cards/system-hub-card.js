@@ -7,7 +7,7 @@
 // unchanged. The status cards show the Status tab of the panel: they read it with the panel's own code (its module,
 // without showing it), as the sidebar icon does, so the three always agree. Administrators only, as the panel.
 
-var SYSTEM_HUB_CARD_VERSION = '2.0.2';
+var SYSTEM_HUB_CARD_VERSION = '2.1.0';
 var SH_CARD_MODULES = ['status', 'system', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations', 'orphans'];
 var SH_MINI_MODULES = ['status', 'system', 'watchdog', 'batteries', 'git_sync', 'automations', 'orphans'];
 var SH_CARD_GROUPS = ['system', 'reliability', 'maintenance', 'devices'];
@@ -86,6 +86,7 @@ var SH_CARD_STYLE = `
   .title { font-size:17px; color:var(--primary-text-color); }
   .mini .title { font-size:15px; }
   .sub { font-size:12.5px; color:var(--secondary-text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  :host([hide-title]) .head .who > .title, :host([hide-subtitle]) .head .who > .sub { display:none; }
   .open { color:var(--secondary-text-color); --mdc-icon-size:20px; }
   .group { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--secondary-text-color); margin:12px 0 6px; }
   .areas { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:6px; }
@@ -111,6 +112,9 @@ class SystemHubCardBase extends HTMLElement {
     var modules = this.constructor.mini ? SH_MINI_MODULES : SH_CARD_MODULES;
     if (!modules.includes(module)) throw new Error(`Unknown System Hub module: ${module} (${modules.join(', ')})`);
     this._config = { ...config, module };
+    // show_title / show_subtitle (status module): the header's title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config?.show_title === false);
+    this.toggleAttribute?.('hide-subtitle', config?.show_subtitle === false);
     if (module === 'status') {
       this._inner = null;
       this.innerHTML = '';
@@ -314,6 +318,8 @@ class SystemHubCardEditorBase extends HTMLElement {
             },
           },
         },
+        { name: 'show_title', selector: { boolean: {} } },
+        { name: 'show_subtitle', selector: { boolean: {} } },
         { name: 'hide_ok', selector: { boolean: {} } },
       );
     }
@@ -342,7 +348,7 @@ class SystemHubCardEditorBase extends HTMLElement {
     if (!this._form) {
       this._form = document.createElement('ha-form');
       this._form.computeLabel = (s) =>
-        ({ module: this._t('card_module', 'Module'), groups: this._t('card_groups', 'Groups'), hide_ok: this._t('card_hide_ok', 'Hide what is fine') })[s.name] || s.name;
+        ({ module: this._t('card_module', 'Module'), groups: this._t('card_groups', 'Groups'), hide_ok: this._t('card_hide_ok', 'Hide what is fine'), show_title: this._t('card_show_title', 'Show title'), show_subtitle: this._t('card_show_subtitle', 'Show subtitle') })[s.name] || s.name;
       this._form.addEventListener('value-changed', (ev) => {
         ev.stopPropagation();
         var value = ev.detail.value;
@@ -355,13 +361,15 @@ class SystemHubCardEditorBase extends HTMLElement {
         var config = { ...this._config, ...value };
         if (!config.groups?.length) delete config.groups;
         if (!config.hide_ok) delete config.hide_ok;
+        if (config.show_title === true) delete config.show_title;
+        if (config.show_subtitle === true) delete config.show_subtitle;
         this._emit(config);
       });
       this.shadowRoot.querySelector('.form').appendChild(this._form);
     }
     this._form.hass = this._hass;
     this._form.schema = this._schema();
-    this._form.data = this._config;
+    this._form.data = this._config.module === 'status' ? { show_title: true, show_subtitle: true, ...this._config } : this._config;
     this._mountInner();
   }
 
