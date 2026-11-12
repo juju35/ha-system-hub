@@ -1504,8 +1504,6 @@
         "group_devices": "Dispozitive",
         "move_up": "Mută în sus",
         "move_down": "Mută în jos",
-        "upd_addons": "Add-on-uri",
-        "upd_devices": "Dispozitive și servicii",
         "upd_backup": "Copie de rezervă înainte de instalare",
         "upd_available": "Disponibile: {n}",
         "upd_uptodate": "La zi: Home Assistant {system}, add-on-uri {addons}, dispozitive și servicii {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Repornește Supervisorul",
         "upd_restart_os": "Repornește gazda",
         "upd_confirm": "Instalați {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Instalați cele {n} actualizări una după alta?",
         "upd_all_restart": "Home Assistant repornește la final.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Eșuată",
         "bk_ok_location": "La zi",
         "bk_kept": "{n} păstrate",
-        "bk_read_failed": "Copiile nu au putut fi citite: {error}"
+        "bk_read_failed": "Copiile nu au putut fi citite: {error}",
+        "upd_heading": "Home Assistant, add-on-uri și dispozitive",
+        "upd_device": "Dispozitiv",
+        "mk_update_marketplace": "Actualizează Marketplace",
+        "upd_available_detail": "Disponibile: {n} ({system} în afara Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "La zi: {n}"
       }
     },
     "battery_type": {

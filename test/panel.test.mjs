@@ -322,8 +322,13 @@ test('updates tab: Home Assistant, the add-ons and the devices before the Market
   const p = panel(state, 'marketplace');
   const html = p._content();
   const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
-  assert.deepEqual(sections, ['Home Assistant', 'Add-ons', 'Devices and services', 'Marketplace']);
-  assert.match(html, /Available: 3 · Up to date: Home Assistant 1, add-ons 10, devices and services 23/);
+  // One grid before the Marketplace, each card saying what it is
+  assert.deepEqual(sections, ['Home Assistant, add-ons and devices', 'Marketplace']);
+  assert.match(html, /Core · update\.core/);
+  assert.match(html, /Add-on · update\.mosquitto/);
+  assert.match(html, /Device · update\.lamp/);
+  // Short on one line, the detail in its tooltip
+  assert.match(html, /title="Available: 3 \(3 outside the Marketplace, 0 Marketplace\)\nUp to date: Home Assistant 1, add-ons 10, devices and services 23">Available: 3 · Up to date: 34</);
   assert.match(html, /Restarts Home Assistant/);
   // The backup chosen in the Updates settings, switched here
   assert.match(html, /data-action="upd_backup" aria-pressed="true"/);
@@ -358,6 +363,8 @@ test('updates tab: Update all, the Marketplace first and Home Assistant itself l
   const p = panel(state, 'marketplace');
   // OS left out while Core waits: two restarts
   assert.match(p._content(), /data-action="upd_all_confirm"[^>]*>[\s\S]*?Update all \(5\)/);
+  // The Marketplace's own button says it is the Marketplace's
+  assert.match(p._content(), /Update the Marketplace \(1\)/);
   p._render = () => {};
   const click = (action) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action } } : null) } });
   click('upd_all_confirm');

@@ -1504,8 +1504,6 @@
         "group_devices": "Dispositivi",
         "move_up": "Sposta su",
         "move_down": "Sposta giù",
-        "upd_addons": "Add-on",
-        "upd_devices": "Dispositivi e servizi",
         "upd_backup": "Esegui un backup prima di installare",
         "upd_available": "Disponibili: {n}",
         "upd_uptodate": "Aggiornati: Home Assistant {system}, add-on {addons}, dispositivi e servizi {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Riavvia il Supervisor",
         "upd_restart_os": "Riavvia l'host",
         "upd_confirm": "Installare {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installare i {n} aggiornamenti uno dopo l'altro?",
         "upd_all_restart": "Home Assistant si riavvia alla fine.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Non riuscito",
         "bk_ok_location": "Aggiornata",
         "bk_kept": "{n} conservati",
-        "bk_read_failed": "Impossibile leggere i backup: {error}"
+        "bk_read_failed": "Impossibile leggere i backup: {error}",
+        "upd_heading": "Home Assistant, add-on e dispositivi",
+        "upd_device": "Dispositivo",
+        "mk_update_marketplace": "Aggiorna il Marketplace",
+        "upd_available_detail": "Disponibili: {n} ({system} fuori dal Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Aggiornati: {n}"
       }
     },
     "battery_type": {

@@ -1504,8 +1504,6 @@
         "group_devices": "Eszközök",
         "move_up": "Fel",
         "move_down": "Le",
-        "upd_addons": "Kiegészítők",
-        "upd_devices": "Eszközök és szolgáltatások",
         "upd_backup": "Mentés telepítés előtt",
         "upd_available": "Elérhető: {n}",
         "upd_uptodate": "Naprakész: Home Assistant {system}, kiegészítők {addons}, eszközök és szolgáltatások {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Újraindítja a Supervisort",
         "upd_restart_os": "Újraindítja a gazdagépet",
         "upd_confirm": "Telepíti: {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Telepíti a(z) {n} frissítést egymás után?",
         "upd_all_restart": "A Home Assistant a végén újraindul.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Sikertelen",
         "bk_ok_location": "Naprakész",
         "bk_kept": "{n} megőrizve",
-        "bk_read_failed": "A mentések nem olvashatók: {error}"
+        "bk_read_failed": "A mentések nem olvashatók: {error}",
+        "upd_heading": "Home Assistant, kiegészítők és eszközök",
+        "upd_device": "Eszköz",
+        "mk_update_marketplace": "Marketplace frissítése",
+        "upd_available_detail": "Elérhető: {n} ({system} a Marketplace-en kívül, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Naprakész: {n}"
       }
     },
     "battery_type": {

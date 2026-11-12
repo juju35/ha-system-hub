@@ -1504,8 +1504,6 @@
         "group_devices": "Urządzenia",
         "move_up": "W górę",
         "move_down": "W dół",
-        "upd_addons": "Dodatki",
-        "upd_devices": "Urządzenia i usługi",
         "upd_backup": "Utwórz kopię przed instalacją",
         "upd_available": "Dostępne: {n}",
         "upd_uptodate": "Aktualne: Home Assistant {system}, dodatki {addons}, urządzenia i usługi {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Uruchamia ponownie Supervisor",
         "upd_restart_os": "Uruchamia ponownie hosta",
         "upd_confirm": "Zainstalować {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Zainstalować {n} aktualizacji jedna po drugiej?",
         "upd_all_restart": "Home Assistant uruchomi się ponownie na końcu.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Błąd",
         "bk_ok_location": "Aktualna",
         "bk_kept": "Zachowane: {n}",
-        "bk_read_failed": "Nie udało się odczytać kopii: {error}"
+        "bk_read_failed": "Nie udało się odczytać kopii: {error}",
+        "upd_heading": "Home Assistant, dodatki i urządzenia",
+        "upd_device": "Urządzenie",
+        "mk_update_marketplace": "Aktualizuj Marketplace",
+        "upd_available_detail": "Dostępne: {n} ({system} spoza Marketplace, {marketplace} z Marketplace)",
+        "upd_uptodate_short": "Aktualne: {n}"
       }
     },
     "battery_type": {

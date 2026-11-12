@@ -1504,8 +1504,6 @@
         "group_devices": "Naprave",
         "move_up": "Premakni gor",
         "move_down": "Premakni dol",
-        "upd_addons": "Dodatki",
-        "upd_devices": "Naprave in storitve",
         "upd_backup": "Varnostno kopiraj pred namestitvijo",
         "upd_available": "Na voljo: {n}",
         "upd_uptodate": "Posodobljeno: Home Assistant {system}, dodatki {addons}, naprave in storitve {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Znova zažene Supervisor",
         "upd_restart_os": "Znova zažene gostitelja",
         "upd_confirm": "Namestim {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Namestim {n} posodobitev eno za drugo?",
         "upd_all_restart": "Home Assistant se na koncu znova zažene.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Neuspešno",
         "bk_ok_location": "Posodobljeno",
         "bk_kept": "Ohranjenih: {n}",
-        "bk_read_failed": "Kopij ni bilo mogoče prebrati: {error}"
+        "bk_read_failed": "Kopij ni bilo mogoče prebrati: {error}",
+        "upd_heading": "Home Assistant, dodatki in naprave",
+        "upd_device": "Naprava",
+        "mk_update_marketplace": "Posodobi Marketplace",
+        "upd_available_detail": "Na voljo: {n} ({system} zunaj Marketplace, {marketplace} iz Marketplace)",
+        "upd_uptodate_short": "Posodobljeno: {n}"
       }
     },
     "battery_type": {

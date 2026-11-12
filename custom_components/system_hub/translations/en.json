@@ -1504,8 +1504,6 @@
         "group_devices": "Devices",
         "move_up": "Move up",
         "move_down": "Move down",
-        "upd_addons": "Add-ons",
-        "upd_devices": "Devices and services",
         "upd_backup": "Back up before installing",
         "upd_available": "Available: {n}",
         "upd_uptodate": "Up to date: Home Assistant {system}, add-ons {addons}, devices and services {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Restarts the Supervisor",
         "upd_restart_os": "Restarts the host",
         "upd_confirm": "Install {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Install the {n} updates one after the other?",
         "upd_all_restart": "Home Assistant restarts at the end.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Failed",
         "bk_ok_location": "Up to date",
         "bk_kept": "{n} kept",
-        "bk_read_failed": "The backups could not be read: {error}"
+        "bk_read_failed": "The backups could not be read: {error}",
+        "upd_heading": "Home Assistant, add-ons and devices",
+        "upd_device": "Device",
+        "mk_update_marketplace": "Update the Marketplace",
+        "upd_available_detail": "Available: {n} ({system} outside the Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Up to date: {n}"
       }
     },
     "battery_type": {

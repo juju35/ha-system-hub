@@ -1504,8 +1504,6 @@
         "group_devices": "Apparaten",
         "move_up": "Omhoog",
         "move_down": "Omlaag",
-        "upd_addons": "Add-ons",
-        "upd_devices": "Apparaten en diensten",
         "upd_backup": "Back-up maken vóór installatie",
         "upd_available": "Beschikbaar: {n}",
         "upd_uptodate": "Bijgewerkt: Home Assistant {system}, add-ons {addons}, apparaten en diensten {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Herstart de Supervisor",
         "upd_restart_os": "Herstart de host",
         "upd_confirm": "{name} {version} installeren?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "De {n} updates na elkaar installeren?",
         "upd_all_restart": "Home Assistant herstart aan het einde.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Mislukt",
         "bk_ok_location": "Bijgewerkt",
         "bk_kept": "{n} bewaard",
-        "bk_read_failed": "De back-ups konden niet worden gelezen: {error}"
+        "bk_read_failed": "De back-ups konden niet worden gelezen: {error}",
+        "upd_heading": "Home Assistant, add-ons en apparaten",
+        "upd_device": "Apparaat",
+        "mk_update_marketplace": "Marketplace bijwerken",
+        "upd_available_detail": "Beschikbaar: {n} ({system} buiten de Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Bijgewerkt: {n}"
       }
     },
     "battery_type": {

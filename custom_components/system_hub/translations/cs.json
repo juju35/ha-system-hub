@@ -1504,8 +1504,6 @@
         "group_devices": "Zařízení",
         "move_up": "Posunout nahoru",
         "move_down": "Posunout dolů",
-        "upd_addons": "Doplňky",
-        "upd_devices": "Zařízení a služby",
         "upd_backup": "Zálohovat před instalací",
         "upd_available": "Dostupné: {n}",
         "upd_uptodate": "Aktuální: Home Assistant {system}, doplňky {addons}, zařízení a služby {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Restartuje Supervisor",
         "upd_restart_os": "Restartuje hostitele",
         "upd_confirm": "Nainstalovat {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Nainstalovat {n} aktualizací jednu po druhé?",
         "upd_all_restart": "Home Assistant se na konci restartuje.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Selhala",
         "bk_ok_location": "Aktuální",
         "bk_kept": "Uchováno: {n}",
-        "bk_read_failed": "Zálohy se nepodařilo načíst: {error}"
+        "bk_read_failed": "Zálohy se nepodařilo načíst: {error}",
+        "upd_heading": "Home Assistant, doplňky a zařízení",
+        "upd_device": "Zařízení",
+        "mk_update_marketplace": "Aktualizovat Marketplace",
+        "upd_available_detail": "Dostupné: {n} ({system} mimo Marketplace, {marketplace} z Marketplace)",
+        "upd_uptodate_short": "Aktuální: {n}"
       }
     },
     "battery_type": {

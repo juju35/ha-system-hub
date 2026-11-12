@@ -1504,8 +1504,6 @@
         "group_devices": "Συσκευές",
         "move_up": "Μετακίνηση πάνω",
         "move_down": "Μετακίνηση κάτω",
-        "upd_addons": "Πρόσθετα",
-        "upd_devices": "Συσκευές και υπηρεσίες",
         "upd_backup": "Αντίγραφο ασφαλείας πριν από την εγκατάσταση",
         "upd_available": "Διαθέσιμες: {n}",
         "upd_uptodate": "Ενημερωμένα: Home Assistant {system}, πρόσθετα {addons}, συσκευές και υπηρεσίες {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Επανεκκινεί τον Supervisor",
         "upd_restart_os": "Επανεκκινεί τον κεντρικό υπολογιστή",
         "upd_confirm": "Εγκατάσταση {name} {version};",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Εγκατάσταση των {n} ενημερώσεων τη μία μετά την άλλη;",
         "upd_all_restart": "Το Home Assistant επανεκκινείται στο τέλος.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Απέτυχε",
         "bk_ok_location": "Ενημερωμένη",
         "bk_kept": "Διατηρούνται: {n}",
-        "bk_read_failed": "Δεν ήταν δυνατή η ανάγνωση των αντιγράφων: {error}"
+        "bk_read_failed": "Δεν ήταν δυνατή η ανάγνωση των αντιγράφων: {error}",
+        "upd_heading": "Home Assistant, πρόσθετα και συσκευές",
+        "upd_device": "Συσκευή",
+        "mk_update_marketplace": "Ενημέρωση του Marketplace",
+        "upd_available_detail": "Διαθέσιμες: {n} ({system} εκτός Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Ενημερωμένα: {n}"
       }
     },
     "battery_type": {

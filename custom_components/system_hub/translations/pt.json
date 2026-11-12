@@ -1504,8 +1504,6 @@
         "group_devices": "Dispositivos",
         "move_up": "Mover para cima",
         "move_down": "Mover para baixo",
-        "upd_addons": "Add-ons",
-        "upd_devices": "Dispositivos e serviços",
         "upd_backup": "Fazer cópia de segurança antes de instalar",
         "upd_available": "Disponíveis: {n}",
         "upd_uptodate": "Atualizados: Home Assistant {system}, add-ons {addons}, dispositivos e serviços {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Reinicia o Supervisor",
         "upd_restart_os": "Reinicia o anfitrião",
         "upd_confirm": "Instalar {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Instalar as {n} atualizações uma após a outra?",
         "upd_all_restart": "O Home Assistant reinicia no fim.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Falhou",
         "bk_ok_location": "Atualizada",
         "bk_kept": "{n} guardadas",
-        "bk_read_failed": "Não foi possível ler as cópias: {error}"
+        "bk_read_failed": "Não foi possível ler as cópias: {error}",
+        "upd_heading": "Home Assistant, add-ons e dispositivos",
+        "upd_device": "Dispositivo",
+        "mk_update_marketplace": "Atualizar o Marketplace",
+        "upd_available_detail": "Disponíveis: {n} ({system} fora do Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Atualizados: {n}"
       }
     },
     "battery_type": {

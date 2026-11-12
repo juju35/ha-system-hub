@@ -1504,8 +1504,6 @@
         "group_devices": "Enheder",
         "move_up": "Flyt op",
         "move_down": "Flyt ned",
-        "upd_addons": "Tilføjelser",
-        "upd_devices": "Enheder og tjenester",
         "upd_backup": "Tag backup før installation",
         "upd_available": "Tilgængelige: {n}",
         "upd_uptodate": "Opdateret: Home Assistant {system}, tilføjelser {addons}, enheder og tjenester {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Genstarter Supervisor",
         "upd_restart_os": "Genstarter værten",
         "upd_confirm": "Installér {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installér de {n} opdateringer efter hinanden?",
         "upd_all_restart": "Home Assistant genstarter til sidst.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Mislykkedes",
         "bk_ok_location": "Opdateret",
         "bk_kept": "{n} gemt",
-        "bk_read_failed": "Sikkerhedskopierne kunne ikke læses: {error}"
+        "bk_read_failed": "Sikkerhedskopierne kunne ikke læses: {error}",
+        "upd_heading": "Home Assistant, tilføjelser og enheder",
+        "upd_device": "Enhed",
+        "mk_update_marketplace": "Opdater Marketplace",
+        "upd_available_detail": "Tilgængelige: {n} ({system} uden for Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Opdateret: {n}"
       }
     },
     "battery_type": {

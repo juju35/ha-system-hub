@@ -1504,8 +1504,6 @@
         "group_devices": "Appareils",
         "move_up": "Monter",
         "move_down": "Descendre",
-        "upd_addons": "Add-ons",
-        "upd_devices": "Appareils et services",
         "upd_backup": "Sauvegarder avant d'installer",
         "upd_available": "Disponibles : {n}",
         "upd_uptodate": "À jour : Home Assistant {system}, add-ons {addons}, appareils et services {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Redémarre le Supervisor",
         "upd_restart_os": "Redémarre l'hôte",
         "upd_confirm": "Installer {name} {version} ?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installer les {n} mises à jour l'une après l'autre ?",
         "upd_all_restart": "Home Assistant redémarre à la fin.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "En échec",
         "bk_ok_location": "À jour",
         "bk_kept": "{n} conservées",
-        "bk_read_failed": "Les sauvegardes n'ont pas pu être lues : {error}"
+        "bk_read_failed": "Les sauvegardes n'ont pas pu être lues : {error}",
+        "upd_heading": "Home Assistant, add-ons et appareils",
+        "upd_device": "Appareil",
+        "mk_update_marketplace": "Mettre à jour le Marketplace",
+        "upd_available_detail": "Disponibles : {n} ({system} hors Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "À jour : {n}"
       }
     },
     "battery_type": {

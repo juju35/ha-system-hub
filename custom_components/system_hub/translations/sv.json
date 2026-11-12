@@ -1504,8 +1504,6 @@
         "group_devices": "Enheter",
         "move_up": "Flytta upp",
         "move_down": "Flytta ned",
-        "upd_addons": "Tillägg",
-        "upd_devices": "Enheter och tjänster",
         "upd_backup": "Säkerhetskopiera före installation",
         "upd_available": "Tillgängliga: {n}",
         "upd_uptodate": "Uppdaterade: Home Assistant {system}, tillägg {addons}, enheter och tjänster {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Startar om Supervisor",
         "upd_restart_os": "Startar om värden",
         "upd_confirm": "Installera {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installera de {n} uppdateringarna efter varandra?",
         "upd_all_restart": "Home Assistant startar om i slutet.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Misslyckades",
         "bk_ok_location": "Uppdaterad",
         "bk_kept": "{n} sparade",
-        "bk_read_failed": "Säkerhetskopiorna kunde inte läsas: {error}"
+        "bk_read_failed": "Säkerhetskopiorna kunde inte läsas: {error}",
+        "upd_heading": "Home Assistant, tillägg och enheter",
+        "upd_device": "Enhet",
+        "mk_update_marketplace": "Uppdatera Marketplace",
+        "upd_available_detail": "Tillgängliga: {n} ({system} utanför Marketplace, {marketplace} Marketplace)",
+        "upd_uptodate_short": "Uppdaterade: {n}"
       }
     },
     "battery_type": {

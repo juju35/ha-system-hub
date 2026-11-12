@@ -1504,8 +1504,6 @@
         "group_devices": "Zariadenia",
         "move_up": "Posunúť hore",
         "move_down": "Posunúť dole",
-        "upd_addons": "Doplnky",
-        "upd_devices": "Zariadenia a služby",
         "upd_backup": "Zálohovať pred inštaláciou",
         "upd_available": "Dostupné: {n}",
         "upd_uptodate": "Aktuálne: Home Assistant {system}, doplnky {addons}, zariadenia a služby {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Reštartuje Supervisor",
         "upd_restart_os": "Reštartuje hostiteľa",
         "upd_confirm": "Nainštalovať {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Nainštalovať {n} aktualizácií jednu po druhej?",
         "upd_all_restart": "Home Assistant sa na konci reštartuje.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Zlyhala",
         "bk_ok_location": "Aktuálne",
         "bk_kept": "Uchované: {n}",
-        "bk_read_failed": "Zálohy sa nepodarilo načítať: {error}"
+        "bk_read_failed": "Zálohy sa nepodarilo načítať: {error}",
+        "upd_heading": "Home Assistant, doplnky a zariadenia",
+        "upd_device": "Zariadenie",
+        "mk_update_marketplace": "Aktualizovať Marketplace",
+        "upd_available_detail": "Dostupné: {n} ({system} mimo Marketplace, {marketplace} z Marketplace)",
+        "upd_uptodate_short": "Aktuálne: {n}"
       }
     },
     "battery_type": {

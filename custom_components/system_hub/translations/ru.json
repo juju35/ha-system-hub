@@ -1504,8 +1504,6 @@
         "group_devices": "Устройства",
         "move_up": "Вверх",
         "move_down": "Вниз",
-        "upd_addons": "Дополнения",
-        "upd_devices": "Устройства и службы",
         "upd_backup": "Создать резервную копию перед установкой",
         "upd_available": "Доступно: {n}",
         "upd_uptodate": "Актуально: Home Assistant {system}, дополнения {addons}, устройства и службы {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Перезапускает Supervisor",
         "upd_restart_os": "Перезапускает хост",
         "upd_confirm": "Установить {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Установить {n} обновлений одно за другим?",
         "upd_all_restart": "В конце Home Assistant перезапустится.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Ошибка",
         "bk_ok_location": "Актуально",
         "bk_kept": "Сохранено: {n}",
-        "bk_read_failed": "Не удалось прочитать копии: {error}"
+        "bk_read_failed": "Не удалось прочитать копии: {error}",
+        "upd_heading": "Home Assistant, дополнения и устройства",
+        "upd_device": "Устройство",
+        "mk_update_marketplace": "Обновить Marketplace",
+        "upd_available_detail": "Доступно: {n} ({system} вне Marketplace, {marketplace} из Marketplace)",
+        "upd_uptodate_short": "Актуально: {n}"
       }
     },
     "battery_type": {

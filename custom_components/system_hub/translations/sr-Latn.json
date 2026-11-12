@@ -1504,8 +1504,6 @@
         "group_devices": "Uređaji",
         "move_up": "Pomeri gore",
         "move_down": "Pomeri dole",
-        "upd_addons": "Dodaci",
-        "upd_devices": "Uređaji i usluge",
         "upd_backup": "Napravi rezervnu kopiju pre instalacije",
         "upd_available": "Dostupno: {n}",
         "upd_uptodate": "Ažurno: Home Assistant {system}, dodaci {addons}, uređaji i usluge {devices}",
@@ -1513,7 +1511,6 @@
         "upd_restart_supervisor": "Ponovo pokreće Supervisor",
         "upd_restart_os": "Ponovo pokreće host",
         "upd_confirm": "Instalirati {name} {version}?",
-        "upd_system": "Home Assistant",
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Instalirati {n} ažuriranja jedno za drugim?",
         "upd_all_restart": "Home Assistant se na kraju ponovo pokreće.",
@@ -1534,7 +1531,12 @@
         "bk_failed_location": "Neuspešno",
         "bk_ok_location": "Ažurno",
         "bk_kept": "Sačuvano: {n}",
-        "bk_read_failed": "Kopije nisu mogle da se pročitaju: {error}"
+        "bk_read_failed": "Kopije nisu mogle da se pročitaju: {error}",
+        "upd_heading": "Home Assistant, dodaci i uređaji",
+        "upd_device": "Uređaj",
+        "mk_update_marketplace": "Ažuriraj Marketplace",
+        "upd_available_detail": "Dostupno: {n} ({system} van Marketplace-a, {marketplace} iz Marketplace-a)",
+        "upd_uptodate_short": "Ažurno: {n}"
       }
     },
     "battery_type": {

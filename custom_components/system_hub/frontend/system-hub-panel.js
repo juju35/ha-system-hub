@@ -1889,7 +1889,7 @@ class SystemHubPanel extends HTMLElement {
         disabled: data.installing_updates,
         busy: running || this._busy.marketplace_check_updates,
       })}
-      ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t('install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
+      ${n ? this._button('confirm_install', 'mdi:package-down', `${this._t(this._state.system_updates ? 'mk_update_marketplace' : 'install_all')} (${n})`, { disabled: running, busy: installing }) : ''}
       <button class="act quiet mkgear" data-action="open_settings:marketplace" title="${shEsc(this._t('configure'))}" aria-label="${shEsc(this._t('configure'))}"><ha-icon icon="mdi:cog-outline"></ha-icon></button></div></ha-card>`;
     var cards = list.map((u) => this._mkCard(u)).join('');
     var failed = failedNames
@@ -2013,18 +2013,18 @@ class SystemHubPanel extends HTMLElement {
     var available = data.available || [];
     var backupDefault = Boolean(this._state.marketplace?.backup_before_install);
     var backup = this._updBackup ?? backupDefault;
-    var sections = [
-      ['upd_system', available.filter((u) => ['core', 'supervisor', 'os'].includes(u.kind))],
-      ['upd_addons', available.filter((u) => u.kind === 'addon')],
-      ['upd_devices', available.filter((u) => u.kind === 'device')],
-    ].filter(([, items]) => items.length);
     if (available.length) this._mkFetchNotes(available);
     var ok = data.up_to_date || {};
     var toggle = available.some((u) => u.backup)
       ? `<button class="act quiet" data-action="upd_backup" aria-pressed="${backup}"><ha-icon icon="mdi:checkbox-${backup ? 'marked' : 'blank-outline'}"></ha-icon>${shEsc(this._t('upd_backup'))}</button>`
       : '';
-    var summary = [
-      available.length ? this._t('upd_available', { n: available.length }) : '',
+    // Every update of the tab: these and the Marketplace's
+    var repos = (this._state.marketplace?.list || []).length;
+    // Short on one line; the detail by kind in its tooltip
+    var total = available.length + repos;
+    var summary = [total ? this._t('upd_available', { n: total }) : '', this._t('upd_uptodate_short', { n: (ok.system ?? 0) + (ok.addon ?? 0) + (ok.device ?? 0) })].filter(Boolean);
+    var detail = [
+      total ? this._t('upd_available_detail', { n: total, system: available.length, marketplace: repos }) : '',
       this._t('upd_uptodate', { system: ok.system ?? 0, addons: ok.addon ?? 0, devices: ok.device ?? 0 }),
     ].filter(Boolean);
     // Update all: every update of the tab, the Marketplace's included, in the order of _updPlan
@@ -2046,10 +2046,14 @@ class SystemHubPanel extends HTMLElement {
           ${this._button('upd_all', 'mdi:package-down', this._t('install_all'))}
           ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
         : '';
-    var head = `<div class="actions"><span class="s grow">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${this._message('upd')}`;
-    return `${head}${sections
-      .map(([key, items]) => `<h2 class="stsec">${shEsc(this._t(key))}</h2><div class="mkgrid">${items.map((u) => this._mkCard(u, backup)).join('')}</div>`)
-      .join('')}`;
+    var head = `<div class="actions"><span class="s grow" title="${shEsc(detail.join('\n'))}">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${this._message('upd')}`;
+    // One grid, in the order of the server (Core, Supervisor, OS, add-ons, devices); each card says what it is
+    return `${head}${available.length ? `<h2 class="stsec">${shEsc(this._t('upd_heading'))}</h2><div class="mkgrid">${available.map((u) => this._mkCard(u, backup)).join('')}</div>` : ''}`;
+  }
+
+  // What an update outside the Marketplace is: Core, Supervisor, OS, an add-on, a device or service
+  _updKind(kind) {
+    return { core: this._t('core'), supervisor: this._t('supervisor'), os: 'OS', addon: this._t('addon'), device: this._t('upd_device') }[kind] || kind;
   }
 
   // Update all, one step after the other: the Marketplace repositories (System Hub's own install, waited for), the
@@ -2121,7 +2125,7 @@ class SystemHubPanel extends HTMLElement {
       ? `<a class="act quiet" href="${shEsc(u.release_url)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</a>`
       : `<button class="act quiet" data-more="${shEsc(u.entity_id)}"><ha-icon icon="mdi:text-box-outline"></ha-icon>${shEsc(this._t('mk_notes'))}</button>`;
     return `<ha-card class="mkcard link" data-more="${shEsc(u.entity_id)}">
-      <div class="mktop">${logo}<div class="who"><div class="n">${shEsc(u.title)}</div><div class="s">${shEsc(u.entity_id)}</div></div>
+      <div class="mktop">${logo}<div class="who"><div class="n">${shEsc(u.title)}</div><div class="s">${shEsc(system ? `${this._updKind(u.kind)} · ${u.entity_id}` : u.entity_id)}</div></div>
         ${change ? `<span class="pill ${change === 'major' ? 'bad' : change === 'minor' ? 'warn' : 'good'}">${shEsc(this._t(`mk_${change}`))}</span>` : ''}</div>
       <div class="mkver"><span class="muted">${shEsc(u.installed || '—')}</span><ha-icon icon="mdi:arrow-right"></ha-icon><b>${shEsc(u.latest || '—')}</b></div>
       ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
