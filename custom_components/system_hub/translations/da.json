@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Vagtpost",
           "marketplace": "Opdateringer",
+          "backups": "Sikkerhedskopier",
           "batteries": "Batterier",
           "git_sync": "Versionering",
           "orphans": "Oprydning",
@@ -17,6 +18,7 @@
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
+          "backups": "Følger Home Assistants sikkerhedskopier: den seneste vellykkede, den næste, hver placering og de seneste 30 dage. Ingen egne entiteter.",
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
           "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
           "orphans": "Viser de entiteter, som deres integration ikke længere leverer, så du kan fjerne dem samlet.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Denne mappe er ikke et Git-arbejdstræ.",
       "unknown_remote": "Denne remote findes ikke i repositoriet.",
       "invalid_branch": "Git accepterer ikke dette branch-navn.",
-      "author_required": "Git ved ikke, hvem der signerer commits her: angiv forfatterens e-mail (og navn)."
+      "author_required": "Git ved ikke, hvem der signerer commits her: angiv forfatterens e-mail (og navn).",
+      "backup_not_loaded": "Backup-integrationen er ikke indlæst."
     },
     "abort": {
       "already_configured": "System Hub er allerede konfigureret.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Vagtpost: Tilføj genstart via stik",
           "watchdog_remove_power_cycle": "Vagtpost: Fjern genstarter via stik",
           "marketplace": "Opdateringer",
+          "backups": "Sikkerhedskopier",
           "batteries": "Batterier",
           "git_sync_repository": "Versionering: Indstillinger for repository",
           "git_sync": "Versionering",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Vagtpost",
           "marketplace": "Opdateringer",
+          "backups": "Sikkerhedskopier",
           "batteries": "Batterier",
           "git_sync": "Versionering",
           "automations": "Automatiseringer"
@@ -96,6 +101,7 @@
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
           "watchdog": "Genindlæser de integrationer, hvis enheder alle er utilgængelige.",
           "marketplace": "Søger på serveren efter opdateringer til alle repositories, der er downloadet med Marketplace. Marketplace selv kontrollerer kun brugerdefinerede repositories hver 48. time.",
+          "backups": "Følger Home Assistants sikkerhedskopier: den seneste vellykkede, den næste, hver placering og de seneste 30 dage. Ingen egne entiteter.",
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
           "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
           "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Timer mellem to automatiske kontroller. 0 slår den automatiske kontrol fra: brug knappen eller handlingen.",
           "backup_before_install": "Før Opdater alle (eller handlingen uden backup) oprettes Home Assistants automatiske backup med indstillingerne i Indstillinger > System > Backups; mislykkes den, installeres intet."
+        }
+      },
+      "backups": {
+        "title": "Sikkerhedskopier",
+        "data": {
+          "max_age": "Advar efter"
+        },
+        "data_description": {
+          "max_age": "Dage uden vellykket automatisk sikkerhedskopi, før fanen Status advarer."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Vælg eller skriv typen.",
       "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet.",
       "critical_below_warning": "Den røde tærskel skal ligge over den orange.",
-      "repository_exists": "Dette repository er allerede sat op."
+      "repository_exists": "Dette repository er allerede sat op.",
+      "backup_not_loaded": "Backup-integrationen er ikke indlæst."
     },
     "abort": {
       "nothing_to_import": "Intet at importere fra Battery Monitor."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installér de {n} opdateringer efter hinanden?",
         "upd_all_restart": "Home Assistant genstarter til sidst.",
-        "upd_all_os_later": "Home Assistant OS venter til bagefter: installér det, når Home Assistant er tilbage."
+        "upd_all_os_later": "Home Assistant OS venter til bagefter: installér det, når Home Assistant er tilbage.",
+        "tab_backups": "Sikkerhedskopier",
+        "bk_ago": "Seneste sikkerhedskopi {when}",
+        "bk_none": "Ingen sikkerhedskopi endnu",
+        "bk_size": "Størrelse på den seneste",
+        "bk_locations": "Placeringer",
+        "bk_locations_ok": "{ok} / {total} opdateret",
+        "bk_days": "Seneste 30 dage",
+        "bk_list": "Sikkerhedskopier",
+        "bk_auto": "Automatisk",
+        "bk_manual": "Manuel",
+        "bk_now": "Tag sikkerhedskopi nu",
+        "bk_settings": "Indstillinger for sikkerhedskopi",
+        "bk_old": "Den seneste vellykkede sikkerhedskopi er ældre end {n} dage.",
+        "bk_failed_location": "Mislykkedes",
+        "bk_ok_location": "Opdateret",
+        "bk_kept": "{n} gemt",
+        "bk_read_failed": "Sikkerhedskopierne kunne ikke læses: {error}"
       }
     },
     "battery_type": {

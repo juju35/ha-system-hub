@@ -48,6 +48,7 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
         "containers": False,
         "watchdog": True,
         "marketplace": False,
+        "backups": False,
         "batteries": True,
         "git_sync": False,
         "automations": False,
@@ -60,6 +61,20 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
     assert result["errors"] == {"marketplace": "marketplace_not_loaded"}
     result = await hass.config_entries.flow.async_configure(result["flow_id"], {"watchdog": True, "marketplace": False})
     assert result["options"] == {CONF_MODULES: ["watchdog", "batteries", "orphans"]}
+
+
+async def test_backups_module(hass: HomeAssistant) -> None:
+    """Backups: refused without the Backup integration; its setting saved, and given to the panel."""
+    result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
+    result = await hass.config_entries.flow.async_configure(result["flow_id"], {"backups": True})
+    assert result["errors"] == {"backups": "backup_not_loaded"}
+    hass.config.components.add("backup")
+    entry = await _setup(hass, ["backups"])
+    result = await hass.config_entries.options.async_init(entry.entry_id)
+    assert "backups" in result["menu_options"]
+    result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "backups"})
+    result = await hass.config_entries.options.async_configure(result["flow_id"], {"max_age": 5})
+    assert entry.options["backups"] == {"max_age": 5}
 
 
 async def test_no_module(hass: HomeAssistant) -> None:

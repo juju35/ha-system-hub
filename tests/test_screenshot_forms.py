@@ -32,6 +32,7 @@ STEPS = (
     "watchdog",
     "watchdog_add_power_cycle",
     "marketplace",
+    "backups",
     "batteries",
     "batteries_types",
     "batteries_import",

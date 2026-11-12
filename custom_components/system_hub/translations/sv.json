@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
+          "backups": "Säkerhetskopior",
           "batteries": "Batterier",
           "git_sync": "Versionshantering",
           "orphans": "Städning",
@@ -17,6 +18,7 @@
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
+          "backups": "Följer Home Assistants säkerhetskopior: den senaste lyckade, nästa, varje plats och de senaste 30 dagarna. Inga egna entiteter.",
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
           "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
           "orphans": "Listar de entiteter som deras integration inte längre tillhandahåller, så att du kan ta bort dem samtidigt.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Den här mappen är inte ett Git-arbetsträd.",
       "unknown_remote": "Den här remoten finns inte i förrådet.",
       "invalid_branch": "Git godtar inte det här grennamnet.",
-      "author_required": "Git vet inte vem som signerar commitarna här: ange författarens e-post (och namn)."
+      "author_required": "Git vet inte vem som signerar commitarna här: ange författarens e-post (och namn).",
+      "backup_not_loaded": "Backup-integrationen är inte inläst."
     },
     "abort": {
       "already_configured": "System Hub är redan konfigurerad.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Väktare: Lägg till omstart via uttag",
           "watchdog_remove_power_cycle": "Väktare: Ta bort omstarter via uttag",
           "marketplace": "Uppdateringar",
+          "backups": "Säkerhetskopior",
           "batteries": "Batterier",
           "git_sync_repository": "Versionshantering: Inställningar för förrådet",
           "git_sync": "Versionshantering",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
+          "backups": "Säkerhetskopior",
           "batteries": "Batterier",
           "git_sync": "Versionshantering",
           "automations": "Automationer"
@@ -96,6 +101,7 @@
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
+          "backups": "Följer Home Assistants säkerhetskopior: den senaste lyckade, nästa, varje plats och de senaste 30 dagarna. Inga egna entiteter.",
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
           "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
           "automations": "Visar de misslyckade automationerna och de otillgängliga entiteterna som integrationen Automation Monitor rapporterar (installeras separat). Inga egna entiteter."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Timmar mellan två automatiska kontroller. 0 stänger av den automatiska kontrollen: använd knappen eller åtgärden.",
           "backup_before_install": "Före Uppdatera alla (eller åtgärden utan backup) skapas Home Assistants automatiska säkerhetskopia med inställningarna i Inställningar > System > Säkerhetskopior; misslyckas den installeras inget."
+        }
+      },
+      "backups": {
+        "title": "Säkerhetskopior",
+        "data": {
+          "max_age": "Varna efter"
+        },
+        "data_description": {
+          "max_age": "Dagar utan lyckad automatisk säkerhetskopia innan fliken Status varnar."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Välj eller skriv typen.",
       "no_model": "Det här batteriets enhet har ingen modell: ange typen för själva batteriet.",
       "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange.",
-      "repository_exists": "Detta repository är redan konfigurerat."
+      "repository_exists": "Detta repository är redan konfigurerat.",
+      "backup_not_loaded": "Backup-integrationen är inte inläst."
     },
     "abort": {
       "nothing_to_import": "Inget att importera från Battery Monitor."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installera de {n} uppdateringarna efter varandra?",
         "upd_all_restart": "Home Assistant startar om i slutet.",
-        "upd_all_os_later": "Home Assistant OS väntar till efteråt: installera det när Home Assistant är tillbaka."
+        "upd_all_os_later": "Home Assistant OS väntar till efteråt: installera det när Home Assistant är tillbaka.",
+        "tab_backups": "Säkerhetskopior",
+        "bk_ago": "Senaste säkerhetskopia {when}",
+        "bk_none": "Ingen säkerhetskopia ännu",
+        "bk_size": "Storlek på den senaste",
+        "bk_locations": "Platser",
+        "bk_locations_ok": "{ok} / {total} uppdaterade",
+        "bk_days": "Senaste 30 dagarna",
+        "bk_list": "Säkerhetskopior",
+        "bk_auto": "Automatisk",
+        "bk_manual": "Manuell",
+        "bk_now": "Säkerhetskopiera nu",
+        "bk_settings": "Inställningar för säkerhetskopior",
+        "bk_old": "Den senaste lyckade säkerhetskopian är äldre än {n} dagar.",
+        "bk_failed_location": "Misslyckades",
+        "bk_ok_location": "Uppdaterad",
+        "bk_kept": "{n} sparade",
+        "bk_read_failed": "Säkerhetskopiorna kunde inte läsas: {error}"
       }
     },
     "battery_type": {

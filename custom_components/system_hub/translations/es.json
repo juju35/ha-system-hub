@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Centinela",
           "marketplace": "Actualizaciones",
+          "backups": "Copias de seguridad",
           "batteries": "Baterías",
           "git_sync": "Versionado",
           "orphans": "Limpieza",
@@ -17,6 +18,7 @@
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
           "watchdog": "Recarga las integraciones en las que ninguna entidad está disponible.",
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
+          "backups": "Sigue las copias de seguridad de Home Assistant: la última correcta, la próxima, cada ubicación y los últimos 30 días. Sin entidades propias.",
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
           "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
           "orphans": "Muestra las entidades que su integración ya no proporciona, para que puedas eliminarlas en bloque.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Esta carpeta no es un repositorio Git.",
       "unknown_remote": "Este remoto no existe en el repositorio.",
       "invalid_branch": "Git no acepta este nombre de rama.",
-      "author_required": "Git no sabe quién firma los commits aquí: indica el correo (y el nombre) del autor."
+      "author_required": "Git no sabe quién firma los commits aquí: indica el correo (y el nombre) del autor.",
+      "backup_not_loaded": "La integración Backup no está cargada."
     },
     "abort": {
       "already_configured": "System Hub ya está configurado.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Centinela: Añadir un reinicio por enchufe",
           "watchdog_remove_power_cycle": "Centinela: Quitar reinicios por enchufe",
           "marketplace": "Actualizaciones",
+          "backups": "Copias de seguridad",
           "batteries": "Baterías",
           "git_sync_repository": "Versionado: Ajustes del repositorio",
           "git_sync": "Versionado",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Centinela",
           "marketplace": "Actualizaciones",
+          "backups": "Copias de seguridad",
           "batteries": "Baterías",
           "git_sync": "Versionado",
           "automations": "Automatizaciones"
@@ -96,6 +101,7 @@
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
           "watchdog": "Recarga las integraciones en las que ninguna entidad está disponible.",
           "marketplace": "Busca actualizaciones de todos los repositorios descargados con Marketplace, en el servidor. Marketplace solo comprueba los repositorios personalizados cada 48 horas.",
+          "backups": "Sigue las copias de seguridad de Home Assistant: la última correcta, la próxima, cada ubicación y los últimos 30 días. Sin entidades propias.",
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
           "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
           "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Horas entre dos comprobaciones automáticas. 0 desactiva la comprobación automática: usa el botón o la acción.",
           "backup_before_install": "Antes de Actualizar todo (o de la acción sin backup), crear la copia de seguridad automática de Home Assistant, con sus ajustes de Ajustes > Sistema > Copias de seguridad; si falla, no se instala nada."
+        }
+      },
+      "backups": {
+        "title": "Copias de seguridad",
+        "data": {
+          "max_age": "Avisar después de"
+        },
+        "data_description": {
+          "max_age": "Días sin copia automática correcta antes de que la pestaña Estado avise."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Elige o escribe el tipo.",
       "no_model": "El dispositivo de esta batería no tiene modelo: define el tipo para la propia batería.",
       "critical_below_warning": "El umbral rojo debe estar por encima del naranja.",
-      "repository_exists": "Este repositorio ya está configurado."
+      "repository_exists": "Este repositorio ya está configurado.",
+      "backup_not_loaded": "La integración Backup no está cargada."
     },
     "abort": {
       "nothing_to_import": "Nada que importar desde Battery Monitor."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "¿Instalar las {n} actualizaciones una tras otra?",
         "upd_all_restart": "Home Assistant se reinicia al final.",
-        "upd_all_os_later": "Home Assistant OS queda para después: instálalo cuando Home Assistant vuelva."
+        "upd_all_os_later": "Home Assistant OS queda para después: instálalo cuando Home Assistant vuelva.",
+        "tab_backups": "Copias de seguridad",
+        "bk_ago": "Última copia {when}",
+        "bk_none": "Aún no hay copias",
+        "bk_size": "Tamaño de la última",
+        "bk_locations": "Ubicaciones",
+        "bk_locations_ok": "{ok} / {total} al día",
+        "bk_days": "Últimos 30 días",
+        "bk_list": "Copias de seguridad",
+        "bk_auto": "Automática",
+        "bk_manual": "Manual",
+        "bk_now": "Hacer copia ahora",
+        "bk_settings": "Ajustes de copias",
+        "bk_old": "La última copia correcta tiene más de {n} días.",
+        "bk_failed_location": "Fallida",
+        "bk_ok_location": "Al día",
+        "bk_kept": "{n} conservadas",
+        "bk_read_failed": "No se pudieron leer las copias: {error}"
       }
     },
     "battery_type": {

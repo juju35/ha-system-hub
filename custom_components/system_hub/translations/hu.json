@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Őrszem",
           "marketplace": "Frissítések",
+          "backups": "Biztonsági mentések",
           "batteries": "Elemek",
           "git_sync": "Verziókezelés",
           "orphans": "Takarítás",
@@ -17,6 +18,7 @@
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
+          "backups": "Követi a Home Assistant mentéseit: az utolsó sikereset, a következőt, minden helyet és az utolsó 30 napot. Saját entitások nélkül.",
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
           "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
           "orphans": "Listázza azokat az entitásokat, amelyeket az integrációjuk már nem biztosít, hogy egyszerre eltávolíthassa őket.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Ez a mappa nem Git munkafa.",
       "unknown_remote": "Ez a remote nem létezik a tárolóban.",
       "invalid_branch": "A Git nem fogadja el ezt az ágnevet.",
-      "author_required": "A Git nem tudja, ki írja alá itt a commitokat: adja meg a szerző e-mail-címét (és nevét)."
+      "author_required": "A Git nem tudja, ki írja alá itt a commitokat: adja meg a szerző e-mail-címét (és nevét).",
+      "backup_not_loaded": "A Backup integráció nincs betöltve."
     },
     "abort": {
       "already_configured": "Az System Hub már be van állítva.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Őrszem: Újraindítás hozzáadása konnektorral",
           "watchdog_remove_power_cycle": "Őrszem: Konnektoros újraindítások eltávolítása",
           "marketplace": "Frissítések",
+          "backups": "Biztonsági mentések",
           "batteries": "Elemek",
           "git_sync_repository": "Verziókezelés: Tároló beállításai",
           "git_sync": "Verziókezelés",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Őrszem",
           "marketplace": "Frissítések",
+          "backups": "Biztonsági mentések",
           "batteries": "Elemek",
           "git_sync": "Verziókezelés",
           "automations": "Automatizálások"
@@ -96,6 +101,7 @@
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
+          "backups": "Követi a Home Assistant mentéseit: az utolsó sikereset, a következőt, minden helyet és az utolsó 30 napot. Saját entitások nélkül.",
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
           "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
           "automations": "Megjeleníti az Automation Monitor integráció (külön telepítendő) által jelentett hibás automatizálásokat és nem elérhető entitásokat. Saját entitása nincs."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Két automatikus ellenőrzés között eltelt órák száma. A 0 kikapcsolja az automatikus ellenőrzést: használja a gombot vagy a műveletet.",
           "backup_before_install": "Az Összes frissítése (vagy a backup nélküli művelet) előtt elkészül a Home Assistant automatikus biztonsági mentése a Beállítások > Rendszer > Biztonsági mentések beállításaival; ha nem sikerül, semmi sem települ."
+        }
+      },
+      "backups": {
+        "title": "Biztonsági mentések",
+        "data": {
+          "max_age": "Figyelmeztetés ennyi után"
+        },
+        "data_description": {
+          "max_age": "Napok sikeres automatikus mentés nélkül, mielőtt az Állapot lap figyelmeztet."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Válassza ki vagy írja be a típust.",
       "no_model": "Ennek az elemnek az eszközéhez nincs modell: állítsa be a típust magára az elemre.",
       "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie.",
-      "repository_exists": "Ez a tároló már be van állítva."
+      "repository_exists": "Ez a tároló már be van állítva.",
+      "backup_not_loaded": "A Backup integráció nincs betöltve."
     },
     "abort": {
       "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Telepíti a(z) {n} frissítést egymás után?",
         "upd_all_restart": "A Home Assistant a végén újraindul.",
-        "upd_all_os_later": "A Home Assistant OS későbbre marad: telepítse, amikor a Home Assistant újra elérhető."
+        "upd_all_os_later": "A Home Assistant OS későbbre marad: telepítse, amikor a Home Assistant újra elérhető.",
+        "tab_backups": "Biztonsági mentések",
+        "bk_ago": "Utolsó mentés {when}",
+        "bk_none": "Még nincs mentés",
+        "bk_size": "Az utolsó mérete",
+        "bk_locations": "Helyek",
+        "bk_locations_ok": "{ok} / {total} naprakész",
+        "bk_days": "Utolsó 30 nap",
+        "bk_list": "Biztonsági mentések",
+        "bk_auto": "Automatikus",
+        "bk_manual": "Kézi",
+        "bk_now": "Mentés most",
+        "bk_settings": "Mentési beállítások",
+        "bk_old": "Az utolsó sikeres mentés régebbi {n} napnál.",
+        "bk_failed_location": "Sikertelen",
+        "bk_ok_location": "Naprakész",
+        "bk_kept": "{n} megőrizve",
+        "bk_read_failed": "A mentések nem olvashatók: {error}"
       }
     },
     "battery_type": {

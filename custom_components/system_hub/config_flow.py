@@ -26,13 +26,17 @@ from .batteries import flow as batteries_flow
 from .batteries import importer as batteries_importer
 from .batteries.const import CONF_BATTERY_MODELS, CONF_BATTERY_TYPES
 from .const import (
+    BACKUP_DOMAIN,
+    CONF_BACKUP_MAX_AGE,
     CONF_MODULES,
     CONF_STOPPABLE_PROCESSES,
     CONF_SYSTEM,
+    DEFAULT_BACKUP_MAX_AGE,
     DEFAULT_THRESHOLDS,
     DOMAIN,
     MARKETPLACE_DOMAIN,
     MODULE_AUTOMATIONS,
+    MODULE_BACKUPS,
     MODULE_BATTERIES,
     MODULE_CONTAINERS,
     MODULE_GIT_SYNC,
@@ -67,6 +71,8 @@ def _modules_errors(hass: HomeAssistant, user_input: dict[str, Any]) -> dict[str
         errors[MODULE_CONTAINERS] = "supervisor_not_available"
     if user_input.get(MODULE_MARKETPLACE) and MARKETPLACE_DOMAIN not in hass.config.components:
         errors[MODULE_MARKETPLACE] = "marketplace_not_loaded"
+    if user_input.get(MODULE_BACKUPS) and BACKUP_DOMAIN not in hass.config.components:
+        errors[MODULE_BACKUPS] = "backup_not_loaded"
     return errors
 
 
@@ -77,6 +83,7 @@ def _available(hass: HomeAssistant) -> list[str]:
         for m in MODULES
         if (m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in hass.config.components)
         and (m != MODULE_CONTAINERS or supervisor_available(hass))
+        and (m != MODULE_BACKUPS or BACKUP_DOMAIN in hass.config.components)
         # Shows what Automation Monitor reports: on by default where it is set up.
         and (m != MODULE_AUTOMATIONS or AUTOMATION_MONITOR in hass.config.components)
         # Needs a repository set up first: turned on by choice.
@@ -202,6 +209,8 @@ class SystemHubOptionsFlow(OptionsFlow):
                 menu.append("watchdog_remove_power_cycle")
         if MODULE_MARKETPLACE in modules:
             menu.append("marketplace")
+        if MODULE_BACKUPS in modules:
+            menu.append("backups")
         if MODULE_BATTERIES in modules:
             menu += ["batteries", "batteries_types"]
             if await batteries_importer.async_find(self.hass):
@@ -559,6 +568,22 @@ class SystemHubOptionsFlow(OptionsFlow):
             return self._save(**{MODULE_AUTOMATIONS: automations_flow.settings_options(user_input)})
         schema = automations_flow.settings_schema(self._module(MODULE_AUTOMATIONS))
         return self.async_show_form(step_id="automations", data_schema=schema)
+
+    # Backups
+
+    async def async_step_backups(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The age from which the last successful backup is a problem."""
+        if user_input is not None:
+            return self._save(**{MODULE_BACKUPS: {CONF_BACKUP_MAX_AGE: int(user_input[CONF_BACKUP_MAX_AGE])}})
+        current = self._module(MODULE_BACKUPS).get(CONF_BACKUP_MAX_AGE, DEFAULT_BACKUP_MAX_AGE)
+        schema = vol.Schema(
+            {
+                vol.Required(CONF_BACKUP_MAX_AGE, default=current): NumberSelector(
+                    NumberSelectorConfig(min=1, max=60, step=1, mode=NumberSelectorMode.BOX, unit_of_measurement="d")
+                )
+            }
+        )
+        return self.async_show_form(step_id="backups", data_schema=schema)
 
     # Orphans
 

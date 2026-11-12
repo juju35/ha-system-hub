@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
+          "backups": "Dublējumi",
           "batteries": "Baterijas",
           "git_sync": "Versiju pārvaldība",
           "orphans": "Tīrīšana",
@@ -17,6 +18,7 @@
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
+          "backups": "Seko Home Assistant dublējumiem: pēdējam veiksmīgajam, nākamajam, katrai atrašanās vietai un pēdējām 30 dienām. Bez savām entītijām.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
           "orphans": "Parāda vienības, ko to integrācija vairs nenodrošina, lai tās varētu noņemt vienlaikus.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Šī mape nav Git darba koks.",
       "unknown_remote": "Šāds remote repozitorijā nepastāv.",
       "invalid_branch": "Git nepieņem šo zara nosaukumu.",
-      "author_required": "Git nezina, kas šeit paraksta commit: ievadiet autora e-pastu (un vārdu)."
+      "author_required": "Git nezina, kas šeit paraksta commit: ievadiet autora e-pastu (un vārdu).",
+      "backup_not_loaded": "Backup integrācija nav ielādēta."
     },
     "abort": {
       "already_configured": "System Hub jau ir konfigurēts.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Sargs: Pievienot restartēšanu ar kontaktligzdu",
           "watchdog_remove_power_cycle": "Sargs: Noņemt restartēšanas ar kontaktligzdu",
           "marketplace": "Atjauninājumi",
+          "backups": "Dublējumi",
           "batteries": "Baterijas",
           "git_sync_repository": "Versiju pārvaldība: Repozitorija iestatījumi",
           "git_sync": "Versiju pārvaldība",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
+          "backups": "Dublējumi",
           "batteries": "Baterijas",
           "git_sync": "Versiju pārvaldība",
           "automations": "Automatizācijas"
@@ -96,6 +101,7 @@
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
+          "backups": "Seko Home Assistant dublējumiem: pēdējam veiksmīgajam, nākamajam, katrai atrašanās vietai un pēdējām 30 dienām. Bez savām entītijām.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
           "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Stundas starp divām automātiskām pārbaudēm. 0 izslēdz automātisko pārbaudi: izmantojiet pogu vai darbību.",
           "backup_before_install": "Pirms «Atjaunināt visu» (vai darbības bez backup) tiek izveidota Home Assistant automātiskā rezerves kopija ar iestatījumiem sadaļā Iestatījumi > Sistēma > Rezerves kopijas; ja tā neizdodas, nekas netiek instalēts."
+        }
+      },
+      "backups": {
+        "title": "Dublējumi",
+        "data": {
+          "max_age": "Brīdināt pēc"
+        },
+        "data_description": {
+          "max_age": "Dienas bez veiksmīga automātiska dublējuma, pirms cilne Statuss brīdina."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Izvēlieties vai ierakstiet veidu.",
       "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai.",
       "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā.",
-      "repository_exists": "Šis repozitorijs jau ir iestatīts."
+      "repository_exists": "Šis repozitorijs jau ir iestatīts.",
+      "backup_not_loaded": "Backup integrācija nav ielādēta."
     },
     "abort": {
       "nothing_to_import": "No Battery Monitor nav ko importēt."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Instalēt {n} atjauninājumus vienu pēc otra?",
         "upd_all_restart": "Beigās Home Assistant tiek restartēts.",
-        "upd_all_os_later": "Home Assistant OS paliek vēlākam: instalējiet to, kad Home Assistant atkal darbojas."
+        "upd_all_os_later": "Home Assistant OS paliek vēlākam: instalējiet to, kad Home Assistant atkal darbojas.",
+        "tab_backups": "Dublējumi",
+        "bk_ago": "Pēdējais dublējums {when}",
+        "bk_none": "Vēl nav dublējumu",
+        "bk_size": "Pēdējā izmērs",
+        "bk_locations": "Atrašanās vietas",
+        "bk_locations_ok": "{ok} / {total} atjaunināti",
+        "bk_days": "Pēdējās 30 dienas",
+        "bk_list": "Dublējumi",
+        "bk_auto": "Automātisks",
+        "bk_manual": "Manuāls",
+        "bk_now": "Dublēt tagad",
+        "bk_settings": "Dublējumu iestatījumi",
+        "bk_old": "Pēdējais veiksmīgais dublējums ir vecāks par {n} dienām.",
+        "bk_failed_location": "Neizdevās",
+        "bk_ok_location": "Atjaunināts",
+        "bk_kept": "Saglabāti: {n}",
+        "bk_read_failed": "Dublējumus neizdevās nolasīt: {error}"
       }
     },
     "battery_type": {

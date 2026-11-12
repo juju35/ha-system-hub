@@ -11,6 +11,7 @@ import json
 import os
 import shutil
 import subprocess
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -438,6 +439,52 @@ def mock_orphans():
     }
 
 
+def mock_backup_info():
+    """Home Assistant's backups: one a night for 30 days but a missed night, the cloud copy failing for 5 days."""
+    now = datetime.fromisoformat(NOW)
+    backups = []
+    for day in range(30):
+        if day == 12:
+            continue
+        date = (now - timedelta(days=day)).replace(hour=4, minute=45)
+        agents = {
+            "backup.local": {"protected": True, "size": 1_331_000_000},
+            "hassio.nas": {"protected": True, "size": 1_331_000_000},
+        }
+        if day >= 5:
+            agents["cloud.cloud"] = {"protected": True, "size": 1_331_000_000}
+        backups.append(
+            {
+                "backup_id": f"auto{day}",
+                "name": f"Automatic backup {date:%Y.%-m.%-d}",
+                "date": date.isoformat(),
+                "with_automatic_settings": True,
+                "failed_agent_ids": ["cloud.cloud"] if day < 5 else [],
+                "agents": agents,
+            }
+        )
+    backups.insert(
+        1,
+        {
+            "backup_id": "manual1",
+            "name": "Before Zigbee2MQTT 2.7.0",
+            "date": (now - timedelta(hours=15)).isoformat(),
+            "with_automatic_settings": False,
+            "failed_agent_ids": [],
+            "agents": {"backup.local": {"protected": True, "size": 325_000_000}},
+        },
+    )
+    last = backups[0]["date"]
+    return {
+        "state": "idle",
+        "agent_errors": {},
+        "backups": backups,
+        "last_attempted_automatic_backup": last,
+        "last_completed_automatic_backup": last,
+        "next_automatic_backup": (now + timedelta(days=1)).replace(hour=4, minute=45).isoformat(),
+    }
+
+
 def mock_state():
     """What system_hub/state answers: every module turned on, with neutral data."""
     system = [
@@ -548,11 +595,31 @@ def mock_state():
     return {
         "loaded": True,
         "entry_id": "system_hub",
-        "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
-        "tabs": ["status", "system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans"],
+        "modules": ["containers", "watchdog", "marketplace", "backups", "batteries", "git_sync", "orphans"],
+        "tabs": [
+            "status",
+            "system",
+            "containers",
+            "watchdog",
+            "marketplace",
+            "backups",
+            "batteries",
+            "git_sync",
+            "orphans",
+        ],
+        "backups": {"max_age": 3},
         # The Orphans tab: the counts with the state, the whole list from its own command
         **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
         "git_sync_configured": True,
+        # The Backups tab: what Home Assistant's backup/info and backup/agents/info answer
+        "backup_info": mock_backup_info(),
+        "backup_agents": {
+            "agents": [
+                {"agent_id": "backup.local", "name": "Local"},
+                {"agent_id": "hassio.nas", "name": "NAS"},
+                {"agent_id": "cloud.cloud", "name": "Home Assistant Cloud"},
+            ]
+        },
         # The Updates tab: Home Assistant, an add-on and a device before the Marketplace
         "system_updates": {
             "available": [
@@ -961,6 +1028,10 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                 ? state
                 : msg.type === "system_hub/orphans"
                   ? state.orphans_list
+                  : msg.type === "backup/info"
+                  ? state.backup_info
+                  : msg.type === "backup/agents/info"
+                  ? state.backup_agents
                   : msg.service === "git_sync_get_diff"
                   ? { response: state.git_sync_diff }
                   : msg.type === "history/history_during_period"
@@ -998,7 +1069,18 @@ ORPHANS_CONFIRM = """async () => {
 # Opens the diff viewer from the Git Sync tab.
 OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
-TABS = ["status", "system", "containers", "watchdog", "marketplace", "batteries", "git_sync", "orphans", "settings"]
+TABS = [
+    "status",
+    "system",
+    "containers",
+    "watchdog",
+    "marketplace",
+    "backups",
+    "batteries",
+    "git_sync",
+    "orphans",
+    "settings",
+]
 SHOTS = [
     *(
         {"file": f"panel-{tab.replace('_', '-')}{suffix}", "theme": theme, "tab": tab}
@@ -1036,6 +1118,7 @@ SHOTS = [
             ("watchdog", "watchdog"),
             ("watchdog", "watchdog_add_power_cycle"),
             ("marketplace", "marketplace"),
+            ("backups", "backups"),
             ("batteries", "batteries"),
             ("batteries", "batteries_types"),
             ("batteries", "batteries_import"),

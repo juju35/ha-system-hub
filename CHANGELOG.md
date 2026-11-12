@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.0 - 2026-11-12
+
+### New
+- **Backups** module, in the **Maintenance** group: Home Assistant's own backups at a glance. The last successful automatic backup, the next one, the size of the last one and the locations up to date; each location (local, network storage, cloud…) with its last copy, the backups it keeps and its error; the last 30 days, a square per day with a backup; the 10 latest backups, each opening its page in **Settings → Backups**; **Back up now** runs Home Assistant's automatic backup. On the **Status** tab, a problem when the last attempt failed, and to watch when a location fails or the last success is older than **Alert after** (**Settings → Backups ⚙**, 3 days by default). It needs the Backup integration and has no entities of its own; turn it on in **Settings**.
+
 ## 1.6.0 - 2026-11-12
 
 ### New

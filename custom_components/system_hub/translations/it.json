@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Sentinella",
           "marketplace": "Aggiornamenti",
+          "backups": "Backup",
           "batteries": "Batterie",
           "git_sync": "Versionamento",
           "orphans": "Pulizia",
@@ -17,6 +18,7 @@
           "containers": "Monitora Home Assistant Core, il Supervisor e gli add-on: stato, versione, CPU e memoria. Solo monitoraggio: nulla viene riavviato.",
           "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
           "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore.",
+          "backups": "Segue i backup di Home Assistant: l'ultimo riuscito, il prossimo, ogni posizione e gli ultimi 30 giorni. Nessuna entità propria.",
           "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica.",
           "git_sync": "Cartella di Home Assistant versionata con Git e inviata a un remote (GitHub, Gitea…).",
           "orphans": "Elenca le entità che la loro integrazione non fornisce più, per poterle rimuovere in blocco.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Questa cartella non è un repository Git.",
       "unknown_remote": "Questo remote non esiste nel repository.",
       "invalid_branch": "Git non accetta questo nome di branch.",
-      "author_required": "Git non sa chi firma i commit qui: inserisci l'email (e il nome) dell'autore."
+      "author_required": "Git non sa chi firma i commit qui: inserisci l'email (e il nome) dell'autore.",
+      "backup_not_loaded": "L'integrazione Backup non è caricata."
     },
     "abort": {
       "already_configured": "System Hub è già configurato.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Sentinella: Aggiungi un riavvio tramite presa",
           "watchdog_remove_power_cycle": "Sentinella: Rimuovi riavvii tramite presa",
           "marketplace": "Aggiornamenti",
+          "backups": "Backup",
           "batteries": "Batterie",
           "git_sync_repository": "Versionamento: Impostazioni del repository",
           "git_sync": "Versionamento",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Sentinella",
           "marketplace": "Aggiornamenti",
+          "backups": "Backup",
           "batteries": "Batterie",
           "git_sync": "Versionamento",
           "automations": "Automazioni"
@@ -96,6 +101,7 @@
           "containers": "Monitora Home Assistant Core, il Supervisor e gli add-on: stato, versione, CPU e memoria. Solo monitoraggio: nulla viene riavviato.",
           "watchdog": "Ricarica le integrazioni le cui entità sono tutte non disponibili.",
           "marketplace": "Cerca gli aggiornamenti di tutti i repository scaricati con Marketplace, lato server. Marketplace stesso controlla i repository personalizzati solo ogni 48 ore.",
+          "backups": "Segue i backup di Home Assistant: l'ultimo riuscito, il prossimo, ogni posizione e gli ultimi 30 giorni. Nessuna entità propria.",
           "batteries": "Notifica due volte al giorno i dispositivi la cui batteria è rimasta scarica.",
           "git_sync": "Cartella di Home Assistant versionata con Git e inviata a un remote (GitHub, Gitea…).",
           "automations": "Mostra le automazioni in errore e le entità non disponibili segnalate dall'integrazione Automation Monitor (da installare a parte). Nessuna entità propria."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Ore tra due verifiche automatiche. 0 disattiva la verifica automatica: usa il pulsante o l'azione.",
           "backup_before_install": "Prima di Aggiorna tutto (o dell'azione senza backup), crea il backup automatico di Home Assistant, con le sue impostazioni in Impostazioni > Sistema > Backup; se non riesce, non viene installato nulla."
+        }
+      },
+      "backups": {
+        "title": "Backup",
+        "data": {
+          "max_age": "Avvisa dopo"
+        },
+        "data_description": {
+          "max_age": "Giorni senza un backup automatico riuscito prima che la scheda Stato avvisi."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Scegli o scrivi il tipo.",
       "no_model": "Il dispositivo di questa batteria non ha un modello: imposta il tipo per la batteria stessa.",
       "critical_below_warning": "La soglia rossa deve essere sopra quella arancione.",
-      "repository_exists": "Questo repository è già configurato."
+      "repository_exists": "Questo repository è già configurato.",
+      "backup_not_loaded": "L'integrazione Backup non è caricata."
     },
     "abort": {
       "nothing_to_import": "Niente da importare da Battery Monitor."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Installare i {n} aggiornamenti uno dopo l'altro?",
         "upd_all_restart": "Home Assistant si riavvia alla fine.",
-        "upd_all_os_later": "Home Assistant OS resta per dopo: installalo quando Home Assistant è di nuovo attivo."
+        "upd_all_os_later": "Home Assistant OS resta per dopo: installalo quando Home Assistant è di nuovo attivo.",
+        "tab_backups": "Backup",
+        "bk_ago": "Ultimo backup {when}",
+        "bk_none": "Ancora nessun backup",
+        "bk_size": "Dimensione dell'ultimo",
+        "bk_locations": "Posizioni",
+        "bk_locations_ok": "{ok} / {total} aggiornate",
+        "bk_days": "Ultimi 30 giorni",
+        "bk_list": "Backup",
+        "bk_auto": "Automatico",
+        "bk_manual": "Manuale",
+        "bk_now": "Esegui backup ora",
+        "bk_settings": "Impostazioni backup",
+        "bk_old": "L'ultimo backup riuscito è più vecchio di {n} giorni.",
+        "bk_failed_location": "Non riuscito",
+        "bk_ok_location": "Aggiornata",
+        "bk_kept": "{n} conservati",
+        "bk_read_failed": "Impossibile leggere i backup: {error}"
       }
     },
     "battery_type": {

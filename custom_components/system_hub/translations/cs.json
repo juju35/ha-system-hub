@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Strážce",
           "marketplace": "Aktualizace",
+          "backups": "Zálohy",
           "batteries": "Baterie",
           "git_sync": "Verzování",
           "orphans": "Úklid",
@@ -17,6 +18,7 @@
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
+          "backups": "Sleduje zálohy Home Assistantu: poslední úspěšnou, další, každé umístění a posledních 30 dní. Bez vlastních entit.",
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
           "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
           "orphans": "Zobrazuje entity, které jejich integrace již neposkytuje, abyste je mohli hromadně odebrat.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Tato složka není pracovní strom Gitu.",
       "unknown_remote": "Tento remote v repozitáři neexistuje.",
       "invalid_branch": "Git nepřijímá tento název větve.",
-      "author_required": "Git neví, kdo zde podepisuje commity: zadejte e-mail (a jméno) autora."
+      "author_required": "Git neví, kdo zde podepisuje commity: zadejte e-mail (a jméno) autora.",
+      "backup_not_loaded": "Integrace Backup není načtena."
     },
     "abort": {
       "already_configured": "System Hub je již nakonfigurován.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Strážce: Přidat restart přes zásuvku",
           "watchdog_remove_power_cycle": "Strážce: Odebrat restarty přes zásuvku",
           "marketplace": "Aktualizace",
+          "backups": "Zálohy",
           "batteries": "Baterie",
           "git_sync_repository": "Verzování: Nastavení repozitáře",
           "git_sync": "Verzování",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Strážce",
           "marketplace": "Aktualizace",
+          "backups": "Zálohy",
           "batteries": "Baterie",
           "git_sync": "Verzování",
           "automations": "Automatizace"
@@ -96,6 +101,7 @@
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
           "watchdog": "Znovu načte integrace, jejichž všechny entity jsou nedostupné.",
           "marketplace": "Na serveru kontroluje aktualizace všech repozitářů stažených přes Marketplace. Samotný Marketplace kontroluje vlastní repozitáře jen jednou za 48 hodin.",
+          "backups": "Sleduje zálohy Home Assistantu: poslední úspěšnou, další, každé umístění a posledních 30 dní. Bez vlastních entit.",
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
           "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
           "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Počet hodin mezi dvěma automatickými kontrolami. 0 vypne automatickou kontrolu: použijte tlačítko nebo akci.",
           "backup_before_install": "Před Aktualizovat vše (nebo akcí bez backup) se vytvoří automatická záloha Home Assistant s nastavením z Nastavení > Systém > Zálohy; pokud selže, nic se nenainstaluje."
+        }
+      },
+      "backups": {
+        "title": "Zálohy",
+        "data": {
+          "max_age": "Upozornit po"
+        },
+        "data_description": {
+          "max_age": "Počet dní bez úspěšné automatické zálohy, než karta Stav upozorní."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Vyberte nebo zadejte typ.",
       "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii.",
       "critical_below_warning": "Červený práh musí být nad oranžovým.",
-      "repository_exists": "Tento repozitář je již nastaven."
+      "repository_exists": "Tento repozitář je již nastaven.",
+      "backup_not_loaded": "Integrace Backup není načtena."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor není co importovat."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Nainstalovat {n} aktualizací jednu po druhé?",
         "upd_all_restart": "Home Assistant se na konci restartuje.",
-        "upd_all_os_later": "Home Assistant OS zůstává na později: nainstalujte ho, až se Home Assistant vrátí."
+        "upd_all_os_later": "Home Assistant OS zůstává na později: nainstalujte ho, až se Home Assistant vrátí.",
+        "tab_backups": "Zálohy",
+        "bk_ago": "Poslední záloha {when}",
+        "bk_none": "Zatím žádná záloha",
+        "bk_size": "Velikost poslední",
+        "bk_locations": "Umístění",
+        "bk_locations_ok": "{ok} / {total} aktuální",
+        "bk_days": "Posledních 30 dní",
+        "bk_list": "Zálohy",
+        "bk_auto": "Automatická",
+        "bk_manual": "Ruční",
+        "bk_now": "Zálohovat nyní",
+        "bk_settings": "Nastavení záloh",
+        "bk_old": "Poslední úspěšná záloha je starší než {n} dní.",
+        "bk_failed_location": "Selhala",
+        "bk_ok_location": "Aktuální",
+        "bk_kept": "Uchováno: {n}",
+        "bk_read_failed": "Zálohy se nepodařilo načíst: {error}"
       }
     },
     "battery_type": {

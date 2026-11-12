@@ -8,6 +8,7 @@
           "containers": "Containers",
           "watchdog": "Stražar",
           "marketplace": "Posodobitve",
+          "backups": "Varnostne kopije",
           "batteries": "Baterije",
           "git_sync": "Upravljanje različic",
           "orphans": "Čiščenje",
@@ -17,6 +18,7 @@
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
+          "backups": "Spremlja varnostne kopije Home Assistanta: zadnjo uspešno, naslednjo, vsako lokacijo in zadnjih 30 dni. Brez lastnih entitet.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
           "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
           "orphans": "Prikaže entitete, ki jih njihova integracija ne zagotavlja več, da jih lahko odstranite naenkrat.",
@@ -50,7 +52,8 @@
       "not_a_repository": "Ta mapa ni delovno drevo Gita.",
       "unknown_remote": "Ta remote v repozitoriju ne obstaja.",
       "invalid_branch": "Git ne sprejme tega imena veje.",
-      "author_required": "Git ne ve, kdo tukaj podpisuje commite: vnesite e-pošto (in ime) avtorja."
+      "author_required": "Git ne ve, kdo tukaj podpisuje commite: vnesite e-pošto (in ime) avtorja.",
+      "backup_not_loaded": "Integracija Backup ni naložena."
     },
     "abort": {
       "already_configured": "System Hub je že nastavljen.",
@@ -68,6 +71,7 @@
           "watchdog_add_power_cycle": "Stražar: Dodaj ponovni zagon prek vtičnice",
           "watchdog_remove_power_cycle": "Stražar: Odstrani ponovne zagone prek vtičnice",
           "marketplace": "Posodobitve",
+          "backups": "Varnostne kopije",
           "batteries": "Baterije",
           "git_sync_repository": "Upravljanje različic: Nastavitve repozitorija",
           "git_sync": "Upravljanje različic",
@@ -88,6 +92,7 @@
           "containers": "Containers",
           "watchdog": "Stražar",
           "marketplace": "Posodobitve",
+          "backups": "Varnostne kopije",
           "batteries": "Baterije",
           "git_sync": "Upravljanje različic",
           "automations": "Avtomatizacije"
@@ -96,6 +101,7 @@
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
+          "backups": "Spremlja varnostne kopije Home Assistanta: zadnjo uspešno, naslednjo, vsako lokacijo in zadnjih 30 dni. Brez lastnih entitet.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
           "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
           "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet."
@@ -173,6 +179,15 @@
         "data_description": {
           "scan_interval": "Število ur med dvema samodejnima preverjanjema. 0 izklopi samodejno preverjanje: uporabite gumb ali dejanje.",
           "backup_before_install": "Pred Posodobi vse (ali dejanjem brez backup) se ustvari samodejna varnostna kopija Home Assistant z nastavitvami v Nastavitve > Sistem > Varnostne kopije; če ne uspe, se nič ne namesti."
+        }
+      },
+      "backups": {
+        "title": "Varnostne kopije",
+        "data": {
+          "max_age": "Opozori po"
+        },
+        "data_description": {
+          "max_age": "Dnevi brez uspešne samodejne kopije, preden zavihek Stanje opozori."
         }
       },
       "batteries": {
@@ -420,7 +435,8 @@
       "type_required": "Izberite ali vpišite vrsto.",
       "no_model": "Naprava te baterije nima modela: nastavite vrsto za samo baterijo.",
       "critical_below_warning": "Rdeči prag mora biti nad oranžnim.",
-      "repository_exists": "Ta repozitorij je že nastavljen."
+      "repository_exists": "Ta repozitorij je že nastavljen.",
+      "backup_not_loaded": "Integracija Backup ni naložena."
     },
     "abort": {
       "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
@@ -1501,7 +1517,24 @@
         "upd_marketplace": "Marketplace",
         "upd_all_confirm": "Namestim {n} posodobitev eno za drugo?",
         "upd_all_restart": "Home Assistant se na koncu znova zažene.",
-        "upd_all_os_later": "Home Assistant OS ostane za pozneje: namestite ga, ko se Home Assistant vrne."
+        "upd_all_os_later": "Home Assistant OS ostane za pozneje: namestite ga, ko se Home Assistant vrne.",
+        "tab_backups": "Varnostne kopije",
+        "bk_ago": "Zadnja kopija {when}",
+        "bk_none": "Še ni kopije",
+        "bk_size": "Velikost zadnje",
+        "bk_locations": "Lokacije",
+        "bk_locations_ok": "{ok} / {total} posodobljenih",
+        "bk_days": "Zadnjih 30 dni",
+        "bk_list": "Varnostne kopije",
+        "bk_auto": "Samodejna",
+        "bk_manual": "Ročna",
+        "bk_now": "Varnostno kopiraj zdaj",
+        "bk_settings": "Nastavitve varnostnih kopij",
+        "bk_old": "Zadnja uspešna kopija je starejša od {n} dni.",
+        "bk_failed_location": "Neuspešno",
+        "bk_ok_location": "Posodobljeno",
+        "bk_kept": "Ohranjenih: {n}",
+        "bk_read_failed": "Kopij ni bilo mogoče prebrati: {error}"
       }
     },
     "battery_type": {
