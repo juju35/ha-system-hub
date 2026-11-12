@@ -216,6 +216,8 @@ System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-
 | `automations` | [Automations](#automation-monitor-cards) | ✓ | `automation-monitor-card`, [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) |
 | `orphans` | [Cleanup](#cards) | ✓ | `orphan-entities-card`, [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) |
 
+**Cards only**: the cards are files of the integration, served by it, so System Hub must be added in **Settings → Devices & services** for a dashboard to load them; downloading it from the Marketplace is not enough, and removing the integration removes the cards from the dashboard resources. To use only the cards, add System Hub with every module turned off: nothing is monitored, no entity is created, and the cards that read other integrations (the System Monitor cards, which read the core System Monitor integration) work as before. The **System Hub** sidebar item can be hidden for your user like any other one: long press the sidebar's title, or **Profile → Change the order and hide items from the sidebar**.
+
 **From 1.x**: the card types before 2.0 (`custom:system-hub-card` (`module: batteries`), `custom:system-hub-mini-card` (`module: watchdog`)…) no longer exist. At every start, System Hub moves the cards of the dashboards edited from the UI to the new type and its module, wherever they are (a view, a section, a stack, a conditional card, a popup), their options kept; each dashboard is saved first in `.storage/system_hub.dashboards_backup`. A dashboard written in YAML is not rewritten: a repair in **Settings → Repairs** lists its cards to change, and goes away once none is left.
 
 ## Status cards
@@ -367,8 +369,9 @@ cpu_critical: 90
 | `show_title` | all | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
 | `show_subtitle` | all | `true` | Show the subtitle under the title |
 | `show_system` | full | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
+| `show_disk` | full | `true` | The disk gauge of the System section (root file system, else the first mount point); `false` leaves the disk to the Storage section |
 | `show_network` | full, mini | `true` | Network download / upload |
-| `show_history` | full, mini | `true` | 24 h curve behind the CPU and RAM gauges (bars on the mini card, RAM from its `memory_use_percent` sensor, on a 0–100 % scale) and each download / upload rate, from the recorder's 5-minute statistics (one query for all of them) (on the mini card, the rates then show as tiles above the footer instead of in it) |
+| `show_history` | full, mini | `true` | 24 h curve behind the CPU, RAM and CPU temperature gauges (bars on the mini card; the temperature on a 0–100 °C scale, RAM from its `memory_use_percent` sensor, on a 0–100 % scale) and each download / upload rate, from the recorder's 5-minute statistics (one query for all of them) (on the mini card, the rates then show as tiles above the footer instead of in it) |
 | `show_storage` | full, mini | `true` | Full card: mount points, swap and database size. Mini card: disk bar |
 | `show_backups` | full, mini | `true` | Full card: the last and next automatic backups at the end of Storage. Mini card: an orange / red item when the last backup is too old or failed |
 | `show_processes` | full | `true` | Monitored processes and their status tile |

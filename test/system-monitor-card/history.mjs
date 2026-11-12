@@ -36,11 +36,15 @@ test("rate tiles: 24 h sparkline from the recorder statistics, refreshed every 5
   assert.equal(calls[0].type, "recorder/statistics_during_period");
   assert.equal(calls[0].period, "5minute");
   assert.deepEqual([...calls[0].types], ["mean"]);
-  // One query: the CPU and RAM percentages, then the rates.
+  // One query: the CPU and RAM percentages, the CPU temperature, then the rates.
   const ids = calls[0].statistic_ids;
-  assert.deepEqual([...ids.slice(0, 2)], ["sensor.system_monitor_processor_use", "sensor.system_monitor_memory_usage"]);
-  assert.ok(ids.length >= 4);
-  assert.ok(ids.slice(2).every((id) => /network_throughput_(in|out)_/.test(id)), ids.join());
+  assert.deepEqual([...ids.slice(0, 3)], [
+    "sensor.system_monitor_processor_use",
+    "sensor.system_monitor_memory_usage",
+    "sensor.system_monitor_processor_temperature",
+  ]);
+  assert.ok(ids.length >= 5);
+  assert.ok(ids.slice(3).every((id) => /network_throughput_(in|out)_/.test(id)), ids.join());
   assert.ok(Math.abs(Date.now() - 864e5 - Date.parse(calls[0].start_time)) < 5000);
   assert.doesNotMatch(el.html, /class="spark"/);
   await tick();
@@ -82,8 +86,12 @@ test("mini card: the rates show as tiles with the same 24 h curves above the foo
   const el = card(lib.SystemMonitorMiniCard, hassWith(calls));
   el._update();
   assert.equal(calls.length, 1);
-  assert.deepEqual([...calls[0].statistic_ids.slice(0, 2)], ["sensor.system_monitor_processor_use", "sensor.system_monitor_memory_usage"]);
-  assert.equal(calls[0].statistic_ids.length, 4);
+  assert.deepEqual([...calls[0].statistic_ids.slice(0, 3)], [
+    "sensor.system_monitor_processor_use",
+    "sensor.system_monitor_memory_usage",
+    "sensor.system_monitor_processor_temperature",
+  ]);
+  assert.equal(calls[0].statistic_ids.length, 5);
   await tick();
   assert.match(el.html, /<div class="tile clickable down"[^>]*><svg class="spark"/);
   assert.match(el.html, /<div class="tile clickable up"[^>]*><svg class="spark"/);
@@ -152,7 +160,7 @@ test("sparkline: nothing without two consecutive points", async () => {
   assert.doesNotMatch(el.html, /class="spark"/);
 });
 
-test("CPU and RAM: 24 h curve behind the gauges and the mini card's bars, on a 0-100 % scale", async () => {
+test("CPU, RAM and CPU temperature: 24 h curve behind the gauges and the mini card's bars, on a 0-100 scale", async () => {
   const calls = [];
   const full = card(lib.SystemMonitorCard, hassWith(calls));
   full._update();
@@ -160,8 +168,8 @@ test("CPU and RAM: 24 h curve behind the gauges and the mini card's bars, on a 0
   assert.equal(calls.length, 1, "one query for the gauges and the rates");
   assert.match(full.html, /<div class="gauge clickable [^"]*" data-entity="sensor\.system_monitor_processor_use"[^>]*><svg class="spark"/);
   assert.match(full.html, /<div class="gauge clickable [^"]*" data-entity="sensor\.system_monitor_memory_usage"[^>]*><svg class="spark"/);
-  // Disk and temperature: no curve.
-  assert.doesNotMatch(full.html, /data-entity="sensor\.system_monitor_processor_temperature"[^>]*><svg class="spark"/);
+  // The CPU temperature too (0-100 °C); the disk: no curve.
+  assert.match(full.html, /data-entity="sensor\.system_monitor_processor_temperature"[^>]*><svg class="spark"/);
   // 40 % on a 0-100 scale: y = 30 - 0.4 * 28 = 18.8 (not the top, as it would be scaled to the series' peak).
   const cpu = full.html.match(/data-entity="sensor\.system_monitor_processor_use"[^>]*><svg class="spark"[\s\S]*?class="spark-l" d="([^"]+)"/)[1];
   assert.match(cpu, /,18\.80/);
@@ -173,6 +181,7 @@ test("CPU and RAM: 24 h curve behind the gauges and the mini card's bars, on a 0
   assert.equal(mcalls.length, 1);
   assert.match(mini.html, /<div class="metric clickable [^"]*" data-entity="sensor\.system_monitor_processor_use"[^>]*><svg class="spark"/);
   assert.match(mini.html, /<div class="metric clickable [^"]*" data-entity="sensor\.system_monitor_memory_usage"[^>]*><svg class="spark"/);
+  assert.match(mini.html, /<div class="metric clickable [^"]*" data-entity="sensor\.system_monitor_processor_temperature"[^>]*><svg class="spark"/);
 
   const off = card(lib.SystemMonitorMiniCard, hassWith([]), { show_history: false });
   off._update();
@@ -185,4 +194,18 @@ test("sparkline: a fixed scale clamps the values above it", () => {
   const d = lib.spark([[end - 600000, 150], [end - 300000, 50]], end, 100).match(/class="spark-l" d="([^"]+)"/)[1];
   assert.match(d, /,2\.00L/);
   assert.match(d, /,16\.00$/);
+});
+
+test("show_disk: false leaves the disk to the Storage section, the other gauges stay", () => {
+  const el = card(lib.SystemMonitorCard, hassWith([]), { show_history: false });
+  const gauges = (html) => html.match(/<div class="gauge clickable/g)?.length ?? 0;
+  const on = el._render();
+  assert.match(on, /<div class="lbl" title="Disk [^"]*">/);
+  el._config = { show_history: false, show_disk: false };
+  const off = el._render();
+  assert.doesNotMatch(off, /<div class="lbl" title="Disk [^"]*">/);
+  assert.equal(gauges(off), gauges(on) - 1);
+  assert.match(off, /<div class="gauge clickable [^"]*" data-entity="sensor\.system_monitor_processor_use"/);
+  assert.ok(lib.SystemMonitorCardEditor.toggles.includes("show_disk"));
+  for (const [code, s] of Object.entries(lib.STRINGS)) assert.ok(s.show_disk, code);
 });

@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Välj vilka moduler som ska aktiveras. Varje modul ställs in under alternativen.",
+        "description": "Välj vilka moduler som ska aktiveras. Varje modul ställs in under alternativen. För att bara använda Lovelace-korten stänger du av alla moduler: korten tillhandahålls av System Hub, så behåll den tillagd.",
         "data": {
           "containers": "Containers",
           "database": "Databas",

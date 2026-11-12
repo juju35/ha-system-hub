@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties.",
+        "description": "Kies de modules die u wilt inschakelen. Elke module stelt u in bij de opties. Om alleen de Lovelace-kaarten te gebruiken, schakel je alle modules uit: System Hub levert de kaarten, dus houd het toegevoegd.",
         "data": {
           "containers": "Containers",
           "database": "Database",

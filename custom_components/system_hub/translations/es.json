@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Elija los módulos que desea activar. Cada módulo se configura en las opciones.",
+        "description": "Elija los módulos que desea activar. Cada módulo se configura en las opciones. Para usar solo las tarjetas de Lovelace, desactiva todos los módulos: System Hub sirve las tarjetas, así que mantenlo añadido.",
         "data": {
           "containers": "Containers",
           "database": "Base de datos",

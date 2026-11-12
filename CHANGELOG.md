@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.3.0 - 2026-11-12
+
+### Features
+- System Monitor cards (#74): the CPU temperature gets its 24 h curve behind its gauge (and its bar on the mini card), like the CPU and RAM, on a 0–100 °C scale (212 °F in Fahrenheit); `show_disk: false` (also in the visual editor) removes the disk gauge of the System section when the Storage section already shows it.
+
+### Documentation
+- Using only the Lovelace cards (#73): the cards are served by the integration, so System Hub must stay added; add it with every module turned off to use only the cards (nothing monitored, no entity). Said in the integration's setup form, in every language, and in the README's Lovelace cards section, with how to hide the sidebar item.
+
 ## 2.2.0 - 2026-11-12
 
 ### New

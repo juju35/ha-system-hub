@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Choisissez les modules à activer. Chaque module se règle dans les options.",
+        "description": "Choisissez les modules à activer. Chaque module se règle dans les options. Pour n'utiliser que les cartes Lovelace, désactivez tous les modules : les cartes sont servies par System Hub, gardez-le donc ajouté.",
         "data": {
           "containers": "Containers",
           "database": "Base de données",

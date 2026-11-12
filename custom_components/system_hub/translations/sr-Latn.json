@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Izaberite module koje želite da uključite. Svaki modul se podešava u opcijama.",
+        "description": "Izaberite module koje želite da uključite. Svaki modul se podešava u opcijama. Da biste koristili samo Lovelace kartice, isključite sve module: kartice pruža System Hub, pa ga zadržite dodatog.",
         "data": {
           "containers": "Containers",
           "database": "Baza podataka",

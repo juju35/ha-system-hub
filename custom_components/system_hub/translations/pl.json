@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Wybierz moduły do włączenia. Każdy moduł konfiguruje się w opcjach.",
+        "description": "Wybierz moduły do włączenia. Każdy moduł konfiguruje się w opcjach. Aby używać tylko kart Lovelace, wyłącz wszystkie moduły: karty udostępnia System Hub, więc pozostaw go dodanego.",
         "data": {
           "containers": "Containers",
           "database": "Baza danych",

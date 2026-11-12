@@ -3,7 +3,7 @@
     "step": {
       "user": {
         "title": "System Hub",
-        "description": "Vyberte moduly, ktoré chcete zapnúť. Každý modul sa nastavuje v možnostiach.",
+        "description": "Vyberte moduly, ktoré chcete zapnúť. Každý modul sa nastavuje v možnostiach. Ak chcete používať iba karty Lovelace, vypnite všetky moduly: karty poskytuje System Hub, preto ho ponechajte pridaný.",
         "data": {
           "containers": "Containers",
           "database": "Databáza",
