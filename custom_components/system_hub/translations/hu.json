@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: csak rendszergazdáknak",
         "card_module": "Modul",
         "card_groups": "Csoportok",
-        "card_hide_ok": "Rendben lévők elrejtése"
+        "card_hide_ok": "Rendben lévők elrejtése",
+        "card_show_title": "Cím megjelenítése",
+        "card_show_subtitle": "Alcím megjelenítése"
       }
     },
     "battery_type": {

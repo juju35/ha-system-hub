@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: doar pentru administratori",
         "card_module": "Modul",
         "card_groups": "Grupuri",
-        "card_hide_ok": "Ascunde ce e în regulă"
+        "card_hide_ok": "Ascunde ce e în regulă",
+        "card_show_title": "Afișează titlul",
+        "card_show_subtitle": "Afișează subtitlul"
       }
     },
     "battery_type": {

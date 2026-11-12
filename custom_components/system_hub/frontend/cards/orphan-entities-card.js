@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub (formerly bundled with Orphan Entities).
  * https://github.com/juju35/ha-system-hub
  */
-var ORPHAN_ENTITIES_CARD_VERSION = '2.0.2';
+var ORPHAN_ENTITIES_CARD_VERSION = '2.1.0';
 // The integration, its module and the prefix of the module's actions
 const OE_DOMAIN = 'system_hub';
 
@@ -85,6 +85,8 @@ const OE_I18N = {
     ed_entity: 'Orphan Entities sensor',
     ed_entity_helper: 'Orphaned entities sensor; leave empty to find it automatically',
     ed_title: 'Title',
+    ed_show_title: 'Show title',
+    ed_show_subtitle: 'Show subtitle',
     ed_title_helper: 'Leave empty for “Orphan Entities”',
     ed_show_stats: 'Summary',
     ed_show_stats_helper: 'Orphans, removed since start and ignored',
@@ -178,6 +180,8 @@ const OE_I18N = {
     ed_entity: 'Capteur Orphan Entities',
     ed_entity_helper: 'Capteur des entités orphelines ; laisser vide pour le trouver automatiquement',
     ed_title: 'Titre',
+    ed_show_title: 'Afficher le titre',
+    ed_show_subtitle: 'Afficher le sous-titre',
     ed_title_helper: 'Laisser vide pour « Orphan Entities »',
     ed_show_stats: 'Résumé',
     ed_show_stats_helper: 'Orphelines, supprimées depuis le démarrage et ignorées',
@@ -271,6 +275,8 @@ const OE_I18N = {
     ed_entity: 'Orphan-Entities-Sensor',
     ed_entity_helper: 'Sensor der verwaisten Entitäten; leer lassen, um ihn automatisch zu finden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel anzeigen',
+    ed_show_subtitle: 'Untertitel anzeigen',
     ed_title_helper: 'Leer lassen für „Orphan Entities“',
     ed_show_stats: 'Übersicht',
     ed_show_stats_helper: 'Verwaiste, seit dem Start entfernte und ignorierte',
@@ -364,6 +370,8 @@ const OE_I18N = {
     ed_entity: 'Sensor de Orphan Entities',
     ed_entity_helper: 'Sensor de entidades huérfanas; déjalo vacío para encontrarlo automáticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar el título',
+    ed_show_subtitle: 'Mostrar el subtítulo',
     ed_title_helper: 'Déjalo vacío para «Orphan Entities»',
     ed_show_stats: 'Resumen',
     ed_show_stats_helper: 'Huérfanas, eliminadas desde el inicio e ignoradas',
@@ -457,6 +465,8 @@ const OE_I18N = {
     ed_entity: 'Sensore Orphan Entities',
     ed_entity_helper: 'Sensore delle entità orfane; lascia vuoto per trovarlo automaticamente',
     ed_title: 'Titolo',
+    ed_show_title: 'Mostra il titolo',
+    ed_show_subtitle: 'Mostra il sottotitolo',
     ed_title_helper: 'Lascia vuoto per «Orphan Entities»',
     ed_show_stats: 'Riepilogo',
     ed_show_stats_helper: 'Orfane, rimosse dall’avvio e ignorate',
@@ -550,6 +560,8 @@ const OE_I18N = {
     ed_entity: 'Orphan Entities-sensor',
     ed_entity_helper: 'Sensor van de verweesde entiteiten; laat leeg om hem automatisch te vinden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel tonen',
+    ed_show_subtitle: 'Ondertitel tonen',
     ed_title_helper: 'Laat leeg voor ‘Orphan Entities’',
     ed_show_stats: 'Overzicht',
     ed_show_stats_helper: 'Verweesd, verwijderd sinds de start en genegeerd',
@@ -643,6 +655,8 @@ const OE_I18N = {
     ed_entity: 'Sensor do Orphan Entities',
     ed_entity_helper: 'Sensor das entidades órfãs; deixe vazio para o encontrar automaticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar o título',
+    ed_show_subtitle: 'Mostrar o subtítulo',
     ed_title_helper: 'Deixe vazio para «Orphan Entities»',
     ed_show_stats: 'Resumo',
     ed_show_stats_helper: 'Órfãs, removidas desde o arranque e ignoradas',
@@ -743,6 +757,8 @@ const OE_I18N = {
     ed_entity: 'Sensor Orphan Entities',
     ed_entity_helper: 'Sensor osieroconych encji; pozostaw puste, aby znaleźć go automatycznie',
     ed_title: 'Tytuł',
+    ed_show_title: 'Pokaż tytuł',
+    ed_show_subtitle: 'Pokaż podtytuł',
     ed_title_helper: 'Pozostaw puste dla „Orphan Entities”',
     ed_show_stats: 'Podsumowanie',
     ed_show_stats_helper: 'Osierocone, usunięte od uruchomienia i ignorowane',
@@ -843,6 +859,8 @@ const OE_I18N = {
     ed_entity: 'Сензор Orphan Entities',
     ed_entity_helper: 'Сензор осироћених ентитета; оставите празно да би био пронађен аутоматски',
     ed_title: 'Наслов',
+    ed_show_title: 'Прикажи наслов',
+    ed_show_subtitle: 'Прикажи поднаслов',
     ed_title_helper: 'Оставите празно за „Orphan Entities“',
     ed_show_stats: 'Преглед',
     ed_show_stats_helper: 'Осироћени, уклоњени од покретања и игнорисани',
@@ -943,6 +961,8 @@ const OE_I18N = {
     ed_entity: 'Senzor Orphan Entities',
     ed_entity_helper: 'Senzor osiroćenih entiteta; ostavite prazno da bi bio pronađen automatski',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Ostavite prazno za „Orphan Entities“',
     ed_show_stats: 'Pregled',
     ed_show_stats_helper: 'Osiroćeni, uklonjeni od pokretanja i ignorisani',
@@ -1043,6 +1063,8 @@ const OE_I18N = {
     ed_entity: 'Senzor Orphan Entities',
     ed_entity_helper: 'Senzorul entităților orfane; lăsați gol pentru a-l găsi automat',
     ed_title: 'Titlu',
+    ed_show_title: 'Afișează titlul',
+    ed_show_subtitle: 'Afișează subtitlul',
     ed_title_helper: 'Lăsați gol pentru „Orphan Entities”',
     ed_show_stats: 'Rezumat',
     ed_show_stats_helper: 'Orfane, eliminate de la pornire și ignorate',
@@ -1136,6 +1158,8 @@ const OE_I18N = {
     ed_entity: 'Orphan Entities-sensor',
     ed_entity_helper: 'Sensoren for forældreløse entiteter; lad feltet stå tomt for at finde den automatisk',
     ed_title: 'Titel',
+    ed_show_title: 'Vis titel',
+    ed_show_subtitle: 'Vis undertitel',
     ed_title_helper: 'Lad feltet stå tomt for »Orphan Entities«',
     ed_show_stats: 'Oversigt',
     ed_show_stats_helper: 'Forældreløse, fjernet siden start og ignorerede',
@@ -1229,6 +1253,8 @@ const OE_I18N = {
     ed_entity: 'Orphan Entities-sensor',
     ed_entity_helper: 'Sensorn för föräldralösa entiteter; lämna tomt för att hitta den automatiskt',
     ed_title: 'Rubrik',
+    ed_show_title: 'Visa rubrik',
+    ed_show_subtitle: 'Visa underrubrik',
     ed_title_helper: 'Lämna tomt för ”Orphan Entities”',
     ed_show_stats: 'Översikt',
     ed_show_stats_helper: 'Föräldralösa, borttagna sedan start och ignorerade',
@@ -1322,6 +1348,8 @@ const OE_I18N = {
     ed_entity: 'Сензор Orphan Entities',
     ed_entity_helper: 'Сензорът на осиротелите обекти; оставете празно, за да бъде намерен автоматично',
     ed_title: 'Заглавие',
+    ed_show_title: 'Показване на заглавието',
+    ed_show_subtitle: 'Показване на подзаглавието',
     ed_title_helper: 'Оставете празно за „Orphan Entities“',
     ed_show_stats: 'Обобщение',
     ed_show_stats_helper: 'Осиротели, премахнати от стартирането и игнорирани',
@@ -1422,6 +1450,8 @@ const OE_I18N = {
     ed_entity: 'Сенсор Orphan Entities',
     ed_entity_helper: 'Сенсор осиротевших объектов; оставьте пустым для автоматического поиска',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показывать заголовок',
+    ed_show_subtitle: 'Показывать подзаголовок',
     ed_title_helper: 'Оставьте пустым для «Orphan Entities»',
     ed_show_stats: 'Сводка',
     ed_show_stats_helper: 'Осиротевшие, удалённые с момента запуска и игнорируемые',
@@ -1522,6 +1552,8 @@ const OE_I18N = {
     ed_entity: 'Сенсор Orphan Entities',
     ed_entity_helper: 'Сенсор осиротілих сутностей; залиште порожнім, щоб знайти його автоматично',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показувати заголовок',
+    ed_show_subtitle: 'Показувати підзаголовок',
     ed_title_helper: 'Залиште порожнім для «Orphan Entities»',
     ed_show_stats: 'Зведення',
     ed_show_stats_helper: 'Осиротілі, видалені з моменту запуску та ігноровані',
@@ -1615,6 +1647,8 @@ const OE_I18N = {
     ed_entity: 'Orphan Entities érzékelő',
     ed_entity_helper: 'Az árva entitások érzékelője; hagyja üresen az automatikus kereséshez',
     ed_title: 'Cím',
+    ed_show_title: 'Cím megjelenítése',
+    ed_show_subtitle: 'Alcím megjelenítése',
     ed_title_helper: 'Hagyja üresen az „Orphan Entities” címhez',
     ed_show_stats: 'Összegzés',
     ed_show_stats_helper: 'Árvák, az indulás óta eltávolítottak és figyelmen kívül hagyottak',
@@ -1715,6 +1749,8 @@ const OE_I18N = {
     ed_entity: 'Senzor Orphan Entities',
     ed_entity_helper: 'Senzor osirotených entít; nechajte prázdne na automatické vyhľadanie',
     ed_title: 'Názov',
+    ed_show_title: 'Zobraziť názov',
+    ed_show_subtitle: 'Zobraziť podnázov',
     ed_title_helper: 'Nechajte prázdne pre „Orphan Entities“',
     ed_show_stats: 'Prehľad',
     ed_show_stats_helper: 'Osirotené, odstránené od spustenia a ignorované',
@@ -1815,6 +1851,8 @@ const OE_I18N = {
     ed_entity: 'Senzor Orphan Entities',
     ed_entity_helper: 'Senzor osiřelých entit; ponechte prázdné pro automatické vyhledání',
     ed_title: 'Název',
+    ed_show_title: 'Zobrazit název',
+    ed_show_subtitle: 'Zobrazit podnázev',
     ed_title_helper: 'Ponechte prázdné pro „Orphan Entities“',
     ed_show_stats: 'Přehled',
     ed_show_stats_helper: 'Osiřelé, odebrané od spuštění a ignorované',
@@ -1908,6 +1946,8 @@ const OE_I18N = {
     ed_entity: 'Senzor Orphan Entities',
     ed_entity_helper: 'Senzor osirotelih entitet; pustite prazno za samodejno iskanje',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Pustite prazno za »Orphan Entities«',
     ed_show_stats: 'Povzetek',
     ed_show_stats_helper: 'Osirotele, odstranjene od zagona in prezrte',
@@ -2001,6 +2041,8 @@ const OE_I18N = {
     ed_entity: 'Orphan Entities sensors',
     ed_entity_helper: 'Pamesto vienību sensors; atstājiet tukšu, lai to atrastu automātiski',
     ed_title: 'Virsraksts',
+    ed_show_title: 'Rādīt virsrakstu',
+    ed_show_subtitle: 'Rādīt apakšvirsrakstu',
     ed_title_helper: 'Atstājiet tukšu, lai rādītu „Orphan Entities”',
     ed_show_stats: 'Kopsavilkums',
     ed_show_stats_helper: 'Pamestas, noņemtas kopš palaišanas un ignorētas',
@@ -2094,6 +2136,8 @@ const OE_I18N = {
     ed_entity: 'Αισθητήρας Orphan Entities',
     ed_entity_helper: 'Αισθητήρας των ορφανών οντοτήτων· αφήστε κενό για αυτόματο εντοπισμό',
     ed_title: 'Τίτλος',
+    ed_show_title: 'Εμφάνιση τίτλου',
+    ed_show_subtitle: 'Εμφάνιση υπότιτλου',
     ed_title_helper: 'Αφήστε κενό για «Orphan Entities»',
     ed_show_stats: 'Σύνοψη',
     ed_show_stats_helper: 'Ορφανές, αφαιρεμένες από την εκκίνηση και σε παράβλεψη',
@@ -2162,6 +2206,8 @@ const oeEsc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 const OE_DEFAULTS = {
+  show_title: true,
+  show_subtitle: true,
   show_stats: true,
   show_filters: true,
   max_rows: 25,
@@ -2294,6 +2340,9 @@ class OrphanEntitiesCard extends HTMLElement {
 
   setConfig(config) {
     this._config = { ...OE_DEFAULTS, ...config };
+    // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config.show_title === false);
+    this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
     this._sig = null;
     this._render();
@@ -3174,6 +3223,7 @@ class OrphanEntitiesCard extends HTMLElement {
       .dlg .dw ha-icon { flex: none; --mdc-icon-size: 16px; }
       .dlg .ub { --t: var(--oe-warn); font-size: 11px; font-weight: 500; padding: 0 6px; border-radius: 8px;
                  color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); background: color-mix(in srgb, var(--t) 16%, transparent); }
+      :host([hide-title]) .heading > .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
     `;
   }
 }
@@ -3398,6 +3448,8 @@ class OrphanEntitiesCardEditor extends HTMLElement {
     this._form.schema = [
       { name: 'entity', selector: { entity: { filter: { integration: OE_DOMAIN, domain: 'sensor' } } } },
       { name: 'title', selector: { text: {} } },
+      { name: 'show_title', selector: { boolean: {} } },
+      { name: 'show_subtitle', selector: { boolean: {} } },
       { name: 'show_stats', selector: { boolean: {} } },
       { name: 'show_filters', selector: { boolean: {} } },
       { name: 'max_rows', selector: { number: { min: 1, max: OE_MAX_ROWS, mode: 'box' } } },

@@ -364,6 +364,8 @@ cpu_critical: 90
 | Option | Card | Default | Description |
 |---|---|---|---|
 | `title` | all | `Home Assistant` | Card title |
+| `show_title` | all | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `show_subtitle` | all | `true` | Show the subtitle under the title |
 | `show_system` | full | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
 | `show_network` | full, mini | `true` | Network download / upload |
 | `show_history` | full, mini | `true` | 24 h curve behind the CPU and RAM gauges (bars on the mini card, RAM from its `memory_use_percent` sensor, on a 0–100 % scale) and each download / upload rate, from the recorder's 5-minute statistics (one query for all of them) (on the mini card, the rates then show as tiles above the footer instead of in it) |
@@ -685,6 +687,8 @@ It reads the Watchdog module's entities (`sensor.system_hub_sentinel_unavailable
 |---|---|---|
 | `entity` | found automatically | The **Unavailable integrations** sensor of System Hub |
 | `title` | Watchdog | Card title |
+| `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_stats` | `true` | Summary tiles |
 | `show_unavailable` | `true` | Unavailable integrations |
 | `show_history` | `true` | Recent reloads |
@@ -839,6 +843,8 @@ Every option is in the visual editor:
 |---|---|---|
 | `entity` | found automatically | The Marketplace **Status** sensor (`sensor.system_hub_updates_status`); its **Last check** sensor or **Check for updates** button lead to it, and an entity that no longer exists (from the old integration, say) falls back to it |
 | `title` | Marketplace updates | Card title |
+| `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_updates` | `true` | Updates available |
 | `show_failed` | `true` | Repositories that couldn't be checked, and the error of a failed check |
 | `check_button` | `true` | **Check for updates** button in the header |
@@ -980,6 +986,7 @@ module: batteries
 |---|---|---|
 | `entity` | Auto | The System Hub **Low batteries** sensor; found automatically |
 | `title` | `Batteries` | Card title |
+| `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
 | `columns` | `1` | Number of battery columns (1–3); a card too narrow for them shows fewer, each at least 160 px wide |
 | `only_low` | `false` | Show only the batteries below the threshold or unavailable |
 | `hide_when_ok` | `false` | Hide the whole card when every battery is above the threshold and available (always shown while editing the dashboard) |
@@ -1083,6 +1090,8 @@ module: automations
 | Option | Card | Default | Description |
 |---|---|---|---|
 | `title` | both | `Automation Monitor` | Card title |
+| `show_title` | both | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `show_subtitle` | both | `true` | Show the subtitle under the title |
 | `show_failed` | both | `true` | Failed automations (counter and list) |
 | `show_linked` | both | `true` | Unavailable linked entities (counter and list) |
 | `expand_failed` | full | `false` | Failed automations expanded when the card loads |
@@ -1344,6 +1353,8 @@ Every option is in the visual editor:
 |---|---|---|
 | `entity` | found automatically | The Git Sync **Status** sensor (`sensor.system_hub_versioning_status`); any other Git Sync entity leads to it, and an entity that isn't one (from the old integration, say) falls back to it |
 | `title` | Git Sync | Card title |
+| `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_files` | `true` | Collapsible list of the changed files |
 | `show_export` | `true` | Last export and the **Export dashboards** button |
 | `language` | Home Assistant's | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt` (European Portuguese), `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv`, `el`, `sr` (Serbian, Cyrillic) or `sr-Latn` (Serbian, Latin) |

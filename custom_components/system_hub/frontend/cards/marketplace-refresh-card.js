@@ -6,7 +6,7 @@
  */
 // Requests left under which the card says the checks may wait for GitHub's limit to reset.
 const MR_RATE_LOW = 1500;
-var MARKETPLACE_REFRESH_CARD_VERSION = '2.0.2';
+var MARKETPLACE_REFRESH_CARD_VERSION = '2.1.0';
 // System Hub: its entities (platform system_hub, translation keys marketplace_*) and actions (system_hub.marketplace_*)
 var HR_DOMAIN = 'system_hub';
 var HR_PREFIX = 'marketplace_';
@@ -49,6 +49,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh sensor',
     ed_entity_helper: 'Status sensor; leave empty to find it automatically',
     ed_title: 'Title',
+    ed_show_title: 'Show title',
+    ed_show_subtitle: 'Show subtitle',
     ed_title_helper: 'Leave empty for “Marketplace updates”',
     ed_show_updates: 'Updates available',
     ed_show_updates_helper: 'The repositories with an update, from their Marketplace update entities',
@@ -100,6 +102,8 @@ const HR_I18N = {
     ed_entity: 'Capteur Marketplace Refresh',
     ed_entity_helper: 'Capteur de statut ; laisser vide pour le trouver automatiquement',
     ed_title: 'Titre',
+    ed_show_title: 'Afficher le titre',
+    ed_show_subtitle: 'Afficher le sous-titre',
     ed_title_helper: 'Laisser vide pour « Mises à jour Marketplace »',
     ed_show_updates: 'Mises à jour disponibles',
     ed_show_updates_helper: 'Les dépôts avec une mise à jour, d’après leurs entités de mise à jour du Marketplace',
@@ -151,6 +155,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace-Refresh-Sensor',
     ed_entity_helper: 'Statussensor; leer lassen, um ihn automatisch zu finden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel anzeigen',
+    ed_show_subtitle: 'Untertitel anzeigen',
     ed_title_helper: 'Leer lassen für „Marketplace-Updates“',
     ed_show_updates: 'Verfügbare Updates',
     ed_show_updates_helper: 'Die Marketplace-Repositorys mit einem Update, aus ihren Update-Entitäten',
@@ -202,6 +208,8 @@ const HR_I18N = {
     ed_entity: 'Sensor de Marketplace Refresh',
     ed_entity_helper: 'Sensor de estado; déjalo vacío para encontrarlo automáticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar el título',
+    ed_show_subtitle: 'Mostrar el subtítulo',
     ed_title_helper: 'Déjalo vacío para «Actualizaciones de Marketplace»',
     ed_show_updates: 'Actualizaciones disponibles',
     ed_show_updates_helper: 'Los repositorios de Marketplace con una actualización, según sus entidades de actualización',
@@ -255,6 +263,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh сензор',
     ed_entity_helper: 'Сензор статуса; оставите празно да би се аутоматски пронашао',
     ed_title: 'Наслов',
+    ed_show_title: 'Прикажи наслов',
+    ed_show_subtitle: 'Прикажи поднаслов',
     ed_title_helper: 'Оставите празно за „Marketplace ажурирања“',
     ed_show_updates: 'Доступна ажурирања',
     ed_show_updates_helper: 'Marketplace репозиторијуми са ажурирањем, према њиховим ентитетима ажурирања',
@@ -308,6 +318,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh senzor',
     ed_entity_helper: 'Senzor statusa; ostavite prazno da bi se automatski pronašao',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Ostavite prazno za „Marketplace ažuriranja“',
     ed_show_updates: 'Dostupna ažuriranja',
     ed_show_updates_helper: 'Marketplace repozitorijumi sa ažuriranjem, prema njihovim entitetima ažuriranja',
@@ -359,6 +371,8 @@ const HR_I18N = {
     ed_entity: 'Sensore Marketplace Refresh',
     ed_entity_helper: 'Sensore di stato; lascia vuoto per trovarlo automaticamente',
     ed_title: 'Titolo',
+    ed_show_title: 'Mostra il titolo',
+    ed_show_subtitle: 'Mostra il sottotitolo',
     ed_title_helper: 'Lascia vuoto per «Aggiornamenti Marketplace»',
     ed_show_updates: 'Aggiornamenti disponibili',
     ed_show_updates_helper: 'I repository Marketplace con un aggiornamento, dalle loro entità di aggiornamento',
@@ -410,6 +424,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh-sensor',
     ed_entity_helper: 'Statussensor; laat leeg om hem automatisch te vinden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel tonen',
+    ed_show_subtitle: 'Ondertitel tonen',
     ed_title_helper: 'Laat leeg voor “Marketplace-updates”',
     ed_show_updates: 'Beschikbare updates',
     ed_show_updates_helper: 'De Marketplace-repository’s met een update, volgens hun update-entiteiten',
@@ -461,6 +477,8 @@ const HR_I18N = {
     ed_entity: 'Sensor Marketplace Refresh',
     ed_entity_helper: 'Sensor de estado; deixe vazio para o encontrar automaticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar o título',
+    ed_show_subtitle: 'Mostrar o subtítulo',
     ed_title_helper: 'Deixe vazio para «Atualizações Marketplace»',
     ed_show_updates: 'Atualizações disponíveis',
     ed_show_updates_helper: 'Os repositórios Marketplace com uma atualização, segundo as suas entidades de atualização',
@@ -514,6 +532,8 @@ const HR_I18N = {
     ed_entity: 'Czujnik Marketplace Refresh',
     ed_entity_helper: 'Czujnik stanu; pozostaw puste, aby znaleźć go automatycznie',
     ed_title: 'Tytuł',
+    ed_show_title: 'Pokaż tytuł',
+    ed_show_subtitle: 'Pokaż podtytuł',
     ed_title_helper: 'Pozostaw puste dla „Aktualizacje Marketplace”',
     ed_show_updates: 'Dostępne aktualizacje',
     ed_show_updates_helper: 'Repozytoria Marketplace z aktualizacją, według ich encji aktualizacji',
@@ -565,6 +585,8 @@ const HR_I18N = {
     ed_entity: 'Senzor Marketplace Refresh',
     ed_entity_helper: 'Senzorul de stare; lăsați gol pentru a-l găsi automat',
     ed_title: 'Titlu',
+    ed_show_title: 'Afișează titlul',
+    ed_show_subtitle: 'Afișează subtitlul',
     ed_title_helper: 'Lăsați gol pentru „Actualizări Marketplace”',
     ed_show_updates: 'Actualizări disponibile',
     ed_show_updates_helper: 'Depozitele Marketplace cu o actualizare, după entitățile lor de actualizare',
@@ -616,6 +638,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh-sensor',
     ed_entity_helper: 'Statussensor; lad stå tomt for at finde den automatisk',
     ed_title: 'Titel',
+    ed_show_title: 'Vis titel',
+    ed_show_subtitle: 'Vis undertitel',
     ed_title_helper: 'Lad stå tomt for “Marketplace-opdateringer”',
     ed_show_updates: 'Tilgængelige opdateringer',
     ed_show_updates_helper: 'Marketplace-repositories med en opdatering, ifølge deres opdateringsentiteter',
@@ -667,6 +691,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh-sensor',
     ed_entity_helper: 'Statussensor; lämna tomt för att hitta den automatiskt',
     ed_title: 'Titel',
+    ed_show_title: 'Visa rubrik',
+    ed_show_subtitle: 'Visa underrubrik',
     ed_title_helper: 'Lämna tomt för ”Marketplace-uppdateringar”',
     ed_show_updates: 'Tillgängliga uppdateringar',
     ed_show_updates_helper: 'Marketplace-repositorier med en uppdatering, enligt deras uppdateringsentiteter',
@@ -718,6 +744,8 @@ const HR_I18N = {
     ed_entity: 'Сензор на Marketplace Refresh',
     ed_entity_helper: 'Сензор за състояние; оставете празно, за да бъде намерен автоматично',
     ed_title: 'Заглавие',
+    ed_show_title: 'Показване на заглавието',
+    ed_show_subtitle: 'Показване на подзаглавието',
     ed_title_helper: 'Оставете празно за „Актуализации на Marketplace“',
     ed_show_updates: 'Налични актуализации',
     ed_show_updates_helper: 'Хранилищата в Marketplace с актуализация, според техните обекти за актуализация',
@@ -769,6 +797,8 @@ const HR_I18N = {
     ed_entity: 'Датчик Marketplace Refresh',
     ed_entity_helper: 'Датчик статуса; оставьте пустым, чтобы найти его автоматически',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показывать заголовок',
+    ed_show_subtitle: 'Показывать подзаголовок',
     ed_title_helper: 'Оставьте пустым для «Обновления Marketplace»',
     ed_show_updates: 'Доступные обновления',
     ed_show_updates_helper: 'Репозитории Marketplace с обновлением, по их объектам обновления',
@@ -820,6 +850,8 @@ const HR_I18N = {
     ed_entity: 'Датчик Marketplace Refresh',
     ed_entity_helper: 'Датчик стану; залиште порожнім, щоб знайти його автоматично',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показувати заголовок',
+    ed_show_subtitle: 'Показувати підзаголовок',
     ed_title_helper: 'Залиште порожнім для «Оновлення Marketplace»',
     ed_show_updates: 'Доступні оновлення',
     ed_show_updates_helper: 'Репозиторії Marketplace з оновленням, за їхніми сутностями оновлення',
@@ -871,6 +903,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh érzékelő',
     ed_entity_helper: 'Állapotérzékelő; hagyja üresen az automatikus kereséshez',
     ed_title: 'Cím',
+    ed_show_title: 'Cím megjelenítése',
+    ed_show_subtitle: 'Alcím megjelenítése',
     ed_title_helper: 'Hagyja üresen a „Marketplace-frissítések” címhez',
     ed_show_updates: 'Elérhető frissítések',
     ed_show_updates_helper: 'A frissíthető Marketplace-tárolók, a frissítési entitásaik alapján',
@@ -922,6 +956,8 @@ const HR_I18N = {
     ed_entity: 'Senzor Marketplace Refresh',
     ed_entity_helper: 'Senzor stavu; ponechajte prázdne, aby sa našiel automaticky',
     ed_title: 'Názov',
+    ed_show_title: 'Zobraziť názov',
+    ed_show_subtitle: 'Zobraziť podnázov',
     ed_title_helper: 'Ponechajte prázdne pre „Aktualizácie Marketplace“',
     ed_show_updates: 'Dostupné aktualizácie',
     ed_show_updates_helper: 'Repozitáre Marketplace s aktualizáciou podľa ich entít aktualizácie',
@@ -973,6 +1009,8 @@ const HR_I18N = {
     ed_entity: 'Senzor Marketplace Refresh',
     ed_entity_helper: 'Senzor stavu; ponechte prázdné pro automatické vyhledání',
     ed_title: 'Název',
+    ed_show_title: 'Zobrazit název',
+    ed_show_subtitle: 'Zobrazit podnázev',
     ed_title_helper: 'Ponechte prázdné pro „Aktualizace Marketplace“',
     ed_show_updates: 'Dostupné aktualizace',
     ed_show_updates_helper: 'Repozitáře Marketplace s aktualizací podle jejich entit aktualizace',
@@ -1024,6 +1062,8 @@ const HR_I18N = {
     ed_entity: 'Senzor Marketplace Refresh',
     ed_entity_helper: 'Senzor stanja; pustite prazno za samodejno iskanje',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Pustite prazno za »Posodobitve Marketplace«',
     ed_show_updates: 'Razpoložljive posodobitve',
     ed_show_updates_helper: 'Repozitoriji Marketplace s posodobitvijo, glede na njihove entitete posodobitev',
@@ -1075,6 +1115,8 @@ const HR_I18N = {
     ed_entity: 'Marketplace Refresh sensors',
     ed_entity_helper: 'Statusa sensors; atstājiet tukšu, lai to atrastu automātiski',
     ed_title: 'Virsraksts',
+    ed_show_title: 'Rādīt virsrakstu',
+    ed_show_subtitle: 'Rādīt apakšvirsrakstu',
     ed_title_helper: 'Atstājiet tukšu, lai būtu “Marketplace atjauninājumi”',
     ed_show_updates: 'Pieejamie atjauninājumi',
     ed_show_updates_helper: 'Marketplace repozitoriji ar atjauninājumu, pēc to atjauninājumu vienībām',
@@ -1126,6 +1168,8 @@ const HR_I18N = {
     ed_entity: 'Αισθητήρας Marketplace Refresh',
     ed_entity_helper: 'Αισθητήρας κατάστασης· αφήστε κενό για αυτόματο εντοπισμό',
     ed_title: 'Τίτλος',
+    ed_show_title: 'Εμφάνιση τίτλου',
+    ed_show_subtitle: 'Εμφάνιση υπότιτλου',
     ed_title_helper: 'Αφήστε κενό για «Ενημερώσεις Marketplace»',
     ed_show_updates: 'Διαθέσιμες ενημερώσεις',
     ed_show_updates_helper: 'Τα αποθετήρια Marketplace με ενημέρωση, σύμφωνα με τις οντότητες ενημέρωσής τους',
@@ -1181,7 +1225,7 @@ const hrEsc = (s) =>
 
 // The focus the card gives back itself (after a re-render, a confirmation) never scrolls the page.
 const HR_FOCUS = { preventScroll: true };
-const HR_DEFAULTS = { show_updates: true, show_failed: true, check_button: true, install_button: true, hide_when_ok: false };
+const HR_DEFAULTS = { show_title: true, show_subtitle: true, show_updates: true, show_failed: true, check_button: true, install_button: true, hide_when_ok: false };
 
 // The integration's entities, from the entity registry: { device: { status, last_check, button } }.
 // Each entity is told apart by its translation key, else by the end of its entity ID (renamed IDs keep the key).
@@ -1225,6 +1269,9 @@ class MarketplaceRefreshCard extends HTMLElement {
 
   setConfig(config) {
     this._config = { ...HR_DEFAULTS, ...config };
+    // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config.show_title === false);
+    this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
     this._sig = null;
     this._render();
@@ -1791,6 +1838,7 @@ class MarketplaceRefreshCard extends HTMLElement {
         .ilabel { white-space: normal; overflow-wrap: anywhere; }
         .install { border-radius: 12px; line-height: 1.2; }
       }
+      :host([hide-title]) .heading > .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
     `;
   }
 }
@@ -1845,6 +1893,8 @@ class MarketplaceRefreshCardEditor extends HTMLElement {
         },
       },
       { name: 'title', selector: { text: {} } },
+      { name: 'show_title', selector: { boolean: {} } },
+      { name: 'show_subtitle', selector: { boolean: {} } },
       { name: 'show_updates', selector: { boolean: {} } },
       { name: 'show_failed', selector: { boolean: {} } },
       { name: 'check_button', selector: { boolean: {} } },

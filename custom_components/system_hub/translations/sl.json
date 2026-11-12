@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: samo za skrbnike",
         "card_module": "Modul",
         "card_groups": "Skupine",
-        "card_hide_ok": "Skrij, kar je v redu"
+        "card_hide_ok": "Skrij, kar je v redu",
+        "card_show_title": "Prikaži naslov",
+        "card_show_subtitle": "Prikaži podnaslov"
       }
     },
     "battery_type": {

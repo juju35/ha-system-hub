@@ -1780,7 +1780,9 @@
         "card_admin_only": "System Hub: само за администратори",
         "card_module": "Модул",
         "card_groups": "Групи",
-        "card_hide_ok": "Скрий наред"
+        "card_hide_ok": "Скрий наред",
+        "card_show_title": "Показване на заглавието",
+        "card_show_subtitle": "Показване на подзаглавието"
       }
     },
     "battery_type": {

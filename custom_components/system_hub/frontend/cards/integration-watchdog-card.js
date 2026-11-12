@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub.
  * https://github.com/juju35/ha-system-hub
  */
-var INTEGRATION_WATCHDOG_CARD_VERSION = '2.0.2';
+var INTEGRATION_WATCHDOG_CARD_VERSION = '2.1.0';
 
 const IW_I18N = {
   en: {
@@ -49,6 +49,8 @@ const IW_I18N = {
     ed_entity: 'Watchdog sensor',
     ed_entity_helper: 'Unavailable integrations sensor; leave empty to find it automatically',
     ed_title: 'Title',
+    ed_show_title: 'Show title',
+    ed_show_subtitle: 'Show subtitle',
     ed_title_helper: 'Leave empty for “Watchdog”',
     ed_show_stats: 'Summary',
     ed_show_stats_helper: 'Unavailable, reloads since start and ignored integrations',
@@ -109,6 +111,8 @@ const IW_I18N = {
     ed_entity: 'Capteur Watchdog',
     ed_entity_helper: 'Capteur des intégrations indisponibles ; laisser vide pour le trouver automatiquement',
     ed_title: 'Titre',
+    ed_show_title: 'Afficher le titre',
+    ed_show_subtitle: 'Afficher le sous-titre',
     ed_title_helper: 'Laisser vide pour « Watchdog »',
     ed_show_stats: 'Résumé',
     ed_show_stats_helper: 'Indisponibles, rechargements depuis le démarrage et intégrations ignorées',
@@ -169,6 +173,8 @@ const IW_I18N = {
     ed_entity: 'Integration-Watchdog-Sensor',
     ed_entity_helper: 'Sensor der nicht verfügbaren Integrationen; leer lassen, um ihn automatisch zu finden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel anzeigen',
+    ed_show_subtitle: 'Untertitel anzeigen',
     ed_title_helper: 'Leer lassen für „Watchdog“',
     ed_show_stats: 'Übersicht',
     ed_show_stats_helper: 'Nicht verfügbare, Neuladungen seit dem Start und ignorierte Integrationen',
@@ -229,6 +235,8 @@ const IW_I18N = {
     ed_entity: 'Sensor de Watchdog',
     ed_entity_helper: 'Sensor de integraciones no disponibles; déjalo vacío para encontrarlo automáticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar el título',
+    ed_show_subtitle: 'Mostrar el subtítulo',
     ed_title_helper: 'Déjalo vacío para «Watchdog»',
     ed_show_stats: 'Resumen',
     ed_show_stats_helper: 'No disponibles, recargas desde el inicio e integraciones ignoradas',
@@ -289,6 +297,8 @@ const IW_I18N = {
     ed_entity: 'Sensore Watchdog',
     ed_entity_helper: 'Sensore delle integrazioni non disponibili; lascia vuoto per trovarlo automaticamente',
     ed_title: 'Titolo',
+    ed_show_title: 'Mostra il titolo',
+    ed_show_subtitle: 'Mostra il sottotitolo',
     ed_title_helper: 'Lascia vuoto per «Watchdog»',
     ed_show_stats: 'Riepilogo',
     ed_show_stats_helper: 'Non disponibili, ricaricamenti dall’avvio e integrazioni ignorate',
@@ -349,6 +359,8 @@ const IW_I18N = {
     ed_entity: 'Watchdog-sensor',
     ed_entity_helper: 'Sensor van de niet-beschikbare integraties; laat leeg om hem automatisch te vinden',
     ed_title: 'Titel',
+    ed_show_title: 'Titel tonen',
+    ed_show_subtitle: 'Ondertitel tonen',
     ed_title_helper: 'Laat leeg voor ‘Watchdog’',
     ed_show_stats: 'Overzicht',
     ed_show_stats_helper: 'Niet beschikbaar, herlaadpogingen sinds de start en genegeerde integraties',
@@ -409,6 +421,8 @@ const IW_I18N = {
     ed_entity: 'Sensor do Watchdog',
     ed_entity_helper: 'Sensor das integrações indisponíveis; deixe vazio para o encontrar automaticamente',
     ed_title: 'Título',
+    ed_show_title: 'Mostrar o título',
+    ed_show_subtitle: 'Mostrar o subtítulo',
     ed_title_helper: 'Deixe vazio para «Watchdog»',
     ed_show_stats: 'Resumo',
     ed_show_stats_helper: 'Indisponíveis, recarregamentos desde o arranque e integrações ignoradas',
@@ -471,6 +485,8 @@ const IW_I18N = {
     ed_entity: 'Sensor Watchdog',
     ed_entity_helper: 'Sensor niedostępnych integracji; pozostaw puste, aby znaleźć go automatycznie',
     ed_title: 'Tytuł',
+    ed_show_title: 'Pokaż tytuł',
+    ed_show_subtitle: 'Pokaż podtytuł',
     ed_title_helper: 'Pozostaw puste dla „Watchdog”',
     ed_show_stats: 'Podsumowanie',
     ed_show_stats_helper: 'Niedostępne, ponowne wczytania od uruchomienia i ignorowane integracje',
@@ -533,6 +549,8 @@ const IW_I18N = {
     ed_entity: 'Сензор Watchdog',
     ed_entity_helper: 'Сензор недоступних интеграција; оставите празно да би био пронађен аутоматски',
     ed_title: 'Наслов',
+    ed_show_title: 'Прикажи наслов',
+    ed_show_subtitle: 'Прикажи поднаслов',
     ed_title_helper: 'Оставите празно за „Watchdog“',
     ed_show_stats: 'Преглед',
     ed_show_stats_helper: 'Недоступне, поновна учитавања од покретања и игнорисане интеграције',
@@ -595,6 +613,8 @@ const IW_I18N = {
     ed_entity: 'Senzor Watchdog',
     ed_entity_helper: 'Senzor nedostupnih integracija; ostavite prazno da bi bio pronađen automatski',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Ostavite prazno za „Watchdog“',
     ed_show_stats: 'Pregled',
     ed_show_stats_helper: 'Nedostupne, ponovna učitavanja od pokretanja i ignorisane integracije',
@@ -655,6 +675,8 @@ const IW_I18N = {
     ed_entity: 'Senzor Watchdog',
     ed_entity_helper: 'Senzorul integrărilor indisponibile; lăsați gol pentru a-l găsi automat',
     ed_title: 'Titlu',
+    ed_show_title: 'Afișează titlul',
+    ed_show_subtitle: 'Afișează subtitlul',
     ed_title_helper: 'Lăsați gol pentru „Watchdog”',
     ed_show_stats: 'Rezumat',
     ed_show_stats_helper: 'Indisponibile, reîncărcări de la pornire și integrări ignorate',
@@ -715,6 +737,8 @@ const IW_I18N = {
     ed_entity: 'Watchdog-sensor',
     ed_entity_helper: 'Sensoren for utilgængelige integrationer; lad feltet være tomt for at finde den automatisk',
     ed_title: 'Titel',
+    ed_show_title: 'Vis titel',
+    ed_show_subtitle: 'Vis undertitel',
     ed_title_helper: 'Lad feltet være tomt for “Watchdog”',
     ed_show_stats: 'Oversigt',
     ed_show_stats_helper: 'Utilgængelige, genindlæsninger siden start og ignorerede integrationer',
@@ -775,6 +799,8 @@ const IW_I18N = {
     ed_entity: 'Watchdog-sensor',
     ed_entity_helper: 'Sensorn för otillgängliga integrationer; lämna tomt för att hitta den automatiskt',
     ed_title: 'Titel',
+    ed_show_title: 'Visa rubrik',
+    ed_show_subtitle: 'Visa underrubrik',
     ed_title_helper: 'Lämna tomt för ”Watchdog”',
     ed_show_stats: 'Sammanfattning',
     ed_show_stats_helper: 'Otillgängliga, omladdningar sedan start och ignorerade integrationer',
@@ -835,6 +861,8 @@ const IW_I18N = {
     ed_entity: 'Сензор на Watchdog',
     ed_entity_helper: 'Сензорът за недостъпни интеграции; оставете празно, за да бъде намерен автоматично',
     ed_title: 'Заглавие',
+    ed_show_title: 'Показване на заглавието',
+    ed_show_subtitle: 'Показване на подзаглавието',
     ed_title_helper: 'Оставете празно за „Watchdog“',
     ed_show_stats: 'Обобщение',
     ed_show_stats_helper: 'Недостъпни, презареждания от стартирането и игнорирани интеграции',
@@ -895,6 +923,8 @@ const IW_I18N = {
     ed_entity: 'Сенсор Watchdog',
     ed_entity_helper: 'Сенсор недоступных интеграций; оставьте пустым, чтобы найти его автоматически',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показывать заголовок',
+    ed_show_subtitle: 'Показывать подзаголовок',
     ed_title_helper: 'Оставьте пустым для «Watchdog»',
     ed_show_stats: 'Сводка',
     ed_show_stats_helper: 'Недоступные, перезагрузки с момента запуска и игнорируемые интеграции',
@@ -955,6 +985,8 @@ const IW_I18N = {
     ed_entity: 'Сенсор Watchdog',
     ed_entity_helper: 'Сенсор недоступних інтеграцій; залиште порожнім, щоб знайти його автоматично',
     ed_title: 'Заголовок',
+    ed_show_title: 'Показувати заголовок',
+    ed_show_subtitle: 'Показувати підзаголовок',
     ed_title_helper: 'Залиште порожнім для «Watchdog»',
     ed_show_stats: 'Зведення',
     ed_show_stats_helper: 'Недоступні, перезавантаження від запуску та ігноровані інтеграції',
@@ -1015,6 +1047,8 @@ const IW_I18N = {
     ed_entity: 'Watchdog érzékelő',
     ed_entity_helper: 'A nem elérhető integrációk érzékelője; hagyja üresen az automatikus kereséshez',
     ed_title: 'Cím',
+    ed_show_title: 'Cím megjelenítése',
+    ed_show_subtitle: 'Alcím megjelenítése',
     ed_title_helper: 'Hagyja üresen az „Watchdog” címhez',
     ed_show_stats: 'Összegzés',
     ed_show_stats_helper: 'Nem elérhető, indulás óta újratöltött és figyelmen kívül hagyott integrációk',
@@ -1075,6 +1109,8 @@ const IW_I18N = {
     ed_entity: 'Senzor Watchdog',
     ed_entity_helper: 'Senzor nedostupných integrácií; nechajte prázdne, aby sa našiel automaticky',
     ed_title: 'Názov',
+    ed_show_title: 'Zobraziť názov',
+    ed_show_subtitle: 'Zobraziť podnázov',
     ed_title_helper: 'Nechajte prázdne pre „Watchdog“',
     ed_show_stats: 'Súhrn',
     ed_show_stats_helper: 'Nedostupné, opätovné načítania od spustenia a ignorované integrácie',
@@ -1135,6 +1171,8 @@ const IW_I18N = {
     ed_entity: 'Senzor Watchdog',
     ed_entity_helper: 'Senzor nedostupných integrací; ponechte prázdné, aby byl nalezen automaticky',
     ed_title: 'Název',
+    ed_show_title: 'Zobrazit název',
+    ed_show_subtitle: 'Zobrazit podnázev',
     ed_title_helper: 'Ponechte prázdné pro „Watchdog“',
     ed_show_stats: 'Souhrn',
     ed_show_stats_helper: 'Nedostupné, opětovná načtení od spuštění a ignorované integrace',
@@ -1195,6 +1233,8 @@ const IW_I18N = {
     ed_entity: 'Senzor Watchdog',
     ed_entity_helper: 'Senzor integracij, ki niso na voljo; pustite prazno, da ga poiščete samodejno',
     ed_title: 'Naslov',
+    ed_show_title: 'Prikaži naslov',
+    ed_show_subtitle: 'Prikaži podnaslov',
     ed_title_helper: 'Pustite prazno za »Watchdog«',
     ed_show_stats: 'Povzetek',
     ed_show_stats_helper: 'Integracije, ki niso na voljo, ponovna nalaganja od zagona in prezrte integracije',
@@ -1255,6 +1295,8 @@ const IW_I18N = {
     ed_entity: 'Watchdog sensors',
     ed_entity_helper: 'Nepieejamo integrāciju sensors; atstājiet tukšu, lai to atrastu automātiski',
     ed_title: 'Virsraksts',
+    ed_show_title: 'Rādīt virsrakstu',
+    ed_show_subtitle: 'Rādīt apakšvirsrakstu',
     ed_title_helper: 'Atstājiet tukšu, lai izmantotu “Watchdog”',
     ed_show_stats: 'Kopsavilkums',
     ed_show_stats_helper: 'Nepieejamās, pārlādes kopš palaišanas un ignorētās integrācijas',
@@ -1315,6 +1357,8 @@ const IW_I18N = {
     ed_entity: 'Αισθητήρας Watchdog',
     ed_entity_helper: 'Ο αισθητήρας των μη διαθέσιμων ενσωματώσεων· αφήστε κενό για αυτόματο εντοπισμό',
     ed_title: 'Τίτλος',
+    ed_show_title: 'Εμφάνιση τίτλου',
+    ed_show_subtitle: 'Εμφάνιση υπότιτλου',
     ed_title_helper: 'Αφήστε κενό για «Watchdog»',
     ed_show_stats: 'Σύνοψη',
     ed_show_stats_helper: 'Μη διαθέσιμες, επαναφορτώσεις από την εκκίνηση και ενσωματώσεις που παραβλέπονται',
@@ -1359,6 +1403,8 @@ const iwEsc = (s) =>
   String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
 const IW_DEFAULTS = {
+  show_title: true,
+  show_subtitle: true,
   show_stats: true,
   show_unavailable: true,
   show_history: true,
@@ -1432,6 +1478,9 @@ class IntegrationWatchdogCard extends HTMLElement {
 
   setConfig(config) {
     this._config = { ...IW_DEFAULTS, ...config };
+    // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
+    this.toggleAttribute?.('hide-title', config.show_title === false);
+    this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
     if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
     this._sig = null;
     this._render();
@@ -1913,6 +1962,7 @@ class IntegrationWatchdogCard extends HTMLElement {
       .when > span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .when .lbl { font-size: 12px; font-weight: 500; line-height: 1.2; color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); }
       .when .ago { font-size: 11px; line-height: 1.2; color: var(--iw-muted); }
+      :host([hide-title]) .heading > .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
     `;
   }
 }
@@ -2152,6 +2202,8 @@ class IntegrationWatchdogCardEditor extends HTMLElement {
     this._form.schema = [
       { name: 'entity', selector: { entity: { filter: { integration: 'system_hub', domain: 'sensor' } } } },
       { name: 'title', selector: { text: {} } },
+      { name: 'show_title', selector: { boolean: {} } },
+      { name: 'show_subtitle', selector: { boolean: {} } },
       { name: 'show_stats', selector: { boolean: {} } },
       { name: 'show_unavailable', selector: { boolean: {} } },
       { name: 'show_history', selector: { boolean: {} } },
