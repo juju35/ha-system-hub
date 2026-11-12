@@ -1158,3 +1158,44 @@ test('backups tab: the last success, the locations and their failures, the last 
   await p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'bk_now' } } : null) } });
   assert.equal(JSON.stringify(calls), JSON.stringify(['backup.create_automatic']));
 });
+
+test('silent devices tab: the silent devices then the weak signals, a filter per integration, Ignore without a reload', async () => {
+  const ago = (hours) => new Date(Date.now() - hours * 3600000).toISOString();
+  const state = {
+    loaded: true,
+    modules: ['silent'],
+    tabs: ['silent'],
+    silent: {
+      tracked: 42,
+      ignored: 1,
+      integrations: ['mqtt', 'zha'],
+      battery_hours: 24,
+      mains_hours: 24,
+      devices: [
+        { device_id: 'd1', name: 'Cellar sensor', area: 'Cellar', integration: 'zha', last_heard: ago(72), unavailable: false, silent: true, battery: true, level: 62, signal: null },
+        { device_id: 'd2', name: 'Garage plug', area: 'Garage', integration: 'mqtt', last_heard: ago(5), unavailable: true, silent: true, battery: false, level: null, signal: null },
+        { device_id: 'd3', name: 'Gate', area: 'Outside', integration: 'mqtt', last_heard: ago(0.2), unavailable: false, silent: false, battery: true, level: 78, signal: { kind: 'lqi', value: 31, weak: true } },
+      ],
+    },
+  };
+  const p = panel(state, 'silent');
+  const html = p._content();
+  assert.match(html, /Cellar sensor<\/div><div class="s">Cellar · ZHA · heard [^·]+ · battery 62 %/);
+  assert.match(html, /Garage plug<\/div><div class="s">Garage · MQTT · unavailable since/);
+  assert.match(html, /Gate<\/div><div class="s">[^<]*LQI 31[^<]*<\/div><\/div>\s*<span class="pill info">Weak signal/);
+  assert.match(html, /href="\/config\/devices\/device\/d1"/);
+  // Status: two silent devices to watch
+  assert.deepEqual([...p._stArea('silent')].slice(0, 2), ['warn', '2 silent']);
+  // A filter per integration
+  p._render = () => {};
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_filter', kind: 'zha' } } : null) } });
+  assert.doesNotMatch(p._content(), /Garage plug/);
+  // Ignore: saved by System Hub's own command
+  const calls = [];
+  p._hass.callWS = async (msg) => {
+    calls.push(msg.type === 'system_hub/silent_ignore' ? `${msg.type} ${msg.device_id}` : msg.type);
+    return state;
+  };
+  await p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_ignore', device: 'd1', name: 'Cellar sensor' } } : null) } });
+  assert.equal(calls[0], 'system_hub/silent_ignore d1');
+});

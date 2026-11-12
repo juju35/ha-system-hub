@@ -9,6 +9,7 @@
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
           "backups": "Copii de rezervă",
+          "silent": "Dispozitive tăcute",
           "batteries": "Baterii",
           "git_sync": "Versionare",
           "orphans": "Curățenie",
@@ -19,6 +20,7 @@
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "backups": "Urmărește copiile de rezervă Home Assistant: ultima reușită, următoarea, fiecare locație și ultimele 30 de zile. Fără entități proprii.",
+          "silent": "Urmărește dispozitivele ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome și deCONZ: cele care nu mai dau semn de viață și semnalele slabe. Fără entități proprii.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
           "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
           "orphans": "Listează entitățile pe care integrarea lor nu le mai furnizează, pentru a le putea elimina în masă.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Santinelă: Elimină reporniri prin priză",
           "marketplace": "Actualizări",
           "backups": "Copii de rezervă",
+          "silent": "Dispozitive tăcute",
           "batteries": "Baterii",
           "git_sync_repository": "Versionare: Setările depozitului",
           "git_sync": "Versionare",
@@ -93,6 +96,7 @@
           "watchdog": "Santinelă",
           "marketplace": "Actualizări",
           "backups": "Copii de rezervă",
+          "silent": "Dispozitive tăcute",
           "batteries": "Baterii",
           "git_sync": "Versionare",
           "automations": "Automatizări"
@@ -102,6 +106,7 @@
           "watchdog": "Reîncarcă integrările ale căror entități sunt toate indisponibile.",
           "marketplace": "Verifică pe server dacă există actualizări pentru toate depozitele descărcate cu Marketplace. Marketplace însuși verifică depozitele personalizate doar o dată la 48 de ore.",
           "backups": "Urmărește copiile de rezervă Home Assistant: ultima reușită, următoarea, fiecare locație și ultimele 30 de zile. Fără entități proprii.",
+          "silent": "Urmărește dispozitivele ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome și deCONZ: cele care nu mai dau semn de viață și semnalele slabe. Fără entități proprii.",
           "batteries": "Trimite de două ori pe zi notificări pentru dispozitivele a căror baterie a rămas scăzută.",
           "git_sync": "Folderul Home Assistant versionat cu Git și trimis către un remote (GitHub, Gitea…).",
           "automations": "Afișează automatizările eșuate și entitățile indisponibile raportate de integrarea Automation Monitor (instalată separat). Fără entități proprii."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Zile fără o copie automată reușită înainte ca fila Stare să avertizeze."
+        }
+      },
+      "silent": {
+        "title": "Dispozitive tăcute",
+        "data": {
+          "integrations": "Integrări urmărite",
+          "battery_hours": "Tăcut după, pe baterie",
+          "mains_hours": "Tăcut după, la rețea",
+          "ignored_devices": "Dispozitive ignorate"
+        },
+        "data_description": {
+          "integrations": "Dispozitivele cu o entitate din aceste integrări (mqtt pentru Zigbee2MQTT).",
+          "battery_hours": "Un dispozitiv cu o entitate de baterie care nu raportează nimic atât timp.",
+          "mains_hours": "Orice alt dispozitiv care nu raportează nimic atât timp.",
+          "ignored_devices": "Excluse din filă și din fila Stare."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Dispozitiv",
         "mk_update_marketplace": "Actualizează Marketplace",
         "upd_available_detail": "Disponibile: {n} ({system} în afara Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "La zi: {n}"
+        "upd_uptodate_short": "La zi: {n}",
+        "tab_silent": "Dispozitive tăcute",
+        "sl_silent": "Tăcute",
+        "sl_weak": "Semnal slab",
+        "sl_tracked": "Dispozitive urmărite",
+        "sl_ignored": "Ignorate",
+        "sl_n_silent": "{n} tăcute",
+        "sl_n_weak": "{n} cu semnal slab",
+        "sl_all_heard": "Toate auzite",
+        "sl_followed": "{n} dispozitive urmărite",
+        "sl_all": "Toate",
+        "sl_none": "Toate dispozitivele urmărite au dat semn de viață recent, cu semnal bun.",
+        "sl_heard": "auzit {when}",
+        "sl_unavailable_since": "indisponibil din {when}",
+        "sl_battery": "baterie {n} %",
+        "sl_battery_unknown": "baterie",
+        "sl_mains": "rețea",
+        "sl_ignore": "Ignoră",
+        "sl_hint": "Tăcut: nimic primit de peste {battery} h pe baterie, {mains} h la rețea. Semnal slab: LQI sub 50, RSSI sub −80 dBm.",
+        "sl_ignored_done": "Ignorat: {name}"
       }
     },
     "battery_type": {

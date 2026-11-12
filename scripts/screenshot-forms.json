@@ -446,6 +446,83 @@
     "errors": {},
     "description_placeholders": {}
   },
+  "silent": {
+    "type": "form",
+    "step_id": "silent",
+    "data_schema": [
+      {
+        "selector": {
+          "select": {
+            "options": [
+              "deconz",
+              "esphome",
+              "matter",
+              "mqtt",
+              "zha",
+              "zwave_js"
+            ],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "integrations",
+        "required": true,
+        "default": [
+          "zha",
+          "mqtt",
+          "zwave_js",
+          "matter",
+          "esphome",
+          "deconz"
+        ]
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 720.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "h"
+          }
+        },
+        "name": "battery_hours",
+        "required": true,
+        "default": 24
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 720.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "h"
+          }
+        },
+        "name": "mains_hours",
+        "required": true,
+        "default": 24
+      },
+      {
+        "selector": {
+          "device": {
+            "multiple": true
+          }
+        },
+        "name": "ignored_devices",
+        "description": {
+          "suggested_value": []
+        },
+        "required": false,
+        "optional": true
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
   "batteries": {
     "type": "form",
     "step_id": "batteries",

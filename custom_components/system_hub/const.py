@@ -6,7 +6,7 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "1.7.0"
+VERSION: Final = "1.8.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
@@ -15,6 +15,8 @@ MODULE_WATCHDOG: Final = "watchdog"
 MODULE_MARKETPLACE: Final = "marketplace"
 # Reads Home Assistant's own backups (the Backup integration); no entities of its own.
 MODULE_BACKUPS: Final = "backups"
+# The devices of the radio integrations not heard from for a while; no entities of its own.
+MODULE_SILENT: Final = "silent"
 MODULE_BATTERIES: Final = "batteries"
 MODULE_GIT_SYNC: Final = "git_sync"
 # Shows what Automation Monitor reports; no entities of its own.
@@ -25,6 +27,7 @@ MODULES: Final = (
     MODULE_WATCHDOG,
     MODULE_MARKETPLACE,
     MODULE_BACKUPS,
+    MODULE_SILENT,
     MODULE_BATTERIES,
     MODULE_GIT_SYNC,
     MODULE_AUTOMATIONS,

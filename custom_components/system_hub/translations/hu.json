@@ -9,6 +9,7 @@
           "watchdog": "Őrszem",
           "marketplace": "Frissítések",
           "backups": "Biztonsági mentések",
+          "silent": "Néma eszközök",
           "batteries": "Elemek",
           "git_sync": "Verziókezelés",
           "orphans": "Takarítás",
@@ -19,6 +20,7 @@
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
           "backups": "Követi a Home Assistant mentéseit: az utolsó sikereset, a következőt, minden helyet és az utolsó 30 napot. Saját entitások nélkül.",
+          "silent": "Követi a ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome és deCONZ eszközeit: azokat, amelyek már nem jelentkeznek, és a gyenge jeleket. Saját entitások nélkül.",
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
           "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
           "orphans": "Listázza azokat az entitásokat, amelyeket az integrációjuk már nem biztosít, hogy egyszerre eltávolíthassa őket.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Őrszem: Konnektoros újraindítások eltávolítása",
           "marketplace": "Frissítések",
           "backups": "Biztonsági mentések",
+          "silent": "Néma eszközök",
           "batteries": "Elemek",
           "git_sync_repository": "Verziókezelés: Tároló beállításai",
           "git_sync": "Verziókezelés",
@@ -93,6 +96,7 @@
           "watchdog": "Őrszem",
           "marketplace": "Frissítések",
           "backups": "Biztonsági mentések",
+          "silent": "Néma eszközök",
           "batteries": "Elemek",
           "git_sync": "Verziókezelés",
           "automations": "Automatizálások"
@@ -102,6 +106,7 @@
           "watchdog": "Újratölti azokat az integrációkat, amelyeknek minden entitása nem elérhető.",
           "marketplace": "A szerveren ellenőrzi az összes Marketplace-szel letöltött tároló frissítéseit. Maga a Marketplace csak 48 óránként ellenőrzi az egyéni tárolókat.",
           "backups": "Követi a Home Assistant mentéseit: az utolsó sikereset, a következőt, minden helyet és az utolsó 30 napot. Saját entitások nélkül.",
+          "silent": "Követi a ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome és deCONZ eszközeit: azokat, amelyek már nem jelentkeznek, és a gyenge jeleket. Saját entitások nélkül.",
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
           "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
           "automations": "Megjeleníti az Automation Monitor integráció (külön telepítendő) által jelentett hibás automatizálásokat és nem elérhető entitásokat. Saját entitása nincs."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Napok sikeres automatikus mentés nélkül, mielőtt az Állapot lap figyelmeztet."
+        }
+      },
+      "silent": {
+        "title": "Néma eszközök",
+        "data": {
+          "integrations": "Követett integrációk",
+          "battery_hours": "Néma ennyi után, elemről",
+          "mains_hours": "Néma ennyi után, hálózatról",
+          "ignored_devices": "Kihagyott eszközök"
+        },
+        "data_description": {
+          "integrations": "Az ezen integrációkból származó entitással rendelkező eszközök (Zigbee2MQTT-hez mqtt).",
+          "battery_hours": "Elem entitással rendelkező eszköz, amely ennyi ideig nem jelent semmit.",
+          "mains_hours": "Bármely más eszköz, amely ennyi ideig nem jelent semmit.",
+          "ignored_devices": "Kihagyva a lapról és az Állapot lapról."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Eszköz",
         "mk_update_marketplace": "Marketplace frissítése",
         "upd_available_detail": "Elérhető: {n} ({system} a Marketplace-en kívül, {marketplace} Marketplace)",
-        "upd_uptodate_short": "Naprakész: {n}"
+        "upd_uptodate_short": "Naprakész: {n}",
+        "tab_silent": "Néma eszközök",
+        "sl_silent": "Néma",
+        "sl_weak": "Gyenge jel",
+        "sl_tracked": "Követett eszközök",
+        "sl_ignored": "Figyelmen kívül",
+        "sl_n_silent": "{n} néma",
+        "sl_n_weak": "{n} gyenge jellel",
+        "sl_all_heard": "Mind hallható",
+        "sl_followed": "{n} követett eszköz",
+        "sl_all": "Mind",
+        "sl_none": "Minden követett eszköz jelentkezett nemrég, jó jellel.",
+        "sl_heard": "hallható volt {when}",
+        "sl_unavailable_since": "nem elérhető {when} óta",
+        "sl_battery": "elem {n} %",
+        "sl_battery_unknown": "elem",
+        "sl_mains": "hálózat",
+        "sl_ignore": "Kihagyás",
+        "sl_hint": "Néma: semmi nem érkezett több mint {battery} órája elemről, {mains} órája hálózatról. Gyenge jel: LQI 50 alatt, RSSI −80 dBm alatt.",
+        "sl_ignored_done": "Kihagyva: {name}"
       }
     },
     "battery_type": {

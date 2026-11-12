@@ -9,6 +9,7 @@
           "watchdog": "Stražar",
           "marketplace": "Posodobitve",
           "backups": "Varnostne kopije",
+          "silent": "Tihe naprave",
           "batteries": "Baterije",
           "git_sync": "Upravljanje različic",
           "orphans": "Čiščenje",
@@ -19,6 +20,7 @@
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
           "backups": "Spremlja varnostne kopije Home Assistanta: zadnjo uspešno, naslednjo, vsako lokacijo in zadnjih 30 dni. Brez lastnih entitet.",
+          "silent": "Spremlja naprave ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome in deCONZ: tiste, ki se ne oglašajo več, in šibke signale. Brez lastnih entitet.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
           "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
           "orphans": "Prikaže entitete, ki jih njihova integracija ne zagotavlja več, da jih lahko odstranite naenkrat.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Stražar: Odstrani ponovne zagone prek vtičnice",
           "marketplace": "Posodobitve",
           "backups": "Varnostne kopije",
+          "silent": "Tihe naprave",
           "batteries": "Baterije",
           "git_sync_repository": "Upravljanje različic: Nastavitve repozitorija",
           "git_sync": "Upravljanje različic",
@@ -93,6 +96,7 @@
           "watchdog": "Stražar",
           "marketplace": "Posodobitve",
           "backups": "Varnostne kopije",
+          "silent": "Tihe naprave",
           "batteries": "Baterije",
           "git_sync": "Upravljanje različic",
           "automations": "Avtomatizacije"
@@ -102,6 +106,7 @@
           "watchdog": "Ponovno naloži integracije, katerih nobena entiteta ni na voljo.",
           "marketplace": "Na strežniku preveri posodobitve vseh repozitorijev, prenesenih s Marketplace. Marketplace sam preverja repozitorije po meri le vsakih 48 ur.",
           "backups": "Spremlja varnostne kopije Home Assistanta: zadnjo uspešno, naslednjo, vsako lokacijo in zadnjih 30 dni. Brez lastnih entitet.",
+          "silent": "Spremlja naprave ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome in deCONZ: tiste, ki se ne oglašajo več, in šibke signale. Brez lastnih entitet.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
           "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
           "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Dnevi brez uspešne samodejne kopije, preden zavihek Stanje opozori."
+        }
+      },
+      "silent": {
+        "title": "Tihe naprave",
+        "data": {
+          "integrations": "Spremljane integracije",
+          "battery_hours": "Tiha po, na bateriji",
+          "mains_hours": "Tiha po, iz omrežja",
+          "ignored_devices": "Prezrte naprave"
+        },
+        "data_description": {
+          "integrations": "Naprave z entiteto teh integracij (mqtt za Zigbee2MQTT).",
+          "battery_hours": "Naprava z entiteto baterije, ki toliko časa ne sporoči ničesar.",
+          "mains_hours": "Vsaka druga naprava, ki toliko časa ne sporoči ničesar.",
+          "ignored_devices": "Izpuščene iz zavihka in zavihka Stanje."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Naprava",
         "mk_update_marketplace": "Posodobi Marketplace",
         "upd_available_detail": "Na voljo: {n} ({system} zunaj Marketplace, {marketplace} iz Marketplace)",
-        "upd_uptodate_short": "Posodobljeno: {n}"
+        "upd_uptodate_short": "Posodobljeno: {n}",
+        "tab_silent": "Tihe naprave",
+        "sl_silent": "Tihe",
+        "sl_weak": "Šibek signal",
+        "sl_tracked": "Spremljane naprave",
+        "sl_ignored": "Prezrte",
+        "sl_n_silent": "Tihe: {n}",
+        "sl_n_weak": "S šibkim signalom: {n}",
+        "sl_all_heard": "Vse slišne",
+        "sl_followed": "Spremljane naprave: {n}",
+        "sl_all": "Vse",
+        "sl_none": "Vse spremljane naprave so se nedavno oglasile, z dobrim signalom.",
+        "sl_heard": "oglasila se je {when}",
+        "sl_unavailable_since": "nedosegljiva od {when}",
+        "sl_battery": "baterija {n} %",
+        "sl_battery_unknown": "baterija",
+        "sl_mains": "omrežje",
+        "sl_ignore": "Prezri",
+        "sl_hint": "Tiha: nič prejeto več kot {battery} h na bateriji, {mains} h iz omrežja. Šibek signal: LQI pod 50, RSSI pod −80 dBm.",
+        "sl_ignored_done": "Prezrto: {name}"
       }
     },
     "battery_type": {

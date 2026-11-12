@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.8.0 - 2026-11-12
+
+### New
+- **Silent devices** module, in the **Devices** group (Silent devices · Batteries · Cleanup): the devices of ZHA, Zigbee2MQTT (MQTT), Z-Wave, Matter, ESPHome and deCONZ not heard from for a while, then the weak signals. A device was last heard when one of its entities last reported a state, even an unchanged one; it is silent beyond **Silent after** (24 h by default, one value on a battery and one on mains) or with every entity unavailable; its signal is weak with an LQI below 50 or an RSSI below −80 dBm. Each one with its room, its integration, when it was last heard, its signal and its battery, **Device** and **Ignore** (saved at once, no reload); a filter per integration. On the **Status** tab, the silent devices to watch and the weak signals to know. Settings: the integrations followed, the hours on a battery and on mains, the devices ignored. No entities of its own; turn it on in **Settings**.
+
 ## 1.7.0 - 2026-11-12
 
 ### New

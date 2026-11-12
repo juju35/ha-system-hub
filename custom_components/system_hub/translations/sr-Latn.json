@@ -9,6 +9,7 @@
           "watchdog": "Stražar",
           "marketplace": "Ažuriranja",
           "backups": "Rezervne kopije",
+          "silent": "Tihi uređaji",
           "batteries": "Baterije",
           "git_sync": "Verzionisanje",
           "orphans": "Čišćenje",
@@ -19,6 +20,7 @@
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "backups": "Prati rezervne kopije Home Assistant-a: poslednju uspešnu, sledeću, svaku lokaciju i poslednjih 30 dana. Bez sopstvenih entiteta.",
+          "silent": "Prati uređaje ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome i deCONZ: one koji se više ne javljaju i slabe signale. Bez sopstvenih entiteta.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
           "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
           "orphans": "Prikazuje entitete koje njihova integracija više ne obezbeđuje, kako biste mogli da ih uklonite odjednom.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Stražar: Ukloni restarte preko utičnice",
           "marketplace": "Ažuriranja",
           "backups": "Rezervne kopije",
+          "silent": "Tihi uređaji",
           "batteries": "Baterije",
           "git_sync_repository": "Verzionisanje: Podešavanja repozitorijuma",
           "git_sync": "Verzionisanje",
@@ -93,6 +96,7 @@
           "watchdog": "Stražar",
           "marketplace": "Ažuriranja",
           "backups": "Rezervne kopije",
+          "silent": "Tihi uređaji",
           "batteries": "Baterije",
           "git_sync": "Verzionisanje",
           "automations": "Automatizacije"
@@ -102,6 +106,7 @@
           "watchdog": "Ponovo učitava integracije čiji su svi entiteti nedostupni.",
           "marketplace": "Proverava ažuriranja za svaki repozitorijum preuzet pomoću Marketplace-a, na serveru. Sam Marketplace proverava prilagođene repozitorijume samo na svakih 48 sati.",
           "backups": "Prati rezervne kopije Home Assistant-a: poslednju uspešnu, sledeću, svaku lokaciju i poslednjih 30 dana. Bez sopstvenih entiteta.",
+          "silent": "Prati uređaje ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome i deCONZ: one koji se više ne javljaju i slabe signale. Bez sopstvenih entiteta.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
           "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
           "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Dani bez uspešne automatske kopije pre nego što kartica Status upozori."
+        }
+      },
+      "silent": {
+        "title": "Tihi uređaji",
+        "data": {
+          "integrations": "Praćene integracije",
+          "battery_hours": "Tih posle, na bateriji",
+          "mains_hours": "Tih posle, iz mreže",
+          "ignored_devices": "Ignorisani uređaji"
+        },
+        "data_description": {
+          "integrations": "Uređaji sa entitetom ovih integracija (mqtt za Zigbee2MQTT).",
+          "battery_hours": "Uređaj sa entitetom baterije koji toliko dugo ništa ne javlja.",
+          "mains_hours": "Svaki drugi uređaj koji toliko dugo ništa ne javlja.",
+          "ignored_devices": "Izostavljeni iz kartice i kartice Status."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Uređaj",
         "mk_update_marketplace": "Ažuriraj Marketplace",
         "upd_available_detail": "Dostupno: {n} ({system} van Marketplace-a, {marketplace} iz Marketplace-a)",
-        "upd_uptodate_short": "Ažurno: {n}"
+        "upd_uptodate_short": "Ažurno: {n}",
+        "tab_silent": "Tihi uređaji",
+        "sl_silent": "Tihi",
+        "sl_weak": "Slab signal",
+        "sl_tracked": "Praćeni uređaji",
+        "sl_ignored": "Ignorisani",
+        "sl_n_silent": "Tihi: {n}",
+        "sl_n_weak": "Sa slabim signalom: {n}",
+        "sl_all_heard": "Svi se čuju",
+        "sl_followed": "Praćeni uređaji: {n}",
+        "sl_all": "Svi",
+        "sl_none": "Svi praćeni uređaji su se nedavno javili, sa dobrim signalom.",
+        "sl_heard": "javio se {when}",
+        "sl_unavailable_since": "nedostupan od {when}",
+        "sl_battery": "baterija {n} %",
+        "sl_battery_unknown": "baterija",
+        "sl_mains": "mreža",
+        "sl_ignore": "Ignoriši",
+        "sl_hint": "Tih: ništa primljeno duže od {battery} h na bateriji, {mains} h iz mreže. Slab signal: LQI ispod 50, RSSI ispod −80 dBm.",
+        "sl_ignored_done": "Ignorisano: {name}"
       }
     },
     "battery_type": {

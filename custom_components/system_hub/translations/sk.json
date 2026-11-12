@@ -9,6 +9,7 @@
           "watchdog": "Strážca",
           "marketplace": "Aktualizácie",
           "backups": "Zálohy",
+          "silent": "Tiché zariadenia",
           "batteries": "Batérie",
           "git_sync": "Verziovanie",
           "orphans": "Čistenie",
@@ -19,6 +20,7 @@
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "backups": "Sleduje zálohy Home Assistant: poslednú úspešnú, nasledujúcu, každé umiestnenie a posledných 30 dní. Bez vlastných entít.",
+          "silent": "Sleduje zariadenia ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome a deCONZ: tie, ktoré sa už neozývajú, a slabé signály. Bez vlastných entít.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
           "orphans": "Zobrazuje entity, ktoré ich integrácia už neposkytuje, aby ste ich mohli hromadne odstrániť.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Strážca: Odstrániť reštarty cez zásuvku",
           "marketplace": "Aktualizácie",
           "backups": "Zálohy",
+          "silent": "Tiché zariadenia",
           "batteries": "Batérie",
           "git_sync_repository": "Verziovanie: Nastavenia repozitára",
           "git_sync": "Verziovanie",
@@ -93,6 +96,7 @@
           "watchdog": "Strážca",
           "marketplace": "Aktualizácie",
           "backups": "Zálohy",
+          "silent": "Tiché zariadenia",
           "batteries": "Batérie",
           "git_sync": "Verziovanie",
           "automations": "Automatizácie"
@@ -102,6 +106,7 @@
           "watchdog": "Znovu načíta integrácie, ktorých všetky entity sú nedostupné.",
           "marketplace": "Na serveri kontroluje aktualizácie všetkých repozitárov stiahnutých cez Marketplace. Samotný Marketplace kontroluje vlastné repozitáre len raz za 48 hodín.",
           "backups": "Sleduje zálohy Home Assistant: poslednú úspešnú, nasledujúcu, každé umiestnenie a posledných 30 dní. Bez vlastných entít.",
+          "silent": "Sleduje zariadenia ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome a deCONZ: tie, ktoré sa už neozývajú, a slabé signály. Bez vlastných entít.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
           "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Počet dní bez úspešnej automatickej zálohy, kým karta Stav upozorní."
+        }
+      },
+      "silent": {
+        "title": "Tiché zariadenia",
+        "data": {
+          "integrations": "Sledované integrácie",
+          "battery_hours": "Tiché po, na batérii",
+          "mains_hours": "Tiché po, zo siete",
+          "ignored_devices": "Ignorované zariadenia"
+        },
+        "data_description": {
+          "integrations": "Zariadenia s entitou týchto integrácií (mqtt pre Zigbee2MQTT).",
+          "battery_hours": "Zariadenie s entitou batérie, ktoré tak dlho nič nehlási.",
+          "mains_hours": "Akékoľvek iné zariadenie, ktoré tak dlho nič nehlási.",
+          "ignored_devices": "Vynechané z karty a z karty Stav."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Zariadenie",
         "mk_update_marketplace": "Aktualizovať Marketplace",
         "upd_available_detail": "Dostupné: {n} ({system} mimo Marketplace, {marketplace} z Marketplace)",
-        "upd_uptodate_short": "Aktuálne: {n}"
+        "upd_uptodate_short": "Aktuálne: {n}",
+        "tab_silent": "Tiché zariadenia",
+        "sl_silent": "Tiché",
+        "sl_weak": "Slabý signál",
+        "sl_tracked": "Sledované zariadenia",
+        "sl_ignored": "Ignorované",
+        "sl_n_silent": "Tiché: {n}",
+        "sl_n_weak": "So slabým signálom: {n}",
+        "sl_all_heard": "Všetky počuť",
+        "sl_followed": "Sledované zariadenia: {n}",
+        "sl_all": "Všetky",
+        "sl_none": "Všetky sledované zariadenia sa nedávno ozvali, s dobrým signálom.",
+        "sl_heard": "ozvalo sa {when}",
+        "sl_unavailable_since": "nedostupné od {when}",
+        "sl_battery": "batéria {n} %",
+        "sl_battery_unknown": "batéria",
+        "sl_mains": "sieť",
+        "sl_ignore": "Ignorovať",
+        "sl_hint": "Tiché: nič neprišlo viac ako {battery} h na batérii, {mains} h zo siete. Slabý signál: LQI pod 50, RSSI pod −80 dBm.",
+        "sl_ignored_done": "Ignorované: {name}"
       }
     },
     "battery_type": {

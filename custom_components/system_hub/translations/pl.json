@@ -9,6 +9,7 @@
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
+          "silent": "Ciche urządzenia",
           "batteries": "Baterie",
           "git_sync": "Wersjonowanie",
           "orphans": "Porządki",
@@ -19,6 +20,7 @@
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
+          "silent": "Obserwuje urządzenia ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome i deCONZ: te, które przestały się odzywać, i słabe sygnały. Bez własnych encji.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
           "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
           "orphans": "Wyświetla encje, których ich integracja już nie dostarcza, aby można je było usunąć zbiorczo.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Strażnik: Usuń restarty przez gniazdko",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
+          "silent": "Ciche urządzenia",
           "batteries": "Baterie",
           "git_sync_repository": "Wersjonowanie: Ustawienia repozytorium",
           "git_sync": "Wersjonowanie",
@@ -93,6 +96,7 @@
           "watchdog": "Strażnik",
           "marketplace": "Aktualizacje",
           "backups": "Kopie zapasowe",
+          "silent": "Ciche urządzenia",
           "batteries": "Baterie",
           "git_sync": "Wersjonowanie",
           "automations": "Automatyzacje"
@@ -102,6 +106,7 @@
           "watchdog": "Ponownie wczytuje integracje, których wszystkie encje są niedostępne.",
           "marketplace": "Sprawdza aktualizacje wszystkich repozytoriów pobranych przez Marketplace, po stronie serwera. Sam Marketplace sprawdza repozytoria niestandardowe tylko co 48 godzin.",
           "backups": "Śledzi kopie zapasowe Home Assistant: ostatnią udaną, następną, każdą lokalizację i ostatnie 30 dni. Bez własnych encji.",
+          "silent": "Obserwuje urządzenia ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome i deCONZ: te, które przestały się odzywać, i słabe sygnały. Bez własnych encji.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
           "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
           "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Liczba dni bez udanej automatycznej kopii, po której karta Status ostrzega."
+        }
+      },
+      "silent": {
+        "title": "Ciche urządzenia",
+        "data": {
+          "integrations": "Obserwowane integracje",
+          "battery_hours": "Ciche po, na baterii",
+          "mains_hours": "Ciche po, z sieci",
+          "ignored_devices": "Ignorowane urządzenia"
+        },
+        "data_description": {
+          "integrations": "Urządzenia z encją tych integracji (mqtt dla Zigbee2MQTT).",
+          "battery_hours": "Urządzenie z encją baterii, które przez ten czas nic nie zgłasza.",
+          "mains_hours": "Każde inne urządzenie, które przez ten czas nic nie zgłasza.",
+          "ignored_devices": "Pominięte w karcie i w karcie Status."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Urządzenie",
         "mk_update_marketplace": "Aktualizuj Marketplace",
         "upd_available_detail": "Dostępne: {n} ({system} spoza Marketplace, {marketplace} z Marketplace)",
-        "upd_uptodate_short": "Aktualne: {n}"
+        "upd_uptodate_short": "Aktualne: {n}",
+        "tab_silent": "Ciche urządzenia",
+        "sl_silent": "Ciche",
+        "sl_weak": "Słaby sygnał",
+        "sl_tracked": "Obserwowane urządzenia",
+        "sl_ignored": "Ignorowane",
+        "sl_n_silent": "Ciche: {n}",
+        "sl_n_weak": "Ze słabym sygnałem: {n}",
+        "sl_all_heard": "Wszystkie słychać",
+        "sl_followed": "Obserwowane urządzenia: {n}",
+        "sl_all": "Wszystkie",
+        "sl_none": "Wszystkie obserwowane urządzenia odezwały się niedawno, z dobrym sygnałem.",
+        "sl_heard": "odezwało się {when}",
+        "sl_unavailable_since": "niedostępne od {when}",
+        "sl_battery": "bateria {n} %",
+        "sl_battery_unknown": "bateria",
+        "sl_mains": "sieć",
+        "sl_ignore": "Ignoruj",
+        "sl_hint": "Ciche: brak sygnału od ponad {battery} h na baterii, {mains} h z sieci. Słaby sygnał: LQI poniżej 50, RSSI poniżej −80 dBm.",
+        "sl_ignored_done": "Zignorowano: {name}"
       }
     },
     "battery_type": {

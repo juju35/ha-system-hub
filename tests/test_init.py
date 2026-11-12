@@ -49,6 +49,7 @@ async def test_flow_without_marketplace(hass: HomeAssistant) -> None:
         "watchdog": True,
         "marketplace": False,
         "backups": False,
+        "silent": False,
         "batteries": True,
         "git_sync": False,
         "automations": False,
