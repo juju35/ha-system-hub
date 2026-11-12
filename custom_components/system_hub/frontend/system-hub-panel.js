@@ -706,6 +706,8 @@ class SystemHubPanel extends HTMLElement {
     .cfgtabs { align-self:flex-start; }
     .cfgdesc { white-space:pre-line; }
     @media (max-width:600px) { .cfgbody { padding-left:0; } }
+    .mkrestart { display:flex; align-items:center; gap:6px; font-size:13px; --mdc-icon-size:16px;
+                 color:color-mix(in srgb, var(--tone-warn) 50%, var(--primary-text-color)); }
     .mkhead { display:flex; align-items:center; gap:14px; padding:14px 16px; flex-wrap:wrap; }
     .mkhead .who { flex:1; min-width:220px; }
     .mkhead .who .n { font-size:16px; font-weight:500; }
@@ -1947,7 +1949,7 @@ class SystemHubPanel extends HTMLElement {
         ${change ? `<span class="pill ${change === 'major' ? 'bad' : change === 'minor' ? 'warn' : 'good'}">${shEsc(this._t(`mk_${change}`))}</span>` : ''}</div>
       <div class="mkver"><span class="muted">${shEsc(u.installed || '—')}</span><ha-icon icon="mdi:arrow-right"></ha-icon><b>${shEsc(u.latest || '—')}</b></div>
       ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
-      ${restart ? `<div class="s warn-text"><ha-icon icon="mdi:restart-alert"></ha-icon> ${shEsc(this._t(restart))}</div>` : ''}
+      ${restart ? `<div class="mkrestart"><ha-icon icon="mdi:restart"></ha-icon>${shEsc(this._t(restart))}</div>` : ''}
       ${this._confirm === `upd:${u.entity_id}` ? `<div class="s" role="alert">${shEsc(this._t('upd_confirm', { name: u.title, version: u.latest || '' }))}</div>` : ''}
       <div class="actions">${link}<span class="grow"></span>${install}</div></ha-card>`;
   }
@@ -1983,7 +1985,8 @@ class SystemHubPanel extends HTMLElement {
       this._hass
         .callWS({ type: 'update/release_notes', entity_id: u.entity_id })
         .then((text) => {
-          this._mkNotes[key] = shExcerpt(text);
+          // No notes (null) for many devices: nothing shown
+          this._mkNotes[key] = typeof text === 'string' ? shExcerpt(text) : '';
           if (this._tab === 'marketplace') this._render();
         })
         .catch(() => {});
