@@ -131,7 +131,7 @@ DEVICES = [
     {"device_id": "d2", "name": "Garage plug", "manufacturer": "Acme", "model": "P2", "entities": 0, "since": None},
 ]
 
-MINI = "orphan-entities-mini-card"
+MINI = "sh-orphans-mini-card"
 MINI_WIDTH = 400
 SELECTED = ["light.hallway_spot", "sensor.hallway_spot_power"]
 
@@ -181,7 +181,7 @@ def main():
         for shot in SHOTS:
             width = shot.get("width", WIDTH)
             page = open_card_page(browser, shot["file"], shot["theme"], width, HA_ELEMENTS, CARD_JS, now=NOW)
-            card = shot.get("card", "orphan-entities-card")
+            card = shot.get("card", "sh-orphans-card")
             opts = {k: shot[k] for k in ("zoom", "select", "dselect", "confirm", "reason", "open") if k in shot}
             page.evaluate(
                 MOUNT, [mock_hass(shot["hass"], devices=shot.get("devices", ())), shot["theme"] == "dark", card, opts]

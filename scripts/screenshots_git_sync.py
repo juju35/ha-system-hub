@@ -179,27 +179,27 @@ ERROR = ("error", [], "git push failed: Permission denied (publickey).")
 
 # (file, theme, hass, action after mounting, card)
 SHOTS = [
-    ("card-git-sync", "light", DIRTY, "files", "git-sync-card"),
-    ("card-git-sync-dark", "dark", DIRTY, "files", "git-sync-card"),
-    ("card-git-sync-clean", "light", CLEAN, None, "git-sync-card"),
-    ("card-git-sync-clean-dark", "dark", CLEAN, None, "git-sync-card"),
-    ("card-git-sync-error", "light", ERROR, None, "git-sync-card"),
-    ("card-git-sync-error-dark", "dark", ERROR, None, "git-sync-card"),
-    ("card-git-sync-confirm", "light", DIRTY, "confirm", "git-sync-card"),
-    ("card-git-sync-confirm-dark", "dark", DIRTY, "confirm", "git-sync-card"),
-    ("card-git-sync-mini", "light", DIRTY, None, "git-sync-mini-card"),
-    ("card-git-sync-mini-dark", "dark", DIRTY, None, "git-sync-mini-card"),
-    ("card-git-sync-mini-clean", "light", CLEAN, None, "git-sync-mini-card"),
-    ("card-git-sync-mini-clean-dark", "dark", CLEAN, None, "git-sync-mini-card"),
-    ("card-git-sync-mini-error", "light", ERROR, None, "git-sync-mini-card"),
-    ("card-git-sync-mini-error-dark", "dark", ERROR, None, "git-sync-mini-card"),
-    ("card-git-sync-mini-zoomed", "light", DIRTY, "zoom", "git-sync-mini-card"),
-    ("card-git-sync-mini-zoomed-dark", "dark", DIRTY, "zoom", "git-sync-mini-card"),
+    ("card-git-sync", "light", DIRTY, "files", "sh-git-sync-card"),
+    ("card-git-sync-dark", "dark", DIRTY, "files", "sh-git-sync-card"),
+    ("card-git-sync-clean", "light", CLEAN, None, "sh-git-sync-card"),
+    ("card-git-sync-clean-dark", "dark", CLEAN, None, "sh-git-sync-card"),
+    ("card-git-sync-error", "light", ERROR, None, "sh-git-sync-card"),
+    ("card-git-sync-error-dark", "dark", ERROR, None, "sh-git-sync-card"),
+    ("card-git-sync-confirm", "light", DIRTY, "confirm", "sh-git-sync-card"),
+    ("card-git-sync-confirm-dark", "dark", DIRTY, "confirm", "sh-git-sync-card"),
+    ("card-git-sync-mini", "light", DIRTY, None, "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-dark", "dark", DIRTY, None, "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-clean", "light", CLEAN, None, "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-clean-dark", "dark", CLEAN, None, "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-error", "light", ERROR, None, "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-error-dark", "dark", ERROR, None, "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-zoomed", "light", DIRTY, "zoom", "sh-git-sync-mini-card"),
+    ("card-git-sync-mini-zoomed-dark", "dark", DIRTY, "zoom", "sh-git-sync-mini-card"),
     # The full-screen diff viewer: a desktop window, and a phone (full screen, files as chips above the diff).
-    ("card-git-sync-diff", "light", DIRTY, "diff", "git-sync-card"),
-    ("card-git-sync-diff-dark", "dark", DIRTY, "diff", "git-sync-card"),
-    ("card-git-sync-diff-phone", "light", DIRTY, "diff", "git-sync-card"),
-    ("card-git-sync-diff-phone-dark", "dark", DIRTY, "diff", "git-sync-card"),
+    ("card-git-sync-diff", "light", DIRTY, "diff", "sh-git-sync-card"),
+    ("card-git-sync-diff-dark", "dark", DIRTY, "diff", "sh-git-sync-card"),
+    ("card-git-sync-diff-phone", "light", DIRTY, "diff", "sh-git-sync-card"),
+    ("card-git-sync-diff-phone-dark", "dark", DIRTY, "diff", "sh-git-sync-card"),
 ]
 # Viewport of the diff viewer captures (the viewer fills it); other captures are clipped to the card.
 VIEWPORTS = {"card-git-sync-diff": (1000, 640), "card-git-sync-diff-phone": (390, 760)}
@@ -226,7 +226,7 @@ def main():
     with sync_playwright() as p:
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for name, theme, state, action, card in SHOTS:
-            width = MINI_WIDTH if card == "git-sync-mini-card" else WIDTH
+            width = MINI_WIDTH if card == "sh-git-sync-mini-card" else WIDTH
             viewport = VIEWPORTS.get(name.removesuffix("-dark"))
             page = browser.new_page(
                 device_scale_factor=2,

@@ -1,5 +1,16 @@
 # Changelog
 
+## 2.0.0 - 2026-11-12
+
+### Breaking changes
+- **One card and one mini card**: `custom:system-hub-card` and `custom:system-hub-mini-card`, `module:` picking what they show (`status` by default, `system`, `watchdog`, `marketplace` — card only —, `batteries`, `git_sync`, `automations`, `orphans`). The options of each module's card stay the same. The 13 types before 2.0 (`custom:battery-monitor-card`, `custom:integration-watchdog-mini-card`…) no longer exist.
+- **Migration at every start**: the cards of the dashboards edited from the UI are moved to the new type and their module, wherever they are (a view, a section, a stack, a conditional card, a popup), their options kept; each dashboard changed is saved first in `.storage/system_hub.dashboards_backup`. A dashboard written in YAML is not rewritten (its comments would be lost): a repair lists its cards to change, and goes away once none is left.
+- **Device names** in the language of Home Assistant and with the new module names: **System Hub Sentinel**, **Updates**, **Versioning**, **Cleanup** (Containers and Batteries unchanged). The entities of an existing installation keep their IDs; a new installation names them after the device (`sensor.system_hub_sentinel_…`). A device renamed by hand keeps its name.
+
+### New
+- **Status cards**: `system-hub-card` shows the **Status** tab — the emblem, the points to check, the score, each area by group (a click opens its tab in the panel); `groups:` keeps some groups, `hide_ok:` hides what is fine. `system-hub-mini-card` puts it on one line, with a dot per area to look at. They read the status as the panel and the sidebar icon do, so all three agree. Administrators only.
+- **Visual editor**: the module first, then the options of its card.
+
 ## 1.10.0 - 2026-11-12
 
 ### New

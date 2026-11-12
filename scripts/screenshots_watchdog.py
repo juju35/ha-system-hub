@@ -23,8 +23,8 @@ CARD_JS = (ROOT / "custom_components/system_hub/frontend/cards/integration-watch
 ICONS = json.loads((ROOT / "scripts/screenshot-icons-watchdog.json").read_text())
 WIDTH = 460
 MINI_WIDTH = 400
-CARD = "integration-watchdog-card"
-MINI = "integration-watchdog-mini-card"
+CARD = "sh-watchdog-card"
+MINI = "sh-watchdog-mini-card"
 
 # The stand-ins for Home Assistant's elements are those of the panel screenshots, with the card's icons added.
 HA_ELEMENTS = HUB_ELEMENTS + "\nObject.assign(ICONS, " + json.dumps(ICONS) + ");"

@@ -19,7 +19,7 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.util import dt as dt_util
 
 from ..const import DOMAIN, MODULE_GIT_SYNC
-from ..entity import DEVICE_NAMES, SystemHubEntity, unique_id
+from ..entity import SystemHubEntity, unique_id
 from .const import STATUSES
 from .coordinator import GitSyncCoordinator, GitSyncData
 from .git import truncate_files
@@ -37,12 +37,13 @@ class GitSyncEntity(SystemHubEntity):
         super().__init__(coordinator, entry_id, MODULE_GIT_SYNC, key)
         self.coordinator = coordinator
         if repo_id := coordinator.repo_id:
-            # A further repository: its own device ("System Hub Git Sync (folder)") and unique ids, the same
+            # A further repository: its own device ("System Hub Versioning (folder)") and unique ids, the same
             # translation keys as the first one's entities.
             self._attr_unique_id = unique_id(entry_id, f"{MODULE_GIT_SYNC}_{repo_id}", key)
             self._attr_device_info = DeviceInfo(
                 identifiers={(DOMAIN, device_key(entry_id, repo_id))},
-                name=f"{DEVICE_NAMES[MODULE_GIT_SYNC]} ({coordinator.title})",
+                translation_key="git_sync_repository",
+                translation_placeholders={"repository": coordinator.title},
                 manufacturer=self._attr_device_info["manufacturer"],
                 entry_type=self._attr_device_info["entry_type"],
                 configuration_url=self._attr_device_info["configuration_url"],

@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.10.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.0.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -4434,3 +4434,6 @@ var SH_STATUS_METHODS = {
 };
 
 Object.assign(SystemHubPanel.prototype, SH_STATUS_METHODS);
+// For the status cards (system-hub-card.js), which read the panel without showing it
+SystemHubPanel.ICONS = SH_MODULE_ICONS;
+SystemHubPanel.groupOf = shGroupOf;

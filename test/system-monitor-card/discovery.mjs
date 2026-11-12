@@ -529,7 +529,7 @@ const editorFor = (cls, config = {}) => {
 };
 const toggles = (schema) => schema.flatMap((s) => s.schema || [s]).filter((s) => s.selector?.boolean).map((s) => s.name);
 
-for (const [name, card, editorCls, tag] of [["mini", lib.SystemMonitorMiniCard, lib.SystemMonitorMiniCardEditor, "system-monitor-mini-card-editor"]]) {
+for (const [name, card, editorCls, tag] of [["mini", lib.SystemMonitorMiniCard, lib.SystemMonitorMiniCardEditor, "sh-system-mini-card-editor"]]) {
   test(`the ${name} card's visual editor lists a zoom toggle, on by default and kept out of the YAML`, () => {
     const create = lib.document.createElement;
     lib.document.createElement = (t) => ({ tag: t });

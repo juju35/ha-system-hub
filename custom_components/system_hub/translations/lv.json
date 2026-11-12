@@ -512,6 +512,29 @@
       "nothing_to_import": "No Battery Monitor nav ko importēt."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Sargs"
+    },
+    "marketplace": {
+      "name": "System Hub Atjauninājumi"
+    },
+    "batteries": {
+      "name": "System Hub Baterijas"
+    },
+    "git_sync": {
+      "name": "System Hub Versiju pārvaldība"
+    },
+    "orphans": {
+      "name": "System Hub Tīrīšana"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versiju pārvaldība ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Versiju pārvaldība repozitorijs nav ielādēts."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "System Hub kartītes, kas jāmaina failā {path}",
+      "description": "System Hub 2.0 ir viena kartīte un viena mini kartīte; `module:` izvēlas, ko tās rāda. {count} kartītes failā {path} joprojām izmanto tipu, kas vairs nepastāv, un System Hub nepārraksta YAML failus. Mainiet tās šādi (opcijas paliek tās pašas):\n\n{types}\n\nŠis labojums pazudīs nākamajā palaišanā, kad neviena vairs nepaliks."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} neaizsargāti papildinājumi",
         "sc_n_no_mfa": "{n} administratori bez 2FA",
         "sc_n_in_clear": "{n} akreditācijas dati atklātā tekstā",
-        "sc_n_unused": "{n} neizmantoti marķieri"
+        "sc_n_unused": "{n} neizmantoti marķieri",
+        "card_admin_only": "System Hub: tikai administratoriem",
+        "card_module": "Modulis",
+        "card_groups": "Grupas",
+        "card_hide_ok": "Paslēpt to, kas ir kārtībā"
       }
     },
     "battery_type": {

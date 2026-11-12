@@ -512,6 +512,29 @@
       "nothing_to_import": "Niente da importare da Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Sentinella"
+    },
+    "marketplace": {
+      "name": "System Hub Aggiornamenti"
+    },
+    "batteries": {
+      "name": "System Hub Batterie"
+    },
+    "git_sync": {
+      "name": "System Hub Versionamento"
+    },
+    "orphans": {
+      "name": "System Hub Pulizia"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versionamento ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Il repository Versionamento non è caricato."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Schede di System Hub da modificare in {path}",
+      "description": "System Hub 2.0 ha una scheda e una mini scheda; `module:` sceglie cosa mostrano. {count} schede di {path} usano ancora un tipo che non esiste più, e System Hub non riscrive un file YAML. Modificale così (le opzioni restano le stesse):\n\n{types}\n\nQuesta riparazione scompare al riavvio successivo quando non ne resta nessuna."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} componenti non protetti",
         "sc_n_no_mfa": "{n} admin senza 2FA",
         "sc_n_in_clear": "{n} credenziali in chiaro",
-        "sc_n_unused": "{n} token inutilizzati"
+        "sc_n_unused": "{n} token inutilizzati",
+        "card_admin_only": "System Hub: solo per gli amministratori",
+        "card_module": "Modulo",
+        "card_groups": "Gruppi",
+        "card_hide_ok": "Nascondi ciò che va bene"
       }
     },
     "battery_type": {

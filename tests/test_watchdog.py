@@ -43,10 +43,10 @@ from custom_components.system_hub.watchdog.const import (
 
 from .conftest import add_integration
 
-UNAVAILABLE = "sensor.system_hub_watchdog_unavailable_integrations"
-LAST_RELOAD = "sensor.system_hub_watchdog_last_reload"
-LAST_CHECK = "sensor.system_hub_watchdog_last_check"
-BUTTON = "button.system_hub_watchdog_check_now"
+UNAVAILABLE = "sensor.system_hub_sentinel_unavailable_integrations"
+LAST_RELOAD = "sensor.system_hub_sentinel_last_reload"
+LAST_CHECK = "sensor.system_hub_sentinel_last_check"
+BUTTON = "button.system_hub_sentinel_check_now"
 OPTIONS = {
     CONF_SCAN_INTERVAL: 5,
     CONF_GRACE_PERIOD: 15,

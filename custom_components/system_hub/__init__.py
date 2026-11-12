@@ -27,6 +27,7 @@ from .batteries.const import ATTR_BATTERY_TYPE, ATTR_COUNT, ATTR_PATH, SERVICE_E
 from .batteries.export import async_export
 from .batteries.monitor import BatteryMonitor
 from .cards import async_register_cards, async_remove_cards
+from .cards_migration import async_migrate_dashboards
 from .const import (
     CONF_MODULES,
     DOMAIN,
@@ -199,6 +200,11 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
     # The Lovelace cards, on every dashboard once Home Assistant has started (the resources are loaded by then).
     async def _register_cards(_event: Event | None = None) -> None:
         await async_register_cards(hass)
+        # The cards of an old type (before 2.0) moved to system-hub-card, in the dashboards edited from the UI
+        try:
+            await async_migrate_dashboards(hass)
+        except Exception:  # noqa: BLE001 - never block the integration on the dashboards
+            _LOGGER.exception("Could not move the System Hub cards of the dashboards to system-hub-card")
 
     if hass.state is CoreState.running:
         await _register_cards()

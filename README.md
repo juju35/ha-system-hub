@@ -110,7 +110,7 @@ Everything else is set in the panel's **Settings** tab (**System Hub** in the si
 
 A module turned off is not set up: its checks stop, its entities and its device are removed, its actions fail with *The … module is turned off*, and the Watchdog's Repairs issues and notifications are dismissed. Its settings and saved state (the Watchdog's history and reload counts, the Marketplace's last check, the Batteries' low-battery times and spare stock) are kept, so turning it back on picks up where it left off.
 
-Every module has its own device (**System Hub Containers**, **System Hub Watchdog**, **System Hub Marketplace**, **System Hub Batteries**, **System Hub Git Sync**, **System Hub Orphans**) holding its entities.
+Every module has its own device, named in the language of Home Assistant (**System Hub Containers**, **System Hub Sentinel**, **System Hub Updates**, **System Hub Batteries**, **System Hub Versioning**, **System Hub Cleanup** in English) holding its entities. The entity IDs below are those of a new installation in English (`sensor.system_hub_sentinel_…`); they follow the device's name when the entities are created, so an installation made before 2.0 keeps its own (`sensor.system_hub_watchdog_…`, `…_marketplace_…`, `…_git_sync_…`, `…_orphans_…`), and the cards find their entities whatever their IDs.
 
 #### Module settings
 
@@ -203,23 +203,40 @@ On a phone:
 
 ## Lovelace cards
 
-System Hub also serves the cards of the integrations it replaces, with the same card types, so their dashboards keep working once the old card or integration is removed. There is nothing to install: each card is added to **Settings → Dashboards → Resources** by itself (`/system_hub_static/cards/<card>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, the cards are loaded on every page instead. Remove the old card's resource (or uninstall it) after the move.
+System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. In the visual editor, pick the module first, then its options.
 
-| Card | Types | Replaces |
-|---|---|---|
-| [System Monitor](#system-monitor-cards) | `custom:system-monitor-card`, `custom:system-monitor-mini-card` | [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card) |
-| [Watchdog](#watchdog-card) | `custom:integration-watchdog-card`, `custom:integration-watchdog-mini-card` | [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog)'s cards |
-| [Marketplace Refresh](#marketplace-refresh-card) | `custom:marketplace-refresh-card` | [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh)'s card |
-| [Battery Monitor](#battery-monitor-card) | `custom:battery-monitor-card`, `custom:battery-monitor-mini-card` | [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor)'s cards |
-| [Git Sync](#git-sync-card) | `custom:git-sync-card`, `custom:git-sync-mini-card` | [ha-git-sync](https://github.com/juju35/ha-git-sync)'s cards |
-| [Orphan Entities](#cards) | `custom:orphan-entities-card`, `custom:orphan-entities-mini-card` | [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities)'s cards |
-| [Automation Monitor](#automation-monitor-cards) | `custom:automation-monitor-card`, `custom:automation-monitor-mini-card` | [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) |
+| `module:` | `system-hub-card` | `system-hub-mini-card` | Formerly |
+|---|---|---|---|
+| `status` (default) | [The Status tab at a glance](#status-cards) | [On one line](#status-cards) | — |
+| `system` | [System Monitor](#system-monitor-cards) | ✓ | `system-monitor-card`, [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card) |
+| `watchdog` | [Sentinel](#watchdog-card) | ✓ | `integration-watchdog-card`, [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog) |
+| `marketplace` | [Updates](#marketplace-refresh-card) | — | `marketplace-refresh-card`, [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh) |
+| `batteries` | [Batteries](#battery-monitor-card) | ✓ | `battery-monitor-card`, [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor) |
+| `git_sync` | [Versioning](#git-sync-card) | ✓ | `git-sync-card`, [ha-git-sync](https://github.com/juju35/ha-git-sync) |
+| `automations` | [Automations](#automation-monitor-cards) | ✓ | `automation-monitor-card`, [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) |
+| `orphans` | [Cleanup](#cards) | ✓ | `orphan-entities-card`, [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) |
+
+**From 1.x**: the card types before 2.0 (`custom:system-hub-card` (`module: batteries`), `custom:system-hub-mini-card` (`module: watchdog`)…) no longer exist. At every start, System Hub moves the cards of the dashboards edited from the UI to the new type and its module, wherever they are (a view, a section, a stack, a conditional card, a popup), their options kept; each dashboard is saved first in `.storage/system_hub.dashboards_backup`. A dashboard written in YAML is not rewritten: a repair in **Settings → Repairs** lists its cards to change, and goes away once none is left.
+
+## Status cards
+
+`module: status` (the default) shows the **Status** tab of the panel: the emblem in the colour of the status, the points to check and the score, then each area by group with its level and details; a click on an area opens its tab in the panel. The mini card puts it on one line: the emblem, the points to check, the details of the first areas to look at and a dot per area. They read the status as the panel does (its own code, without showing it), every 30 seconds, so the cards, the panel and the sidebar icon always agree. Administrators only, as the panel.
+
+```yaml
+type: custom:system-hub-card
+groups: [system, reliability]   # optional: only these groups (system, reliability, maintenance, devices)
+hide_ok: true                     # optional: hide the areas that are fine
+```
+
+| `system-hub-card` | `system-hub-mini-card` |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status.png" alt="system-hub-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini.png" alt="system-hub-mini-card, status" width="400"> |
 
 ## System Monitor cards
 
 System Hub ships two Lovelace cards to monitor the machine running Home Assistant itself — CPU, RAM, disk, temperature, network, storage, backups and processes at a glance: the full **System Monitor Card** and the compact **System Monitor Mini Card** (formerly [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card)).
 
-There is nothing to install: System Hub adds the cards to **Settings → Dashboards → Resources** by itself (`/system_hub_static/cards/system-monitor-card.js`, with the version in its URL so that an update is fetched again), and removes them when the integration is removed. With the dashboard resources in YAML mode, the cards are loaded on every page instead. If you used the separate card before, remove its resource (or uninstall it): the custom element names are the same (`custom:system-monitor-card`, `custom:system-monitor-mini-card`), so your dashboards keep working unchanged.
+There is nothing to install: System Hub adds the cards to **Settings → Dashboards → Resources** by itself (with the version in its URL so that an update is fetched again), and removes them when the integration is removed. With the dashboard resources in YAML mode, the cards are loaded on every page instead. They are `custom:system-hub-card` and `custom:system-hub-mini-card` with `module: system`; if you used the separate card before, remove its resource (or uninstall it): System Hub moves its cards to the new type at its next start (see [Lovelace cards](#lovelace-cards)).
 
 The cards are built on top of the core [System Monitor integration](https://www.home-assistant.io/integrations/systemmonitor/): entities are **discovered automatically**, you don't have to pick them one by one, and it works whatever the language of your installation.
 
@@ -280,17 +297,20 @@ Edit a dashboard, click **Add card** and search for **System Monitor Card** or *
 #### Minimal
 
 ```yaml
-type: custom:system-monitor-card
+type: custom:system-hub-card
+module: system
 ```
 
 ```yaml
-type: custom:system-monitor-mini-card
+type: custom:system-hub-mini-card
+module: system
 ```
 
 #### Full options
 
 ```yaml
-type: custom:system-monitor-card
+type: custom:system-hub-card
+module: system
 title: My Home Assistant
 show_system: true
 show_network: true
@@ -326,7 +346,8 @@ entities:
 ```
 
 ```yaml
-type: custom:system-monitor-mini-card
+type: custom:system-hub-mini-card
+module: system
 title: My Home Assistant
 show_storage: true
 show_network: true
@@ -570,11 +591,11 @@ Opening the issue offers **Try again**: submitting it forgets the reloads of the
 
 | Entity | Description |
 |---|---|
-| `button.system_hub_watchdog_check_now` | Runs a check now. Unavailable while one is running |
-| `sensor.system_hub_watchdog_unavailable_integrations` | Number of integrations whose entities are all unavailable. Attributes: `integrations` (list of `domain`, `title`, `entry_id`, `since`, `reloads`, `gave_up`), `ignored`, `max_reloads`, `paused` (the pause entity is on) |
-| `sensor.system_hub_watchdog_last_reload` | Time of the last reload. Attributes: `domain`, `title`, `entry_id`, `success`, `reloads` (since Home Assistant started), `history` (the last 20 reloads, power cycles and give-ups, newest first: `kind` = `reloaded` / `reload_failed` / `gave_up` / `power_cycled` / `power_cycle_failed` / `power_cycle_gave_up`, `at`, `domain`, `title`, `entry_id`, `attempt`, `max_reloads`, `unavailable_since`, plus `device_id`, `switch` and `switch_name` for a power cycle, whose `title` is the device name and `entry_id` / `domain` those of its integration; kept across restarts, not recorded in the database) |
-| `sensor.system_hub_watchdog_last_check` | End of the last check |
-| `sensor.system_hub_watchdog_reloads_in_24_h` | Reloads and failed reloads of the last 24 hours (from the history). Attributes: `failed`, `integrations` (count per integration) |
+| `button.system_hub_sentinel_check_now` | Runs a check now. Unavailable while one is running |
+| `sensor.system_hub_sentinel_unavailable_integrations` | Number of integrations whose entities are all unavailable. Attributes: `integrations` (list of `domain`, `title`, `entry_id`, `since`, `reloads`, `gave_up`), `ignored`, `max_reloads`, `paused` (the pause entity is on) |
+| `sensor.system_hub_sentinel_last_reload` | Time of the last reload. Attributes: `domain`, `title`, `entry_id`, `success`, `reloads` (since Home Assistant started), `history` (the last 20 reloads, power cycles and give-ups, newest first: `kind` = `reloaded` / `reload_failed` / `gave_up` / `power_cycled` / `power_cycle_failed` / `power_cycle_gave_up`, `at`, `domain`, `title`, `entry_id`, `attempt`, `max_reloads`, `unavailable_since`, plus `device_id`, `switch` and `switch_name` for a power cycle, whose `title` is the device name and `entry_id` / `domain` those of its integration; kept across restarts, not recorded in the database) |
+| `sensor.system_hub_sentinel_last_check` | End of the last check |
+| `sensor.system_hub_sentinel_reloads_in_24_h` | Reloads and failed reloads of the last 24 hours (from the history). Attributes: `failed`, `integrations` (count per integration) |
 
 #### Action `system_hub.watchdog_check`
 
@@ -619,7 +640,7 @@ triggers:
 actions:
   - action: logbook.log
     data:
-      name: System Hub Watchdog
+      name: System Hub Sentinel
       message: >
         reloaded {{ trigger.event.data.title }} ({{ trigger.event.data.domain }}),
         attempt {{ trigger.event.data.attempt }}/{{ trigger.event.data.max_reloads }}
@@ -642,7 +663,8 @@ actions:
 System Hub serves the **Watchdog Card** (ported from Integration Watchdog) with its other cards: no separate install. It keeps the card types of Integration Watchdog, so dashboards that used them keep working once Integration Watchdog is removed (a card still pointing at its old sensor finds System Hub's on its own). Add it from the card picker (**Watchdog Card (System Hub)**), or:
 
 ```yaml
-type: custom:integration-watchdog-card
+type: custom:system-hub-card
+module: watchdog
 ```
 
 | Unavailable integrations | Everything available |
@@ -657,7 +679,7 @@ type: custom:integration-watchdog-card
 - For an administrator, a row opens the integration's page in **Settings** on its entry, to reload it by hand or read its logs (other users can't open Settings, so their rows are not clickable). Integration logos come from the Home Assistant brands
 - For an administrator, an integration given up gets a **Try again** button next to its row: it runs the `system_hub.watchdog_reset` action (start over and reload now)
 
-It reads the Watchdog module's entities (`sensor.system_hub_watchdog_unavailable_integrations`, `sensor.system_hub_watchdog_last_reload`, `sensor.system_hub_watchdog_last_check`, `button.system_hub_watchdog_check_now`), found by their translation keys, so renamed entities are still found. Every option is in the visual editor:
+It reads the Watchdog module's entities (`sensor.system_hub_sentinel_unavailable_integrations`, `sensor.system_hub_sentinel_last_reload`, `sensor.system_hub_sentinel_last_check`, `button.system_hub_sentinel_check_now`), found by their translation keys, so renamed entities are still found. Every option is in the visual editor:
 
 | Option | Default | Description |
 |---|---|---|
@@ -673,10 +695,11 @@ It reads the Watchdog module's entities (`sensor.system_hub_watchdog_unavailable
 
 #### Watchdog mini card
 
-`custom:integration-watchdog-mini-card` shows the essentials on two lines, for a compact dashboard: the icon, title, **Check now** button and status, then a chip per unavailable integration (*Hue Bridge · 1/3 reloads*, *Zigbee · Given up*), or the last reload while everything is available, and the time of the last check. Search for **Watchdog Mini Card (System Hub)** when adding a card, or in YAML:
+`custom:system-hub-mini-card` (`module: watchdog`) shows the essentials on two lines, for a compact dashboard: the icon, title, **Check now** button and status, then a chip per unavailable integration (*Hue Bridge · 1/3 reloads*, *Zigbee · Given up*), or the last reload while everything is available, and the time of the last check. Search for **Watchdog Mini Card (System Hub)** when adding a card, or in YAML:
 
 ```yaml
-type: custom:integration-watchdog-mini-card
+type: custom:system-hub-mini-card
+module: watchdog
 ```
 
 | Unavailable integrations | Everything available | Zoomed in |
@@ -707,9 +730,9 @@ The screenshots are made by `python scripts/screenshots_watchdog.py`.
 
 | Entity | Description |
 |---|---|
-| `button.system_hub_marketplace_check_for_updates` | Starts a check. Unavailable while one is running |
-| `sensor.system_hub_marketplace_status` | `idle`, `running` or `error`. Attributes: `done`, `total`, `updates`, `failed` (list of `owner/repo`), `not_checked` (`owner/repo` of the repositories added from a link that the last check couldn't check because no GitHub account is connected to the Marketplace), `error`, `checking` (update entities being checked by `marketplace_check_repository`), `installing` (update entities left to install, the current one first), `install_failed` (`title: error` of the updates that couldn't be installed), `github_connected` (whether a GitHub account was connected to the Marketplace at the last check), `rate_limit_remaining` and `rate_limit_reset` (GitHub requests left and when the limit resets, as read at the last check; empty without a GitHub account) |
-| `sensor.system_hub_marketplace_last_check` | End of the last check. Attributes: `scan_interval` (hours, `0` = automatic check off), `next_check` (when the next automatic check is due, within the hour after a failed or skipped one, kept across restarts; `null` when it is off) |
+| `button.system_hub_updates_check_for_updates` | Starts a check. Unavailable while one is running |
+| `sensor.system_hub_updates_status` | `idle`, `running` or `error`. Attributes: `done`, `total`, `updates`, `failed` (list of `owner/repo`), `not_checked` (`owner/repo` of the repositories added from a link that the last check couldn't check because no GitHub account is connected to the Marketplace), `error`, `checking` (update entities being checked by `marketplace_check_repository`), `installing` (update entities left to install, the current one first), `install_failed` (`title: error` of the updates that couldn't be installed), `github_connected` (whether a GitHub account was connected to the Marketplace at the last check), `rate_limit_remaining` and `rate_limit_reset` (GitHub requests left and when the limit resets, as read at the last check; empty without a GitHub account) |
+| `sensor.system_hub_updates_last_check` | End of the last check. Attributes: `scan_interval` (hours, `0` = automatic check off), `next_check` (when the next automatic check is due, within the hour after a failed or skipped one, kept across restarts; `null` when it is off) |
 
 #### Action `system_hub.marketplace_check_updates`
 
@@ -728,10 +751,10 @@ actions:
     data:
       wait: true
   - condition: template
-    value_template: "{{ state_attr('sensor.system_hub_marketplace_status', 'updates') | int(0) > 0 }}"
+    value_template: "{{ state_attr('sensor.system_hub_updates_status', 'updates') | int(0) > 0 }}"
   - action: notify.mobile_app_phone
     data:
-      message: "{{ state_attr('sensor.system_hub_marketplace_status', 'updates') }} Marketplace update(s) available"
+      message: "{{ state_attr('sensor.system_hub_updates_status', 'updates') }} Marketplace update(s) available"
 ```
 
 #### Action `system_hub.marketplace_check_repository`
@@ -793,7 +816,8 @@ actions:
 The card of System Hub's **Marketplace** module, ported from [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh): same element name, options and look, so a dashboard keeps working once the module replaces the old integration. System Hub serves it with its other cards: no separate install. Add it from the card picker, or:
 
 ```yaml
-type: custom:marketplace-refresh-card
+type: custom:system-hub-card
+module: marketplace
 ```
 
 | Updates available | Checking | Installing | Up to date |
@@ -813,7 +837,7 @@ Every option is in the visual editor:
 
 | Option | Default | Description |
 |---|---|---|
-| `entity` | found automatically | The Marketplace **Status** sensor (`sensor.system_hub_marketplace_status`); its **Last check** sensor or **Check for updates** button lead to it, and an entity that no longer exists (from the old integration, say) falls back to it |
+| `entity` | found automatically | The Marketplace **Status** sensor (`sensor.system_hub_updates_status`); its **Last check** sensor or **Check for updates** button lead to it, and an entity that no longer exists (from the old integration, say) falls back to it |
 | `title` | Marketplace updates | Card title |
 | `show_updates` | `true` | Updates available |
 | `show_failed` | `true` | Repositories that couldn't be checked, and the error of a failed check |
@@ -824,7 +848,7 @@ Every option is in the visual editor:
 
 #### Entities and actions used
 
-The card reads the Marketplace module's sensors, told apart by their translation key (`marketplace_status`, `marketplace_last_check`, button `marketplace_check_updates`) so renamed entity IDs keep working, and only System Hub's (the other modules have a status too), plus the Marketplace's own update entities. **Check for updates** presses `button.system_hub_marketplace_check_updates`; **Update all** calls `system_hub.marketplace_install_updates` with the update entities listed.
+The card reads the Marketplace module's sensors, told apart by their translation key (`marketplace_status`, `marketplace_last_check`, button `marketplace_check_updates`) so renamed entity IDs keep working, and only System Hub's (the other modules have a status too), plus the Marketplace's own update entities. **Check for updates** presses `button.system_hub_updates_check_updates`; **Update all** calls `system_hub.marketplace_install_updates` with the update entities listed.
 
 Screenshots: `python scripts/screenshots_marketplace.py` (mock data, frozen clock; repository pictures are not fetched).
 
@@ -943,12 +967,13 @@ Once a day (and at start), the drain of each level battery is measured on its re
 
 ### Battery Monitor card
 
-The **Battery Monitor Card** and **Battery Monitor Mini Card**, served by System Hub for its Batteries module. The card types are those of Battery Monitor (`custom:battery-monitor-card`, `custom:battery-monitor-mini-card`), so dashboards made with it keep working once Battery Monitor is removed.
+The **Battery Monitor Card** and **Battery Monitor Mini Card**, served by System Hub for its Batteries module. They are `custom:system-hub-card` and `custom:system-hub-mini-card` with `module: batteries`; the cards of Battery Monitor are moved to them at System Hub's next start.
 
 Add it from the dashboard (**Add card → Battery Monitor Card**) or in YAML:
 
 ```yaml
-type: custom:battery-monitor-card
+type: custom:system-hub-card
+module: batteries
 ```
 
 | Option | Default | Description |
@@ -973,7 +998,8 @@ Tap a battery to open its details.
 A compact card for a half-width column: the header with its status and **Notify now** button, and only the batteries needing attention. The detail button (top right) shows the full card; a click outside brings the compact view back. Same options and editor:
 
 ```yaml
-type: custom:battery-monitor-mini-card
+type: custom:system-hub-mini-card
+module: batteries
 ```
 
 #### Full screen
@@ -985,7 +1011,8 @@ The **full screen** button shows every battery grouped **by room**, **by battery
 System Hub already gives each battery its type: the one set in panel's **Settings → Batteries ⚙ → Battery types** (per battery or per device model), otherwise [Battery Notes](https://github.com/andrew-codechimp/HA-Battery-Notes). The types set in the card editor (**Battery types by model**, **Battery types by battery**) still apply on top, for that card only; **Settings → Batteries ⚙ → Import from Battery Monitor** brings those of existing cards into System Hub. `2× AA` (or `2x AA`, `AA x2`) counts two batteries; batteries without a type are grouped under **Unknown type**.
 
 ```yaml
-type: custom:battery-monitor-card
+type: custom:system-hub-card
+module: batteries
 battery_models:
   Hue dimmer switch: CR2450
 battery_types:
@@ -1038,7 +1065,7 @@ While some failures are left out, **Clear all** clears only the failures listed,
 
 ### Automation Monitor cards
 
-Two Lovelace cards for the same integration, served by System Hub (formerly [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card)): the full **Automation Monitor Card** (`custom:automation-monitor-card`) and the compact **Automation Monitor Mini Card** (`custom:automation-monitor-mini-card`). They work with or without the Automations module: the sensors of Automation Monitor are found by the entity registry, whatever their language or entity ids.
+Two Lovelace cards for the same integration, served by System Hub (formerly [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card)): the full **Automation Monitor Card** (`custom:system-hub-card` (`module: automations`)) and the compact **Automation Monitor Mini Card** (`custom:system-hub-mini-card` (`module: automations`)). They work with or without the Automations module: the sensors of Automation Monitor are found by the entity registry, whatever their language or entity ids.
 
 - Overall status: all good, the number of problems, or "Sensor unavailable" when a sensor of the integration cannot be read
 - Counters of failed automations and unavailable linked entities; a list is only shown when it has something to show
@@ -1049,7 +1076,8 @@ Two Lovelace cards for the same integration, served by System Hub (formerly [ha-
 - Visual editor for both cards
 
 ```yaml
-type: custom:automation-monitor-card
+type: custom:system-hub-card
+module: automations
 ```
 
 | Option | Card | Default | Description |
@@ -1087,7 +1115,7 @@ Turning the module on (in the setup or with its switch in the panel's **Settings
 
 #### Several repositories
 
-**Settings → Versioning ⚙ → Add a repository** adds another one (an ESPHome folder, a `/share` folder…), checked the same way; **Another repository** sets one of them (its repository settings, then its options: schedule, export, notifications…, its own as an entry of the former integration had them), **Remove repositories** removes some. Each further repository has its own device, **System Hub Git Sync (folder)**, with the same entities named after its folder (`sensor.system_hub_git_sync_esphome_status`…), its own repairs and its own saved state; the first repository keeps the module's entities. Turned on next to the former Git Sync integration, the module takes over every one of its repositories: the configuration folder's first, the others as further repositories.
+**Settings → Versioning ⚙ → Add a repository** adds another one (an ESPHome folder, a `/share` folder…), checked the same way; **Another repository** sets one of them (its repository settings, then its options: schedule, export, notifications…, its own as an entry of the former integration had them), **Remove repositories** removes some. Each further repository has its own device, **System Hub Git Sync (folder)**, with the same entities named after its folder (`sensor.system_hub_versioning_esphome_status`…), its own repairs and its own saved state; the first repository keeps the module's entities. Turned on next to the former Git Sync integration, the module takes over every one of its repositories: the configuration folder's first, the others as further repositories.
 
 In the panel, the **Git Sync** tab shows one repository at a time, with a chip per repository; the **Status** tab shows the one most in need of action. The [card](#git-sync-card) shows the repository of the sensor it is given (`entity`), the first one by default.
 
@@ -1169,14 +1197,14 @@ Prerequisites:
 
 | Entity | Description |
 |---|---|
-| `sensor.system_hub_git_sync_status` | `clean`, `dirty`, `ahead` (committed, push pending, or a branch never pushed), `behind` (the remote has commits that are not here: the next commit pulls them first), `diverged` (both sides have commits: nothing is pushed until it is resolved, see [Repairs](#repairs)) or `error` (last push failed; retried by the automatic commit). Attributes: `repository` (its path), `branch`, `upstream`, `remote_url` (without the user or token of an HTTPS remote), `ahead`, `behind`, `changed_count`, `changed_files` (first 50), `last_error`, `ai_task` |
-| `sensor.system_hub_git_sync_changed_files` | Number of changed files |
-| `sensor.system_hub_git_sync_last_commit` | Time of the HEAD commit. Attributes: `message`, `sha`, `short_sha` |
-| `sensor.system_hub_git_sync_last_push` | Time of the last push made by the module. Attribute: `message` |
-| `sensor.system_hub_git_sync_last_export` | Time of the last dashboard export. Attribute: `files` |
-| `sensor.system_hub_git_sync_branch` | Current branch (diagnostic) |
-| `button.system_hub_git_sync_commit_and_push` | Commit and push now |
-| `button.system_hub_git_sync_export_dashboards` | Export the dashboards now |
+| `sensor.system_hub_versioning_status` | `clean`, `dirty`, `ahead` (committed, push pending, or a branch never pushed), `behind` (the remote has commits that are not here: the next commit pulls them first), `diverged` (both sides have commits: nothing is pushed until it is resolved, see [Repairs](#repairs)) or `error` (last push failed; retried by the automatic commit). Attributes: `repository` (its path), `branch`, `upstream`, `remote_url` (without the user or token of an HTTPS remote), `ahead`, `behind`, `changed_count`, `changed_files` (first 50), `last_error`, `ai_task` |
+| `sensor.system_hub_versioning_changed_files` | Number of changed files |
+| `sensor.system_hub_versioning_last_commit` | Time of the HEAD commit. Attributes: `message`, `sha`, `short_sha` |
+| `sensor.system_hub_versioning_last_push` | Time of the last push made by the module. Attribute: `message` |
+| `sensor.system_hub_versioning_last_export` | Time of the last dashboard export. Attribute: `files` |
+| `sensor.system_hub_versioning_branch` | Current branch (diagnostic) |
+| `button.system_hub_versioning_commit_and_push` | Commit and push now |
+| `button.system_hub_versioning_export_dashboards` | Export the dashboards now |
 
 #### Action `system_hub.git_sync_commit_push`
 
@@ -1275,10 +1303,11 @@ The module raises these issues in **Settings → System → Repairs**:
 
 ### Git Sync card
 
-The card of System Hub's **Git Sync** module, ported from [ha-git-sync](https://github.com/juju35/ha-git-sync): same element names, options and look, so a dashboard keeps working once the module replaces the old integration. System Hub serves it with its other cards: no separate install. Add it from the card picker, or:
+The card of System Hub's **Git Sync** module, ported from [ha-git-sync](https://github.com/juju35/ha-git-sync): same options and look (`custom:system-hub-card` with `module: git_sync`); the cards of the old integration are moved to it at System Hub's next start. System Hub serves it with its other cards: no separate install. Add it from the card picker, or:
 
 ```yaml
-type: custom:git-sync-card
+type: custom:system-hub-card
+module: git_sync
 ```
 
 | Changes pending | Up to date |
@@ -1313,7 +1342,7 @@ Every option is in the visual editor:
 
 | Option | Default | Description |
 |---|---|---|
-| `entity` | found automatically | The Git Sync **Status** sensor (`sensor.system_hub_git_sync_status`); any other Git Sync entity leads to it, and an entity that isn't one (from the old integration, say) falls back to it |
+| `entity` | found automatically | The Git Sync **Status** sensor (`sensor.system_hub_versioning_status`); any other Git Sync entity leads to it, and an entity that isn't one (from the old integration, say) falls back to it |
 | `title` | Git Sync | Card title |
 | `show_files` | `true` | Collapsible list of the changed files |
 | `show_export` | `true` | Last export and the **Export dashboards** button |
@@ -1324,7 +1353,8 @@ Every option is in the visual editor:
 A compact version for a 6-column slot: status, branch, last commit on one line, number of changed files, last push and **Commit & push** as an icon button (plus **Pull** when the remote has new commits; administrators only). The zoom button at the top right switches it to the full card (same options) and back; a click anywhere else brings back the compact view.
 
 ```yaml
-type: custom:git-sync-mini-card
+type: custom:system-hub-mini-card
+module: git_sync
 ```
 
 | Changes pending | Up to date | Push failed |
@@ -1377,7 +1407,7 @@ The **Orphans** tab: a counter per reason (a click filters on it), the orphan de
 
 ### Cards
 
-The Orphan Entities card and mini card are served by System Hub (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and use the Orphans module's entities and actions.
+The Orphan Entities card and mini card are served by System Hub (`custom:system-hub-card` (`module: orphans`), `custom:system-hub-mini-card` (`module: orphans`)) and use the Orphans module's entities and actions.
 
 | Card | Light | Dark |
 |---|---|---|
@@ -1396,9 +1426,9 @@ The Orphan Entities card and mini card are served by System Hub (`custom:orphan-
 
 | Entity | Description |
 |---|---|
-| `sensor.system_hub_orphans_orphaned_entities` | Number of orphaned entities; attributes `entities` (each with `entity_id`, `name`, `platform`, `reason`, `since`, `entry_title`, `device`, `disabled`, `used_by`), `devices`, `counts` by reason, `removed`, `truncated` and `devices_truncated` (the attributes list at most 250 of each), `next_scan`, the ignored integrations and entities |
-| `sensor.system_hub_orphans_last_scan` | End of the last scan |
-| `button.system_hub_orphans_scan_now` | Scans now, even within the grace period |
+| `sensor.system_hub_cleanup_orphaned_entities` | Number of orphaned entities; attributes `entities` (each with `entity_id`, `name`, `platform`, `reason`, `since`, `entry_title`, `device`, `disabled`, `used_by`), `devices`, `counts` by reason, `removed`, `truncated` and `devices_truncated` (the attributes list at most 250 of each), `next_scan`, the ignored integrations and entities |
+| `sensor.system_hub_cleanup_last_scan` | End of the last scan |
+| `button.system_hub_cleanup_scan_now` | Scans now, even within the grace period |
 
 #### Action `system_hub.orphans_scan`
 
@@ -1440,21 +1470,21 @@ A module turned on for the first time takes over the settings of the integration
 |---|---|
 | `integration_watchdog.check` / `.reset` | `system_hub.watchdog_check` / `.watchdog_reset` |
 | `integration_watchdog_reloaded` / `_power_cycled` events | `system_hub_integration_reloaded` / `system_hub_device_power_cycled` |
-| `sensor.integration_watchdog_*`, `button.integration_watchdog_check_now` | `sensor.system_hub_watchdog_*`, `button.system_hub_watchdog_check_now` |
+| `sensor.integration_watchdog_*`, `button.integration_watchdog_check_now` | `sensor.system_hub_sentinel_*`, `button.system_hub_sentinel_check_now` |
 | `marketplace_refresh.check_updates` / `.check_repository` / `.install_updates` | `system_hub.marketplace_check_updates` / `.marketplace_check_repository` / `.marketplace_install_updates` |
 | `marketplace_refresh_updates_found` event | `system_hub_marketplace_updates_found` |
-| `sensor.marketplace_refresh_*`, `button.marketplace_refresh_check_for_updates` | `sensor.system_hub_marketplace_*`, `button.system_hub_marketplace_check_for_updates` |
+| `sensor.marketplace_refresh_*`, `button.marketplace_refresh_check_for_updates` | `sensor.system_hub_updates_*`, `button.system_hub_updates_check_for_updates` |
 | `battery_monitor.notify` / `.set_stock` / `.export` | `system_hub.batteries_notify` / `.batteries_set_stock` / `.batteries_export` |
 | `battery_monitor_low` / `_replaced` events | `system_hub_battery_low` / `system_hub_battery_replaced` |
 | `sensor.battery_monitor_*`, `button.battery_monitor_notify_now` | `sensor.system_hub_batteries_*`, `button.system_hub_batteries_notify_now` |
 | `git_sync.commit_push` / `.pull` / `.generate_message` / `.get_diff` / `.export_dashboards` / `.generate_ssh_key` | `system_hub.git_sync_commit_push` / `.git_sync_pull` / … (`repository`, a path or id, instead of `config_entry_id`; the first repository's result at the top of the response, and `results` with several repositories) |
 | `git_sync_committed` / `git_sync_exported` events | `system_hub_git_committed` / `system_hub_dashboards_exported` |
-| `sensor.git_sync_<repo>_*`, `button.git_sync_<repo>_*` | `sensor.system_hub_git_sync_*`, `button.system_hub_git_sync_*` |
+| `sensor.git_sync_<repo>_*`, `button.git_sync_<repo>_*` | `sensor.system_hub_versioning_*`, `button.system_hub_versioning_*` |
 | `orphan_entities.scan` / `.remove` / `.remove_devices` / `.ignore` | `system_hub.orphans_scan` / `.orphans_remove` / `.orphans_remove_devices` / `.orphans_ignore` |
 | `orphan_entities_removed` / `_devices_removed` events | `system_hub_orphans_removed` / `system_hub_orphans_devices_removed` |
-| `sensor.orphan_entities_*`, `button.orphan_entities_scan_now` | `sensor.system_hub_orphans_*`, `button.system_hub_orphans_scan_now` |
+| `sensor.orphan_entities_*`, `button.orphan_entities_scan_now` | `sensor.system_hub_cleanup_*`, `button.system_hub_cleanup_scan_now` |
 
-[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards keep their names (`custom:orphan-entities-card`, `custom:orphan-entities-mini-card`) and are now served by System Hub; once Orphan Entities is removed, point a card's `entity` (if set) to `sensor.system_hub_orphans_orphaned_entities`. Its ignored integrations and entities are taken over when the Orphans module is turned on.
+[ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards are now `custom:system-hub-card` and `custom:system-hub-mini-card` with `module: orphans`, moved at System Hub's next start; once Orphan Entities is removed, point a card's `entity` (if set) to the Cleanup module's *Orphaned entities* sensor. Its ignored integrations and entities are taken over when the Orphans module is turned on.
 
 ## Translations
 

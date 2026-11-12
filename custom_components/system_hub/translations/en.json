@@ -512,6 +512,29 @@
       "nothing_to_import": "Nothing to import from Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Sentinel"
+    },
+    "marketplace": {
+      "name": "System Hub Updates"
+    },
+    "batteries": {
+      "name": "System Hub Batteries"
+    },
+    "git_sync": {
+      "name": "System Hub Versioning"
+    },
+    "orphans": {
+      "name": "System Hub Cleanup"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versioning ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "The Versioning repository is not loaded."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "System Hub cards to change in {path}",
+      "description": "System Hub 2.0 has one card and one mini card, `module:` picking what they show. {count} cards of {path} still use a type that no longer exists, and System Hub does not rewrite a YAML file. Change them as follows (the options stay the same):\n\n{types}\n\nThis repair goes away at the next start once none is left."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} add-ons not protected",
         "sc_n_no_mfa": "{n} admins without 2FA",
         "sc_n_in_clear": "{n} credentials in clear",
-        "sc_n_unused": "{n} unused tokens"
+        "sc_n_unused": "{n} unused tokens",
+        "card_admin_only": "System Hub: for administrators only",
+        "card_module": "Module",
+        "card_groups": "Groups",
+        "card_hide_ok": "Hide what is fine"
       }
     },
     "battery_type": {

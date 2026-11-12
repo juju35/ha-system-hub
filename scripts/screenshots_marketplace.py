@@ -94,7 +94,7 @@ SHOTS = [
 
 
 MOUNT = """([hass, dark]) => {
-    const el = document.createElement("marketplace-refresh-card");
+    const el = document.createElement("sh-marketplace-card");
     el.setConfig({ type: "custom:marketplace-refresh-card" });
     el.hass = { ...hass, themes: { darkMode: dark }, callService: async () => {} };
     document.getElementById("root").appendChild(el);

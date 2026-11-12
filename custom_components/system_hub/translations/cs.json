@@ -512,6 +512,29 @@
       "nothing_to_import": "Z Battery Monitor není co importovat."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Strážce"
+    },
+    "marketplace": {
+      "name": "System Hub Aktualizace"
+    },
+    "batteries": {
+      "name": "System Hub Baterie"
+    },
+    "git_sync": {
+      "name": "System Hub Verzování"
+    },
+    "orphans": {
+      "name": "System Hub Úklid"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Verzování ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Repozitář Verzování není načten."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Karty System Hub ke změně v {path}",
+      "description": "System Hub 2.0 má jednu kartu a jednu mini kartu; `module:` vybírá, co zobrazují. {count} karet v {path} stále používá typ, který už neexistuje, a System Hub nepřepisuje soubory YAML. Změňte je takto (možnosti zůstávají stejné):\n\n{types}\n\nTato oprava zmizí při dalším spuštění, až žádná nezůstane."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} nechráněných doplňků",
         "sc_n_no_mfa": "{n} adminů bez 2FA",
         "sc_n_in_clear": "{n} údajů v čistém textu",
-        "sc_n_unused": "{n} nepoužívaných tokenů"
+        "sc_n_unused": "{n} nepoužívaných tokenů",
+        "card_admin_only": "System Hub: jen pro správce",
+        "card_module": "Modul",
+        "card_groups": "Skupiny",
+        "card_hide_ok": "Skrýt, co je v pořádku"
       }
     },
     "battery_type": {

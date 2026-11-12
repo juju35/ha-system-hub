@@ -168,8 +168,8 @@ SHOTS = [
     {"file": "card-batteries-low", "theme": "light", "config": {"only_low": True}},
     {"file": "card-batteries-low-dark", "theme": "dark", "config": {"only_low": True}},
     # The mini card, compact: the status and the batteries needing attention.
-    {"file": "card-batteries-mini", "theme": "light", "config": {}, "tag": "battery-monitor-mini-card"},
-    {"file": "card-batteries-mini-dark", "theme": "dark", "config": {}, "tag": "battery-monitor-mini-card"},
+    {"file": "card-batteries-mini", "theme": "light", "config": {}, "tag": "sh-batteries-mini-card"},
+    {"file": "card-batteries-mini-dark", "theme": "dark", "config": {}, "tag": "sh-batteries-mini-card"},
 ]
 
 # The full screen view: on a desktop by room and by type, on a phone by room and by type (light and dark). The viewport is the size of
@@ -229,7 +229,7 @@ def open_card(browser, shot, config, viewport, view=None):
     page.set_content(page_html(shot["theme"]))
     page.add_script_tag(content=HA_ELEMENTS)
     page.add_script_tag(content=CARD_JS)
-    page.evaluate(MOUNT, [mock_hass(), config, view, shot.get("tag", "battery-monitor-card")])
+    page.evaluate(MOUNT, [mock_hass(), config, view, shot.get("tag", "sh-batteries-card")])
     if view:
         page.evaluate(FRAME_POPUP)
     page.wait_for_timeout(500 if view else 300)

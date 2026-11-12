@@ -512,6 +512,29 @@
       "nothing_to_import": "Inget att importera från Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Väktare"
+    },
+    "marketplace": {
+      "name": "System Hub Uppdateringar"
+    },
+    "batteries": {
+      "name": "System Hub Batterier"
+    },
+    "git_sync": {
+      "name": "System Hub Versionshantering"
+    },
+    "orphans": {
+      "name": "System Hub Städning"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versionshantering ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Versionshantering-repositoryt är inte inläst."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "System Hub-kort att ändra i {path}",
+      "description": "System Hub 2.0 har ett kort och ett minikort; `module:` väljer vad de visar. {count} kort i {path} använder fortfarande en typ som inte finns längre, och System Hub skriver inte om en YAML-fil. Ändra dem så här (alternativen är desamma):\n\n{types}\n\nDen här reparationen försvinner vid nästa start när inga finns kvar."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} tillägg inte skyddade",
         "sc_n_no_mfa": "{n} admins utan 2FA",
         "sc_n_in_clear": "{n} inloggningsuppgifter i klartext",
-        "sc_n_unused": "{n} oanvända token"
+        "sc_n_unused": "{n} oanvända token",
+        "card_admin_only": "System Hub: endast för administratörer",
+        "card_module": "Modul",
+        "card_groups": "Grupper",
+        "card_hide_ok": "Dölj det som är okej"
       }
     },
     "battery_type": {

@@ -14,9 +14,9 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.system_hub.const import CONF_MODULES, DOMAIN
 
-WATCHDOG_SENSOR = "sensor.system_hub_watchdog_unavailable_integrations"
-WATCHDOG_BUTTON = "button.system_hub_watchdog_check_now"
-MARKETPLACE_SENSOR = "sensor.system_hub_marketplace_status"
+WATCHDOG_SENSOR = "sensor.system_hub_sentinel_unavailable_integrations"
+WATCHDOG_BUTTON = "button.system_hub_sentinel_check_now"
+MARKETPLACE_SENSOR = "sensor.system_hub_updates_status"
 
 
 async def _setup(hass: HomeAssistant, modules: list[str]) -> MockConfigEntry:

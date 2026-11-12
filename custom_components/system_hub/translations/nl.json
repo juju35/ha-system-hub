@@ -512,6 +512,29 @@
       "nothing_to_import": "Niets te importeren uit Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Wachter"
+    },
+    "marketplace": {
+      "name": "System Hub Updates"
+    },
+    "batteries": {
+      "name": "System Hub Batterijen"
+    },
+    "git_sync": {
+      "name": "System Hub Versiebeheer"
+    },
+    "orphans": {
+      "name": "System Hub Opruimen"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Versiebeheer ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "De Versiebeheer-repository is niet geladen."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "System Hub-kaarten aan te passen in {path}",
+      "description": "System Hub 2.0 heeft één kaart en één minikaart; `module:` kiest wat ze tonen. {count} kaarten in {path} gebruiken nog een type dat niet meer bestaat, en System Hub herschrijft geen YAML-bestand. Pas ze zo aan (de opties blijven gelijk):\n\n{types}\n\nDeze reparatie verdwijnt bij de volgende start zodra er geen meer over is."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} add-ons niet beschermd",
         "sc_n_no_mfa": "{n} beheerders zonder 2FA",
         "sc_n_in_clear": "{n} inloggegevens in platte tekst",
-        "sc_n_unused": "{n} ongebruikte tokens"
+        "sc_n_unused": "{n} ongebruikte tokens",
+        "card_admin_only": "System Hub: alleen voor beheerders",
+        "card_module": "Module",
+        "card_groups": "Groepen",
+        "card_hide_ok": "Verberg wat in orde is"
       }
     },
     "battery_type": {

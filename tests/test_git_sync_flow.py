@@ -66,7 +66,7 @@ async def test_setup_checks_the_repository(hass: HomeAssistant, repo: Path, tmp_
     assert done["options"][CONF_MODULES] == ["git_sync"]
     assert done["options"]["git_sync"][CONF_REPO_PATH] == str(repo)
     await hass.async_block_till_done()
-    assert hass.states.get("button.system_hub_git_sync_commit_and_push") is not None
+    assert hass.states.get("button.system_hub_versioning_commit_and_push") is not None
 
 
 @pytest.mark.parametrize("branch", ["main..", "a b", "-x", "feature/"])

@@ -32,9 +32,9 @@ from custom_components.system_hub.orphans.const import (
     REGISTRY_DEBOUNCE,
 )
 
-ORPHANS = "sensor.system_hub_orphans_orphaned_entities"
-LAST_SCAN = "sensor.system_hub_orphans_last_scan"
-BUTTON = "button.system_hub_orphans_scan_now"
+ORPHANS = "sensor.system_hub_cleanup_orphaned_entities"
+LAST_SCAN = "sensor.system_hub_cleanup_last_scan"
+BUTTON = "button.system_hub_cleanup_scan_now"
 OPTIONS = {
     CONF_SCAN_INTERVAL: 15,
     CONF_GRACE_PERIOD: 10,

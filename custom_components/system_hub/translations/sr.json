@@ -512,6 +512,29 @@
       "nothing_to_import": "Нема шта да се увезе из Battery Monitor."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Стражар"
+    },
+    "marketplace": {
+      "name": "System Hub Ажурирања"
+    },
+    "batteries": {
+      "name": "System Hub Батерије"
+    },
+    "git_sync": {
+      "name": "System Hub Верзионисање"
+    },
+    "orphans": {
+      "name": "System Hub Чишћење"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Верзионисање ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Верзионисање репозиторијум није учитан."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "System Hub картице за измену у {path}",
+      "description": "System Hub 2.0 има једну картицу и једну мини картицу; `module:` бира шта приказују. {count} картица у {path} и даље користи тип који више не постоји, а System Hub не преписује YAML датотеке. Измените их овако (опције остају исте):\n\n{types}\n\nОва поправка нестаје при следећем покретању када ниједна не остане."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} незаштићених додатака",
         "sc_n_no_mfa": "{n} админа без 2FA",
         "sc_n_in_clear": "{n} акредитива у чистом тексту",
-        "sc_n_unused": "{n} некоришћених токена"
+        "sc_n_unused": "{n} некоришћених токена",
+        "card_admin_only": "System Hub: само за администраторе",
+        "card_module": "Модул",
+        "card_groups": "Групе",
+        "card_hide_ok": "Сакриј оно што је у реду"
       }
     },
     "battery_type": {

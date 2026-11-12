@@ -121,5 +121,5 @@ async def test_ignore_keeps_the_other_modules_running(hass: HomeAssistant) -> No
 async def test_one_device_for_the_module(hass: HomeAssistant) -> None:
     entry = await _setup(hass)
     devices = dr.async_entries_for_config_entry(dr.async_get(hass), entry.entry_id)
-    assert [d.name for d in devices] == ["System Hub Orphans"]
+    assert [d.name for d in devices] == ["System Hub Cleanup"]
     assert (DOMAIN, f"{entry.entry_id}_orphans") in devices[0].identifiers

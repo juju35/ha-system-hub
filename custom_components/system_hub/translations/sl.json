@@ -512,6 +512,29 @@
       "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
     }
   },
+  "device": {
+    "containers": {
+      "name": "System Hub Containers"
+    },
+    "watchdog": {
+      "name": "System Hub Stražar"
+    },
+    "marketplace": {
+      "name": "System Hub Posodobitve"
+    },
+    "batteries": {
+      "name": "System Hub Baterije"
+    },
+    "git_sync": {
+      "name": "System Hub Upravljanje različic"
+    },
+    "orphans": {
+      "name": "System Hub Čiščenje"
+    },
+    "git_sync_repository": {
+      "name": "System Hub Upravljanje različic ({repository})"
+    }
+  },
   "entity": {
     "button": {
       "watchdog_check": {
@@ -1234,6 +1257,10 @@
           "not_loaded": "Repozitorij Upravljanje različic ni naložen."
         }
       }
+    },
+    "cards_yaml": {
+      "title": "Kartice System Hub za spremembo v {path}",
+      "description": "System Hub 2.0 ima eno kartico in eno mini kartico; `module:` izbere, kaj prikazujeta. {count} kartic v {path} še uporablja tip, ki ne obstaja več, System Hub pa ne prepisuje datotek YAML. Spremenite jih tako (možnosti ostanejo enake):\n\n{types}\n\nTo popravilo izgine ob naslednjem zagonu, ko ne ostane nobena."
     }
   },
   "selector": {
@@ -1749,7 +1776,11 @@
         "sc_n_unprotected": "{n} nezaščitenih dodatkov",
         "sc_n_no_mfa": "{n} skrbnikov brez 2FA",
         "sc_n_in_clear": "{n} poverilnic v čistem besedilu",
-        "sc_n_unused": "{n} neuporabljenih žetonov"
+        "sc_n_unused": "{n} neuporabljenih žetonov",
+        "card_admin_only": "System Hub: samo za skrbnike",
+        "card_module": "Modul",
+        "card_groups": "Skupine",
+        "card_hide_ok": "Skrij, kar je v redu"
       }
     },
     "battery_type": {
