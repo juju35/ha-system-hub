@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.1 - 2026-11-12
+
+### Fixed
+- **Settings: saving the Sentinel settings failed with "[object Object]"** ([#63](https://github.com/juju35/ha-system-hub/issues/63), thanks @tschoiss): the *Pause entity*, when none was chosen, was sent back empty and refused by Home Assistant. An empty field is now left out, as in Home Assistant's own forms, and a form refused anyway shows each error under its field instead of "[object Object]".
+- **Cards in sections**: a module's card whose file was still loading took the whole width (and a mini card a single row) until the page was reloaded; it now asks for the size its card asks for.
+- **Panel**: the database count and the security scan no longer hold up the panel when it opens; it is drawn at once, then again once they are read.
+- **Security**: refused logins from the Internet make one persistent notification, replaced by the latest, instead of one per address (a scan from many addresses piled them up); the notify actions chosen still get each one. `!input` (a blueprint's input) is no longer taken for a credential in clear.
+- **Updates**: a release link that is not a web address is not offered as a link.
+
 ## 2.0.0 - 2026-11-12
 
 ### Breaking changes

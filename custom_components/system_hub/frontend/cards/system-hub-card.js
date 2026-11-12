@@ -7,7 +7,7 @@
 // unchanged. The status cards show the Status tab of the panel: they read it with the panel's own code (its module,
 // without showing it), as the sidebar icon does, so the three always agree. Administrators only, as the panel.
 
-var SYSTEM_HUB_CARD_VERSION = '2.0.0';
+var SYSTEM_HUB_CARD_VERSION = '2.0.1';
 var SH_CARD_MODULES = ['status', 'system', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations', 'orphans'];
 var SH_MINI_MODULES = ['status', 'system', 'watchdog', 'batteries', 'git_sync', 'automations', 'orphans'];
 var SH_CARD_GROUPS = ['system', 'reliability', 'maintenance', 'devices'];
@@ -173,7 +173,10 @@ class SystemHubCardBase extends HTMLElement {
 
   getGridOptions() {
     if (this._inner?.getGridOptions) return this._inner.getGridOptions();
-    return this.constructor.mini ? { columns: 12, rows: 1, min_rows: 1 } : { columns: 12, min_columns: 6 };
+    // Before a module's card is defined (its file still loading), the size it will ask for: half a section for a
+    // module's mini card, the whole width otherwise; the height follows the content
+    var half = this.constructor.mini && this._config?.module !== 'status';
+    return { columns: half ? 6 : 12, min_columns: 6, rows: 'auto' };
   }
 
   _note(text) {
