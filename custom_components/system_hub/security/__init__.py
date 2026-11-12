@@ -196,12 +196,9 @@ def _bans(hass: HomeAssistant, watcher: SecurityWatcher | None) -> tuple[list[di
     for ban in bans:
         ban["at"] = max(ban["at"], recent.get(ban["ip"], 0))
     external = hass.config.external_url or ""
-    try:
-        from homeassistant.components.cloud import async_is_connected  # noqa: PLC0415
-
-        cloud = "cloud" in hass.config.components and async_is_connected(hass)
-    except ImportError:
-        cloud = False
+    # Read as the cloud integration keeps it (hass.data["cloud"]): importing it would make it a dependency
+    cloud_data = hass.data.get("cloud")
+    cloud = bool(getattr(getattr(cloud_data, "iot", None), "connected", False))
     exposure = {
         "external_url": external or None,
         "https": external.startswith("https://") if external else None,

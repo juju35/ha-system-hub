@@ -2363,32 +2363,28 @@ class SystemHubPanel extends HTMLElement {
     return ts ? this._rel(new Date(ts * 1000).toISOString()) : this._t('never');
   }
 
-  async _scIgnore(ip, ignore) {
-    this._busy[`sc_ignore:${ip}`] = true;
+  // A Security command (Ignore, Revoke): its button spins until the tab is read again; a failure next to the buttons
+  async _scCall(busyKey, msg, done) {
+    this._busy[busyKey] = true;
     this._render();
     try {
-      await this._hass.callWS({ type: 'system_hub/security_ignore', ip, ignore });
+      await this._hass.callWS(msg);
+      if (done) this._toast(this._t('done'));
       await this._scLoad(true);
     } catch (err) {
       this._messages.sc = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
     }
-    delete this._busy[`sc_ignore:${ip}`];
+    delete this._busy[busyKey];
     await this._load();
   }
 
-  async _scRevoke(token) {
+  _scIgnore(ip, ignore) {
+    return this._scCall(`sc_ignore:${ip}`, { type: 'system_hub/security_ignore', ip, ignore });
+  }
+
+  _scRevoke(token) {
     this._confirm = null;
-    this._busy[`sc_revoke:${token}`] = true;
-    this._render();
-    try {
-      await this._hass.callWS({ type: 'system_hub/security_revoke', token_id: token });
-      this._toast(this._t('done'));
-      await this._scLoad(true);
-    } catch (err) {
-      this._messages.sc = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
-    }
-    delete this._busy[`sc_revoke:${token}`];
-    this._render();
+    return this._scCall(`sc_revoke:${token}`, { type: 'system_hub/security_revoke', token_id: token }, true);
   }
 
   _scList(icon, title, count, rows, note) {
