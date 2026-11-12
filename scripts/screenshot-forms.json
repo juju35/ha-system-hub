@@ -230,6 +230,66 @@
     "errors": {},
     "description_placeholders": {}
   },
+  "security": {
+    "type": "form",
+    "step_id": "security",
+    "data_schema": [
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "notify",
+        "required": true,
+        "default": true
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": false,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "notify_services",
+        "required": false,
+        "optional": true,
+        "default": []
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 7.0,
+            "max": 3650.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "d"
+          }
+        },
+        "name": "token_unused_days",
+        "required": true,
+        "default": 90
+      },
+      {
+        "selector": {
+          "select": {
+            "options": [],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "ignored_ips",
+        "required": false,
+        "optional": true,
+        "default": []
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {}
+  },
   "logs": {
     "type": "form",
     "step_id": "logs",

@@ -1359,3 +1359,65 @@ test('sidebar icon: the Status tab tone sent when the sidebar shows another one;
   await new Promise((resolve) => setImmediate(resolve));
   assert.deepEqual(sent, ['warn', 'good']);
 });
+
+test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons, credentials in clear', async () => {
+  const now = Date.now() / 1000;
+  const data = {
+    refused: [
+      { ip: '8.8.8.8', host: 'dns.google', count: 5, day: 5, last: now - 7200, url: '/auth/token', internet: true, ignored: false },
+      { ip: '192.168.1.37', host: null, count: 1, day: 0, last: now - 90000, url: null, internet: false, ignored: false },
+    ],
+    bans: [{ ip: '8.8.8.8', at: now - 7000, internet: true }],
+    exposure: { external_url: 'https://ha.example.org', https: true, trusted_proxies: ['172.30.33.0/24'], ip_ban: true, login_threshold: 5, cloud: false },
+    users: [
+      { id: 'u1', name: 'Julien', owner: true, admin: true, active: true, local_only: false, mfa: true, sessions: 3, last_used: now - 180 },
+      { id: 'u2', name: 'Marie', owner: false, admin: true, active: true, local_only: false, mfa: false, sessions: 2, last_used: now - 172800 },
+    ],
+    tokens: [{ id: 't1', name: 'Old script', user: 'Julien', created: now - 60000000, last_used: null, last_ip: null, unused: true }],
+    addons: [
+      { slug: 'ssh', name: 'Advanced SSH', protected: false, full_access: true, host_network: true, rating: 2 },
+      { slug: 'mqtt', name: 'Mosquitto', protected: true, full_access: false, host_network: false, rating: 6 },
+    ],
+    config: [{ file: 'configuration.yaml', line: 142, key: 'password' }],
+    scanned_at: now - 600,
+    token_unused_days: 90,
+  };
+  const state = { loaded: true, modules: ['security'], tabs: ['security'], security: { notify: true, ignored_ips: [] } };
+  const p = panel(state, 'security');
+  const calls = [];
+  p._hass.callWS = async (msg) => {
+    calls.push(`${msg.type}${msg.ip ? ` ${msg.ip}` : ''}${msg.token_id ? ` ${msg.token_id}` : ''}${msg.force ? ' force' : ''}`);
+    return msg.type === 'system_hub/security' ? data : state;
+  };
+  p._render = () => {};
+  await p._scLoad(true);
+  const html = p._content();
+  assert.match(html, /tile bad[\s\S]*?<b>5<\/b>[\s\S]*?Refused logins · 24 h/);
+  assert.match(html, /1 of 2[\s\S]*?Admins without 2FA/);
+  assert.match(html, /8\.8\.8\.8[\s\S]*?dns\.google · Internet · ×5[\s\S]*?Banned/);
+  assert.match(html, /Automatic ban on: an IP is banned after 5 failures[\s\S]*?1 IP banned/);
+  assert.match(html, /Marie[\s\S]*?Administrator[\s\S]*?No 2FA/);
+  assert.match(html, /Old script[\s\S]*?never used[\s\S]*?Unused/);
+  assert.match(html, /Advanced SSH[\s\S]*?protection mode off · full hardware access · host network access · security rating 2\/8[\s\S]*?Not protected/);
+  assert.doesNotMatch(html, /Mosquitto/);
+  assert.match(html, /2 · 1 without remark/);
+  assert.match(html, /<code>configuration\.yaml<\/code> line 142 · <code>password<\/code>/);
+  assert.deepEqual([...p._stArea('security')].slice(0, 2), ['bad', '5 refused logins']);
+  // Revoke asks first; Ignore and Scan now call the server
+  const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
+  click('sc_revoke_confirm', { token: 't1' });
+  assert.match(p._content(), /Revoke the token “Old script”\?/);
+  await click('sc_revoke', { token: 't1' });
+  await click('sc_ignore', { ip: '192.168.1.37', ignore: 'true' });
+  await click('sc_scan');
+  assert.deepEqual(
+    calls.filter((c) => !c.startsWith('system_hub/state') && c !== 'system_hub/security'),
+    ['system_hub/security_revoke t1', 'system_hub/security_ignore 192.168.1.37', 'system_hub/security force'],
+  );
+  // Nothing from the Internet, no problem left: the points to check
+  data.refused = [];
+  data.bans = [];
+  data.addons = [];
+  await p._scLoad(true);
+  assert.deepEqual([...p._stArea('security')].slice(0, 2), ['warn', '3 points to check']);
+});

@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub.
  * https://github.com/juju35/ha-system-hub
  */
-var INTEGRATION_WATCHDOG_CARD_VERSION = '1.9.0';
+var INTEGRATION_WATCHDOG_CARD_VERSION = '1.10.0';
 
 const IW_I18N = {
   en: {

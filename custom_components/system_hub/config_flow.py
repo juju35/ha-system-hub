@@ -44,6 +44,7 @@ from .const import (
     MODULE_LOGS,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
+    MODULE_SECURITY,
     MODULE_SILENT,
     MODULE_WATCHDOG,
     MODULES,
@@ -62,6 +63,7 @@ from .logs import SYSTEM_LOG_DOMAIN
 from .logs import flow as logs_flow
 from .marketplace import flow as marketplace_flow
 from .orphans import flow as orphans_flow
+from .security import flow as security_flow
 from .silent import DEFAULT_INTEGRATIONS
 from .silent import flow as silent_flow
 from .standalone import STANDALONE, further_git_sync, taken_over
@@ -218,6 +220,8 @@ class SystemHubOptionsFlow(OptionsFlow):
             menu.append("containers")
         if MODULE_DATABASE in modules:
             menu.append("database")
+        if MODULE_SECURITY in modules:
+            menu.append("security")
         if MODULE_LOGS in modules:
             menu.append("logs")
         if MODULE_WATCHDOG in modules:
@@ -613,6 +617,15 @@ class SystemHubOptionsFlow(OptionsFlow):
         return self.async_show_form(
             step_id="database", data_schema=database_flow.settings_schema(self._module(MODULE_DATABASE))
         )
+
+    # Security
+
+    async def async_step_security(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """Notifications of refused logins, unused tokens, ignored addresses."""
+        if user_input is not None:
+            return self._save(**{MODULE_SECURITY: security_flow.settings_options(user_input)})
+        schema = security_flow.settings_schema(self.hass, self._module(MODULE_SECURITY))
+        return self.async_show_form(step_id="security", data_schema=schema)
 
     # Logs
 

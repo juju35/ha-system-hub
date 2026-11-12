@@ -439,6 +439,186 @@ def mock_orphans():
     }
 
 
+def mock_security():
+    """What system_hub/security answers: refusals from the Internet, an admin without 2FA, unused tokens."""
+    now = datetime.fromisoformat(NOW).timestamp()
+    return {
+        "refused": [
+            {
+                "ip": "185.220.101.42",
+                "host": None,
+                "count": 5,
+                "day": 5,
+                "last": now - 7200,
+                "url": "/auth/login_flow",
+                "agent": None,
+                "internet": True,
+                "ignored": False,
+            },
+            {
+                "ip": "45.155.205.7",
+                "host": None,
+                "count": 1,
+                "day": 1,
+                "last": now - 32400,
+                "url": "/api/",
+                "agent": None,
+                "internet": True,
+                "ignored": False,
+            },
+            {
+                "ip": "192.168.1.37",
+                "host": "tablette-salon.lan",
+                "count": 1,
+                "day": 0,
+                "last": now - 43000,
+                "url": "/api/websocket",
+                "agent": None,
+                "internet": False,
+                "ignored": False,
+            },
+        ],
+        "bans": [{"ip": "185.220.101.42", "at": now - 7100, "internet": True}],
+        "exposure": {
+            "external_url": "https://ha.example.org",
+            "https": True,
+            "internal_url": None,
+            "ssl_certificate": False,
+            "trusted_proxies": ["172.30.33.0/24"],
+            "ip_ban": True,
+            "login_threshold": 5,
+            "cloud": False,
+        },
+        "users": [
+            {
+                "id": "1",
+                "name": "Julien",
+                "owner": True,
+                "admin": True,
+                "active": True,
+                "local_only": False,
+                "mfa": True,
+                "sessions": 3,
+                "last_used": now - 180,
+            },
+            {
+                "id": "2",
+                "name": "Marie",
+                "owner": False,
+                "admin": True,
+                "active": True,
+                "local_only": False,
+                "mfa": False,
+                "sessions": 2,
+                "last_used": now - 172800,
+            },
+            {
+                "id": "3",
+                "name": "Living room tablet",
+                "owner": False,
+                "admin": False,
+                "active": True,
+                "local_only": True,
+                "mfa": False,
+                "sessions": 1,
+                "last_used": now - 300,
+            },
+            {
+                "id": "4",
+                "name": "Guest",
+                "owner": False,
+                "admin": False,
+                "active": False,
+                "local_only": False,
+                "mfa": False,
+                "sessions": 0,
+                "last_used": now - 10500000,
+            },
+        ],
+        "tokens": [
+            {
+                "id": "a",
+                "name": "Old backup script",
+                "user": "Julien",
+                "created": now - 63000000,
+                "last_used": now - 18000000,
+                "last_ip": "192.168.1.20",
+                "unused": True,
+            },
+            {
+                "id": "b",
+                "name": "API test",
+                "user": "Marie",
+                "created": now - 36000000,
+                "last_used": None,
+                "last_ip": None,
+                "unused": True,
+            },
+            {
+                "id": "c",
+                "name": "Node-RED",
+                "user": "Julien",
+                "created": now - 31000000,
+                "last_used": now - 60,
+                "last_ip": "172.30.33.4",
+                "unused": False,
+            },
+            {
+                "id": "d",
+                "name": "Grafana",
+                "user": "Julien",
+                "created": now - 63000000,
+                "last_used": now - 10800,
+                "last_ip": "192.168.1.20",
+                "unused": False,
+            },
+        ],
+        "addons": [
+            {
+                "slug": "ssh",
+                "name": "Advanced SSH & Web Terminal",
+                "protected": False,
+                "full_access": True,
+                "host_network": True,
+                "rating": 2,
+            },
+            {
+                "slug": "frigate",
+                "name": "Frigate",
+                "protected": True,
+                "full_access": True,
+                "host_network": False,
+                "rating": 4,
+            },
+            {
+                "slug": "z2m",
+                "name": "Zigbee2MQTT",
+                "protected": True,
+                "full_access": False,
+                "host_network": True,
+                "rating": 5,
+            },
+            *(
+                {
+                    "slug": f"a{i}",
+                    "name": f"Add-on {i}",
+                    "protected": True,
+                    "full_access": False,
+                    "host_network": False,
+                    "rating": 6,
+                }
+                for i in range(11)
+            ),
+        ],
+        "config": [
+            {"file": "configuration.yaml", "line": 142, "key": "password"},
+            {"file": "packages/weather.yaml", "line": 18, "key": "api_key"},
+        ],
+        "scanned_at": now - 900,
+        "token_unused_days": 90,
+    }
+
+
 def mock_database():
     """What system_hub/database answers: a SQLite database near its limit, the entities that wrote the most."""
     top = [
@@ -721,6 +901,7 @@ def mock_state():
         "modules": [
             "containers",
             "database",
+            "security",
             "logs",
             "watchdog",
             "marketplace",
@@ -735,6 +916,7 @@ def mock_state():
             "system",
             "containers",
             "database",
+            "security",
             "logs",
             "watchdog",
             "marketplace",
@@ -746,6 +928,9 @@ def mock_state():
         ],
         "backups": {"max_age": 3},
         "database": {"max_size": 2},
+        "security": {"notify": True, "notify_services": [], "token_unused_days": 90, "ignored_ips": []},
+        # The Security tab: what system_hub/security answers
+        "security_info": mock_security(),
         # The Database tab: what system_hub/database answers
         "database_info": mock_database(),
         "logs": {
@@ -1176,6 +1361,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                 ? state
                 : msg.type === "system_hub/orphans"
                   ? state.orphans_list
+                  : msg.type === "system_hub/security"
+                  ? state.security_info
                   : msg.type === "system_hub/database"
                   ? state.database_info
                   : msg.type === "system_log/list"
@@ -1226,6 +1413,7 @@ TABS = [
     "system",
     "containers",
     "database",
+    "security",
     "logs",
     "watchdog",
     "marketplace",
@@ -1271,6 +1459,7 @@ SHOTS = [
             ("system", "system"),
             ("containers", "containers"),
             ("database", "database"),
+            ("security", "security"),
             ("logs", "logs"),
             ("watchdog", "watchdog"),
             ("watchdog", "watchdog_add_power_cycle"),
