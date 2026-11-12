@@ -439,6 +439,54 @@ def mock_orphans():
     }
 
 
+def mock_silent():
+    """The Silent devices module: a cellar sensor quiet for 3 days, a plug gone, two weak signals."""
+
+    def device(device_id, name, area, integration, heard, **more):
+        base = {"unavailable": False, "silent": False, "battery": False, "level": None, "signal": None}
+        return {
+            "device_id": device_id,
+            "name": name,
+            "area": area,
+            "integration": integration,
+            "last_heard": heard,
+            **base,
+            **more,
+        }
+
+    return {
+        "tracked": 87,
+        "ignored": 2,
+        "integrations": ["esphome", "mqtt", "zha"],
+        "battery_hours": 24,
+        "mains_hours": 24,
+        "devices": [
+            device(
+                "d1", "Cellar sensor", "Cellar", "zha", "2026-11-07T08:12:00+01:00", silent=True, battery=True, level=62
+            ),
+            device("d2", "Garage plug", "Garage", "mqtt", "2026-11-10T04:02:00+01:00", silent=True, unavailable=True),
+            device(
+                "d3",
+                "Gate contact",
+                "Outside",
+                "mqtt",
+                "2026-11-10T08:46:00+01:00",
+                battery=True,
+                level=78,
+                signal={"kind": "lqi", "value": 31, "weak": True},
+            ),
+            device(
+                "d4",
+                "Garden shed sensor",
+                "Garden",
+                "esphome",
+                "2026-11-10T08:58:00+01:00",
+                signal={"kind": "rssi", "value": -84, "weak": True},
+            ),
+        ],
+    }
+
+
 def mock_backup_info():
     """Home Assistant's backups: one a night for 30 days but a missed night, the cloud copy failing for 5 days."""
     now = datetime.fromisoformat(NOW)
@@ -595,7 +643,7 @@ def mock_state():
     return {
         "loaded": True,
         "entry_id": "system_hub",
-        "modules": ["containers", "watchdog", "marketplace", "backups", "batteries", "git_sync", "orphans"],
+        "modules": ["containers", "watchdog", "marketplace", "backups", "silent", "batteries", "git_sync", "orphans"],
         "tabs": [
             "status",
             "system",
@@ -603,11 +651,14 @@ def mock_state():
             "watchdog",
             "marketplace",
             "backups",
+            "silent",
             "batteries",
             "git_sync",
             "orphans",
         ],
         "backups": {"max_age": 3},
+        # The Silent devices tab: two silent devices, two weak signals
+        "silent": mock_silent(),
         # The Orphans tab: the counts with the state, the whole list from its own command
         **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
         "git_sync_configured": True,
@@ -1076,6 +1127,7 @@ TABS = [
     "watchdog",
     "marketplace",
     "backups",
+    "silent",
     "batteries",
     "git_sync",
     "orphans",
@@ -1119,6 +1171,7 @@ SHOTS = [
             ("watchdog", "watchdog_add_power_cycle"),
             ("marketplace", "marketplace"),
             ("backups", "backups"),
+            ("silent", "silent"),
             ("batteries", "batteries"),
             ("batteries", "batteries_types"),
             ("batteries", "batteries_import"),

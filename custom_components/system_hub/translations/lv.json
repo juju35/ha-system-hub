@@ -9,6 +9,7 @@
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
           "backups": "Dublējumi",
+          "silent": "Klusās ierīces",
           "batteries": "Baterijas",
           "git_sync": "Versiju pārvaldība",
           "orphans": "Tīrīšana",
@@ -19,6 +20,7 @@
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "backups": "Seko Home Assistant dublējumiem: pēdējam veiksmīgajam, nākamajam, katrai atrašanās vietai un pēdējām 30 dienām. Bez savām entītijām.",
+          "silent": "Seko ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome un deCONZ ierīcēm: tām, kas vairs nesazinās, un vājajiem signāliem. Bez savām entītijām.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
           "orphans": "Parāda vienības, ko to integrācija vairs nenodrošina, lai tās varētu noņemt vienlaikus.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Sargs: Noņemt restartēšanas ar kontaktligzdu",
           "marketplace": "Atjauninājumi",
           "backups": "Dublējumi",
+          "silent": "Klusās ierīces",
           "batteries": "Baterijas",
           "git_sync_repository": "Versiju pārvaldība: Repozitorija iestatījumi",
           "git_sync": "Versiju pārvaldība",
@@ -93,6 +96,7 @@
           "watchdog": "Sargs",
           "marketplace": "Atjauninājumi",
           "backups": "Dublējumi",
+          "silent": "Klusās ierīces",
           "batteries": "Baterijas",
           "git_sync": "Versiju pārvaldība",
           "automations": "Automatizācijas"
@@ -102,6 +106,7 @@
           "watchdog": "Pārlādē integrācijas, kuru visas vienības nav pieejamas.",
           "marketplace": "Serverī pārbauda atjauninājumus visiem ar Marketplace lejupielādētajiem repozitorijiem. Pats Marketplace pielāgotos repozitorijus pārbauda tikai reizi 48 stundās.",
           "backups": "Seko Home Assistant dublējumiem: pēdējam veiksmīgajam, nākamajam, katrai atrašanās vietai un pēdējām 30 dienām. Bez savām entītijām.",
+          "silent": "Seko ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome un deCONZ ierīcēm: tām, kas vairs nesazinās, un vājajiem signāliem. Bez savām entītijām.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
           "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Dienas bez veiksmīga automātiska dublējuma, pirms cilne Statuss brīdina."
+        }
+      },
+      "silent": {
+        "title": "Klusās ierīces",
+        "data": {
+          "integrations": "Sekotās integrācijas",
+          "battery_hours": "Klusa pēc, ar bateriju",
+          "mains_hours": "Klusa pēc, no tīkla",
+          "ignored_devices": "Ignorētās ierīces"
+        },
+        "data_description": {
+          "integrations": "Ierīces ar šo integrāciju entītiju (Zigbee2MQTT — mqtt).",
+          "battery_hours": "Ierīce ar baterijas entītiju, kas tik ilgi neko neziņo.",
+          "mains_hours": "Jebkura cita ierīce, kas tik ilgi neko neziņo.",
+          "ignored_devices": "Izslēgtas no cilnes un cilnes Statuss."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Ierīce",
         "mk_update_marketplace": "Atjaunināt Marketplace",
         "upd_available_detail": "Pieejami: {n} ({system} ārpus Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "Atjaunināti: {n}"
+        "upd_uptodate_short": "Atjaunināti: {n}",
+        "tab_silent": "Klusās ierīces",
+        "sl_silent": "Klusās",
+        "sl_weak": "Vājš signāls",
+        "sl_tracked": "Sekotās ierīces",
+        "sl_ignored": "Ignorētās",
+        "sl_n_silent": "Klusās: {n}",
+        "sl_n_weak": "Ar vāju signālu: {n}",
+        "sl_all_heard": "Visas dzirdamas",
+        "sl_followed": "Sekotās ierīces: {n}",
+        "sl_all": "Visas",
+        "sl_none": "Visas sekotās ierīces nesen ir sazinājušās, ar labu signālu.",
+        "sl_heard": "dzirdēta {when}",
+        "sl_unavailable_since": "nepieejama kopš {when}",
+        "sl_battery": "baterija {n} %",
+        "sl_battery_unknown": "baterija",
+        "sl_mains": "tīkls",
+        "sl_ignore": "Ignorēt",
+        "sl_hint": "Klusa: nekas nav saņemts vairāk nekā {battery} h ar bateriju, {mains} h no tīkla. Vājš signāls: LQI zem 50, RSSI zem −80 dBm.",
+        "sl_ignored_done": "Ignorēta: {name}"
       }
     },
     "battery_type": {

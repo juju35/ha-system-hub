@@ -9,6 +9,7 @@
           "watchdog": "Sentinela",
           "marketplace": "Atualizações",
           "backups": "Cópias de segurança",
+          "silent": "Dispositivos silenciosos",
           "batteries": "Baterias",
           "git_sync": "Versionamento",
           "orphans": "Limpeza",
@@ -19,6 +20,7 @@
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "backups": "Acompanha as cópias de segurança do Home Assistant: a última bem-sucedida, a próxima, cada localização e os últimos 30 dias. Sem entidades próprias.",
+          "silent": "Segue os dispositivos ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome e deCONZ: os que deixaram de dar sinal de vida e os sinais fracos. Sem entidades próprias.",
           "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca.",
           "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…).",
           "orphans": "Lista as entidades que a respetiva integração já não fornece, para que as possa remover em massa.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Sentinela: Remover reinícios por tomada",
           "marketplace": "Atualizações",
           "backups": "Cópias de segurança",
+          "silent": "Dispositivos silenciosos",
           "batteries": "Baterias",
           "git_sync_repository": "Versionamento: Definições do repositório",
           "git_sync": "Versionamento",
@@ -93,6 +96,7 @@
           "watchdog": "Sentinela",
           "marketplace": "Atualizações",
           "backups": "Cópias de segurança",
+          "silent": "Dispositivos silenciosos",
           "batteries": "Baterias",
           "git_sync": "Versionamento",
           "automations": "Automatizações"
@@ -102,6 +106,7 @@
           "watchdog": "Recarrega as integrações cujas entidades estão todas indisponíveis.",
           "marketplace": "Procura atualizações de todos os repositórios transferidos com o Marketplace, no servidor. O próprio Marketplace só verifica os repositórios personalizados a cada 48 horas.",
           "backups": "Acompanha as cópias de segurança do Home Assistant: a última bem-sucedida, a próxima, cada localização e os últimos 30 dias. Sem entidades próprias.",
+          "silent": "Segue os dispositivos ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome e deCONZ: os que deixaram de dar sinal de vida e os sinais fracos. Sem entidades próprias.",
           "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca.",
           "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…).",
           "automations": "Mostra as automatizações com falha e as entidades indisponíveis reportadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Dias sem cópia automática bem-sucedida antes de o separador Estado avisar."
+        }
+      },
+      "silent": {
+        "title": "Dispositivos silenciosos",
+        "data": {
+          "integrations": "Integrações seguidas",
+          "battery_hours": "Silencioso após, a bateria",
+          "mains_hours": "Silencioso após, na rede",
+          "ignored_devices": "Dispositivos ignorados"
+        },
+        "data_description": {
+          "integrations": "Os dispositivos com uma entidade destas integrações (mqtt para Zigbee2MQTT).",
+          "battery_hours": "Um dispositivo com uma entidade de bateria que não reporta nada durante este tempo.",
+          "mains_hours": "Qualquer outro dispositivo que não reporta nada durante este tempo.",
+          "ignored_devices": "Excluídos do separador e do separador Estado."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Dispositivo",
         "mk_update_marketplace": "Atualizar o Marketplace",
         "upd_available_detail": "Disponíveis: {n} ({system} fora do Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "Atualizados: {n}"
+        "upd_uptodate_short": "Atualizados: {n}",
+        "tab_silent": "Dispositivos silenciosos",
+        "sl_silent": "Silenciosos",
+        "sl_weak": "Sinal fraco",
+        "sl_tracked": "Dispositivos seguidos",
+        "sl_ignored": "Ignorados",
+        "sl_n_silent": "{n} silenciosos",
+        "sl_n_weak": "{n} com sinal fraco",
+        "sl_all_heard": "Todos ouvidos",
+        "sl_followed": "{n} dispositivos seguidos",
+        "sl_all": "Todos",
+        "sl_none": "Todos os dispositivos seguidos deram sinal de vida recentemente, com bom sinal.",
+        "sl_heard": "ouvido {when}",
+        "sl_unavailable_since": "indisponível desde {when}",
+        "sl_battery": "bateria {n} %",
+        "sl_battery_unknown": "bateria",
+        "sl_mains": "rede",
+        "sl_ignore": "Ignorar",
+        "sl_hint": "Silencioso: nada recebido há mais de {battery} h a bateria, {mains} h na rede. Sinal fraco: LQI abaixo de 50, RSSI abaixo de −80 dBm.",
+        "sl_ignored_done": "Ignorado: {name}"
       }
     },
     "battery_type": {

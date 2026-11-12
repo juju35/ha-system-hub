@@ -9,6 +9,7 @@
           "watchdog": "Wachter",
           "marketplace": "Updates",
           "backups": "Back-ups",
+          "silent": "Stille apparaten",
           "batteries": "Batterijen",
           "git_sync": "Versiebeheer",
           "orphans": "Opruimen",
@@ -19,6 +20,7 @@
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "backups": "Volgt de back-ups van Home Assistant: de laatste geslaagde, de volgende, elke locatie en de laatste 30 dagen. Geen eigen entiteiten.",
+          "silent": "Volgt de apparaten van ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome en deCONZ: de apparaten die niets meer laten horen en de zwakke signalen. Geen eigen entiteiten.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
           "orphans": "Toont de entiteiten die hun integratie niet meer levert, zodat je ze in één keer kunt verwijderen.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Wachter: Herstarts via stekker verwijderen",
           "marketplace": "Updates",
           "backups": "Back-ups",
+          "silent": "Stille apparaten",
           "batteries": "Batterijen",
           "git_sync_repository": "Versiebeheer: Instellingen van de repository",
           "git_sync": "Versiebeheer",
@@ -93,6 +96,7 @@
           "watchdog": "Wachter",
           "marketplace": "Updates",
           "backups": "Back-ups",
+          "silent": "Stille apparaten",
           "batteries": "Batterijen",
           "git_sync": "Versiebeheer",
           "automations": "Automatiseringen"
@@ -102,6 +106,7 @@
           "watchdog": "Herlaadt de integraties waarvan alle entiteiten niet beschikbaar zijn.",
           "marketplace": "Controleert alle met Marketplace gedownloade repository's op updates, op de server. Marketplace zelf controleert aangepaste repository's maar om de 48 uur.",
           "backups": "Volgt de back-ups van Home Assistant: de laatste geslaagde, de volgende, elke locatie en de laatste 30 dagen. Geen eigen entiteiten.",
+          "silent": "Volgt de apparaten van ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome en deCONZ: de apparaten die niets meer laten horen en de zwakke signalen. Geen eigen entiteiten.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
           "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Dagen zonder geslaagde automatische back-up voordat het tabblad Status waarschuwt."
+        }
+      },
+      "silent": {
+        "title": "Stille apparaten",
+        "data": {
+          "integrations": "Gevolgde integraties",
+          "battery_hours": "Stil na, op batterij",
+          "mains_hours": "Stil na, op het net",
+          "ignored_devices": "Genegeerde apparaten"
+        },
+        "data_description": {
+          "integrations": "De apparaten met een entiteit van deze integraties (mqtt voor Zigbee2MQTT).",
+          "battery_hours": "Een apparaat met een batterij-entiteit dat zo lang niets meldt.",
+          "mains_hours": "Elk ander apparaat dat zo lang niets meldt.",
+          "ignored_devices": "Weggelaten uit het tabblad en het tabblad Status."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Apparaat",
         "mk_update_marketplace": "Marketplace bijwerken",
         "upd_available_detail": "Beschikbaar: {n} ({system} buiten de Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "Bijgewerkt: {n}"
+        "upd_uptodate_short": "Bijgewerkt: {n}",
+        "tab_silent": "Stille apparaten",
+        "sl_silent": "Stil",
+        "sl_weak": "Zwak signaal",
+        "sl_tracked": "Gevolgde apparaten",
+        "sl_ignored": "Genegeerd",
+        "sl_n_silent": "{n} stil",
+        "sl_n_weak": "{n} met zwak signaal",
+        "sl_all_heard": "Allemaal gehoord",
+        "sl_followed": "{n} apparaten gevolgd",
+        "sl_all": "Alle",
+        "sl_none": "Alle gevolgde apparaten hebben onlangs van zich laten horen, met een goed signaal.",
+        "sl_heard": "gehoord {when}",
+        "sl_unavailable_since": "niet beschikbaar sinds {when}",
+        "sl_battery": "batterij {n} %",
+        "sl_battery_unknown": "batterij",
+        "sl_mains": "net",
+        "sl_ignore": "Negeren",
+        "sl_hint": "Stil: niets ontvangen sinds meer dan {battery} u op batterij, {mains} u op het net. Zwak signaal: LQI onder 50, RSSI onder −80 dBm.",
+        "sl_ignored_done": "Genegeerd: {name}"
       }
     },
     "battery_type": {

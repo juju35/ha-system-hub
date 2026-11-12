@@ -42,6 +42,7 @@ from .const import (
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
+    MODULE_SILENT,
     MODULE_WATCHDOG,
     MODULES,
 )
@@ -55,6 +56,8 @@ from .git_sync.const import CONF_REPO_ID, CONF_REPO_PATH, CONF_REPOSITORIES
 from .git_sync.coordinator import GitSyncCoordinator
 from .marketplace import flow as marketplace_flow
 from .orphans import flow as orphans_flow
+from .silent import DEFAULT_INTEGRATIONS
+from .silent import flow as silent_flow
 from .standalone import STANDALONE, further_git_sync, taken_over
 from .standalone import settings as standalone_settings
 from .watchdog import flow as watchdog_flow
@@ -84,6 +87,8 @@ def _available(hass: HomeAssistant) -> list[str]:
         if (m != MODULE_MARKETPLACE or MARKETPLACE_DOMAIN in hass.config.components)
         and (m != MODULE_CONTAINERS or supervisor_available(hass))
         and (m != MODULE_BACKUPS or BACKUP_DOMAIN in hass.config.components)
+        # Follows radio devices: on by default where one of their integrations is set up
+        and (m != MODULE_SILENT or any(i in hass.config.components for i in DEFAULT_INTEGRATIONS))
         # Shows what Automation Monitor reports: on by default where it is set up.
         and (m != MODULE_AUTOMATIONS or AUTOMATION_MONITOR in hass.config.components)
         # Needs a repository set up first: turned on by choice.
@@ -211,6 +216,8 @@ class SystemHubOptionsFlow(OptionsFlow):
             menu.append("marketplace")
         if MODULE_BACKUPS in modules:
             menu.append("backups")
+        if MODULE_SILENT in modules:
+            menu.append("silent")
         if MODULE_BATTERIES in modules:
             menu += ["batteries", "batteries_types"]
             if await batteries_importer.async_find(self.hass):
@@ -584,6 +591,15 @@ class SystemHubOptionsFlow(OptionsFlow):
             }
         )
         return self.async_show_form(step_id="backups", data_schema=schema)
+
+    # Silent devices
+
+    async def async_step_silent(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The integrations followed, the hours of silence on a battery and on mains, the devices ignored."""
+        if user_input is not None:
+            return self._save(**{MODULE_SILENT: silent_flow.settings_options(user_input)})
+        schema = silent_flow.settings_schema(self.hass, self._module(MODULE_SILENT))
+        return self.async_show_form(step_id="silent", data_schema=schema)
 
     # Orphans
 

@@ -9,6 +9,7 @@
           "watchdog": "Sentinelle",
           "marketplace": "Mises à jour",
           "backups": "Sauvegardes",
+          "silent": "Appareils muets",
           "batteries": "Batteries",
           "git_sync": "Versionnage",
           "orphans": "Nettoyage",
@@ -19,6 +20,7 @@
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "backups": "Suit les sauvegardes de Home Assistant : la dernière réussie, la prochaine, chaque emplacement et les 30 derniers jours. Aucune entité propre.",
+          "silent": "Suit les appareils ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome et deCONZ : ceux qui ne donnent plus signe de vie, et les signaux faibles. Aucune entité propre.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
           "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
           "orphans": "Liste les entités que leur intégration ne fournit plus, pour pouvoir les supprimer en masse.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Sentinelle : Retirer des redémarrages par prise",
           "marketplace": "Mises à jour",
           "backups": "Sauvegardes",
+          "silent": "Appareils muets",
           "batteries": "Batteries",
           "git_sync_repository": "Versionnage : Paramètres du dépôt",
           "git_sync": "Versionnage",
@@ -93,6 +96,7 @@
           "watchdog": "Sentinelle",
           "marketplace": "Mises à jour",
           "backups": "Sauvegardes",
+          "silent": "Appareils muets",
           "batteries": "Batteries",
           "git_sync": "Versionnage",
           "automations": "Automatisations"
@@ -102,6 +106,7 @@
           "watchdog": "Recharge les intégrations dont toutes les entités sont indisponibles.",
           "marketplace": "Recherche les mises à jour de tous les dépôts installés depuis le Marketplace, côté serveur. Le Marketplace lui-même ne relit le catalogue que toutes les 6 heures et ne vérifie les dépôts personnalisés que toutes les 48 heures.",
           "backups": "Suit les sauvegardes de Home Assistant : la dernière réussie, la prochaine, chaque emplacement et les 30 derniers jours. Aucune entité propre.",
+          "silent": "Suit les appareils ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome et deCONZ : ceux qui ne donnent plus signe de vie, et les signaux faibles. Aucune entité propre.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
           "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
           "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Jours sans sauvegarde automatique réussie avant que l'onglet Statut ne signale un problème."
+        }
+      },
+      "silent": {
+        "title": "Appareils muets",
+        "data": {
+          "integrations": "Intégrations suivies",
+          "battery_hours": "Muet après, sur pile",
+          "mains_hours": "Muet après, sur secteur",
+          "ignored_devices": "Appareils ignorés"
+        },
+        "data_description": {
+          "integrations": "Les appareils ayant une entité de ces intégrations (mqtt pour Zigbee2MQTT).",
+          "battery_hours": "Un appareil avec une entité de batterie qui ne remonte rien pendant ce délai.",
+          "mains_hours": "Tout autre appareil qui ne remonte rien pendant ce délai.",
+          "ignored_devices": "Exclus de l'onglet et de l'onglet Statut."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Appareil",
         "mk_update_marketplace": "Mettre à jour le Marketplace",
         "upd_available_detail": "Disponibles : {n} ({system} hors Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "À jour : {n}"
+        "upd_uptodate_short": "À jour : {n}",
+        "tab_silent": "Appareils muets",
+        "sl_silent": "Muets",
+        "sl_weak": "Signal faible",
+        "sl_tracked": "Appareils suivis",
+        "sl_ignored": "Ignorés",
+        "sl_n_silent": "{n} muets",
+        "sl_n_weak": "{n} au signal faible",
+        "sl_all_heard": "Tous entendus",
+        "sl_followed": "{n} appareils suivis",
+        "sl_all": "Tous",
+        "sl_none": "Tous les appareils suivis ont donné signe de vie récemment, avec un bon signal.",
+        "sl_heard": "entendu {when}",
+        "sl_unavailable_since": "indisponible depuis {when}",
+        "sl_battery": "pile {n} %",
+        "sl_battery_unknown": "pile",
+        "sl_mains": "secteur",
+        "sl_ignore": "Ignorer",
+        "sl_hint": "Muet : rien reçu depuis plus de {battery} h sur pile, {mains} h sur secteur. Signal faible : LQI sous 50, RSSI sous −80 dBm.",
+        "sl_ignored_done": "Ignoré : {name}"
       }
     },
     "battery_type": {

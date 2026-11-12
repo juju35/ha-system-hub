@@ -32,6 +32,7 @@ from .const import (
     MODULE_AUTOMATIONS,
     MODULE_BACKUPS,
     MODULE_GIT_SYNC,
+    MODULE_SILENT,
     MODULES,
     PANEL_PATH,
     SOURCE_PANEL,
@@ -40,6 +41,9 @@ from .const import (
 )
 from .containers.flow import stoppable_processes
 from .orphans import panel as orphans_panel
+from .orphans.services import NO_RELOAD_KEY
+from .silent import CONF_IGNORED_DEVICES, silent_state
+from .silent import settings as silent_settings
 
 STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
@@ -96,6 +100,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_options_flow)
         websocket_api.async_register_command(hass, ws_stoppable_processes)
         websocket_api.async_register_command(hass, orphans_panel.ws_orphans)
+        websocket_api.async_register_command(hass, ws_silent_ignore)
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         return
@@ -467,6 +472,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         backups = entry.options.get(MODULE_BACKUPS)
         max_age = backups.get(CONF_BACKUP_MAX_AGE) if isinstance(backups, dict) else None
         result["backups"] = {"max_age": int(max_age or DEFAULT_BACKUP_MAX_AGE)}
+    if MODULE_SILENT in result["modules"]:
+        result["silent"] = silent_state(hass, entry.options.get(MODULE_SILENT))
     if MODULE_AUTOMATIONS in result["modules"]:
         options = entry.options.get(MODULE_AUTOMATIONS)
         result["automations"] = automations.state(hass, options if isinstance(options, dict) else None)
@@ -505,6 +512,31 @@ async def ws_update_settings(
         options[CONF_TABS] = tab_order({CONF_TABS: msg["tabs"]})
     hass.config_entries.async_update_entry(entry, options=options)
     connection.send_result(msg["id"], {"modules": options.get(CONF_MODULES), "tabs": tab_order(options)})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "system_hub/silent_ignore",
+        vol.Required("device_id"): str,
+        vol.Optional("ignore", default=True): bool,
+    }
+)
+@callback
+def ws_silent_ignore(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """A device left out of the Silent devices module (or back in), saved in its settings without a reload."""
+    entry = _entry(hass)
+    if entry is None:
+        connection.send_error(msg["id"], "not_loaded", "System Hub is not loaded")
+        return
+    current = silent_settings(entry.options.get(MODULE_SILENT))
+    ignored = set(current[CONF_IGNORED_DEVICES])
+    ignored = ignored | {msg["device_id"]} if msg["ignore"] else ignored - {msg["device_id"]}
+    options = {**entry.options, MODULE_SILENT: {**current, CONF_IGNORED_DEVICES: sorted(ignored)}}
+    # Read again on the next state: nothing to reload
+    hass.data.setdefault(DOMAIN, {})[NO_RELOAD_KEY] = options
+    hass.config_entries.async_update_entry(entry, options=options)
+    connection.send_result(msg["id"], {"ignored": sorted(ignored)})
 
 
 @websocket_api.require_admin

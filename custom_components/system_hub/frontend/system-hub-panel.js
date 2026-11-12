@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '1.7.0';
+var SYSTEM_HUB_PANEL_VERSION = '1.8.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -24,6 +24,7 @@ var SH_MODULE_ICONS = {
   watchdog: 'mdi:shield-search',
   marketplace: 'mdi:storefront-outline',
   backups: 'mdi:backup-restore',
+  silent: 'mdi:access-point-off',
   batteries: 'mdi:battery-heart-variant',
   git_sync: 'mdi:source-branch-sync',
   automations: 'mdi:robot-confused-outline',
@@ -36,6 +37,7 @@ var SH_MODULE_NAMES = {
   watchdog: 'Watchdog',
   marketplace: 'Marketplace',
   backups: 'Backups',
+  silent: 'Silent devices',
   batteries: 'Batteries',
   git_sync: 'Git Sync',
   automations: 'Automations',
@@ -46,7 +48,7 @@ var SH_GROUPS = {
   system: ['system', 'containers'],
   reliability: ['watchdog', 'automations'],
   maintenance: ['marketplace', 'backups', 'git_sync'],
-  devices: ['batteries', 'orphans'],
+  devices: ['silent', 'batteries', 'orphans'],
 };
 // The group of a tab; Status and Settings are groups of their own
 function shGroupOf(tab) {
@@ -113,6 +115,12 @@ function shErr(err) {
   if (typeof err !== 'object') return String(err);
   var text = err.message || err.error?.message || err.body?.message || err.error?.code || err.code;
   return text ? String(text) : String(err);
+}
+
+// An integration's name as its users know it
+var SH_INTEGRATIONS = { zha: 'ZHA', mqtt: 'MQTT', zwave_js: 'Z-Wave', matter: 'Matter', esphome: 'ESPHome', deconz: 'deCONZ' };
+function shIntegration(domain) {
+  return SH_INTEGRATIONS[domain] || domain;
 }
 
 function shEsc(value) {
@@ -1269,6 +1277,7 @@ class SystemHubPanel extends HTMLElement {
       watchdog: () => this._watchdog(),
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
+      silent: () => this._silent(),
       batteries: () => this._batteries(),
       git_sync: () => this._gitSync(),
       automations: () => this._automations(),
@@ -1904,6 +1913,58 @@ class SystemHubPanel extends HTMLElement {
       ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
       ${cards ? `<div class="mkgrid">${cards}</div>` : ''}
       ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
+  }
+
+  // Silent devices: the devices of the radio integrations not heard from beyond the hours set, then the weak signals
+  _silent() {
+    var data = this._state.silent || {};
+    var all = data.devices || [];
+    var quiet = all.filter((d) => d.silent);
+    var weak = all.filter((d) => !d.silent && d.signal?.weak);
+    var kinds = data.integrations || [];
+    var filter = kinds.includes(this._slFilter) ? this._slFilter : null;
+    var list = filter ? all.filter((d) => d.integration === filter) : all;
+    var tiles = [
+      this._tile('mdi:access-point-off', `<b>${quiet.length}</b>`, this._t('sl_silent'), quiet.length ? 'warn' : 'good'),
+      this._tile('mdi:wifi-strength-1-alert', `<b>${weak.length}</b>`, this._t('sl_weak'), weak.length ? 'info' : 'good'),
+      this._tile('mdi:access-point', `<b>${data.tracked ?? 0}</b>`, this._t('sl_tracked'), ''),
+      this._tile('mdi:eye-off-outline', `<b>${data.ignored ?? 0}</b>`, this._t('sl_ignored'), ''),
+    ];
+    var seg = (kind, label) =>
+      `<button class="btab${(kind || null) === filter ? ' on' : ''}" data-action="sl_filter" data-kind="${shEsc(kind || '')}" aria-pressed="${(kind || null) === filter}">${shEsc(label)}</button>`;
+    var filters = kinds.length > 1 ? `<div class="btabs" role="group">${seg('', this._t('sl_all'))}${kinds.map((k) => seg(k, shIntegration(k))).join('')}</div>` : '';
+    var rows = list
+      .map((d) => {
+        var tone = d.silent ? 'warn' : 'info';
+        var signal = d.signal ? `${d.signal.kind === 'lqi' ? 'LQI' : 'RSSI'} ${d.signal.value}${d.signal.kind === 'rssi' ? ' dBm' : ''}` : '';
+        var power = d.battery ? (d.level === null || d.level === undefined ? this._t('sl_battery_unknown') : this._t('sl_battery', { n: d.level })) : this._t('sl_mains');
+        var heard = d.unavailable ? this._t('sl_unavailable_since', { when: this._rel(d.last_heard) }) : this._t('sl_heard', { when: this._rel(d.last_heard) });
+        return `<div class="item ${tone}"><ha-icon icon="${d.silent ? 'mdi:access-point-off' : 'mdi:wifi-strength-1-alert'}"></ha-icon>
+          <div class="who"><div class="n">${shEsc(d.name)}</div><div class="s">${shEsc([d.area, shIntegration(d.integration), heard, signal, power].filter(Boolean).join(' · '))}</div></div>
+          <span class="pill ${tone}">${shEsc(this._t(d.silent ? 'sl_silent' : 'sl_weak'))}</span>
+          <a class="act quiet" href="/config/devices/device/${encodeURIComponent(d.device_id)}"><ha-icon icon="mdi:open-in-new"></ha-icon>${shEsc(this._t('open_device'))}</a>
+          ${this._button('sl_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { device: d.device_id, name: d.name }, busy: this._busy[`sl_ignore:${d.device_id}`] })}</div>`;
+      })
+      .join('');
+    var hint = this._t('sl_hint', { battery: data.battery_hours ?? 24, mains: data.mains_hours ?? 24 });
+    return `<div class="tiles">${tiles.join('')}</div>
+      <div class="actions">${filters}${this._message('sl')}${this._configure()}</div>
+      <span class="msg">${shEsc(hint)}</span>
+      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('sl_none'))}</div>`}</ha-card>`;
+  }
+
+  // A device left out of the module: saved in its settings at once, gone from the list
+  async _slIgnore(device, name) {
+    this._busy[`sl_ignore:${device}`] = true;
+    this._render();
+    try {
+      await this._hass.callWS({ type: 'system_hub/silent_ignore', device_id: device });
+      this._toast(this._t('sl_ignored_done', { name }));
+    } catch (err) {
+      this._messages.sl = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
+    }
+    delete this._busy[`sl_ignore:${device}`];
+    await this._load();
   }
 
   // Home Assistant's backups (the Backup integration's backup/info and its locations), read when the tab is shown
@@ -2662,6 +2723,11 @@ class SystemHubPanel extends HTMLElement {
       });
     }
     if (action === 'git_sync_pull' || action === 'git_sync_export_dashboards') return this._run(action, 'git_sync', this._gitTarget(), null, SH_DOMAIN, action);
+    if (action === 'sl_filter') {
+      this._slFilter = button.dataset.kind || null;
+      return this._render();
+    }
+    if (action === 'sl_ignore') return this._slIgnore(button.dataset.device, button.dataset.name);
     if (action === 'bk_now') return this._run('create_automatic', 'bk', {}, () => this._bkLoad(true), 'backup', 'bk_now');
     if (action === 'upd_backup') {
       this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));
@@ -3226,6 +3292,7 @@ var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   backups: ['backups'],
+  silent: ['silent'],
   batteries: ['batteries', 'batteries_types', 'batteries_import'],
   git_sync: ['git_sync', 'git_sync_repository', 'git_sync_add_repository', 'git_sync_other', 'git_sync_remove_repository'],
   automations: ['automations'],
@@ -3671,6 +3738,17 @@ var SH_STATUS_METHODS = {
         market?.state === 'error' ? 'bad' : count ? 'warn' : 'good',
         count ? n('st_available', count) : this._t('up_to_date'),
         join([...others, ...repos.map((u) => `${u.title} ${u.latest}`)]),
+      ];
+    }
+    if (tab === 'silent') {
+      var sl = s.silent;
+      if (!sl) return null;
+      var quiet = (sl.devices || []).filter((d) => d.silent);
+      var weak = (sl.devices || []).filter((d) => !d.silent && d.signal?.weak);
+      return [
+        quiet.length ? 'warn' : weak.length ? 'info' : 'good',
+        quiet.length ? n('sl_n_silent', quiet.length) : weak.length ? n('sl_n_weak', weak.length) : this._t('sl_all_heard'),
+        join([...quiet.map((d) => d.name), weak.length && quiet.length ? n('sl_n_weak', weak.length) : '', quiet.length ? '' : this._t('sl_followed', { n: sl.tracked ?? 0 })]),
       ];
     }
     if (tab === 'backups') {

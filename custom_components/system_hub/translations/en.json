@@ -9,6 +9,7 @@
           "watchdog": "Sentinel",
           "marketplace": "Updates",
           "backups": "Backups",
+          "silent": "Silent devices",
           "batteries": "Batteries",
           "git_sync": "Versioning",
           "orphans": "Cleanup",
@@ -19,6 +20,7 @@
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "backups": "Follows Home Assistant's backups: the last successful one, the next one, each location and the last 30 days. No entities of its own.",
+          "silent": "Follows the devices of ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome and deCONZ: the ones not heard from for a while, and the weak signals. No entities of its own.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
           "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
           "orphans": "Lists the entities that their integration no longer provides, so that you can remove them in bulk.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Sentinel: Remove power cycles",
           "marketplace": "Updates",
           "backups": "Backups",
+          "silent": "Silent devices",
           "batteries": "Batteries",
           "git_sync_repository": "Versioning: Repository settings",
           "git_sync": "Versioning",
@@ -93,6 +96,7 @@
           "watchdog": "Sentinel",
           "marketplace": "Updates",
           "backups": "Backups",
+          "silent": "Silent devices",
           "batteries": "Batteries",
           "git_sync": "Versioning",
           "automations": "Automations"
@@ -102,6 +106,7 @@
           "watchdog": "Reloads the integrations whose entities are all unavailable.",
           "marketplace": "Checks every repository installed from the Marketplace for updates, on the server. The Marketplace itself reads the catalog every 6 hours and only checks custom repositories every 48 hours.",
           "backups": "Follows Home Assistant's backups: the last successful one, the next one, each location and the last 30 days. No entities of its own.",
+          "silent": "Follows the devices of ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome and deCONZ: the ones not heard from for a while, and the weak signals. No entities of its own.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
           "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
           "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Days without a successful automatic backup before the Status tab warns."
+        }
+      },
+      "silent": {
+        "title": "Silent devices",
+        "data": {
+          "integrations": "Integrations followed",
+          "battery_hours": "Silent after, on a battery",
+          "mains_hours": "Silent after, on mains",
+          "ignored_devices": "Ignored devices"
+        },
+        "data_description": {
+          "integrations": "The devices with an entity from these integrations (mqtt for Zigbee2MQTT).",
+          "battery_hours": "A device with a battery entity that reports nothing for this long.",
+          "mains_hours": "Any other device that reports nothing for this long.",
+          "ignored_devices": "Left out of the tab and the Status tab."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Device",
         "mk_update_marketplace": "Update the Marketplace",
         "upd_available_detail": "Available: {n} ({system} outside the Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "Up to date: {n}"
+        "upd_uptodate_short": "Up to date: {n}",
+        "tab_silent": "Silent devices",
+        "sl_silent": "Silent",
+        "sl_weak": "Weak signal",
+        "sl_tracked": "Devices followed",
+        "sl_ignored": "Ignored",
+        "sl_n_silent": "{n} silent",
+        "sl_n_weak": "{n} with a weak signal",
+        "sl_all_heard": "All heard",
+        "sl_followed": "{n} devices followed",
+        "sl_all": "All",
+        "sl_none": "Every device followed was heard from recently, with a good signal.",
+        "sl_heard": "heard {when}",
+        "sl_unavailable_since": "unavailable since {when}",
+        "sl_battery": "battery {n} %",
+        "sl_battery_unknown": "battery",
+        "sl_mains": "mains",
+        "sl_ignore": "Ignore",
+        "sl_hint": "Silent: nothing heard for more than {battery} h on a battery, {mains} h on mains. Weak signal: LQI below 50, RSSI below −80 dBm.",
+        "sl_ignored_done": "Ignored: {name}"
       }
     },
     "battery_type": {

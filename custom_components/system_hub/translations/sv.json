@@ -9,6 +9,7 @@
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
           "backups": "Säkerhetskopior",
+          "silent": "Tysta enheter",
           "batteries": "Batterier",
           "git_sync": "Versionshantering",
           "orphans": "Städning",
@@ -19,6 +20,7 @@
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
           "backups": "Följer Home Assistants säkerhetskopior: den senaste lyckade, nästa, varje plats och de senaste 30 dagarna. Inga egna entiteter.",
+          "silent": "Följer enheterna från ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome och deCONZ: de som inte längre hörs av och de svaga signalerna. Inga egna entiteter.",
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
           "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
           "orphans": "Listar de entiteter som deras integration inte längre tillhandahåller, så att du kan ta bort dem samtidigt.",
@@ -72,6 +74,7 @@
           "watchdog_remove_power_cycle": "Väktare: Ta bort omstarter via uttag",
           "marketplace": "Uppdateringar",
           "backups": "Säkerhetskopior",
+          "silent": "Tysta enheter",
           "batteries": "Batterier",
           "git_sync_repository": "Versionshantering: Inställningar för förrådet",
           "git_sync": "Versionshantering",
@@ -93,6 +96,7 @@
           "watchdog": "Väktare",
           "marketplace": "Uppdateringar",
           "backups": "Säkerhetskopior",
+          "silent": "Tysta enheter",
           "batteries": "Batterier",
           "git_sync": "Versionshantering",
           "automations": "Automationer"
@@ -102,6 +106,7 @@
           "watchdog": "Laddar om de integrationer vars entiteter alla är otillgängliga.",
           "marketplace": "Söker på servern efter uppdateringar för alla repositorier som laddats ned med Marketplace. Marketplace själv kontrollerar bara anpassade repositorier var 48:e timme.",
           "backups": "Följer Home Assistants säkerhetskopior: den senaste lyckade, nästa, varje plats och de senaste 30 dagarna. Inga egna entiteter.",
+          "silent": "Följer enheterna från ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome och deCONZ: de som inte längre hörs av och de svaga signalerna. Inga egna entiteter.",
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
           "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
           "automations": "Visar de misslyckade automationerna och de otillgängliga entiteterna som integrationen Automation Monitor rapporterar (installeras separat). Inga egna entiteter."
@@ -188,6 +193,21 @@
         },
         "data_description": {
           "max_age": "Dagar utan lyckad automatisk säkerhetskopia innan fliken Status varnar."
+        }
+      },
+      "silent": {
+        "title": "Tysta enheter",
+        "data": {
+          "integrations": "Följda integrationer",
+          "battery_hours": "Tyst efter, på batteri",
+          "mains_hours": "Tyst efter, på elnät",
+          "ignored_devices": "Ignorerade enheter"
+        },
+        "data_description": {
+          "integrations": "Enheterna med en entitet från dessa integrationer (mqtt för Zigbee2MQTT).",
+          "battery_hours": "En enhet med en batterientitet som inte rapporterar något så länge.",
+          "mains_hours": "Varje annan enhet som inte rapporterar något så länge.",
+          "ignored_devices": "Utelämnade från fliken och fliken Status."
         }
       },
       "batteries": {
@@ -1536,7 +1556,26 @@
         "upd_device": "Enhet",
         "mk_update_marketplace": "Uppdatera Marketplace",
         "upd_available_detail": "Tillgängliga: {n} ({system} utanför Marketplace, {marketplace} Marketplace)",
-        "upd_uptodate_short": "Uppdaterade: {n}"
+        "upd_uptodate_short": "Uppdaterade: {n}",
+        "tab_silent": "Tysta enheter",
+        "sl_silent": "Tysta",
+        "sl_weak": "Svag signal",
+        "sl_tracked": "Följda enheter",
+        "sl_ignored": "Ignorerade",
+        "sl_n_silent": "{n} tysta",
+        "sl_n_weak": "{n} med svag signal",
+        "sl_all_heard": "Alla hörda",
+        "sl_followed": "{n} enheter följs",
+        "sl_all": "Alla",
+        "sl_none": "Alla följda enheter har hörts av nyligen, med bra signal.",
+        "sl_heard": "hörd {when}",
+        "sl_unavailable_since": "otillgänglig sedan {when}",
+        "sl_battery": "batteri {n} %",
+        "sl_battery_unknown": "batteri",
+        "sl_mains": "elnät",
+        "sl_ignore": "Ignorera",
+        "sl_hint": "Tyst: inget mottaget på över {battery} h på batteri, {mains} h på elnät. Svag signal: LQI under 50, RSSI under −80 dBm.",
+        "sl_ignored_done": "Ignorerad: {name}"
       }
     },
     "battery_type": {
