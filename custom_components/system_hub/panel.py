@@ -19,7 +19,6 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import area_registry as ar
 from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
-from homeassistant.helpers.storage import Store
 
 from . import automations
 from .const import (
@@ -59,13 +58,11 @@ STATIC_URL = f"/{DOMAIN}_static"
 FRONTEND_DIR = Path(__file__).parent / "frontend"
 MODULE = "system-hub-panel.js"
 ELEMENT = "system-hub-panel"
-# The sidebar icon: the Status tab's emblem (frontend/system-hub-icons.js, loaded on every page), its badge following
-# the Status tab: good, warn or bad, as an open panel reports it (system_hub/sidebar_icon)
+# The sidebar icon: the Status tab's emblem (frontend/system-hub-icons.js, loaded on every page). Its badge follows
+# the Status tab in each browser, drawn there: the panel is never registered again for it, which would rebuild an open
+# panel on its first tab.
 ICONS_MODULE = "system-hub-icons.js"
-ICON_TONES = ("good", "warn", "bad")
-TONE_KEY = "sidebar_tone"
-# The last tone kept across restarts: the sidebar shows it at once, until a page reads the status again
-TONE_STORE = f"{DOMAIN}.sidebar"
+SIDEBAR_ICON = "system-hub:status"
 TITLE = "System Hub"
 TABS = (TAB_STATUS, TAB_SYSTEM, *MODULES)
 
@@ -119,33 +116,20 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_silent_ignore)
         websocket_api.async_register_command(hass, ws_logs_ignore)
         websocket_api.async_register_command(hass, ws_database)
-        websocket_api.async_register_command(hass, ws_sidebar_icon)
         websocket_api.async_register_command(hass, ws_security)
         websocket_api.async_register_command(hass, ws_security_revoke)
         websocket_api.async_register_command(hass, ws_security_ignore)
         data["version"] = await hass.async_add_executor_job(_version)
-        data["tone_store"] = Store(hass, 1, TONE_STORE)
-        tone = (await data["tone_store"].async_load() or {}).get("tone")
-        data[TONE_KEY] = tone if tone in ICON_TONES else ICON_TONES[0]
         frontend.add_extra_js_url(hass, f"{STATIC_URL}/{ICONS_MODULE}?v={data['version']}")
         data["panel_registered"] = True
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         return
-    _add_panel(hass)
-
-
-def _add_panel(hass: HomeAssistant, update: bool = False) -> None:
-    """The panel in the sidebar, its icon the last status reported (good until one is)."""
-    from homeassistant.components import frontend  # noqa: PLC0415
-
-    data = hass.data[DOMAIN]
     version = data["version"]
     frontend.async_register_built_in_panel(
         hass,
         component_name="custom",
         sidebar_title=TITLE,
-        sidebar_icon=f"system-hub:{data.get(TONE_KEY, ICON_TONES[0])}",
-        update=update,
+        sidebar_icon=SIDEBAR_ICON,
         frontend_url_path=PANEL_PATH,
         require_admin=True,
         config={
@@ -616,25 +600,6 @@ async def ws_database(hass: HomeAssistant, connection: websocket_api.ActiveConne
         connection.send_error(msg["id"], "failed", str(err))
         return
     connection.send_result(msg["id"], result)
-
-
-@websocket_api.require_admin
-@websocket_api.websocket_command(
-    {vol.Required("type"): "system_hub/sidebar_icon", vol.Required("tone"): vol.In(ICON_TONES)}
-)
-@callback
-def ws_sidebar_icon(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
-    """The Status tab's tone, from a panel open or a page that follows it: the sidebar icon changes with it."""
-    from homeassistant.components import frontend  # noqa: PLC0415
-
-    data = hass.data.setdefault(DOMAIN, {})
-    changed = data.get(TONE_KEY, ICON_TONES[0]) != msg["tone"]
-    data[TONE_KEY] = msg["tone"]
-    if changed and "version" in data and PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
-        _add_panel(hass, update=True)
-    if changed and (store := data.get("tone_store")) is not None:
-        store.async_delay_save(lambda: {"tone": msg["tone"]}, 5)
-    connection.send_result(msg["id"], {"changed": changed})
 
 
 @websocket_api.require_admin

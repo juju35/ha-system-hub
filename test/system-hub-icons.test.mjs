@@ -71,3 +71,25 @@ test('icons drawn before the set was known are drawn again, each with its own ic
   assert.equal(other.icon, 'mdi:cog');
   assert.equal(after.icon, undefined);
 });
+
+test('the status icon: the tone read, drawn again when it changes and kept by the browser', async () => {
+  const { context } = load(null);
+  const saved = {};
+  context.localStorage = { getItem: (k) => saved[k] ?? null, setItem: (k, v) => (saved[k] = v) };
+  const set = context.window.customIcons['system-hub'];
+  assert.equal((await set.getIcon('status')).path, (await set.getIcon('good')).path);
+  const frames = [];
+  context.requestAnimationFrame = (fn) => frames.push(fn);
+  const icon = { localName: 'ha-icon', icon: 'system-hub:status' };
+  context.document.querySelector = () => ({ shadowRoot: { querySelectorAll: () => [icon] } });
+  context.window.systemHubSetTone('warn');
+  assert.equal((await set.getIcon('status')).path, (await set.getIcon('warn')).path);
+  assert.equal(saved['system-hub-tone'], 'warn');
+  assert.equal(icon.icon, '');
+  for (const fn of frames) fn();
+  assert.equal(icon.icon, 'system-hub:status');
+  // The same tone, or one that is not: nothing drawn again
+  context.window.systemHubSetTone('warn');
+  context.window.systemHubSetTone('purple');
+  assert.equal(frames.length, 1);
+});

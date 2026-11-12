@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.2 - 2026-11-12
+
+### Fixed
+- **The panel went back to the Status tab by itself**, after an action that changed the status (a problem fixed, a message ignored, a token revoked…): to change the sidebar icon, System Hub registered its panel again, and Home Assistant built the open panel again, on its first tab. The icon now changes in each browser only (the status it reads, kept by the browser for the next page), and the panel is never registered again for it. Home Assistant is also told of each tab chosen, so that a panel it builds again for any other reason opens on the same tab.
+
 ## 2.0.1 - 2026-11-12
 
 ### Fixed

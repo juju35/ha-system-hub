@@ -76,26 +76,19 @@ async def test_panel_is_registered_for_administrators(hass: HomeAssistant) -> No
     assert panel.config["_panel_custom"]["module_url"].startswith("/system_hub_static/system-hub-panel.js?v=")
 
 
-async def test_sidebar_icon_follows_the_status(hass: HomeAssistant, hass_ws_client) -> None:
+async def test_sidebar_icon_is_the_status_emblem(hass: HomeAssistant, hass_ws_client) -> None:
+    """The icon set of system-hub-icons.js; its badge drawn in each browser: the panel is never registered again for
+    it (an open panel would be built again, back on its first tab)."""
     await _setup(hass, [])
-    assert hass.data[frontend.DATA_PANELS][PANEL_PATH].sidebar_icon == "system-hub:good"
+    panel = hass.data[frontend.DATA_PANELS][PANEL_PATH]
+    assert panel.sidebar_icon == "system-hub:status"
     assert any(
         "/system_hub_static/system-hub-icons.js?v=" in url for url in hass.data[frontend.DATA_EXTRA_MODULE_URL].urls
     )
     client = await hass_ws_client(hass)
     await client.send_json({"id": 1, "type": "system_hub/sidebar_icon", "tone": "warn"})
-    assert (await client.receive_json())["result"] == {"changed": True}
-    assert hass.data[frontend.DATA_PANELS][PANEL_PATH].sidebar_icon == "system-hub:warn"
-    await client.send_json({"id": 2, "type": "system_hub/sidebar_icon", "tone": "warn"})
-    assert (await client.receive_json())["result"] == {"changed": False}
-    await client.send_json({"id": 3, "type": "system_hub/sidebar_icon", "tone": "purple"})
-    assert not (await client.receive_json())["success"]
-
-
-async def test_sidebar_icon_kept_across_restarts(hass: HomeAssistant, hass_storage) -> None:
-    hass_storage["system_hub.sidebar"] = {"version": 1, "key": "system_hub.sidebar", "data": {"tone": "bad"}}
-    await _setup(hass, [])
-    assert hass.data[frontend.DATA_PANELS][PANEL_PATH].sidebar_icon == "system-hub:bad"
+    assert (await client.receive_json())["error"]["code"] == "unknown_command"
+    assert hass.data[frontend.DATA_PANELS][PANEL_PATH] is panel
 
 
 async def test_panel_removed_with_the_integration(hass: HomeAssistant) -> None:

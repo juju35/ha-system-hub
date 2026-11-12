@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.0.1';
+var SYSTEM_HUB_PANEL_VERSION = '2.0.2';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1194,6 +1194,8 @@ class SystemHubPanel extends HTMLElement {
     try {
       // Every tab in the address, the first one too: the panel's bare address opens the first tab of the order
       history.replaceState(history.state, '', `/${base}/${this._tab}`);
+      // Home Assistant told, so that its route follows: a panel it builds again opens on this tab, not on the first one
+      window.dispatchEvent(new CustomEvent('location-changed', { detail: { replace: true } }));
     } catch (_err) {
       // no history (a test): the tab still shows
     }
@@ -4408,19 +4410,9 @@ var SH_STATUS_METHODS = {
     return { areas, counts, score, tone: score >= 80 ? 'good' : score >= 50 ? 'warn' : 'bad' };
   },
 
-  // The sidebar icon follows the Status tab: its tone sent when the sidebar shows another one
-  async _reportTone() {
-    if (!this._state?.loaded || !this._hass?.callWS) return;
-    var tone = this._stTone().tone;
-    var shown = this._hass.panels?.['system-hub']?.icon;
-    if (!shown || shown === `system-hub:${tone}` || this._toneSending === tone) return;
-    this._toneSending = tone;
-    try {
-      await this._hass.callWS({ type: 'system_hub/sidebar_icon', tone });
-    } catch (_err) {
-      // sent again with the next read
-    }
-    this._toneSending = null;
+  // The sidebar icon follows the Status tab: drawn again in this browser when its tone changes (system-hub-icons.js)
+  _reportTone() {
+    if (this._state?.loaded) globalThis.systemHubSetTone?.(this._stTone().tone);
   },
 
   _status() {
