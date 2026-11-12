@@ -635,6 +635,7 @@ class SystemHubPanel extends HTMLElement {
     .lhead .lname { flex:1; font-size:14px; font-weight:500; color:var(--primary-text-color); }
     .item { display:flex; align-items:center; gap:12px; padding:8px 14px; min-width:0; }
     .item.link { cursor:pointer; }
+    a.item { color:inherit; text-decoration:none; }
     .item.link:hover { background:var(--secondary-background-color, rgba(127,127,127,.08)); }
     .item > ha-icon { flex:none; --mdc-icon-size:22px; color:var(--tone-text, var(--secondary-text-color)); }
     .side { flex:none; display:flex; flex-direction:column; align-items:flex-end; gap:4px; font-size:12px; text-align:right; min-width:90px; }
