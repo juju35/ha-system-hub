@@ -950,11 +950,11 @@ test('mini card: the detail button switches to the full card and back; a click e
   assert.match(out, /class="zoom"[^>]*aria-expanded="true"/);
   assert.equal(card.getCardSize(), IntegrationWatchdogCard.prototype.getCardSize.call(card));
   // A click inside the card or in a dialog opened from it keeps the full card...
-  card._onUnzoom({ composedPath: () => [card] });
-  card._onUnzoom({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  card._unzoom.tap({ composedPath: () => [card] });
+  card._unzoom.tap({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
   assert.match(html(card), /class="stats"/);
   // ...a click anywhere else goes back to the compact view.
-  card._onUnzoom({ composedPath: () => [{ localName: 'div' }] });
+  card._unzoom.tap({ composedPath: () => [{ localName: 'div' }] });
   out = html(card);
   assert.doesNotMatch(out, /class="stats"/);
   assert.match(out, /class="mini"/);

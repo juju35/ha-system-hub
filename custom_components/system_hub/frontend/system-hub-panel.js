@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.3.2';
+var SYSTEM_HUB_PANEL_VERSION = '2.3.3';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after

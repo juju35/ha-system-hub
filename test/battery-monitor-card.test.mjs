@@ -1243,14 +1243,19 @@ test('mini card: compact with the batteries needing attention, the detail button
   assert.match(out, /<button class="zoom" title="Back to the compact view"[^>]*aria-expanded="true">/);
   assert.deepEqual({ ...card.getGridOptions() }, { columns: 12, min_columns: 6, rows: 'auto' });
 
-  // A click in the card, or in a more-info opened from it, keeps the full card; a click elsewhere folds it back.
-  listeners.click({ composedPath: () => [card] });
-  listeners.click({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  // A tap in the card, or in a more-info opened from it, keeps the full card; a tap elsewhere folds it back.
+  const tap = (ev) => {
+    listeners.pointerdown(ev);
+    listeners.pointerup(ev);
+  };
+  tap({ composedPath: () => [card] });
+  tap({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
   assert.ok(html(card).includes('Lamp'));
-  listeners.click({ composedPath: () => [{ localName: 'div' }] });
+  tap({ composedPath: () => [{ localName: 'div' }] });
   assert.ok(!html(card).includes('Lamp'));
   card.disconnectedCallback();
   assert.equal(listeners.click, undefined);
+  assert.equal(listeners.pointerup, undefined);
 });
 
 test('System Hub: its Batteries sensor is found, not an old Battery Monitor one nor another System Hub sensor', () => {

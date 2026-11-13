@@ -107,3 +107,24 @@ test("numbers use the card language's decimal separator", () => {
   assert.equal(lib.fmtBytes(1536), "1.5 KiB");
   assert.equal(lib.fmtBytes(2 * 1024 ** 3 - 1, "fr"), "2 GiB");
 });
+
+test("no rewrite under a press: drawn after its release, and at once by its click", () => {
+  const c = card(lib.SystemMonitorCard, running());
+  c._update();
+  const before = c.shadowRoot.innerHTML;
+  c._pressing = true;
+  c._procsOpen = true;
+  c._update();
+  assert.equal(c.shadowRoot.innerHTML, before, "no rewrite under the pointer");
+  c._endPress(); // what the release runs, on the next task (no timers in this sandbox)
+  assert.notEqual(c.shadowRoot.innerHTML, before, "drawn right after the release");
+  const open = c.shadowRoot.innerHTML;
+  c._pressing = true;
+  c._pressClick({ detail: 1 });
+  c._procsOpen = false;
+  c._update();
+  assert.equal(c.shadowRoot.innerHTML, before, "the click draws at once");
+  assert.notEqual(open, before);
+  c.disconnectedCallback();
+  assert.equal(c._pressing, false);
+});

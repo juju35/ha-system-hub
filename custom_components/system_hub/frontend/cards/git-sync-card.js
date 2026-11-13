@@ -6,7 +6,7 @@
  * integration, same card types: dashboards using it keep working.
  * https://github.com/juju35/ha-system-hub
  */
-var GIT_SYNC_CARD_VERSION = '2.3.2';
+var GIT_SYNC_CARD_VERSION = '2.3.3';
 // System Hub: its entities (platform system_hub, translation keys git_sync_*) and actions (system_hub.git_sync_*)
 var GS_DOMAIN = 'system_hub';
 var GS_PREFIX = 'git_sync_';
@@ -1658,6 +1658,88 @@ const gsInDialog = (ev) =>
     ['ha-more-info-dialog', 'ha-dialog', 'dialog', 'git-sync-diff-dialog'].includes(n?.localName),
   );
 
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app)
+// a tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to
+// the page. It counts when the press and the release are both outside (`isOut`; a slider dragged out of the card
+// does not fold it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through
+// the click event.
+const gsWatchOutside = (isOut, handler) => {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOut(ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOut(ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOut(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener?.('pointerdown', onDown, true);
+      document.addEventListener?.('pointerup', onUp, true);
+      document.addEventListener?.('click', onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener?.('pointerdown', onDown, true);
+      document.removeEventListener?.('pointerup', onUp, true);
+      document.removeEventListener?.('click', onClick, true);
+    },
+  };
+};
+
+// No rewrite of the card between a press and its click: Home Assistant updates the card several times a second, and a
+// rewrite under the pointer replaces the element pressed, so that the click lands on the card itself and does nothing
+// (a button or a row that does not react). While a press is in progress (`_pressing`), a render is left pending
+// (`_dirty`): it is done at the click, or right after the release when no click follows (a drag, a scroll).
+// `_byPointer` tells a mouse or touch use from the keyboard: after a rewrite, the focus is put back only for the
+// keyboard (no focus ring after a click), and always in a text field.
+const gsHoldUnderPress = (card, render) => {
+  const root = card.shadowRoot;
+  card._onPressEnd = () => {
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+    setTimeout(() => card._endPress(), 0);
+  };
+  card._endPress = () => {
+    card._pressing = false;
+    if (!card._dirty) return;
+    card._dirty = false;
+    render();
+  };
+  // Left in the middle of a press (see disconnectedCallback).
+  card._dropPress = () => {
+    card._pressing = false;
+    card._dirty = false;
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+  };
+  root.addEventListener?.('pointerdown', () => {
+    card._byPointer = true;
+    card._pressing = true;
+    window.addEventListener?.('pointerup', card._onPressEnd, true);
+    window.addEventListener?.('pointercancel', card._onPressEnd, true);
+  });
+  root.addEventListener?.('keydown', () => {
+    card._byPointer = false;
+  });
+  // At the click (capture: before the card acts on it) the press is over, and what the click changes is drawn at once.
+  card._pressClick = (ev) => {
+    card._pressing = false;
+    if (ev.detail === 0) card._byPointer = false;
+  };
+  root.addEventListener?.('click', card._pressClick, true);
+};
+
+// Whether the focus goes back to `el` after a rewrite (see gsHoldUnderPress).
+const gsKeepsFocus = (card, el) => !card._byPointer || typeof el?.selectionStart === 'number';
+
 // Status letter and colour of a file in the diff viewer, as in an editor's source control view.
 const GS_DIFF_STATUS = {
   added: { letter: 'A', key: 'diff_added', color: 'var(--gs-ok)' },
@@ -1701,18 +1783,26 @@ class GitSyncCard extends HTMLElement {
     this._draft = '';
     this._generating = false;
     // A click elsewhere folds the changed files (and brings the mini card back to its compact view).
-    this._outside = (ev) => {
-      if (ev.composedPath?.().includes(this) || gsInDialog(ev)) return;
-      if (this._collapse()) this._render();
-    };
+    this._outside = gsWatchOutside(
+      (ev) => !ev.composedPath?.().includes(this) && !gsInDialog(ev),
+      () => {
+        if (this._collapse()) this._render();
+      },
+    );
   }
 
   connectedCallback() {
-    document.addEventListener?.('click', this._outside, true);
+    this._outside.on();
+    // Back on the page after leaving it: rendered again folded.
+    if (this._hass && this._config) this._render();
   }
 
   disconnectedCallback() {
-    document.removeEventListener?.('click', this._outside, true);
+    // Left in the middle of a press: nothing stays held.
+    this._dropPress?.();
+    this._outside.off();
+    // Left (another dashboard view, a conditional card hidden): back folded (and compact for the mini card).
+    this._collapse();
     this._diffDialog?.close?.();
     this._diffDialog?.remove?.();
     this._diffDialog = null;
@@ -1741,7 +1831,10 @@ class GitSyncCard extends HTMLElement {
     // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.('hide-title', config.show_title === false);
     this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+      gsHoldUnderPress(this, () => this._render());
+    }
     this._sig = null;
     this._render();
   }
@@ -1952,7 +2045,7 @@ class GitSyncCard extends HTMLElement {
   // The element with the keyboard focus, as a selector to find it again after a render replaced the DOM.
   _focused() {
     const el = this.shadowRoot?.activeElement;
-    if (!el) return null;
+    if (!el || !gsKeepsFocus(this, el)) return null;
     if (el.id) return `#${el.id}`;
     if (el.classList?.contains('zoom')) return '.zoom';
     if (el.classList?.contains('link')) return '.link';
@@ -1960,6 +2053,12 @@ class GitSyncCard extends HTMLElement {
   }
 
   _render() {
+    // Held under a press (see gsHoldUnderPress), drawn after its click.
+    if (this._pressing) {
+      this._dirty = true;
+      return;
+    }
+    this._dirty = false;
     const focused = this._focused();
     this._paint();
     if (focused) this.shadowRoot.querySelector(focused)?.focus?.({ preventScroll: true });

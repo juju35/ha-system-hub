@@ -4,7 +4,7 @@
  * Served and added to the dashboard resources by System Hub; the card types are those of Battery Monitor, so its
  * dashboards keep working. https://github.com/juju35/ha-system-hub
  */
-var BATTERY_MONITOR_CARD_VERSION = '2.3.2';
+var BATTERY_MONITOR_CARD_VERSION = '2.3.3';
 
 const BM_I18N = {
   en: {
@@ -1733,7 +1733,10 @@ class BatteryMonitorCard extends HTMLElement {
     this._config = { ...BM_DEFAULTS, ...config };
     // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.('hide-title', config.show_title === false);
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+      bmHoldUnderPress(this, () => this._render());
+    }
     this._sig = null;
     this._render();
   }
@@ -1785,6 +1788,8 @@ class BatteryMonitorCard extends HTMLElement {
   }
 
   disconnectedCallback() {
+    // Left in the middle of a press: nothing stays held.
+    this._dropPress?.();
     // A dashboard edit can simply move the card in the DOM: only close the full screen if the card is really gone.
     Promise.resolve().then(() => {
       if (this.isConnected) return;
@@ -1841,6 +1846,12 @@ class BatteryMonitorCard extends HTMLElement {
 
   _render() {
     if (!this._config || !this._hass || !this.shadowRoot) return;
+    // Held under a press (see bmHoldUnderPress), drawn after its click.
+    if (this._pressing) {
+      this._dirty = true;
+      return;
+    }
+    this._dirty = false;
     const c = this._config;
     const { entity, button } = this._lookup();
     const st = entity && this._hass.states[entity];
@@ -1893,7 +1904,8 @@ class BatteryMonitorCard extends HTMLElement {
       .join('');
 
     // Writing the markup again replaces the focused control (a battery, a header button): it is found again after.
-    const focused = bmFocusKey(this.shadowRoot.activeElement);
+    const active = this.shadowRoot.activeElement;
+    const focused = bmKeepsFocus(this, active) && bmFocusKey(active);
     this.shadowRoot.innerHTML = `
       <style>${BatteryMonitorCard.styles}</style>
       <ha-card class="lvl-${level}${compact ? ' mini' : ''}">
@@ -2607,6 +2619,88 @@ class BatteryMonitorCard extends HTMLElement {
 // A click in a dialog opened from the card (a battery's more-info) does not fold it back.
 const bmInDialog = (ev) => ev.composedPath().some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n.localName));
 
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app)
+// a tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to
+// the page. It counts when the press and the release are both outside (`isOut`; a slider dragged out of the card
+// does not fold it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through
+// the click event.
+const bmWatchOutside = (isOut, handler) => {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOut(ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOut(ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOut(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener?.('pointerdown', onDown, true);
+      document.addEventListener?.('pointerup', onUp, true);
+      document.addEventListener?.('click', onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener?.('pointerdown', onDown, true);
+      document.removeEventListener?.('pointerup', onUp, true);
+      document.removeEventListener?.('click', onClick, true);
+    },
+  };
+};
+
+// No rewrite of the card between a press and its click: Home Assistant updates the card several times a second, and a
+// rewrite under the pointer replaces the element pressed, so that the click lands on the card itself and does nothing
+// (a button or a row that does not react). While a press is in progress (`_pressing`), a render is left pending
+// (`_dirty`): it is done at the click, or right after the release when no click follows (a drag, a scroll).
+// `_byPointer` tells a mouse or touch use from the keyboard: after a rewrite, the focus is put back only for the
+// keyboard (no focus ring after a click), and always in a text field.
+const bmHoldUnderPress = (card, render) => {
+  const root = card.shadowRoot;
+  card._onPressEnd = () => {
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+    setTimeout(() => card._endPress(), 0);
+  };
+  card._endPress = () => {
+    card._pressing = false;
+    if (!card._dirty) return;
+    card._dirty = false;
+    render();
+  };
+  // Left in the middle of a press (see disconnectedCallback).
+  card._dropPress = () => {
+    card._pressing = false;
+    card._dirty = false;
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+  };
+  root.addEventListener?.('pointerdown', () => {
+    card._byPointer = true;
+    card._pressing = true;
+    window.addEventListener?.('pointerup', card._onPressEnd, true);
+    window.addEventListener?.('pointercancel', card._onPressEnd, true);
+  });
+  root.addEventListener?.('keydown', () => {
+    card._byPointer = false;
+  });
+  // At the click (capture: before the card acts on it) the press is over, and what the click changes is drawn at once.
+  card._pressClick = (ev) => {
+    card._pressing = false;
+    if (ev.detail === 0) card._byPointer = false;
+  };
+  root.addEventListener?.('click', card._pressClick, true);
+};
+
+// Whether the focus goes back to `el` after a rewrite (see bmHoldUnderPress).
+const bmKeepsFocus = (card, el) => !card._byPointer || typeof el?.selectionStart === 'number';
+
 /**
  * Compact card: the header (status, "Notify now") and only the batteries needing attention. Its detail button (top
  * right) switches it to the full card and back; a click outside the card brings the compact view back.
@@ -2615,13 +2709,17 @@ class BatteryMonitorMiniCard extends BatteryMonitorCard {
   constructor() {
     super();
     this._zoomed = false;
-    this._onOutside = (ev) => {
-      if (!this._zoomed || bmInDialog(ev)) return;
-      const path = ev.composedPath();
-      // The full screen opened from the zoomed card lives on the page's body, outside the card.
-      if (path.includes(this) || (this._popup && path.includes(this._popup))) return;
-      this._setZoom(false);
-    };
+    // The full screen opened from the zoomed card lives on the page's body, outside the card: not outside here.
+    this._outside = bmWatchOutside(
+      (ev) => {
+        if (bmInDialog(ev)) return false;
+        const path = ev.composedPath();
+        return !path.includes(this) && !(this._popup && path.includes(this._popup));
+      },
+      () => {
+        if (this._zoomed) this._setZoom(false);
+      },
+    );
   }
 
   static getStubConfig() {
@@ -2635,12 +2733,16 @@ class BatteryMonitorMiniCard extends BatteryMonitorCard {
   }
 
   connectedCallback() {
-    document.addEventListener('click', this._onOutside, true);
+    this._outside.on();
+    // Back on the page after leaving it: rendered again in the compact view.
+    if (this._hass && this._config) this._render();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener('click', this._onOutside, true);
+    this._outside.off();
+    // Left (another dashboard view, a conditional card hidden): back to the compact view on return.
+    this._zoomed = false;
   }
 
   getCardSize() {
