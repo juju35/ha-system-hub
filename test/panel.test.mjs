@@ -869,6 +869,19 @@ test('marketplace tab: a card per update with the size of the change, its notes,
   await new Promise((r) => setImmediate(r));
   html = p._content();
   assert.match(html, /v5\.0\.0 Breaking: a new editor and more/);
+  // Mushroom has neither a picture nor a project of juju35: its initial
+  assert.match(html, /class="mklogo" style="--logo:hsl[^"]*">M<\/div>/);
+  // A card of juju35 without a picture: the project's icon of the showcase site, renamed repositories included
+  const card = (url) => p._mkCard({ entity_id: 'update.x', title: 'X', installed: '1.0.0', latest: '1.0.1', release_url: url, picture: null });
+  assert.match(card('https://github.com/juju35/ha-heating-card/releases/tag/v1.0.1'), /mklogo mkproj" style="--logo:#ef6c00"><ha-icon icon="mdi:radiator">/);
+  assert.match(card('https://github.com/juju35/ha-freebox-card/releases/tag/v1.0.1'), /--logo:#cd1e25"><ha-icon icon="mdi:router-wireless">/);
+  assert.match(card('https://github.com/juju35/ha-3d-printer-card/releases/tag/v1.0.1'), /icon="mdi:printer-3d-nozzle"/);
+  assert.doesNotMatch(card('https://github.com/someone/ha-heating-card/releases/tag/v1.0.1'), /mkproj/);
+  // With a picture (an integration's brand icon), the picture first, the project's icon if it doesn't load
+  assert.match(
+    p._mkCard({ entity_id: 'update.parcel', title: 'Parcel', release_url: 'https://github.com/juju35/ha-parcel/releases/tag/v1.6.0', picture: '/p.png' }),
+    /<span class="mklogos"><img class="mklogo" src="\/p\.png"[^>]*><div class="mklogo mkproj" style="--logo:#ff7a00"><ha-icon icon="mdi:package-variant-closed">/,
+  );
   // Update on one card installs that one
   const calls = [];
   p._hass.callService = async (...args) => calls.push(args);
