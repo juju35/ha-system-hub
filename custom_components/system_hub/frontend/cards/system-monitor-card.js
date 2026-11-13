@@ -33,6 +33,15 @@ const ICONS = {
   backup: "M12,3A9,9 0 0,0 3,12H0L4,16L8,12H5A7,7 0 0,1 12,5A7,7 0 0,1 19,12A7,7 0 0,1 12,19C10.5,19 9.09,18.5 7.94,17.7L6.5,19.14C8.04,20.3 9.94,21 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3M14,12A2,2 0 0,0 12,10A2,2 0 0,0 10,12A2,2 0 0,0 12,14A2,2 0 0,0 14,12Z",
   // mdi:arrow-expand and mdi:arrow-collapse, for the zoom button of the mini card.
   expand: "M10,21V19H6.41L10.91,14.5L9.5,13.09L5,17.59V14H3V21H10M14.5,10.91L19,6.41V10H21V3H14V5H17.59L13.09,9.5L14.5,10.91Z",
+  // mdi:reload, mdi:restart and mdi:power-cycle, mdi:alert-circle-outline and mdi:check-circle-outline: show_actions.
+  reload: "M2 12C2 16.97 6.03 21 11 21C13.39 21 15.68 20.06 17.4 18.4L15.9 16.9C14.63 18.25 12.86 19 11 19C4.76 19 1.64 11.46 6.05 7.05C10.46 2.64 18 5.77 18 12H15L19 16H19.1L23 12H20C20 7.03 15.97 3 11 3C6.03 3 2 7.03 2 12Z",
+  restart:
+    "M12,4C14.1,4 16.1,4.8 17.6,6.3C20.7,9.4 20.7,14.5 17.6,17.6C15.8,19.5 13.3,20.2 10.9,19.9L11.4,17.9C13.1,18.1 14.9,17.5 16.2,16.2C18.5,13.9 18.5,10.1 16.2,7.7C15.1,6.6 13.5,6 12,6V10.6L7,5.6L12,0.6V4M6.3,17.6C3.7,15 3.3,11 5.1,7.9L6.6,9.4C5.5,11.6 5.9,14.4 7.8,16.2C8.3,16.7 8.9,17.1 9.6,17.4L9,19.4C8,19 7.1,18.4 6.3,17.6Z",
+  reboot: "M12,3A9,9 0 0,0 3,12A9,9 0 0,0 12,21A9,9 0 0,0 21,12A9,9 0 0,0 12,3M12,19A7,7 0 0,1 5,12A7,7 0 0,1 12,5A7,7 0 0,1 19,12A7,7 0 0,1 12,19M13,17H11V7H13V17Z",
+  alert:
+    "M11,15H13V17H11V15M11,7H13V13H11V7M12,2C6.47,2 2,6.5 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20Z",
+  check:
+    "M12 2C6.5 2 2 6.5 2 12S6.5 22 12 22 22 17.5 22 12 17.5 2 12 2M12 20C7.59 20 4 16.41 4 12S7.59 4 12 4 20 7.59 20 12 16.41 20 12 20M16.59 7.58L10 14.17L7.41 11.59L6 13L10 17L18 9L16.59 7.58Z",
   collapse: "M19.5,3.09L15,7.59V4H13V11H20V9H16.41L20.91,4.5L19.5,3.09M4,13V15H7.59L3.09,19.5L4.5,20.91L9,16.41V20H11V13H4Z",
 };
 
@@ -109,6 +118,25 @@ const STRINGS = {
     ent_last_boot: "Last boot",
     language: "Language",
     lang_auto: "Automatic",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Show the reload and restart buttons",
+    show_actions_helper: "Administrators only. Rebooting the host needs Home Assistant OS or Supervised",
+    ha_reload: "Reload configuration",
+    ha_restart: "Restart Home Assistant",
+    ha_reboot: "Reboot the host",
+    ha_reload_title: "Reload the configuration?",
+    ha_reload_text: "Every YAML configuration Home Assistant can reload (automations, scripts, scenes, templates, groups…) is read again, without a restart.",
+    ha_restart_title: "Restart Home Assistant?",
+    ha_restart_text: "Home Assistant stops then starts again: it is unavailable for a moment and its automations do not run meanwhile.",
+    ha_reboot_title: "Reboot the host?",
+    ha_reboot_text: "The machine running Home Assistant restarts, with Home Assistant and every add-on: everything is unavailable for a few minutes.",
+    ha_checking: "Checking the configuration…",
+    ha_valid: "The configuration is valid.",
+    ha_invalid: "The configuration is invalid: fix it before restarting.",
+    ha_restarting: "Home Assistant is restarting…",
+    ha_rebooting: "The host is rebooting…",
+    ha_cancel: "Cancel",
+    ha_failed: "Failed: {error}",
   },
   fr: {
     cpu: "CPU",
@@ -181,6 +209,25 @@ const STRINGS = {
     ent_last_boot: "Dernier démarrage",
     language: "Langue",
     lang_auto: "Automatique",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Afficher les boutons de rechargement et de redémarrage",
+    show_actions_helper: "Administrateurs uniquement. Le redémarrage de l'hôte demande Home Assistant OS ou Supervised",
+    ha_reload: "Recharger la configuration",
+    ha_restart: "Redémarrer Home Assistant",
+    ha_reboot: "Redémarrer l'hôte",
+    ha_reload_title: "Recharger la configuration ?",
+    ha_reload_text: "Toute la configuration YAML que Home Assistant sait recharger (automatisations, scripts, scènes, modèles, groupes…) est relue, sans redémarrage.",
+    ha_restart_title: "Redémarrer Home Assistant ?",
+    ha_restart_text: "Home Assistant s'arrête puis redémarre : il est indisponible un moment et ses automatisations ne tournent pas pendant ce temps.",
+    ha_reboot_title: "Redémarrer l'hôte ?",
+    ha_reboot_text: "La machine qui fait tourner Home Assistant redémarre, avec Home Assistant et tous les add-ons : tout est indisponible quelques minutes.",
+    ha_checking: "Vérification de la configuration…",
+    ha_valid: "La configuration est valide.",
+    ha_invalid: "La configuration n'est pas valide : corrigez-la avant de redémarrer.",
+    ha_restarting: "Home Assistant redémarre…",
+    ha_rebooting: "L'hôte redémarre…",
+    ha_cancel: "Annuler",
+    ha_failed: "Échec : {error}",
   },
   de: {
     cpu: "CPU",
@@ -253,6 +300,25 @@ const STRINGS = {
     ent_last_boot: "Letzter Start",
     language: "Sprache",
     lang_auto: "Automatisch",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Schaltflächen zum Neuladen und Neustarten anzeigen",
+    show_actions_helper: "Nur für Administratoren. Der Neustart des Hosts erfordert Home Assistant OS oder Supervised",
+    ha_reload: "Konfiguration neu laden",
+    ha_restart: "Home Assistant neu starten",
+    ha_reboot: "Host neu starten",
+    ha_reload_title: "Konfiguration neu laden?",
+    ha_reload_text: "Jede YAML-Konfiguration, die Home Assistant neu laden kann (Automationen, Skripte, Szenen, Templates, Gruppen…), wird ohne Neustart neu eingelesen.",
+    ha_restart_title: "Home Assistant neu starten?",
+    ha_restart_text: "Home Assistant wird beendet und wieder gestartet: Es ist kurz nicht erreichbar und seine Automationen laufen in dieser Zeit nicht.",
+    ha_reboot_title: "Host neu starten?",
+    ha_reboot_text: "Der Rechner, auf dem Home Assistant läuft, startet neu, mit Home Assistant und allen Add-ons: Alles ist einige Minuten nicht erreichbar.",
+    ha_checking: "Konfiguration wird geprüft…",
+    ha_valid: "Die Konfiguration ist gültig.",
+    ha_invalid: "Die Konfiguration ist ungültig: Bitte vor dem Neustart korrigieren.",
+    ha_restarting: "Home Assistant wird neu gestartet…",
+    ha_rebooting: "Der Host wird neu gestartet…",
+    ha_cancel: "Abbrechen",
+    ha_failed: "Fehlgeschlagen: {error}",
   },
   es: {
     cpu: "CPU",
@@ -325,6 +391,25 @@ const STRINGS = {
     ent_last_boot: "Último arranque",
     language: "Idioma",
     lang_auto: "Automático",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Mostrar los botones de recarga y reinicio",
+    show_actions_helper: "Solo administradores. Reiniciar el host requiere Home Assistant OS o Supervised",
+    ha_reload: "Recargar la configuración",
+    ha_restart: "Reiniciar Home Assistant",
+    ha_reboot: "Reiniciar el host",
+    ha_reload_title: "¿Recargar la configuración?",
+    ha_reload_text: "Toda la configuración YAML que Home Assistant puede recargar (automatizaciones, scripts, escenas, plantillas, grupos…) se vuelve a leer, sin reiniciar.",
+    ha_restart_title: "¿Reiniciar Home Assistant?",
+    ha_restart_text: "Home Assistant se detiene y vuelve a arrancar: no estará disponible durante un momento y sus automatizaciones no se ejecutan mientras tanto.",
+    ha_reboot_title: "¿Reiniciar el host?",
+    ha_reboot_text: "La máquina que ejecuta Home Assistant se reinicia, con Home Assistant y todos los complementos: todo deja de estar disponible unos minutos.",
+    ha_checking: "Comprobando la configuración…",
+    ha_valid: "La configuración es válida.",
+    ha_invalid: "La configuración no es válida: corrígela antes de reiniciar.",
+    ha_restarting: "Home Assistant se está reiniciando…",
+    ha_rebooting: "El host se está reiniciando…",
+    ha_cancel: "Cancelar",
+    ha_failed: "Error: {error}",
   },
   sr: {
     cpu: "CPU",
@@ -398,6 +483,25 @@ const STRINGS = {
     ent_last_boot: "Последње покретање",
     language: "Језик",
     lang_auto: "Аутоматски",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Прикажи дугмад за поновно учитавање и рестарт",
+    show_actions_helper: "Само за администраторе. Рестарт хоста захтева Home Assistant OS или Supervised",
+    ha_reload: "Поново учитај конфигурацију",
+    ha_restart: "Поново покрени Home Assistant",
+    ha_reboot: "Рестартуј хост",
+    ha_reload_title: "Поново учитати конфигурацију?",
+    ha_reload_text: "Сва YAML конфигурација коју Home Assistant може поново да учита (аутоматизације, скрипте, сцене, шаблони, групе…) чита се поново, без поновног покретања.",
+    ha_restart_title: "Поново покренути Home Assistant?",
+    ha_restart_text: "Home Assistant се зауставља и поново покреће: на тренутак је недоступан и његове аутоматизације у међувремену не раде.",
+    ha_reboot_title: "Рестартовати хост?",
+    ha_reboot_text: "Рачунар на коме ради Home Assistant се поново покреће, заједно са Home Assistant-ом и свим додацима: све је недоступно неколико минута.",
+    ha_checking: "Провера конфигурације…",
+    ha_valid: "Конфигурација је исправна.",
+    ha_invalid: "Конфигурација није исправна: исправите је пре поновног покретања.",
+    ha_restarting: "Home Assistant се поново покреће…",
+    ha_rebooting: "Хост се рестартује…",
+    ha_cancel: "Откажи",
+    ha_failed: "Неуспех: {error}",
   },
   "sr-Latn": {
     cpu: "CPU",
@@ -471,6 +575,25 @@ const STRINGS = {
     ent_last_boot: "Poslednje pokretanje",
     language: "Jezik",
     lang_auto: "Automatski",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Prikaži dugmad za ponovno učitavanje i restart",
+    show_actions_helper: "Samo za administratore. Restart hosta zahteva Home Assistant OS ili Supervised",
+    ha_reload: "Ponovo učitaj konfiguraciju",
+    ha_restart: "Ponovo pokreni Home Assistant",
+    ha_reboot: "Restartuj host",
+    ha_reload_title: "Ponovo učitati konfiguraciju?",
+    ha_reload_text: "Sva YAML konfiguracija koju Home Assistant može ponovo da učita (automatizacije, skripte, scene, šabloni, grupe…) čita se ponovo, bez ponovnog pokretanja.",
+    ha_restart_title: "Ponovo pokrenuti Home Assistant?",
+    ha_restart_text: "Home Assistant se zaustavlja i ponovo pokreće: na trenutak je nedostupan i njegove automatizacije u međuvremenu ne rade.",
+    ha_reboot_title: "Restartovati host?",
+    ha_reboot_text: "Računar na kome radi Home Assistant se ponovo pokreće, zajedno sa Home Assistant-om i svim dodacima: sve je nedostupno nekoliko minuta.",
+    ha_checking: "Provera konfiguracije…",
+    ha_valid: "Konfiguracija je ispravna.",
+    ha_invalid: "Konfiguracija nije ispravna: ispravite je pre ponovnog pokretanja.",
+    ha_restarting: "Home Assistant se ponovo pokreće…",
+    ha_rebooting: "Host se restartuje…",
+    ha_cancel: "Otkaži",
+    ha_failed: "Neuspeh: {error}",
   },
   it: {
     cpu: "CPU",
@@ -544,6 +667,25 @@ const STRINGS = {
     ent_last_boot: "Ultimo avvio",
     language: "Lingua",
     lang_auto: "Automatico",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Mostra i pulsanti di ricarica e riavvio",
+    show_actions_helper: "Solo amministratori. Il riavvio dell'host richiede Home Assistant OS o Supervised",
+    ha_reload: "Ricarica la configurazione",
+    ha_restart: "Riavvia Home Assistant",
+    ha_reboot: "Riavvia l'host",
+    ha_reload_title: "Ricaricare la configurazione?",
+    ha_reload_text: "Tutta la configurazione YAML che Home Assistant può ricaricare (automazioni, script, scene, template, gruppi…) viene riletta, senza riavvio.",
+    ha_restart_title: "Riavviare Home Assistant?",
+    ha_restart_text: "Home Assistant si arresta e riparte: non è disponibile per un momento e le sue automazioni non vengono eseguite nel frattempo.",
+    ha_reboot_title: "Riavviare l'host?",
+    ha_reboot_text: "La macchina su cui gira Home Assistant si riavvia, con Home Assistant e tutti gli add-on: tutto resta non disponibile per qualche minuto.",
+    ha_checking: "Verifica della configurazione…",
+    ha_valid: "La configurazione è valida.",
+    ha_invalid: "La configurazione non è valida: correggila prima di riavviare.",
+    ha_restarting: "Home Assistant si sta riavviando…",
+    ha_rebooting: "L'host si sta riavviando…",
+    ha_cancel: "Annulla",
+    ha_failed: "Errore: {error}",
   },
   nl: {
     cpu: "CPU",
@@ -617,6 +759,25 @@ const STRINGS = {
     ent_last_boot: "Laatste start",
     language: "Taal",
     lang_auto: "Automatisch",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Knoppen voor herladen en herstarten tonen",
+    show_actions_helper: "Alleen beheerders. Het herstarten van de host vereist Home Assistant OS of Supervised",
+    ha_reload: "Configuratie herladen",
+    ha_restart: "Home Assistant herstarten",
+    ha_reboot: "Host herstarten",
+    ha_reload_title: "Configuratie herladen?",
+    ha_reload_text: "Alle YAML-configuratie die Home Assistant kan herladen (automatiseringen, scripts, scènes, sjablonen, groepen…) wordt opnieuw ingelezen, zonder herstart.",
+    ha_restart_title: "Home Assistant herstarten?",
+    ha_restart_text: "Home Assistant stopt en start opnieuw: het is even niet beschikbaar en de automatiseringen draaien in die tijd niet.",
+    ha_reboot_title: "Host herstarten?",
+    ha_reboot_text: "De machine waarop Home Assistant draait start opnieuw op, met Home Assistant en alle add-ons: alles is een paar minuten niet beschikbaar.",
+    ha_checking: "Configuratie controleren…",
+    ha_valid: "De configuratie is geldig.",
+    ha_invalid: "De configuratie is ongeldig: corrigeer deze voor het herstarten.",
+    ha_restarting: "Home Assistant wordt herstart…",
+    ha_rebooting: "De host wordt herstart…",
+    ha_cancel: "Annuleren",
+    ha_failed: "Mislukt: {error}",
   },
   pt: {
     cpu: "CPU",
@@ -690,6 +851,25 @@ const STRINGS = {
     ent_last_boot: "Último arranque",
     language: "Idioma",
     lang_auto: "Automático",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Mostrar os botões de recarregar e reiniciar",
+    show_actions_helper: "Apenas administradores. Reiniciar o anfitrião requer o Home Assistant OS ou Supervised",
+    ha_reload: "Recarregar a configuração",
+    ha_restart: "Reiniciar o Home Assistant",
+    ha_reboot: "Reiniciar o anfitrião",
+    ha_reload_title: "Recarregar a configuração?",
+    ha_reload_text: "Toda a configuração YAML que o Home Assistant consegue recarregar (automações, scripts, cenas, modelos, grupos…) é lida de novo, sem reiniciar.",
+    ha_restart_title: "Reiniciar o Home Assistant?",
+    ha_restart_text: "O Home Assistant para e volta a arrancar: fica indisponível por um momento e as suas automações não são executadas entretanto.",
+    ha_reboot_title: "Reiniciar o anfitrião?",
+    ha_reboot_text: "A máquina onde corre o Home Assistant reinicia, com o Home Assistant e todos os add-ons: tudo fica indisponível durante alguns minutos.",
+    ha_checking: "A verificar a configuração…",
+    ha_valid: "A configuração é válida.",
+    ha_invalid: "A configuração não é válida: corrija-a antes de reiniciar.",
+    ha_restarting: "O Home Assistant está a reiniciar…",
+    ha_rebooting: "O anfitrião está a reiniciar…",
+    ha_cancel: "Cancelar",
+    ha_failed: "Falhou: {error}",
   },
   pl: {
     cpu: "CPU",
@@ -763,6 +943,25 @@ const STRINGS = {
     ent_last_boot: "Ostatnie uruchomienie",
     language: "Język",
     lang_auto: "Automatycznie",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Pokaż przyciski przeładowania i ponownego uruchomienia",
+    show_actions_helper: "Tylko administratorzy. Ponowne uruchomienie hosta wymaga Home Assistant OS lub Supervised",
+    ha_reload: "Przeładuj konfigurację",
+    ha_restart: "Uruchom ponownie Home Assistant",
+    ha_reboot: "Uruchom ponownie hosta",
+    ha_reload_title: "Przeładować konfigurację?",
+    ha_reload_text: "Cała konfiguracja YAML, którą Home Assistant potrafi przeładować (automatyzacje, skrypty, sceny, szablony, grupy…), zostanie wczytana ponownie, bez restartu.",
+    ha_restart_title: "Uruchomić ponownie Home Assistant?",
+    ha_restart_text: "Home Assistant zatrzyma się i uruchomi ponownie: przez chwilę będzie niedostępny, a jego automatyzacje w tym czasie nie działają.",
+    ha_reboot_title: "Uruchomić ponownie hosta?",
+    ha_reboot_text: "Komputer, na którym działa Home Assistant, uruchamia się ponownie wraz z Home Assistant i wszystkimi dodatkami: wszystko jest niedostępne przez kilka minut.",
+    ha_checking: "Sprawdzanie konfiguracji…",
+    ha_valid: "Konfiguracja jest poprawna.",
+    ha_invalid: "Konfiguracja jest niepoprawna: popraw ją przed ponownym uruchomieniem.",
+    ha_restarting: "Home Assistant uruchamia się ponownie…",
+    ha_rebooting: "Host uruchamia się ponownie…",
+    ha_cancel: "Anuluj",
+    ha_failed: "Błąd: {error}",
   },
   ro: {
     cpu: "CPU",
@@ -836,6 +1035,25 @@ const STRINGS = {
     ent_last_boot: "Ultima pornire",
     language: "Limbă",
     lang_auto: "Automat",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Afișează butoanele de reîncărcare și repornire",
+    show_actions_helper: "Doar administratori. Repornirea gazdei necesită Home Assistant OS sau Supervised",
+    ha_reload: "Reîncarcă configurația",
+    ha_restart: "Repornește Home Assistant",
+    ha_reboot: "Repornește gazda",
+    ha_reload_title: "Reîncărcați configurația?",
+    ha_reload_text: "Toată configurația YAML pe care Home Assistant o poate reîncărca (automatizări, scripturi, scene, șabloane, grupuri…) este citită din nou, fără repornire.",
+    ha_restart_title: "Reporniți Home Assistant?",
+    ha_restart_text: "Home Assistant se oprește și pornește din nou: este indisponibil pentru un moment, iar automatizările sale nu rulează între timp.",
+    ha_reboot_title: "Repornești gazda?",
+    ha_reboot_text: "Mașina pe care rulează Home Assistant repornește, cu Home Assistant și toate suplimentele: totul este indisponibil câteva minute.",
+    ha_checking: "Se verifică configurația…",
+    ha_valid: "Configurația este validă.",
+    ha_invalid: "Configurația nu este validă: corectați-o înainte de repornire.",
+    ha_restarting: "Home Assistant repornește…",
+    ha_rebooting: "Gazda repornește…",
+    ha_cancel: "Anulează",
+    ha_failed: "Eșuat: {error}",
   },
   da: {
     cpu: "CPU",
@@ -909,6 +1127,25 @@ const STRINGS = {
     ent_last_boot: "Seneste opstart",
     language: "Sprog",
     lang_auto: "Automatisk",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Vis knapperne til genindlæsning og genstart",
+    show_actions_helper: "Kun administratorer. Genstart af værten kræver Home Assistant OS eller Supervised",
+    ha_reload: "Genindlæs konfiguration",
+    ha_restart: "Genstart Home Assistant",
+    ha_reboot: "Genstart værten",
+    ha_reload_title: "Genindlæs konfigurationen?",
+    ha_reload_text: "Al YAML-konfiguration, som Home Assistant kan genindlæse (automatiseringer, scripts, scener, skabeloner, grupper…), læses igen uden genstart.",
+    ha_restart_title: "Genstart Home Assistant?",
+    ha_restart_text: "Home Assistant stopper og starter igen: det er utilgængeligt et øjeblik, og dets automatiseringer kører ikke imens.",
+    ha_reboot_title: "Genstart værten?",
+    ha_reboot_text: "Maskinen, der kører Home Assistant, genstarter med Home Assistant og alle tilføjelser: alt er utilgængeligt i et par minutter.",
+    ha_checking: "Kontrollerer konfigurationen…",
+    ha_valid: "Konfigurationen er gyldig.",
+    ha_invalid: "Konfigurationen er ugyldig: ret den før genstart.",
+    ha_restarting: "Home Assistant genstarter…",
+    ha_rebooting: "Værten genstarter…",
+    ha_cancel: "Annuller",
+    ha_failed: "Mislykkedes: {error}",
   },
   sv: {
     cpu: "CPU",
@@ -982,6 +1219,25 @@ const STRINGS = {
     ent_last_boot: "Senaste start",
     language: "Språk",
     lang_auto: "Automatiskt",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Visa knapparna för omläsning och omstart",
+    show_actions_helper: "Endast administratörer. Omstart av värden kräver Home Assistant OS eller Supervised",
+    ha_reload: "Läs om konfigurationen",
+    ha_restart: "Starta om Home Assistant",
+    ha_reboot: "Starta om värden",
+    ha_reload_title: "Läsa om konfigurationen?",
+    ha_reload_text: "All YAML-konfiguration som Home Assistant kan läsa om (automationer, skript, scener, mallar, grupper…) läses in igen, utan omstart.",
+    ha_restart_title: "Starta om Home Assistant?",
+    ha_restart_text: "Home Assistant stoppas och startar igen: det är otillgängligt en stund och dess automationer körs inte under tiden.",
+    ha_reboot_title: "Starta om värden?",
+    ha_reboot_text: "Datorn som kör Home Assistant startar om, med Home Assistant och alla tillägg: allt är otillgängligt i några minuter.",
+    ha_checking: "Kontrollerar konfigurationen…",
+    ha_valid: "Konfigurationen är giltig.",
+    ha_invalid: "Konfigurationen är ogiltig: rätta den innan omstart.",
+    ha_restarting: "Home Assistant startar om…",
+    ha_rebooting: "Värden startar om…",
+    ha_cancel: "Avbryt",
+    ha_failed: "Misslyckades: {error}",
   },
   bg: {
     cpu: "CPU",
@@ -1055,6 +1311,25 @@ const STRINGS = {
     ent_last_boot: "Последно стартиране",
     language: "Език",
     lang_auto: "Автоматично",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Показване на бутоните за презареждане и рестартиране",
+    show_actions_helper: "Само за администратори. Рестартирането на хоста изисква Home Assistant OS или Supervised",
+    ha_reload: "Презареждане на конфигурацията",
+    ha_restart: "Рестартиране на Home Assistant",
+    ha_reboot: "Рестартиране на хоста",
+    ha_reload_title: "Презареждане на конфигурацията?",
+    ha_reload_text: "Цялата YAML конфигурация, която Home Assistant може да презареди (автоматизации, скриптове, сцени, шаблони, групи…), се прочита отново, без рестартиране.",
+    ha_restart_title: "Рестартиране на Home Assistant?",
+    ha_restart_text: "Home Assistant спира и стартира отново: за момент е недостъпен и автоматизациите му не работят междувременно.",
+    ha_reboot_title: "Рестартиране на хоста?",
+    ha_reboot_text: "Машината, на която работи Home Assistant, се рестартира заедно с Home Assistant и всички добавки: всичко е недостъпно за няколко минути.",
+    ha_checking: "Проверка на конфигурацията…",
+    ha_valid: "Конфигурацията е валидна.",
+    ha_invalid: "Конфигурацията не е валидна: коригирайте я преди рестартиране.",
+    ha_restarting: "Home Assistant се рестартира…",
+    ha_rebooting: "Хостът се рестартира…",
+    ha_cancel: "Отказ",
+    ha_failed: "Неуспех: {error}",
   },
   ru: {
     cpu: "CPU",
@@ -1128,6 +1403,25 @@ const STRINGS = {
     ent_last_boot: "Последний запуск",
     language: "Язык",
     lang_auto: "Автоматически",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Показывать кнопки перезагрузки конфигурации и перезапуска",
+    show_actions_helper: "Только для администраторов. Перезагрузка хоста требует Home Assistant OS или Supervised",
+    ha_reload: "Перезагрузить конфигурацию",
+    ha_restart: "Перезапустить Home Assistant",
+    ha_reboot: "Перезагрузить хост",
+    ha_reload_title: "Перезагрузить конфигурацию?",
+    ha_reload_text: "Вся YAML-конфигурация, которую Home Assistant умеет перезагружать (автоматизации, скрипты, сцены, шаблоны, группы…), будет прочитана заново, без перезапуска.",
+    ha_restart_title: "Перезапустить Home Assistant?",
+    ha_restart_text: "Home Assistant остановится и запустится снова: какое-то время он будет недоступен, а его автоматизации в это время не работают.",
+    ha_reboot_title: "Перезагрузить хост?",
+    ha_reboot_text: "Компьютер, на котором работает Home Assistant, перезагружается вместе с Home Assistant и всеми дополнениями: всё недоступно несколько минут.",
+    ha_checking: "Проверка конфигурации…",
+    ha_valid: "Конфигурация корректна.",
+    ha_invalid: "Конфигурация некорректна: исправьте её перед перезапуском.",
+    ha_restarting: "Home Assistant перезапускается…",
+    ha_rebooting: "Хост перезагружается…",
+    ha_cancel: "Отмена",
+    ha_failed: "Ошибка: {error}",
   },
   uk: {
     cpu: "CPU",
@@ -1201,6 +1495,25 @@ const STRINGS = {
     ent_last_boot: "Останній запуск",
     language: "Мова",
     lang_auto: "Автоматично",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Показувати кнопки перезавантаження конфігурації та перезапуску",
+    show_actions_helper: "Лише для адміністраторів. Перезавантаження хоста потребує Home Assistant OS або Supervised",
+    ha_reload: "Перезавантажити конфігурацію",
+    ha_restart: "Перезапустити Home Assistant",
+    ha_reboot: "Перезавантажити хост",
+    ha_reload_title: "Перезавантажити конфігурацію?",
+    ha_reload_text: "Уся YAML-конфігурація, яку Home Assistant уміє перезавантажувати (автоматизації, скрипти, сцени, шаблони, групи…), буде прочитана знову, без перезапуску.",
+    ha_restart_title: "Перезапустити Home Assistant?",
+    ha_restart_text: "Home Assistant зупиниться й запуститься знову: деякий час він буде недоступний, а його автоматизації тим часом не працюють.",
+    ha_reboot_title: "Перезавантажити хост?",
+    ha_reboot_text: "Комп'ютер, на якому працює Home Assistant, перезавантажується разом із Home Assistant і всіма доповненнями: усе недоступне кілька хвилин.",
+    ha_checking: "Перевірка конфігурації…",
+    ha_valid: "Конфігурація коректна.",
+    ha_invalid: "Конфігурація некоректна: виправте її перед перезапуском.",
+    ha_restarting: "Home Assistant перезапускається…",
+    ha_rebooting: "Хост перезавантажується…",
+    ha_cancel: "Скасувати",
+    ha_failed: "Помилка: {error}",
   },
   hu: {
     cpu: "CPU",
@@ -1274,6 +1587,25 @@ const STRINGS = {
     ent_last_boot: "Utolsó indítás",
     language: "Nyelv",
     lang_auto: "Automatikus",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Az újratöltés és újraindítás gombjainak megjelenítése",
+    show_actions_helper: "Csak rendszergazdáknak. A gazdagép újraindításához Home Assistant OS vagy Supervised szükséges",
+    ha_reload: "Konfiguráció újratöltése",
+    ha_restart: "Home Assistant újraindítása",
+    ha_reboot: "Gazdagép újraindítása",
+    ha_reload_title: "Újratölti a konfigurációt?",
+    ha_reload_text: "Minden YAML-konfiguráció, amelyet a Home Assistant újra tud tölteni (automatizálások, szkriptek, jelenetek, sablonok, csoportok…), újra beolvasásra kerül, újraindítás nélkül.",
+    ha_restart_title: "Újraindítja a Home Assistantot?",
+    ha_restart_text: "A Home Assistant leáll, majd újraindul: egy ideig nem érhető el, és az automatizálásai addig nem futnak.",
+    ha_reboot_title: "Újraindítod a gazdagépet?",
+    ha_reboot_text: "A Home Assistantot futtató gép újraindul a Home Assistanttal és az összes bővítménnyel együtt: néhány percig semmi sem érhető el.",
+    ha_checking: "Konfiguráció ellenőrzése…",
+    ha_valid: "A konfiguráció érvényes.",
+    ha_invalid: "A konfiguráció érvénytelen: javítsa ki újraindítás előtt.",
+    ha_restarting: "A Home Assistant újraindul…",
+    ha_rebooting: "A gazdagép újraindul…",
+    ha_cancel: "Mégse",
+    ha_failed: "Sikertelen: {error}",
   },
   sk: {
     cpu: "CPU",
@@ -1347,6 +1679,25 @@ const STRINGS = {
     ent_last_boot: "Posledné spustenie",
     language: "Jazyk",
     lang_auto: "Automaticky",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Zobraziť tlačidlá opätovného načítania a reštartu",
+    show_actions_helper: "Iba pre správcov. Reštart hostiteľa vyžaduje Home Assistant OS alebo Supervised",
+    ha_reload: "Znovu načítať konfiguráciu",
+    ha_restart: "Reštartovať Home Assistant",
+    ha_reboot: "Reštartovať hostiteľa",
+    ha_reload_title: "Znovu načítať konfiguráciu?",
+    ha_reload_text: "Celá konfigurácia YAML, ktorú Home Assistant dokáže znovu načítať (automatizácie, skripty, scény, šablóny, skupiny…), sa načíta znova, bez reštartu.",
+    ha_restart_title: "Reštartovať Home Assistant?",
+    ha_restart_text: "Home Assistant sa zastaví a znova spustí: na chvíľu bude nedostupný a jeho automatizácie medzitým nebežia.",
+    ha_reboot_title: "Reštartovať hostiteľa?",
+    ha_reboot_text: "Počítač, na ktorom beží Home Assistant, sa reštartuje spolu s Home Assistant a všetkými doplnkami: všetko je na niekoľko minút nedostupné.",
+    ha_checking: "Kontrola konfigurácie…",
+    ha_valid: "Konfigurácia je platná.",
+    ha_invalid: "Konfigurácia nie je platná: pred reštartom ju opravte.",
+    ha_restarting: "Home Assistant sa reštartuje…",
+    ha_rebooting: "Hostiteľ sa reštartuje…",
+    ha_cancel: "Zrušiť",
+    ha_failed: "Zlyhalo: {error}",
   },
   cs: {
     cpu: "CPU",
@@ -1420,6 +1771,25 @@ const STRINGS = {
     ent_last_boot: "Poslední spuštění",
     language: "Jazyk",
     lang_auto: "Automaticky",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Zobrazit tlačítka opětovného načtení a restartu",
+    show_actions_helper: "Pouze pro správce. Restart hostitele vyžaduje Home Assistant OS nebo Supervised",
+    ha_reload: "Znovu načíst konfiguraci",
+    ha_restart: "Restartovat Home Assistant",
+    ha_reboot: "Restartovat hostitele",
+    ha_reload_title: "Znovu načíst konfiguraci?",
+    ha_reload_text: "Veškerá konfigurace YAML, kterou Home Assistant umí znovu načíst (automatizace, skripty, scény, šablony, skupiny…), se načte znovu, bez restartu.",
+    ha_restart_title: "Restartovat Home Assistant?",
+    ha_restart_text: "Home Assistant se zastaví a znovu spustí: na chvíli bude nedostupný a jeho automatizace mezitím neběží.",
+    ha_reboot_title: "Restartovat hostitele?",
+    ha_reboot_text: "Počítač, na kterém běží Home Assistant, se restartuje spolu s Home Assistant a všemi doplňky: vše je na několik minut nedostupné.",
+    ha_checking: "Kontrola konfigurace…",
+    ha_valid: "Konfigurace je platná.",
+    ha_invalid: "Konfigurace není platná: před restartem ji opravte.",
+    ha_restarting: "Home Assistant se restartuje…",
+    ha_rebooting: "Hostitel se restartuje…",
+    ha_cancel: "Zrušit",
+    ha_failed: "Selhalo: {error}",
   },
   sl: {
     cpu: "CPU",
@@ -1493,6 +1863,25 @@ const STRINGS = {
     ent_last_boot: "Zadnji zagon",
     language: "Jezik",
     lang_auto: "Samodejno",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Prikaži gumba za ponovno nalaganje in ponovni zagon",
+    show_actions_helper: "Samo skrbniki. Ponovni zagon gostitelja zahteva Home Assistant OS ali Supervised",
+    ha_reload: "Znova naloži konfiguracijo",
+    ha_restart: "Znova zaženi Home Assistant",
+    ha_reboot: "Znova zaženi gostitelja",
+    ha_reload_title: "Znova naložiti konfiguracijo?",
+    ha_reload_text: "Vsa konfiguracija YAML, ki jo Home Assistant zna znova naložiti (avtomatizacije, skripte, scene, predloge, skupine…), se prebere znova, brez ponovnega zagona.",
+    ha_restart_title: "Znova zagnati Home Assistant?",
+    ha_restart_text: "Home Assistant se ustavi in znova zažene: za trenutek ni na voljo, njegove avtomatizacije pa medtem ne tečejo.",
+    ha_reboot_title: "Znova zagnati gostitelja?",
+    ha_reboot_text: "Računalnik, na katerem teče Home Assistant, se znova zažene skupaj s Home Assistant in vsemi dodatki: vse je nekaj minut nedosegljivo.",
+    ha_checking: "Preverjanje konfiguracije…",
+    ha_valid: "Konfiguracija je veljavna.",
+    ha_invalid: "Konfiguracija ni veljavna: popravite jo pred ponovnim zagonom.",
+    ha_restarting: "Home Assistant se znova zaganja…",
+    ha_rebooting: "Gostitelj se znova zaganja…",
+    ha_cancel: "Prekliči",
+    ha_failed: "Ni uspelo: {error}",
   },
   lv: {
     cpu: "CPU",
@@ -1566,6 +1955,25 @@ const STRINGS = {
     ent_last_boot: "Pēdējā palaišana",
     language: "Valoda",
     lang_auto: "Automātiski",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Rādīt pārlādes un restartēšanas pogas",
+    show_actions_helper: "Tikai administratoriem. Resursdatora restartēšanai nepieciešams Home Assistant OS vai Supervised",
+    ha_reload: "Pārlādēt konfigurāciju",
+    ha_restart: "Restartēt Home Assistant",
+    ha_reboot: "Restartēt resursdatoru",
+    ha_reload_title: "Pārlādēt konfigurāciju?",
+    ha_reload_text: "Visa YAML konfigurācija, ko Home Assistant spēj pārlādēt (automatizācijas, skripti, ainas, veidnes, grupas…), tiek nolasīta no jauna, bez restartēšanas.",
+    ha_restart_title: "Restartēt Home Assistant?",
+    ha_restart_text: "Home Assistant apstājas un atkal startē: brīdi tas nav pieejams, un tā automatizācijas šajā laikā nedarbojas.",
+    ha_reboot_title: "Restartēt resursdatoru?",
+    ha_reboot_text: "Dators, kurā darbojas Home Assistant, tiek restartēts kopā ar Home Assistant un visiem papildinājumiem: viss uz dažām minūtēm nav pieejams.",
+    ha_checking: "Pārbauda konfigurāciju…",
+    ha_valid: "Konfigurācija ir derīga.",
+    ha_invalid: "Konfigurācija nav derīga: izlabojiet to pirms restartēšanas.",
+    ha_restarting: "Home Assistant restartējas…",
+    ha_rebooting: "Resursdators tiek restartēts…",
+    ha_cancel: "Atcelt",
+    ha_failed: "Neizdevās: {error}",
   },
   el: {
     cpu: "CPU",
@@ -1639,6 +2047,25 @@ const STRINGS = {
     ent_last_boot: "Τελευταία εκκίνηση",
     language: "Γλώσσα",
     lang_auto: "Αυτόματα",
+    // Reload, restart and reboot (show_actions); the panel's strings
+    show_actions: "Εμφάνιση των κουμπιών επαναφόρτωσης και επανεκκίνησης",
+    show_actions_helper: "Μόνο για διαχειριστές. Η επανεκκίνηση του κεντρικού υπολογιστή απαιτεί Home Assistant OS ή Supervised",
+    ha_reload: "Επαναφόρτωση ρυθμίσεων",
+    ha_restart: "Επανεκκίνηση του Home Assistant",
+    ha_reboot: "Επανεκκίνηση του κεντρικού υπολογιστή",
+    ha_reload_title: "Επαναφόρτωση των ρυθμίσεων;",
+    ha_reload_text: "Όλες οι ρυθμίσεις YAML που μπορεί να επαναφορτώσει το Home Assistant (αυτοματισμοί, σενάρια, σκηνές, πρότυπα, ομάδες…) διαβάζονται ξανά, χωρίς επανεκκίνηση.",
+    ha_restart_title: "Επανεκκίνηση του Home Assistant;",
+    ha_restart_text: "Το Home Assistant σταματά και ξεκινά ξανά: δεν είναι διαθέσιμο για λίγο και οι αυτοματισμοί του δεν εκτελούνται στο μεταξύ.",
+    ha_reboot_title: "Επανεκκίνηση του κεντρικού υπολογιστή;",
+    ha_reboot_text: "Ο υπολογιστής που εκτελεί το Home Assistant επανεκκινείται, μαζί με το Home Assistant και όλα τα πρόσθετα: τίποτα δεν είναι διαθέσιμο για λίγα λεπτά.",
+    ha_checking: "Έλεγχος ρυθμίσεων…",
+    ha_valid: "Οι ρυθμίσεις είναι έγκυρες.",
+    ha_invalid: "Οι ρυθμίσεις δεν είναι έγκυρες: διορθώστε τες πριν από την επανεκκίνηση.",
+    ha_restarting: "Το Home Assistant επανεκκινείται…",
+    ha_rebooting: "Ο κεντρικός υπολογιστής επανεκκινείται…",
+    ha_cancel: "Ακύρωση",
+    ha_failed: "Αποτυχία: {error}",
   },
 };
 
@@ -2466,6 +2893,7 @@ class SystemMonitorBase extends HTMLElement {
       const path = ev.composedPath();
       const action = path.find((n) => n.dataset?.action);
       if (action?.dataset.action === "zoom") return this._zoomClick?.(ev);
+      if (action?.dataset.action.startsWith("ha_")) return this._haAction?.(action.dataset.action);
       if (action) {
         // With a process stopped, the list stays unfolded.
         if (action.dataset.action === "procs" && !this._procsKo()) this._procsOpen = !this._procsOpen;
@@ -2502,8 +2930,11 @@ class SystemMonitorBase extends HTMLElement {
     clearInterval(this._minuteTimer);
     this._outside?.off();
     this._dropPress();
-    // Left (another dashboard view, a conditional card hidden): the processes list comes back folded.
+    // Left (another dashboard view, a conditional card hidden): the processes list comes back folded, a confirmation
+    // of show_actions is dropped.
     this._procsOpen = false;
+    this._haConfirm = null;
+    this._haCheck = null;
   }
 
   set hass(hass) {
@@ -2832,6 +3263,36 @@ const FULL_STYLE = `
   .procs .chip { font-weight: 400; }
 `;
 
+// show_actions: what each button runs, its icon, and whether it is shown as dangerous (red).
+const HA_ACTIONS = {
+  reload: { service: ["homeassistant", "reload_all"], icon: ICONS.reload, danger: false },
+  restart: { service: ["homeassistant", "restart"], icon: ICONS.restart, danger: true },
+  reboot: { service: ["hassio", "host_reboot"], icon: ICONS.reboot, danger: true },
+};
+
+const ACTIONS_STYLE = `
+  .ha-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px; }
+  .ha-msg { flex: 1 1 100%; font-size: 12px; text-align: right; }
+  .ha-msg.crit { color: color-mix(in srgb, var(--sm-crit) 45%, var(--primary-text-color)); }
+  .ha-btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 32px;
+            padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; --c: var(--sm-focus);
+            color: color-mix(in srgb, var(--c) 45%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 12%, transparent); }
+  .ha-btn.danger { --c: var(--sm-crit); }
+  .ha-btn .icon { width: 16px; height: 16px; color: var(--c); }
+  .ha-btn:hover { background: color-mix(in srgb, var(--c) 20%, transparent); }
+  .ha-btn:focus-visible { outline: 2px solid var(--sm-focus); outline-offset: 1px; }
+  .ha-btn[disabled] { cursor: default; opacity: .5; }
+  .ha-confirm { padding: 10px 12px; border-radius: 10px; background: color-mix(in srgb, var(--c) 8%, transparent); }
+  .ha-confirm.ok { --c: var(--sm-focus); }
+  .ha-title { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 500; }
+  .ha-title .icon { color: var(--c); }
+  .ha-confirm p { margin: 8px 0; font-size: 13px; line-height: 1.4; color: var(--secondary-text-color); }
+  .ha-check { display: flex; gap: 6px; align-items: flex-start; font-size: 12px; margin-bottom: 8px;
+              color: color-mix(in srgb, var(--c) 45%, var(--primary-text-color)); }
+  .ha-check .icon { width: 16px; height: 16px; color: var(--c); }
+  .ha-check pre { margin: 4px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 120px; overflow: auto; font-size: 11px; }
+`;
+
 class SystemMonitorCard extends SystemMonitorBase {
   static getConfigElement() {
     return document.createElement("sh-system-card-editor");
@@ -2860,7 +3321,8 @@ class SystemMonitorCard extends SystemMonitorBase {
     if (c.show_network !== false) parts.push(this._network(sm, ifs, hist));
     if (c.show_storage !== false) parts.push(this._storage(sm));
     if (c.show_processes !== false) parts.push(this._processes(sm));
-    return `<style>${BASE_STYLE}${TILES_STYLE}${FULL_STYLE}${NET_STYLE}</style>
+    parts.push(this._actions());
+    return `<style>${BASE_STYLE}${TILES_STYLE}${FULL_STYLE}${NET_STYLE}${ACTIONS_STYLE}</style>
       <ha-card>
         ${this._header(sm)}
         ${this._statusRow(sm)}
@@ -2938,6 +3400,90 @@ class SystemMonitorCard extends SystemMonitorBase {
       ${gauges.length ? `<div class="gauges" style="--n:${gauges.length}">${gauges.join("")}</div>` : ""}
       ${facts.length ? `<div class="facts">${facts.join("")}</div>` : ""}
     </div>`;
+  }
+
+  /**
+   * show_actions, administrators only: Reload the configuration, Restart Home Assistant and, with the Supervisor,
+   * Reboot the host, as in the System tab of System Hub's panel. Each is confirmed in the card itself (not in an
+   * overlay, which the dashboard's containers could hold in); the restart checks the configuration first, as Home
+   * Assistant's own dialog does, and is refused while it is invalid.
+   */
+  _actions() {
+    if (this._config.show_actions !== true || !this._hass.user?.is_admin) return "";
+    if (this._haConfirm) return this._haConfirmBox(this._haConfirm);
+    const kinds = Object.keys(HA_ACTIONS).filter((k) => k !== "reboot" || this._hass.config?.components?.includes("hassio"));
+    const msg = this._haMsg ? `<div class="ha-msg ${this._haMsg.tone}" role="status">${esc(this._haMsg.text)}</div>` : "";
+    return `<div class="ha-acts">${msg}${kinds.map((k) => this._haButton(`ha_ask:${k}`, k, this._t(`ha_${k}`), k === "reload" && this._haBusy)).join("")}</div>`;
+  }
+
+  _haButton(action, kind, label, disabled = false) {
+    const cls = HA_ACTIONS[kind]?.danger ? "danger" : "";
+    const icon = HA_ACTIONS[kind]?.icon ?? ICONS.close;
+    return `<button type="button" class="ha-btn ${cls}" data-action="${action}"${disabled ? " disabled" : ""}>${svgIcon(icon)}<span>${esc(label)}</span></button>`;
+  }
+
+  _haConfirmBox(kind) {
+    const check = kind === "restart" ? this._haCheck : null;
+    let status = "";
+    if (check?.checking) status = `<div class="ha-check muted" role="status">${esc(this._t("ha_checking"))}</div>`;
+    else if (check?.invalid)
+      status = `<div class="ha-check crit" role="alert">${svgIcon(ICONS.alert)}<div><b>${esc(this._t("ha_invalid"))}</b>${check.errors ? `<pre>${esc(check.errors)}</pre>` : ""}</div></div>`;
+    else if (check?.valid) status = `<div class="ha-check good" role="status">${svgIcon(ICONS.check)}<span>${esc(this._t("ha_valid"))}</span></div>`;
+    const blocked = Boolean(check?.checking || check?.invalid);
+    return `<div class="ha-confirm ${HA_ACTIONS[kind].danger ? "crit" : "ok"}" role="alertdialog" aria-labelledby="sm-ha-title" aria-describedby="sm-ha-text">
+      <div class="ha-title" id="sm-ha-title">${svgIcon(HA_ACTIONS[kind].icon)}<span>${esc(this._t(`ha_${kind}_title`))}</span></div>
+      <p id="sm-ha-text">${esc(this._t(`ha_${kind}_text`))}</p>${status}
+      <div class="ha-acts">${this._haButton("ha_cancel", "cancel", this._t("ha_cancel"))}${this._haButton(`ha_ok:${kind}`, kind, this._t(`ha_${kind}`), blocked)}</div>
+    </div>`;
+  }
+
+  async _haAction(action) {
+    const [name, kind] = action.split(":");
+    if (name === "ha_cancel") {
+      this._haConfirm = null;
+      this._haCheck = null;
+      this._update();
+      this.shadowRoot.querySelector('.ha-btn[data-action^="ha_ask:"]')?.focus?.({ preventScroll: true });
+      return;
+    }
+    if (!HA_ACTIONS[kind]) return;
+    if (name === "ha_ask") {
+      this._haConfirm = kind;
+      this._haMsg = null;
+      this._haCheck = kind === "restart" ? { checking: true } : null;
+      this._update();
+      this.shadowRoot.querySelector('[data-action="ha_cancel"]')?.focus?.({ preventScroll: true });
+      if (kind !== "restart") return;
+      let check;
+      try {
+        const result = await this._hass.callApi("POST", "config/core/check_config");
+        check = result?.result === "invalid" ? { invalid: true, errors: result.errors || "" } : { valid: result?.result === "valid" };
+      } catch (_err) {
+        // No check (the configuration panel off): Home Assistant still checks before it restarts.
+        check = {};
+      }
+      if (this._haConfirm !== "restart") return;
+      this._haCheck = check;
+      this._update();
+      return;
+    }
+    if (name !== "ha_ok" || this._haConfirm !== kind || (kind === "restart" && (this._haCheck?.checking || this._haCheck?.invalid))) return;
+    this._haConfirm = null;
+    this._haCheck = null;
+    const [domain, service] = HA_ACTIONS[kind].service;
+    const drops = kind !== "reload";
+    this._haMsg = drops ? { text: this._t(kind === "reboot" ? "ha_rebooting" : "ha_restarting"), tone: "muted" } : null;
+    this._haBusy = !drops;
+    this._update();
+    try {
+      await this._hass.callService(domain, service, {});
+    } catch (err) {
+      const text = err?.message || err?.code || (typeof err === "string" ? err : JSON.stringify(err));
+      // The restart and the reboot drop the connection: no failure to report then, Home Assistant's own banner takes over.
+      if (!drops || !/connection|lost|closed/i.test(String(text))) this._haMsg = { text: this._t("ha_failed").replace("{error}", String(text)), tone: "crit" };
+    }
+    this._haBusy = false;
+    this._update();
   }
 
   _network(sm, ifs, hist) {
@@ -3365,9 +3911,18 @@ class SystemMonitorEditorBase extends HTMLElement {
     return [];
   }
 
-  /** Boolean options, all on by default. */
+  /** Boolean options off by default (show_actions). */
+  static get offToggles() {
+    return [];
+  }
+
+  /** Boolean options, all on by default but the offToggles. */
   _booleans() {
     return ["show_title", "show_subtitle", ...this.constructor.toggles];
+  }
+
+  _offBooleans() {
+    return this.constructor.offToggles;
   }
 
   setConfig(config) {
@@ -3392,7 +3947,7 @@ class SystemMonitorEditorBase extends HTMLElement {
         type: "grid",
         name: "",
         schema: [
-          ...this._booleans().map((name) => ({ name, selector: { boolean: {} } })),
+          ...[...this._booleans(), ...this._offBooleans()].map((name) => ({ name, selector: { boolean: {} } })),
         ],
       },
       // Warning / critical thresholds, shown at their default values.
@@ -3480,7 +4035,15 @@ class SystemMonitorEditorBase extends HTMLElement {
         }
         for (const [k, v] of Object.entries(config)) {
           // Keep the YAML minimal: drop empty values, toggles left at their default (true) and default thresholds.
-          if (v === "" || v === undefined || v === null || (this._booleans().includes(k) && v === true) || THRESHOLDS[k] === v) delete config[k];
+          if (
+            v === "" ||
+            v === undefined ||
+            v === null ||
+            (this._booleans().includes(k) && v === true) ||
+            (this._offBooleans().includes(k) && v === false) ||
+            THRESHOLDS[k] === v
+          )
+            delete config[k];
         }
         this._config = config;
         this.dispatchEvent(new CustomEvent("config-changed", { detail: { config }, bubbles: true, composed: true }));
@@ -3494,6 +4057,7 @@ class SystemMonitorEditorBase extends HTMLElement {
       this._formConfig = this._config;
       const data = { ...THRESHOLDS, ...this._config };
       for (const name of this._booleans()) if (data[name] === undefined) data[name] = true;
+      for (const name of this._offBooleans()) if (data[name] === undefined) data[name] = false;
       this._form.data = data;
     }
     const schema = this._schema();
@@ -3509,12 +4073,20 @@ class SystemMonitorCardEditor extends SystemMonitorEditorBase {
   static get toggles() {
     return ["show_system", "show_disk", "show_network", "show_history", "show_storage", "show_backups", "show_processes"];
   }
+
+  static get offToggles() {
+    return ["show_actions"];
+  }
 }
 
 class SystemMonitorMiniCardEditor extends SystemMonitorEditorBase {
   // The full card's sections too: the zoom button shows the full card with this same configuration.
   static get toggles() {
     return ["show_storage", "show_backups", "show_network", "show_history", "zoom", "show_system", "show_disk", "show_processes"];
+  }
+
+  static get offToggles() {
+    return ["show_actions"];
   }
 }
 

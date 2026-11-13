@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.4.0 - 2026-11-14
+
+### Features
+- **Reload, restart and reboot from the System Monitor card** ([#82](https://github.com/juju35/ha-system-hub/issues/82), thanks @Matssa56): `show_actions: true` (also in the visual editor, off by default) adds **Reload configuration**, **Restart Home Assistant** and **Reboot the host** at the bottom of the full card (`module: system`) and of the mini card's zoomed view, for administrators only. Each is confirmed in the card itself; the restart checks the configuration first and is refused while it is invalid, as in the panel. Until now, these buttons were only in the panel's System tab.
+- **Reboot the host** in the panel's System tab too, next to **Restart Home Assistant**: with Home Assistant OS or Supervised only (`hassio.host_reboot`), confirmed first.
+
 ## 2.3.5 - 2026-11-14
 
 ### Fixed

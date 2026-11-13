@@ -600,6 +600,25 @@ test('system tab: a restart that drops the connection is no failure', async () =
   assert.match(p._messages.ha.text, /Unauthorized/);
 });
 
+test('system tab: Reboot the host, with the Supervisor only, asks first then calls hassio.host_reboot', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.callService = async (domain, service, data) => calls.push([domain, service, data]);
+  p._render = () => {};
+  p._toast = () => {};
+  p._hass.config = { ...(p._hass.config || {}), components: ['systemmonitor'] };
+  assert.doesNotMatch(p._content(), /data-action="ha_ask:reboot"/);
+  p._hass.config = { ...p._hass.config, components: ['hassio', 'systemmonitor'] };
+  assert.match(p._content(), /data-action="ha_ask:reboot"/);
+  await p._haAction('ha_ask:reboot');
+  assert.equal(calls.length, 0);
+  assert.match(p._content(), /role="alertdialog"[\s\S]*Reboot the host\?/);
+  assert.doesNotMatch(p._content(), /data-action="ha_ok:reboot"[^>]* disabled/);
+  await p._haAction('ha_ok:reboot');
+  assert.deepEqual(JSON.parse(JSON.stringify(calls)), [['hassio', 'host_reboot', {}]]);
+  assert.equal(p._confirm, null);
+});
+
 test('automations tab: Clear all with failures left out clears the listed ones only', async () => {
   const calls = [];
   const p = panel(

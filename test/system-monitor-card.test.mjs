@@ -1,6 +1,7 @@
 // Unit tests for the System Monitor Card and Mini Card (frontend/cards/system-monitor-card.js), evaluated with stubs,
 // no browser needed. Each file of test/system-monitor-card/ holds the tests of one part of the cards; the mock
 // System Monitor states there also feed the screenshots (scripts/screenshots_system_monitor.py).
+import "./system-monitor-card/actions.mjs";
 import "./system-monitor-card/arguments.mjs";
 import "./system-monitor-card/backup.mjs";
 import "./system-monitor-card/discovery.mjs";
