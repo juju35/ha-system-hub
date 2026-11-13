@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.4 - 2026-11-13
+
+### Features
+- **Updates tab: the projects' icons.** An update of one of juju35's projects without a picture of its own (the Lovelace cards, which have no brand icon) shows its project's icon, the round badge of the showcase site in its accent colour, instead of its initial; the renamed repositories are known by their former names too. An integration keeps its brand icon, the project's icon taking over if it does not load. Other repositories keep their initial.
+- **Updates tab: the integrations' logos.** An update without a picture of its own (the firmware of a Zigbee device, through ZHA or MQTT, say) shows the logo of its integration from Home Assistant's brands, instead of its initial (kept if the logo does not load).
+
 ## 2.3.3 - 2026-11-13
 
 ### Fixed

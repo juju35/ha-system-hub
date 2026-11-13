@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.3.3';
+var SYSTEM_HUB_PANEL_VERSION = '2.3.4';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -100,6 +100,97 @@ function shExcerpt(text) {
 }
 
 // A hue of its own for a name, for the initials that stand in for a missing logo
+// juju35's projects, as the showcase site draws them (homeassistant-projects, src/data/projects.yaml): the MDI icon and
+// the accent of each repository, for the Updates tab's cards of those without a picture of their own (the cards).
+// A project missing here keeps its initial; the former names of the renamed repositories point to the current ones.
+var SH_PROJECTS = {
+  'ha-weather-card': ['weather-partly-cloudy', '#f5a623'],
+  'ha-uv-card': ['sun-wireless', '#f2b100'],
+  'ha-climate-air-card': ['air-conditioner', '#039be5'],
+  'ha-smart-comfort': ['home-thermometer', '#26a69a'],
+  'ha-heating-card': ['radiator', '#ef6c00'],
+  'ha-room-card': ['floor-plan', '#5b6cf0'],
+  'ha-energy-card': ['solar-power-variant', '#f9a825'],
+  'ha-zlinky-card': ['meter-electric', '#43a047'],
+  'ha-cover-card': ['window-shutter', '#5c6bc0'],
+  'ha-utility-meter-card': ['water-pump', '#0288d1'],
+  'ha-tempo-card': ['calendar-blank-multiple', '#1e88e5'],
+  'ha-pool-card': ['pool', '#00acc1'],
+  'ha-garden-card': ['sprinkler-variant', '#43a047'],
+  'ha-waste-card': ['trash-can', '#7cb342'],
+  'ha-presence-card': ['home-account', '#5b6cf0'],
+  'ha-alarm-card': ['shield-home', '#e5484d'],
+  'ha-smartlock-card': ['lock-smart', '#43a047'],
+  'ha-camera': ['cctv', '#e5484d'],
+  'ha-tapo': ['cctv', '#4acbd6'],
+  'ha-doorbell-card': ['doorbell-video', '#fb8c00'],
+  'ha-smart-appliance-card': ['dishwasher', '#039be5'],
+  'ha-vacuum-card': ['robot-vacuum', '#ea0029'],
+  'ha-mower-card': ['robot-mower', '#5a9e3c'],
+  'ha-printer-card': ['printer', '#0096d6'],
+  'ha-hp': ['printer-wireless', '#0096d6'],
+  'ha-3d-printer-card': ['printer-3d-nozzle', '#00ae42'],
+  'ha-pet-card': ['paw', '#ff7043'],
+  'ha-internet-box-card': ['router-wireless', '#cd1e25'],
+  'ha-router-card': ['router-network', '#0277bd'],
+  'ha-nas-card': ['nas', '#00b46e'],
+  'ha-switch-card': ['switch', '#5b6cf0'],
+  'ha-docker-card': ['docker', '#2496ed'],
+  'ha-dns-filter-card': ['shield-check', '#68bc71'],
+  'ha-reverse-proxy': ['server-network', '#5b6cf0'],
+  'ha-proxmox': ['server', '#e57000'],
+  'ha-ups-card': ['power-plug-battery', '#43a047'],
+  'ha-uptime-card': ['server-network', '#26a69a'],
+  'ha-certificate-card': ['certificate', '#5e35b1'],
+  'ha-seedbox-card': ['download-network', '#2e7d32'],
+  'ha-vehicle-card': ['car', '#e1b000'],
+  'ha-renault-picture': ['car-info', '#e1b000'],
+  'ha-orange-internet-on-the-move': ['car-wireless', '#ff7900'],
+  'ha-vehicle-consumption': ['gauge-low', '#26a69a'],
+  'ha-carburants-france': ['gas-station', '#43a047'],
+  'ha-calendar-card': ['calendar-month', '#5b6cf0'],
+  'ha-parcel': ['package-variant-closed', '#ff7a00'],
+  'ha-wifi-card': ['qrcode-scan', '#039be5'],
+  'ha-wero-card': ['qrcode', '#b8a400'],
+  'ha-media-card': ['speaker-multiple', '#8e24aa'],
+  'ha-public-transport': ['bus-clock', '#00897b'],
+  'ha-saint-of-the-day': ['calendar-star', '#8e44ad'],
+  'ha-pronote-card': ['school', '#2e7d32'],
+  'ha-stock-card': ['chart-line', '#00897b'],
+  'ha-automation-monitor-card': ['robot-confused-outline', '#e5484d'],
+  'ha-github': ['github', '#8250df'],
+  'ha-system-hub': ['home-analytics', '#03a9f4'],
+  'ha-system-monitor-card': ['monitor-dashboard', '#039be5'],
+  'ha-marketplace-refresh': ['cloud-refresh-variant', '#41bdf5'],
+  'ha-integration-watchdog': ['shield-sync-outline', '#41bdf5'],
+  'ha-battery-monitor': ['battery-alert', '#ffa600'],
+  'ha-git-sync': ['source-branch-sync', '#f05032'],
+  'ha-orphan-entities': ['ghost-outline', '#7e57c2'],
+};
+var SH_PROJECT_RENAMED = {
+  'ha-freebox-card': 'ha-internet-box-card',
+  'ha-dockhand-card': 'ha-docker-card',
+  'ha-roborock-card': 'ha-vacuum-card',
+  'ha-renault-card': 'ha-vehicle-card',
+  'ha-ugreen-nas-card': 'ha-nas-card',
+  'ha-hp-printer-card': 'ha-printer-card',
+  'ha-home-connect-card': 'ha-smart-appliance-card',
+  'ha-home-camera-card': 'ha-camera',
+  'ha-zoraxy': 'ha-reverse-proxy',
+  'ha-switch': 'ha-switch-card',
+  'ha-github-card': 'ha-github',
+  'ha-hacs-refresh': 'ha-marketplace-refresh',
+};
+
+// The project of an update, from its release notes' address on GitHub (github.com/juju35/<repository>/…)
+function shProject(url) {
+  var m = /^https:\/\/github\.com\/juju35\/([^/?#]+)/i.exec(String(url || ''));
+  if (!m) return null;
+  var slug = m[1].toLowerCase().replace(/\.git$/, '');
+  var found = SH_PROJECTS[SH_PROJECT_RENAMED[slug] || slug];
+  return found ? { icon: `mdi:${found[0]}`, accent: found[1] } : null;
+}
+
 function shHue(name) {
   var h = 0;
   for (var c of String(name || '')) h = (h * 31 + c.charCodeAt(0)) % 360;
@@ -777,6 +868,8 @@ class SystemHubPanel extends HTMLElement {
     .mklogo { width:40px; height:40px; border-radius:10px; flex:none; object-fit:contain; display:flex; align-items:center; justify-content:center;
               color:#fff; font-weight:600; font-size:18px; background:var(--logo, var(--primary-color)); }
     img.mklogo { background:var(--secondary-background-color, rgba(127,127,127,.08)); }
+    .mklogo.mkproj { border-radius:50%; color:var(--logo); background:color-mix(in srgb, var(--logo) 18%, transparent); }
+    .mklogo.mkproj ha-icon { --mdc-icon-size:24px; }
     .mklogos { display:contents; }
     .mklogos > div.mklogo, .mklogos.broken > img { display:none; }
     .mklogos.broken > div.mklogo { display:flex; }
@@ -2683,9 +2776,15 @@ class SystemHubPanel extends HTMLElement {
         : this._button('upd_confirm', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy })
       : this._button('mk_install', 'mdi:package-down', this._t('mk_install'), { data: { entity: u.entity_id }, busy, disabled: this._state.marketplace?.installing_updates });
     var notes = u.release_summary || this._mkNotes?.[`${u.entity_id}@${u.latest}`];
-    var initial = `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
-    var picture = this._mkPicture(u.picture);
-    // A picture that doesn't load gives way to the initial
+    // Without a picture, the project's icon when it is one of juju35's (the showcase site's badge), else the initial
+    var project = shProject(u.release_url);
+    var initial = project
+      ? `<div class="mklogo mkproj" style="--logo:${shEsc(project.accent)}"><ha-icon icon="${shEsc(project.icon)}"></ha-icon></div>`
+      : `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
+    // Without a picture, the logo of its integration (a device's firmware: ZHA, MQTT…), from Home Assistant's brands
+    var brand = u.integration && /^[a-z0-9_]+$/.test(u.integration) ? `/api/brands/integration/${u.integration}/icon.png` : null;
+    var picture = this._mkPicture(u.picture || brand);
+    // A picture that doesn't load gives way to the project's icon or the initial
     var logo = picture ? `<span class="mklogos"><img class="mklogo" src="${shEsc(picture)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('broken')">${initial}</span>` : initial;
     // Release notes on the web only (an integration's release_url could be any link)
     var link = /^https?:\/\//i.test(u.release_url || '')

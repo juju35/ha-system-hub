@@ -284,7 +284,13 @@ def _system_updates(hass: HomeAssistant) -> dict[str, Any]:
             continue
         features = int(state.attributes.get("supported_features") or 0)
         available.append(
-            {**_update(entry.entity_id, state), "kind": kind, "backup": bool(features & UPDATE_FEATURE_BACKUP)}
+            {
+                **_update(entry.entity_id, state),
+                "kind": kind,
+                "backup": bool(features & UPDATE_FEATURE_BACKUP),
+                # The integration of the update, whose logo stands in for a picture it doesn't have (device firmware)
+                "integration": entry.platform,
+            }
         )
     available.sort(key=lambda u: (UPDATE_KIND_ORDER.index(u["kind"]), str(u["title"]).lower()))
     return {"available": available, "up_to_date": up_to_date}

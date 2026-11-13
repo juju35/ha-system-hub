@@ -1120,8 +1120,8 @@ def mock_state():
             "state": "idle",
             "done": 42,
             "total": 42,
-            "updates": 3,
-            "pending": ["Mushroom", "Bubble Card", "Auto-entities"],
+            "updates": 4,
+            "pending": ["Mushroom", "Bubble Card", "Auto-entities", "Weather Plus Card"],
             "list": [
                 {
                     "entity_id": "update.auto_entities_update",
@@ -1150,6 +1150,16 @@ def mock_state():
                     "latest": "v5.0.0",
                     "release_url": "https://github.com/piitaya/lovelace-mushroom/releases",
                     "release_summary": "Breaking: a new card editor; some YAML options are renamed.",
+                    "picture": None,
+                    "installing": False,
+                },
+                {
+                    "entity_id": "update.weather_plus_card_update",
+                    "title": "Weather Plus Card",
+                    "installed": "v2.4.0",
+                    "latest": "v2.4.1",
+                    "release_url": "https://github.com/juju35/ha-weather-card/releases/tag/v2.4.1",
+                    "release_summary": "Smoother rain at night and a fix for the pollen levels.",
                     "picture": None,
                     "installing": False,
                 },
