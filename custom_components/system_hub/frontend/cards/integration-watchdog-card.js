@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub.
  * https://github.com/juju35/ha-system-hub
  */
-var INTEGRATION_WATCHDOG_CARD_VERSION = '2.3.2';
+var INTEGRATION_WATCHDOG_CARD_VERSION = '2.3.3';
 
 const IW_I18N = {
   en: {
@@ -1968,6 +1968,42 @@ class IntegrationWatchdogCard extends HTMLElement {
 }
 
 // ── Mini card ────────────────────────────────────────────────────────────────
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app)
+// a tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to
+// the page. It counts when the press and the release are both outside (`isOut`; a slider dragged out of the card
+// does not fold it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through
+// the click event.
+const iwWatchOutside = (isOut, handler) => {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOut(ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOut(ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOut(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener?.('pointerdown', onDown, true);
+      document.addEventListener?.('pointerup', onUp, true);
+      document.addEventListener?.('click', onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener?.('pointerdown', onDown, true);
+      document.removeEventListener?.('pointerup', onUp, true);
+      document.removeEventListener?.('click', onClick, true);
+    },
+  };
+};
+
 // integration-watchdog-mini-card: the status on two lines — the badge, title and status pill, then a chip per
 // unavailable integration (or the last reload while everything is available) and the time of the last check.
 // Its detail button (top right, `zoom: false` removes it) switches it to the full card and back; a click anywhere
@@ -1980,21 +2016,29 @@ class IntegrationWatchdogMiniCard extends IntegrationWatchdogCard {
   constructor() {
     super();
     this._zoomed = false;
-    this._onUnzoom = (ev) => {
-      const path = ev.composedPath();
-      if (!this._zoomed || path.includes(this)) return;
-      if (path.some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n.localName))) return;
-      this._zoomed = false;
-      this._render();
-    };
+    this._unzoom = iwWatchOutside(
+      (ev) => {
+        const path = ev.composedPath();
+        return !path.includes(this) && !path.some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n.localName));
+      },
+      () => {
+        if (!this._zoomed) return;
+        this._zoomed = false;
+        this._render();
+      },
+    );
   }
 
   connectedCallback() {
-    document.addEventListener('click', this._onUnzoom, true);
+    this._unzoom.on();
+    // Back on the page after leaving it: rendered again in the compact view.
+    if (this._hass && this._config) this._render();
   }
 
   disconnectedCallback() {
-    document.removeEventListener('click', this._onUnzoom, true);
+    this._unzoom.off();
+    // Left (another dashboard view, a conditional card hidden): back to the compact view on return.
+    this._zoomed = false;
   }
 
   setConfig(config) {

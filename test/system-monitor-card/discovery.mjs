@@ -449,8 +449,10 @@ const zoomCard = (cls, config = {}) => {
   return { card, listeners, focused };
 };
 const click = (path, detail = 1) => ({ detail, composedPath: () => path, stopPropagation() {} });
+// A tap: the press and the release (iOS sends no click for a tap on something that is not clickable).
 const outside = (card, listeners, path = [{ localName: "div" }]) => {
-  for (const l of listeners.filter((x) => x.type === "click")) l.fn(click(path));
+  const ev = click(path);
+  for (const type of ["pointerdown", "pointerup"]) for (const l of listeners.filter((x) => x.type === type)) l.fn(ev);
   return card;
 };
 
@@ -501,7 +503,7 @@ for (const [name, cls, compactSize, compactPart] of [["mini", lib.SystemMonitorM
     outside(card, listeners);
     assert.ok(!card._zoomed);
     card.disconnectedCallback();
-    assert.equal(listeners.filter((l) => l.type === "click").length, 0);
+    assert.equal(listeners.filter((l) => ["click", "pointerdown", "pointerup"].includes(l.type)).length, 0);
   });
 
   test(`zoom: false removes the ${name} card's zoom button`, () => {

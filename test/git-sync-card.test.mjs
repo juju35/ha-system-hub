@@ -703,13 +703,13 @@ test('mini card: a click elsewhere brings back the compact view, not while writi
   const elsewhere = { composedPath: () => [] };
   card.shadowRoot.querySelector('.zoom').click();
   card.shadowRoot.querySelector('#commit').click();
-  card._outside(elsewhere);
+  card._outside.tap(elsewhere);
   assert.match(html(card), /Commit and push now\?/);
   assert.doesNotMatch(html(card), / compact"/);
   card.shadowRoot.querySelector('#cancel').click();
-  card._outside({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  card._outside.tap({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
   assert.doesNotMatch(html(card), / compact"/);
-  card._outside(elsewhere);
+  card._outside.tap(elsewhere);
   assert.match(html(card), / compact"/);
 });
 

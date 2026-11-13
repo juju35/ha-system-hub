@@ -200,16 +200,16 @@ test("a click outside the mini card collapses it, a click inside or in a dialog 
   assert.match(el.html, /title="Afficher la carte complète"/);
   el._zoomClick(zoomButton());
   assert.match(el.html, /title="Revenir à la vue compacte"/);
-  el._onUnzoom(click([node("div"), el, node("body")]));
+  el._unzoom.tap(click([node("div"), el, node("body")]));
   assert.equal(el._zoomed, true);
   for (const dialog of ["ha-more-info-dialog", "ha-dialog", "dialog"]) {
-    el._onUnzoom(click([node("div"), node(dialog), node("body")]));
+    el._unzoom.tap(click([node("div"), node(dialog), node("body")]));
     assert.equal(el._zoomed, true, dialog);
   }
   // Other clicks on the card leave it as it is.
   el._zoomClick(click([el], { target: { closest: () => null } }));
   assert.equal(el._zoomed, true);
-  el._onUnzoom(click([node("div"), node("body")]));
+  el._unzoom.tap(click([node("div"), node("body")]));
   assert.equal(el._zoomed, false);
   assert.match(el.html, /class="line crit/);
 });
@@ -223,13 +223,13 @@ test("a click outside the card folds its sections, a click inside or in a dialog
     el._expanded = { failed: true };
   };
   open();
-  el._onOutside(click([node("div"), el, node("body")]));
+  el._outside.tap(click([node("div"), el, node("body")]));
   assert.deepEqual({ ...el._folds }, { failed: true });
   for (const dialog of ["ha-more-info-dialog", "ha-dialog", "dialog"]) {
-    el._onOutside(click([node("div"), node(dialog), node("body")]));
+    el._outside.tap(click([node("div"), node(dialog), node("body")]));
     assert.deepEqual({ ...el._expanded }, { failed: true }, dialog);
   }
-  el._onOutside(click([node("div"), node("body")]));
+  el._outside.tap(click([node("div"), node("body")]));
   assert.deepEqual({ ...el._folds }, {});
   assert.deepEqual({ ...el._expanded }, {});
   el.disconnectedCallback();
@@ -256,7 +256,7 @@ test("Clear asks through the in-card popup: OK calls the service, Cancel, Escape
   assert.equal(el._confirm, null);
   // A click outside the card.
   openReset();
-  el._onOutside(click([node("div"), node("body")]));
+  el._outside.tap(click([node("div"), node("body")]));
   assert.equal(el._confirm, null);
   // A click elsewhere on the card neither acts nor closes.
   openReset();
@@ -450,7 +450,7 @@ test("Escape is listened in the capture phase while the popup is open, and the f
     el._confirmClosedAt = 0;
     el.connectedCallback();
     el._onClick(click([opener]));
-    el._onOutside(click([node("div"), node("body")]));
+    el._outside.tap(click([node("div"), node("body")]));
     assert.equal(focused, 1);
     el.disconnectedCallback();
   } finally {
@@ -467,12 +467,12 @@ test("a click outside a zoomed mini card with the popup open only closes the pop
   el._onClick(click([{ dataset: { action: "reset_all" } }]));
   assert.ok(el._confirm);
   const outside = click([node("div"), node("body")]);
-  el._onOutside(outside);
-  el._onUnzoom(outside);
+  el._outside.tap(outside);
+  el._unzoom.tap(outside);
   assert.equal(el._confirm, null);
   assert.equal(el._zoomed, true);
   // The next click outside brings the compact view back.
-  el._onUnzoom(click([node("div"), node("body")]));
+  el._unzoom.tap(click([node("div"), node("body")]));
   assert.equal(el._zoomed, false);
   el.disconnectedCallback();
 });
@@ -493,7 +493,7 @@ test("the editor gives ha-form a new schema only when the language changes", () 
   assert.equal(ed._form.data.max_items, 3);
 });
 
-test("a popup still open when the card is attached again keeps closing on Escape", () => {
+test("a popup open when the card leaves the page is closed: back on the page, no popup and no Escape listener", () => {
   const listeners = new Set();
   const add = win.addEventListener;
   const remove = win.removeEventListener;
@@ -505,16 +505,12 @@ test("a popup still open when the card is attached again keeps closing on Escape
     el.connectedCallback();
     el._onClick(click([{ dataset: { action: "reset", entity: "automation.a", label: "A" } }]));
     assert.ok(listeners.has("keydown|true|true"));
-    // Lovelace view change: the card is detached, cached, then attached again with the popup still open.
+    el._folds = { failed: true };
+    // Lovelace view change: the card is detached, cached, then attached again in its default state.
     el.disconnectedCallback();
-    assert.ok(el._confirm);
-    el.connectedCallback();
-    assert.ok(listeners.has("keydown|true|true"));
-    el._onKey({ key: "Escape", stopPropagation() {} });
     assert.equal(el._confirm, null);
+    assert.deepEqual({ ...el._folds }, {});
     assert.ok(!listeners.has("keydown|true|true"));
-    // Attached again with no popup open: no keydown listener is added.
-    el.disconnectedCallback();
     el.connectedCallback();
     assert.ok(!listeners.has("keydown|true|true"));
   } finally {
@@ -846,4 +842,14 @@ test("icon-only buttons have an accessible name and the confirm popup is describ
   const html = el._confirmHtml();
   assert.match(html, /role="dialog" aria-modal="true" aria-describedby="confirm-msg"/);
   assert.match(html, /<div class="msg" id="confirm-msg">Clear all\?<\/div>/);
+});
+
+test("a press in the card released outside of it (a slider dragged out) does not fold", () => {
+  const el = card(baseStates());
+  el._update = () => {};
+  el.connectedCallback();
+  el._folds = { failed: true };
+  el._outside.tap(click([node("div"), el, node("body")]));
+  assert.deepEqual({ ...el._folds }, { failed: true });
+  el.disconnectedCallback();
 });

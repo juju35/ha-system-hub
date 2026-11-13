@@ -6,7 +6,7 @@
  * integration, same card types: dashboards using it keep working.
  * https://github.com/juju35/ha-system-hub
  */
-var GIT_SYNC_CARD_VERSION = '2.3.2';
+var GIT_SYNC_CARD_VERSION = '2.3.3';
 // System Hub: its entities (platform system_hub, translation keys git_sync_*) and actions (system_hub.git_sync_*)
 var GS_DOMAIN = 'system_hub';
 var GS_PREFIX = 'git_sync_';
@@ -1658,6 +1658,42 @@ const gsInDialog = (ev) =>
     ['ha-more-info-dialog', 'ha-dialog', 'dialog', 'git-sync-diff-dialog'].includes(n?.localName),
   );
 
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app)
+// a tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to
+// the page. It counts when the press and the release are both outside (`isOut`; a slider dragged out of the card
+// does not fold it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through
+// the click event.
+const gsWatchOutside = (isOut, handler) => {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOut(ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOut(ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOut(ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener?.('pointerdown', onDown, true);
+      document.addEventListener?.('pointerup', onUp, true);
+      document.addEventListener?.('click', onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener?.('pointerdown', onDown, true);
+      document.removeEventListener?.('pointerup', onUp, true);
+      document.removeEventListener?.('click', onClick, true);
+    },
+  };
+};
+
 // Status letter and colour of a file in the diff viewer, as in an editor's source control view.
 const GS_DIFF_STATUS = {
   added: { letter: 'A', key: 'diff_added', color: 'var(--gs-ok)' },
@@ -1701,18 +1737,24 @@ class GitSyncCard extends HTMLElement {
     this._draft = '';
     this._generating = false;
     // A click elsewhere folds the changed files (and brings the mini card back to its compact view).
-    this._outside = (ev) => {
-      if (ev.composedPath?.().includes(this) || gsInDialog(ev)) return;
-      if (this._collapse()) this._render();
-    };
+    this._outside = gsWatchOutside(
+      (ev) => !ev.composedPath?.().includes(this) && !gsInDialog(ev),
+      () => {
+        if (this._collapse()) this._render();
+      },
+    );
   }
 
   connectedCallback() {
-    document.addEventListener?.('click', this._outside, true);
+    this._outside.on();
+    // Back on the page after leaving it: rendered again folded.
+    if (this._hass && this._config) this._render();
   }
 
   disconnectedCallback() {
-    document.removeEventListener?.('click', this._outside, true);
+    this._outside.off();
+    // Left (another dashboard view, a conditional card hidden): back folded (and compact for the mini card).
+    this._collapse();
     this._diffDialog?.close?.();
     this._diffDialog?.remove?.();
     this._diffDialog = null;

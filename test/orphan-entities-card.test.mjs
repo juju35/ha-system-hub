@@ -507,7 +507,8 @@ test('mini card: the detail button switches to the full card and back; a reason 
   card._zoom(true);
   assert.match(html(card), /class="list"/);
   assert.match(html(card), /aria-expanded="true"/);
-  documentListeners.click({ composedPath: () => [] });
+  documentListeners.pointerdown({ composedPath: () => [] });
+  documentListeners.pointerup({ composedPath: () => [] });
   assert.equal(card._zoomed, false);
   card._zoom(true, 'unknown');
   assert.deepEqual(rows(card), ['sensor.forecast']);

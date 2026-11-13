@@ -2487,19 +2487,21 @@ class SystemMonitorBase extends HTMLElement {
     // The uptime and the relative times ("2 minutes ago") depend on the current minute: without a
     // state change, `set hass` doesn't come, so check the render signature (it includes the minute).
     this._minuteTimer = setInterval(() => this._maybeRender(), 30 * 1000);
-    // A click elsewhere on the page folds the processes list (as in ha-carburants-france), unless a process is stopped.
-    // A click, not a pointerdown: folding on press would shift the layout under the pointer before the click.
-    this._onOutside ??= (ev) => {
-      if (!this._procsOpen || ev.composedPath().includes(this) || inDialog(ev)) return;
+    // A tap or click elsewhere on the page folds the processes list (as in ha-carburants-france), unless a process is
+    // stopped. On the release, not the press: folding on press would shift the layout under the pointer.
+    this._outside ??= watchOutside(this, () => {
+      if (!this._procsOpen) return;
       this._procsOpen = false;
       this._update();
-    };
-    document.addEventListener("click", this._onOutside, true);
+    });
+    this._outside.on();
   }
 
   disconnectedCallback() {
     clearInterval(this._minuteTimer);
-    document.removeEventListener("click", this._onOutside, true);
+    this._outside?.off();
+    // Left (another dashboard view, a conditional card hidden): the processes list comes back folded.
+    this._procsOpen = false;
   }
 
   set hass(hass) {
@@ -3029,6 +3031,45 @@ class SystemMonitorCard extends SystemMonitorBase {
 /** A click inside a dialog (more-info opened from the card, say) is not a click outside the card. */
 const inDialog = (ev) => ev.composedPath().some((n) => ["ha-more-info-dialog", "ha-dialog", "dialog"].includes(n.localName));
 
+// A click or tap outside of the card, and not in a Home Assistant dialog opened from it.
+const isOutside = (card, ev) => !ev.composedPath().includes(card) && !inDialog(ev);
+
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app)
+// a tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to
+// the page. It counts when the press and the release are both outside the card (a slider dragged out of the card
+// does not fold it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through
+// the click event.
+const watchOutside = (card, handler) => {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOutside(card, ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOutside(card, ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOutside(card, ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener("pointerdown", onDown, true);
+      document.addEventListener("pointerup", onUp, true);
+      document.addEventListener("click", onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener("pointerdown", onDown, true);
+      document.removeEventListener("pointerup", onUp, true);
+      document.removeEventListener("click", onClick, true);
+    },
+  };
+};
+
 /**
  * A compact card with a zoom button at the far right of its header (`zoom: false` removes it): the
  * button switches it to the full card, with the same config, and back; a click anywhere outside the
@@ -3039,19 +3080,21 @@ class SystemMonitorZoomCard extends SystemMonitorCard {
   constructor() {
     super();
     // A click outside the card (or a dialog opened from it) brings it back to the compact view.
-    this._onUnzoom = (ev) => {
-      if (this._zoomed && !ev.composedPath().includes(this) && !inDialog(ev)) this._setZoom(false);
-    };
+    this._unzoom = watchOutside(this, () => {
+      if (this._zoomed) this._setZoom(false);
+    });
   }
 
   connectedCallback() {
-    document.addEventListener("click", this._onUnzoom, true);
+    this._unzoom.on();
     super.connectedCallback();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener("click", this._onUnzoom, true);
+    this._unzoom.off();
+    // Back to the compact view once off the screen.
+    this._zoomed = false;
   }
 
   getCardSize() {

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.3 - 2026-11-13
+
+### Fixed
+- Folding back on a tap elsewhere now works on iOS (Safari and the companion app): a tap on something that is not clickable sent no click to the page, so the detailed view of the mini cards, the unfolded lists and processes, and the Automation Monitor popup stayed open. The press and the release are caught instead; a slider dragged out of the card and a scroll do not fold anything.
+- Leaving the card (another dashboard view, a conditional card hidden) brings it back in its default state.
+
 ## 2.3.2 - 2026-11-13
 
 ### Fixed

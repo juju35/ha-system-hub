@@ -1652,6 +1652,45 @@ const CONFIRM_GUARD_MS = 400;
 // A click inside a dialog (more-info opened from the card, say) is not a click outside the card.
 const inDialog = (ev) => ev.composedPath().some((n) => ["ha-more-info-dialog", "ha-dialog", "dialog"].includes(n.localName));
 
+// A click or tap outside of the card, and not in a Home Assistant dialog opened from it.
+const isOutside = (card, ev) => !ev.composedPath().includes(card) && !inDialog(ev);
+
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app)
+// a tap on something that is not clickable (the background, an empty spot, a card with no action) sends no click to
+// the page. It counts when the press and the release are both outside the card (a slider dragged out of the card
+// does not fold it), and a scroll does not count (the browser cancels the pointer). Keyboard clicks still go through
+// the click event.
+const watchOutside = (card, handler) => {
+  let downOutside = false;
+  const onDown = (ev) => {
+    downOutside = isOutside(card, ev);
+  };
+  const onUp = (ev) => {
+    if (downOutside && isOutside(card, ev)) handler(ev);
+    downOutside = false;
+  };
+  const onClick = (ev) => {
+    if (ev.detail === 0 && isOutside(card, ev)) handler(ev);
+  };
+  return {
+    on() {
+      document.addEventListener("pointerdown", onDown, true);
+      document.addEventListener("pointerup", onUp, true);
+      document.addEventListener("click", onClick, true);
+    },
+    // A tap (press and release at the same spot), for the tests.
+    tap(ev) {
+      onDown(ev);
+      onUp(ev);
+    },
+    off() {
+      document.removeEventListener("pointerdown", onDown, true);
+      document.removeEventListener("pointerup", onUp, true);
+      document.removeEventListener("click", onClick, true);
+    },
+  };
+};
+
 class AutomationMonitorBase extends HTMLElement {
   constructor() {
     super();
@@ -1708,12 +1747,11 @@ class AutomationMonitorBase extends HTMLElement {
     this._timer = setInterval(() => {
       if (this._showsRelativeTime()) this._update();
     }, 60000);
-    // A click elsewhere on the page folds the lists back to their defaults and shortens them again
-    // (as in ha-carburants-france). A click, not a pointerdown: folding on press would shift the
-    // layout under the pointer before the click.
-    this._onOutside ??= (ev) => {
+    // A tap or click elsewhere on the page folds the lists back to their defaults and shortens them again
+    // (as in ha-carburants-france). On the release, not the press: folding on press would shift the
+    // layout under the pointer.
+    this._outside ??= watchOutside(this, (ev) => {
       if (!this._confirm && !Object.keys(this._folds || {}).length && !Object.keys(this._expanded).length) return;
-      if (ev.composedPath().includes(this) || inDialog(ev)) return;
       // A click outside the card closes the confirmation popup (as Cancel) before anything else: the event
       // is remembered so the mini card does not also leave its zoomed view on that same click. The focus
       // stays where the user clicked.
@@ -1724,8 +1762,10 @@ class AutomationMonitorBase extends HTMLElement {
       this._folds = {};
       this._expanded = {};
       this._update();
-    };
-    document.addEventListener("click", this._onOutside, true);
+    });
+    this._outside.on();
+    // Back on the page after leaving it: rendered again in its default state.
+    if (this._hass && this._config) this._update();
     // A confirmation popup still open when the card is attached again (Lovelace keeps the card of a view
     // that is left and attaches it again on return) keeps closing on Escape.
     if (this._confirm) window.addEventListener("keydown", this._onKey, true);
@@ -1761,8 +1801,13 @@ class AutomationMonitorBase extends HTMLElement {
     this._roFrame = 0;
     clearInterval(this._timer);
     this._stopRefresh();
-    document.removeEventListener("click", this._onOutside, true);
+    this._outside?.off();
     window.removeEventListener("keydown", this._onKey, true);
+    // Left (another dashboard view, a conditional card hidden): back to the defaults, so that the card does not
+    // come back unfolded or with its popup open.
+    this._folds = {};
+    this._expanded = {};
+    this._confirm = null;
   }
 
   // True when the card shows at least one relative time: every one of them (subtitle, list items, mini
@@ -2305,10 +2350,10 @@ class AutomationMonitorMiniCard extends AutomationMonitorCard {
     this._zoomed = false;
     this.shadowRoot.addEventListener("click", (ev) => this._zoomClick(ev));
     // A click outside the card, and not in a dialog opened from it, brings it back to the compact view.
-    this._onUnzoom = (ev) => {
+    this._unzoom = watchOutside(this, (ev) => {
       if (ev === this._confirmCloseEvent) return;
-      if (this._zoomed && !ev.composedPath().includes(this) && !inDialog(ev)) this._setZoom(false);
-    };
+      if (this._zoomed) this._setZoom(false);
+    });
   }
 
   static getConfigElement() {
@@ -2322,12 +2367,14 @@ class AutomationMonitorMiniCard extends AutomationMonitorCard {
 
   connectedCallback() {
     super.connectedCallback();
-    document.addEventListener("click", this._onUnzoom, true);
+    this._unzoom.on();
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
-    document.removeEventListener("click", this._onUnzoom, true);
+    this._unzoom.off();
+    // Back to the compact view once off the screen.
+    this._zoomed = false;
   }
 
   getCardSize() {
