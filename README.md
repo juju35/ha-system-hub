@@ -31,7 +31,7 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 ## Features
 
-- **Resources**: CPU, memory, disks, network and temperatures from the System Monitor integration, with **Restart Home Assistant** (once the configuration is checked) and **Reload configuration**, each confirmed first.
+- **Resources**: CPU, memory, disks, network and temperatures from the System Monitor integration, with **Restart Home Assistant** (once the configuration is checked), **Reload configuration** and, with Home Assistant OS or Supervised, **Reboot the host**, each confirmed first; on a dashboard, the System Monitor card offers them too with `show_actions: true`.
 - **Containers**: Home Assistant Core, the Supervisor and every add-on, monitored on their own — state, version, CPU and memory, with their history. Monitoring only: nothing is restarted.
 - **Database**: the recorder's database — its size against a limit you set, its retention, the states written in 24 hours and the entities that write the most; purge their history, copy the YAML that leaves them out of the recorder, **Purge and repack**.
 - **Security**: refused logins (kept 7 days, a notification for each one from the Internet), accounts and 2FA, long-lived tokens (revoked from the panel), exposure (HTTPS, trusted proxies, IP ban, Home Assistant Cloud), add-ons not protected and credentials written in clear in the YAML files.
@@ -377,6 +377,7 @@ cpu_critical: 90
 | `show_storage` | full, mini | `true` | Full card: mount points, swap and database size. Mini card: disk bar |
 | `show_backups` | full, mini | `true` | Full card: the last and next automatic backups at the end of Storage. Mini card: an orange / red item when the last backup is too old or failed |
 | `show_processes` | full, mini | `true` | Monitored processes and their status tile (mini card: a stopped process shows as an item) |
+| `show_actions` | full, mini | `false` | Administrators only: **Reload configuration**, **Restart Home Assistant** and, with Home Assistant OS or Supervised, **Reboot the host** (`hassio.host_reboot`) at the bottom of the full card (on the mini card, of its zoomed view), each confirmed in the card first; the restart checks the configuration and is refused while it is invalid, as in the panel's System tab |
 | `zoom` | mini | `true` | Zoom button at the top right: shows the full card, and back to the compact view. The full card's options (`show_system`, `show_disk`, `show_processes`, the swap thresholds) are set on the mini card too, in YAML or in its visual editor, and apply to that view |
 | `interface` | full, mini | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
 | `cpu_warning` / `cpu_critical` | full, mini | `70` / `90` | CPU usage (%) from which the gauge turns orange / red |

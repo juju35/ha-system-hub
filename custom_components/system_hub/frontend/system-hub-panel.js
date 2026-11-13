@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.3.5';
+var SYSTEM_HUB_PANEL_VERSION = '2.4.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1696,16 +1696,20 @@ class SystemHubPanel extends HTMLElement {
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
   }
 
-  // Reload the YAML configuration and restart Home Assistant, each once confirmed in a dialog; the restart checks the
-  // configuration first, as Home Assistant's own dialog does, and is refused while it is invalid
+  // Reload the YAML configuration, restart Home Assistant and reboot the host (with the Supervisor only), each once
+  // confirmed in a dialog; the restart checks the configuration first, as Home Assistant's own dialog does, and is
+  // refused while it is invalid
   _haControls() {
+    var reboot = this._hass?.config?.components?.includes('hassio')
+      ? this._button('ha_ask:reboot', 'mdi:power-cycle', this._t('ha_reboot'), { danger: true })
+      : '';
     return `<div class="actions ha-ctl">${this._message('ha')}<span class="grow"></span>
       ${this._button('ha_ask:reload', 'mdi:reload', this._t('ha_reload'), { quiet: true, busy: this._busy.ha_reload })}
-      ${this._button('ha_ask:restart', 'mdi:restart', this._t('ha_restart'), { danger: true })}</div>${this._haDialog()}`;
+      ${this._button('ha_ask:restart', 'mdi:restart', this._t('ha_restart'), { danger: true })}${reboot}</div>${this._haDialog()}`;
   }
 
   _haDialog() {
-    var kind = this._confirm === 'ha_reload' ? 'reload' : this._confirm === 'ha_restart' ? 'restart' : null;
+    var kind = { ha_reload: 'reload', ha_restart: 'restart', ha_reboot: 'reboot' }[this._confirm] || null;
     if (!kind) return '';
     var check = kind === 'restart' ? this._haCheck : null;
     var status = '';
@@ -1715,13 +1719,14 @@ class SystemHubPanel extends HTMLElement {
         ${check.errors ? `<pre>${shEsc(check.errors)}</pre>` : ''}</div></div>`;
     } else if (check?.valid) status = `<div class="ha-check good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('ha_valid'))}</div>`;
     var blocked = Boolean(check?.checking || check?.invalid);
-    var icon = kind === 'restart' ? 'mdi:restart' : 'mdi:reload';
+    var icon = { reload: 'mdi:reload', restart: 'mdi:restart', reboot: 'mdi:power-cycle' }[kind];
+    var danger = kind !== 'reload';
     return `<div class="ha-backdrop" data-action="cancel"></div>
       <div class="ha-dialog" role="alertdialog" aria-modal="true" aria-labelledby="ha-dialog-title">
-        <div class="ha-dhead ${kind === 'restart' ? 'bad' : ''}"><ha-icon icon="${icon}"></ha-icon><span id="ha-dialog-title">${shEsc(this._t(`ha_${kind}_title`))}</span></div>
+        <div class="ha-dhead ${danger ? 'bad' : ''}"><ha-icon icon="${icon}"></ha-icon><span id="ha-dialog-title">${shEsc(this._t(`ha_${kind}_title`))}</span></div>
         <p>${shEsc(this._t(`ha_${kind}_text`))}</p>${status}
         <div class="actions"><span class="grow"></span>${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}
-          ${this._button(`ha_ok:${kind}`, icon, this._t(`ha_${kind}`), { danger: kind === 'restart', disabled: blocked })}</div></div>`;
+          ${this._button(`ha_ok:${kind}`, icon, this._t(`ha_${kind}`), { danger, disabled: blocked })}</div></div>`;
   }
 
   async _haAction(action) {
@@ -1745,11 +1750,12 @@ class SystemHubPanel extends HTMLElement {
     }
     this._confirm = null;
     if (kind === 'reload') return this._run('reload_all', 'ha', {}, null, 'homeassistant', 'ha_reload');
-    // The restart drops the connection: no failure to report then, Home Assistant's own banner takes over
+    // The restart and the reboot drop the connection: no failure to report then, Home Assistant's own banner takes over
     this._render();
-    this._toast(this._t('ha_restarting'));
+    this._toast(this._t(kind === 'reboot' ? 'ha_rebooting' : 'ha_restarting'));
     try {
-      await this._hass.callService('homeassistant', 'restart', {});
+      if (kind === 'reboot') await this._hass.callService('hassio', 'host_reboot', {});
+      else await this._hass.callService('homeassistant', 'restart', {});
     } catch (err) {
       if (!/connection|lost|closed/i.test(String(err?.message || err?.code || err))) {
         this._messages.ha = { text: this._t('failed', { error: shErr(err) }), tone: 'bad' };
