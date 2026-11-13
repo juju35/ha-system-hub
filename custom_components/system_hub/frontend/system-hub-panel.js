@@ -2781,7 +2781,9 @@ class SystemHubPanel extends HTMLElement {
     var initial = project
       ? `<div class="mklogo mkproj" style="--logo:${shEsc(project.accent)}"><ha-icon icon="${shEsc(project.icon)}"></ha-icon></div>`
       : `<div class="mklogo" style="--logo:${shHue(u.title)}">${shEsc(String(u.title || '?').charAt(0).toUpperCase())}</div>`;
-    var picture = this._mkPicture(u.picture);
+    // Without a picture, the logo of its integration (a device's firmware: ZHA, MQTT…), from Home Assistant's brands
+    var brand = u.integration && /^[a-z0-9_]+$/.test(u.integration) ? `/api/brands/integration/${u.integration}/icon.png` : null;
+    var picture = this._mkPicture(u.picture || brand);
     // A picture that doesn't load gives way to the project's icon or the initial
     var logo = picture ? `<span class="mklogos"><img class="mklogo" src="${shEsc(picture)}" alt="" loading="lazy" onerror="this.parentNode.classList.add('broken')">${initial}</span>` : initial;
     // Release notes on the web only (an integration's release_url could be any link)

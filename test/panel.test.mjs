@@ -314,13 +314,16 @@ test('updates tab: Home Assistant, the add-ons and the devices before the Market
       available: [
         { entity_id: 'update.core', kind: 'core', title: 'Home Assistant Core', installed: '2026.11.1', latest: '2026.11.2', release_summary: 'Fixes', backup: true },
         { entity_id: 'update.mosquitto', kind: 'addon', title: 'Mosquitto broker', installed: '6.5.1', latest: '6.5.2', backup: true },
-        { entity_id: 'update.lamp', kind: 'device', title: 'Lamp', installed: '1.0.21', latest: '1.0.24', backup: false },
+        { entity_id: 'update.lamp', kind: 'device', title: 'Lamp', installed: '1.0.21', latest: '1.0.24', backup: false, integration: 'zha' },
       ],
       up_to_date: { system: 1, addon: 10, device: 23 },
     },
   };
   const p = panel(state, 'marketplace');
+  p._brandsToken = 'tok';
   const html = p._content();
+  // A device's firmware without a picture: the logo of its integration, its initial if that doesn't load
+  assert.match(html, /<img class="mklogo" src="\/api\/brands\/integration\/zha\/icon\.png\?token=tok"[^>]*><div class="mklogo" style="--logo:hsl[^"]*">L<\/div>/);
   const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
   // One grid before the Marketplace, each card saying what it is
   assert.deepEqual(sections, ['Home Assistant, add-ons and devices', 'Marketplace']);

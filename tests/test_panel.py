@@ -413,6 +413,8 @@ async def test_system_updates_for_the_panel(hass: HomeAssistant) -> None:
     ]
     assert result["available"][0]["backup"] is True
     assert result["available"][3]["backup"] is False
+    # Its integration, whose logo stands in for the picture the firmware has not
+    assert result["available"][3]["integration"] == "zha"
     assert result["up_to_date"] == {"system": 1, "addon": 1, "device": 1}
 
 
