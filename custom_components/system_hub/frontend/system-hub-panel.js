@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.3.1';
+var SYSTEM_HUB_PANEL_VERSION = '2.3.2';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -4349,14 +4349,14 @@ var SH_STATUS_METHODS = {
     }
     if (tab === 'logs') {
       if (!s.logs || !this._lg?.entries) return null;
+      // Only the frequent errors make a problem (an integration at the threshold in 24 h): an occasional error is
+      // part of a normal day and stays in the Logs tab, without lowering the score
       var day = this._lgGroups('error', 'day');
-      var errors = day.reduce((sum, g) => sum + g.errors, 0);
       var worst = day.filter((g) => g.errors >= (s.logs.error_threshold ?? 10));
-      return [
-        worst.length ? 'bad' : errors ? 'warn' : 'good',
-        errors ? n('lg_n_errors', errors) : this._t('lg_no_errors'),
-        join(day.slice(0, 3).map((g) => `${shIntegration(g.domain)} ×${g.errors}`)),
-      ];
+      var frequent = worst.reduce((sum, g) => sum + g.errors, 0);
+      var occasional = day.reduce((sum, g) => sum + g.errors, 0) - frequent;
+      if (!worst.length) return ['good', this._t('lg_no_frequent'), occasional ? n('lg_n_occasional', occasional) : ''];
+      return ['bad', n('lg_n_errors', frequent), join(worst.slice(0, 3).map((g) => `${shIntegration(g.domain)} ×${g.errors}`))];
     }
     if (tab === 'silent') {
       var sl = s.silent;

@@ -1661,6 +1661,8 @@
         "lg_n_errors": "Kļūdas: {n}",
         "lg_n_warnings": "Brīdinājumi: {n}",
         "lg_no_errors": "Nav kļūdu",
+        "lg_no_frequent": "Nav biežu kļūdu",
+        "lg_n_occasional": "Retas kļūdas: {n}",
         "lg_errors": "Kļūdas",
         "lg_warnings": "Brīdinājumi",
         "lg_integrations": "Integrācijas",

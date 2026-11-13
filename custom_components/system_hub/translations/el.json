@@ -1661,6 +1661,8 @@
         "lg_n_errors": "Σφάλματα: {n}",
         "lg_n_warnings": "Προειδοποιήσεις: {n}",
         "lg_no_errors": "Κανένα σφάλμα",
+        "lg_no_frequent": "Κανένα συχνό σφάλμα",
+        "lg_n_occasional": "Περιστασιακά σφάλματα: {n}",
         "lg_errors": "Σφάλματα",
         "lg_warnings": "Προειδοποιήσεις",
         "lg_integrations": "Ενσωματώσεις",

@@ -1661,6 +1661,8 @@
         "lg_n_errors": "{n} fouten",
         "lg_n_warnings": "{n} waarschuwingen",
         "lg_no_errors": "Geen fouten",
+        "lg_no_frequent": "Geen frequente fouten",
+        "lg_n_occasional": "{n} incidentele fouten",
         "lg_errors": "Fouten",
         "lg_warnings": "Waarschuwingen",
         "lg_integrations": "Integraties",

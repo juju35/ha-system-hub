@@ -1225,8 +1225,12 @@ test('logs tab: the errors and warnings by integration, a level and a period; Ig
   assert.match(html, /lggroup bad[\s\S]*?tapo_cameras[\s\S]*?21 errors/);
   assert.match(html, /<details><summary class="s">Traceback/);
   assert.match(html, /×21 · [^·]+ · custom_components\.tapo_cameras\.coordinator · x\/coordinator\.py:142/);
-  // Status: one integration beyond the threshold
-  assert.deepEqual([...p._stArea('logs')].slice(0, 2), ['bad', '30 errors']);
+  // Status: only the integration beyond the threshold counts (mqtt's 9 errors are occasional)
+  assert.deepEqual([...p._stArea('logs')], ['bad', '21 errors', 'tapo_cameras ×21']);
+  // Below the threshold, occasional errors leave the status in good health
+  state.logs.error_threshold = 50;
+  assert.deepEqual([...p._stArea('logs')], ['good', 'No frequent errors', '30 occasional errors']);
+  state.logs.error_threshold = 10;
   // Errors only, since start: hue back, meteo_france out
   p._render = () => {};
   const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });

@@ -1661,6 +1661,8 @@
         "lg_n_errors": "{n} errors",
         "lg_n_warnings": "{n} warnings",
         "lg_no_errors": "No errors",
+        "lg_no_frequent": "No frequent errors",
+        "lg_n_occasional": "{n} occasional errors",
         "lg_errors": "Errors",
         "lg_warnings": "Warnings",
         "lg_integrations": "Integrations",
