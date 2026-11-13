@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.1 - 2026-11-13
+
+### Fixed
+- **Every other tab took two clicks (or taps)**: since 2.0.2, the route Home Assistant gives back after a tab chosen was kept and applied again at the next drawing, which brought that tab back over the one just chosen. It is now applied once, and a tab chosen in the panel always wins. Checked in a real Home Assistant, on a phone and on a computer.
+
 ## 2.3.0 - 2026-11-12
 
 ### Features
