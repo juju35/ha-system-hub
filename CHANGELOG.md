@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.3.2 - 2026-11-13
+
+### Fixed
+- **Occasional errors in the log lowered the status**: on the Status tab (and so the score, the sidebar icon and the status cards), any error of the last 24 hours made the Logs area orange. Only frequent errors are now a problem: an integration with at least **Errors that make a problem** of **Settings → Logs ⚙** (10 by default) in 24 hours turns the area red, with its errors and integrations alone; below it, the area stays in good health, **No frequent errors**, with the occasional errors counted in its details. The Logs tab still lists every error.
+
 ## 2.3.1 - 2026-11-13
 
 ### Fixed

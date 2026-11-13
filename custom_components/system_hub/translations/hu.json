@@ -1661,6 +1661,8 @@
         "lg_n_errors": "{n} hiba",
         "lg_n_warnings": "{n} figyelmeztetés",
         "lg_no_errors": "Nincs hiba",
+        "lg_no_frequent": "Nincs gyakori hiba",
+        "lg_n_occasional": "{n} alkalmi hiba",
         "lg_errors": "Hibák",
         "lg_warnings": "Figyelmeztetések",
         "lg_integrations": "Integrációk",

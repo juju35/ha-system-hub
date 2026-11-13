@@ -1661,6 +1661,8 @@
         "lg_n_errors": "Greške: {n}",
         "lg_n_warnings": "Upozorenja: {n}",
         "lg_no_errors": "Nema grešaka",
+        "lg_no_frequent": "Nema čestih grešaka",
+        "lg_n_occasional": "Povremene greške: {n}",
         "lg_errors": "Greške",
         "lg_warnings": "Upozorenja",
         "lg_integrations": "Integracije",

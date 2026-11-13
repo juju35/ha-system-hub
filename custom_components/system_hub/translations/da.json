@@ -1661,6 +1661,8 @@
         "lg_n_errors": "{n} fejl",
         "lg_n_warnings": "{n} advarsler",
         "lg_no_errors": "Ingen fejl",
+        "lg_no_frequent": "Ingen hyppige fejl",
+        "lg_n_occasional": "{n} lejlighedsvise fejl",
         "lg_errors": "Fejl",
         "lg_warnings": "Advarsler",
         "lg_integrations": "Integrationer",

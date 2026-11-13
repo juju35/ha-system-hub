@@ -1661,6 +1661,8 @@
         "lg_n_errors": "Помилки: {n}",
         "lg_n_warnings": "Попередження: {n}",
         "lg_no_errors": "Немає помилок",
+        "lg_no_frequent": "Немає частих помилок",
+        "lg_n_occasional": "Поодинокі помилки: {n}",
         "lg_errors": "Помилки",
         "lg_warnings": "Попередження",
         "lg_integrations": "Інтеграції",

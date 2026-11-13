@@ -1661,6 +1661,8 @@
         "lg_n_errors": "Chyby: {n}",
         "lg_n_warnings": "Upozornění: {n}",
         "lg_no_errors": "Žádné chyby",
+        "lg_no_frequent": "Žádné časté chyby",
+        "lg_n_occasional": "Občasné chyby: {n}",
         "lg_errors": "Chyby",
         "lg_warnings": "Upozornění",
         "lg_integrations": "Integrace",
