@@ -220,3 +220,12 @@ test('editor: the module first, then its own editor; another module starts its o
   assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,show_title,show_subtitle,hide_ok');
   assert.equal(inner.children.length, 0);
 });
+
+test('mini editor, status: the groups only, the options the one-line card ignores left out', () => {
+  const { registry } = load();
+  const editor = new (registry.get('system-hub-mini-card-editor'))();
+  editor.hass = hass;
+  editor.setConfig({ type: 'custom:system-hub-mini-card', module: 'status' });
+  const form = editor.shadowRoot.querySelector('.form').children[0];
+  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups');
+});

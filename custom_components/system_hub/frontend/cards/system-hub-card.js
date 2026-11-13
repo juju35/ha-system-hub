@@ -7,7 +7,7 @@
 // unchanged. The status cards show the Status tab of the panel: they read it with the panel's own code (its module,
 // without showing it), as the sidebar icon does, so the three always agree. Administrators only, as the panel.
 
-var SYSTEM_HUB_CARD_VERSION = '2.3.4';
+var SYSTEM_HUB_CARD_VERSION = '2.3.5';
 var SH_CARD_MODULES = ['status', 'system', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations', 'orphans'];
 var SH_MINI_MODULES = ['status', 'system', 'watchdog', 'batteries', 'git_sync', 'automations', 'orphans'];
 var SH_CARD_GROUPS = ['system', 'reliability', 'maintenance', 'devices'];
@@ -318,10 +318,15 @@ class SystemHubCardEditorBase extends HTMLElement {
             },
           },
         },
-        { name: 'show_title', selector: { boolean: {} } },
-        { name: 'show_subtitle', selector: { boolean: {} } },
-        { name: 'hide_ok', selector: { boolean: {} } },
       );
+      // The mini card's one line has no header and only shows the areas to look at: these three change nothing there.
+      if (!this.constructor.mini) {
+        schema.push(
+          { name: 'show_title', selector: { boolean: {} } },
+          { name: 'show_subtitle', selector: { boolean: {} } },
+          { name: 'hide_ok', selector: { boolean: {} } },
+        );
+      }
     }
     return schema;
   }

@@ -4,7 +4,7 @@
  * Served and added to the dashboard resources by System Hub; the card types are those of Battery Monitor, so its
  * dashboards keep working. https://github.com/juju35/ha-system-hub
  */
-var BATTERY_MONITOR_CARD_VERSION = '2.3.4';
+var BATTERY_MONITOR_CARD_VERSION = '2.3.5';
 
 const BM_I18N = {
   en: {
@@ -43,6 +43,10 @@ const BM_I18N = {
     ed_language_helper: 'Leave empty to follow Home Assistant',
     ed_popup: 'Full screen button',
     ed_popup_helper: 'Opens every battery over the whole screen, by room or by battery type',
+    ed_expanded: 'Full screen view in the card',
+    ed_expanded_helper: 'Lays the full screen view out in the card itself (no full screen button then)',
+    ed_csv_button: '“Export CSV” button',
+    ed_csv_button_helper: 'In the full screen view and the expanded card',
     ed_battery_models: 'Battery types by model',
     ed_battery_models_helper:
       'One type for every device of a model whose type is not detected (Battery Notes): pick it or type it, e.g. CR2450, 2× AA',
@@ -115,6 +119,10 @@ const BM_I18N = {
     ed_language_helper: 'Laisser vide pour suivre Home Assistant',
     ed_popup: 'Bouton plein écran',
     ed_popup_helper: 'Affiche toutes les batteries sur tout l’écran, par pièce ou par type de pile',
+    ed_expanded: 'Vue plein écran dans la carte',
+    ed_expanded_helper: 'Affiche la vue plein écran dans la carte elle-même (sans bouton plein écran)',
+    ed_csv_button: 'Bouton « Exporter en CSV »',
+    ed_csv_button_helper: 'Dans la vue plein écran et la carte dépliée',
     ed_battery_models: 'Types de pile par modèle',
     ed_battery_models_helper:
       'Un type pour tous les appareils d’un modèle dont le type n’est pas détecté (Battery Notes) : le choisir ou le saisir, ex. CR2450, 2× AA',
@@ -187,6 +195,10 @@ const BM_I18N = {
     ed_language_helper: 'Leer lassen, um Home Assistant zu folgen',
     ed_popup: 'Vollbild-Schaltfläche',
     ed_popup_helper: 'Zeigt alle Batterien im Vollbild, nach Raum oder nach Batterietyp',
+    ed_expanded: 'Vollbildansicht in der Karte',
+    ed_expanded_helper: 'Zeigt die Vollbildansicht direkt in der Karte (dann ohne Vollbild-Schaltfläche)',
+    ed_csv_button: 'Schaltfläche „Als CSV exportieren“',
+    ed_csv_button_helper: 'In der Vollbildansicht und der ausgeklappten Karte',
     ed_battery_models: 'Batterietypen nach Modell',
     ed_battery_models_helper:
       'Ein Typ für alle Geräte eines Modells, dessen Typ nicht erkannt wird (Battery Notes): auswählen oder eingeben, z. B. CR2450, 2× AA',
@@ -259,6 +271,10 @@ const BM_I18N = {
     ed_language_helper: 'Déjalo vacío para seguir a Home Assistant',
     ed_popup: 'Botón de pantalla completa',
     ed_popup_helper: 'Muestra todas las baterías en pantalla completa, por habitación o por tipo de pila',
+    ed_expanded: 'Vista de pantalla completa en la tarjeta',
+    ed_expanded_helper: 'Muestra la vista de pantalla completa en la propia tarjeta (sin botón de pantalla completa)',
+    ed_csv_button: 'Botón «Exportar a CSV»',
+    ed_csv_button_helper: 'En la vista de pantalla completa y en la tarjeta desplegada',
     ed_battery_models: 'Tipos de pila por modelo',
     ed_battery_models_helper:
       'Un tipo para todos los dispositivos de un modelo cuyo tipo no se detecta (Battery Notes): elígelo o escríbelo, p. ej. CR2450, 2× AA',
@@ -331,6 +347,10 @@ const BM_I18N = {
     ed_language_helper: 'Остави празно да прати језик Home Assistant-а',
     ed_popup: 'Дугме за цео екран',
     ed_popup_helper: 'Отвара приказ свих батерија преко целог екрана, по просторијама или по типу батерије',
+    ed_expanded: 'Приказ преко целог екрана у картици',
+    ed_expanded_helper: 'Приказује приказ преко целог екрана у самој картици (тада без дугмета за цео екран)',
+    ed_csv_button: 'Дугме „Извези у CSV“',
+    ed_csv_button_helper: 'У приказу преко целог екрана и у раширеној картици',
     ed_battery_models: 'Типови батерија по моделу',
     ed_battery_models_helper:
       'Један тип за сваки уређај модела чији тип није детектован (Battery Notes): изабери га или упиши, нпр. CR2450, 2× AA',
@@ -403,6 +423,10 @@ const BM_I18N = {
     ed_language_helper: 'Ostavi prazno da prati jezik Home Assistant-a',
     ed_popup: 'Dugme za ceo ekran',
     ed_popup_helper: 'Otvara prikaz svih baterija preko celog ekrana, po prostorijama ili po tipu baterije',
+    ed_expanded: 'Prikaz preko celog ekrana u kartici',
+    ed_expanded_helper: 'Prikazuje prikaz preko celog ekrana u samoj kartici (tada bez dugmeta za ceo ekran)',
+    ed_csv_button: 'Dugme „Izvezi u CSV“',
+    ed_csv_button_helper: 'U prikazu preko celog ekrana i u raširenoj kartici',
     ed_battery_models: 'Tipovi baterija po modelu',
     ed_battery_models_helper:
       'Jedan tip za svaki uređaj modela čiji tip nije detektovan (Battery Notes): izaberi ga ili upiši, npr. CR2450, 2× AA',
@@ -475,6 +499,10 @@ const BM_I18N = {
     ed_language_helper: 'Lascia vuoto per seguire Home Assistant',
     ed_popup: 'Pulsante schermo intero',
     ed_popup_helper: 'Mostra tutte le batterie a schermo intero, per stanza o per tipo di batteria',
+    ed_expanded: 'Vista a schermo intero nella scheda',
+    ed_expanded_helper: 'Mostra la vista a schermo intero nella scheda stessa (senza pulsante schermo intero)',
+    ed_csv_button: 'Pulsante «Esporta in CSV»',
+    ed_csv_button_helper: 'Nella vista a schermo intero e nella scheda espansa',
     ed_battery_models: 'Tipi di batteria per modello',
     ed_battery_models_helper:
       'Un tipo per tutti i dispositivi di un modello il cui tipo non viene rilevato (Battery Notes): sceglilo o digitalo, ad es. CR2450, 2× AA',
@@ -547,6 +575,10 @@ const BM_I18N = {
     ed_language_helper: 'Leeg laten om Home Assistant te volgen',
     ed_popup: 'Knop volledig scherm',
     ed_popup_helper: 'Toont alle batterijen over het hele scherm, per ruimte of per batterijtype',
+    ed_expanded: 'Volledig-schermweergave in de kaart',
+    ed_expanded_helper: 'Toont de volledig-schermweergave in de kaart zelf (dan zonder knop volledig scherm)',
+    ed_csv_button: 'Knop “Exporteren als CSV”',
+    ed_csv_button_helper: 'In de volledig-schermweergave en de uitgeklapte kaart',
     ed_battery_models: 'Batterijtypes per model',
     ed_battery_models_helper:
       'Eén type voor alle apparaten van een model waarvan het type niet wordt herkend (Battery Notes): kies of typ het, bijv. CR2450, 2× AA',
@@ -619,6 +651,10 @@ const BM_I18N = {
     ed_language_helper: 'Deixe vazio para seguir o Home Assistant',
     ed_popup: 'Botão de ecrã inteiro',
     ed_popup_helper: 'Mostra todas as baterias em ecrã inteiro, por divisão ou por tipo de pilha',
+    ed_expanded: 'Vista de ecrã inteiro no cartão',
+    ed_expanded_helper: 'Mostra a vista de ecrã inteiro no próprio cartão (sem botão de ecrã inteiro)',
+    ed_csv_button: 'Botão «Exportar para CSV»',
+    ed_csv_button_helper: 'Na vista de ecrã inteiro e no cartão expandido',
     ed_battery_models: 'Tipos de pilha por modelo',
     ed_battery_models_helper:
       'Um tipo para todos os dispositivos de um modelo cujo tipo não é detetado (Battery Notes): escolha-o ou escreva-o, p. ex. CR2450, 2× AA',
@@ -691,6 +727,10 @@ const BM_I18N = {
     ed_language_helper: 'Pozostaw puste, aby używać języka Home Assistant',
     ed_popup: 'Przycisk pełnego ekranu',
     ed_popup_helper: 'Wyświetla wszystkie baterie na całym ekranie, według pomieszczenia lub typu baterii',
+    ed_expanded: 'Widok pełnoekranowy w karcie',
+    ed_expanded_helper: 'Wyświetla widok pełnoekranowy w samej karcie (wtedy bez przycisku pełnego ekranu)',
+    ed_csv_button: 'Przycisk „Eksportuj do CSV”',
+    ed_csv_button_helper: 'W widoku pełnoekranowym i w rozwiniętej karcie',
     ed_battery_models: 'Typy baterii według modelu',
     ed_battery_models_helper:
       'Jeden typ dla wszystkich urządzeń modelu, którego typ nie został wykryty (Battery Notes): wybierz go lub wpisz, np. CR2450, 2× AA',
@@ -763,6 +803,10 @@ const BM_I18N = {
     ed_language_helper: 'Lăsați gol pentru a urma Home Assistant',
     ed_popup: 'Buton ecran complet',
     ed_popup_helper: 'Afișează toate bateriile pe tot ecranul, pe camere sau pe tipuri de baterie',
+    ed_expanded: 'Vizualizare ecran complet în card',
+    ed_expanded_helper: 'Afișează vizualizarea ecran complet chiar în card (fără butonul ecran complet)',
+    ed_csv_button: 'Butonul „Exportă CSV”',
+    ed_csv_button_helper: 'În vizualizarea ecran complet și în cardul extins',
     ed_battery_models: 'Tipuri de baterie pe model',
     ed_battery_models_helper:
       'Un tip pentru toate dispozitivele unui model al cărui tip nu este detectat (Battery Notes): alegeți-l sau introduceți-l, de ex. CR2450, 2× AA',
@@ -835,6 +879,10 @@ const BM_I18N = {
     ed_language_helper: 'Lad feltet være tomt for at følge Home Assistant',
     ed_popup: 'Fuldskærmsknap',
     ed_popup_helper: 'Viser alle batterier på hele skærmen, efter rum eller efter batteritype',
+    ed_expanded: 'Fuldskærmsvisning i kortet',
+    ed_expanded_helper: 'Viser fuldskærmsvisningen i selve kortet (så uden fuldskærmsknap)',
+    ed_csv_button: 'Knappen “Eksportér CSV”',
+    ed_csv_button_helper: 'I fuldskærmsvisningen og det udfoldede kort',
     ed_battery_models: 'Batterityper efter model',
     ed_battery_models_helper:
       'Én type for alle enheder af en model, hvis type ikke registreres (Battery Notes): vælg den eller skriv den, f.eks. CR2450, 2× AA',
@@ -907,6 +955,10 @@ const BM_I18N = {
     ed_language_helper: 'Lämna tomt för att följa Home Assistant',
     ed_popup: 'Helskärmsknapp',
     ed_popup_helper: 'Visar alla batterier över hela skärmen, per rum eller per batterityp',
+    ed_expanded: 'Helskärmsvy i kortet',
+    ed_expanded_helper: 'Visar helskärmsvyn i själva kortet (då utan helskärmsknapp)',
+    ed_csv_button: 'Knappen ”Exportera CSV”',
+    ed_csv_button_helper: 'I helskärmsvyn och det utfällda kortet',
     ed_battery_models: 'Batterityper per modell',
     ed_battery_models_helper:
       'En typ för alla enheter av en modell vars typ inte identifieras (Battery Notes): välj den eller skriv den, t.ex. CR2450, 2× AA',
@@ -979,6 +1031,10 @@ const BM_I18N = {
     ed_language_helper: 'Оставете празно, за да следва езика на Home Assistant',
     ed_popup: 'Бутон за цял екран',
     ed_popup_helper: 'Показва всички батерии на цял екран, по стаи или по тип батерия',
+    ed_expanded: 'Изглед на цял екран в картата',
+    ed_expanded_helper: 'Показва изгледа на цял екран в самата карта (тогава без бутон за цял екран)',
+    ed_csv_button: 'Бутон „Експорт в CSV“',
+    ed_csv_button_helper: 'В изгледа на цял екран и в разгънатата карта',
     ed_battery_models: 'Типове батерии по модел',
     ed_battery_models_helper:
       'Един тип за всички устройства от модел, чийто тип не е разпознат (Battery Notes): изберете го или го въведете, напр. CR2450, 2× AA',
@@ -1051,6 +1107,10 @@ const BM_I18N = {
     ed_language_helper: 'Оставьте пустым, чтобы использовать язык Home Assistant',
     ed_popup: 'Кнопка полноэкранного режима',
     ed_popup_helper: 'Показывает все батареи на весь экран, по помещениям или по типу батареи',
+    ed_expanded: 'Полноэкранный вид в карточке',
+    ed_expanded_helper: 'Показывает полноэкранный вид прямо в карточке (тогда без кнопки полноэкранного режима)',
+    ed_csv_button: 'Кнопка «Экспорт в CSV»',
+    ed_csv_button_helper: 'В полноэкранном виде и в развёрнутой карточке',
     ed_battery_models: 'Типы батарей по модели',
     ed_battery_models_helper:
       'Один тип для всех устройств модели, тип которой не определён (Battery Notes): выберите или введите его, например CR2450, 2× AA',
@@ -1123,6 +1183,10 @@ const BM_I18N = {
     ed_language_helper: 'Залиште порожнім, щоб використовувати мову Home Assistant',
     ed_popup: 'Кнопка повноекранного режиму',
     ed_popup_helper: 'Показує всі батареї на весь екран, за приміщеннями або за типом батареї',
+    ed_expanded: 'Повноекранний вигляд у картці',
+    ed_expanded_helper: 'Показує повноекранний вигляд прямо в картці (тоді без кнопки повноекранного режиму)',
+    ed_csv_button: 'Кнопка «Експорт у CSV»',
+    ed_csv_button_helper: 'У повноекранному вигляді та в розгорнутій картці',
     ed_battery_models: 'Типи батарей за моделлю',
     ed_battery_models_helper:
       'Один тип для всіх пристроїв моделі, тип якої не визначено (Battery Notes): виберіть або введіть його, наприклад CR2450, 2× AA',
@@ -1195,6 +1259,10 @@ const BM_I18N = {
     ed_language_helper: 'Hagyja üresen a Home Assistant nyelvének követéséhez',
     ed_popup: 'Teljes képernyő gomb',
     ed_popup_helper: 'Az összes elemet teljes képernyőn mutatja, helyiségenként vagy elemtípusonként',
+    ed_expanded: 'Teljes képernyős nézet a kártyán',
+    ed_expanded_helper: 'A teljes képernyős nézetet magában a kártyában jeleníti meg (ekkor teljes képernyő gomb nélkül)',
+    ed_csv_button: '„Exportálás CSV-be” gomb',
+    ed_csv_button_helper: 'A teljes képernyős nézetben és a kibontott kártyán',
     ed_battery_models: 'Elemtípusok modellenként',
     ed_battery_models_helper:
       'Egy típus egy modell összes eszközéhez, amelynek típusa nem ismerhető fel (Battery Notes): válassza ki vagy írja be, pl. CR2450, 2× AA',
@@ -1267,6 +1335,10 @@ const BM_I18N = {
     ed_language_helper: 'Nechajte prázdne, ak chcete používať jazyk Home Assistant',
     ed_popup: 'Tlačidlo celej obrazovky',
     ed_popup_helper: 'Zobrazí všetky batérie na celú obrazovku, podľa miestnosti alebo typu batérie',
+    ed_expanded: 'Zobrazenie na celú obrazovku v karte',
+    ed_expanded_helper: 'Zobrazí zobrazenie na celú obrazovku priamo v karte (potom bez tlačidla celej obrazovky)',
+    ed_csv_button: 'Tlačidlo „Exportovať do CSV“',
+    ed_csv_button_helper: 'V zobrazení na celú obrazovku a v rozbalenej karte',
     ed_battery_models: 'Typy batérií podľa modelu',
     ed_battery_models_helper:
       'Jeden typ pre všetky zariadenia modelu, ktorého typ sa nerozpoznal (Battery Notes): vyberte ho alebo zadajte, napr. CR2450, 2× AA',
@@ -1339,6 +1411,10 @@ const BM_I18N = {
     ed_language_helper: 'Ponechte prázdné pro jazyk Home Assistant',
     ed_popup: 'Tlačítko celé obrazovky',
     ed_popup_helper: 'Zobrazí všechny baterie na celou obrazovku, podle místnosti nebo typu baterie',
+    ed_expanded: 'Zobrazení na celou obrazovku v kartě',
+    ed_expanded_helper: 'Zobrazí zobrazení na celou obrazovku přímo v kartě (pak bez tlačítka celé obrazovky)',
+    ed_csv_button: 'Tlačítko „Exportovat do CSV“',
+    ed_csv_button_helper: 'V zobrazení na celou obrazovku a v rozbalené kartě',
     ed_battery_models: 'Typy baterií podle modelu',
     ed_battery_models_helper:
       'Jeden typ pro všechna zařízení modelu, jehož typ nebyl rozpoznán (Battery Notes): vyberte jej nebo zadejte, např. CR2450, 2× AA',
@@ -1411,6 +1487,10 @@ const BM_I18N = {
     ed_language_helper: 'Pustite prazno za jezik Home Assistanta',
     ed_popup: 'Gumb za celozaslonski prikaz',
     ed_popup_helper: 'Prikaže vse baterije čez cel zaslon, po prostorih ali po vrsti baterije',
+    ed_expanded: 'Celozaslonski prikaz v kartici',
+    ed_expanded_helper: 'Prikaže celozaslonski prikaz v sami kartici (takrat brez gumba za celozaslonski prikaz)',
+    ed_csv_button: 'Gumb »Izvozi v CSV«',
+    ed_csv_button_helper: 'V celozaslonskem prikazu in v razširjeni kartici',
     ed_battery_models: 'Vrste baterij po modelu',
     ed_battery_models_helper:
       'Ena vrsta za vse naprave modela, katerega vrsta ni zaznana (Battery Notes): izberite jo ali vpišite, npr. CR2450, 2× AA',
@@ -1483,6 +1563,10 @@ const BM_I18N = {
     ed_language_helper: 'Atstājiet tukšu, lai izmantotu Home Assistant valodu',
     ed_popup: 'Pilnekrāna poga',
     ed_popup_helper: 'Parāda visas baterijas pa visu ekrānu, pa telpām vai pa bateriju veidiem',
+    ed_expanded: 'Pilnekrāna skats kartītē',
+    ed_expanded_helper: 'Parāda pilnekrāna skatu pašā kartītē (tad bez pilnekrāna pogas)',
+    ed_csv_button: 'Poga “Eksportēt CSV”',
+    ed_csv_button_helper: 'Pilnekrāna skatā un izvērstajā kartītē',
     ed_battery_models: 'Bateriju veidi pēc modeļa',
     ed_battery_models_helper:
       'Viens veids visām modeļa ierīcēm, kuru veids netiek noteikts (Battery Notes): izvēlieties vai ierakstiet to, piem., CR2450, 2× AA',
@@ -1555,6 +1639,10 @@ const BM_I18N = {
     ed_language_helper: 'Αφήστε κενό για να ακολουθεί το Home Assistant',
     ed_popup: 'Κουμπί πλήρους οθόνης',
     ed_popup_helper: 'Εμφανίζει όλες τις μπαταρίες σε πλήρη οθόνη, ανά δωμάτιο ή ανά τύπο μπαταρίας',
+    ed_expanded: 'Προβολή πλήρους οθόνης στην κάρτα',
+    ed_expanded_helper: 'Εμφανίζει την προβολή πλήρους οθόνης μέσα στην ίδια την κάρτα (τότε χωρίς κουμπί πλήρους οθόνης)',
+    ed_csv_button: 'Κουμπί «Εξαγωγή σε CSV»',
+    ed_csv_button_helper: 'Στην προβολή πλήρους οθόνης και στην αναπτυγμένη κάρτα',
     ed_battery_models: 'Τύποι μπαταρίας ανά μοντέλο',
     ed_battery_models_helper:
       'Ένας τύπος για όλες τις συσκευές ενός μοντέλου του οποίου ο τύπος δεν εντοπίζεται (Battery Notes): επιλέξτε τον ή πληκτρολογήστε τον, π.χ. CR2450, 2× AA',
@@ -2778,7 +2866,7 @@ class BatteryMonitorMiniCard extends BatteryMonitorCard {
 }
 
 // ── Editor ───────────────────────────────────────────────────────────────────
-const BM_HELPERS = ['entity', 'title', 'only_low', 'hide_when_ok', 'notify_button', 'popup', 'language', 'battery_models', 'battery_types'];
+const BM_HELPERS = ['entity', 'title', 'only_low', 'hide_when_ok', 'notify_button', 'popup', 'expanded', 'csv_button', 'language', 'battery_models', 'battery_types'];
 
 // A map of the editor (battery types by battery or by model) without its empty entries, or undefined when empty.
 const bmCleanMap = (map) => {
@@ -2885,6 +2973,8 @@ class BatteryMonitorCardEditor extends HTMLElement {
       { name: 'hide_when_ok', selector: { boolean: {} } },
       { name: 'notify_button', selector: { boolean: {} } },
       { name: 'popup', selector: { boolean: {} } },
+      { name: 'expanded', selector: { boolean: {} } },
+      { name: 'csv_button', selector: { boolean: {} } },
       {
         name: 'language',
         selector: {

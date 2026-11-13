@@ -3512,8 +3512,9 @@ class SystemMonitorCardEditor extends SystemMonitorEditorBase {
 }
 
 class SystemMonitorMiniCardEditor extends SystemMonitorEditorBase {
+  // The full card's sections too: the zoom button shows the full card with this same configuration.
   static get toggles() {
-    return ["show_storage", "show_backups", "show_network", "show_history", "zoom"];
+    return ["show_storage", "show_backups", "show_network", "show_history", "zoom", "show_system", "show_disk", "show_processes"];
   }
 }
 

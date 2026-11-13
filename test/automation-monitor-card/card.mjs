@@ -536,14 +536,32 @@ test("the editor turns the former collapse_<list>: false option into expand_<lis
   assert.deepEqual({ ...ed._config }, { type: "custom:automation-monitor-card", expand_linked: true });
 });
 
-test("the mini card editor, without list toggles, leaves the collapse_<list> options alone", () => {
+test("the mini card editor, with the list toggles of its detail view, migrates the collapse_<list> options too", () => {
   const { AutomationMonitorMiniCardEditor } = load("automation-monitor-card.js", ["AutomationMonitorMiniCardEditor"]);
   const ed = new AutomationMonitorMiniCardEditor();
   const events = [];
   ed.dispatchEvent = (ev) => events.push(ev);
   ed.setConfig({ type: "custom:automation-monitor-mini-card", collapse_failed: false });
-  assert.equal(events.length, 0);
-  assert.equal(ed._config.collapse_failed, false);
+  assert.equal(events.length, 1);
+  assert.deepEqual({ ...ed._config }, { type: "custom:automation-monitor-mini-card", expand_failed: true });
+});
+
+test("the editors offer the sensors; the mini card's, the full card's options its detail view uses", () => {
+  const { AutomationMonitorMiniCardEditor, STRINGS } = load("automation-monitor-card.js", ["AutomationMonitorMiniCardEditor", "STRINGS"]);
+  const names = (Cls) => {
+    const ed = new Cls();
+    ed._config = {};
+    ed._hass = { language: "en", locale: { language: "en" }, states: {}, entities: {} };
+    return ed._schema().flatMap((s) => (s.schema ? s.schema.map((x) => x.name) : [s.name]));
+  };
+  const full = names(AutomationMonitorCardEditor);
+  const mini = names(AutomationMonitorMiniCardEditor);
+  for (const name of ["failed_entity", "linked_entity"]) {
+    assert.ok(full.includes(name) && mini.includes(name), name);
+    for (const [l, table] of Object.entries(STRINGS)) assert.ok(table[name] && table[`${name}_helper`], `${l}: ${name}`);
+  }
+  for (const name of full) assert.ok(mini.includes(name), `mini: ${name}`);
+  assert.ok(mini.includes("zoom"));
 });
 
 // --- Review pass 9 ---
