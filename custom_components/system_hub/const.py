@@ -6,7 +6,7 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "2.3.4"
+VERSION: Final = "2.3.5"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"

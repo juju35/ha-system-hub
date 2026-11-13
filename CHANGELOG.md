@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.5 - 2026-11-14
+
+### Fixed
+- Visual editors completed. Automation Monitor cards: the `failed_entity` and `linked_entity` sensors can be picked; the mini card's editor also offers the full card's options its detail view uses (`expand_failed`, `expand_linked`, `show_details`, `show_controls`, `max_items`). Battery Monitor cards: `expanded` and `csv_button` are in the editor. System Monitor Mini Card: `show_system`, `show_disk` and `show_processes`, used by its zoomed view, are in its editor.
+- Status mini card editor: `show_title`, `show_subtitle` and `hide_ok`, which change nothing on its single line, are no longer offered.
+
 ## 2.3.4 - 2026-11-13
 
 ### Features

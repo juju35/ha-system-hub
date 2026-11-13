@@ -230,6 +230,8 @@ groups: [system, reliability]   # optional: only these groups (system, reliabili
 hide_ok: true                     # optional: hide the areas that are fine
 ```
 
+The mini card takes `groups` only: its single line has no header, and it already shows only the areas to look at, so `show_title`, `show_subtitle` and `hide_ok` apply to the full card.
+
 | `system-hub-card` | `system-hub-mini-card` |
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status.png" alt="system-hub-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini.png" alt="system-hub-mini-card, status" width="400"> |
@@ -368,20 +370,20 @@ cpu_critical: 90
 | `title` | all | `Home Assistant` | Card title |
 | `show_title` | all | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
 | `show_subtitle` | all | `true` | Show the subtitle under the title |
-| `show_system` | full | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
-| `show_disk` | full | `true` | The disk gauge of the System section (root file system, else the first mount point); `false` leaves the disk to the Storage section |
+| `show_system` | full, mini | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
+| `show_disk` | full, mini | `true` | The disk gauge of the System section (root file system, else the first mount point); `false` leaves the disk to the Storage section |
 | `show_network` | full, mini | `true` | Network download / upload |
 | `show_history` | full, mini | `true` | 24 h curve behind the CPU, RAM and CPU temperature gauges (bars on the mini card; the temperature on a 0–100 °C scale, RAM from its `memory_use_percent` sensor, on a 0–100 % scale) and each download / upload rate, from the recorder's 5-minute statistics (one query for all of them) (on the mini card, the rates then show as tiles above the footer instead of in it) |
 | `show_storage` | full, mini | `true` | Full card: mount points, swap and database size. Mini card: disk bar |
 | `show_backups` | full, mini | `true` | Full card: the last and next automatic backups at the end of Storage. Mini card: an orange / red item when the last backup is too old or failed |
-| `show_processes` | full | `true` | Monitored processes and their status tile |
-| `zoom` | mini | `true` | Zoom button at the top right: shows the full card, and back to the compact view |
+| `show_processes` | full, mini | `true` | Monitored processes and their status tile (mini card: a stopped process shows as an item) |
+| `zoom` | mini | `true` | Zoom button at the top right: shows the full card, and back to the compact view. The full card's options (`show_system`, `show_disk`, `show_processes`, the swap thresholds) are set on the mini card too, in YAML or in its visual editor, and apply to that view |
 | `interface` | full, mini | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
 | `cpu_warning` / `cpu_critical` | full, mini | `70` / `90` | CPU usage (%) from which the gauge turns orange / red |
 | `ram_warning` / `ram_critical` | full, mini | `80` / `95` | RAM usage (%) from which the gauge turns orange / red |
 | `disk_warning` / `disk_critical` | full, mini | `80` / `90` | Disk usage (%) from which the gauges and storage bars turn orange / red |
 | `temp_warning` / `temp_critical` | full, mini | `75` / `90` | CPU temperature (°C, whatever the unit of the sensor) from which the gauge turns orange / red |
-| `swap_warning` / `swap_critical` | full | `50` / `80` | Swap usage (%) from which the swap bar turns orange / red |
+| `swap_warning` / `swap_critical` | full, mini | `50` / `80` | Swap usage (%) from which the swap bar turns orange / red |
 | `backup_warning` / `backup_critical` | full, mini | `2` / `7` | Days since the last successful automatic backup from which the backup turns orange / red (red also when the last attempt failed, or there was never one) |
 | `entities` | full, mini | — | Sensors of your choice, instead of or next to System Monitor's (see below) |
 | `language` | all | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |
@@ -1097,13 +1099,13 @@ module: automations
 | `show_subtitle` | both | `true` | Show the subtitle under the title |
 | `show_failed` | both | `true` | Failed automations (counter and list) |
 | `show_linked` | both | `true` | Unavailable linked entities (counter and list) |
-| `expand_failed` | full | `false` | Failed automations expanded when the card loads |
-| `expand_linked` | full | `false` | Unavailable linked entities expanded when the card loads |
-| `show_details` | full | `true` | Error message of each failed automation |
-| `show_controls` | full | `true` | Clear and Clear all buttons (administrators only, like the Trace and Edit links and the Refresh button) |
-| `max_items` | full | `5` | Items shown per list before the "Show more" button |
+| `expand_failed` | both | `false` | Failed automations expanded when the card loads |
+| `expand_linked` | both | `false` | Unavailable linked entities expanded when the card loads |
+| `show_details` | both | `true` | Error message of each failed automation |
+| `show_controls` | both | `true` | Clear and Clear all buttons (administrators only, like the Trace and Edit links and the Refresh button) |
+| `max_items` | both | `5` | Items shown per list before the "Show more" button |
 | `hide_when_ok` | both | `false` | Hide the card while all is good. Never hidden while a sensor can't be read, nor while the dashboard is being edited |
-| `zoom` | mini | `true` | Detail button at the top right: switches to the full card and back (`false` removes it) |
+| `zoom` | mini | `true` | Detail button at the top right: switches to the full card and back (`false` removes it). The full card's options (`expand_failed`, `expand_linked`, `show_details`, `show_controls`, `max_items`) are set on the mini card too, in YAML or in its visual editor, and apply to that full view |
 | `exclude_devices` | both | — | Devices to ignore (ids or names): their unavailable linked entities and failed automations are left out of the lists, counters and status |
 | `exclude_entities` | both | — | Entities to ignore: entity ids or patterns with `*` and `?` (`automation.test_*`), case-insensitive |
 | `failed_entity` | both | Auto | Failed automations sensor, only needed if it can't be found automatically |

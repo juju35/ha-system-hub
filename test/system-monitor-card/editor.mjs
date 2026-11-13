@@ -53,3 +53,15 @@ test("card editor: a new network interface shows up in the interface choice", ()
   assert.ok(options(e._form.schema).includes("wlan0"), options(e._form.schema).join());
   assert.notEqual(e._form.schema, before);
 });
+
+test("SystemMonitorMiniCardEditor: the full card's sections, shown by the zoom", () => {
+  const names = (Cls) => {
+    const e = editor(Cls);
+    e.setConfig({});
+    e.hass = hassWith();
+    return e._form.schema.flatMap((f) => (f.schema ? f.schema.map((x) => x.name) : [f.name]));
+  };
+  const mini = names(lib.SystemMonitorMiniCardEditor);
+  for (const name of names(lib.SystemMonitorCardEditor)) assert.ok(mini.includes(name), name);
+  assert.ok(mini.includes("zoom"));
+});

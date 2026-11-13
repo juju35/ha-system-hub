@@ -310,6 +310,20 @@ test('I18N parity: every language has exactly the English keys and placeholders,
   }
 });
 
+test('editor: the expanded and CSV options, labelled in every language', () => {
+  const editor = new BatteryMonitorCardEditor();
+  editor.appendChild = () => {};
+  editor.setConfig({});
+  editor.hass = typedHass('en');
+  const names = editor._form.schema.map((s) => s.name);
+  assert.ok(names.includes('expanded') && names.includes('csv_button'), names.join());
+  assert.equal(editor._form.data.csv_button, true);
+  assert.equal(editor._form.data.expanded, false);
+  for (const [l, table] of Object.entries(BM_I18N))
+    for (const key of ['ed_expanded', 'ed_expanded_helper', 'ed_csv_button', 'ed_csv_button_helper']) assert.ok(table[key], `${l}: ${key}`);
+  assert.equal(editor._form.computeHelper({ name: 'csv_button' }), 'In the full screen view and the expanded card');
+});
+
 test('editor: the language list offers every translation, once', () => {
   const editor = new BatteryMonitorCardEditor();
   editor.appendChild = () => {};
