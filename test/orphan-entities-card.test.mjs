@@ -819,3 +819,33 @@ test('a list cut by the integration says how many orphans are left out', () => {
   assert.match(html(render({}, hass)), /class="empty trunc">40 more orphans are not listed here/);
   assert.doesNotMatch(html(render({}, makeHass())), /class="empty trunc"/);
 });
+
+test('a press holds the rewrite until its release or click; after a mouse use only a text field keeps the focus', () => {
+  const card = render({}, makeHass());
+  const before = html(card);
+  card._pressing = true;
+  card._config = { ...card._config, title: 'Pressed' };
+  card._render();
+  assert.equal(html(card), before, 'no rewrite under the pointer');
+  card._pressClick({ detail: 1 });
+  card._endPress(); // what the release runs, on the next task (no timers in this sandbox)
+  assert.match(html(card), /Pressed/, 'drawn right after the click');
+  // Pressed with the mouse: a button does not get the focus back (no focus ring), a text field does.
+  card._byPointer = true;
+  focused.length = 0;
+  card.shadowRoot.activeElement = { dataset: { focus: 'q' } };
+  card._q = 'ha';
+  card._render();
+  assert.deepEqual(focused, []);
+  card.shadowRoot.activeElement = { dataset: { focus: 'q' }, selectionStart: 2, selectionEnd: 2 };
+  card._q = 'h';
+  card._render();
+  assert.deepEqual(focused, ['q']);
+  // From the keyboard, any focused control gets it back.
+  card._pressClick({ detail: 0 });
+  focused.length = 0;
+  card.shadowRoot.activeElement = { dataset: { focus: 'q' } };
+  card._q = '';
+  card._render();
+  assert.deepEqual(focused, ['q']);
+});

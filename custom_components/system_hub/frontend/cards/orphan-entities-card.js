@@ -2319,6 +2319,8 @@ class OrphanEntitiesCard extends HTMLElement {
   }
 
   disconnectedCallback() {
+    // Left in the middle of a press: nothing stays held.
+    this._dropPress?.();
     document.removeEventListener('keydown', this._onKey);
     this._resize?.disconnect();
     this._resize = null;
@@ -2343,7 +2345,10 @@ class OrphanEntitiesCard extends HTMLElement {
     // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.('hide-title', config.show_title === false);
     this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+      oeHoldUnderPress(this, () => this._render());
+    }
     this._sig = null;
     this._render();
   }
@@ -2482,12 +2487,18 @@ class OrphanEntitiesCard extends HTMLElement {
   }
 
   _render() {
+    // Held under a press (see oeHoldUnderPress), drawn after its click.
+    if (this._pressing) {
+      this._dirty = true;
+      return;
+    }
+    this._dirty = false;
     const m = this._prepare();
     if (!m) return;
     // innerHTML replaces every element: the one that had the keyboard focus gets it back after the render,
     // a text field with its caret.
     const active = this.shadowRoot.activeElement;
-    const focusKey = active?.dataset?.focus;
+    const focusKey = oeKeepsFocus(this, active) && active?.dataset?.focus;
     const caret = active && typeof active.selectionStart === 'number' ? [active.selectionStart, active.selectionEnd] : null;
     this._draw(m);
     this._bind();
@@ -3263,6 +3274,52 @@ const oeWatchOutside = (isOut, handler) => {
     },
   };
 };
+
+// No rewrite of the card between a press and its click: Home Assistant updates the card several times a second, and a
+// rewrite under the pointer replaces the element pressed, so that the click lands on the card itself and does nothing
+// (a button or a row that does not react). While a press is in progress (`_pressing`), a render is left pending
+// (`_dirty`): it is done at the click, or right after the release when no click follows (a drag, a scroll).
+// `_byPointer` tells a mouse or touch use from the keyboard: after a rewrite, the focus is put back only for the
+// keyboard (no focus ring after a click), and always in a text field.
+const oeHoldUnderPress = (card, render) => {
+  const root = card.shadowRoot;
+  card._onPressEnd = () => {
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+    setTimeout(() => card._endPress(), 0);
+  };
+  card._endPress = () => {
+    card._pressing = false;
+    if (!card._dirty) return;
+    card._dirty = false;
+    render();
+  };
+  // Left in the middle of a press (see disconnectedCallback).
+  card._dropPress = () => {
+    card._pressing = false;
+    card._dirty = false;
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+  };
+  root.addEventListener?.('pointerdown', () => {
+    card._byPointer = true;
+    card._pressing = true;
+    window.addEventListener?.('pointerup', card._onPressEnd, true);
+    window.addEventListener?.('pointercancel', card._onPressEnd, true);
+  });
+  root.addEventListener?.('keydown', () => {
+    card._byPointer = false;
+  });
+  // At the click (capture: before the card acts on it) the press is over, and what the click changes is drawn at once.
+  card._pressClick = (ev) => {
+    card._pressing = false;
+    if (ev.detail === 0) card._byPointer = false;
+  };
+  root.addEventListener?.('click', card._pressClick, true);
+};
+
+// Whether the focus goes back to `el` after a rewrite (see oeHoldUnderPress).
+const oeKeepsFocus = (card, el) => !card._byPointer || typeof el?.selectionStart === 'number';
 
 // ── Mini card ────────────────────────────────────────────────────────────────
 // orphan-entities-mini-card: the status on two lines — the badge, title and status pill, then a chip per reason

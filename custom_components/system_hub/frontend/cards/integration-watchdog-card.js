@@ -1481,7 +1481,10 @@ class IntegrationWatchdogCard extends HTMLElement {
     // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.('hide-title', config.show_title === false);
     this.toggleAttribute?.('hide-subtitle', config.show_subtitle === false);
-    if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+    if (!this.shadowRoot) {
+      this.attachShadow({ mode: 'open' });
+      iwHoldUnderPress(this, () => this._render());
+    }
     this._sig = null;
     this._render();
   }
@@ -1604,10 +1607,17 @@ class IntegrationWatchdogCard extends HTMLElement {
   }
 
   _render() {
+    // Held under a press (see iwHoldUnderPress), drawn after its click.
+    if (this._pressing) {
+      this._dirty = true;
+      return;
+    }
+    this._dirty = false;
     const m = this._prepare();
     if (!m) return;
     // innerHTML replaces every element: the one that had the keyboard focus gets it back after the render.
-    const focusKey = this.shadowRoot.activeElement?.dataset?.focus;
+    const active = this.shadowRoot.activeElement;
+    const focusKey = iwKeepsFocus(this, active) && active?.dataset?.focus;
     this._draw(m);
     this._bind();
     if (focusKey) [...this.shadowRoot.querySelectorAll('[data-focus]')].find((el) => el.dataset.focus === focusKey)?.focus({ preventScroll: true });
@@ -2004,6 +2014,52 @@ const iwWatchOutside = (isOut, handler) => {
   };
 };
 
+// No rewrite of the card between a press and its click: Home Assistant updates the card several times a second, and a
+// rewrite under the pointer replaces the element pressed, so that the click lands on the card itself and does nothing
+// (a button or a row that does not react). While a press is in progress (`_pressing`), a render is left pending
+// (`_dirty`): it is done at the click, or right after the release when no click follows (a drag, a scroll).
+// `_byPointer` tells a mouse or touch use from the keyboard: after a rewrite, the focus is put back only for the
+// keyboard (no focus ring after a click), and always in a text field.
+const iwHoldUnderPress = (card, render) => {
+  const root = card.shadowRoot;
+  card._onPressEnd = () => {
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+    setTimeout(() => card._endPress(), 0);
+  };
+  card._endPress = () => {
+    card._pressing = false;
+    if (!card._dirty) return;
+    card._dirty = false;
+    render();
+  };
+  // Left in the middle of a press (see disconnectedCallback).
+  card._dropPress = () => {
+    card._pressing = false;
+    card._dirty = false;
+    window.removeEventListener?.('pointerup', card._onPressEnd, true);
+    window.removeEventListener?.('pointercancel', card._onPressEnd, true);
+  };
+  root.addEventListener?.('pointerdown', () => {
+    card._byPointer = true;
+    card._pressing = true;
+    window.addEventListener?.('pointerup', card._onPressEnd, true);
+    window.addEventListener?.('pointercancel', card._onPressEnd, true);
+  });
+  root.addEventListener?.('keydown', () => {
+    card._byPointer = false;
+  });
+  // At the click (capture: before the card acts on it) the press is over, and what the click changes is drawn at once.
+  card._pressClick = (ev) => {
+    card._pressing = false;
+    if (ev.detail === 0) card._byPointer = false;
+  };
+  root.addEventListener?.('click', card._pressClick, true);
+};
+
+// Whether the focus goes back to `el` after a rewrite (see iwHoldUnderPress).
+const iwKeepsFocus = (card, el) => !card._byPointer || typeof el?.selectionStart === 'number';
+
 // integration-watchdog-mini-card: the status on two lines — the badge, title and status pill, then a chip per
 // unavailable integration (or the last reload while everything is available) and the time of the last check.
 // Its detail button (top right, `zoom: false` removes it) switches it to the full card and back; a click anywhere
@@ -2036,6 +2092,8 @@ class IntegrationWatchdogMiniCard extends IntegrationWatchdogCard {
   }
 
   disconnectedCallback() {
+    // Left in the middle of a press: nothing stays held.
+    this._dropPress?.();
     this._unzoom.off();
     // Left (another dashboard view, a conditional card hidden): back to the compact view on return.
     this._zoomed = false;
