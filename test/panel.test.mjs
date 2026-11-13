@@ -1493,3 +1493,21 @@ test('the route given again by Home Assistant at each update does not bring the 
   p.route = { prefix: '/system-hub', path: '/logs' };
   assert.equal(p._tab, 'logs');
 });
+
+test('a tab chosen after a route is shown at the first click (each click used to need two)', () => {
+  const state = { loaded: true, modules: ['logs', 'watchdog', 'batteries', 'orphans'], tabs: ['logs', 'watchdog', 'batteries', 'orphans'] };
+  const p = panel(state, 'status');
+  // Drawn: only the address applied, as a real drawing does
+  p._render = () => p._applyRoute();
+  context.history = { state: null, replaceState() {} };
+  // Each tab chosen tells Home Assistant, which gives the panel its new route back
+  context.window = { dispatchEvent: (ev) => ev.type === 'location-changed' && (p.route = { prefix: '/system-hub', path: `/${p._tab}` }) };
+  const shown = [];
+  for (const group of ['reliability', 'devices', 'reliability', 'devices']) {
+    p._goGroup(group);
+    shown.push(p._tab);
+  }
+  assert.equal(shown.join(), 'logs,batteries,logs,batteries');
+  delete context.history;
+  delete context.window;
+});

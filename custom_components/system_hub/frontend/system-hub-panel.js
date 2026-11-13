@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.3.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.3.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1017,7 +1017,12 @@ class SystemHubPanel extends HTMLElement {
     if (this._routeSeen !== undefined && path === this._routeSeen) return;
     this._routeSeen = path;
     this._routeTab = path;
-    if (this._state) this._selectTab(this._routeTab);
+    if (this._state) {
+      this._selectTab(path);
+      // Followed: not applied again by the next drawing, which would bring this tab back over one chosen since (a
+      // tab chosen after a route took two clicks)
+      this._routeTab = null;
+    }
   }
 
   // Values set before the element was defined land as plain properties and hide the setters: passed through them
@@ -1194,6 +1199,8 @@ class SystemHubPanel extends HTMLElement {
   }
 
   _goTab(tab, focus) {
+    // A tab chosen here wins over an address not yet applied
+    this._routeTab = null;
     this._selectTab(tab, focus);
     var base = (this._panel?.url_path || 'system-hub').replace(/^\//, '');
     try {
@@ -1262,11 +1269,9 @@ class SystemHubPanel extends HTMLElement {
     });
   }
 
-  _render() {
-    // Read for the sidebar icon only (system-hub-icons.js): nothing shown
-    if (this._headless) return;
-    this._renderShell();
-    var root = this.shadowRoot;
+  // The tab of an address not applied yet (the panel opened on /system-hub/<tab> before its state was read), once;
+  // else a tab that is still there
+  _applyRoute() {
     if (this._routeTab && this._state) {
       var wanted = this._routeTab;
       this._routeTab = null;
@@ -1275,6 +1280,14 @@ class SystemHubPanel extends HTMLElement {
       if (this._tabs().includes(wanted)) this._tab = wanted;
     }
     if (!this._tabs().includes(this._tab)) this._tab = this._tabs()[0];
+  }
+
+  _render() {
+    // Read for the sidebar icon only (system-hub-icons.js): nothing shown
+    if (this._headless) return;
+    this._renderShell();
+    var root = this.shadowRoot;
+    this._applyRoute();
     var current = shGroupOf(this._tab);
     root.querySelector('.tabs').innerHTML = this._groups()
       .map((group) => {
