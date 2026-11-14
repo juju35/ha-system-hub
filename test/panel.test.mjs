@@ -1356,11 +1356,33 @@ test('silent devices networks: the Zigbee mesh from ZHA or Zigbee2MQTT, Matter b
   assert.ok(calls.includes('zha/devices'));
   html = p._content();
   // The map and the tree: the silent door in red, under its router, with since when
-  assert.match(html, /<svg viewBox="0 0 400 400"/);
+  // The map: laid out once, a search, the tools, the silent door red with since when, its link dashed to its parent
+  assert.match(html, /<svg class="nsvg" data-net="zigbee" viewBox="[-\d. ]+"/);
+  assert.match(html, /data-draft="sl_search"/);
+  assert.match(html, /data-action="sl_fit"[\s\S]*?data-action="sl_labels"[\s\S]*?data-action="sl_only"/);
   assert.match(html, /class="nn end silent" data-action="sl_pick" data-node="e2"/);
-  assert.match(html, /class="nl gone"/);
-  assert.match(html, /nrow silent[^>]*data-node="e2"[\s\S]*?Front door<\/span><span class="pill warn">Silent · /);
+  assert.match(html, /class="nl gone end" data-a="e2" data-b="r2"/);
+  assert.match(html, /<text class="sub"[^>]*>Silent · /);
   assert.match(html, /3 heard/);
+  const laid = p._slMap.zigbee.pos;
+  p._content();
+  assert.equal(p._slMap.zigbee.pos, laid);
+  // Every node on the map, the coordinator pinned in the middle
+  assert.deepEqual([...laid.c], [500, 320]);
+  // The pointer over the door: its router and its details
+  assert.ok(p._slHover.adj.get('e2').has('r2'));
+  assert.match(p._slHover.tips.get('e2'), /<b>Front door<\/b>[\s\S]*?Parent<\/span>Garage plug[\s\S]*?Area<\/span>Hall/);
+  // The list by router, folded at first
+  assert.doesNotMatch(html, /class="nrow/);
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_tree' } } : null) } });
+  html = p._content();
+  assert.match(html, /nrow silent[^>]*data-node="e2"[\s\S]*?Front door<\/span><span class="pill warn">Silent · /);
+  // The search: the rest fades
+  p._draft.sl_search = 'door';
+  html = p._content();
+  assert.match(html, /class="nn end silent hit" data-action="sl_pick" data-node="e2"/);
+  assert.match(html, /class="nn router dim" data-action="sl_pick" data-node="r1"/);
+  p._draft.sl_search = '';
   // Picked: detailed below, its parent and its battery, Ignore
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_pick', node: 'e2' } } : null) } });
   html = p._content();
