@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.2 - 2026-11-14
+
+### Fixed
+- **Each tab opens in its default state.** What was typed, chosen or sorted in a tab stayed there when coming back to it after another tab. Leaving a tab now clears its search fields and filters (Cleanup, Batteries, Silent devices), its selections (Database devices and entities, Cleanup entities and devices), its folds and "show all" lists (Database, Automations, Cleanup, Versioning files), the Batteries view (back to by level, no longer remembered by the browser), the curves' periods, the commit message, the stock form, **Back up before installing**, the repository shown, the questions and the messages; a module's settings form left open in the Settings tab is closed. What was read and the actions still running are kept.
+
 ## 2.5.1 - 2026-11-14
 
 ### Fixed

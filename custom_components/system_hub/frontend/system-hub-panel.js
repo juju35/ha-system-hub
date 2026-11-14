@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.5.1';
+var SYSTEM_HUB_PANEL_VERSION = '2.5.2';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1079,11 +1079,8 @@ class SystemHubPanel extends HTMLElement {
     this._hist = {};
     this._histBusy = {};
     this._periods = {};
-    try {
-      this._battView = localStorage.getItem('system_hub_batteries_view') || 'level';
-    } catch (_err) {
-      this._battView = 'level';
-    }
+    // By level: the view chosen lasts while the Batteries tab is shown (see _resetTabState)
+    this._battView = 'level';
   }
 
   set hass(hass) {
@@ -1284,10 +1281,44 @@ class SystemHubPanel extends HTMLElement {
     if (!tabs.includes(tab) && SH_GROUPS[tab]) tab = this._groupTabs(tab)[0];
     var chosen = tabs.includes(tab) ? tab : tabs[0];
     if (chosen !== this._tab) {
+      if (this._tab) this._resetTabState();
       this._tab = chosen;
       this._render();
     }
     if (focus) this.shadowRoot.querySelector(focus === 'sub' ? `[data-subtab="${chosen}"]` : `[data-group="${shGroupOf(chosen)}"]`)?.focus({ preventScroll: true });
+  }
+
+  // Another tab shown: what was typed, chosen, sorted, ticked, unfolded or asked in the one left goes, so that every tab
+  // opens in its default state. Kept: what was read (the data and their caches) and the actions still running.
+  _resetTabState() {
+    // Search fields, filters, the commit message, the stock form, unsaved Settings orders
+    this._draft = {};
+    this._messages = {};
+    this._confirm = null;
+    this._haCheck = null;
+    // Database: devices ticked and unfolded
+    this._dbSel = null;
+    this._dbOpen = null;
+    // Automations: lists folded and shortened again
+    this._autoFolds = {};
+    this._autoMore = {};
+    // Silent devices: the filter; Batteries: the view (by level); Resources: the curves' periods
+    this._slFilter = null;
+    this._battView = 'level';
+    this._periods = {};
+    // Updates: Back up before installing back to its setting
+    this._updBackup = undefined;
+    // Versioning: the first repository, the changed files folded as by default; the stock form closed
+    this._gitRepo = undefined;
+    this._gitFilesOpen = undefined;
+    this._stockForm = false;
+    // Cleanup: nothing ticked, the list shortened, no question
+    if (this._orphState) Object.assign(this._orphState, { sel: new Set(), dsel: new Set(), all: false, confirm: null });
+    // Settings: a module's settings form closed (its flow aborted)
+    if (this._cfg?.module) {
+      this._cfgAbort();
+      Object.assign(this._cfg, { module: null, step: null, error: null, haForm: null });
+    }
   }
 
   // A group's tab clicked: its first sub-tab, whichever was shown last in it
@@ -3350,11 +3381,6 @@ class SystemHubPanel extends HTMLElement {
     }
     if (action === 'batt_view') {
       this._battView = button.dataset.view;
-      try {
-        localStorage.setItem('system_hub_batteries_view', this._battView);
-      } catch (_err) {
-        // no storage: the view stays for this visit
-      }
       return this._render();
     }
     if (action === 'save') return this._save();

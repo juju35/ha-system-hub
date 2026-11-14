@@ -1041,6 +1041,40 @@ test('groups: Status, the groups with a module turned on, Settings; the modules 
   assert.equal(p._tab, 'watchdog');
 });
 
+test('another tab shown: what was typed, chosen, sorted or ticked in the one left goes', () => {
+  const state = { loaded: true, modules: ['database', 'batteries', 'orphans'], tabs: ['status', 'database', 'batteries', 'orphans'] };
+  const p = panel(state, 'batteries');
+  p._render = () => {};
+  p._draft = { batt_search: 'salon', orph_q: 'zha', message: 'wip' };
+  p._battView = 'room';
+  p._periods = { cpu: 168 };
+  p._dbSel = new Set(['sensor.power']);
+  p._dbOpen = new Set(['dev1']);
+  p._slFilter = 'weak';
+  p._confirm = 'db_purge';
+  p._messages = { db: { text: 'Failed', tone: 'bad' } };
+  p._orphState = { data: { entities: [] }, sel: new Set(['sensor.old']), dsel: new Set(['d1']), all: true, confirm: 'remove' };
+  p._db = { data: { top: [] } };
+  // The same tab chosen again: nothing changes
+  p._selectTab('batteries');
+  assert.equal(p._battView, 'room');
+  p._selectTab('database');
+  assert.equal(Object.keys(p._draft).length, 0);
+  assert.equal(p._battView, 'level');
+  assert.equal(Object.keys(p._periods).length, 0);
+  assert.equal(p._dbSel, null);
+  assert.equal(p._dbOpen, null);
+  assert.equal(p._slFilter, null);
+  assert.equal(p._confirm, null);
+  assert.equal(Object.keys(p._messages).length, 0);
+  assert.equal(p._orphState.sel.size + p._orphState.dsel.size, 0);
+  assert.equal(p._orphState.all, false);
+  assert.equal(p._orphState.confirm, null);
+  // What was read stays
+  assert.deepEqual(p._orphState.data, { entities: [] });
+  assert.deepEqual(p._db, { data: { top: [] } });
+});
+
 test('status tab: a score, one tile per area in the order of the tabs, each opening its tab', () => {
   const state = {
     loaded: true,
