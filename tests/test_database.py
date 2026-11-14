@@ -1,8 +1,11 @@
-"""Database module: the recorder's database, its retention and the entities that wrote the most states."""
+"""Database module: the recorder's database, its retention and the devices that wrote the most states."""
 
 from __future__ import annotations
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import area_registry as ar
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.components.recorder.common import async_wait_recording_done
 
@@ -29,7 +32,15 @@ async def test_top_writers(recorder_mock, hass: HomeAssistant, hass_ws_client) -
     result = (await client.receive_json())["result"]
     assert result["engine"] == "sqlite"
     assert result["keep_days"] == 10
-    assert result["top"][0] == {"entity_id": "sensor.chatty", "count": 5, "name": "chatty", "excluded": False}
+    assert result["top"][0] == {
+        "device_id": None,
+        "name": "chatty",
+        "area": None,
+        "count": 5,
+        "excluded": 0,
+        "entity_ids": ["sensor.chatty"],
+        "entities": [{"entity_id": "sensor.chatty", "count": 5, "name": "chatty", "excluded": False}],
+    }
     assert result["total_day"] >= 6
     # Kept for an hour: a new state is not counted until asked again with force
     hass.states.async_set("sensor.chatty", "9")
@@ -40,6 +51,34 @@ async def test_top_writers(recorder_mock, hass: HomeAssistant, hass_ws_client) -
     assert (await client.receive_json())["result"]["top"][0]["count"] == 6
     await client.send_json({"id": 4, "type": "system_hub/state"})
     assert (await client.receive_json())["result"]["database"] == {"max_size": 2.0}
+
+
+async def test_by_device(recorder_mock, hass: HomeAssistant, hass_ws_client) -> None:
+    """The states of a device's entities added up, the device named and placed, its entities the most first."""
+    entry = await _setup(hass)
+    area = ar.async_get(hass).async_create("Garage")
+    device = dr.async_get(hass).async_get_or_create(
+        config_entry_id=entry.entry_id, identifiers={("test", "linky")}, name="Linky"
+    )
+    dr.async_get(hass).async_update_device(device.id, area_id=area.id)
+    entities = er.async_get(hass)
+    for key in ("power", "current"):
+        entities.async_get_or_create("sensor", "test", key, suggested_object_id=key, device_id=device.id)
+    for value in range(3):
+        hass.states.async_set("sensor.power", str(value))
+    hass.states.async_set("sensor.current", "1")
+    for value in range(2):
+        hass.states.async_set("sensor.alone", str(value))
+    await async_wait_recording_done(hass)
+    client = await hass_ws_client(hass)
+    await client.send_json({"id": 1, "type": "system_hub/database"})
+    top = (await client.receive_json())["result"]["top"]
+    linky = top[0]
+    assert (linky["device_id"], linky["name"], linky["area"], linky["count"]) == (device.id, "Linky", "Garage", 4)
+    assert linky["entity_ids"] == ["sensor.power", "sensor.current"]
+    assert [e["count"] for e in linky["entities"]] == [3, 1]
+    assert top[1]["device_id"] is None
+    assert top[1]["entity_ids"] == ["sensor.alone"]
 
 
 async def test_not_enabled(hass: HomeAssistant, hass_ws_client) -> None:

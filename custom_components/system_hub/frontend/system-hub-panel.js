@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.4.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.5.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -834,6 +834,13 @@ class SystemHubPanel extends HTMLElement {
     .dbrow { width:100%; border:0; background:none; font:inherit; color:inherit; text-align:left; cursor:pointer; }
     .dbrow.on { background:rgba(var(--rgb-primary-color, 3,169,244), .08); }
     .dbrow .who { flex:1; min-width:0; }
+    .dbdev { display:flex; align-items:center; padding-right:6px; }
+    .dbdev.on { background:rgba(var(--rgb-primary-color, 3,169,244), .08); }
+    .dbdev .dbrow { flex:1; min-width:0; }
+    .dbdev .dbfold-space { width:36px; flex:none; }
+    .dbents { border-left:2px solid var(--divider-color, rgba(127,127,127,.2)); margin-left:24px; padding-right:42px; }
+    .dbent { padding-left:14px; }
+    .dbent .n { font-size:13px; }
     .dbbar { height:4px; margin-top:6px; border-radius:2px; background:var(--divider-color, rgba(127,127,127,.2)); overflow:hidden; }
     .dbbar span { display:block; height:100%; background:var(--primary-color); }
     .dbcount { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
@@ -2397,8 +2404,8 @@ class SystemHubPanel extends HTMLElement {
     }
   }
 
-  // Database: its size, its retention, the states of the day; the entities that wrote the most, to purge their history
-  // or to leave out of the recorder; Purge and repack
+  // Database: its size, its retention, the states of the day; the devices that wrote the most, each unfolding to its
+  // entities that wrote the most, to purge their history or to leave them out of the recorder; Purge and repack
   _database() {
     var data = this._db?.data;
     if (!data) {
@@ -2412,7 +2419,8 @@ class SystemHubPanel extends HTMLElement {
     var max = this._state.database?.max_size ?? 2;
     var sel = (this._dbSel ??= new Set());
     var top = data.top || [];
-    for (var id of [...sel]) if (!top.some((e) => e.entity_id === id)) sel.delete(id);
+    var counted = new Set(top.flatMap((d) => d.entity_ids || []));
+    for (var id of [...sel]) if (!counted.has(id)) sel.delete(id);
     var tone = this._dbTone(data.size);
     var tiles = [
       this._tile('mdi:database-outline', shEsc(typeof data.size === 'number' ? shBytes(data.size) : '—'), this._t('db_size'), tone, {
@@ -2432,17 +2440,11 @@ class SystemHubPanel extends HTMLElement {
       ${this._button('db_refresh', 'mdi:refresh', this._t('db_recount'), { quiet: true, busy: this._busy.db_refresh })}
       ${this._button('db_repack_confirm', 'mdi:database-refresh-outline', this._t('db_repack'), { quiet: true, busy: this._busy.db_repack })}${this._configure()}</div>${confirm}`;
     var total = data.total_day || 0;
-    var rows = top
-      .map((e) => {
-        var on = sel.has(e.entity_id);
-        var share = total ? Math.round((e.count / total) * 100) : 0;
-        return `<button class="item dbrow${on ? ' on' : ''}" data-action="db_pick" data-entity="${shEsc(e.entity_id)}" aria-pressed="${on}">
-          <ha-icon icon="mdi:checkbox-${on ? 'marked' : 'blank-outline'}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(e.name)}${e.excluded ? ` <span class="pill">${shEsc(this._t('db_excluded'))}</span>` : ''}</div>
-            <div class="s">${shEsc(e.entity_id)}</div><div class="dbbar"><span style="width:${Math.max(share, 1)}%"></span></div></div>
-          <span class="dbcount"><b>${e.count.toLocaleString(this._hass?.language)}</b><span class="s">${share} %</span></span></button>`;
-      })
-      .join('');
+    var share = (n) => (total ? Math.round((n / total) * 100) : 0);
+    var count = (n, pct) =>
+      `<span class="dbcount"><b>${n.toLocaleString(this._hass?.language)}</b><span class="s">${pct} %</span></span>`;
+    var open = (this._dbOpen ??= new Set());
+    var rows = top.map((d) => this._dbDevice(d, sel, open, share, count)).join('');
     var chosen = [...sel];
     var purge =
       this._confirm === 'db_purge'
@@ -2457,6 +2459,52 @@ class SystemHubPanel extends HTMLElement {
     return `<div class="tiles">${tiles.join('')}</div>${actions}
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:chart-bar"></ha-icon><span class="lname">${shEsc(this._t('db_top'))}</span>
         <span class="muted">${shEsc(this._t('db_counted', { when: this._rel(new Date(data.counted_at * 1000).toISOString()) }))}</span></div>${rows}${picked}</ha-card>`;
+  }
+
+  // A device of the Database tab: its row picks all its entities that wrote (a box half ticked when some are), its
+  // chevron unfolds them, the ones that wrote the most first, each picked on its own. An entity without a device is a
+  // row of its own, with nothing to unfold.
+  _dbDevice(d, sel, open, share, count) {
+    var ids = d.entity_ids || [];
+    var key = d.device_id || ids[0] || d.name;
+    var picked = ids.filter((id) => sel.has(id)).length;
+    var box = picked && picked === ids.length ? 'marked' : picked ? 'intermediate' : 'blank-outline';
+    var excluded =
+      d.excluded && d.excluded === ids.length
+        ? ` <span class="pill">${shEsc(this._t('db_excluded'))}</span>`
+        : d.excluded
+          ? ` <span class="pill">${shEsc(this._t('db_excluded_some', { n: d.excluded }))}</span>`
+          : '';
+    var sub = d.device_id
+      ? [d.area, this._t(ids.length === 1 ? 'db_entities_one' : 'db_entities_many', { n: ids.length })].filter(Boolean).join(' · ')
+      : [ids[0], this._t('db_no_device')].filter(Boolean).join(' · ');
+    var pct = share(d.count);
+    var isOpen = Boolean(d.device_id) && open.has(key);
+    var label = `${this._t('db_unfold')} · ${d.name}`;
+    var fold = d.device_id
+      ? `<button class="icon-btn" data-action="db_open" data-key="${shEsc(key)}" aria-expanded="${isOpen}" title="${shEsc(label)}" aria-label="${shEsc(label)}"><ha-icon icon="mdi:chevron-${isOpen ? 'up' : 'down'}"></ha-icon></button>`
+      : '<span class="dbfold-space"></span>';
+    var row = `<div class="dbdev${picked ? ' on' : ''}">
+      <button class="item dbrow" data-action="db_pick_device" data-key="${shEsc(key)}" aria-pressed="${picked === ids.length && picked > 0}">
+        <ha-icon icon="mdi:checkbox-${box}"></ha-icon>
+        <div class="who"><div class="n">${shEsc(d.name)}${excluded}</div><div class="s">${shEsc(sub)}</div>
+          <div class="dbbar"><span style="width:${Math.max(pct, 1)}%"></span></div></div>
+        ${count(d.count, pct)}</button>${fold}</div>`;
+    if (!isOpen) return row;
+    var entities = (d.entities || [])
+      .map((e) => {
+        var on = sel.has(e.entity_id);
+        var ep = share(e.count);
+        return `<button class="item dbrow dbent${on ? ' on' : ''}" data-action="db_pick" data-entity="${shEsc(e.entity_id)}" aria-pressed="${on}">
+          <ha-icon icon="mdi:checkbox-${on ? 'marked' : 'blank-outline'}"></ha-icon>
+          <div class="who"><div class="n">${shEsc(e.name)}${e.excluded ? ` <span class="pill">${shEsc(this._t('db_excluded'))}</span>` : ''}</div>
+            <div class="s">${shEsc(e.entity_id)}</div><div class="dbbar"><span style="width:${Math.max(ep, 1)}%"></span></div></div>
+          ${count(e.count, ep)}</button>`;
+      })
+      .join('');
+    var more = ids.length - (d.entities || []).length;
+    var rest = more > 0 ? `<div class="item dbent"><div class="who"><div class="s">${shEsc(this._t(more === 1 ? 'db_more_one' : 'db_more', { n: more }))}</div></div></div>` : '';
+    return `${row}<div class="dbents" role="group" aria-label="${shEsc(label)}">${entities}${rest}</div>`;
   }
 
   // Security (system_hub/security): read every 5 minutes at most; the add-ons and the YAML files are read again by the
@@ -3363,6 +3411,22 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'sc_allow') {
       var allow = button.dataset.allow !== 'false';
       return this._scCall(`sc_allow:${button.dataset.slug}`, { type: 'system_hub/security_allow_addon', slug: button.dataset.slug, allow });
+    }
+    if (action === 'db_pick_device') {
+      var dev = (this._db?.data?.top || []).find((d) => (d.device_id || d.entity_ids?.[0] || d.name) === button.dataset.key);
+      var all = dev?.entity_ids || [];
+      var set = (this._dbSel ??= new Set());
+      // All ticked: untick them; otherwise tick the rest
+      if (all.length && all.every((id) => set.has(id))) for (var one of all) set.delete(one);
+      else for (var one2 of all) set.add(one2);
+      if (this._confirm === 'db_purge') this._confirm = null;
+      return this._render();
+    }
+    if (action === 'db_open') {
+      var opened = (this._dbOpen ??= new Set());
+      if (opened.has(button.dataset.key)) opened.delete(button.dataset.key);
+      else opened.add(button.dataset.key);
+      return this._render();
     }
     if (action === 'db_pick') {
       var picked = (this._dbSel ??= new Set());
