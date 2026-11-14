@@ -1027,14 +1027,18 @@ test('groups: Status, the groups with a module turned on, Settings; the modules 
   // The group's badge: one module to look at, in the colour of the worst
   assert.match(p._groupBadge('reliability'), /class="tbadge bad"[^>]*>1</);
   assert.equal(p._groupBadge('devices'), '');
-  // A group chosen: the sub-tab shown last in it, else its first
+  // A group chosen: its first sub-tab, even when another one was shown last in it
   p._render = () => {};
   p._selectTab('reliability');
   assert.equal(p._tab, 'watchdog');
   p._selectTab('automations');
   p._selectTab('batteries');
   p._goGroup('reliability');
-  assert.equal(p._tab, 'automations');
+  assert.equal(p._tab, 'watchdog');
+  // The group shown, clicked again: back to its first sub-tab too
+  p._selectTab('automations');
+  p._goGroup('reliability');
+  assert.equal(p._tab, 'watchdog');
 });
 
 test('status tab: a score, one tile per area in the order of the tabs, each opening its tab', () => {

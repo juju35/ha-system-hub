@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.1 - 2026-11-14
+
+### Fixed
+- **A group's tab opens its first sub-tab.** Going back to a group (System, say) showed the sub-tab last shown in it (Database) instead of its first one (Resources). A group's tab now always opens its first sub-tab, also when clicked again while one of its sub-tabs is shown; the sub-tabs and the Status tab's tiles still open the tab they name.
+
 ## 2.5.0 - 2026-11-14
 
 ### Features

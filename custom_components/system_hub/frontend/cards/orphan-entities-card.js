@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub (formerly bundled with Orphan Entities).
  * https://github.com/juju35/ha-system-hub
  */
-var ORPHAN_ENTITIES_CARD_VERSION = '2.5.0';
+var ORPHAN_ENTITIES_CARD_VERSION = '2.5.1';
 // The integration, its module and the prefix of the module's actions
 const OE_DOMAIN = 'system_hub';
 
