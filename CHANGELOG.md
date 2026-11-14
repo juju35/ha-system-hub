@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.7.0 - 2026-11-14
+
+### Features
+- **The network map made interactive**, in the spirit of Home Assistant's Matter map. The Zigbee and Matter networks of the Silent devices tab are laid out as a graph of forces over the whole width, each node with its name and room beside it (since when, for a silent one); the coordinator and the networks as squares, the routers as circles, the end devices as small circles. Each link points to the parent, thicker when its LQI is stronger, dashed for an end device. The wheel zooms and a drag moves the map; the pointer over a node leaves it and its neighbours standing out and shows its details (role, status, LQI, parent, model, room). A **Search** field fades the other devices; buttons read again, fit to the screen, show or hide the names and keep only the silent devices. The tree by router is now **List by router**, folded under the map; the details of a device show once it is clicked.
+
 ## 2.6.0 - 2026-11-14
 
 ### Features

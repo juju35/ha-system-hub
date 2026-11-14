@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.6.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.7.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -404,6 +404,96 @@ function shNetLayout(nodes, size) {
   };
   place(top, 0, -Math.PI / 2, Math.PI * 1.5);
   return pos;
+}
+
+// The map's layout, as a graph of forces: the nodes push each other away, every link pulls its two ends together
+// (a device to its parent harder than the mesh between routers), a light pull keeps everything near the middle. It
+// starts from the rings of shNetLayout and is computed once per reading, so the same network is always drawn the
+// same way; a single root stays in the middle. Coordinates on a width × height plane.
+function shNetForce(nodes, links, width, height) {
+  var ring = shNetLayout(nodes, Math.min(width, height));
+  var dx0 = (width - Math.min(width, height)) / 2;
+  var dy0 = (height - Math.min(width, height)) / 2;
+  var pts = nodes.map((n) => {
+    var p = ring[n.id] || [width / 2, height / 2];
+    return { id: n.id, x: p[0] + dx0, y: p[1] + dy0, vx: 0, vy: 0 };
+  });
+  var at = new Map(pts.map((p, i) => [p.id, i]));
+  var springs = [];
+  for (var n of nodes) if (at.has(n.parent)) springs.push([at.get(n.id), at.get(n.parent), n.role === 'end' ? 1 : 0.6]);
+  for (var l of links || []) {
+    if (!at.has(l.a) || !at.has(l.b)) continue;
+    var a = nodes[at.get(l.a)];
+    var b = nodes[at.get(l.b)];
+    if (a.parent === b.id || b.parent === a.id || a.role === 'end' || b.role === 'end') continue;
+    springs.push([at.get(l.a), at.get(l.b), 0.15]);
+  }
+  var roots = nodes.filter((x) => !at.has(x.parent));
+  var pinned = roots.length === 1 ? at.get(roots[0].id) : -1;
+  // Several roots (Matter networks, nothing between them): each pulled hard to the middle, so they stay together
+  var anchored = new Set(roots.length > 1 ? roots.map((x) => at.get(x.id)) : []);
+  var k = Math.min(Math.sqrt((width * height) / Math.max(pts.length, 1)) * 0.5, 110);
+  var far = 9 * k * k;
+  var cx = width / 2;
+  var cy = height / 2;
+  var steps = pts.length > 200 ? 150 : 300;
+  for (var step = 0; step < steps; step++) {
+    var heat = 1 - step / steps;
+    for (var i = 0; i < pts.length; i++) {
+      var p = pts[i];
+      for (var j = i + 1; j < pts.length; j++) {
+        var q = pts[j];
+        var ddx = p.x - q.x;
+        var ddy = p.y - q.y;
+        var d2 = ddx * ddx + ddy * ddy || 0.01;
+        // Far apart, they no longer push: the light pull to the middle keeps the parts together
+        if (d2 > far) continue;
+        var push = (k * k) / d2;
+        p.vx += ddx * push;
+        p.vy += ddy * push;
+        q.vx -= ddx * push;
+        q.vy -= ddy * push;
+      }
+    }
+    for (var [s, t, w] of springs) {
+      var ps = pts[s];
+      var pt = pts[t];
+      var sx = pt.x - ps.x;
+      var sy = pt.y - ps.y;
+      var d = Math.hypot(sx, sy) || 0.01;
+      var pull = ((d * d) / k / d) * w;
+      ps.vx += sx * pull;
+      ps.vy += sy * pull;
+      pt.vx -= sx * pull;
+      pt.vy -= sy * pull;
+    }
+    var limit = (k / 2) * heat + 0.5;
+    for (var m = 0; m < pts.length; m++) {
+      var r = pts[m];
+      var g = anchored.has(m) ? 0.3 : 0.03;
+      r.vx += (cx - r.x) * g;
+      r.vy += (cy - r.y) * g;
+      var v = Math.hypot(r.vx, r.vy);
+      if (m !== pinned && v > 0) {
+        r.x += (r.vx / v) * Math.min(v, limit);
+        r.y += (r.vy / v) * Math.min(v, limit);
+      }
+      r.vx = 0;
+      r.vy = 0;
+    }
+    if (pinned >= 0) Object.assign(pts[pinned], { x: cx, y: cy });
+  }
+  return Object.fromEntries(pts.map((p) => [p.id, [p.x, p.y]]));
+}
+
+// The box that shows every node and its label, with a margin
+function shNetBox(pos) {
+  var xs = Object.values(pos).map((p) => p[0]);
+  var ys = Object.values(pos).map((p) => p[1]);
+  if (!xs.length) return [0, 0, 1000, 640];
+  var x0 = Math.min(...xs) - 50;
+  var y0 = Math.min(...ys) - 50;
+  return [x0, y0, Math.max(...xs) + 230 - x0, Math.max(...ys) + 60 - y0];
 }
 
 // The tone of a link quality: strong, medium, weak (the module's weak signal is below 50)
@@ -1219,23 +1309,52 @@ class SystemHubPanel extends HTMLElement {
     .more-row { justify-content:center; padding:6px 0; }
     .nviews { margin-bottom:12px; width:fit-content; }
     .nbar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
-    .nonly { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--secondary-text-color); cursor:pointer; }
-    .nview { display:grid; grid-template-columns:minmax(0, 1.35fr) minmax(0, 1fr); gap:12px; margin-top:12px; }
-    .nmap { padding:8px; }
-    .nmap svg { display:block; width:100%; max-height:560px; }
+    .nmap { position:relative; padding:0; overflow:hidden; }
+    .nsvg { display:block; width:100%; height:min(640px, 70vh); cursor:grab; user-select:none; touch-action:none; }
+    .nsvg:active { cursor:grabbing; }
+    .nsearch { position:absolute; top:12px; left:12px; z-index:1; display:flex; align-items:center; gap:6px; padding:0 10px; height:36px;
+               width:min(260px, calc(100% - 80px)); box-sizing:border-box; border:1px solid var(--divider-color, rgba(127,127,127,.3)); border-radius:8px;
+               background:var(--card-background-color, #fff); --mdc-icon-size:18px; color:var(--secondary-text-color); }
+    .nsearch input { flex:1; min-width:0; border:0; outline:none; background:none; font:inherit; font-size:14px; color:var(--primary-text-color); }
+    .ntools { position:absolute; top:12px; right:12px; z-index:1; display:flex; flex-direction:column; gap:6px; }
+    .ntool { width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; cursor:pointer; font:inherit; font-size:16px;
+             border:1px solid var(--divider-color, rgba(127,127,127,.3)); background:var(--card-background-color, #fff); color:var(--secondary-text-color); --mdc-icon-size:20px; }
+    .ntool.on { color:var(--primary-color); border-color:var(--primary-color); }
+    .ntool ha-icon[icon="mdi:loading"] { animation:sh-spin 1s linear infinite; }
     .nl { stroke:var(--disabled-text-color, #9e9e9e); stroke-width:1.5; }
-    .nl.mesh { stroke-dasharray:3 3; opacity:.45; stroke-width:1; }
+    .nl.end { stroke-dasharray:8 6; }
+    .nl.mesh { stroke-dasharray:2 5; opacity:.5; stroke-width:1.5; }
     .nl.good { stroke:var(--tone-good); } .nl.warn { stroke:var(--tone-warn); } .nl.bad { stroke:var(--tone-bad); }
-    .nl.gone { stroke:var(--tone-bad); stroke-dasharray:4 4; }
-    .nn { cursor:pointer; } .nn circle { fill:var(--disabled-text-color, #9e9e9e); stroke:var(--card-background-color, #fff); stroke-width:1.5; }
-    .nn.coordinator circle { fill:var(--primary-color); } .nn.router circle { fill:var(--tone-good); } .nn.silent circle { fill:var(--tone-bad); }
-    .nn circle.nring { fill:none; stroke:none; }
-    .nn.sel circle.nring { stroke:var(--primary-color); stroke-width:2; }
-    .nn text { font-size:10px; text-anchor:middle; fill:var(--secondary-text-color); pointer-events:none; paint-order:stroke;
-               stroke:var(--card-background-color, #fff); stroke-width:3px; stroke-linejoin:round; }
-    .nn.silent text { fill:var(--tone-bad); } .nn.coordinator text { fill:var(--primary-text-color); font-weight:500; }
-    .nl.dim, .nn.dim { opacity:.15; }
-    .ntree { padding:6px; max-height:576px; overflow:auto; display:flex; flex-direction:column; gap:1px; }
+    .nl.thread { stroke:#8e6fd6; } .nl.ip { stroke:#f2a03d; }
+    .nl.gone { stroke:var(--tone-bad); stroke-dasharray:4 6; }
+    .nn { cursor:pointer; } .nn circle, .nn rect { fill:#26a69a; stroke:var(--card-background-color, #fff); stroke-width:2; }
+    .nn.coordinator rect, .nn.coordinator circle { fill:var(--primary-color); } .nn.thread rect { fill:#8e6fd6; } .nn.ip rect { fill:#f2a03d; }
+    .nn.router circle { fill:#4fb3e0; } .nn.silent circle, .nn.silent rect { fill:var(--tone-bad); }
+    .nn .nring { fill:none; stroke:none; }
+    .nn.sel .nring, .nn.hit .nring { stroke:var(--primary-color); stroke-width:3; }
+    .nn text { font-size:16px; fill:var(--primary-text-color); pointer-events:none; paint-order:stroke;
+               stroke:var(--card-background-color, #fff); stroke-width:4px; stroke-linejoin:round; }
+    .nn text.sub { font-size:13px; fill:var(--secondary-text-color); }
+    .nn.silent text { fill:var(--tone-bad); }
+    .nl.dim, .nn.dim { opacity:.12; }
+    .nsvg.focusing .nn:not(.near), .nsvg.focusing .nl:not(.near) { opacity:.1; }
+    .nsvg.focusing .nl.near { opacity:1; }
+    .ntip { position:absolute; z-index:2; pointer-events:none; max-width:280px; padding:10px 12px; border-radius:8px; font-size:12px; line-height:1.5;
+            background:var(--card-background-color, #fff); color:var(--primary-text-color); border:1px solid var(--divider-color, rgba(127,127,127,.3));
+            box-shadow:0 4px 16px rgba(0,0,0,.25); }
+    .ntip b { display:block; font-size:13px; margin-bottom:2px; }
+    .ntip span { color:var(--secondary-text-color); margin-right:6px; }
+    .ntip span::after { content:':'; }
+    .nlegend { display:flex; flex-wrap:wrap; justify-content:center; gap:6px 16px; padding:8px 12px 12px; font-size:12px; color:var(--secondary-text-color); }
+    .nlegend span { display:inline-flex; align-items:center; gap:6px; }
+    .nlegend .nd { width:11px; height:11px; border-radius:50%; background:#26a69a; }
+    .nlegend .nd.sq { border-radius:3px; } .nlegend .nd.coordinator { background:var(--primary-color); } .nlegend .nd.thread { background:#8e6fd6; }
+    .nlegend .nd.ip { background:#f2a03d; } .nlegend .nd.router { background:#4fb3e0; } .nlegend .nd.silent { background:var(--tone-bad); }
+    .nlegend .nlq { flex-basis:100%; justify-content:center; }
+    .ntree { margin-top:12px; padding:4px 6px; }
+    .ntoggle { display:flex; align-items:center; gap:6px; width:100%; border:0; background:none; font:inherit; font-size:14px; font-weight:500;
+               color:var(--primary-text-color); padding:8px; cursor:pointer; --mdc-icon-size:20px; }
+    .nrows { display:flex; flex-direction:column; gap:1px; padding-bottom:6px; }
     .nrow ha-icon { color:var(--secondary-text-color); } .nrow.silent ha-icon { color:var(--tone-bad); }
     .nrow { display:flex; align-items:center; gap:6px; width:100%; border:0; background:none; font:inherit; font-size:13px; text-align:left;
             color:var(--primary-text-color); padding:6px 8px; border-radius:8px; cursor:pointer; --mdc-icon-size:18px; }
@@ -1247,11 +1366,6 @@ class SystemHubPanel extends HTMLElement {
     .ndetail { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 14px; margin-top:12px; }
     .ndetail .who { flex:1; min-width:200px; } .ndetail .ndact { display:flex; gap:6px; }
     .ndetail.silent .n { color:var(--tone-bad); }
-    .nlegend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:8px; font-size:12px; color:var(--secondary-text-color); }
-    .nlegend span { display:inline-flex; align-items:center; gap:5px; }
-    .nlegend .nd { width:10px; height:10px; border-radius:50%; background:var(--disabled-text-color, #9e9e9e); }
-    .nlegend .nd.coordinator { background:var(--primary-color); } .nlegend .nd.router { background:var(--tone-good); } .nlegend .nd.silent { background:var(--tone-bad); }
-    @media (max-width: 900px) { .nview { grid-template-columns:1fr; } .ntree { max-height:none; } }
     @media (max-width: 600px) {
       main { padding:12px 8px; }
       .tiles { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; }
@@ -1516,6 +1630,9 @@ class SystemHubPanel extends HTMLElement {
     this._slView = 'list';
     this._slSel = null;
     this._slOnly = false;
+    this._slBox = null;
+    this._slLabels = true;
+    this._slTreeOpen = false;
     this._battView = 'level';
     this._periods = {};
     // Updates: Back up before installing back to its setting
@@ -1601,11 +1718,19 @@ class SystemHubPanel extends HTMLElement {
         this._onClick(ev);
       }
     });
+    // The network map: zoomed with the wheel, moved by dragging
+    root.querySelector('main').addEventListener('wheel', (ev) => this._slWheel(ev), { passive: false });
+    root.querySelector('main').addEventListener('pointerdown', (ev) => this._slPanStart(ev));
+    root.querySelector('main').addEventListener('pointermove', (ev) => this._slPanMove(ev));
+    root.querySelector('main').addEventListener('pointerup', () => this._slPanEnd());
+    root.querySelector('main').addEventListener('pointerleave', () => this._slPanEnd());
+    root.querySelector('main').addEventListener('pointerover', (ev) => this._slHoverAt(ev));
+    root.querySelector('main').addEventListener('pointerout', (ev) => !ev.relatedTarget?.closest?.('svg.nsvg') && this._slHoverEnd(ev.target.closest?.('.nmap')));
     root.querySelector('main').addEventListener('input', (ev) => {
       if (ev.target.dataset?.draft) this._draft[ev.target.dataset.draft] = ev.target.value;
       // The Orphans search and filters narrow the list as they change
       if (ev.target.dataset?.draft?.startsWith('orph_')) this._render();
-      if (ev.target.dataset?.draft === 'batt_search') this._render();
+      if (ev.target.dataset?.draft === 'batt_search' || ev.target.dataset?.draft === 'sl_search') this._render();
     });
   }
 
@@ -2609,16 +2734,20 @@ class SystemHubPanel extends HTMLElement {
   _slNetwork(net) {
     this._slNetLoad(net);
     var map = this._slMap?.[net];
-    var reload = this._button('sl_net_reload', 'mdi:refresh', this._t('sl_net_reload'), { quiet: true, data: { net }, busy: map?.loading });
     if (!map?.nodes) {
+      var reload = this._button('sl_net_reload', 'mdi:refresh', this._t('sl_net_reload'), { quiet: true, data: { net }, busy: map?.loading });
       var wait = this._spinner(this._t(net === 'zigbee' && !(this._hass?.config?.components || []).includes('zha') ? 'sl_net_scanning' : 'sl_net_loading'));
       var failed = map?.error ? `<span class="msg bad" role="status">${shEsc(this._t('sl_net_failed', { error: map.error }))}</span>${reload}` : '';
       return `<ha-card class="note">${failed || wait}</ha-card>`;
     }
     var rows = new Map((this._state.silent?.devices || []).map((d) => [d.device_id, d]));
+    var reg = new Map((this._slReg?.devices || []).map((d) => [d.id, d]));
     var nodes = map.nodes.map((n) => {
       var row = n.device_id ? rows.get(n.device_id) : null;
-      return { ...n, row, silent: Boolean(row?.silent) || (n.role !== 'hub' && !n.available) };
+      var dev = reg.get(n.device_id);
+      var area = row?.area || this._hass?.areas?.[dev?.area_id]?.name || null;
+      var maker = [dev?.manufacturer, dev?.model].filter(Boolean).join(' ');
+      return { ...n, row, area, maker, silent: Boolean(row?.silent) || (n.role !== 'hub' && !n.available) };
     });
     var byId = new Map(nodes.map((n) => [n.id, n]));
     // Silent only: the silent devices and the nodes they hang from
@@ -2626,21 +2755,23 @@ class SystemHubPanel extends HTMLElement {
     for (var n of nodes.filter((x) => x.silent)) {
       for (var at = n; at && !keep.has(at.id); at = byId.get(at.parent)) keep.add(at.id);
     }
-    var shown = (x) => !this._slOnly || keep.has(x.id) || x.role === 'coordinator';
+    // The search: the devices whose name or room holds it
+    var query = (this._draft.sl_search || '').trim().toLowerCase();
+    var found = (x) => !query || `${this._slName(x)} ${x.area || ''}`.toLowerCase().includes(query);
+    var shown = (x) => (!this._slOnly || keep.has(x.id) || x.role === 'coordinator') && found(x);
     var sel = byId.get(this._slSel) ? this._slSel : null;
     var devices = nodes.filter((x) => x.role !== 'hub' && x.role !== 'coordinator');
     var silentCount = devices.filter((x) => x.silent).length;
     var counts = `<span class="pill good">${shEsc(this._t('sl_net_heard', { n: devices.length - silentCount }))}</span>
       <span class="pill ${silentCount ? 'warn' : 'good'}">${shEsc(this._t('sl_n_silent', { n: silentCount }))}</span>
       <span class="pill">${shEsc(map.source === 'zha' ? 'ZHA' : map.source === 'z2m' ? 'Zigbee2MQTT' : 'Matter')}</span>`;
-    var only = `<label class="nonly"><input type="checkbox" data-action="sl_only"${this._slOnly ? ' checked' : ''}>${shEsc(this._t('sl_net_only'))}</label>`;
     var hint = net === 'matter' ? `<span class="msg">${shEsc(this._t('sl_net_matter_hint'))}</span>` : '';
-    var legend = `<div class="nlegend"><span><i class="nd coordinator"></i>${shEsc(this._t(net === 'matter' ? 'sl_role_hub' : 'sl_role_coordinator'))}</span>
-      <span><i class="nd router"></i>${shEsc(this._t('sl_role_router'))}</span><span><i class="nd end"></i>${shEsc(this._t('sl_role_end'))}</span>
-      <span><i class="nd silent"></i>${shEsc(this._t('sl_silent'))}</span>${net === 'zigbee' ? `<span>${shEsc(this._t('sl_net_legend'))}</span>` : ''}</div>`;
-    return `<div class="actions"><div class="nbar">${counts}</div>${only}${reload}</div>${hint}
-      <div class="nview">${this._slMapSvg(nodes, map.links || [], sel, shown)}<ha-card class="ntree">${this._slTree(nodes, sel, shown)}</ha-card></div>
-      ${this._slDetail(sel && byId.get(sel), byId)}${legend}`;
+    var treeOpen = Boolean(this._slTreeOpen);
+    var tree = `<ha-card class="ntree"><button class="ntoggle" data-action="sl_tree" aria-expanded="${treeOpen}">
+        <ha-icon icon="mdi:chevron-${treeOpen ? 'up' : 'down'}"></ha-icon>${shEsc(this._t('sl_net_tree'))}</button>
+      ${treeOpen ? `<div class="nrows">${this._slTree(nodes, sel, shown)}</div>` : ''}</ha-card>`;
+    return `<div class="actions"><div class="nbar">${counts}</div></div>${hint}
+      ${this._slMapSvg(net, map, nodes, sel, shown, query)}${this._slDetail(sel && byId.get(sel), byId)}${tree}`;
   }
 
   // The name of a node: a network's (Thread and its name, Wi-Fi, Ethernet) or the device's
@@ -2650,68 +2781,178 @@ class SystemHubPanel extends HTMLElement {
     return this._t(`sl_net_${n.hub}`);
   }
 
-  _slMapSvg(nodes, links, sel, shown) {
-    var size = 400;
-    var pos = shNetLayout(nodes, size);
-    var byId = new Map(nodes.map((n) => [n.id, n]));
-    var big = nodes.length > 30;
-    var radius = { coordinator: 13, hub: 13, router: 8, bridge: 8, end: 5 };
-    // On the map a network's short name (its full name in the tree and the tooltip): the Thread network's own name
-    // only when there are several
-    var threads = nodes.filter((x) => x.hub === 'thread').length;
-    var short = (x) =>
-      x.hub === 'thread' ? (threads > 1 && x.name) || 'Thread' : x.hub === 'wifi' ? 'Wi-Fi' : x.hub === 'ethernet' ? 'Ethernet' : this._slName(x);
+  // The map: laid out as a graph of forces once per reading, zoomed with the wheel and moved by dragging; each node
+  // with its name and room beside it, the networks and the coordinator as squares, the routers as circles, the devices
+  // as small circles, the silent ones red; a device's link points to its parent, coloured by its LQI (Zigbee)
+  _slMapSvg(net, map, nodes, sel, shown, query) {
+    var W = 1000;
+    var H = 640;
+    if (!map.pos) map.pos = shNetForce(map.nodes, map.links, W, H);
+    var pos = map.pos;
+    var box = this._slBox?.net === net ? this._slBox.box : shNetBox(pos);
+    var byId = new Map(nodes.map((x) => [x.id, x]));
+    var labels = this._slLabels !== false;
+    var fade = (x) => (shown(x) ? '' : ' dim');
     var lines = [];
-    // The mesh between routers (Zigbee), faint, then each device's link to its parent
-    for (var l of links) {
+    for (var l of map.links || []) {
       var a = byId.get(l.a);
       var b = byId.get(l.b);
       if (!a || !b || a.role === 'end' || b.role === 'end' || a.parent === b.id || b.parent === a.id || !pos[a.id] || !pos[b.id]) continue;
-      var dim = !shown(a) || !shown(b) ? ' dim' : '';
-      lines.push(`<line class="nl mesh${dim}" x1="${pos[a.id][0].toFixed(1)}" y1="${pos[a.id][1].toFixed(1)}" x2="${pos[b.id][0].toFixed(1)}" y2="${pos[b.id][1].toFixed(1)}"/>`);
+      lines.push(`<line class="nl mesh${shown(a) && shown(b) ? '' : ' dim'}" data-a="${shEsc(a.id)}" data-b="${shEsc(b.id)}" x1="${pos[a.id][0].toFixed(1)}" y1="${pos[a.id][1].toFixed(1)}" x2="${pos[b.id][0].toFixed(1)}" y2="${pos[b.id][1].toFixed(1)}"/>`);
     }
-    for (var n of nodes) {
-      var p = byId.get(n.parent);
-      if (!p || !pos[n.id] || !pos[p.id]) continue;
-      var tone = n.silent ? 'gone' : shLqiTone(n.lqi);
-      lines.push(`<line class="nl ${tone}${shown(n) ? '' : ' dim'}" x1="${pos[p.id][0].toFixed(1)}" y1="${pos[p.id][1].toFixed(1)}" x2="${pos[n.id][0].toFixed(1)}" y2="${pos[n.id][1].toFixed(1)}"/>`);
+    var size = { coordinator: 20, hub: 20, router: 13, bridge: 13, end: 9 };
+    for (var x of nodes) {
+      var p = byId.get(x.parent);
+      if (!p || !pos[x.id] || !pos[p.id]) continue;
+      // From the device to its parent, stopped at the parent's edge for the arrow
+      var [x1, y1] = pos[x.id];
+      var [x2, y2] = pos[p.id];
+      var len = Math.hypot(x2 - x1, y2 - y1) || 1;
+      var cut = (size[p.role] || 9) + 4;
+      x2 -= ((x2 - x1) / len) * cut;
+      y2 -= ((y2 - y1) / len) * cut;
+      var tone = x.silent ? 'gone' : net === 'matter' ? (p.hub === 'thread' || byId.get(p.parent)?.hub === 'thread' ? 'thread' : p.role === 'hub' ? 'ip' : '') : shLqiTone(x.lqi);
+      var width = x.lqi !== null && x.lqi !== undefined ? 1.5 + (Math.min(255, x.lqi) / 255) * 2.5 : 2;
+      var dash = x.role === 'end' ? ' end' : '';
+      lines.push(`<line class="nl ${tone}${dash}${fade(x)}" data-a="${shEsc(x.id)}" data-b="${shEsc(p.id)}" style="stroke-width:${width.toFixed(1)}px" marker-end="url(#sh-arrow)" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`);
     }
-    var labels = [];
-    var dots = nodes
-      .filter((x) => pos[x.id])
-      .map((x) => {
-        var [cx, cy] = pos[x.id];
-        var r = radius[x.role] || 5;
-        var role = x.role === 'hub' ? 'coordinator' : x.role === 'bridge' ? 'router' : x.role;
-        var cls = `nn ${role}${x.silent ? ' silent' : ''}${x.id === sel ? ' sel' : ''}${shown(x) ? '' : ' dim'}`;
-        var name = this._slName(x);
-        if (!big || x.role !== 'end' || x.silent || x.id === sel) {
-          var label = short(x);
-          var text = label.length > 18 ? `${label.slice(0, 17)}…` : label;
-          // A device's name below it; a network's or the coordinator's on the side away from its devices (above when
-          // they are all around it)
-          var top = role === 'coordinator';
-          var lx = cx;
-          var ly = cy + r + 11;
-          if (top) {
-            var mine = nodes.filter((c) => c.parent === x.id && pos[c.id]);
-            var dx = mine.reduce((t, c) => t + pos[c.id][0] - cx, 0) / (mine.length || 1);
-            var dy = mine.reduce((t, c) => t + pos[c.id][1] - cy, 0) / (mine.length || 1);
-            var len = Math.hypot(dx, dy);
-            [lx, ly] = len < 10 ? [cx, cy - r - 6] : [cx - (dx / len) * (r + 16), cy - (dy / len) * (r + 16) + 4];
-          }
-          labels.push([top ? 2 : role === 'end' ? 0 : 1, `<g class="${cls}" data-action="sl_pick" data-node="${shEsc(x.id)}"><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${shEsc(text)}</text></g>`]);
-        }
-        return `<g class="${cls}" data-action="sl_pick" data-node="${shEsc(x.id)}"><title>${shEsc(name)}</title>
-          <circle class="nring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r + 4}"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}"/></g>`;
-      })
-      .join('');
-    // The labels over every dot, the networks' and the routers' over the devices'
-    dots += labels
-      .sort((p, q) => p[0] - q[0])
-      .map(([, svg]) => svg)
-      .join('');
-    return `<ha-card class="nmap"><svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${shEsc(this._t('sl_net_map'))}">${lines.join('')}${dots}</svg></ha-card>`;
+    // For the pointer over a node: its neighbours (parent, children, mesh) and its details
+    var adj = new Map(nodes.map((z) => [z.id, new Set([z.id])]));
+    var tie = (u, v) => {
+      if (!adj.has(u) || !adj.has(v)) return;
+      adj.get(u).add(v);
+      adj.get(v).add(u);
+    };
+    for (var z of nodes) tie(z.id, z.parent);
+    for (var m of map.links || []) tie(m.a, m.b);
+    var roles = { coordinator: 'sl_role_coordinator', hub: 'sl_role_hub', router: 'sl_role_router', bridge: 'sl_role_bridge', end: 'sl_role_end' };
+    var tips = new Map(
+      nodes.map((z) => {
+        var parent = byId.get(z.parent);
+        var heard = z.row?.last_heard || z.seen;
+        var facts = [
+          [this._t('sl_net_role'), this._t(roles[z.role])],
+          [this._t('sl_net_status'), z.silent ? this._t('sl_silent') + (heard ? ` · ${this._rel(heard)}` : '') : heard ? this._t('sl_heard', { when: this._rel(heard) }) : ''],
+          ['LQI', z.lqi ?? ''],
+          [this._t('sl_net_parent'), parent && z.role !== 'hub' ? this._slName(parent) : ''],
+          [this._t('sl_net_model'), z.maker],
+          [this._t('sl_net_area'), z.area],
+        ].filter(([, v]) => v !== '' && v !== null && v !== undefined);
+        return [z.id, `<b>${shEsc(this._slName(z))}</b>${facts.map(([k, v]) => `<div><span>${shEsc(k)}</span>${shEsc(v)}</div>`).join('')}`];
+      }),
+    );
+    this._slHover = { adj, tips };
+    var dots = [];
+    var texts = [];
+    for (var y of nodes) {
+      if (!pos[y.id]) continue;
+      var [cx, cy] = pos[y.id];
+      var r = size[y.role] || 9;
+      var kind = y.role === 'hub' ? (y.hub === 'thread' ? 'thread' : 'ip') : y.role === 'bridge' ? 'router' : y.role;
+      var hit = query && shown(y) ? ' hit' : '';
+      var cls = `nn ${kind}${y.silent ? ' silent' : ''}${y.id === sel ? ' sel' : ''}${hit}${fade(y)}`;
+      var name = this._slName(y);
+      var shape =
+        y.role === 'coordinator' || y.role === 'hub'
+          ? `<rect class="nring" x="${(cx - r - 4).toFixed(1)}" y="${(cy - r - 4).toFixed(1)}" width="${2 * r + 8}" height="${2 * r + 8}" rx="10"/><rect x="${(cx - r).toFixed(1)}" y="${(cy - r).toFixed(1)}" width="${2 * r}" height="${2 * r}" rx="8"/>`
+          : `<circle class="nring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r + 4}"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}"/>`;
+      dots.push(`<g class="${cls}" data-action="sl_pick" data-node="${shEsc(y.id)}"><title>${shEsc([name, y.area].filter(Boolean).join(' · '))}</title>${shape}</g>`);
+      if (labels || y.id === sel || hit) {
+        var text = name.length > 26 ? `${name.slice(0, 25)}…` : name;
+        var sub = y.silent && y.row?.last_heard ? `${this._t('sl_silent')} · ${this._rel(y.row.last_heard)}` : y.area || '';
+        texts.push(`<g class="${cls}" data-action="sl_pick" data-node="${shEsc(y.id)}"><text x="${(cx + r + 8).toFixed(1)}" y="${(cy - (sub ? 2 : -5)).toFixed(1)}">${shEsc(text)}</text>${sub ? `<text class="sub" x="${(cx + r + 8).toFixed(1)}" y="${(cy + 15).toFixed(1)}">${shEsc(sub)}</text>` : ''}</g>`);
+      }
+    }
+    var tool = (action, icon, label, on) =>
+      `<button class="ntool${on ? ' on' : ''}" data-action="${action}" data-net="${net}" title="${shEsc(label)}" aria-label="${shEsc(label)}"${on === undefined ? '' : ` aria-pressed="${Boolean(on)}"`}>${icon.startsWith('mdi:') ? `<ha-icon icon="${icon}"></ha-icon>` : icon}</button>`;
+    var tools = `<div class="ntools">${tool('sl_net_reload', map.loading ? 'mdi:loading' : 'mdi:refresh', this._t('sl_net_reload'))}
+      ${tool('sl_fit', 'mdi:magnify-scan', this._t('sl_net_fit'))}${tool('sl_labels', '<b>A</b>', this._t('sl_net_labels'), labels)}
+      ${tool('sl_only', 'mdi:access-point-off', this._t('sl_net_only'), Boolean(this._slOnly))}</div>`;
+    var search = `<div class="nsearch"><ha-icon icon="mdi:magnify"></ha-icon><input type="search" data-draft="sl_search" value="${shEsc(this._draft.sl_search || '')}" placeholder="${shEsc(this._t('sl_net_search'))}" aria-label="${shEsc(this._t('sl_net_search'))}"></div>`;
+    var key = (cls, label) => `<span><i class="nd ${cls}"></i>${shEsc(label)}</span>`;
+    var legend = `<div class="nlegend">${net === 'matter' ? key('thread sq', 'Thread') + key('ip sq', this._t('sl_net_ip')) : key('coordinator sq', this._t('sl_role_coordinator'))}
+      ${key('router', this._t('sl_role_router'))}${key('end', this._t('sl_role_end'))}${key('silent', this._t('sl_silent'))}
+      ${net === 'zigbee' ? `<span class="nlq">${shEsc(this._t('sl_net_legend'))}</span>` : ''}</div>`;
+    return `<ha-card class="nmap">${search}${tools}<div class="ntip" hidden></div>
+      <svg class="nsvg" data-net="${net}" viewBox="${box.map((v) => v.toFixed(1)).join(' ')}" role="img" aria-label="${shEsc(this._t('sl_net_map'))}">
+        <defs><marker id="sh-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        ${lines.join('')}${dots.join('')}${texts.join('')}</svg>${legend}</ha-card>`;
+  }
+
+  // The map zoomed around the pointer with the wheel, moved by dragging; a drag is not a click on a node
+  _slWheel(ev) {
+    var svg = ev.target.closest?.('svg.nsvg');
+    if (!svg) return;
+    ev.preventDefault();
+    var box = svg.getAttribute('viewBox').split(' ').map(Number);
+    var rect = svg.getBoundingClientRect();
+    var scale = Math.min(box[2] / rect.width, box[3] / rect.height);
+    var fx = box[0] + (ev.clientX - rect.left - (rect.width - box[2] / scale) / 2) * scale;
+    var fy = box[1] + (ev.clientY - rect.top - (rect.height - box[3] / scale) / 2) * scale;
+    var k = ev.deltaY > 0 ? 1.15 : 1 / 1.15;
+    var w = Math.min(Math.max(box[2] * k, 150), 6000);
+    var h = (box[3] * w) / box[2];
+    var next = [fx - ((fx - box[0]) * w) / box[2], fy - ((fy - box[1]) * h) / box[3], w, h];
+    this._slBox = { net: svg.dataset.net, box: next };
+    svg.setAttribute('viewBox', next.map((v) => v.toFixed(1)).join(' '));
+  }
+
+  _slPanStart(ev) {
+    var svg = ev.target.closest?.('svg.nsvg');
+    if (!svg || ev.button !== 0) return;
+    var box = svg.getAttribute('viewBox').split(' ').map(Number);
+    var rect = svg.getBoundingClientRect();
+    this._slPan = { svg, x: ev.clientX, y: ev.clientY, box, scale: Math.max(box[2] / rect.width, box[3] / rect.height), moved: false };
+  }
+
+  _slPanMove(ev) {
+    var pan = this._slPan;
+    if (!pan) return;
+    var dx = ev.clientX - pan.x;
+    var dy = ev.clientY - pan.y;
+    if (!pan.moved && Math.hypot(dx, dy) < 4) return;
+    pan.moved = true;
+    var next = [pan.box[0] - dx * pan.scale, pan.box[1] - dy * pan.scale, pan.box[2], pan.box[3]];
+    this._slBox = { net: pan.svg.dataset.net, box: next };
+    pan.svg.setAttribute('viewBox', next.map((v) => v.toFixed(1)).join(' '));
+  }
+
+  _slPanEnd() {
+    if (this._slPan?.moved) this._slDragged = Date.now();
+    this._slPan = null;
+  }
+
+  // The pointer over a node: it and its neighbours stand out, the rest fades, its details beside it
+  _slHoverAt(ev) {
+    var svg = ev.target.closest?.('svg.nsvg');
+    var g = svg && !this._slPan?.moved ? ev.target.closest('[data-node]') : null;
+    var card = (svg || ev.target).closest?.('.nmap');
+    var tip = card?.querySelector('.ntip');
+    if (!g || !this._slHover?.adj.has(g.dataset.node)) {
+      if (svg || ev.type === 'pointerleave') this._slHoverEnd(card);
+      return;
+    }
+    var id = g.dataset.node;
+    var near = this._slHover.adj.get(id);
+    svg.classList.add('focusing');
+    for (var el of svg.querySelectorAll('[data-node]')) el.classList.toggle('near', near.has(el.dataset.node));
+    for (var line of svg.querySelectorAll('line[data-a]')) line.classList.toggle('near', line.dataset.a === id || line.dataset.b === id);
+    if (!tip) return;
+    tip.innerHTML = this._slHover.tips.get(id) || '';
+    tip.hidden = false;
+    var box = card.getBoundingClientRect();
+    var x = ev.clientX - box.left + 16;
+    var y = ev.clientY - box.top + 16;
+    tip.style.left = `${Math.min(x, box.width - tip.offsetWidth - 8)}px`;
+    tip.style.top = `${Math.min(y, box.height - tip.offsetHeight - 8)}px`;
+  }
+
+  _slHoverEnd(card) {
+    var svg = card?.querySelector('svg.nsvg');
+    svg?.classList.remove('focusing');
+    for (var el of svg?.querySelectorAll('.near') || []) el.classList.remove('near');
+    var tip = card?.querySelector('.ntip');
+    if (tip) tip.hidden = true;
   }
 
   // The tree: the coordinator (or each network), its routers, their devices; the silent ones say since when
@@ -2743,7 +2984,7 @@ class SystemHubPanel extends HTMLElement {
 
   // The device picked: its role, its room, when it was last heard, its parent and link, its battery; its page, Ignore
   _slDetail(n, byId) {
-    if (!n) return `<ha-card class="ndetail"><span class="s">${shEsc(this._t('sl_net_pick'))}</span></ha-card>`;
+    if (!n) return '';
     var row = n.row;
     var role = { coordinator: 'sl_role_coordinator', hub: 'sl_role_hub', router: 'sl_role_router', bridge: 'sl_role_bridge', end: 'sl_role_end' }[n.role];
     var parent = byId.get(n.parent);
@@ -3894,6 +4135,19 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'sl_view') {
       this._slView = button.dataset.view;
       this._slSel = null;
+      return this._render();
+    }
+    if (action === 'sl_pick' && Date.now() - (this._slDragged || 0) < 300) return;
+    if (action === 'sl_fit') {
+      this._slBox = null;
+      return this._render();
+    }
+    if (action === 'sl_labels') {
+      this._slLabels = this._slLabels === false;
+      return this._render();
+    }
+    if (action === 'sl_tree') {
+      this._slTreeOpen = !this._slTreeOpen;
       return this._render();
     }
     if (action === 'sl_pick') {
