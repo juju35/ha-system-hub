@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.5.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.5.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1278,13 +1278,11 @@ class SystemHubPanel extends HTMLElement {
     return `<span class="tbadge ${tone}" aria-label="${shEsc(this._t(tones.length === 1 ? 'st_point' : 'st_points', { n: tones.length }))}">${tones.length}</span>`;
   }
 
-  // A tab, or a group (its sub-tab shown last, else its first)
+  // A tab, or a group (its first sub-tab)
   _selectTab(tab, focus) {
     var tabs = this._tabs();
     if (!tabs.includes(tab) && SH_GROUPS[tab]) tab = this._groupTabs(tab)[0];
     var chosen = tabs.includes(tab) ? tab : tabs[0];
-    this._lastTab ??= {};
-    this._lastTab[shGroupOf(chosen)] = chosen;
     if (chosen !== this._tab) {
       this._tab = chosen;
       this._render();
@@ -1292,10 +1290,9 @@ class SystemHubPanel extends HTMLElement {
     if (focus) this.shadowRoot.querySelector(focus === 'sub' ? `[data-subtab="${chosen}"]` : `[data-group="${shGroupOf(chosen)}"]`)?.focus({ preventScroll: true });
   }
 
-  // A group's tab clicked: the sub-tab shown last in it
+  // A group's tab clicked: its first sub-tab, whichever was shown last in it
   _goGroup(group, focus) {
-    var last = this._lastTab?.[group];
-    this._goTab(last && this._tabs().includes(last) ? last : this._groupTabs(group)[0], focus);
+    this._goTab(this._groupTabs(group)[0], focus);
   }
 
   _goTab(tab, focus) {
