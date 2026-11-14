@@ -346,9 +346,11 @@ function shMatterGraph(registry, diagnostics) {
   return { source: 'matter', nodes: [...hubs.values(), ...nodes], links: [] };
 }
 
-// Where each node goes on a square map of the given size: the root in the middle (several roots around it), every
-// subtree in a slice of the circle as wide as its leaves, one ring per depth
-function shNetLayout(nodes, size) {
+// The order of a network's nodes: the coordinator or the network, the routers and bridges, the devices
+var SH_NET_RANK = { coordinator: 0, hub: 0, bridge: 1, router: 1, end: 2 };
+
+// A network as a tree: each node's children (by its id), and the nodes without a parent among them
+function shNetTree(nodes) {
   var ids = new Set(nodes.map((n) => n.id));
   var kids = new Map();
   var roots = [];
@@ -358,8 +360,14 @@ function shNetLayout(nodes, size) {
       kids.get(n.parent).push(n);
     } else roots.push(n);
   }
-  var rank = { coordinator: 0, hub: 0, bridge: 1, router: 1, end: 2 };
-  for (var list of kids.values()) list.sort((a, b) => rank[a.role] - rank[b.role] || a.name.localeCompare(b.name));
+  return { kids, roots };
+}
+
+// Where each node goes on a square map of the given size: the root in the middle (several roots around it), every
+// subtree in a slice of the circle as wide as its leaves, one ring per depth
+function shNetLayout(nodes, size) {
+  var { kids, roots } = shNetTree(nodes);
+  for (var list of kids.values()) list.sort((a, b) => SH_NET_RANK[a.role] - SH_NET_RANK[b.role] || a.name.localeCompare(b.name));
   var top = roots.length === 1 ? roots[0] : { id: '', virtual: true };
   if (top.virtual) kids.set('', roots);
   var leaves = new Map();
@@ -2708,17 +2716,8 @@ class SystemHubPanel extends HTMLElement {
 
   // The tree: the coordinator (or each network), its routers, their devices; the silent ones say since when
   _slTree(nodes, sel, shown) {
-    var kids = new Map();
-    var ids = new Set(nodes.map((n) => n.id));
-    var roots = [];
-    for (var n of nodes) {
-      if (n.parent && ids.has(n.parent)) {
-        if (!kids.has(n.parent)) kids.set(n.parent, []);
-        kids.get(n.parent).push(n);
-      } else roots.push(n);
-    }
-    var rank = { coordinator: 0, hub: 0, bridge: 1, router: 1, end: 2 };
-    var order = (a, b) => rank[a.role] - rank[b.role] || b.silent - a.silent || a.name.localeCompare(b.name);
+    var { kids, roots } = shNetTree(nodes);
+    var order = (a, b) => SH_NET_RANK[a.role] - SH_NET_RANK[b.role] || b.silent - a.silent || a.name.localeCompare(b.name);
     var icons = { coordinator: 'mdi:access-point', hub: 'mdi:access-point', router: 'mdi:google-circles-communities', bridge: 'mdi:link-variant', end: 'mdi:chip' };
     var out = [];
     var walk = (node, depth, seen) => {
