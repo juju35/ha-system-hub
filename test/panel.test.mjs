@@ -1299,7 +1299,7 @@ test('logs tab: the errors and warnings by integration, a level and a period; Ig
   );
 });
 
-test('database tab: size against the limit, retention, the top writers; purge, exclude, purge and repack', async () => {
+test('database tab: size against the limit, retention, the devices that write the most; purge, exclude, purge and repack', async () => {
   const data = {
     engine: 'sqlite',
     size: 2.4 * 1073741824,
@@ -1308,8 +1308,19 @@ test('database tab: size against the limit, retention, the top writers; purge, e
     total_day: 20000,
     counted_at: Date.now() / 1000 - 600,
     top: [
-      { entity_id: 'sensor.power', name: 'Power', count: 8000, excluded: false },
-      { entity_id: 'sensor.uptime', name: 'Uptime', count: 2000, excluded: true },
+      {
+        device_id: 'dev1',
+        name: 'Linky',
+        area: 'Garage',
+        count: 9000,
+        excluded: 1,
+        entity_ids: ['sensor.power', 'sensor.current', 'sensor.voltage'],
+        entities: [
+          { entity_id: 'sensor.power', name: 'Power', count: 8000, excluded: false },
+          { entity_id: 'sensor.current', name: 'Current', count: 900, excluded: true },
+        ],
+      },
+      { device_id: null, name: 'Uptime', area: null, count: 2000, excluded: 1, entity_ids: ['sensor.uptime'], entities: [{ entity_id: 'sensor.uptime', name: 'Uptime', count: 2000, excluded: true }] },
     ],
   };
   const state = { loaded: true, modules: ['database'], tabs: ['database'], database: { max_size: 2 } };
@@ -1326,26 +1337,43 @@ test('database tab: size against the limit, retention, the top writers; purge, e
   assert.match(html, /tile bad[\s\S]*?2\.40 GiB[\s\S]*?Size/);
   assert.match(html, /Beyond 2 GiB/);
   assert.match(html, /10 days[\s\S]*?Retention/);
-  assert.match(html, /Power[\s\S]*?sensor\.power[\s\S]*?width:40%[\s\S]*?<b>8,000<\/b><span class="s">40 %/);
-  assert.match(html, /Uptime <span class="pill">Excluded/);
-  assert.match(html, /Choose entities/);
+  assert.match(html, /Devices that write the most/);
+  // A device: its area, its entities that wrote, its share; an entity without a device on its own row, no chevron
+  assert.match(html, /Linky <span class="pill">1 excluded<\/span>[\s\S]*?Garage · 3 entities[\s\S]*?width:45%[\s\S]*?<b>9,000<\/b><span class="s">45 %/);
+  assert.match(html, /Uptime <span class="pill">Excluded<\/span>[\s\S]*?sensor\.uptime · No device/);
+  assert.equal((html.match(/data-action="db_open"/g) || []).length, 1);
+  assert.doesNotMatch(html, /data-entity="sensor\.power"/);
+  assert.match(html, /Choose devices/);
   assert.deepEqual([...p._stArea('database')].slice(0, 2), ['warn', '2.40 GiB']);
-  // Two picked: purge their history (confirmed), the YAML to leave them out
   const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
-  click('db_pick', { entity: 'sensor.power' });
-  click('db_pick', { entity: 'sensor.uptime' });
+  // Unfolded: its entities that wrote the most, and how many are not shown
+  click('db_open', { key: 'dev1' });
   html = p._content();
-  assert.match(html, /Purge their history \(2\)/);
-  assert.match(html, /recorder:\n {2}exclude:\n {4}entities:\n {6}- sensor\.power\n {6}- sensor\.uptime/);
+  assert.match(html, /aria-expanded="true"/);
+  assert.match(html, /data-entity="sensor\.power"[\s\S]*?Power[\s\S]*?<b>8,000<\/b><span class="s">40 %/);
+  assert.match(html, /Current <span class="pill">Excluded/);
+  assert.match(html, /1 more entity</);
+  // One entity of the device: half ticked; the device: all its entities, the one not shown included
+  click('db_pick', { entity: 'sensor.power' });
+  assert.match(p._content(), /mdi:checkbox-intermediate/);
+  click('db_pick_device', { key: 'dev1' });
+  assert.deepEqual([...p._dbSel].sort(), ['sensor.current', 'sensor.power', 'sensor.voltage']);
+  click('db_pick_device', { key: 'dev1' });
+  assert.equal(p._dbSel.size, 0);
+  click('db_pick_device', { key: 'dev1' });
+  click('db_pick_device', { key: 'sensor.uptime' });
+  html = p._content();
+  assert.match(html, /Purge their history \(4\)/);
+  assert.match(html, /recorder:\n {2}exclude:\n {4}entities:\n {6}- sensor\.power\n {6}- sensor\.current\n {6}- sensor\.voltage\n {6}- sensor\.uptime/);
   click('db_purge_confirm');
-  assert.match(p._content(), /Remove the whole history of the 2 entities chosen\?/);
+  assert.match(p._content(), /Remove the whole history of the 4 entities chosen\?/);
   await click('db_purge');
   click('db_repack_confirm');
   assert.match(p._content(), /older than 10 days and repack/);
   await click('db_repack');
   assert.deepEqual(
     calls.filter((c) => c.startsWith('recorder')),
-    ['recorder.purge_entities {"entity_id":["sensor.power","sensor.uptime"],"keep_days":0}', 'recorder.purge {"keep_days":10,"repack":true}'],
+    ['recorder.purge_entities {"entity_id":["sensor.power","sensor.current","sensor.voltage","sensor.uptime"],"keep_days":0}', 'recorder.purge {"keep_days":10,"repack":true}'],
   );
   assert.ok(calls.includes('system_hub/database force'));
   // Another engine: no size, the tile says so

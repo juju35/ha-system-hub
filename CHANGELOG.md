@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.0 - 2026-11-14
+
+### Features
+- **Database tab by device.** The list shows the devices that wrote the most states in 24 hours, the states of their entities added up (an entity without a device on its own row), with their room, how many of their entities wrote, their share and how many the recorder already leaves out. A device unfolds to its entities that wrote the most (10 at most, then how many more), each with its count and share. Ticking a device picks all its entities that wrote, the ones not shown included (half ticked when only some are); its entities can also be picked one by one, for **Purge their history** and the `recorder: exclude:` lines.
+
 ## 2.4.0 - 2026-11-14
 
 ### Features

@@ -641,16 +641,59 @@ def mock_security():
 
 
 def mock_database():
-    """What system_hub/database answers: a SQLite database near its limit, the entities that wrote the most."""
+    """What system_hub/database answers: a SQLite database near its limit, the devices that wrote the most."""
+
+    def device(device_id, name, area, entities, total=None):
+        rows = [
+            {"entity_id": e, "name": n, "count": c, "excluded": e == "sensor.uptime_seconds"} for e, n, c in entities
+        ]
+        return {
+            "device_id": device_id,
+            "name": name,
+            "area": area,
+            "count": total or sum(r["count"] for r in rows),
+            "excluded": sum(r["excluded"] for r in rows),
+            "entity_ids": [r["entity_id"] for r in rows],
+            "entities": rows,
+        }
+
     top = [
-        ("sensor.linky_papp", "Linky Apparent power", 17280),
-        ("sensor.shelly_em_power", "Shelly EM Power", 8640),
-        ("sensor.processor_use", "Processor use", 2880),
-        ("sensor.uptime_seconds", "Uptime", 2880),
-        ("sensor.salon_temperature", "Salon Temperature", 1420),
-        ("sensor.zigbee2mqtt_bridge_state", "Zigbee2MQTT Bridge state", 960),
-        ("weather.rennes", "Rennes", 288),
+        device(
+            "linky",
+            "Linky",
+            "Garage",
+            [
+                ("sensor.linky_papp", "Linky Apparent power", 17280),
+                ("sensor.linky_iinst", "Linky Current", 4320),
+                ("sensor.linky_east", "Linky Energy", 1440),
+            ],
+        ),
+        device(
+            "shelly",
+            "Shelly EM",
+            "Garage",
+            [
+                ("sensor.shelly_em_power", "Shelly EM Power", 8640),
+                ("sensor.shelly_em_voltage", "Shelly EM Voltage", 1440),
+            ],
+        ),
+        device(
+            "host",
+            "System Monitor",
+            None,
+            [("sensor.processor_use", "Processor use", 2880), ("sensor.uptime_seconds", "Uptime", 2880)],
+        ),
+        device("salon", "Salon sensor", "Salon", [("sensor.salon_temperature", "Salon Temperature", 1420)]),
+        device(
+            None,
+            "Zigbee2MQTT Bridge state",
+            None,
+            [("sensor.zigbee2mqtt_bridge_state", "Zigbee2MQTT Bridge state", 960)],
+        ),
     ]
+    for row in top:
+        if row["device_id"] is None:
+            row["name"] = row["entities"][0]["name"]
     return {
         "engine": "sqlite",
         "size": int(1.78 * 1024**3),
@@ -658,7 +701,7 @@ def mock_database():
         "auto_purge": True,
         "total_day": 41250,
         "counted_at": datetime.fromisoformat(NOW).timestamp() - 1500,
-        "top": [{"entity_id": e, "name": n, "count": c, "excluded": e == "sensor.uptime_seconds"} for e, n, c in top],
+        "top": top,
     }
 
 
@@ -1450,6 +1493,11 @@ CARD_MOUNT = """async (type) => {
     await card._read();
 }"""
 
+# Unfolds the first device of the Database tab.
+OPEN_DEVICE = (
+    """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="db_open"]')?.click()"""
+)
+
 # Opens the diff viewer from the Git Sync tab.
 OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
@@ -1718,6 +1766,10 @@ def main():
                 capture(page, out / f"{shot['file']}.png", clip=clip, full_page=True, animations="disabled")
                 page.close()
                 continue
+            if shot["tab"] == "database":
+                # The first device unfolded, its entities that wrote the most under it
+                page.evaluate(OPEN_DEVICE)
+                page.wait_for_timeout(200)
             if shot.get("orphans_confirm"):
                 page.evaluate(ORPHANS_CONFIRM)
                 page.wait_for_timeout(200)
