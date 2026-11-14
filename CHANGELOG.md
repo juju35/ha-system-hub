@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.7.1 - 2026-11-14
+
+### Fixed
+- **Network map: names and nodes keep their size when zooming.** Zooming in spreads the nodes apart without enlarging the shapes, the names or the arrows; zoomed out, the rooms then the end devices' names are left out (the device pointed at, picked, found or silent keeps its name). A small network is no longer blown up to fill the map.
+- **Arrows in colour** in every browser (they were black where the browser does not take the line's colour), halfway along each link.
+- **End devices round their parent**: a crown, past 8 of them two columns on its left and right with the routers on an arc above, the names on the outer side; the coordinator's and a network's name centred under it, a few devices on an arc above. Several Matter networks stay together, and a large network no longer piles its devices and names on its network.
+
 ## 2.7.0 - 2026-11-14
 
 ### Features

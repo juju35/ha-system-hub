@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.7.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.7.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -406,34 +406,45 @@ function shNetLayout(nodes, size) {
   return pos;
 }
 
-// The map's layout, as a graph of forces: the nodes push each other away, every link pulls its two ends together
-// (a device to its parent harder than the mesh between routers), a light pull keeps everything near the middle. It
-// starts from the rings of shNetLayout and is computed once per reading, so the same network is always drawn the
-// same way; a single root stays in the middle. Coordinates on a width × height plane.
+// The map's layout. The nodes without children go round their parent in a crown (a gap under it for its name), or,
+// past 8 end devices, those in two columns on its left and right and the routers on an arc above, the ones on the
+// left with their name on the left; the rest (coordinator, networks, routers with children) is laid out as a graph of
+// forces, each pushing the others as far as its crown reaches, every
+// link pulling its two ends together, a light pull keeping everything near the middle. It starts from the rings of
+// shNetLayout and is computed once per reading, so the same network is always drawn the same way; a single root stays
+// in the middle. Each node gets [x, y, side], side -1 when its name goes on its left.
 function shNetForce(nodes, links, width, height) {
-  var ring = shNetLayout(nodes, Math.min(width, height));
-  var dx0 = (width - Math.min(width, height)) / 2;
-  var dy0 = (height - Math.min(width, height)) / 2;
-  var pts = nodes.map((n) => {
-    var p = ring[n.id] || [width / 2, height / 2];
-    return { id: n.id, x: p[0] + dx0, y: p[1] + dy0, vx: 0, vy: 0 };
+  var { kids } = shNetTree(nodes);
+  var leaf = (n) => n.parent && !(kids.get(n.id) || []).length;
+  var core = nodes.filter((n) => !leaf(n));
+  var crown = new Map();
+  for (var n of nodes) if (leaf(n)) crown.set(n.parent, [...(crown.get(n.parent) || []), n]);
+  var COLUMNS = 8;
+  var ringOf = (count) => (count ? Math.max(110, (count * 46) / (2 * Math.PI)) : 0);
+  var ends = (list) => list.filter((u) => u.role === 'end').length;
+  // How far a node's crown reaches: its ring, or its columns (180 to the side, names 200 beyond, 40 per row) and arc
+  var reachOf = (list) => (ends(list) > COLUMNS ? Math.max(380, Math.ceil(ends(list) / 2) * 20 + (list.length > ends(list) ? 130 : 0)) : ringOf(list.length));
+  var reach = new Map(core.map((c) => [c.id, reachOf(crown.get(c.id) || [])]));
+  var ring = shNetLayout(core, Math.min(width, height));
+  var pts = core.map((c) => {
+    var p = ring[c.id] || [Math.min(width, height) / 2, Math.min(width, height) / 2];
+    return { id: c.id, r: reach.get(c.id) || 0, x: p[0] + (width - Math.min(width, height)) / 2, y: p[1] + (height - Math.min(width, height)) / 2, vx: 0, vy: 0 };
   });
   var at = new Map(pts.map((p, i) => [p.id, i]));
   var springs = [];
-  for (var n of nodes) if (at.has(n.parent)) springs.push([at.get(n.id), at.get(n.parent), n.role === 'end' ? 1 : 0.6]);
+  for (var c of core) if (at.has(c.parent)) springs.push([at.get(c.id), at.get(c.parent), 0.6]);
   for (var l of links || []) {
     if (!at.has(l.a) || !at.has(l.b)) continue;
-    var a = nodes[at.get(l.a)];
-    var b = nodes[at.get(l.b)];
-    if (a.parent === b.id || b.parent === a.id || a.role === 'end' || b.role === 'end') continue;
+    var a = core[at.get(l.a)];
+    var b = core[at.get(l.b)];
+    if (a.parent === b.id || b.parent === a.id) continue;
     springs.push([at.get(l.a), at.get(l.b), 0.15]);
   }
-  var roots = nodes.filter((x) => !at.has(x.parent));
+  var roots = core.filter((x) => !at.has(x.parent));
   var pinned = roots.length === 1 ? at.get(roots[0].id) : -1;
   // Several roots (Matter networks, nothing between them): each pulled hard to the middle, so they stay together
   var anchored = new Set(roots.length > 1 ? roots.map((x) => at.get(x.id)) : []);
-  var k = Math.min(Math.sqrt((width * height) / Math.max(pts.length, 1)) * 0.5, 110);
-  var far = 9 * k * k;
+  var k = 130;
   var cx = width / 2;
   var cy = height / 2;
   var steps = pts.length > 200 ? 150 : 300;
@@ -446,9 +457,10 @@ function shNetForce(nodes, links, width, height) {
         var ddx = p.x - q.x;
         var ddy = p.y - q.y;
         var d2 = ddx * ddx + ddy * ddy || 0.01;
+        var room = k + p.r + q.r;
         // Far apart, they no longer push: the light pull to the middle keeps the parts together
-        if (d2 > far) continue;
-        var push = (k * k) / d2;
+        if (d2 > 4 * room * room) continue;
+        var push = (room * room) / d2;
         p.vx += ddx * push;
         p.vy += ddy * push;
         q.vx -= ddx * push;
@@ -460,14 +472,13 @@ function shNetForce(nodes, links, width, height) {
       var pt = pts[t];
       var sx = pt.x - ps.x;
       var sy = pt.y - ps.y;
-      var d = Math.hypot(sx, sy) || 0.01;
-      var pull = ((d * d) / k / d) * w;
+      var pull = (Math.hypot(sx, sy) / (k + ps.r + pt.r)) * w;
       ps.vx += sx * pull;
       ps.vy += sy * pull;
       pt.vx -= sx * pull;
       pt.vy -= sy * pull;
     }
-    var limit = (k / 2) * heat + 0.5;
+    var limit = 60 * heat + 0.5;
     for (var m = 0; m < pts.length; m++) {
       var r = pts[m];
       var g = anchored.has(m) ? 0.3 : 0.03;
@@ -483,17 +494,70 @@ function shNetForce(nodes, links, width, height) {
     }
     if (pinned >= 0) Object.assign(pts[pinned], { x: cx, y: cy });
   }
-  return Object.fromEntries(pts.map((p) => [p.id, [p.x, p.y]]));
+  var pos = Object.fromEntries(pts.map((p) => [p.id, [p.x, p.y, 1]]));
+  // The crowns: round the parent, away from the grandparent (a half circle at least), else all the way round with a
+  // gap at the bottom; past 8 end devices, those in two columns and the routers on an arc above
+  for (var [pid, list] of crown) {
+    var o = pos[pid];
+    if (!o) continue;
+    list.sort((u, v) => (u.role === 'end') - (v.role === 'end') || u.name.localeCompare(v.name));
+    var gp = pos[core.find((x) => x.id === pid)?.parent];
+    if (ends(list) > COLUMNS) {
+      var cols = list.filter((u) => u.role === 'end');
+      var arc = list.filter((u) => u.role !== 'end');
+      var half = Math.ceil(cols.length / 2);
+      cols.forEach((u, idx) => {
+        // The first half on the right, names on the right; the rest on the left, names on the left
+        var right = idx < half;
+        var row = right ? idx : idx - half;
+        var rows = right ? half : cols.length - half;
+        pos[u.id] = [o[0] + (right ? 180 : -180), o[1] + (row - (rows - 1) / 2) * 40, right ? 1 : -1, true];
+      });
+      var top = o[1] - (half * 20 + 110);
+      arc.forEach((u, idx) => {
+        pos[u.id] = [o[0] + (idx - (arc.length - 1) / 2) * 280, top + Math.abs(idx - (arc.length - 1) / 2) * 18, 1];
+      });
+      continue;
+    }
+    var count = list.length;
+    var radius = ringOf(count);
+    var span = gp ? Math.min(2 * Math.PI, Math.max(Math.PI, count * 0.45)) : 2 * Math.PI;
+    var base = gp ? Math.atan2(o[1] - gp[1], o[0] - gp[0]) : Math.PI / 2;
+    // A few nodes round a coordinator or a network (its name under it): on an arc above it
+    var role = core.find((x) => x.id === pid)?.role;
+    if (!gp && count <= 6 && (role === 'coordinator' || role === 'hub')) {
+      span = Math.PI + 0.8;
+      base = -Math.PI / 2;
+    }
+    list.forEach((u, idx) => {
+      // All the way round: from just after the bottom to just before it, the bottom left free for the parent's name
+      var ang = span >= 2 * Math.PI ? Math.PI / 2 + 0.7 + (2 * Math.PI - 1.4) * (count > 1 ? idx / (count - 1) : 0.5) : base - span / 2 + (span * (idx + 0.5)) / count;
+      pos[u.id] = [o[0] + Math.cos(ang) * radius, o[1] + Math.sin(ang) * radius, Math.cos(ang) < -0.2 ? -1 : 1];
+    });
+  }
+  return pos;
 }
 
-// The box that shows every node and its label, with a margin
-function shNetBox(pos) {
-  var xs = Object.values(pos).map((p) => p[0]);
-  var ys = Object.values(pos).map((p) => p[1]);
-  if (!xs.length) return [0, 0, 1000, 640];
-  var x0 = Math.min(...xs) - 50;
-  var y0 = Math.min(...ys) - 50;
-  return [x0, y0, Math.max(...xs) + 230 - x0, Math.max(...ys) + 60 - y0];
+// The box that shows every node with its name, for a map of pxW × pxH screen pixels. The names keep their size in
+// pixels, so the margins are in pixels: the units per pixel are the smallest that fit the nodes inside them, and at
+// least 1 so that a small network is not blown up (zoomed out, the map leaves out names: see _slFixZoom)
+function shNetBox(pos, pxW, pxH) {
+  var pts = Object.values(pos);
+  if (!pts.length) return [0, 0, pxW, pxH];
+  var xs = pts.map((p) => p[0]);
+  var ys = pts.map((p) => p[1]);
+  var left = pts.some((p) => p[2] === -1) ? 260 : 40;
+  var right = 260;
+  var top = 80;
+  var bottom = 50;
+  var x0 = Math.min(...xs);
+  var y0 = Math.min(...ys);
+  var w = Math.max(...xs) - x0;
+  var h = Math.max(...ys) - y0;
+  var unit = Math.max(1, w / Math.max(pxW - left - right, 100), h / Math.max(pxH - top - bottom, 100));
+  var bw = pxW * unit;
+  var bh = pxH * unit;
+  return [x0 - left * unit - (bw - w - (left + right) * unit) / 2, y0 - top * unit - (bh - h - (top + bottom) * unit) / 2, bw, bh];
 }
 
 // The tone of a link quality: strong, medium, weak (the module's weak signal is below 50)
@@ -1310,7 +1374,7 @@ class SystemHubPanel extends HTMLElement {
     .nviews { margin-bottom:12px; width:fit-content; }
     .nbar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
     .nmap { position:relative; padding:0; overflow:hidden; }
-    .nsvg { display:block; width:100%; height:min(640px, 70vh); cursor:grab; user-select:none; touch-action:none; }
+    .nsvg { display:block; width:100%; height:min(720px, 72vh); cursor:grab; user-select:none; touch-action:none; }
     .nsvg:active { cursor:grabbing; }
     .nsearch { position:absolute; top:12px; left:12px; z-index:1; display:flex; align-items:center; gap:6px; padding:0 10px; height:36px;
                width:min(260px, calc(100% - 80px)); box-sizing:border-box; border:1px solid var(--divider-color, rgba(127,127,127,.3)); border-radius:8px;
@@ -1321,12 +1385,14 @@ class SystemHubPanel extends HTMLElement {
              border:1px solid var(--divider-color, rgba(127,127,127,.3)); background:var(--card-background-color, #fff); color:var(--secondary-text-color); --mdc-icon-size:20px; }
     .ntool.on { color:var(--primary-color); border-color:var(--primary-color); }
     .ntool ha-icon[icon="mdi:loading"] { animation:sh-spin 1s linear infinite; }
-    .nl { stroke:var(--disabled-text-color, #9e9e9e); stroke-width:1.5; }
+    .nl { stroke:var(--disabled-text-color, #9e9e9e); stroke-width:1.5; fill:none; vector-effect:non-scaling-stroke; }
     .nl.end { stroke-dasharray:8 6; }
     .nl.mesh { stroke-dasharray:2 5; opacity:.5; stroke-width:1.5; }
     .nl.good { stroke:var(--tone-good); } .nl.warn { stroke:var(--tone-warn); } .nl.bad { stroke:var(--tone-bad); }
     .nl.thread { stroke:#8e6fd6; } .nl.ip { stroke:#f2a03d; }
     .nl.gone { stroke:var(--tone-bad); stroke-dasharray:4 6; }
+    .na { fill:var(--disabled-text-color, #9e9e9e); } .na.good { fill:var(--tone-good); } .na.warn { fill:var(--tone-warn); }
+    .na.bad, .na.gone { fill:var(--tone-bad); } .na.thread { fill:#8e6fd6; } .na.ip { fill:#f2a03d; }
     .nn { cursor:pointer; } .nn circle, .nn rect { fill:#26a69a; stroke:var(--card-background-color, #fff); stroke-width:2; }
     .nn.coordinator rect, .nn.coordinator circle { fill:var(--primary-color); } .nn.thread rect { fill:#8e6fd6; } .nn.ip rect { fill:#f2a03d; }
     .nn.router circle { fill:#4fb3e0; } .nn.silent circle, .nn.silent rect { fill:var(--tone-bad); }
@@ -1336,6 +1402,8 @@ class SystemHubPanel extends HTMLElement {
                stroke:var(--card-background-color, #fff); stroke-width:4px; stroke-linejoin:round; }
     .nn text.sub { font-size:13px; fill:var(--secondary-text-color); }
     .nn.silent text { fill:var(--tone-bad); }
+    .nsvg.dense text.sub { display:none; }
+    .nsvg.crowded .nn.end:not(.sel):not(.hit):not(.near):not(.silent) text { display:none; }
     .nl.dim, .nn.dim { opacity:.12; }
     .nsvg.focusing .nn:not(.near), .nsvg.focusing .nl:not(.near) { opacity:.1; }
     .nsvg.focusing .nl.near { opacity:1; }
@@ -1766,6 +1834,8 @@ class SystemHubPanel extends HTMLElement {
     // The button or row with the focus keeps it through the refresh every few seconds
     var focusSel = !focusKey && active && main.contains(active) ? shFocusSelector(active) : null;
     main.innerHTML = this._subtabs() + this._content();
+    var netSvg = main.querySelector('svg.nsvg');
+    if (netSvg) this._slFixZoom(netSvg);
     if (this._tab === 'settings') this._cfgMount(main);
     // Rows and tiles that open the entity's dialog: reached and opened from the keyboard too
     main.querySelectorAll('[data-more]:not(button):not(a)').forEach((el) => {
@@ -2789,7 +2859,9 @@ class SystemHubPanel extends HTMLElement {
     var H = 640;
     if (!map.pos) map.pos = shNetForce(map.nodes, map.links, W, H);
     var pos = map.pos;
-    var box = this._slBox?.net === net ? this._slBox.box : shNetBox(pos);
+    // Fitted to the map's size on screen (read once it is drawn, 1000 × 640 until then)
+    this._slPxUsed = this._slPx || [1000, 640];
+    var box = this._slBox?.net === net ? this._slBox.box : shNetBox(pos, ...this._slPxUsed);
     var byId = new Map(nodes.map((x) => [x.id, x]));
     var labels = this._slLabels !== false;
     var fade = (x) => (shown(x) ? '' : ' dim');
@@ -2804,17 +2876,14 @@ class SystemHubPanel extends HTMLElement {
     for (var x of nodes) {
       var p = byId.get(x.parent);
       if (!p || !pos[x.id] || !pos[p.id]) continue;
-      // From the device to its parent, stopped at the parent's edge for the arrow
+      // From the device to its parent, the arrow halfway (the nodes keep their size whatever the zoom)
       var [x1, y1] = pos[x.id];
       var [x2, y2] = pos[p.id];
-      var len = Math.hypot(x2 - x1, y2 - y1) || 1;
-      var cut = (size[p.role] || 9) + 4;
-      x2 -= ((x2 - x1) / len) * cut;
-      y2 -= ((y2 - y1) / len) * cut;
+      var mid = `${((x1 + x2) / 2).toFixed(1)},${((y1 + y2) / 2).toFixed(1)}`;
       var tone = x.silent ? 'gone' : net === 'matter' ? (p.hub === 'thread' || byId.get(p.parent)?.hub === 'thread' ? 'thread' : p.role === 'hub' ? 'ip' : '') : shLqiTone(x.lqi);
       var width = x.lqi !== null && x.lqi !== undefined ? 1.5 + (Math.min(255, x.lqi) / 255) * 2.5 : 2;
       var dash = x.role === 'end' ? ' end' : '';
-      lines.push(`<line class="nl ${tone}${dash}${fade(x)}" data-a="${shEsc(x.id)}" data-b="${shEsc(p.id)}" style="stroke-width:${width.toFixed(1)}px" marker-end="url(#sh-arrow)" x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}"/>`);
+      lines.push(`<polyline class="nl ${tone}${dash}${fade(x)}" data-a="${shEsc(x.id)}" data-b="${shEsc(p.id)}" style="stroke-width:${width.toFixed(1)}px" ${pos[x.id][3] ? '' : `marker-mid="url(#sh-arrow-${tone || 'n'})" `}points="${x1.toFixed(1)},${y1.toFixed(1)} ${mid} ${x2.toFixed(1)},${y2.toFixed(1)}"/>`);
     }
     // For the pointer over a node: its neighbours (parent, children, mesh) and its details
     var adj = new Map(nodes.map((z) => [z.id, new Set([z.id])]));
@@ -2844,6 +2913,8 @@ class SystemHubPanel extends HTMLElement {
     this._slHover = { adj, tips };
     var dots = [];
     var texts = [];
+    // Shapes and names drawn at the node in screen pixels: scaled by the map's units per pixel (_slFixZoom)
+    var unit = (this._slU || 1).toFixed(4);
     for (var y of nodes) {
       if (!pos[y.id]) continue;
       var [cx, cy] = pos[y.id];
@@ -2854,13 +2925,20 @@ class SystemHubPanel extends HTMLElement {
       var name = this._slName(y);
       var shape =
         y.role === 'coordinator' || y.role === 'hub'
-          ? `<rect class="nring" x="${(cx - r - 4).toFixed(1)}" y="${(cy - r - 4).toFixed(1)}" width="${2 * r + 8}" height="${2 * r + 8}" rx="10"/><rect x="${(cx - r).toFixed(1)}" y="${(cy - r).toFixed(1)}" width="${2 * r}" height="${2 * r}" rx="8"/>`
-          : `<circle class="nring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r + 4}"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}"/>`;
-      dots.push(`<g class="${cls}" data-action="sl_pick" data-node="${shEsc(y.id)}"><title>${shEsc([name, y.area].filter(Boolean).join(' · '))}</title>${shape}</g>`);
+          ? `<rect class="nring" x="${-r - 4}" y="${-r - 4}" width="${2 * r + 8}" height="${2 * r + 8}" rx="10"/><rect x="${-r}" y="${-r}" width="${2 * r}" height="${2 * r}" rx="8"/>`
+          : `<circle class="nring" r="${r + 4}"/><circle r="${r}"/>`;
+      var at = `transform="translate(${cx.toFixed(1)} ${cy.toFixed(1)})"`;
+      dots.push(`<g class="${cls}" data-action="sl_pick" data-node="${shEsc(y.id)}" ${at}><title>${shEsc([name, y.area].filter(Boolean).join(' · '))}</title><g class="nz" transform="scale(${unit})">${shape}</g></g>`);
       if (labels || y.id === sel || hit) {
-        var text = name.length > 26 ? `${name.slice(0, 25)}…` : name;
+        var text = name.length > 24 ? `${name.slice(0, 23)}…` : name;
         var sub = y.silent && y.row?.last_heard ? `${this._t('sl_silent')} · ${this._rel(y.row.last_heard)}` : y.area || '';
-        texts.push(`<g class="${cls}" data-action="sl_pick" data-node="${shEsc(y.id)}"><text x="${(cx + r + 8).toFixed(1)}" y="${(cy - (sub ? 2 : -5)).toFixed(1)}">${shEsc(text)}</text>${sub ? `<text class="sub" x="${(cx + r + 8).toFixed(1)}" y="${(cy + 15).toFixed(1)}">${shEsc(sub)}</text>` : ''}</g>`);
+        // A device's name on its right; the coordinator's or a network's centred under it, clear of its neighbours
+        var under = y.role === 'coordinator' || y.role === 'hub';
+        var left = !under && pos[y.id][2] === -1;
+        var tx = under ? 0 : left ? -r - 8 : r + 8;
+        var ty = under ? r + 20 : sub ? -2 : 5;
+        var anchor = under ? ' text-anchor="middle"' : left ? ' text-anchor="end"' : '';
+        texts.push(`<g class="${cls}" data-action="sl_pick" data-node="${shEsc(y.id)}" ${at}><g class="nz" transform="scale(${unit})"><text x="${tx}" y="${ty}"${anchor}>${shEsc(text)}</text>${sub ? `<text class="sub" x="${tx}" y="${ty + 17}"${anchor}>${shEsc(sub)}</text>` : ''}</g></g>`);
       }
     }
     var tool = (action, icon, label, on) =>
@@ -2875,7 +2953,7 @@ class SystemHubPanel extends HTMLElement {
       ${net === 'zigbee' ? `<span class="nlq">${shEsc(this._t('sl_net_legend'))}</span>` : ''}</div>`;
     return `<ha-card class="nmap">${search}${tools}<div class="ntip" hidden></div>
       <svg class="nsvg" data-net="${net}" viewBox="${box.map((v) => v.toFixed(1)).join(' ')}" role="img" aria-label="${shEsc(this._t('sl_net_map'))}">
-        <defs><marker id="sh-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker></defs>
+        <defs>${['n', 'good', 'warn', 'bad', 'thread', 'ip', 'gone'].map((t) => `<marker id="sh-arrow-${t}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="${(3 * unit).toFixed(2)}" markerHeight="${(3 * unit).toFixed(2)}" orient="auto"><path class="na ${t}" d="M0,0 L10,5 L0,10 z"/></marker>`).join('')}</defs>
         ${lines.join('')}${dots.join('')}${texts.join('')}</svg>${legend}</ha-card>`;
   }
 
@@ -2895,6 +2973,32 @@ class SystemHubPanel extends HTMLElement {
     var next = [fx - ((fx - box[0]) * w) / box[2], fy - ((fy - box[1]) * h) / box[3], w, h];
     this._slBox = { net: svg.dataset.net, box: next };
     svg.setAttribute('viewBox', next.map((v) => v.toFixed(1)).join(' '));
+    this._slFixZoom(svg);
+  }
+
+  // The map's units per screen pixel, given to the shapes and names (which keep their size) and to the arrows
+  _slFixZoom(svg) {
+    var rect = svg.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    // The map fitted for another size than its own: fitted again once
+    this._slPx = [Math.round(rect.width), Math.round(rect.height)];
+    var used = this._slPxUsed || [];
+    if (!this._slBox && (this._slPx[0] !== used[0] || this._slPx[1] !== used[1])) {
+      this._slPxUsed = this._slPx;
+      requestAnimationFrame(() => this._render());
+    }
+    var box = svg.getAttribute('viewBox').split(' ').map(Number);
+    var unit = Math.max(box[2] / rect.width, box[3] / rect.height);
+    this._slU = unit;
+    // Zoomed out, the names would run into each other: the rooms go first, then the end devices' names (still shown
+    // for the device pointed at, picked or found)
+    svg.classList.toggle('dense', unit > 1.4);
+    svg.classList.toggle('crowded', unit > 2.2);
+    for (var g of svg.querySelectorAll('.nz')) g.setAttribute('transform', `scale(${unit.toFixed(4)})`);
+    for (var m of svg.querySelectorAll('marker')) {
+      m.setAttribute('markerWidth', (3 * unit).toFixed(2));
+      m.setAttribute('markerHeight', (3 * unit).toFixed(2));
+    }
   }
 
   _slPanStart(ev) {
@@ -2936,7 +3040,7 @@ class SystemHubPanel extends HTMLElement {
     var near = this._slHover.adj.get(id);
     svg.classList.add('focusing');
     for (var el of svg.querySelectorAll('[data-node]')) el.classList.toggle('near', near.has(el.dataset.node));
-    for (var line of svg.querySelectorAll('line[data-a]')) line.classList.toggle('near', line.dataset.a === id || line.dataset.b === id);
+    for (var line of svg.querySelectorAll('.nl[data-a]')) line.classList.toggle('near', line.dataset.a === id || line.dataset.b === id);
     if (!tip) return;
     tip.innerHTML = this._slHover.tips.get(id) || '';
     tip.hidden = false;
