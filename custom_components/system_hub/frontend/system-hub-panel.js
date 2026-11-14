@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.5.2';
+var SYSTEM_HUB_PANEL_VERSION = '2.6.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -238,6 +238,172 @@ function shNum(value) {
 }
 
 // Tone of a percentage: good below 70, warn below 90, bad above
+// Silent devices, network views. A Zigbee mesh as ZHA's zha/devices gives it (each device with its neighbour table):
+// the nodes (coordinator, routers, end devices) and the links between them; an end device's parent is the router or
+// coordinator whose table names it as a child, else its best neighbour among them; a router hangs from the coordinator
+function shZhaGraph(list) {
+  var roles = { Coordinator: 'coordinator', Router: 'router', EndDevice: 'end' };
+  var nodes = (list || []).map((d) => ({
+    id: String(d.ieee),
+    device_id: d.device_reg_id || null,
+    name: d.user_given_name || d.name || String(d.ieee),
+    role: roles[d.device_type] || 'end',
+    lqi: shNum(d.lqi),
+    available: d.available !== false,
+    seen: d.last_seen || null,
+    parent: null,
+  }));
+  var byId = new Map(nodes.map((n) => [n.id, n]));
+  var links = new Map();
+  var best = new Map();
+  var offer = (child, parent, lqi, rank) => {
+    var had = best.get(child.id);
+    if (!had || rank > had.rank || (rank === had.rank && (lqi ?? -1) > (had.lqi ?? -1))) best.set(child.id, { parent: parent.id, lqi, rank });
+  };
+  for (var d of list || []) {
+    var self = byId.get(String(d.ieee));
+    for (var nb of d.neighbors || []) {
+      var other = byId.get(String(nb.ieee));
+      if (!self || !other || other === self) continue;
+      var lqi = shNum(nb.lqi);
+      var key = [self.id, other.id].sort().join('|');
+      if (!links.has(key) || (lqi ?? -1) > (links.get(key).lqi ?? -1)) links.set(key, { a: self.id, b: other.id, lqi });
+      var rel = String(nb.relationship || '');
+      // The table of self names other: its child, its parent, or a neighbour only (weaker)
+      if (other.role === 'end' && self.role !== 'end') offer(other, self, lqi, rel === 'Child' ? 2 : 1);
+      else if (self.role === 'end' && other.role !== 'end') offer(self, other, lqi, rel === 'Parent' ? 2 : 1);
+    }
+  }
+  var coordinator = nodes.find((n) => n.role === 'coordinator');
+  for (var n of nodes) {
+    if (n.role === 'router') n.parent = coordinator?.id || null;
+    else if (n.role === 'end') {
+      var found = best.get(n.id);
+      n.parent = found?.parent || coordinator?.id || null;
+      if (n.lqi === null && found) n.lqi = found.lqi;
+    }
+  }
+  return { source: 'zha', nodes, links: [...links.values()] };
+}
+
+// Zigbee2MQTT's raw network map (bridge/request/networkmap): its links are read from the table of their target, so
+// they become the neighbour tables ZHA gives; the Home Assistant device of a node is the MQTT device named after it
+function shZ2mGraph(value, registry) {
+  var rel = { 0: 'Parent', 1: 'Child', 2: 'Sibling' };
+  var ids = new Map();
+  for (var dev of registry || []) {
+    for (var [dom, id] of dev.identifiers || []) {
+      var m = dom === 'mqtt' && /^zigbee2mqtt_(0x[0-9a-f]+)$/i.exec(String(id));
+      if (m) ids.set(m[1].toLowerCase(), dev.id);
+    }
+  }
+  var list = (value?.nodes || []).map((n) => {
+    var ieee = String(n.ieeeAddr || '').toLowerCase();
+    return {
+      ieee,
+      device_reg_id: ids.get(ieee) || null,
+      name: n.friendlyName || ieee,
+      device_type: n.type,
+      last_seen: typeof n.lastSeen === 'number' ? new Date(n.lastSeen).toISOString() : n.lastSeen || null,
+      neighbors: (value.links || [])
+        .filter((l) => String(l.target?.ieeeAddr || '').toLowerCase() === ieee)
+        .map((l) => ({ ieee: String(l.source?.ieeeAddr || '').toLowerCase(), lqi: l.lqi ?? l.linkquality, relationship: rel[l.relationship] || '' })),
+    };
+  });
+  return { ...shZhaGraph(list), source: 'z2m' };
+}
+
+// The Matter devices by network (matter/node_diagnostics of each node): Thread (by network name), Wi-Fi, Ethernet;
+// Matter gives no neighbour table, so a node hangs from its network, the devices a bridge exposes from the bridge
+function shMatterGraph(registry, diagnostics) {
+  var mine = (registry || []).filter((d) => !d.disabled_by && (d.identifiers || []).some(([dom]) => dom === 'matter'));
+  var ids = new Set(mine.map((d) => d.id));
+  var diag = new Map(diagnostics || []);
+  var hubs = new Map();
+  var nodes = [];
+  for (var dev of mine) {
+    var bridged = ids.has(dev.via_device_id);
+    var info = diag.get(dev.id) || null;
+    var parent = dev.via_device_id;
+    if (!bridged) {
+      var kind = ['thread', 'wifi', 'ethernet'].includes(info?.network_type) ? info.network_type : 'other';
+      var label = kind === 'thread' ? info.network_name || '' : '';
+      parent = `net:${kind}:${label}`;
+      if (!hubs.has(parent)) hubs.set(parent, { id: parent, device_id: null, name: label, hub: kind, role: 'hub', lqi: null, available: true, seen: null, parent: null });
+    }
+    var type = info?.node_type;
+    nodes.push({
+      id: dev.id,
+      device_id: dev.id,
+      name: dev.name_by_user || dev.name || dev.id,
+      role: type === 'bridge' ? 'bridge' : type === 'routing_end_device' ? 'router' : 'end',
+      lqi: null,
+      available: bridged ? diag.get(dev.via_device_id)?.available !== false : info?.available !== false,
+      seen: null,
+      parent,
+    });
+  }
+  return { source: 'matter', nodes: [...hubs.values(), ...nodes], links: [] };
+}
+
+// Where each node goes on a square map of the given size: the root in the middle (several roots around it), every
+// subtree in a slice of the circle as wide as its leaves, one ring per depth
+function shNetLayout(nodes, size) {
+  var ids = new Set(nodes.map((n) => n.id));
+  var kids = new Map();
+  var roots = [];
+  for (var n of nodes) {
+    if (n.parent && ids.has(n.parent) && n.parent !== n.id) {
+      if (!kids.has(n.parent)) kids.set(n.parent, []);
+      kids.get(n.parent).push(n);
+    } else roots.push(n);
+  }
+  var rank = { coordinator: 0, hub: 0, bridge: 1, router: 1, end: 2 };
+  for (var list of kids.values()) list.sort((a, b) => rank[a.role] - rank[b.role] || a.name.localeCompare(b.name));
+  var top = roots.length === 1 ? roots[0] : { id: '', virtual: true };
+  if (top.virtual) kids.set('', roots);
+  var leaves = new Map();
+  var count = (node, seen) => {
+    if (seen.has(node.id)) return 0;
+    seen.add(node.id);
+    var k = kids.get(node.id) || [];
+    var total = k.length ? k.reduce((s, c) => s + count(c, seen), 0) : 1;
+    leaves.set(node.id, total || 1);
+    return total || 1;
+  };
+  count(top, new Set());
+  var depth = (node, seen) => {
+    if (seen.has(node.id)) return 0;
+    seen.add(node.id);
+    return 1 + Math.max(0, ...(kids.get(node.id) || []).map((c) => depth(c, seen)));
+  };
+  var rings = Math.max(1, depth(top, new Set()) - 1);
+  var mid = size / 2;
+  var step = (mid - 40) / rings;
+  var pos = {};
+  var place = (node, d, a0, a1) => {
+    if (pos[node.id] || (node.virtual && d)) return;
+    var a = (a0 + a1) / 2;
+    if (!node.virtual) pos[node.id] = d ? [mid + Math.cos(a) * d * step, mid + Math.sin(a) * d * step] : [mid, mid];
+    var k = kids.get(node.id) || [];
+    var total = k.reduce((s, c) => s + (leaves.get(c.id) || 1), 0) || 1;
+    var at = a0;
+    for (var c of k) {
+      var span = ((a1 - a0) * (leaves.get(c.id) || 1)) / total;
+      place(c, d + 1, at, at + span);
+      at += span;
+    }
+  };
+  place(top, 0, -Math.PI / 2, Math.PI * 1.5);
+  return pos;
+}
+
+// The tone of a link quality: strong, medium, weak (the module's weak signal is below 50)
+function shLqiTone(lqi) {
+  if (lqi === null || lqi === undefined) return '';
+  return lqi >= 100 ? 'good' : lqi >= 50 ? 'warn' : 'bad';
+}
+
 function shTone(pct, warn = 70, bad = 90) {
   if (pct === null || pct === undefined) return '';
   return pct >= bad ? 'bad' : pct >= warn ? 'warn' : 'good';
@@ -1043,6 +1209,41 @@ class SystemHubPanel extends HTMLElement {
     a.pill { text-decoration:none; }
     .item .actions { margin-top:6px; }
     .more-row { justify-content:center; padding:6px 0; }
+    .nviews { margin-bottom:12px; width:fit-content; }
+    .nbar { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+    .nonly { display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--secondary-text-color); cursor:pointer; }
+    .nview { display:grid; grid-template-columns:minmax(0, 1.35fr) minmax(0, 1fr); gap:12px; margin-top:12px; }
+    .nmap { padding:8px; }
+    .nmap svg { display:block; width:100%; max-height:560px; }
+    .nl { stroke:var(--disabled-text-color, #9e9e9e); stroke-width:1.5; }
+    .nl.mesh { stroke-dasharray:3 3; opacity:.45; stroke-width:1; }
+    .nl.good { stroke:var(--tone-good); } .nl.warn { stroke:var(--tone-warn); } .nl.bad { stroke:var(--tone-bad); }
+    .nl.gone { stroke:var(--tone-bad); stroke-dasharray:4 4; }
+    .nn { cursor:pointer; } .nn circle { fill:var(--disabled-text-color, #9e9e9e); stroke:var(--card-background-color, #fff); stroke-width:1.5; }
+    .nn.coordinator circle { fill:var(--primary-color); } .nn.router circle { fill:var(--tone-good); } .nn.silent circle { fill:var(--tone-bad); }
+    .nn circle.nring { fill:none; stroke:none; }
+    .nn.sel circle.nring { stroke:var(--primary-color); stroke-width:2; }
+    .nn text { font-size:10px; text-anchor:middle; fill:var(--secondary-text-color); pointer-events:none; paint-order:stroke;
+               stroke:var(--card-background-color, #fff); stroke-width:3px; stroke-linejoin:round; }
+    .nn.silent text { fill:var(--tone-bad); } .nn.coordinator text { fill:var(--primary-text-color); font-weight:500; }
+    .nl.dim, .nn.dim { opacity:.15; }
+    .ntree { padding:6px; max-height:576px; overflow:auto; display:flex; flex-direction:column; gap:1px; }
+    .nrow ha-icon { color:var(--secondary-text-color); } .nrow.silent ha-icon { color:var(--tone-bad); }
+    .nrow { display:flex; align-items:center; gap:6px; width:100%; border:0; background:none; font:inherit; font-size:13px; text-align:left;
+            color:var(--primary-text-color); padding:6px 8px; border-radius:8px; cursor:pointer; --mdc-icon-size:18px; }
+    .nrow:hover { background:color-mix(in srgb, var(--primary-color) 8%, transparent); }
+    .nrow.sel { background:color-mix(in srgb, var(--primary-color) 16%, transparent); }
+    .nrow.silent { color:var(--tone-bad); }
+    .nrow .nn-name { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .nrow .s { font-size:12px; color:var(--secondary-text-color); }
+    .ndetail { display:flex; flex-wrap:wrap; align-items:center; gap:10px; padding:10px 14px; margin-top:12px; }
+    .ndetail .who { flex:1; min-width:200px; } .ndetail .ndact { display:flex; gap:6px; }
+    .ndetail.silent .n { color:var(--tone-bad); }
+    .nlegend { display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:8px; font-size:12px; color:var(--secondary-text-color); }
+    .nlegend span { display:inline-flex; align-items:center; gap:5px; }
+    .nlegend .nd { width:10px; height:10px; border-radius:50%; background:var(--disabled-text-color, #9e9e9e); }
+    .nlegend .nd.coordinator { background:var(--primary-color); } .nlegend .nd.router { background:var(--tone-good); } .nlegend .nd.silent { background:var(--tone-bad); }
+    @media (max-width: 900px) { .nview { grid-template-columns:1fr; } .ntree { max-height:none; } }
     @media (max-width: 600px) {
       main { padding:12px 8px; }
       .tiles { grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px; }
@@ -1302,8 +1503,11 @@ class SystemHubPanel extends HTMLElement {
     // Automations: lists folded and shortened again
     this._autoFolds = {};
     this._autoMore = {};
-    // Silent devices: the filter; Batteries: the view (by level); Resources: the curves' periods
+    // Silent devices: the filter, the list view, the device picked and Silent only on a network; Batteries: the view (by level); Resources: the curves' periods
     this._slFilter = null;
+    this._slView = 'list';
+    this._slSel = null;
+    this._slOnly = false;
     this._battView = 'level';
     this._periods = {};
     // Updates: Back up before installing back to its setting
@@ -2245,6 +2449,19 @@ class SystemHubPanel extends HTMLElement {
 
   // Silent devices: the devices of the radio integrations not heard from beyond the hours set, then the weak signals
   _silent() {
+    this._slRegLoad();
+    var nets = this._slNets();
+    var view = nets.includes(this._slView) ? this._slView : 'list';
+    var vtab = (v, label) =>
+      `<button class="btab${v === view ? ' on' : ''}" data-action="sl_view" data-view="${v}" aria-pressed="${v === view}">${shEsc(label)}</button>`;
+    var views = nets.length
+      ? `<div class="btabs nviews" role="group">${vtab('list', this._t('sl_view_list'))}${nets.map((v) => vtab(v, this._t(`sl_view_${v}`))).join('')}</div>`
+      : '';
+    if (view !== 'list') return views + this._slNetwork(view);
+    return views + this._silentList();
+  }
+
+  _silentList() {
     var data = this._state.silent || {};
     var all = data.devices || [];
     var quiet = all.filter((d) => d.silent);
@@ -2293,6 +2510,233 @@ class SystemHubPanel extends HTMLElement {
     }
     delete this._busy[`sl_ignore:${device}`];
     await this._load();
+  }
+
+  // The device registry, read once when the Silent devices tab is shown: which networks can be drawn (ZHA or
+  // Zigbee2MQTT devices, Matter devices), the Zigbee2MQTT and Matter devices' Home Assistant ids
+  _slRegLoad() {
+    if (this._slReg || !this._hass?.callWS) return;
+    this._slReg = { devices: [], loading: true };
+    this._hass
+      .callWS({ type: 'config/device_registry/list' })
+      .then((devices) => (this._slReg = { devices: Array.isArray(devices) ? devices : [] }))
+      .catch(() => (this._slReg = { devices: [] }))
+      .then(() => this._tab === 'silent' && this._render());
+  }
+
+  _slNets() {
+    var has = (test) => (this._slReg?.devices || []).some((d) => !d.disabled_by && (d.identifiers || []).some(test));
+    var nets = [];
+    if (has(([dom, id]) => dom === 'zha' || (dom === 'mqtt' && /^zigbee2mqtt_0x/i.test(String(id))))) nets.push('zigbee');
+    if (has(([dom]) => dom === 'matter')) nets.push('matter');
+    return nets;
+  }
+
+  // A network read when its view is shown, again after 5 minutes or on Read again
+  async _slNetLoad(net, force) {
+    var had = this._slMap?.[net];
+    if (!this._hass?.callWS || had?.loading || (had && !force && Date.now() - had.at < 300000)) return;
+    this._slMap = { ...(this._slMap || {}), [net]: { ...(had || {}), loading: true, error: null, at: Date.now() } };
+    if (force) this._render();
+    try {
+      var graph = net === 'zigbee' ? await this._slZigbee() : await this._slMatter();
+      this._slMap[net] = { ...graph, loading: false, error: null, at: Date.now() };
+    } catch (err) {
+      this._slMap[net] = { ...(had || {}), loading: false, error: shErr(err), at: Date.now() };
+    }
+    if (this._tab === 'silent') this._render();
+  }
+
+  async _slZigbee() {
+    if ((this._hass.config?.components || []).includes('zha')) return shZhaGraph(await this._hass.callWS({ type: 'zha/devices' }));
+    return this._slZ2m();
+  }
+
+  // Zigbee2MQTT scans its network when asked (up to a minute or more): its answer on bridge/response/networkmap
+  async _slZ2m() {
+    var base = 'zigbee2mqtt';
+    var timer;
+    var unsub;
+    try {
+      var answer = new Promise((resolve, reject) => {
+        timer = setTimeout(() => reject(new Error(this._t('sl_net_timeout', { topic: `${base}/bridge` }))), 120000);
+        unsub = this._hass.connection.subscribeMessage(
+          (msg) => {
+            var data;
+            try {
+              data = JSON.parse(msg.payload);
+            } catch (_err) {
+              return;
+            }
+            if (data?.data?.type !== 'raw') return;
+            if (data.status === 'ok') resolve(data.data.value);
+            else reject(new Error(data.error || 'networkmap'));
+          },
+          { type: 'mqtt/subscribe', topic: `${base}/bridge/response/networkmap` },
+        );
+      });
+      await unsub;
+      await this._hass.callService('mqtt', 'publish', { topic: `${base}/bridge/request/networkmap`, payload: JSON.stringify({ type: 'raw', routes: false }) });
+      return shZ2mGraph(await answer, this._slReg?.devices);
+    } finally {
+      clearTimeout(timer);
+      Promise.resolve(unsub)
+        .then((stop) => stop?.())
+        .catch(() => {});
+    }
+  }
+
+  // Each Matter node's diagnostics (its network and whether it routes); the devices it bridges come with it
+  async _slMatter() {
+    var registry = this._slReg?.devices || [];
+    var mine = registry.filter((d) => !d.disabled_by && (d.identifiers || []).some(([dom]) => dom === 'matter'));
+    var ids = new Set(mine.map((d) => d.id));
+    var tops = mine.filter((d) => !ids.has(d.via_device_id));
+    var diags = await Promise.all(tops.map((d) => this._hass.callWS({ type: 'matter/node_diagnostics', device_id: d.id }).catch(() => null)));
+    return shMatterGraph(registry, tops.map((d, i) => [d.id, diags[i]]));
+  }
+
+  // The view of a network: its map beside its tree by router, the silent devices in red with their last link, a
+  // device picked on either side shown on both and detailed below
+  _slNetwork(net) {
+    this._slNetLoad(net);
+    var map = this._slMap?.[net];
+    var reload = this._button('sl_net_reload', 'mdi:refresh', this._t('sl_net_reload'), { quiet: true, data: { net }, busy: map?.loading });
+    if (!map?.nodes) {
+      var wait = this._spinner(this._t(net === 'zigbee' && !(this._hass?.config?.components || []).includes('zha') ? 'sl_net_scanning' : 'sl_net_loading'));
+      var failed = map?.error ? `<span class="msg bad" role="status">${shEsc(this._t('sl_net_failed', { error: map.error }))}</span>${reload}` : '';
+      return `<ha-card class="note">${failed || wait}</ha-card>`;
+    }
+    var rows = new Map((this._state.silent?.devices || []).map((d) => [d.device_id, d]));
+    var nodes = map.nodes.map((n) => {
+      var row = n.device_id ? rows.get(n.device_id) : null;
+      return { ...n, row, silent: Boolean(row?.silent) || (n.role !== 'hub' && !n.available) };
+    });
+    var byId = new Map(nodes.map((n) => [n.id, n]));
+    // Silent only: the silent devices and the nodes they hang from
+    var keep = new Set();
+    for (var n of nodes.filter((x) => x.silent)) {
+      for (var at = n; at && !keep.has(at.id); at = byId.get(at.parent)) keep.add(at.id);
+    }
+    var shown = (x) => !this._slOnly || keep.has(x.id) || x.role === 'coordinator';
+    var sel = byId.get(this._slSel) ? this._slSel : null;
+    var devices = nodes.filter((x) => x.role !== 'hub' && x.role !== 'coordinator');
+    var silentCount = devices.filter((x) => x.silent).length;
+    var counts = `<span class="pill good">${shEsc(this._t('sl_net_heard', { n: devices.length - silentCount }))}</span>
+      <span class="pill ${silentCount ? 'warn' : 'good'}">${shEsc(this._t('sl_n_silent', { n: silentCount }))}</span>
+      <span class="pill">${shEsc(map.source === 'zha' ? 'ZHA' : map.source === 'z2m' ? 'Zigbee2MQTT' : 'Matter')}</span>`;
+    var only = `<label class="nonly"><input type="checkbox" data-action="sl_only"${this._slOnly ? ' checked' : ''}>${shEsc(this._t('sl_net_only'))}</label>`;
+    var hint = net === 'matter' ? `<span class="msg">${shEsc(this._t('sl_net_matter_hint'))}</span>` : '';
+    var legend = `<div class="nlegend"><span><i class="nd coordinator"></i>${shEsc(this._t(net === 'matter' ? 'sl_role_hub' : 'sl_role_coordinator'))}</span>
+      <span><i class="nd router"></i>${shEsc(this._t('sl_role_router'))}</span><span><i class="nd end"></i>${shEsc(this._t('sl_role_end'))}</span>
+      <span><i class="nd silent"></i>${shEsc(this._t('sl_silent'))}</span>${net === 'zigbee' ? `<span>${shEsc(this._t('sl_net_legend'))}</span>` : ''}</div>`;
+    return `<div class="actions"><div class="nbar">${counts}</div>${only}${reload}</div>${hint}
+      <div class="nview">${this._slMapSvg(nodes, map.links || [], sel, shown)}<ha-card class="ntree">${this._slTree(nodes, sel, shown)}</ha-card></div>
+      ${this._slDetail(sel && byId.get(sel), byId)}${legend}`;
+  }
+
+  // The name of a node: a network's (Thread and its name, Wi-Fi, Ethernet) or the device's
+  _slName(n) {
+    if (n.role !== 'hub') return n.name;
+    if (n.hub === 'thread') return n.name ? `Thread · ${n.name}` : 'Thread';
+    return this._t(`sl_net_${n.hub}`);
+  }
+
+  _slMapSvg(nodes, links, sel, shown) {
+    var size = 400;
+    var pos = shNetLayout(nodes, size);
+    var byId = new Map(nodes.map((n) => [n.id, n]));
+    var big = nodes.length > 30;
+    var radius = { coordinator: 13, hub: 13, router: 8, bridge: 8, end: 5 };
+    var lines = [];
+    // The mesh between routers (Zigbee), faint, then each device's link to its parent
+    for (var l of links) {
+      var a = byId.get(l.a);
+      var b = byId.get(l.b);
+      if (!a || !b || a.role === 'end' || b.role === 'end' || a.parent === b.id || b.parent === a.id || !pos[a.id] || !pos[b.id]) continue;
+      var dim = !shown(a) || !shown(b) ? ' dim' : '';
+      lines.push(`<line class="nl mesh${dim}" x1="${pos[a.id][0].toFixed(1)}" y1="${pos[a.id][1].toFixed(1)}" x2="${pos[b.id][0].toFixed(1)}" y2="${pos[b.id][1].toFixed(1)}"/>`);
+    }
+    for (var n of nodes) {
+      var p = byId.get(n.parent);
+      if (!p || !pos[n.id] || !pos[p.id]) continue;
+      var tone = n.silent ? 'gone' : shLqiTone(n.lqi);
+      lines.push(`<line class="nl ${tone}${shown(n) ? '' : ' dim'}" x1="${pos[p.id][0].toFixed(1)}" y1="${pos[p.id][1].toFixed(1)}" x2="${pos[n.id][0].toFixed(1)}" y2="${pos[n.id][1].toFixed(1)}"/>`);
+    }
+    var dots = nodes
+      .filter((x) => pos[x.id])
+      .map((x) => {
+        var [cx, cy] = pos[x.id];
+        var r = radius[x.role] || 5;
+        var role = x.role === 'hub' ? 'coordinator' : x.role === 'bridge' ? 'router' : x.role;
+        var cls = `nn ${role}${x.silent ? ' silent' : ''}${x.id === sel ? ' sel' : ''}${shown(x) ? '' : ' dim'}`;
+        var label = !big || x.role !== 'end' || x.silent || x.id === sel;
+        var name = this._slName(x);
+        var text = name.length > 18 ? `${name.slice(0, 17)}…` : name;
+        return `<g class="${cls}" data-action="sl_pick" data-node="${shEsc(x.id)}"><title>${shEsc(name)}</title>
+          <circle class="nring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r + 4}"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}"/>
+          ${label ? `<text x="${cx.toFixed(1)}" y="${(cy + r + 11).toFixed(1)}">${shEsc(text)}</text>` : ''}</g>`;
+      })
+      .join('');
+    return `<ha-card class="nmap"><svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${shEsc(this._t('sl_net_map'))}">${lines.join('')}${dots}</svg></ha-card>`;
+  }
+
+  // The tree: the coordinator (or each network), its routers, their devices; the silent ones say since when
+  _slTree(nodes, sel, shown) {
+    var kids = new Map();
+    var ids = new Set(nodes.map((n) => n.id));
+    var roots = [];
+    for (var n of nodes) {
+      if (n.parent && ids.has(n.parent)) {
+        if (!kids.has(n.parent)) kids.set(n.parent, []);
+        kids.get(n.parent).push(n);
+      } else roots.push(n);
+    }
+    var rank = { coordinator: 0, hub: 0, bridge: 1, router: 1, end: 2 };
+    var order = (a, b) => rank[a.role] - rank[b.role] || b.silent - a.silent || a.name.localeCompare(b.name);
+    var icons = { coordinator: 'mdi:access-point', hub: 'mdi:access-point', router: 'mdi:google-circles-communities', bridge: 'mdi:link-variant', end: 'mdi:chip' };
+    var out = [];
+    var walk = (node, depth, seen) => {
+      if (seen.has(node.id)) return;
+      seen.add(node.id);
+      if (shown(node)) {
+        var side = '';
+        if (node.silent) {
+          side = `<span class="pill warn">${shEsc(this._t('sl_silent'))}${node.row?.last_heard ? ` · ${shEsc(this._rel(node.row.last_heard))}` : ''}</span>`;
+        } else if (node.lqi !== null && node.lqi !== undefined) {
+          side = `<span class="pill ${shLqiTone(node.lqi) === 'good' ? 'good' : shLqiTone(node.lqi) === 'warn' ? 'info' : 'warn'}">LQI ${node.lqi}</span>`;
+        } else if (node.seen) side = `<span class="s">${shEsc(this._rel(node.seen))}</span>`;
+        var icon = node.role === 'hub' && (node.hub === 'wifi' || node.hub === 'ethernet') ? 'mdi:ip-network-outline' : icons[node.role];
+        out.push(`<button class="nrow${node.silent ? ' silent' : ''}${node.id === sel ? ' sel' : ''}" style="padding-left:${8 + depth * 18}px" data-action="sl_pick" data-node="${shEsc(node.id)}" aria-pressed="${node.id === sel}">
+          <ha-icon icon="${node.silent ? 'mdi:access-point-off' : icon}"></ha-icon><span class="nn-name">${shEsc(this._slName(node))}</span>${side}</button>`);
+      }
+      for (var c of (kids.get(node.id) || []).sort(order)) walk(c, depth + 1, seen);
+    };
+    var seen = new Set();
+    for (var r of roots.sort(order)) walk(r, 0, seen);
+    return out.join('') || `<div class="empty">${shEsc(this._t('sl_net_empty'))}</div>`;
+  }
+
+  // The device picked: its role, its room, when it was last heard, its parent and link, its battery; its page, Ignore
+  _slDetail(n, byId) {
+    if (!n) return `<ha-card class="ndetail"><span class="s">${shEsc(this._t('sl_net_pick'))}</span></ha-card>`;
+    var row = n.row;
+    var role = { coordinator: 'sl_role_coordinator', hub: 'sl_role_hub', router: 'sl_role_router', bridge: 'sl_role_bridge', end: 'sl_role_end' }[n.role];
+    var parent = byId.get(n.parent);
+    var heard = row
+      ? row.unavailable
+        ? this._t('sl_unavailable_since', { when: this._rel(row.last_heard) })
+        : this._t('sl_heard', { when: this._rel(row.last_heard) })
+      : n.seen
+        ? this._t('sl_heard', { when: this._rel(n.seen) })
+        : '';
+    var power = row?.battery ? (row.level === null || row.level === undefined ? this._t('sl_battery_unknown') : this._t('sl_battery', { n: row.level })) : '';
+    var via = parent && n.role !== 'hub' ? this._t('sl_net_via', { name: this._slName(parent) }) + (n.lqi !== null && n.lqi !== undefined ? ` (LQI ${n.lqi})` : '') : '';
+    var bits = [this._t(role), row?.area, heard, via, power].filter(Boolean).join(' · ');
+    var open = n.device_id ? `<a class="act quiet" href="/config/devices/device/${encodeURIComponent(n.device_id)}"><ha-icon icon="mdi:open-in-new"></ha-icon>${shEsc(this._t('open_device'))}</a>` : '';
+    var ignore = row ? this._button('sl_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { device: row.device_id, name: row.name }, busy: this._busy[`sl_ignore:${row.device_id}`] }) : '';
+    return `<ha-card class="ndetail${n.silent ? ' silent' : ''}"><div class="who"><div class="n">${shEsc(this._slName(n))}</div><div class="s">${shEsc(bits)}</div></div>
+      <span class="ndact">${open}${ignore}</span></ha-card>`;
   }
 
   // Home Assistant's backups (the Backup integration's backup/info and its locations), read when the tab is shown
@@ -3423,6 +3867,20 @@ class SystemHubPanel extends HTMLElement {
       this._slFilter = button.dataset.kind || null;
       return this._render();
     }
+    if (action === 'sl_view') {
+      this._slView = button.dataset.view;
+      this._slSel = null;
+      return this._render();
+    }
+    if (action === 'sl_pick') {
+      this._slSel = this._slSel === button.dataset.node ? null : button.dataset.node;
+      return this._render();
+    }
+    if (action === 'sl_only') {
+      this._slOnly = !this._slOnly;
+      return this._render();
+    }
+    if (action === 'sl_net_reload') return this._slNetLoad(button.dataset.net, true);
     if (action === 'sl_ignore') return this._slIgnore(button.dataset.device, button.dataset.name);
     if (action === 'sc_scan') return this._scLoad(true, true);
     if (action === 'sc_ignore') return this._scIgnore(button.dataset.ip, button.dataset.ignore !== 'false');

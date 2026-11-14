@@ -758,6 +758,45 @@ def mock_system_log():
     ]
 
 
+def mock_zha():
+    """A ZHA mesh as zha/devices gives it: the coordinator, five routers, their end devices; the cellar sensor silent."""
+    routers = [
+        ("r1", "Living room plug", 214, ["Living room motion", "Sofa lamp remote", "TV sensor"]),
+        ("r2", "Kitchen bulb", 188, ["Fridge door", "Kitchen leak"]),
+        ("r3", "Hallway relay", 152, ["Front door", "Hallway motion", "Coat closet"]),
+        ("r4", "Garage plug", 74, ["Cellar sensor", "Garage door"]),
+        ("r5", "Bedroom bulb", 201, ["Bedroom window", "Bedside button"]),
+    ]
+    devices = [
+        {
+            "ieee": "c",
+            "device_type": "Coordinator",
+            "name": "Coordinator",
+            "available": True,
+            "neighbors": [{"ieee": r, "lqi": lqi, "relationship": "Child"} for r, _, lqi, _ in routers],
+        }
+    ]
+    for i, (rid, name, lqi, ends) in enumerate(routers):
+        neighbors = [{"ieee": f"{rid}e{j}", "lqi": 190 - 37 * j, "relationship": "Child"} for j in range(len(ends))]
+        nxt = routers[(i + 1) % len(routers)][0]
+        neighbors.append({"ieee": nxt, "lqi": 96, "relationship": "Sibling"})
+        devices.append(
+            {"ieee": rid, "device_type": "Router", "name": name, "lqi": lqi, "available": True, "neighbors": neighbors}
+        )
+        for j, end in enumerate(ends):
+            devices.append(
+                {
+                    "ieee": f"{rid}e{j}",
+                    "device_type": "EndDevice",
+                    "name": end,
+                    "device_reg_id": "d1" if end == "Cellar sensor" else None,
+                    "available": True,
+                    "neighbors": [],
+                }
+            )
+    return devices
+
+
 def mock_silent():
     """The Silent devices module: a cellar sensor quiet for 3 days, a plug gone, two weak signals."""
 
@@ -1005,6 +1044,9 @@ def mock_state():
         "system_log": mock_system_log(),
         # The Silent devices tab: two silent devices, two weak signals
         "silent": mock_silent(),
+        # Its Zigbee network: a ZHA device in the registry offers the view, zha/devices gives the mesh
+        "device_registry": [{"id": "d1", "identifiers": [["zha", "r4e0"]]}],
+        "zha_devices": mock_zha(),
         # The Orphans tab: the counts with the state, the whole list from its own command
         **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
         "git_sync_configured": True,
@@ -1415,6 +1457,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
         language: "en",
         locale: { language: "en" },
         user: { is_admin: true },
+        // ZHA loaded: the Silent devices tab's Zigbee view reads its mesh from zha/devices
+        config: { components: ["zha"] },
         localize,
         loadBackendTranslation: async () => localize,
         areas: {
@@ -1441,6 +1485,10 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                   ? state.database_info
                   : msg.type === "system_log/list"
                   ? state.system_log
+                  : msg.type === "config/device_registry/list"
+                  ? state.device_registry
+                  : msg.type === "zha/devices"
+                  ? state.zha_devices
                   : msg.type === "backup/info"
                   ? state.backup_info
                   : msg.type === "backup/agents/info"
@@ -1453,7 +1501,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                       ? statistics(msg)
                       : {},
     };
-    if (view) el._battView = view;
+    if (view && tab === "silent") el._slView = view;
+    else if (view) el._battView = view;
     document.getElementById("root").appendChild(el);
 }"""
 
@@ -1529,6 +1578,9 @@ SHOTS = [
         for view in ("room", "type", "forecast")
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
+    # The Silent devices tab on its Zigbee network: the map beside the tree
+    {"file": "panel-silent-zigbee", "theme": "light", "tab": "silent", "view": "zigbee"},
+    {"file": "panel-silent-zigbee-dark", "theme": "dark", "tab": "silent", "view": "zigbee"},
     {"file": "panel-marketplace-checking", "theme": "light", "tab": "marketplace", "checking": True},
     {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
