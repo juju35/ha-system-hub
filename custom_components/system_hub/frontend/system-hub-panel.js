@@ -2648,6 +2648,11 @@ class SystemHubPanel extends HTMLElement {
     var byId = new Map(nodes.map((n) => [n.id, n]));
     var big = nodes.length > 30;
     var radius = { coordinator: 13, hub: 13, router: 8, bridge: 8, end: 5 };
+    // On the map a network's short name (its full name in the tree and the tooltip): the Thread network's own name
+    // only when there are several
+    var threads = nodes.filter((x) => x.hub === 'thread').length;
+    var short = (x) =>
+      x.hub === 'thread' ? (threads > 1 && x.name) || 'Thread' : x.hub === 'wifi' ? 'Wi-Fi' : x.hub === 'ethernet' ? 'Ethernet' : this._slName(x);
     var lines = [];
     // The mesh between routers (Zigbee), faint, then each device's link to its parent
     for (var l of links) {
@@ -2663,6 +2668,7 @@ class SystemHubPanel extends HTMLElement {
       var tone = n.silent ? 'gone' : shLqiTone(n.lqi);
       lines.push(`<line class="nl ${tone}${shown(n) ? '' : ' dim'}" x1="${pos[p.id][0].toFixed(1)}" y1="${pos[p.id][1].toFixed(1)}" x2="${pos[n.id][0].toFixed(1)}" y2="${pos[n.id][1].toFixed(1)}"/>`);
     }
+    var labels = [];
     var dots = nodes
       .filter((x) => pos[x.id])
       .map((x) => {
@@ -2670,13 +2676,32 @@ class SystemHubPanel extends HTMLElement {
         var r = radius[x.role] || 5;
         var role = x.role === 'hub' ? 'coordinator' : x.role === 'bridge' ? 'router' : x.role;
         var cls = `nn ${role}${x.silent ? ' silent' : ''}${x.id === sel ? ' sel' : ''}${shown(x) ? '' : ' dim'}`;
-        var label = !big || x.role !== 'end' || x.silent || x.id === sel;
         var name = this._slName(x);
-        var text = name.length > 18 ? `${name.slice(0, 17)}…` : name;
+        if (!big || x.role !== 'end' || x.silent || x.id === sel) {
+          var label = short(x);
+          var text = label.length > 18 ? `${label.slice(0, 17)}…` : label;
+          // A device's name below it; a network's or the coordinator's on the side away from its devices (above when
+          // they are all around it)
+          var top = role === 'coordinator';
+          var lx = cx;
+          var ly = cy + r + 11;
+          if (top) {
+            var mine = nodes.filter((c) => c.parent === x.id && pos[c.id]);
+            var dx = mine.reduce((t, c) => t + pos[c.id][0] - cx, 0) / (mine.length || 1);
+            var dy = mine.reduce((t, c) => t + pos[c.id][1] - cy, 0) / (mine.length || 1);
+            var len = Math.hypot(dx, dy);
+            [lx, ly] = len < 10 ? [cx, cy - r - 6] : [cx - (dx / len) * (r + 16), cy - (dy / len) * (r + 16) + 4];
+          }
+          labels.push([top ? 2 : role === 'end' ? 0 : 1, `<g class="${cls}" data-action="sl_pick" data-node="${shEsc(x.id)}"><text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}">${shEsc(text)}</text></g>`]);
+        }
         return `<g class="${cls}" data-action="sl_pick" data-node="${shEsc(x.id)}"><title>${shEsc(name)}</title>
-          <circle class="nring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r + 4}"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}"/>
-          ${label ? `<text x="${cx.toFixed(1)}" y="${(cy + r + 11).toFixed(1)}">${shEsc(text)}</text>` : ''}</g>`;
+          <circle class="nring" cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r + 4}"/><circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="${r}"/></g>`;
       })
+      .join('');
+    // The labels over every dot, the networks' and the routers' over the devices'
+    dots += labels
+      .sort((p, q) => p[0] - q[0])
+      .map(([, svg]) => svg)
       .join('');
     return `<ha-card class="nmap"><svg viewBox="0 0 ${size} ${size}" role="img" aria-label="${shEsc(this._t('sl_net_map'))}">${lines.join('')}${dots}</svg></ha-card>`;
   }

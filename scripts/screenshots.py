@@ -797,6 +797,38 @@ def mock_zha():
     return devices
 
 
+def mock_matter():
+    """Matter devices: a Thread network (two routers, sleepy sensors, one unavailable), Wi-Fi devices, a bridge.
+
+    Returns the device registry entries and what matter/node_diagnostics answers for each node.
+    """
+    nodes = [
+        ("m1", "Kitchen plug", "thread", "routing_end_device", True),
+        ("m2", "Hallway light", "thread", "routing_end_device", True),
+        ("m3", "Bedroom blinds", "thread", "sleepy_end_device", True),
+        ("m4", "Window sensor", "thread", "sleepy_end_device", False),
+        ("m5", "Bathroom humidity", "thread", "sleepy_end_device", True),
+        ("m6", "Desk lamp", "wifi", "end_device", True),
+        ("m7", "Air purifier", "wifi", "end_device", True),
+        ("m8", "Hub bridge", "ethernet", "bridge", True),
+    ]
+    registry = [{"id": i, "name": name, "identifiers": [["matter", i]]} for i, name, *_ in nodes]
+    registry += [
+        {"id": f"m8b{j}", "name": name, "identifiers": [["matter", f"m8b{j}"]], "via_device_id": "m8"}
+        for j, name in enumerate(["Garden spot", "Porch light"])
+    ]
+    diagnostics = {
+        i: {
+            "network_type": net,
+            "network_name": "Home" if net == "thread" else None,
+            "node_type": kind,
+            "available": up,
+        }
+        for i, _, net, kind, up in nodes
+    }
+    return registry, diagnostics
+
+
 def mock_silent():
     """The Silent devices module: a cellar sensor quiet for 3 days, a plug gone, two weak signals."""
 
@@ -1044,8 +1076,10 @@ def mock_state():
         "system_log": mock_system_log(),
         # The Silent devices tab: two silent devices, two weak signals
         "silent": mock_silent(),
-        # Its Zigbee network: a ZHA device in the registry offers the view, zha/devices gives the mesh
-        "device_registry": [{"id": "d1", "identifiers": [["zha", "r4e0"]]}],
+        # Its Zigbee network: a ZHA device in the registry offers the view, zha/devices gives the mesh;
+        # and its Matter network: the Matter devices in the registry, what matter/node_diagnostics answers
+        "device_registry": [{"id": "d1", "identifiers": [["zha", "r4e0"]]}, *mock_matter()[0]],
+        "matter_diagnostics": mock_matter()[1],
         "zha_devices": mock_zha(),
         # The Orphans tab: the counts with the state, the whole list from its own command
         **dict(zip(("orphans", "orphans_list"), mock_orphans(), strict=True)),
@@ -1458,7 +1492,7 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
         locale: { language: "en" },
         user: { is_admin: true },
         // ZHA loaded: the Silent devices tab's Zigbee view reads its mesh from zha/devices
-        config: { components: ["zha"] },
+        config: { components: ["zha", "matter"] },
         localize,
         loadBackendTranslation: async () => localize,
         areas: {
@@ -1489,6 +1523,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
                   ? state.device_registry
                   : msg.type === "zha/devices"
                   ? state.zha_devices
+                  : msg.type === "matter/node_diagnostics"
+                  ? state.matter_diagnostics[msg.device_id]
                   : msg.type === "backup/info"
                   ? state.backup_info
                   : msg.type === "backup/agents/info"
@@ -1578,9 +1614,11 @@ SHOTS = [
         for view in ("room", "type", "forecast")
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
-    # The Silent devices tab on its Zigbee network: the map beside the tree
+    # The Silent devices tab on its Zigbee and Matter networks: the map beside the tree
     {"file": "panel-silent-zigbee", "theme": "light", "tab": "silent", "view": "zigbee"},
     {"file": "panel-silent-zigbee-dark", "theme": "dark", "tab": "silent", "view": "zigbee"},
+    {"file": "panel-silent-matter", "theme": "light", "tab": "silent", "view": "matter"},
+    {"file": "panel-silent-matter-dark", "theme": "dark", "tab": "silent", "view": "matter"},
     {"file": "panel-marketplace-checking", "theme": "light", "tab": "marketplace", "checking": True},
     {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
