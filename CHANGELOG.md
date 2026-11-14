@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.6.0 - 2026-11-14
+
+### Features
+- **Zigbee and Matter networks in the Silent devices tab.** Beside **List**, **Zigbee network** and **Matter network** (offered when such devices are in the device registry) draw the network as a map beside a tree by router. The map puts the coordinator (or each Matter network) in the middle, the routers around it and their devices beyond, each link coloured by its LQI, the mesh between routers dotted; a silent device is red, on a dashed line to its last parent. The tree gives each router and device its LQI or, when silent, since when. A device picked on the map or in the tree is shown on both and detailed below: role, room, last heard, parent and LQI, battery, **Device** and **Ignore**. **Silent only** keeps the silent devices and the routers they hang from; **Read again** reads the network again (by itself after 5 minutes). Zigbee comes from ZHA (`zha/devices`) or Zigbee2MQTT (its network map, asked on the default `zigbee2mqtt` base topic); Matter gives no neighbour table, so each node is shown under its network (Thread, Wi-Fi, Ethernet), a bridge's devices under it.
+
 ## 2.5.2 - 2026-11-14
 
 ### Fixed

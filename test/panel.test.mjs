@@ -31,8 +31,8 @@ const context = {
   clearTimeout() {},
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors };`, context);
-const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors } = context.panel;
+vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors, shZhaGraph, shZ2mGraph, shMatterGraph, shNetLayout };`, context);
+const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors, shZhaGraph, shZ2mGraph, shMatterGraph, shNetLayout } = context.panel;
 
 // The strings as Home Assistant's localize returns them from the integration's English translations
 function localize(key, vars = {}) {
@@ -1271,6 +1271,110 @@ test('silent devices tab: the silent devices then the weak signals, a filter per
   };
   await p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_ignore', device: 'd1', name: 'Cellar sensor' } } : null) } });
   assert.equal(calls[0], 'system_hub/silent_ignore d1');
+});
+
+test('silent devices networks: the Zigbee mesh from ZHA or Zigbee2MQTT, Matter by network, a map beside a tree', async () => {
+  // ZHA: the coordinator, two routers, an end device its router names as a child, a silent one heard by a router only
+  const zha = [
+    { ieee: 'c', device_type: 'Coordinator', name: 'Coordinator', device_reg_id: 'dc', available: true, neighbors: [
+      { ieee: 'r1', lqi: 220, relationship: 'Child' }, { ieee: 'r2', lqi: 90, relationship: 'Child' }] },
+    { ieee: 'r1', device_type: 'Router', name: 'Living plug', device_reg_id: 'd1', lqi: 220, available: true, neighbors: [
+      { ieee: 'e1', lqi: 180, relationship: 'Child' }, { ieee: 'r2', lqi: 60, relationship: 'Sibling' }, { ieee: 'e2', lqi: 20, relationship: 'None' }] },
+    { ieee: 'r2', device_type: 'Router', name: 'Garage plug', device_reg_id: 'd2', lqi: 90, available: true, neighbors: [
+      { ieee: 'e2', lqi: 40, relationship: 'Child' }] },
+    { ieee: 'e1', device_type: 'EndDevice', name: 'Living sensor', device_reg_id: 'd3', lqi: null, available: true, neighbors: [] },
+    { ieee: 'e2', device_type: 'EndDevice', name: 'Front door', user_given_name: 'Front door', device_reg_id: 'd4', available: false, neighbors: [] },
+  ];
+  const graph = shZhaGraph(zha);
+  const node = (id) => graph.nodes.find((n) => n.id === id);
+  assert.equal(node('r1').parent, 'c');
+  assert.equal(node('e1').parent, 'r1');
+  assert.equal(node('e1').lqi, 180);
+  // A child in r2's table beats a neighbour with no relationship in r1's
+  assert.equal(node('e2').parent, 'r2');
+  assert.equal(graph.links.length, 6);
+  // Every node on the map, the coordinator in the middle
+  const pos = shNetLayout(graph.nodes, 400);
+  assert.deepEqual([...pos.c], [200, 200]);
+  assert.equal(Object.keys(pos).length, 5);
+
+  // Zigbee2MQTT: its links read from their target's table, its nodes matched to the MQTT devices
+  const z2m = shZ2mGraph(
+    {
+      nodes: [{ ieeeAddr: '0xC0', type: 'Coordinator', friendlyName: 'Coordinator' }, { ieeeAddr: '0xA1', type: 'EndDevice', friendlyName: 'Window', lastSeen: 0 }],
+      links: [{ source: { ieeeAddr: '0xa1' }, target: { ieeeAddr: '0xc0' }, lqi: 77, relationship: 1 }],
+    },
+    [{ id: 'dw', identifiers: [['mqtt', 'zigbee2mqtt_0xa1']] }],
+  );
+  assert.equal(z2m.source, 'z2m');
+  const win = z2m.nodes.find((n) => n.name === 'Window');
+  assert.deepEqual([win.parent, win.lqi, win.device_id], ['0xc0', 77, 'dw']);
+
+  // Matter: by network, a bridge's devices under it
+  const reg = [
+    { id: 'm1', name: 'Bulb', identifiers: [['matter', 'a']] },
+    { id: 'm2', name: 'Hub', identifiers: [['matter', 'b']] },
+    { id: 'm3', name: 'Bridged sensor', identifiers: [['matter', 'c']], via_device_id: 'm2' },
+    { id: 'x', name: 'Hue', identifiers: [['hue', 'x']] },
+  ];
+  const matter = shMatterGraph(reg, [
+    ['m1', { network_type: 'thread', network_name: 'Home', node_type: 'routing_end_device', available: true }],
+    ['m2', { network_type: 'wifi', node_type: 'bridge', available: false }],
+  ]);
+  const m = (id) => matter.nodes.find((n) => n.id === id);
+  assert.deepEqual([m('m1').parent, m('m1').role], ['net:thread:Home', 'router']);
+  assert.deepEqual([m('m3').parent, m('m3').available], ['m2', false]);
+  assert.equal(matter.nodes.filter((n) => n.role === 'hub').length, 2);
+
+  // The panel: the views offered from the device registry, ZHA read when its view is shown
+  const ago = (hours) => new Date(Date.now() - hours * 3600000).toISOString();
+  const state = {
+    loaded: true,
+    modules: ['silent'],
+    tabs: ['silent'],
+    silent: { tracked: 4, ignored: 0, integrations: ['zha'], devices: [
+      { device_id: 'd4', name: 'Front door', area: 'Hall', integration: 'zha', last_heard: ago(48), unavailable: false, silent: true, battery: true, level: 12, signal: null }] },
+  };
+  const p = panel(state, 'silent');
+  const calls = [];
+  p._hass.config = { components: ['zha'] };
+  p._hass.callWS = async (msg) => {
+    calls.push(msg.type);
+    if (msg.type === 'config/device_registry/list') return [{ id: 'd1', identifiers: [['zha', 'r1']] }];
+    if (msg.type === 'zha/devices') return zha;
+    return state;
+  };
+  p._render = () => {};
+  assert.doesNotMatch(p._content(), /data-view="zigbee"/);
+  await new Promise((resolve) => setImmediate(resolve));
+  let html = p._content();
+  assert.match(html, /data-action="sl_view" data-view="zigbee"/);
+  assert.doesNotMatch(html, /data-view="matter"/);
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_view', view: 'zigbee' } } : null) } });
+  p._content();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.ok(calls.includes('zha/devices'));
+  html = p._content();
+  // The map and the tree: the silent door in red, under its router, with since when
+  assert.match(html, /<svg viewBox="0 0 400 400"/);
+  assert.match(html, /class="nn end silent" data-action="sl_pick" data-node="e2"/);
+  assert.match(html, /class="nl gone"/);
+  assert.match(html, /nrow silent[^>]*data-node="e2"[\s\S]*?Front door<\/span><span class="pill warn">Silent · /);
+  assert.match(html, /3 heard/);
+  // Picked: detailed below, its parent and its battery, Ignore
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_pick', node: 'e2' } } : null) } });
+  html = p._content();
+  assert.match(html, /ndetail silent[\s\S]*?End device · Hall · heard [^·]+ · via Garage plug \(LQI 40\) · battery 12 %/);
+  assert.match(html, /data-action="sl_ignore" data-device="d4"/);
+  // Silent only: the living room fades
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_only' } } : null) } });
+  html = p._content();
+  assert.match(html, /class="nn router dim" data-action="sl_pick" data-node="r1"/);
+  assert.doesNotMatch(html, /nrow[^>]*data-node="e1"/);
+  // Another tab: back to the list
+  p._resetTabState();
+  assert.equal(p._slView, 'list');
+  assert.equal(p._slOnly, false);
 });
 
 test('logs tab: the errors and warnings by integration, a level and a period; Ignore, Reload, Clear', async () => {
