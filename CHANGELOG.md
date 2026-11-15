@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.2 - 2026-11-15
+
+### Fixed
+- **Sidebar badge no longer pushes the panel label out of line.** Home Assistant's recent sidebar places the collapsed badge over the icon with a `ha-svg-icon + .badge` rule, but a custom panel's sidebar icon is an `<ha-icon>`, so the rule did not match and the badge sat in the leading slot and shifted the "System Hub" label to the right when the sidebar was expanded. The badge is now positioned over the icon by the integration itself, so the label stays aligned with the other panels.
+
 ## 2.8.1 - 2026-11-15
 
 ### Fixed

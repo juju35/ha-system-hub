@@ -112,7 +112,13 @@ function shBadgeSpan(text, tone, slot, key) {
   el.slot = slot;
   el.dataset.key = key;
   el.textContent = text;
-  el.style.cssText = `min-width:18px; height:18px; box-sizing:border-box; padding:0 5px; align-items:center; border-radius:9px; font-size:11px; font-weight:500; line-height:1; color:${SH_BADGE_TEXT[tone] || '#fff'}; background:${SH_BADGE_COLORS[tone]};`;
+  // The start badge (shown collapsed, over the icon) is placed by Home Assistant's `ha-svg-icon + .badge` rule — but a
+  // custom panel's sidebar icon is an <ha-icon>, not a bare <ha-svg-icon>, so that rule does not match and the badge
+  // would sit in the start slot and push the panel label to the right. Position it ourselves (over the icon, like
+  // Home Assistant's own: top var(--ha-space-1), left 26px) so it never affects the row's layout; the end badge stays
+  // in flow at the trailing edge. The host's expanded/collapsed opacity rules still show the right one by slot.
+  var place = slot === 'start' ? 'position:absolute; top:var(--ha-space-1, 4px); left:26px; z-index:1; pointer-events:none; ' : '';
+  el.style.cssText = `${place}display:inline-flex; justify-content:center; min-width:18px; height:18px; box-sizing:border-box; padding:0 5px; align-items:center; border-radius:9px; font-size:11px; font-weight:500; line-height:1; color:${SH_BADGE_TEXT[tone] || '#fff'}; background:${SH_BADGE_COLORS[tone]};`;
   return el;
 }
 
