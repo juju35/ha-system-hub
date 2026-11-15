@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.3 - 2026-11-15
+
+### Maintenance
+- Document the sidebar count badge in the README, with a light and dark screenshot of the sidebar entry.
+
 ## 2.8.2 - 2026-11-15
 
 ### Fixed
