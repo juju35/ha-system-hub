@@ -1689,8 +1689,17 @@ def health_state(state):
     for sensor in s.get("system", []):
         if sensor.get("key") == "disk_use_percent":
             sensor["state"] = "55"
-    for key in ("containers", "logs", "system_log", "watchdog", "marketplace", "system_updates", "updates",
-                "git_sync", "git_sync_diff"):
+    for key in (
+        "containers",
+        "logs",
+        "system_log",
+        "watchdog",
+        "marketplace",
+        "system_updates",
+        "updates",
+        "git_sync",
+        "git_sync_diff",
+    ):
         s.pop(key, None)
     return s
 
