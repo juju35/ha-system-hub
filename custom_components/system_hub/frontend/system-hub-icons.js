@@ -90,48 +90,72 @@ window.systemHubSetTone = (tone) => {
   shIconRedraw(document.querySelector('home-assistant')?.shadowRoot);
 };
 
-// The System Hub item in Home Assistant's sidebar (by its panel path), or null until the sidebar is drawn
+// The System Hub item in Home Assistant's sidebar, or null until the sidebar is drawn. The recent sidebar gives each
+// item the id `sidebar-panel-<path>` and sets its href as a property (not an attribute), so the id is the reliable
+// hook; `[href]` and `[data-panel]` catch the older sidebars (an <a> wrapping a paper-icon-item).
 function shSidebarItem() {
   var ha = document.querySelector('home-assistant')?.shadowRoot;
   var sidebar = ha?.querySelector('home-assistant-main')?.shadowRoot?.querySelector('ha-sidebar')?.shadowRoot;
   if (!sidebar) return null;
-  return sidebar.querySelector('[href="/system-hub"]') || sidebar.querySelector('[data-panel="system-hub"]');
+  return (
+    sidebar.querySelector('#sidebar-panel-system-hub') ||
+    sidebar.querySelector('[href="/system-hub"]') ||
+    sidebar.querySelector('[data-panel="system-hub"]')
+  );
 }
 
-// The badge on the sidebar item: the number of points to check, coloured by the most serious one, like the
-// notifications count; none when all is good. New sidebar items (ha-md-list-item) carry it in their trailing slot,
-// the older ones (<a>) at the right of the row. Redrawn when Home Assistant rebuilds its items; unchanged, it writes
-// nothing (so the observer below does not loop).
+// One badge span, styled as Home Assistant's own sidebar badge (class `badge`, so the sidebar's CSS places it and
+// shows or hides it by slot and expanded state) but in our tone instead of the accent colour.
+function shBadgeSpan(text, tone, slot, key) {
+  var el = document.createElement('span');
+  el.className = 'badge system-hub-badge';
+  el.slot = slot;
+  el.dataset.key = key;
+  el.textContent = text;
+  el.style.cssText = `min-width:18px; height:18px; box-sizing:border-box; padding:0 5px; align-items:center; border-radius:9px; font-size:11px; font-weight:500; line-height:1; color:${SH_BADGE_TEXT[tone] || '#fff'}; background:${SH_BADGE_COLORS[tone]};`;
+  return el;
+}
+
+// The badge on the sidebar item: the number of points to check, in the overall tone, like the notifications count;
+// none when all is good. On the recent sidebar (ha-list-item-button / ha-md-list-item) it mirrors Home Assistant's
+// own badge — a span in the start slot (shown when the sidebar is collapsed, over the icon) and one in the end slot
+// (shown when expanded) — so the sidebar's CSS handles the placement and the collapsed/expanded switch. On the older
+// sidebar (an <a>) a single span is placed at the right. Redrawn when Home Assistant rebuilds its items; unchanged,
+// it writes nothing (so the observer below does not loop).
 function shBadgeRedraw() {
   var item = shSidebarItem();
   if (!item) return false;
   var count = window.__systemHubBadge.count;
   var tone = window.__systemHubBadge.tone;
-  var badge = item.querySelector(':scope > .system-hub-badge');
+  var spans = item.querySelectorAll(':scope > .system-hub-badge');
   if (!count) {
-    if (badge) badge.remove();
+    for (var b of spans) b.remove();
     return true;
   }
   var text = count > 99 ? '99+' : String(count);
   var key = `${tone}:${text}`;
-  if (badge && badge.dataset.key === key) return true;
-  var slotted = item.localName === 'ha-md-list-item';
-  if (!badge) {
-    badge = document.createElement('span');
-    badge.className = 'system-hub-badge';
-    if (slotted) {
-      badge.slot = 'end';
-    } else {
+  if (item.localName === 'a') {
+    var badge = spans[0];
+    if (badge && badge.dataset.key === key) return true;
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'system-hub-badge';
       item.style.position = 'relative';
+      item.appendChild(badge);
     }
-    item.appendChild(badge);
+    badge.dataset.key = key;
+    badge.textContent = text;
+    badge.style.cssText = `position:absolute; right:12px; top:50%; transform:translateY(-50%); min-width:18px; height:18px; box-sizing:border-box; padding:0 5px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; font-size:11px; font-weight:500; line-height:1; pointer-events:none; z-index:1; color:${SH_BADGE_TEXT[tone] || '#fff'}; background:${SH_BADGE_COLORS[tone]};`;
+    return true;
   }
-  badge.dataset.key = key;
-  badge.textContent = text;
-  var base = `min-width:18px; height:18px; box-sizing:border-box; padding:0 5px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; font-size:11px; font-weight:500; line-height:1; pointer-events:none; color:${SH_BADGE_TEXT[tone] || '#fff'}; background:${SH_BADGE_COLORS[tone]};`;
-  badge.style.cssText = slotted
-    ? `${base} margin-inline-end:4px;`
-    : `${base} position:absolute; right:12px; top:50%; transform:translateY(-50%); z-index:1;`;
+  if (spans.length === 2 && spans[0].dataset.key === key) return true;
+  for (var old of spans) old.remove();
+  // The start badge goes right after the icon, so the sidebar's `ha-svg-icon + .badge` rule places it over the icon.
+  var icon = item.querySelector(':scope > ha-svg-icon[slot="start"]') || item.querySelector(':scope > ha-icon[slot="start"]');
+  var start = shBadgeSpan(text, tone, 'start', key);
+  if (icon) item.insertBefore(start, icon.nextSibling);
+  else item.appendChild(start);
+  item.appendChild(shBadgeSpan(text, tone, 'end', key));
   return true;
 }
 

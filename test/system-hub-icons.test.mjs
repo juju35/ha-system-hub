@@ -94,21 +94,48 @@ test('the status icon: the tone read, drawn again when it changes and kept by th
   assert.equal(frames.length, 1);
 });
 
-function makeEl(localName) {
+function matchEl(el, sel) {
+  if (sel.startsWith(':scope > ')) {
+    const rest = sel.slice(9);
+    return el.children.filter((c) => matchEl(c, rest));
+  }
+  if (sel === '.system-hub-badge') return (el.className || '').includes('system-hub-badge') ? [el] : [];
+  const slot = sel.match(/^(ha-svg-icon|ha-icon)\[slot="start"\]$/);
+  if (slot) return el.localName === slot[1] && el.slot === 'start' ? [el] : [];
+  return [];
+}
+
+function makeEl(localName, props = {}) {
   return {
     localName,
     children: [],
     style: {},
     dataset: {},
+    ...props,
     appendChild(child) {
-      this.children.push(child);
       child.parent = this;
+      this.children.push(child);
+      return child;
+    },
+    insertBefore(child, ref) {
+      child.parent = this;
+      const i = ref ? this.children.indexOf(ref) : -1;
+      if (i < 0) this.children.push(child);
+      else this.children.splice(i, 0, child);
+      return child;
+    },
+    get nextSibling() {
+      const sibs = this.parent ? this.parent.children : [];
+      return sibs[sibs.indexOf(this) + 1] || null;
     },
     remove() {
       if (this.parent) this.parent.children = this.parent.children.filter((c) => c !== this);
     },
-    querySelector() {
-      return this.children.find((c) => c.className === 'system-hub-badge') || null;
+    querySelector(sel) {
+      return matchEl(this, sel)[0] || null;
+    },
+    querySelectorAll(sel) {
+      return matchEl(this, sel);
     },
   };
 }
@@ -117,7 +144,7 @@ function withSidebar(context, item) {
   const saved = {};
   context.localStorage = { getItem: (k) => saved[k] ?? null, setItem: (k, v) => (saved[k] = v) };
   context.document.createElement = () => makeEl('span');
-  const sidebarShadow = { querySelector: (s) => (s === '[href="/system-hub"]' ? item : null) };
+  const sidebarShadow = { querySelector: (s) => (s === '#sidebar-panel-system-hub' ? item : null) };
   const haRoot = {
     querySelector: (s) =>
       s === 'home-assistant-main'
@@ -128,14 +155,13 @@ function withSidebar(context, item) {
   return saved;
 }
 
-test('the sidebar badge: the count, in the overall tone, at the right of an older item', () => {
+test('the sidebar badge: the count, in the overall tone, at the right of an older <a> item', () => {
   const { context } = load(null);
   const item = makeEl('a');
   const saved = withSidebar(context, item);
   context.window.systemHubSetBadge(3, 'warn');
   const badge = item.children[0];
   assert.equal(badge.textContent, '3');
-  assert.equal(badge.slot, undefined);
   assert.match(badge.style.cssText, /position:absolute/);
   assert.match(badge.style.cssText, /--warning-color/);
   assert.equal(item.style.position, 'relative');
@@ -150,19 +176,32 @@ test('the sidebar badge: the count, in the overall tone, at the right of an olde
   assert.equal(item.children.length, 0);
 });
 
-test('the sidebar badge: carried in the trailing slot of a new ha-md-list-item', () => {
+test('the sidebar badge: two slots on a new ha-list-item-button, mirroring the notifications badge', () => {
   const { context } = load(null);
-  const item = makeEl('ha-md-list-item');
+  const item = makeEl('ha-list-item-button', { id: 'sidebar-panel-system-hub' });
+  const icon = makeEl('ha-icon', { slot: 'start' });
+  item.appendChild(icon);
+  item.appendChild(makeEl('span', { slot: 'headline' }));
   withSidebar(context, item);
   // A count can show while the overall tone is still healthy (a single point, score 80+): a green badge
   context.window.systemHubSetBadge(1, 'good');
-  const badge = item.children[0];
-  assert.equal(badge.slot, 'end');
-  assert.match(badge.style.cssText, /margin-inline-end/);
-  assert.doesNotMatch(badge.style.cssText, /position:absolute/);
-  assert.match(badge.style.cssText, /--success-color/);
-  // The same count and tone: nothing rewritten (a fresh key would mean a rewrite)
-  const key = badge.dataset.key;
+  const badges = item.children.filter((c) => (c.className || '').includes('system-hub-badge'));
+  assert.equal(badges.length, 2);
+  const slots = badges.map((b) => b.slot).sort();
+  assert.deepEqual(slots, ['end', 'start']);
+  // Home Assistant's own badge class, so its CSS places and toggles them
+  for (const b of badges) {
+    assert.match(b.className, /\bbadge\b/);
+    assert.equal(b.textContent, '1');
+    assert.match(b.style.cssText, /--success-color/);
+  }
+  // The start badge sits right after the icon (so `ha-svg-icon + .badge` positions it over the icon)
+  assert.equal(item.children[item.children.indexOf(icon) + 1].slot, 'start');
+  // The same count and tone: nothing rewritten
+  const key = badges[0].dataset.key;
   context.window.systemHubSetBadge(1, 'good');
-  assert.equal(item.children[0].dataset.key, key);
+  assert.equal(item.children.filter((c) => (c.className || '').includes('system-hub-badge'))[0].dataset.key, key);
+  // Cleared when there is nothing to check
+  context.window.systemHubSetBadge(0, 'good');
+  assert.equal(item.children.filter((c) => (c.className || '').includes('system-hub-badge')).length, 0);
 });

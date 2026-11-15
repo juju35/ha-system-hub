@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.1 - 2026-11-15
+
+### Fixed
+- **The sidebar count badge now appears on the recent sidebar.** Home Assistant's recent sidebar draws each item as an `<ha-list-item-button>` whose address is a property, not an attribute, so the badge was never placed and nothing showed. The item is now found by its id, and the badge mirrors Home Assistant's own notifications count — a mark over the icon when the sidebar is collapsed, a number at the end of the row when it is expanded — in the Status tone.
+
 ## 2.8.0 - 2026-11-15
 
 ### Features
