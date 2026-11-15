@@ -128,7 +128,7 @@ function withSidebar(context, item) {
   return saved;
 }
 
-test('the sidebar badge: the count, coloured by the most serious point, at the right of an older item', () => {
+test('the sidebar badge: the count, in the overall tone, at the right of an older item', () => {
   const { context } = load(null);
   const item = makeEl('a');
   const saved = withSidebar(context, item);
@@ -154,14 +154,15 @@ test('the sidebar badge: carried in the trailing slot of a new ha-md-list-item',
   const { context } = load(null);
   const item = makeEl('ha-md-list-item');
   withSidebar(context, item);
-  context.window.systemHubSetBadge(2, 'info');
+  // A count can show while the overall tone is still healthy (a single point, score 80+): a green badge
+  context.window.systemHubSetBadge(1, 'good');
   const badge = item.children[0];
   assert.equal(badge.slot, 'end');
   assert.match(badge.style.cssText, /margin-inline-end/);
   assert.doesNotMatch(badge.style.cssText, /position:absolute/);
-  assert.match(badge.style.cssText, /--info-color/);
+  assert.match(badge.style.cssText, /--success-color/);
   // The same count and tone: nothing rewritten (a fresh key would mean a rewrite)
   const key = badge.dataset.key;
-  context.window.systemHubSetBadge(2, 'info');
+  context.window.systemHubSetBadge(1, 'good');
   assert.equal(item.children[0].dataset.key, key);
 });

@@ -25,11 +25,10 @@ window.__systemHubTone ??= shToneSaved();
 
 var SH_COUNT_KEY = 'system-hub-count';
 var SH_BADGE_TONE_KEY = 'system-hub-badge-tone';
-// The badge's colour follows the most serious point of the Status tab: critical, to watch or info (good shows none).
+// The badge takes the overall tone, the same as the Status emblem (the sidebar icon): healthy, to watch or a problem.
 var SH_BADGE_COLORS = {
   bad: 'var(--error-color, #db4437)',
   warn: 'var(--warning-color, #ffa600)',
-  info: 'var(--info-color, #039be5)',
   good: 'var(--success-color, #43a047)',
 };
 // Dark text reads on the amber badge, white on the others.

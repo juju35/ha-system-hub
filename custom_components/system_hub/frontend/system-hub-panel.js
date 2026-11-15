@@ -5486,15 +5486,13 @@ var SH_STATUS_METHODS = {
   },
 
   // The sidebar icon and its badge follow the Status tab: drawn again in this browser when they change
-  // (system-hub-icons.js). The icon's shape is the overall tone (the ring); the badge counts the points to check
-  // and takes the colour of the most serious one (critical, to watch, then info).
+  // (system-hub-icons.js). Both take the overall tone (the ring): the icon its shape, the badge its colour, so the
+  // badge matches the Status emblem. The badge counts the points to check (critical, to watch and info together).
   _reportTone() {
     if (!this._state?.loaded) return;
     var { counts, tone } = this._stTone();
     globalThis.systemHubSetTone?.(tone);
-    var points = counts.bad + counts.warn + counts.info;
-    var badgeTone = counts.bad ? 'bad' : counts.warn ? 'warn' : counts.info ? 'info' : 'good';
-    globalThis.systemHubSetBadge?.(points, badgeTone);
+    globalThis.systemHubSetBadge?.(counts.bad + counts.warn + counts.info, tone);
   },
 
   _status() {
