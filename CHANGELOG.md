@@ -4,6 +4,7 @@
 
 ### Maintenance
 - Document the sidebar count badge in the README, with a light and dark screenshot of the sidebar entry.
+- Document the Status health score in the README, with a light and dark screenshot of the hero ring at a mid score.
 
 ## 2.8.2 - 2026-11-15
 

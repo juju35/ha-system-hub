@@ -7,6 +7,7 @@ A file is only rewritten when its decoded pixels differ from the one already the
 re-encode that looks the same leaves the repository untouched.
 """
 
+import copy
 import json
 import os
 import shutil
@@ -1626,6 +1627,8 @@ SHOTS = [
     # The Status tab with every area, Automation Monitor's included
     {"file": "panel-status", "theme": "light", "tab": "status", "automations": True},
     {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True},
+    {"file": "status-score", "theme": "light", "tab": "status", "health": True, "hero": True},
+    {"file": "status-score-dark", "theme": "dark", "tab": "status", "health": True, "hero": True},
     {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
     {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},
@@ -1674,6 +1677,22 @@ SHOTS = [
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
     {"file": "panel-phone-dark", "theme": "dark", "tab": "system", "phone": True},
 ]
+
+
+def health_state(state):
+    """A healthier Status for the hero score shot: the overloaded modules are left out and the disk falls back to
+    normal, so a few areas remain to watch and the ring shows a mid score (not the 0 of the all-problems panel, not a
+    perfect 100). Security stays critical, Database, Silent devices and Batteries to watch, Cleanup informational, and
+    System and Backups healthy: 1 critical + 3 to watch + 1 info over healthy ones gives 100 - (15 + 3x5 + 1) = 69.
+    """
+    s = copy.deepcopy(state)
+    for sensor in s.get("system", []):
+        if sensor.get("key") == "disk_use_percent":
+            sensor["state"] = "55"
+    for key in ("containers", "logs", "system_log", "watchdog", "marketplace", "system_updates", "updates",
+                "git_sync", "git_sync_diff"):
+        s.pop(key, None)
+    return s
 
 
 def automations_state(state):
@@ -1839,6 +1858,7 @@ def main():
             page.add_script_tag(content=PANEL_JS)
             shown = checking_state(state) if shot.get("checking") else state
             shown = automations_state(shown) if shot.get("automations") else shown
+            shown = health_state(shown) if shot.get("health") else shown
             page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view"), FORMS])
             page.wait_for_timeout(400)
             if shot.get("card"):
@@ -1854,6 +1874,18 @@ def main():
             if shot.get("form"):
                 clip = page.evaluate(OPEN_FORM, list(shot["form"]))
                 capture(page, out / f"{shot['file']}.png", clip=clip, full_page=True, animations="disabled")
+                page.close()
+                continue
+            if shot.get("hero"):
+                # The Status hero alone (the score ring, the emblem and the pills), with a 16 px frame of the theme.
+                box = page.locator(".sthero").bounding_box()
+                clip = {
+                    "x": max(0, box["x"] - 16),
+                    "y": max(0, box["y"] - 16),
+                    "width": box["width"] + 32,
+                    "height": box["height"] + 32,
+                }
+                capture(page, out / f"{shot['file']}.png", clip=clip, animations="disabled")
                 page.close()
                 continue
             if shot["tab"] == "database":

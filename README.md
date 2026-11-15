@@ -15,6 +15,11 @@ Home Assistant integration that brings the care of your Home Assistant system to
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-status.png" alt="System Hub sidebar panel, Status tab" width="800"></p>
 
+The hero of the Status tab scores the home's health out of 100 — `100` minus a weight for every area to watch — with the ring, the emblem and the count in the tone of the worst area:
+
+<p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/status-score.png" alt="Status tab hero, the health score ring" width="640"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/status-score-dark.png" alt="Status tab hero, the health score ring, dark theme" width="640"></p>
+
 The sidebar entry carries a badge with the number of points to check, in the Status tone (green when healthy, amber to watch, red for a problem), like the notifications count:
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/sidebar-badge.png" alt="System Hub sidebar entry with the count badge" width="256"> <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/sidebar-badge-dark.png" alt="System Hub sidebar entry with the count badge, dark theme" width="256"></p>
