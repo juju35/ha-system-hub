@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.8.0 - 2026-11-15
+
+### Features
+- **A count of the points to check on the sidebar.** The System Hub item in the sidebar now carries a badge with the number of points to check — the same count as the Status tab's hero (critical, to watch and info together), like the notifications count. It takes the colour of the most serious point (red for a critical one, amber for one to watch, blue for an info one) and disappears when all is good. It is drawn beside the Status emblem, whose shape already follows the overall tone, and is read for every administrator every 5 minutes, even with the panel closed.
+
 ## 2.7.1 - 2026-11-14
 
 ### Fixed

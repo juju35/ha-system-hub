@@ -23,6 +23,29 @@ function shToneSaved() {
 }
 window.__systemHubTone ??= shToneSaved();
 
+var SH_COUNT_KEY = 'system-hub-count';
+var SH_BADGE_TONE_KEY = 'system-hub-badge-tone';
+// The badge's colour follows the most serious point of the Status tab: critical, to watch or info (good shows none).
+var SH_BADGE_COLORS = {
+  bad: 'var(--error-color, #db4437)',
+  warn: 'var(--warning-color, #ffa600)',
+  info: 'var(--info-color, #039be5)',
+  good: 'var(--success-color, #43a047)',
+};
+// Dark text reads on the amber badge, white on the others.
+var SH_BADGE_TEXT = { warn: 'rgba(0,0,0,.87)' };
+
+function shBadgeSaved() {
+  try {
+    var n = parseInt(localStorage.getItem(SH_COUNT_KEY), 10);
+    var tone = localStorage.getItem(SH_BADGE_TONE_KEY);
+    return { count: Number.isFinite(n) && n > 0 ? n : 0, tone: tone in SH_BADGE_COLORS ? tone : 'good' };
+  } catch (_err) {
+    return { count: 0, tone: 'good' };
+  }
+}
+window.__systemHubBadge ??= shBadgeSaved();
+
 window.customIcons = window.customIcons || {};
 window.customIcons['system-hub'] = {
   getIcon: async (name) => ({
@@ -68,6 +91,92 @@ window.systemHubSetTone = (tone) => {
   shIconRedraw(document.querySelector('home-assistant')?.shadowRoot);
 };
 
+// The System Hub item in Home Assistant's sidebar (by its panel path), or null until the sidebar is drawn
+function shSidebarItem() {
+  var ha = document.querySelector('home-assistant')?.shadowRoot;
+  var sidebar = ha?.querySelector('home-assistant-main')?.shadowRoot?.querySelector('ha-sidebar')?.shadowRoot;
+  if (!sidebar) return null;
+  return sidebar.querySelector('[href="/system-hub"]') || sidebar.querySelector('[data-panel="system-hub"]');
+}
+
+// The badge on the sidebar item: the number of points to check, coloured by the most serious one, like the
+// notifications count; none when all is good. New sidebar items (ha-md-list-item) carry it in their trailing slot,
+// the older ones (<a>) at the right of the row. Redrawn when Home Assistant rebuilds its items; unchanged, it writes
+// nothing (so the observer below does not loop).
+function shBadgeRedraw() {
+  var item = shSidebarItem();
+  if (!item) return false;
+  var count = window.__systemHubBadge.count;
+  var tone = window.__systemHubBadge.tone;
+  var badge = item.querySelector(':scope > .system-hub-badge');
+  if (!count) {
+    if (badge) badge.remove();
+    return true;
+  }
+  var text = count > 99 ? '99+' : String(count);
+  var key = `${tone}:${text}`;
+  if (badge && badge.dataset.key === key) return true;
+  var slotted = item.localName === 'ha-md-list-item';
+  if (!badge) {
+    badge = document.createElement('span');
+    badge.className = 'system-hub-badge';
+    if (slotted) {
+      badge.slot = 'end';
+    } else {
+      item.style.position = 'relative';
+    }
+    item.appendChild(badge);
+  }
+  badge.dataset.key = key;
+  badge.textContent = text;
+  var base = `min-width:18px; height:18px; box-sizing:border-box; padding:0 5px; display:inline-flex; align-items:center; justify-content:center; border-radius:9px; font-size:11px; font-weight:500; line-height:1; pointer-events:none; color:${SH_BADGE_TEXT[tone] || '#fff'}; background:${SH_BADGE_COLORS[tone]};`;
+  badge.style.cssText = slotted
+    ? `${base} margin-inline-end:4px;`
+    : `${base} position:absolute; right:12px; top:50%; transform:translateY(-50%); z-index:1;`;
+  return true;
+}
+
+// Until the sidebar has drawn the item (it may come after this module): every 250 ms for 5 seconds
+function shBadgeRedrawSoon(tries = 20) {
+  if (shBadgeRedraw() || tries <= 1) return;
+  setTimeout(() => shBadgeRedrawSoon(tries - 1), 250);
+}
+
+// The sidebar rebuilds its items (opened, folded, panels changed): the badge is added again when it is dropped
+function shBadgeObserve() {
+  var item = shSidebarItem();
+  var sidebar = item?.getRootNode();
+  if (!sidebar) {
+    setTimeout(shBadgeObserve, 500);
+    return;
+  }
+  if (sidebar.__systemHubBadgeObserved) return;
+  sidebar.__systemHubBadgeObserved = true;
+  new MutationObserver(() => {
+    if (window.__systemHubBadgeRaf) return;
+    window.__systemHubBadgeRaf = requestAnimationFrame(() => {
+      window.__systemHubBadgeRaf = 0;
+      shBadgeRedraw();
+    });
+  }).observe(sidebar, { childList: true, subtree: true });
+}
+
+// The number of points to check and the most serious one, from the panel's read: the sidebar badge drawn again when
+// it changes, kept for the next page
+window.systemHubSetBadge = (count, tone) => {
+  count = Math.max(0, parseInt(count, 10) || 0);
+  if (!(tone in SH_BADGE_COLORS)) tone = 'good';
+  if (window.__systemHubBadge.count === count && window.__systemHubBadge.tone === tone) return;
+  window.__systemHubBadge = { count: count, tone: tone };
+  try {
+    localStorage.setItem(SH_COUNT_KEY, String(count));
+    localStorage.setItem(SH_BADGE_TONE_KEY, tone);
+  } catch (_err) {
+    // drawn anyway, not kept
+  }
+  shBadgeRedraw();
+};
+
 // The status, read as the panel reads it (its module, without showing it), reported for the sidebar icon
 async function shIconFollow() {
   var hass = document.querySelector('home-assistant')?.hass;
@@ -89,6 +198,8 @@ async function shIconFollow() {
 if (!window.__systemHubIcons) {
   window.__systemHubIcons = true;
   shIconRedrawSoon();
+  shBadgeRedrawSoon();
+  shBadgeObserve();
   // The status read a few seconds after the page, once Home Assistant has drawn it, then every 5 minutes
   setTimeout(shIconFollow, 5000);
   setInterval(shIconFollow, SH_ICON_EVERY_MS);

@@ -93,3 +93,75 @@ test('the status icon: the tone read, drawn again when it changes and kept by th
   context.window.systemHubSetTone('purple');
   assert.equal(frames.length, 1);
 });
+
+function makeEl(localName) {
+  return {
+    localName,
+    children: [],
+    style: {},
+    dataset: {},
+    appendChild(child) {
+      this.children.push(child);
+      child.parent = this;
+    },
+    remove() {
+      if (this.parent) this.parent.children = this.parent.children.filter((c) => c !== this);
+    },
+    querySelector() {
+      return this.children.find((c) => c.className === 'system-hub-badge') || null;
+    },
+  };
+}
+
+function withSidebar(context, item) {
+  const saved = {};
+  context.localStorage = { getItem: (k) => saved[k] ?? null, setItem: (k, v) => (saved[k] = v) };
+  context.document.createElement = () => makeEl('span');
+  const sidebarShadow = { querySelector: (s) => (s === '[href="/system-hub"]' ? item : null) };
+  const haRoot = {
+    querySelector: (s) =>
+      s === 'home-assistant-main'
+        ? { shadowRoot: { querySelector: (s2) => (s2 === 'ha-sidebar' ? { shadowRoot: sidebarShadow } : null) } }
+        : null,
+  };
+  context.document.querySelector = (s) => (s === 'home-assistant' ? { shadowRoot: haRoot } : null);
+  return saved;
+}
+
+test('the sidebar badge: the count, coloured by the most serious point, at the right of an older item', () => {
+  const { context } = load(null);
+  const item = makeEl('a');
+  const saved = withSidebar(context, item);
+  context.window.systemHubSetBadge(3, 'warn');
+  const badge = item.children[0];
+  assert.equal(badge.textContent, '3');
+  assert.equal(badge.slot, undefined);
+  assert.match(badge.style.cssText, /position:absolute/);
+  assert.match(badge.style.cssText, /--warning-color/);
+  assert.equal(item.style.position, 'relative');
+  assert.equal(saved['system-hub-count'], '3');
+  assert.equal(saved['system-hub-badge-tone'], 'warn');
+  // A change recolours and recounts; over 99 is capped
+  context.window.systemHubSetBadge(120, 'bad');
+  assert.equal(item.children[0].textContent, '99+');
+  assert.match(item.children[0].style.cssText, /--error-color/);
+  // Nothing to check: the badge is taken away
+  context.window.systemHubSetBadge(0, 'good');
+  assert.equal(item.children.length, 0);
+});
+
+test('the sidebar badge: carried in the trailing slot of a new ha-md-list-item', () => {
+  const { context } = load(null);
+  const item = makeEl('ha-md-list-item');
+  withSidebar(context, item);
+  context.window.systemHubSetBadge(2, 'info');
+  const badge = item.children[0];
+  assert.equal(badge.slot, 'end');
+  assert.match(badge.style.cssText, /margin-inline-end/);
+  assert.doesNotMatch(badge.style.cssText, /position:absolute/);
+  assert.match(badge.style.cssText, /--info-color/);
+  // The same count and tone: nothing rewritten (a fresh key would mean a rewrite)
+  const key = badge.dataset.key;
+  context.window.systemHubSetBadge(2, 'info');
+  assert.equal(item.children[0].dataset.key, key);
+});

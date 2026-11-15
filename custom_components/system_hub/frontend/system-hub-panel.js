@@ -5485,9 +5485,16 @@ var SH_STATUS_METHODS = {
     return { areas, counts, score, tone: score >= 80 ? 'good' : score >= 50 ? 'warn' : 'bad' };
   },
 
-  // The sidebar icon follows the Status tab: drawn again in this browser when its tone changes (system-hub-icons.js)
+  // The sidebar icon and its badge follow the Status tab: drawn again in this browser when they change
+  // (system-hub-icons.js). The icon's shape is the overall tone (the ring); the badge counts the points to check
+  // and takes the colour of the most serious one (critical, to watch, then info).
   _reportTone() {
-    if (this._state?.loaded) globalThis.systemHubSetTone?.(this._stTone().tone);
+    if (!this._state?.loaded) return;
+    var { counts, tone } = this._stTone();
+    globalThis.systemHubSetTone?.(tone);
+    var points = counts.bad + counts.warn + counts.info;
+    var badgeTone = counts.bad ? 'bad' : counts.warn ? 'warn' : counts.info ? 'info' : 'good';
+    globalThis.systemHubSetBadge?.(points, badgeTone);
   },
 
   _status() {
