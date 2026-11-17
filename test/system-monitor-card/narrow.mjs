@@ -53,23 +53,14 @@ for (const [name, html] of Object.entries(renders())) {
     assert.ok(Number(titles.match(/min-width:\s*([\d.]+)ch/)?.[1]) >= 6.5, titles);
     assert.match(titles, /font-size:\s*16px/);
     assert.match(rulesFor(css, ".name"), /font-size:\s*16px/);
-    // The name takes its own width (the pill right after it, not pushed to the right) and gives way first.
-    const nameRule = rulesFor(css, ".title-row > .name");
-    assert.match(nameRule, /flex:\s*0 1 auto(?:;|\s|$)/);
-    assert.ok(Number(nameRule.match(/min-width:\s*min\(([\d.]+)ch, 100%\)/)?.[1]) >= 6.5, nameRule);
+    // The name takes its own width (the pill right after it, not pushed to the right) and gives way first; the pill
+    // beside the whole name, else under the subtitle, its dot when narrow: measured (test/pill-fit.test.mjs).
+    assert.match(rulesFor(css, ".title-row > .name"), /flex:\s*0 1 auto(?:;|\s|$)/);
     assert.match(rulesFor(css, ".name"), /text-overflow:\s*ellipsis/);
-    // The pill is cut only when the room really lacks: no cap at half the line.
-    const chip = rulesFor(css, ".title-row > .chip");
-    assert.match(chip, /flex:\s*0 0\.01 auto/);
-    assert.match(chip, /min-width:\s*0/);
-    assert.doesNotMatch(chip, /max-width/);
-    assert.match(rulesFor(css, ".title-row > .chip > .chip-text"), /text-overflow:\s*ellipsis/);
+    assert.match(rulesFor(css, ".title-row > .chip"), /flex:\s*none/);
     assert.match(rulesFor(css, ".header"), /container:\s*sm-header \/ inline-size/);
-    const narrow = containerBlocks(css, "sm-header");
-    assert.ok(narrow.some((b) => /\.title-row > \.chip > \.chip-text\s*\{[^}]*display:\s*none/.test(b.body)), "the pill never drops to its dot");
-    // A 245 px card (221 px inside its header) still shows the pill's text: only a phone-width header drops it.
-    for (const b of narrow.filter((x) => /\.chip-text\s*\{[^}]*display:\s*none/.test(x.body)))
-      assert.ok(b.max < 221, `@container sm-header (max-width: ${b.max}px)`);
+    // No fixed header width hides the pill's text.
+    for (const b of containerBlocks(css, "sm-header")) assert.doesNotMatch(b.body, /chip-text\s*\{[^}]*display:\s*none/);
     // The zoom button in the card's top right corner, out of the header's flow.
     assert.match(rulesFor(css, ".zoom"), /position:\s*absolute;[^}]*top:\s*5px;\s*right:\s*5px/);
   });

@@ -1669,8 +1669,6 @@ const BASE_STYLE = `
   :host([compact]) .logo { height: 28px; width: 28px; }
   :host([compact]) .logo .icon { width: 16px; height: 16px; }
   :host([nologo]) .logo { display: none; }
-  :host([tiny]) .chip .txt { display: none; }
-  :host([tiny]) .chip { padding: 4px; }
   .logo { height: 40px; width: 40px; border-radius: 50%; flex: none; display: grid; place-items: center;
           color: var(--c, var(--am-ok)); background: color-mix(in srgb, var(--c, var(--am-ok)) 16%, transparent); }
   .logo .icon { width: 24px; height: 24px; fill: currentColor; }
@@ -1686,10 +1684,22 @@ const BASE_STYLE = `
   }
   /* The title block takes the room left, truncates, and keeps a few characters whatever the chip and buttons need. */
   .titles { flex: 1 1 0; min-width: 5ch; }
-  /* The status chip right after the name (8 px): the name gives way first, down to a few characters, then the chip. */
-  .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .title-row > .name { flex: 0 1 auto; min-width: 4.5ch; }
-  .title-row > .chip { flex: 0 0.01 auto; }
+  /* The status pill: on the title row, 8 px after the title, only when the whole title and the pill's whole label fit
+     there; otherwise on its own line under the subtitle, which then keeps one line; its dot alone at 200 px or less
+     or when its label does not fit the title block (its text stays in its title and for screen readers). Measured
+     after each render (_fitPill), in every language, never by a fixed width. */
+  .title-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; min-width: 0; }
+  .title-row > .name { flex: 0 1 auto; min-width: 0; }
+  .title-row > .chip { flex: none; min-width: auto; max-width: none; overflow: visible; align-self: center; margin-top: 0; }
+  .title-row > .chip .txt { min-width: auto; overflow: visible; white-space: nowrap; display: inline; -webkit-line-clamp: none; line-clamp: none; }
+  .titles.pill-below { display: flex; flex-direction: column; align-items: stretch; }
+  .titles.pill-below > * { order: 3; }
+  .titles.pill-below > .title-row { display: contents; }
+  .titles.pill-below > .sub { order: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .titles.pill-below > .title-row > .chip { order: 2; align-self: flex-start; margin-top: 2px; }
+  .titles.pill-dot > .title-row > .chip { padding: 4px; gap: 0; }
+  .titles.pill-dot > .title-row > .chip .dot { display: block; }
+  .titles.pill-dot > .title-row > .chip .txt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
   /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the Refresh button on the
      same top line at its left; the header keeps clear of them. */
   ha-card:has(> .header > .zoom) { position: relative; }
@@ -1793,6 +1803,9 @@ const watchOutside = (card, handler) => {
   };
 };
 
+// The parts of the header that hold the status pill (see _fitPill).
+const AM_PILL = { block: ".titles", row: ".title-row", name: ".name", chip: ".chip", sub: ".sub" };
+
 class AutomationMonitorBase extends HTMLElement {
   constructor() {
     super();
@@ -1846,6 +1859,7 @@ class AutomationMonitorBase extends HTMLElement {
   // tick skips the render (signature + full render chain) until a list has items again.
   connectedCallback() {
     this._observeWidth();
+    this._watchPill();
     this._timer = setInterval(() => {
       if (this._showsRelativeTime()) this._update();
     }, 60000);
@@ -1897,7 +1911,55 @@ class AutomationMonitorBase extends HTMLElement {
     this._ro.observe(this);
   }
 
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). Its dot
+  // alone on a card 200 px wide or less, or when its label is wider than the title block (or, in a banner, would not
+  // fit above the ground strip). Measured after each render and on every new width (or once the web font is loaded),
+  // never by a fixed width; $AM_PILL names the parts.
+  _fitPill() {
+    const S = AM_PILL;
+    for (const t of this.shadowRoot?.querySelectorAll?.(S.block) || []) {
+      const row = [...(t.children || [])].find((n) => n.matches?.(S.row));
+      const name = row && [...row.children].find((n) => n.matches?.(S.name));
+      const chips = row ? [...row.children].filter((n) => n.matches?.(S.chip)) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      if (this.getBoundingClientRect().width <= 200) t.classList.add("pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + 8 + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const box = t.closest(".banner")?.getBoundingClientRect();
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...chips, ...[...t.children].filter((n) => n.matches?.(S.sub))].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.right > right + 0.5 || (box && (r.top < box.top - 0.5 || r.bottom > box.bottom - 10.5)));
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  // Fitted again on a new width, a new content (a render) and once the web font is loaded, in the next frame.
+  _watchPill() {
+    if (this._pillWatch || typeof ResizeObserver !== "function") return;
+    const fit = () => {
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    };
+    this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
+    this._pillWatch[0].observe(this);
+    if (this.shadowRoot) this._pillWatch[1]?.observe(this.shadowRoot, { childList: true, subtree: true, characterData: true });
+    document.fonts?.ready?.then(fit);
+    fit();
+  }
+
+  _unwatchPill() {
+    for (const o of this._pillWatch || []) o?.disconnect();
+    this._pillWatch = null;
+  }
+
   disconnectedCallback() {
+    this._unwatchPill();
     this._ro?.disconnect();
     if (this._roFrame) cancelAnimationFrame(this._roFrame);
     this._roFrame = 0;
@@ -2184,7 +2246,7 @@ class AutomationMonitorBase extends HTMLElement {
           <div class="title-row"><div class="name">${esc(c.title || "Automation Monitor")}</div><span class="chip clickable ${status.cls}" role="button" tabindex="0" data-entity="${esc(status.entity || "")}" title="${esc(status.text)}" aria-label="${esc(
             status.text
           )}"><span class="dot"></span><span class="txt">${esc(status.text)}</span></span></div>
-          ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
+          ${sub ? `<div class="sub" title="${esc(sub)}">${esc(sub)}</div>` : ""}
         </div>
         ${
           this._admin

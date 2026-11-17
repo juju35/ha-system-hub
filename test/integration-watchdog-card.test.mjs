@@ -632,16 +632,8 @@ const containerRules = (css) => {
 
 test('narrow header: the pill keeps its full text while there is room, the title keeps a few characters, the button never shrinks', () => {
   const css = rules(IntegrationWatchdogCard.styles);
-  // The pill takes the room it needs and only shrinks (then truncates) when there is not enough of it.
-  assert.equal(css['.pill'].flex, '0 1 auto');
-  assert.equal(css['.pill']['min-width'], '0');
-  assert.equal(css['.pill']['max-width'], undefined, 'no cap on the pill: it truncates only when the room runs out');
-  assert.equal(css['.pill'].overflow, 'hidden');
-  // Short of room, the status goes onto a second line (« Sve je / dostupno » on a 245 px card) before it is cut.
-  assert.equal(css['.pill .ptxt']['white-space'], 'normal');
-  assert.equal(css['.pill .ptxt']['-webkit-line-clamp'], '2');
-  assert.equal(css['.pill .ptxt'].display, '-webkit-box');
-  assert.equal(css['.pill .ptxt']['text-overflow'], 'ellipsis');
+  // The pill beside the whole title, else under the subtitle, its dot when narrow: measured (test/pill-fit.test.mjs).
+  assert.equal(css['.title-row > .pill .ptxt']['white-space'], 'nowrap');
   // The title takes what is left (basis 0, so it does not take the pill's room) and keeps ~4 characters.
   assert.equal(css['.heading'].flex, '1 1 0');
   assert.match(css['.heading']['min-width'], /^[4-9](\.\d+)?ch$/);
@@ -649,15 +641,8 @@ test('narrow header: the pill keeps its full text while there is room, the title
   assert.equal(css['.badge'].flex, 'none');
   // The header is a size container: below the threshold the pill keeps only its coloured dot.
   assert.equal(css['.head']['container-type'], 'inline-size');
-  const queries = containerRules(IntegrationWatchdogCard.styles);
-  const [query, compact] = Object.entries(queries).find(([, r]) => r['.head .pill .dot']) ?? [];
-  assert.ok(query, 'a container query turns the pill into its dot');
-  // Only where even a short status cannot fit: a 245 px card (header 221 px) still shows the text.
-  const threshold = Number(query.match(/max-width:\s*(\d+)px/)?.[1]);
-  assert.ok(threshold >= 150 && threshold < 221, query);
-  assert.equal(compact['.head .pill .dot'].display, 'block');
-  // The text is hidden visually only: screen readers still read it.
-  assert.match(compact['.head .pill .ptxt'].clip || compact['.head .pill .ptxt']['clip-path'], /rect|inset/);
+  // The dot alone: the text hidden visually only, screen readers still read it.
+  assert.match(css['.heading.pill-dot > .title-row > .pill .ptxt']['clip-path'], /inset/);
   // The dot shows at every width (dot + status, in the status colour); the text gives way only when narrow.
   assert.equal(css['.pill .dot'].display, undefined);
   // In the rows, the outcome on the right gives way (up to half the row) instead of hiding the name.

@@ -1258,6 +1258,9 @@ const hrStatusIds = (registry) => {
 const hrMarketplaceUpdates = (registry) =>
   Object.keys(registry || {}).filter((id) => id.startsWith('update.') && registry[id]?.platform === 'marketplace');
 
+// The parts of the header that hold the status pill (see _fitPill).
+const MR_PILL = { block: '.heading', row: '.title-row', name: '.title', chip: '.pill', sub: '.subtitle' };
+
 class MarketplaceRefreshCard extends HTMLElement {
   static getConfigElement() {
     return document.createElement('sh-marketplace-card-editor');
@@ -1322,26 +1325,59 @@ class MarketplaceRefreshCard extends HTMLElement {
     return 2 + (this._rows || 0);
   }
 
-  // The pill shows its dot only when its whole label doesn't fit: measured again whenever the card changes width.
   connectedCallback() {
-    if (!this._ro && typeof ResizeObserver === 'function') this._ro = new ResizeObserver(() => this._fitPill());
-    this._ro?.observe(this);
-    // Widths measured before the web font is there would be wrong.
-    document.fonts?.ready?.then(() => this._fitPill());
-    this._fitPill();
+    this._watchPill();
   }
 
   disconnectedCallback() {
-    this._ro?.disconnect();
+    this._unwatchPill();
   }
 
-  // The label is measured at its full size (the dot removed first): the dot only when the label would be cut.
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). Its dot
+  // alone on a card 200 px wide or less, or when its label is wider than the title block (or, in a banner, would not
+  // fit above the ground strip). Measured after each render and on every new width (or once the web font is loaded),
+  // never by a fixed width; $MR_PILL names the parts.
   _fitPill() {
-    const pill = this.shadowRoot?.querySelector('.pill');
-    const text = pill?.querySelector?.('.ptext');
-    if (!pill?.classList || !text) return;
-    pill.classList.remove('compact');
-    pill.classList.toggle('compact', text.scrollWidth > text.clientWidth);
+    const S = MR_PILL;
+    for (const t of this.shadowRoot?.querySelectorAll?.(S.block) || []) {
+      const row = [...(t.children || [])].find((n) => n.matches?.(S.row));
+      const name = row && [...row.children].find((n) => n.matches?.(S.name));
+      const chips = row ? [...row.children].filter((n) => n.matches?.(S.chip)) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      if (this.getBoundingClientRect().width <= 200) t.classList.add("pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + 8 + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const box = t.closest(".banner")?.getBoundingClientRect();
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...chips, ...[...t.children].filter((n) => n.matches?.(S.sub))].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.right > right + 0.5 || (box && (r.top < box.top - 0.5 || r.bottom > box.bottom - 10.5)));
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  // Fitted again on a new width, a new content (a render) and once the web font is loaded, in the next frame.
+  _watchPill() {
+    if (this._pillWatch || typeof ResizeObserver !== "function") return;
+    const fit = () => {
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    };
+    this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
+    this._pillWatch[0].observe(this);
+    if (this.shadowRoot) this._pillWatch[1]?.observe(this.shadowRoot, { childList: true, subtree: true, characterData: true });
+    document.fonts?.ready?.then(fit);
+    fit();
+  }
+
+  _unwatchPill() {
+    for (const o of this._pillWatch || []) o?.disconnect();
+    this._pillWatch = null;
   }
 
   getGridOptions() {
@@ -1739,17 +1775,25 @@ class MarketplaceRefreshCard extends HTMLElement {
               background: color-mix(in srgb, var(--c) 14%, transparent); font-variant-numeric: tabular-nums; }
       .ptext { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .dot { display: block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
-      /* The pill right after the title (8 px), a dot in the status colour before its words. Short of room beside the
-         title it takes its own line under it, whole; when even that line is too short (measured by _fitPill, class
-         "compact"), only its dot. 8 px gaps and a slimmer pill under 324 px; on a phone's 6 columns (156-194 px) a
-         smaller badge. */
-      .title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; min-width: 0; }
-      .title-row > .title { flex: 0 1 auto; min-width: min(100%, 4.5ch); }
-      .title-row > .pill { max-width: 100%; }
+      /* A dot in the status colour before the pill's words; 8 px gaps and a slimmer pill under 324 px; on a phone's
+         6 columns (156-194 px) a smaller badge. */
+      /* The status pill: on the title row, 8 px after the title, only when the whole title and the pill's whole label fit
+         there; otherwise on its own line under the subtitle, which then keeps one line; its dot alone at 200 px or less
+         or when its label does not fit the title block (its text stays in its title and for screen readers). Measured
+         after each render (_fitPill), in every language, never by a fixed width. */
+      .title-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 0; }
+      .title-row > .pill { flex: none; min-width: auto; max-width: none; overflow: visible; align-self: center; margin-top: 0; }
+      .title-row > .pill .ptext { min-width: auto; overflow: visible; white-space: nowrap; display: inline; -webkit-line-clamp: none; line-clamp: none; }
+      .heading.pill-below { display: flex; flex-direction: column; align-items: stretch; }
+      .heading.pill-below > * { order: 3; }
+      .heading.pill-below > .title-row { display: contents; }
+      .heading.pill-below > .subtitle { order: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .heading.pill-below > .title-row > .pill { order: 2; align-self: flex-start; margin-top: 2px; }
+      .heading.pill-dot > .title-row > .pill { padding: 4px; gap: 0; }
+      .heading.pill-dot > .title-row > .pill .dot { display: block; }
+      .heading.pill-dot > .title-row > .pill .ptext { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
       @container (max-width: 300px) { .head { gap: 8px; } .pill { padding: 1px 6px; } }
-      .pill.compact { padding: 5px; }
-      .pill.compact .dot { display: block; }
-      .pill.compact .ptext { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       @container (max-width: 170px) {
         .badge { width: 32px; height: 32px; }
         .badge ha-icon { --mdc-icon-size: 20px; }
@@ -1837,7 +1881,7 @@ class MarketplaceRefreshCard extends HTMLElement {
         .ilabel { white-space: normal; overflow-wrap: anywhere; }
         .install { border-radius: 12px; line-height: 1.2; }
       }
-      :host([hide-title]) .heading > .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
+      :host([hide-title]) .heading .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
     `;
   }
 }

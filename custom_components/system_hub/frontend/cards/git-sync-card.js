@@ -1766,6 +1766,9 @@ const gsRepo = (url) => {
 };
 // jscpd:ignore-end
 
+// The parts of the header that hold the status pill (see _fitPill).
+const GS_PILL = { block: '.titles', row: '.title-row', name: '.title', chip: '.pill', sub: '.subtitle' };
+
 class GitSyncCard extends HTMLElement {
   static getConfigElement() {
     return document.createElement('sh-git-sync-card-editor');
@@ -1793,11 +1796,60 @@ class GitSyncCard extends HTMLElement {
 
   connectedCallback() {
     this._outside.on();
+    this._watchPill();
     // Back on the page after leaving it: rendered again folded.
     if (this._hass && this._config) this._render();
   }
 
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). Its dot
+  // alone on a card 200 px wide or less, or when its label is wider than the title block (or, in a banner, would not
+  // fit above the ground strip). Measured after each render and on every new width (or once the web font is loaded),
+  // never by a fixed width; $GS_PILL names the parts.
+  _fitPill() {
+    const S = GS_PILL;
+    for (const t of this.shadowRoot?.querySelectorAll?.(S.block) || []) {
+      const row = [...(t.children || [])].find((n) => n.matches?.(S.row));
+      const name = row && [...row.children].find((n) => n.matches?.(S.name));
+      const chips = row ? [...row.children].filter((n) => n.matches?.(S.chip)) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      if (this.getBoundingClientRect().width <= 200) t.classList.add("pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + 8 + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const box = t.closest(".banner")?.getBoundingClientRect();
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...chips, ...[...t.children].filter((n) => n.matches?.(S.sub))].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.right > right + 0.5 || (box && (r.top < box.top - 0.5 || r.bottom > box.bottom - 10.5)));
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  // Fitted again on a new width, a new content (a render) and once the web font is loaded, in the next frame.
+  _watchPill() {
+    if (this._pillWatch || typeof ResizeObserver !== "function") return;
+    const fit = () => {
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    };
+    this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
+    this._pillWatch[0].observe(this);
+    if (this.shadowRoot) this._pillWatch[1]?.observe(this.shadowRoot, { childList: true, subtree: true, characterData: true });
+    document.fonts?.ready?.then(fit);
+    fit();
+  }
+
+  _unwatchPill() {
+    for (const o of this._pillWatch || []) o?.disconnect();
+    this._pillWatch = null;
+  }
+
   disconnectedCallback() {
+    this._unwatchPill();
     // Left in the middle of a press: nothing stays held.
     this._dropPress?.();
     this._outside.off();
@@ -2241,7 +2293,7 @@ class GitSyncCard extends HTMLElement {
           <div class="badge"><ha-icon icon="mdi:git"></ha-icon></div>
           <div class="titles">
             <div class="title-row"><div class="title">${gsEsc(c.title || this._t('title'))}</div><span class="pill${busy ? ' busy' : ''}" title="${gsEsc(pillText)}" aria-label="${gsEsc(pillText)}"><span class="pill-text">${gsEsc(pillText)}</span></span></div>
-            <div class="subtitle">${subtitle}</div>
+            <div class="subtitle" title="${subtitle}">${subtitle}</div>
           </div>
           ${this._zoomButton()}
         </div>
@@ -2287,16 +2339,23 @@ class GitSyncCard extends HTMLElement {
               background: color-mix(in srgb, var(--s) 14%, transparent); }
       .pill::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--s); }
       .pill-text { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      /* Narrow card: the pill keeps its dot only, its text stays in title / aria-label. */
-      @container (max-width: 200px) {
-        .pill { gap: 0; padding: 4px; }
-        .pill-text { display: none; }
-      }
       .pill.busy::before { animation: gs-pulse 1s ease-in-out infinite; }
-      /* The pill right after the title (8 px): the title gives way first, down to a few letters, then the pill. */
-      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-      .title-row > .title { flex: 0 1 auto; min-width: 4.5ch; }
-      .title-row > .pill { flex: 0 0.01 auto; align-self: center; margin-top: 0; }
+      /* The status pill: on the title row, 8 px after the title, only when the whole title and the pill's whole label fit
+         there; otherwise on its own line under the subtitle, which then keeps one line; its dot alone at 200 px or less
+         or when its label does not fit the title block (its text stays in its title and for screen readers). Measured
+         after each render (_fitPill), in every language, never by a fixed width. */
+      .title-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 0; }
+      .title-row > .pill { flex: none; min-width: auto; max-width: none; overflow: visible; align-self: center; margin-top: 0; }
+      .title-row > .pill .pill-text { min-width: auto; overflow: visible; white-space: nowrap; display: inline; -webkit-line-clamp: none; line-clamp: none; }
+      .titles.pill-below { display: flex; flex-direction: column; align-items: stretch; }
+      .titles.pill-below > * { order: 3; }
+      .titles.pill-below > .title-row { display: contents; }
+      .titles.pill-below > .subtitle { order: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .titles.pill-below > .title-row > .pill { order: 2; align-self: flex-start; margin-top: 2px; }
+      .titles.pill-dot > .title-row > .pill { padding: 4px; gap: 0; }
+      .titles.pill-dot > .title-row > .pill .dot { display: block; }
+      .titles.pill-dot > .title-row > .pill .pill-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 
       .commit { margin-top: 14px; padding: 10px 12px; border-radius: 12px;
                 background: var(--secondary-background-color, rgba(127,127,127,.08)); }

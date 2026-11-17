@@ -590,29 +590,6 @@ test('mini card: chip text is readable in light and dark themes (WCAG AA, 4.5:1)
   assert.deepEqual(checkContrast(OrphanEntitiesMiniCard, cases), []);
 });
 
-test('header: the pill keeps its dot alone when its text or the title would be cut, the text otherwise', () => {
-  const card = render({}, makeHass({ scanned: false, items: [] }));
-  const el = (scrollWidth, clientWidth, extra = {}) => ({ scrollWidth, clientWidth, scrollHeight: 20, clientHeight: 20, ...extra });
-  const classes = new Set();
-  const pill = { classList: { add: (c) => classes.add(c), remove: (c) => classes.delete(c) }, querySelector: () => text };
-  let text = el(120, 60);
-  let title = el(80, 80);
-  card.shadowRoot.querySelector = (sel) => (sel === '.head .pill' ? pill : sel === '.head .title' ? title : null);
-  card._fitPill();
-  assert.ok(classes.has('compact'), 'cut pill text');
-  text = el(60, 60);
-  card._fitPill();
-  assert.ok(!classes.has('compact'), 'everything fits');
-  title = el(120, 40);
-  card._fitPill();
-  assert.ok(classes.has('compact'), 'cut title');
-  // A pill text clamped on more lines than its box shows is cut too.
-  title = el(80, 80);
-  text = el(60, 60, { scrollHeight: 48, clientHeight: 28 });
-  card._fitPill();
-  assert.ok(classes.has('compact'), 'clamped text');
-});
-
 test('hide_when_empty: the hidden card shows again in edit mode and in the editor preview', () => {
   const card = render({ hide_when_empty: true }, makeHass({ items: [] }));
   const events = [];

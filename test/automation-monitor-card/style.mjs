@@ -91,11 +91,9 @@ test("narrow header: the title keeps a few characters, the chip shrinks, the ico
   assert.match(rule(".titles"), /flex: 1 1 0;/);
   assert.match(rule(".titles"), /min-width: \d+ch/);
   assert.match(rule(".name"), /text-overflow: ellipsis/);
-  assert.match(rule(".chip"), /flex: 0 1 auto/);
-  assert.match(rule(".chip"), /min-width: 0/);
-  assert.doesNotMatch(rule(".chip"), /max-width/);
-  assert.match(rule(".chip .txt"), /text-overflow: ellipsis/);
-  assert.match(BASE_STYLE, /:host\(\[tiny\]\) \.chip \.txt \{ display: none; \}/);
+  // The pill beside the whole name, else under the subtitle, its dot when narrow: measured (test/pill-fit.test.mjs).
+  assert.match(rule(".title-row > .chip"), /flex: none/);
+  assert.doesNotMatch(BASE_STYLE, /:host\(\[tiny\]\) \.chip/);
   assert.match(BASE_STYLE, /:host\(\[compact\]\) \.logo \{[^}]*width: 28px/);
   assert.match(BASE_STYLE, /:host\(\[nologo\]\) \.logo \{ display: none; \}/);
   for (const s of [BASE_STYLE, FULL_STYLE]) assert.doesNotMatch(s.replace(/\/\*[\s\S]*?\*\//g, ""), /container-type:|container: [^;]*\/|@container/);

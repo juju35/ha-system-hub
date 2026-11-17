@@ -1467,6 +1467,9 @@ function iwHistoryLabel(kind) {
   return kind === 'gave_up' || kind === 'power_cycle_gave_up' ? 'gave_up_event' : kind;
 }
 
+// The parts of the header that hold the status pill (see _fitPill).
+const IW_PILL = { block: '.heading', row: '.title-row', name: '.title', chip: '.pill', sub: '.subtitle' };
+
 class IntegrationWatchdogCard extends HTMLElement {
   static getConfigElement() {
     return document.createElement('sh-watchdog-card-editor');
@@ -1489,7 +1492,55 @@ class IntegrationWatchdogCard extends HTMLElement {
     this._render();
   }
 
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). Its dot
+  // alone on a card 200 px wide or less, or when its label is wider than the title block (or, in a banner, would not
+  // fit above the ground strip). Measured after each render and on every new width (or once the web font is loaded),
+  // never by a fixed width; $IW_PILL names the parts.
+  _fitPill() {
+    const S = IW_PILL;
+    for (const t of this.shadowRoot?.querySelectorAll?.(S.block) || []) {
+      const row = [...(t.children || [])].find((n) => n.matches?.(S.row));
+      const name = row && [...row.children].find((n) => n.matches?.(S.name));
+      const chips = row ? [...row.children].filter((n) => n.matches?.(S.chip)) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      if (this.getBoundingClientRect().width <= 200) t.classList.add("pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + 8 + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const box = t.closest(".banner")?.getBoundingClientRect();
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...chips, ...[...t.children].filter((n) => n.matches?.(S.sub))].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.right > right + 0.5 || (box && (r.top < box.top - 0.5 || r.bottom > box.bottom - 10.5)));
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  // Fitted again on a new width, a new content (a render) and once the web font is loaded, in the next frame.
+  _watchPill() {
+    if (this._pillWatch || typeof ResizeObserver !== "function") return;
+    const fit = () => {
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    };
+    this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
+    this._pillWatch[0].observe(this);
+    if (this.shadowRoot) this._pillWatch[1]?.observe(this.shadowRoot, { childList: true, subtree: true, characterData: true });
+    document.fonts?.ready?.then(fit);
+    fit();
+  }
+
+  _unwatchPill() {
+    for (const o of this._pillWatch || []) o?.disconnect();
+    this._pillWatch = null;
+  }
+
   set hass(hass) {
+    this._watchPill();
     const old = this._hass;
     this._hass = hass;
     // Nothing the card shows changed: the same state objects, registry, language and minute ("3 min ago").
@@ -1902,10 +1953,22 @@ class IntegrationWatchdogCard extends HTMLElement {
       .pill .ptxt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.25;
                     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
       .pill .dot { flex: none; width: 6px; height: 6px; margin-right: 4px; border-radius: 50%; background: var(--c); }
-      /* The pill right after the title (8 px): the title gives way first, down to a few letters, then the pill. */
-      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-      .title-row > .title { flex: 0 1 auto; min-width: 4.5ch; }
-      .title-row > .pill { flex: 0 0.01 auto; max-width: none; }
+      /* The status pill: on the title row, 8 px after the title, only when the whole title and the pill's whole label fit
+         there; otherwise on its own line under the subtitle, which then keeps one line; its dot alone at 200 px or less
+         or when its label does not fit the title block (its text stays in its title and for screen readers). Measured
+         after each render (_fitPill), in every language, never by a fixed width. */
+      .title-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 0; }
+      .title-row > .pill { flex: none; min-width: auto; max-width: none; overflow: visible; align-self: center; margin-top: 0; }
+      .title-row > .pill .ptxt { min-width: auto; overflow: visible; white-space: nowrap; display: inline; -webkit-line-clamp: none; line-clamp: none; }
+      .heading.pill-below { display: flex; flex-direction: column; align-items: stretch; }
+      .heading.pill-below > * { order: 3; }
+      .heading.pill-below > .title-row { display: contents; }
+      .heading.pill-below > .subtitle { order: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .heading.pill-below > .title-row > .pill { order: 2; align-self: flex-start; margin-top: 2px; }
+      .heading.pill-dot > .title-row > .pill { padding: 4px; gap: 0; }
+      .heading.pill-dot > .title-row > .pill .dot { display: block; }
+      .heading.pill-dot > .title-row > .pill .ptxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
       /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the check button on the
          same top line at its left; the header keeps clear of them. */
       ha-card:has(.zoom) { position: relative; }
@@ -1915,11 +1978,6 @@ class IntegrationWatchdogCard extends HTMLElement {
                                                  background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
       .head > .zoom { right: 5px; }
       .head:has(> .zoom) > .check { right: 33px; }
-      @container (max-width: 200px) {
-        .head .pill { padding: 5px; }
-        .head .pill .dot { display: block; }
-        .head .pill .ptxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-      }
       /* A very narrow header (a 1fr 1fr grid on a phone): the badge gives way, the pill's dot still tells the status */
       @container (max-width: 140px) {
         .head .badge { display: none; }
@@ -1984,7 +2042,7 @@ class IntegrationWatchdogCard extends HTMLElement {
       .when > span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .when .lbl { font-size: 12px; font-weight: 500; line-height: 1.2; color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); }
       .when .ago { font-size: 11px; line-height: 1.2; color: var(--iw-muted); }
-      :host([hide-title]) .heading > .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
+      :host([hide-title]) .heading .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
     `;
   }
 }

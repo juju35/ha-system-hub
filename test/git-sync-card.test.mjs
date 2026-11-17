@@ -634,17 +634,12 @@ test('narrow card: the title truncates, the pill shrinks to its dot, buttons wra
   assert.match(title, /min-width: \dch/);
   assert.match(title, /white-space: nowrap/);
   assert.match(title, /text-overflow: ellipsis/);
-  const pill = cssRule(css, '.pill');
-  assert.match(pill, /flex: 0 1 auto/);
-  assert.match(pill, /min-width: 0/);
-  assert.doesNotMatch(pill, /max-width/);
-  assert.match(cssRule(css, '.pill-text'), /text-overflow: ellipsis/);
+  // The pill beside the whole title, else under the subtitle, its dot when narrow: measured (test/pill-fit.test.mjs).
   // The size container is inside the card, never ha-card: in an inline-block parent or an auto grid column the
   // card would fall to the width of its padding.
   assert.doesNotMatch(cssRule(css, 'ha-card'), /container/);
   assert.match(cssRule(css, ':host'), /display: block/);
   assert.match(cssRule(css, '.header'), /container-type: inline-size/);
-  assert.match(css, /@container \(max-width: \d+px\) \{[\s\S]*?\.pill-text \{ display: none; \}/);
   assert.match(cssRule(css, '.badge'), /flex: none/);
   const button = cssRule(css, 'button.action');
   assert.match(button, /min-width: 0/);
@@ -672,7 +667,7 @@ test('mini card: compact view with the last commit, the changes, the last push a
   const card = mini({}, makeHass({ status: 'dirty', files: ['a.yaml', 'b.yaml'] }));
   const out = html(card);
   assert.match(out, /class="st-dirty compact"/);
-  assert.match(out, /<div class="subtitle">main<\/div>/);
+  assert.match(out, /<div class="subtitle" title="main">main<\/div>/);
   assert.match(out, /class="m-msg">feat\(corridor\): lower the night light threshold/);
   assert.match(out, /class="m-chip changed"[\s\S]*2 files/);
   assert.match(out, /Last push: 42 minutes ago/);

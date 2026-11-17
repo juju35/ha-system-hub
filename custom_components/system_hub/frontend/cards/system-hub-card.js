@@ -148,7 +148,14 @@ var SH_HUB_STYLE = `
   .htext .title { font-size:16px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:inherit; }
   .htext .sub { font-size:13px; color:#3b5b78; }
   .night .htext .sub { color:rgba(255,255,255,.78); }
-  .htext .dots { justify-content:flex-start; max-width:none; margin-top:4px; }
+  .htext .dots { justify-content:flex-start; max-width:none; margin-top:4px; flex-wrap:nowrap; overflow:hidden; }
+  /* The pill under the subtitle (see _fitPill): the area dots beside it, on the same line. */
+  .htext .who.pill-below { flex-direction:row; flex-wrap:wrap; align-items:center; align-content:center; column-gap:8px; }
+  .htext .who.pill-below > .trow > .title, .htext .who.pill-below > .sub { flex:1 0 100%; min-width:0; }
+  .htext .who.pill-below > .dots { order:3; margin-top:2px; flex:0 1 auto; min-width:0; }
+  /* A narrow card: no room for the picture beside the text, the background alone stays. */
+  .banner { container:sh-banner / inline-size; }
+  @container sh-banner (max-width: 300px) { .sh-scene { display:none; } .htext { right:0; } }
   .banner .chip { background:color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color:color-mix(in srgb, var(--c) 45%, #0d2a45); }
   .banner.night .chip { background:color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color:color-mix(in srgb, var(--c) 35%, #ffffff); }
   .body { padding:0 16px 14px; }
@@ -190,15 +197,33 @@ var SH_CARD_STYLE = `
   .mini { display:flex; align-items:center; gap:12px; padding:10px 14px; cursor:pointer; }
   .dots { display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end; max-width:40%; }
   .note { color:var(--secondary-text-color); }
-  /* The title and the status pill right after it (8 px); short of room the pill takes the next line, whole. */
-  .trow { display:flex; flex-wrap:wrap; align-items:center; gap:2px 8px; min-width:0; }
-  .trow > .title { flex:0 1 auto; min-width:4.5ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .chip { --c:var(--sh-tone); flex:0 0.01 auto; min-width:0; display:inline-flex; align-items:center; gap:5px; padding:1px 8px; border-radius:12px;
+  .trow > .title { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chip { --c:var(--sh-tone); display:inline-flex; align-items:center; gap:5px; padding:1px 8px; border-radius:12px;
           font-size:11px; font-weight:500; line-height:16px; white-space:nowrap; color:color-mix(in srgb, var(--c) 50%, var(--primary-text-color));
           background:color-mix(in srgb, var(--c) 15%, transparent); }
   .chip .cdot { width:7px; height:7px; border-radius:50%; flex:none; background:var(--c); }
-  .chip .ct { min-width:0; overflow:hidden; text-overflow:ellipsis; }
+  .chip .ct { white-space:nowrap; }
+
+  /* The status pill: on the title row, 8 px after the title, only when the whole title and the pill's whole label fit
+     there; otherwise on its own line under the subtitle, which then keeps one line; its dot alone at 200 px or less
+     or when its label does not fit the title block (its text stays in its title and for screen readers). Measured
+     after each render (_fitPill), in every language, never by a fixed width. */
+  .trow { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; min-width: 0; }
+  .trow > .title { flex: 0 1 auto; min-width: 0; }
+  .trow > .chip { flex: none; min-width: auto; max-width: none; overflow: visible; align-self: center; margin-top: 0; }
+  .trow > .chip .ct { min-width: auto; overflow: visible; white-space: nowrap; display: inline; -webkit-line-clamp: none; line-clamp: none; }
+  .who.pill-below { display: flex; flex-direction: column; align-items: stretch; }
+  .who.pill-below > * { order: 3; }
+  .who.pill-below > .trow { display: contents; }
+  .who.pill-below > .sub { order: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .who.pill-below > .trow > .chip { order: 2; align-self: flex-start; margin-top: 2px; }
+  .who.pill-dot > .trow > .chip { padding: 4px; gap: 0; }
+  .who.pill-dot > .trow > .chip .dot { display: block; }
+  .who.pill-dot > .trow > .chip .ct { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
 `;
+
+// The parts of the header that hold the status pill (see _fitPill).
+var SH_CARD_PILL = { block: '.who', row: '.trow', name: '.title', chip: '.chip', sub: '.sub' };
 
 // A card of a module (its own card element), or the Status card
 class SystemHubCardBase extends HTMLElement {
@@ -255,6 +280,54 @@ class SystemHubCardBase extends HTMLElement {
   disconnectedCallback() {
     clearInterval(this._timer);
     this._timer = null;
+    this._unwatchPill();
+  }
+
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). Its dot
+  // alone on a card 200 px wide or less, or when its label is wider than the title block (or, in a banner, would not
+  // fit above the ground strip). Measured after each render and on every new width (or once the web font is loaded),
+  // never by a fixed width; $SH_CARD_PILL names the parts.
+  _fitPill() {
+    const S = SH_CARD_PILL;
+    for (const t of this.shadowRoot?.querySelectorAll?.(S.block) || []) {
+      const row = [...(t.children || [])].find((n) => n.matches?.(S.row));
+      const name = row && [...row.children].find((n) => n.matches?.(S.name));
+      const chips = row ? [...row.children].filter((n) => n.matches?.(S.chip)) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      if (this.getBoundingClientRect().width <= 200) t.classList.add("pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + 8 + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const box = t.closest(".banner")?.getBoundingClientRect();
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...chips, ...[...t.children].filter((n) => n.matches?.(S.sub))].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.right > right + 0.5 || (box && (r.top < box.top - 0.5 || r.bottom > box.bottom - 10.5)));
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  // Fitted again on a new width, a new content (a render) and once the web font is loaded, in the next frame.
+  _watchPill() {
+    if (this._pillWatch || typeof ResizeObserver !== "function") return;
+    const fit = () => {
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    };
+    this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
+    this._pillWatch[0].observe(this);
+    if (this.shadowRoot) this._pillWatch[1]?.observe(this.shadowRoot, { childList: true, subtree: true, characterData: true });
+    document.fonts?.ready?.then(fit);
+    fit();
+  }
+
+  _unwatchPill() {
+    for (const o of this._pillWatch || []) o?.disconnect();
+    this._pillWatch = null;
   }
 
   async _read() {
@@ -299,6 +372,8 @@ class SystemHubCardBase extends HTMLElement {
     this._night = shHubIsNight(hass, this._config);
     var illus = this._config.illustration !== false ? SH_HUB_STYLE : '';
     root.innerHTML = `<style>${SH_CARD_STYLE}${illus}</style>${body}`;
+    this._watchPill();
+    this._fitPill();
     for (var el of root.querySelectorAll('[data-tab]')) {
       el.addEventListener('click', (ev) => {
         ev.stopPropagation();
@@ -333,9 +408,9 @@ class SystemHubCardBase extends HTMLElement {
       .join('');
     if (this._config.illustration === false) {
       return `<ha-card><div class="head ${status.tone}" data-tab="status"><div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
-      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}</div><ha-icon class="open" icon="mdi:open-in-new"></ha-icon></div>${groups}</ha-card>`;
+      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}</div><ha-icon class="open" icon="mdi:open-in-new"></ha-icon></div>${groups}</ha-card>`;
     }
-    var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}</div>`;
+    var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}</div>`;
     return `<ha-card class="illus">${this._banner(status, head)}${groups ? `<div class="body">${groups}</div>` : ''}</ha-card>`;
   }
 
@@ -385,11 +460,11 @@ class SystemHubMiniCard extends SystemHubCardBase {
       : '';
     var dots = look.map(([tab, [tone]]) => `<span class="dot ${tone}" title="${shCardEsc(p._tabName(tab))}"></span>`).join('');
     if (this._config.illustration !== false) {
-      var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}${dots ? `<div class="dots">${dots}</div>` : ''}</div>`;
+      var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}${dots ? `<div class="dots">${dots}</div>` : ''}</div>`;
       return `<ha-card class="illus">${this._banner(status, head)}</ha-card>`;
     }
     return `<ha-card class="mini ${status.tone}" data-tab="status"><div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
-      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}</div><div class="dots">${dots}</div></ha-card>`;
+      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}</div><div class="dots">${dots}</div></ha-card>`;
   }
 }
 

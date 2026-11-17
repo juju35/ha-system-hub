@@ -2278,6 +2278,9 @@ function oeFilter(items, { q = '', platform = '', reason = '' } = {}) {
   });
 }
 
+// The parts of the header that hold the status pill (see _fitPill).
+const OE_PILL = { block: '.heading', row: '.title-row', name: '.title', chip: '.pill', sub: '.subtitle' };
+
 class OrphanEntitiesCard extends HTMLElement {
   static getConfigElement() {
     return document.createElement('sh-orphans-card-editor');
@@ -2311,33 +2314,61 @@ class OrphanEntitiesCard extends HTMLElement {
 
   connectedCallback() {
     document.addEventListener('keydown', this._onKey);
-    // The header is fitted again when the card is resized (a phone turned, a column added to the view).
-    if (typeof ResizeObserver === 'function' && !this._resize) {
-      this._resize = new ResizeObserver(() => this._fitPill());
-      this._resize.observe(this);
-    }
+    this._watchPill();
   }
 
   disconnectedCallback() {
     // Left in the middle of a press: nothing stays held.
     this._dropPress?.();
     document.removeEventListener('keydown', this._onKey);
-    this._resize?.disconnect();
-    this._resize = null;
+    this._unwatchPill();
   }
 
-  // The status pill keeps its text only while the text and the title both fit: a long status such as "Waiting for
-  // the first scan" on a narrow card would otherwise leave "Orp…" of the title, or get cut itself. When one of them
-  // is cut, the pill shows its dot alone (the text stays in its tooltip) and the title gets the room.
+  // The status pill goes on the title row, right after the title, only when the whole title and the pill's whole
+  // label fit there; otherwise it takes its own line under the subtitle (the subtitle then on one line). Its dot
+  // alone on a card 200 px wide or less, or when its label is wider than the title block (or, in a banner, would not
+  // fit above the ground strip). Measured after each render and on every new width (or once the web font is loaded),
+  // never by a fixed width; $OE_PILL names the parts.
   _fitPill() {
-    const root = this.shadowRoot;
-    const pill = root?.querySelector('.head .pill');
-    const text = pill?.querySelector('.ptxt');
-    if (!pill || !text || typeof text.clientWidth !== 'number') return;
-    pill.classList.remove('compact');
-    const title = root.querySelector('.head .title');
-    const cut = (el) => !!el && (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1);
-    if (cut(text) || cut(title)) pill.classList.add('compact');
+    const S = OE_PILL;
+    for (const t of this.shadowRoot?.querySelectorAll?.(S.block) || []) {
+      const row = [...(t.children || [])].find((n) => n.matches?.(S.row));
+      const name = row && [...row.children].find((n) => n.matches?.(S.name));
+      const chips = row ? [...row.children].filter((n) => n.matches?.(S.chip)) : [];
+      if (!name?.getBoundingClientRect || !chips.length) continue;
+      t.classList.remove("pill-below", "pill-dot");
+      if (this.getBoundingClientRect().width <= 200) t.classList.add("pill-dot");
+      // The title's whole width (scrollWidth is rounded: 1 px more, so that a title that fits is never cut).
+      const need = chips.reduce((w, c) => w + 8 + c.getBoundingClientRect().width, name.scrollWidth + 1);
+      if (need <= row.getBoundingClientRect().width + 0.5) continue;
+      t.classList.add("pill-below");
+      const box = t.closest(".banner")?.getBoundingClientRect();
+      const right = t.getBoundingClientRect().right;
+      const out = [name, ...chips, ...[...t.children].filter((n) => n.matches?.(S.sub))].some((n) => {
+        const r = n.getBoundingClientRect();
+        return r.height > 0 && (r.right > right + 0.5 || (box && (r.top < box.top - 0.5 || r.bottom > box.bottom - 10.5)));
+      });
+      if (out) t.classList.add("pill-dot");
+    }
+  }
+
+  // Fitted again on a new width, a new content (a render) and once the web font is loaded, in the next frame.
+  _watchPill() {
+    if (this._pillWatch || typeof ResizeObserver !== "function") return;
+    const fit = () => {
+      cancelAnimationFrame(this._pillFrame);
+      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+    };
+    this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
+    this._pillWatch[0].observe(this);
+    if (this.shadowRoot) this._pillWatch[1]?.observe(this.shadowRoot, { childList: true, subtree: true, characterData: true });
+    document.fonts?.ready?.then(fit);
+    fit();
+  }
+
+  _unwatchPill() {
+    for (const o of this._pillWatch || []) o?.disconnect();
+    this._pillWatch = null;
   }
 
   setConfig(config) {
@@ -3067,10 +3098,22 @@ class OrphanEntitiesCard extends HTMLElement {
       .pill .ptxt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.25;
                     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
       .pill .dot { flex: none; width: 6px; height: 6px; margin-right: 4px; border-radius: 50%; background: var(--c); }
-      /* The pill right after the title (8 px): the title gives way first, down to a few letters, then the pill. */
-      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
-      .title-row > .title { flex: 0 1 auto; min-width: 4.5ch; }
-      .title-row > .pill { flex: 0 0.01 auto; max-width: none; }
+      /* The status pill: on the title row, 8 px after the title, only when the whole title and the pill's whole label fit
+         there; otherwise on its own line under the subtitle, which then keeps one line; its dot alone at 200 px or less
+         or when its label does not fit the title block (its text stays in its title and for screen readers). Measured
+         after each render (_fitPill), in every language, never by a fixed width. */
+      .title-row { display: flex; flex-wrap: nowrap; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 0; }
+      .title-row > .pill { flex: none; min-width: auto; max-width: none; overflow: visible; align-self: center; margin-top: 0; }
+      .title-row > .pill .ptxt { min-width: auto; overflow: visible; white-space: nowrap; display: inline; -webkit-line-clamp: none; line-clamp: none; }
+      .heading.pill-below { display: flex; flex-direction: column; align-items: stretch; }
+      .heading.pill-below > * { order: 3; }
+      .heading.pill-below > .title-row { display: contents; }
+      .heading.pill-below > .subtitle { order: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .heading.pill-below > .title-row > .pill { order: 2; align-self: flex-start; margin-top: 2px; }
+      .heading.pill-dot > .title-row > .pill { padding: 4px; gap: 0; }
+      .heading.pill-dot > .title-row > .pill .dot { display: block; }
+      .heading.pill-dot > .title-row > .pill .ptxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
       /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the scan button on the
          same top line at its left; the header keeps clear of them. */
       ha-card:has(.zoom) { position: relative; }
@@ -3080,15 +3123,6 @@ class OrphanEntitiesCard extends HTMLElement {
                                                  background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
       .head > .zoom { right: 5px; }
       .head:has(> .zoom) > .scan { right: 33px; }
-      /* Dot only: under 200 px, and whenever the text or the title would be cut (class compact, set by _fitPill) */
-      .head .pill.compact { padding: 5px; }
-      .head .pill.compact .dot { display: block; }
-      .head .pill.compact .ptxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-      @container (max-width: 200px) {
-        .head .pill { padding: 5px; }
-        .head .pill .dot { display: block; }
-        .head .pill .ptxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-      }
       @container (max-width: 140px) {
         .head .badge { display: none; }
       }
@@ -3246,7 +3280,7 @@ class OrphanEntitiesCard extends HTMLElement {
       .dlg .dw ha-icon { flex: none; --mdc-icon-size: 16px; }
       .dlg .ub { --t: var(--oe-warn); font-size: 11px; font-weight: 500; padding: 0 6px; border-radius: 8px;
                  color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); background: color-mix(in srgb, var(--t) 16%, transparent); }
-      :host([hide-title]) .heading > .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
+      :host([hide-title]) .heading .title, :host([hide-subtitle]) .heading > .subtitle { display: none; }
     `;
   }
 }
