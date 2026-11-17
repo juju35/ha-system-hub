@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.10.0 - 2026-11-17
+
+### Features
+- **Illustrated header on the Status cards.** `system-hub-card` and `system-hub-mini-card` (`module: status`) open on a 90 px animated banner: a home server's dashboard (host, health score ring, containers, batteries, updates, watchdog), each part in the colour of its Status area, over a 10 px concrete floor, with the title on the left and a server icon in the colour of the status (green, amber or red). Night picture when `sun.sun` is below the horizon or the theme is dark, forced with `illustration_theme: day | night`; `illustration: false` keeps the classic header. Both options are in the visual editor of both cards, translated in every language; animations stop under `prefers-reduced-motion`.
+- **Status pill right after the title** on the Status cards (the health score, its dot in the status colour; the score left the subtitle) and on the Automation Monitor, Watchdog, Orphan Entities, Batteries, Git Sync, System Monitor and Marketplace Refresh cards (always with its coloured dot). On every card the pill sits on the title row only when the whole title and its whole label fit there (measured, in every language); otherwise on its own line under the subtitle (then kept to one line), and only its dot when even that does not fit, or on a card 200 px wide or less. The compact System Monitor mini card shows its pill again, red with the number of stopped processes when its icon turns red.
+- **Mini cards**: the expand / collapse button sits in the card's top right corner (24 px, round), the header's other buttons (refresh, check, scan, full screen, notify) on the same top line at its left.
+
 ## 2.9.0 - 2026-11-17
 
 ### Features
