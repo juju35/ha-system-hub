@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Verziókezelés ({repository})"
+    },
+    "database": {
+      "name": "System Hub Adatbázis"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Utolsó vizsgálat"
+      },
+      "database_size": {
+        "name": "Adatbázis mérete",
+        "state_attributes": {
+          "engine": {
+            "name": "Motor"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "még {n} entitás",
         "db_unfold": "Entitásai",
         "db_no_device": "Nincs eszköz",
+        "db_growth": "Növekedés {n} nap alatt",
+        "db_growth_title": "A méret változása a rögzítő által a méretérzékelőről tárolt napi átlagok alapján (30 nap ábrázolva)",
+        "db_free": "Repack által felszabadítva",
+        "db_free_title": "Szabad hely az adatbázisban, amelyet a “Törlés és tömörítés” visszaad",
+        "db_tables": "Táblák",
+        "db_rows": "{n} sor",
+        "db_rows_one": "1 sor",
         "tab_security": "Biztonság",
         "sc_refused": "Elutasított bejelentkezések",
         "sc_refused_day": "Elutasított bejelentkezések · 24 óra",

@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Wersjonowanie ({repository})"
+    },
+    "database": {
+      "name": "System Hub Baza danych"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Ostatnie skanowanie"
+      },
+      "database_size": {
+        "name": "Rozmiar bazy danych",
+        "state_attributes": {
+          "engine": {
+            "name": "Silnik"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "jeszcze {n} encji",
         "db_unfold": "Jego encje",
         "db_no_device": "Bez urządzenia",
+        "db_growth": "Wzrost w {n} dni",
+        "db_growth_title": "Zmiana rozmiaru według średnich dziennych, które rejestrator przechowuje dla czujnika rozmiaru (wykres 30 dni)",
+        "db_free": "Zwolnione przez repack",
+        "db_free_title": "Wolne miejsce w bazie danych, odzyskiwane przez “Wyczyść i skompaktuj”",
+        "db_tables": "Tabele",
+        "db_rows": "{n} wierszy",
+        "db_rows_one": "1 wiersz",
         "tab_security": "Bezpieczeństwo",
         "sc_refused": "Odrzucone logowania",
         "sc_refused_day": "Odrzucone logowania · 24 h",

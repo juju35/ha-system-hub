@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Upravljanje različic ({repository})"
+    },
+    "database": {
+      "name": "System Hub Podatkovna baza"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Zadnji pregled"
+      },
+      "database_size": {
+        "name": "Velikost podatkovne baze",
+        "state_attributes": {
+          "engine": {
+            "name": "Pogon"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "še {n} entitet",
         "db_unfold": "Njene entitete",
         "db_no_device": "Brez naprave",
+        "db_growth": "Rast v {n} dneh",
+        "db_growth_title": "Sprememba velikosti po dnevnih povprečjih, ki jih snemalnik hrani za senzor velikosti (prikazanih 30 dni)",
+        "db_free": "Sprosti repack",
+        "db_free_title": "Prosti prostor v podatkovni bazi, ki ga vrne “Počisti in stisni”",
+        "db_tables": "Tabele",
+        "db_rows": "{n} vrstic",
+        "db_rows_one": "1 vrstica",
         "tab_security": "Varnost",
         "sc_refused": "Zavrnjene prijave",
         "sc_refused_day": "Zavrnjene prijave · 24 h",

@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versioning ({repository})"
+    },
+    "database": {
+      "name": "System Hub Database"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Last scan"
+      },
+      "database_size": {
+        "name": "Database size",
+        "state_attributes": {
+          "engine": {
+            "name": "Engine"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "{n} more entities",
         "db_unfold": "Its entities",
         "db_no_device": "No device",
+        "db_growth": "Growth in {n} days",
+        "db_growth_title": "Change of the size, from the daily means the recorder keeps of the size sensor (30 days drawn)",
+        "db_free": "Freed by a repack",
+        "db_free_title": "Free space inside the database, given back by “Purge and repack”",
+        "db_tables": "Tables",
+        "db_rows": "{n} rows",
+        "db_rows_one": "1 row",
         "tab_security": "Security",
         "sc_refused": "Refused logins",
         "sc_refused_day": "Refused logins · 24 h",

@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Версиониране ({repository})"
+    },
+    "database": {
+      "name": "System Hub База данни"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Последно сканиране"
+      },
+      "database_size": {
+        "name": "Размер на базата данни",
+        "state_attributes": {
+          "engine": {
+            "name": "Двигател"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "още {n} обекта",
         "db_unfold": "Обектите му",
         "db_no_device": "Без устройство",
+        "db_growth": "Растеж за {n} дни",
+        "db_growth_title": "Промяна на размера по дневните средни стойности, които рекордерът пази за сензора за размер (30 дни на графиката)",
+        "db_free": "Освободено с repack",
+        "db_free_title": "Свободно място в базата данни, върнато от „Почисти и компактирай“",
+        "db_tables": "Таблици",
+        "db_rows": "{n} реда",
+        "db_rows_one": "1 ред",
         "tab_security": "Сигурност",
         "sc_refused": "Отказани влизания",
         "sc_refused_day": "Отказани влизания · 24 ч",

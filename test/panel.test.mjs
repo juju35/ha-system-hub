@@ -1471,6 +1471,12 @@ test('database tab: size against the limit, retention, the devices that write th
     auto_purge: true,
     total_day: 20000,
     counted_at: Date.now() / 1000 - 600,
+    free: 300 * 1048576,
+    entity_id: 'sensor.system_hub_database_database_size',
+    tables: [
+      { name: 'states', rows: 900000, size: 1.8 * 1073741824 },
+      { name: 'statistics', rows: 120000, size: 0.6 * 1073741824 },
+    ],
     top: [
       {
         device_id: 'dev1',
@@ -1492,6 +1498,11 @@ test('database tab: size against the limit, retention, the devices that write th
   const calls = [];
   p._hass.callWS = async (msg) => {
     calls.push(`${msg.type}${msg.force ? ' force' : ''}`);
+    if (msg.type === 'recorder/statistics_during_period') {
+      // A week ago 2.30 GiB, today 2.40 GiB
+      const day = 86400e3;
+      return { [msg.statistic_ids[0]]: [8, 7, 1].map((d) => ({ start: Date.now() - d * day, mean: (d === 1 ? 2.39 : 2.3) * 1073741824 })) };
+    }
     return msg.type === 'system_hub/database' ? data : state;
   };
   p._hass.callService = async (domain, service, d) => calls.push(`${domain}.${service} ${JSON.stringify(d)}`);
@@ -1502,6 +1513,11 @@ test('database tab: size against the limit, retention, the devices that write th
   assert.match(html, /Beyond 2 GiB/);
   assert.match(html, /10 days[\s\S]*?Retention/);
   assert.match(html, /Devices that write the most/);
+  // The growth from the size sensor's daily means, what a repack would free, the tables the biggest first
+  assert.match(html, /\+102 MiB[\s\S]*?Growth in 7 days/);
+  assert.ok(calls.includes('recorder/statistics_during_period'));
+  assert.match(html, /300 MiB[\s\S]*?Freed by a repack/);
+  assert.match(html, /Tables[\s\S]*?states[\s\S]*?900,000 rows[\s\S]*?width:75%[\s\S]*?1\.80 GiB[\s\S]*?statistics/);
   // A device: its area, its entities that wrote, its share; an entity without a device on its own row, no chevron
   assert.match(html, /Linky <span class="pill">1 excluded<\/span>[\s\S]*?Garage · 3 entities[\s\S]*?width:45%[\s\S]*?<b>9,000<\/b><span class="s">45 %/);
   assert.match(html, /Uptime <span class="pill">Excluded<\/span>[\s\S]*?sensor\.uptime · No device/);
@@ -1536,7 +1552,7 @@ test('database tab: size against the limit, retention, the devices that write th
   assert.match(p._content(), /older than 10 days and repack/);
   await click('db_repack');
   assert.deepEqual(
-    calls.filter((c) => c.startsWith('recorder')),
+    calls.filter((c) => c.startsWith('recorder.')),
     ['recorder.purge_entities {"entity_id":["sensor.power","sensor.current","sensor.voltage","sensor.uptime"],"keep_days":0}', 'recorder.purge {"keep_days":10,"repack":true}'],
   );
   assert.ok(calls.includes('system_hub/database force'));
@@ -1546,6 +1562,12 @@ test('database tab: size against the limit, retention, the devices that write th
   await p._dbLoad(true);
   assert.match(p._content(), /title="Size unknown for this engine"[\s\S]*?—/);
   assert.match(p._content(), /PostgreSQL/);
+  // MariaDB / MySQL: the size the server tells, the rows estimated
+  data.engine = 'mysql';
+  data.size = 1.2 * 1073741824;
+  await p._dbLoad(true);
+  assert.match(p._content(), /1\.20 GiB[\s\S]*?MariaDB \/ MySQL/);
+  assert.match(p._content(), /≈ 900,000 rows/);
 });
 
 test('sidebar icon: the Status tab tone given to this browser at each read, the panel never registered again', async () => {

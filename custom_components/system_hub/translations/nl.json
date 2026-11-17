@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versiebeheer ({repository})"
+    },
+    "database": {
+      "name": "System Hub Database"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Laatste scan"
+      },
+      "database_size": {
+        "name": "Databasegrootte",
+        "state_attributes": {
+          "engine": {
+            "name": "Engine"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "nog {n} entiteiten",
         "db_unfold": "Zijn entiteiten",
         "db_no_device": "Geen apparaat",
+        "db_growth": "Groei in {n} dagen",
+        "db_growth_title": "Verandering van de grootte, uit de daggemiddelden die de recorder van de groottesensor bewaart (30 dagen getekend)",
+        "db_free": "Vrij na een repack",
+        "db_free_title": "Vrije ruimte in de database, teruggegeven door “Opschonen en comprimeren”",
+        "db_tables": "Tabellen",
+        "db_rows": "{n} rijen",
+        "db_rows_one": "1 rij",
         "tab_security": "Beveiliging",
         "sc_refused": "Geweigerde aanmeldingen",
         "sc_refused_day": "Geweigerde aanmeldingen · 24 u",

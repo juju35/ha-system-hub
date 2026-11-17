@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.9.0 - 2026-11-17
+
+### Features
+- **Database volume, MariaDB / MySQL and PostgreSQL included.** The Database tab now shows the size of an external database too — the schema's for MariaDB / MySQL (`information_schema`), the database's for PostgreSQL (`pg_database_size`) — so the size limit, the Status tab and the sidebar count work whatever the engine.
+- **A size sensor to follow the growth.** `sensor.system_hub_database_database_size` (bytes, shown in MiB, its engine in the attributes) is read every 15 minutes, so the recorder keeps its history and statistics; the tab shows the growth over the last 7 days with the line of the last 30, and the System tab shows the size even without the File Size integration.
+- **The tables and the space to free.** The tab lists the database's tables, the biggest first, with their rows (estimated by MariaDB / MySQL and PostgreSQL) and their size, and tells how much a **Purge and repack** would free (SQLite's free pages, MariaDB / MySQL's free space).
+
 ## 2.8.3 - 2026-11-15
 
 ### Maintenance

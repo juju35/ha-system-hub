@@ -703,6 +703,21 @@ def mock_database():
         "total_day": 41250,
         "counted_at": datetime.fromisoformat(NOW).timestamp() - 1500,
         "top": top,
+        "free": (212 * 1024**2),
+        "entity_id": "sensor.system_hub_database_database_size",
+        "tables": [
+            {"name": name, "rows": rows, "size": int(mib * 1024**2)}
+            for name, rows, mib in (
+                ("states", 6_412_380, 1012),
+                ("statistics_short_term", 2_150_400, 368),
+                ("state_attributes", 412_960, 196),
+                ("statistics", 1_048_220, 142),
+                ("events", 186_450, 64),
+                ("event_data", 12_840, 9),
+                ("states_meta", 1_412, 0.4),
+                ("statistics_meta", 638, 0.2),
+            )
+        ],
     }
 
 
@@ -1482,6 +1497,13 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
     };
     const statistics = (msg) => {
         const from = Date.parse(msg.start_time);
+        // The database size sensor: a month of daily means, growing from 1.52 to 1.78 GiB
+        if (msg.period === "day") {
+            return Object.fromEntries(msg.statistic_ids.map((id) => [id, Array.from({ length: 30 }, (_, i) => ({
+                start: from + i * 86400000,
+                mean: Math.round((1.52 + (0.26 * i) / 29 + 0.012 * Math.sin(i)) * 1024 ** 3),
+            }))]));
+        }
         return Object.fromEntries(msg.statistic_ids.map((id) => [id, wave(id, from, 3600000, 168).map(([t, v]) => ({ start: t, mean: v }))]));
     };
     const el = document.createElement("system-hub-panel");

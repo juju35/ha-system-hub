@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Verzování ({repository})"
+    },
+    "database": {
+      "name": "System Hub Databáze"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Poslední skenování"
+      },
+      "database_size": {
+        "name": "Velikost databáze",
+        "state_attributes": {
+          "engine": {
+            "name": "Engine"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "dalších {n} entit",
         "db_unfold": "Jeho entity",
         "db_no_device": "Bez zařízení",
+        "db_growth": "Růst za {n} dní",
+        "db_growth_title": "Změna velikosti podle denních průměrů, které záznamník uchovává pro senzor velikosti (zobrazeno 30 dní)",
+        "db_free": "Uvolní repack",
+        "db_free_title": "Volné místo v databázi, které vrátí “Vyčistit a zhutnit”",
+        "db_tables": "Tabulky",
+        "db_rows": "{n} řádků",
+        "db_rows_one": "1 řádek",
         "tab_security": "Zabezpečení",
         "sc_refused": "Odmítnutá přihlášení",
         "sc_refused_day": "Odmítnutá přihlášení · 24 h",

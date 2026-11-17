@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versionamento ({repository})"
+    },
+    "database": {
+      "name": "System Hub Base de dados"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Última análise"
+      },
+      "database_size": {
+        "name": "Tamanho da base de dados",
+        "state_attributes": {
+          "engine": {
+            "name": "Motor"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "mais {n} entidades",
         "db_unfold": "As suas entidades",
         "db_no_device": "Sem dispositivo",
+        "db_growth": "Crescimento em {n} dias",
+        "db_growth_title": "Variação do tamanho, a partir das médias diárias que o gravador guarda do sensor de tamanho (30 dias traçados)",
+        "db_free": "Libertado por um repack",
+        "db_free_title": "Espaço livre dentro da base de dados, devolvido por “Limpar e compactar”",
+        "db_tables": "Tabelas",
+        "db_rows": "{n} linhas",
+        "db_rows_one": "1 linha",
         "tab_security": "Segurança",
         "sc_refused": "Inícios de sessão recusados",
         "sc_refused_day": "Inícios recusados · 24 h",

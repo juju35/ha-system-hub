@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versionshantering ({repository})"
+    },
+    "database": {
+      "name": "System Hub Databas"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Senaste skanning"
+      },
+      "database_size": {
+        "name": "Databasstorlek",
+        "state_attributes": {
+          "engine": {
+            "name": "Motor"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "{n} entiteter till",
         "db_unfold": "Dess entiteter",
         "db_no_device": "Ingen enhet",
+        "db_growth": "Tillväxt på {n} dagar",
+        "db_growth_title": "Förändring av storleken, från de dagliga medelvärden som inspelaren sparar för storlekssensorn (30 dagar ritade)",
+        "db_free": "Frigörs av en repack",
+        "db_free_title": "Ledigt utrymme i databasen, återlämnat av “Rensa och komprimera”",
+        "db_tables": "Tabeller",
+        "db_rows": "{n} rader",
+        "db_rows_one": "1 rad",
         "tab_security": "Säkerhet",
         "sc_refused": "Nekade inloggningar",
         "sc_refused_day": "Nekade inloggningar · 24 h",

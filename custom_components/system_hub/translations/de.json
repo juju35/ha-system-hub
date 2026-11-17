@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versionierung ({repository})"
+    },
+    "database": {
+      "name": "System Hub Datenbank"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Letzter Scan"
+      },
+      "database_size": {
+        "name": "Datenbankgröße",
+        "state_attributes": {
+          "engine": {
+            "name": "Engine"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "{n} weitere Entitäten",
         "db_unfold": "Seine Entitäten",
         "db_no_device": "Kein Gerät",
+        "db_growth": "Wachstum in {n} Tagen",
+        "db_growth_title": "Änderung der Größe, aus den Tagesmitteln, die der Recorder vom Größensensor speichert (30 Tage gezeichnet)",
+        "db_free": "Durch Repack frei",
+        "db_free_title": "Freier Platz in der Datenbank, zurückgegeben durch „Bereinigen und komprimieren“",
+        "db_tables": "Tabellen",
+        "db_rows": "{n} Zeilen",
+        "db_rows_one": "1 Zeile",
         "tab_security": "Sicherheit",
         "sc_refused": "Abgelehnte Anmeldungen",
         "sc_refused_day": "Abgelehnte Anmeldungen · 24 h",

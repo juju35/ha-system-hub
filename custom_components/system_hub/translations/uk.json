@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Версіонування ({repository})"
+    },
+    "database": {
+      "name": "System Hub База даних"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Останнє сканування"
+      },
+      "database_size": {
+        "name": "Розмір бази даних",
+        "state_attributes": {
+          "engine": {
+            "name": "Рушій"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "ще {n} сутностей",
         "db_unfold": "Його сутності",
         "db_no_device": "Без пристрою",
+        "db_growth": "Зростання за {n} дн.",
+        "db_growth_title": "Зміна розміру за середньодобовими значеннями, які рекордер зберігає для датчика розміру (графік за 30 днів)",
+        "db_free": "Звільнить repack",
+        "db_free_title": "Вільне місце всередині бази, яке повертає «Очистити й стиснути»",
+        "db_tables": "Таблиці",
+        "db_rows": "{n} рядків",
+        "db_rows_one": "1 рядок",
         "tab_security": "Безпека",
         "sc_refused": "Відхилені входи",
         "sc_refused_day": "Відхилені входи · 24 год",

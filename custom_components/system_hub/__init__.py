@@ -33,6 +33,7 @@ from .const import (
     DOMAIN,
     MODULE_BATTERIES,
     MODULE_CONTAINERS,
+    MODULE_DATABASE,
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
@@ -43,6 +44,7 @@ from .const import (
 from .containers import async_setup_containers
 from .containers.const import SERVICE_REFRESH
 from .containers.monitor import ContainerMonitor
+from .database.monitor import DatabaseMonitor
 from .git_sync import async_remove_git_sync, async_setup_git_sync, configured, further_repositories
 from .git_sync.const import CONF_REPO_ID
 from .git_sync.coordinator import GitSyncCoordinator
@@ -91,6 +93,7 @@ class SystemHubData:
     git_syncs: list[GitSyncCoordinator] = field(default_factory=list)
     orphans: OrphanScanner | None = None
     security: SecurityWatcher | None = None
+    database: DatabaseMonitor | None = None
 
 
 type SystemHubConfigEntry = ConfigEntry[SystemHubData]
@@ -357,6 +360,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
     if MODULE_SECURITY in modules:
         data.security = SecurityWatcher(hass, module_options(entry, MODULE_SECURITY))
         await data.security.async_start()
+    if MODULE_DATABASE in modules:
+        data.database = DatabaseMonitor(hass)
+        await data.database.async_start()
+        entry.async_on_unload(data.database.async_stop)
     entry.runtime_data = data
     # Added again after a removal (which drops the panel and the cards) without a restart: they come back.
     await async_register_panel(hass)

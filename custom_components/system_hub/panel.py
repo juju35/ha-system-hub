@@ -45,6 +45,7 @@ from .const import (
 from .containers.flow import stoppable_processes
 from .database import database_state
 from .database import settings as database_settings
+from .entity import unique_id as entity_unique_id
 from .logs import CONF_IGNORED_MESSAGES
 from .logs import settings as logs_settings
 from .orphans import panel as orphans_panel
@@ -195,6 +196,9 @@ def _key(hass: HomeAssistant, item: er.RegistryEntry) -> str | None:
         entry = hass.config_entries.async_get_entry(item.config_entry_id)
         if entry and str(entry.data.get("file_path", "")).endswith(".db"):
             return "database_size"
+    # The Database module's own size sensor, whatever the engine (MariaDB / MySQL and PostgreSQL included)
+    if item.platform == DOMAIN and item.unique_id.endswith(f"_{MODULE_DATABASE}_size"):
+        return "database_size"
     return None
 
 
@@ -302,7 +306,7 @@ def _system(hass: HomeAssistant, stoppable: set[str] | None = None) -> list[dict
     registry = er.async_get(hass)
     sensors = []
     for item in sorted(registry.entities.values(), key=lambda e: e.entity_id):
-        if item.disabled_by or item.hidden_by or item.platform not in ("systemmonitor", "backup", "filesize"):
+        if item.disabled_by or item.hidden_by or item.platform not in ("systemmonitor", "backup", "filesize", DOMAIN):
             continue
         key = _key(hass, item)
         if key is None or (state := hass.states.get(item.entity_id)) is None:
@@ -603,6 +607,10 @@ async def ws_database(hass: HomeAssistant, connection: websocket_api.ActiveConne
         return
     try:
         result = await database_state(hass, hass.data.setdefault(DOMAIN, {}), msg["force"])
+        # The size sensor, whose statistics give the growth
+        result["entity_id"] = er.async_get(hass).async_get_entity_id(
+            "sensor", DOMAIN, entity_unique_id(entry.entry_id, MODULE_DATABASE, "size")
+        )
     except Exception as err:  # noqa: BLE001 - shown in the tab
         connection.send_error(msg["id"], "failed", str(err))
         return

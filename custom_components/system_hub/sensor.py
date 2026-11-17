@@ -1,4 +1,4 @@
-"""Sensors of the modules: Containers, Watchdog, Marketplace and Batteries."""
+"""Sensors of the modules: Containers, Watchdog, Marketplace, Batteries and Database."""
 
 from __future__ import annotations
 
@@ -6,15 +6,16 @@ from datetime import datetime, timedelta
 from typing import Any, ClassVar
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity, SensorStateClass
-from homeassistant.const import EntityCategory
+from homeassistant.const import EntityCategory, UnitOfInformation
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.util import dt as dt_util
 
 from . import SystemHubConfigEntry
 from .batteries.monitor import BatteryMonitor
-from .const import DOMAIN, MODULE_BATTERIES, MODULE_CONTAINERS, MODULE_MARKETPLACE, MODULE_WATCHDOG
+from .const import DOMAIN, MODULE_BATTERIES, MODULE_CONTAINERS, MODULE_DATABASE, MODULE_MARKETPLACE, MODULE_WATCHDOG
 from .containers.monitor import ContainerMonitor
+from .database.monitor import DatabaseMonitor
 from .entity import SystemHubEntity
 from .git_sync.entities import SENSORS, GitSyncSensor
 from .marketplace.const import STATE_ERROR, STATE_IDLE, STATE_RUNNING
@@ -59,6 +60,8 @@ async def async_setup_entry(
         entities += [GitSyncSensor(g, entry.entry_id, description) for description in SENSORS]
     if (o := data.orphans) is not None:
         entities += orphans_entities.sensors(o, entry.entry_id)
+    if (d := data.database) is not None:
+        entities.append(DatabaseSizeSensor(d, entry.entry_id, MODULE_DATABASE, "size"))
     async_add_entities(entities)
 
 
@@ -373,3 +376,26 @@ class SparesSensor(BatteriesEntity, SensorEntity):
             "needed": {kind: v["needed"] for kind, v in spares.items()},
             "short": {kind: v["short"] for kind, v in spares.items() if v["short"]},
         }
+
+
+class DatabaseSizeSensor(SystemHubEntity, SensorEntity):
+    """Size of the recorder's database, whatever its engine (SQLite, MariaDB / MySQL, PostgreSQL)."""
+
+    _attr_device_class = SensorDeviceClass.DATA_SIZE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = UnitOfInformation.BYTES
+    _attr_suggested_unit_of_measurement = UnitOfInformation.MEBIBYTES
+    _attr_suggested_display_precision = 1
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, monitor: DatabaseMonitor, entry_id: str, module: str, key: str) -> None:
+        super().__init__(monitor, entry_id, module, key)
+        self.monitor = monitor
+
+    @property
+    def native_value(self) -> int | None:
+        return self.monitor.size
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {"engine": self.monitor.engine}

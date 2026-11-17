@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.8.3';
+var SYSTEM_HUB_PANEL_VERSION = '2.9.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -3217,11 +3217,50 @@ class SystemHubPanel extends HTMLElement {
     if (recount) this._busy.db_refresh = true;
     try {
       this._db = { data: await this._hass.callWS({ type: 'system_hub/database', force: Boolean(recount) }), at: Date.now(), error: null };
+      await this._dbGrowthLoad(this._db.data?.entity_id);
     } catch (err) {
       this._db = { ...this._db, error: shErr(err) };
     }
     delete this._busy.db_refresh;
     if (this._tab === 'database' || recount) this._render();
+  }
+
+  // The growth: the daily means of the size sensor over 30 days (recorder statistics, in bytes), read once an hour
+  async _dbGrowthLoad(entityId) {
+    if (!entityId || (this._dbStats?.id === entityId && Date.now() - this._dbStats.at < 3600000)) return;
+    try {
+      var start = new Date(Date.now() - 30 * 86400e3).toISOString();
+      var stats = await this._hass.callWS({
+        type: 'recorder/statistics_during_period',
+        start_time: start,
+        statistic_ids: [entityId],
+        period: 'day',
+        types: ['mean'],
+        units: { data_size: 'B' },
+      });
+      var points = (stats?.[entityId] || [])
+        .map((p) => [typeof p.start === 'number' ? p.start : Date.parse(p.start), shNum(p.mean)])
+        .filter((p) => p[1] !== null);
+      this._dbStats = { id: entityId, at: Date.now(), points };
+    } catch (_err) {
+      // No statistics yet (or the recorder's API refused): no growth tile
+      this._dbStats = { id: entityId, at: Date.now(), points: [] };
+    }
+  }
+
+  // The change of size over the last 7 days (or since the first day kept, when fewer), and the line of the 30 days
+  _dbGrowth(size) {
+    var points = this._dbStats?.points || [];
+    if (!points.length) return null;
+    var now = typeof size === 'number' ? size : points[points.length - 1][1];
+    var since = Date.now() - 7 * 86400e3;
+    var from = points.find((p) => p[0] >= since - 43200e3) || points[0];
+    var days = Math.max(1, Math.round((Date.now() - from[0]) / 86400e3));
+    var values = points.map((p) => p[1]);
+    var lo = Math.min(...values, now);
+    var hi = Math.max(...values, now);
+    var spark = shSpark([...values, now].map((v) => (hi > lo ? ((v - lo) / (hi - lo)) * 100 : 50)));
+    return { delta: now - from[1], days, spark };
   }
 
   // The size against the limit set: bad beyond it, warn from 80 %
@@ -3267,10 +3306,27 @@ class SystemHubPanel extends HTMLElement {
       this._tile('mdi:database-outline', shEsc(typeof data.size === 'number' ? shBytes(data.size) : '—'), this._t('db_size'), tone, {
         title: typeof data.size === 'number' ? this._t('db_limit', { n: max }) : this._t('db_no_size'),
       }),
+    ];
+    var growth = this._dbGrowth(data.size);
+    if (growth) {
+      var sign = growth.delta > 0 ? '+' : growth.delta < 0 ? '−' : '';
+      tiles.push(
+        this._tile('mdi:chart-line-variant', shEsc(`${sign}${shBytes(Math.abs(growth.delta))}`), this._t('db_growth', { n: growth.days }), '', {
+          spark: growth.spark,
+          title: this._t('db_growth_title'),
+          entity: data.entity_id,
+        })
+      );
+    }
+    // What a repack would give back: the free pages of SQLite, the free space of the MariaDB / MySQL tables
+    if (typeof data.free === 'number' && data.free >= 1048576) {
+      tiles.push(this._tile('mdi:broom', shEsc(shBytes(data.free)), this._t('db_free'), '', { title: this._t('db_free_title') }));
+    }
+    tiles.push(
       this._tile('mdi:calendar-range', shEsc(this._t('db_days', { n: data.keep_days })), this._t(data.auto_purge ? 'db_retention' : 'db_no_auto_purge'), data.auto_purge ? '' : 'warn'),
       this._tile('mdi:chart-timeline-variant', `<b>${(data.total_day ?? 0).toLocaleString(this._hass?.language)}</b>`, this._t('db_states_day'), ''),
-      this._tile('mdi:database-cog-outline', shEsc(data.engine === 'sqlite' ? 'SQLite' : data.engine === 'postgresql' ? 'PostgreSQL' : data.engine === 'mysql' ? 'MariaDB / MySQL' : data.engine), this._t('db_engine'), ''),
-    ];
+      this._tile('mdi:database-cog-outline', shEsc(data.engine === 'sqlite' ? 'SQLite' : data.engine === 'postgresql' ? 'PostgreSQL' : data.engine === 'mysql' ? 'MariaDB / MySQL' : data.engine), this._t('db_engine'), '')
+    );
     var confirm =
       this._confirm === 'db_repack'
         ? `<div class="confirm" role="alertdialog">${shEsc(this._t('db_repack_confirm', { n: data.keep_days }))}
@@ -3299,7 +3355,33 @@ class SystemHubPanel extends HTMLElement {
       : `<div class="item"><div class="who"><div class="s">${shEsc(this._t(top.length ? 'db_pick_hint' : 'db_none'))}</div></div></div>`;
     return `<div class="tiles">${tiles.join('')}</div>${actions}
       <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:chart-bar"></ha-icon><span class="lname">${shEsc(this._t('db_top'))}</span>
-        <span class="muted">${shEsc(this._t('db_counted', { when: this._rel(new Date(data.counted_at * 1000).toISOString()) }))}</span></div>${rows}${picked}</ha-card>`;
+        <span class="muted">${shEsc(this._t('db_counted', { when: this._rel(new Date(data.counted_at * 1000).toISOString()) }))}</span></div>${rows}${picked}</ha-card>
+      ${this._dbTables(data)}`;
+  }
+
+  // The tables: their rows and their size, the biggest first, each bar its share of the size (of the rows when the
+  // engine cannot tell the sizes); MariaDB / MySQL and PostgreSQL estimate the rows
+  _dbTables(data) {
+    var tables = data.tables || [];
+    if (!tables.length) return '';
+    var sized = tables.some((t) => typeof t.size === 'number' && t.size > 0);
+    var key = sized ? 'size' : 'rows';
+    var total = tables.reduce((sum, t) => sum + (t[key] || 0), 0);
+    var approx = data.engine !== 'sqlite' ? '≈ ' : '';
+    var lang = this._hass?.language;
+    var rows = tables
+      .map((t) => {
+        var pct = total ? Math.round(((t[key] || 0) / total) * 100) : 0;
+        var sub = `${approx}${this._t(t.rows === 1 ? 'db_rows_one' : 'db_rows', { n: (t.rows || 0).toLocaleString(lang) })}`;
+        var value = sized ? shBytes(t.size || 0) : (t.rows || 0).toLocaleString(lang);
+        return `<div class="item dbrow"><ha-icon icon="mdi:table"></ha-icon>
+          <div class="who"><div class="n mono">${shEsc(t.name)}</div><div class="s">${shEsc(sub)}</div>
+            <div class="dbbar"><span style="width:${Math.max(pct, 1)}%"></span></div></div>
+          <span class="dbcount"><b>${shEsc(value)}</b><span class="s">${pct} %</span></span></div>`;
+      })
+      .join('');
+    return `<ha-card class="list"><div class="lhead"><ha-icon icon="mdi:table-multiple"></ha-icon><span class="lname">${shEsc(this._t('db_tables'))}</span>
+      <span class="muted">${tables.length}</span></div>${rows}</ha-card>`;
   }
 
   // A device of the Database tab: its row picks all its entities that wrote (a box half ticked when some are), its

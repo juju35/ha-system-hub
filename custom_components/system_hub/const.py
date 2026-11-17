@@ -6,7 +6,7 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "2.8.3"
+VERSION: Final = "2.9.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
@@ -14,7 +14,7 @@ MODULE_CONTAINERS: Final = "containers"
 MODULE_WATCHDOG: Final = "watchdog"
 # Home Assistant's log grouped by integration; no entities of its own.
 MODULE_LOGS: Final = "logs"
-# The recorder's database: size, retention, the entities that write the most; no entities of its own.
+# The recorder's database: size (a sensor), tables, retention, the entities that write the most.
 MODULE_DATABASE: Final = "database"
 # Refused logins, accounts, tokens, exposure, add-ons, credentials in clear; no entities of its own.
 MODULE_SECURITY: Final = "security"

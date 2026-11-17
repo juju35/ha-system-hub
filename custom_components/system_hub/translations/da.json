@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versionering ({repository})"
+    },
+    "database": {
+      "name": "System Hub Database"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Seneste scanning"
+      },
+      "database_size": {
+        "name": "Databasestørrelse",
+        "state_attributes": {
+          "engine": {
+            "name": "Motor"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "{n} entiteter mere",
         "db_unfold": "Dens entiteter",
         "db_no_device": "Ingen enhed",
+        "db_growth": "Vækst på {n} dage",
+        "db_growth_title": "Ændring af størrelsen ud fra de daglige gennemsnit, recorderen gemmer for størrelsessensoren (30 dage tegnet)",
+        "db_free": "Frigivet ved repack",
+        "db_free_title": "Ledig plads i databasen, givet tilbage af “Ryd op og komprimer”",
+        "db_tables": "Tabeller",
+        "db_rows": "{n} rækker",
+        "db_rows_one": "1 række",
         "tab_security": "Sikkerhed",
         "sc_refused": "Afviste logins",
         "sc_refused_day": "Afviste logins · 24 t",

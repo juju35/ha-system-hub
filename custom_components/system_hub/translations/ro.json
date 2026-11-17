@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versionare ({repository})"
+    },
+    "database": {
+      "name": "System Hub Bază de date"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Ultima scanare"
+      },
+      "database_size": {
+        "name": "Dimensiunea bazei de date",
+        "state_attributes": {
+          "engine": {
+            "name": "Motor"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "încă {n} entități",
         "db_unfold": "Entitățile sale",
         "db_no_device": "Fără dispozitiv",
+        "db_growth": "Creștere în {n} zile",
+        "db_growth_title": "Variația dimensiunii, din mediile zilnice păstrate de recorder pentru senzorul de dimensiune (30 de zile trasate)",
+        "db_free": "Eliberat de un repack",
+        "db_free_title": "Spațiu liber în baza de date, recuperat de “Curăță și compactează”",
+        "db_tables": "Tabele",
+        "db_rows": "{n} rânduri",
+        "db_rows_one": "1 rând",
         "tab_security": "Securitate",
         "sc_refused": "Autentificări refuzate",
         "sc_refused_day": "Autentificări refuzate · 24 h",

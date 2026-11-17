@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Версионирование ({repository})"
+    },
+    "database": {
+      "name": "System Hub База данных"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Последнее сканирование"
+      },
+      "database_size": {
+        "name": "Размер базы данных",
+        "state_attributes": {
+          "engine": {
+            "name": "Движок"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "ещё {n} объектов",
         "db_unfold": "Его объекты",
         "db_no_device": "Без устройства",
+        "db_growth": "Рост за {n} дн.",
+        "db_growth_title": "Изменение размера по среднесуточным значениям, которые рекордер хранит для датчика размера (график за 30 дней)",
+        "db_free": "Освободит repack",
+        "db_free_title": "Свободное место внутри базы, возвращаемое «Очистить и сжать»",
+        "db_tables": "Таблицы",
+        "db_rows": "{n} строк",
+        "db_rows_one": "1 строка",
         "tab_security": "Безопасность",
         "sc_refused": "Отклонённые входы",
         "sc_refused_day": "Отклонённые входы · 24 ч",

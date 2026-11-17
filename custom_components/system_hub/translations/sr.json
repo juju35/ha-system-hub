@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Верзионисање ({repository})"
+    },
+    "database": {
+      "name": "System Hub База података"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Последње скенирање"
+      },
+      "database_size": {
+        "name": "Величина базе података",
+        "state_attributes": {
+          "engine": {
+            "name": "Мотор"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "још {n} ентитета",
         "db_unfold": "Његови ентитети",
         "db_no_device": "Без уређаја",
+        "db_growth": "Раст за {n} дана",
+        "db_growth_title": "Промена величине, према дневним просецима које снимач чува за сензор величине (приказано 30 дана)",
+        "db_free": "Ослобођено репаком",
+        "db_free_title": "Слободан простор у бази, враћен опцијом “Очисти и сабиј”",
+        "db_tables": "Табеле",
+        "db_rows": "{n} редова",
+        "db_rows_one": "1 ред",
         "tab_security": "Безбедност",
         "sc_refused": "Одбијене пријаве",
         "sc_refused_day": "Одбијене пријаве · 24 ч",

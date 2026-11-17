@@ -535,6 +535,9 @@
     },
     "git_sync_repository": {
       "name": "System Hub Versiju pārvaldība ({repository})"
+    },
+    "database": {
+      "name": "System Hub Datubāze"
     }
   },
   "entity": {
@@ -866,6 +869,14 @@
       },
       "orphans_last_scan": {
         "name": "Pēdējā skenēšana"
+      },
+      "database_size": {
+        "name": "Datubāzes izmērs",
+        "state_attributes": {
+          "engine": {
+            "name": "Dzinējs"
+          }
+        }
       }
     }
   },
@@ -1747,6 +1758,13 @@
         "db_more": "vēl {n} entītijas",
         "db_unfold": "Tās entītijas",
         "db_no_device": "Bez ierīces",
+        "db_growth": "Pieaugums {n} dienās",
+        "db_growth_title": "Izmēra izmaiņas pēc dienas vidējām vērtībām, ko ierakstītājs glabā izmēra sensoram (attēlotas 30 dienas)",
+        "db_free": "Atbrīvos repack",
+        "db_free_title": "Brīvā vieta datubāzē, ko atgriež “Iztīrīt un saspiest”",
+        "db_tables": "Tabulas",
+        "db_rows": "{n} rindas",
+        "db_rows_one": "1 rinda",
         "tab_security": "Drošība",
         "sc_refused": "Noraidītās pieteikšanās",
         "sc_refused_day": "Noraidītās pieteikšanās · 24 h",

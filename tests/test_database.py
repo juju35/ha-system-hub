@@ -10,7 +10,7 @@ from pytest_homeassistant_custom_component.common import MockConfigEntry
 from pytest_homeassistant_custom_component.components.recorder.common import async_wait_recording_done
 
 from custom_components.system_hub.const import CONF_MODULES, DOMAIN
-from custom_components.system_hub.database import _size, settings
+from custom_components.system_hub.database import _server_size, _size, engine, settings
 
 
 async def _setup(hass: HomeAssistant) -> MockConfigEntry:
@@ -32,6 +32,11 @@ async def test_top_writers(recorder_mock, hass: HomeAssistant, hass_ws_client) -
     result = (await client.receive_json())["result"]
     assert result["engine"] == "sqlite"
     assert result["keep_days"] == 10
+    # Each table with its rows, the biggest first; the space a repack would free
+    tables = {t["name"]: t for t in result["tables"]}
+    assert tables["states"]["rows"] >= 6
+    assert isinstance(result["free"], int)
+    assert result["entity_id"] == "sensor.system_hub_database_database_size"
     assert result["top"][0] == {
         "device_id": None,
         "name": "chatty",
@@ -108,3 +113,35 @@ async def test_settings_step(recorder_mock, hass: HomeAssistant) -> None:
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"next_step_id": "database"})
     result = await hass.config_entries.options.async_configure(result["flow_id"], {"max_size": 5})
     assert entry.options["database"] == {"max_size": 5.0}
+
+
+async def test_size_sensor(recorder_mock, hass: HomeAssistant) -> None:
+    """The size followed by a sensor (bytes, shown in MiB), its engine in the attributes."""
+    entry = await _setup(hass)
+    monitor = entry.runtime_data.database
+    monitor.size = 3 * 1048576
+    monitor.engine = "mysql"
+    for update in list(monitor._listeners):
+        update()
+    await hass.async_block_till_done()
+    state = hass.states.get("sensor.system_hub_database_database_size")
+    assert state is not None
+    assert float(state.state) == 3.0
+    assert state.attributes["unit_of_measurement"] == "MiB"
+    assert state.attributes["engine"] == "mysql"
+    await monitor.async_refresh()
+    assert monitor.engine == "sqlite"
+    # In memory for the tests: no file to measure
+    assert monitor.size is None or monitor.size >= 0
+
+
+def test_engine_and_server_size() -> None:
+    """MariaDB / MySQL and PostgreSQL are measured by the server; another engine has no query."""
+
+    class Instance:
+        dialect_name = None
+        db_url = "mysql+pymysql://ha@db/ha"
+
+    assert engine(Instance()) == "mysql"
+    Instance.db_url = "sqlite://"
+    assert _server_size(Instance()) is None
