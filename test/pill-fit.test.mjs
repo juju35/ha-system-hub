@@ -38,7 +38,14 @@ function header(parts, { rowW, titleW, chipW, cardW = 400 }) {
   const sub = node(parts.sub, { getBoundingClientRect: () => box(60) });
   const block = node(parts.block, {
     children: [row, sub],
-    classList: { add: (...c) => c.forEach((x) => classes.add(x)), remove: (...c) => c.forEach((x) => classes.delete(x)) },
+    classList: {
+      add: (...c) => {
+        for (const x of c) classes.add(x);
+      },
+      remove: (...c) => {
+        for (const x of c) classes.delete(x);
+      },
+    },
     getBoundingClientRect: () => box(rowW),
     closest: () => null,
   });
