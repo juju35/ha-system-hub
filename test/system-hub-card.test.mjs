@@ -243,11 +243,11 @@ test('mini editor, status: the groups and the illustration, the options the mini
   assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,illustration,illustration_theme');
 });
 
-test('illustrated header: night from the sun, the theme or the option; each part in the tone of its area; classic header', async () => {
+test('illustrated header: night from the theme or the option; each part in the tone of its area; classic header', async () => {
   const { registry } = load();
   const card = new (registry.get('system-hub-card'))();
   card.setConfig({});
-  card.hass = { ...hass, states: { 'sun.sun': { state: 'below_horizon' } } };
+  card.hass = { ...hass, themes: { darkMode: true }, states: { 'sun.sun': { state: 'below_horizon' } } };
   await card._read();
   let html = card.shadowRoot.innerHTML;
   assert.match(html, /class="banner warn night"/);
@@ -256,8 +256,8 @@ test('illustrated header: night from the sun, the theme or the option; each part
   assert.match(html, /y="2" width="8" height="6" rx="1" fill="#f5a623"/);
   // The score fills the ring
   assert.match(html, /stroke-dasharray="56.5 100"/);
-  // The sun goes up: drawn again by day without a new read
-  card.hass = { ...hass, states: { 'sun.sun': { state: 'above_horizon' } } };
+  // A light theme after sunset: drawn again by day without a new read
+  card.hass = { ...hass, themes: { darkMode: false }, states: { 'sun.sun': { state: 'below_horizon' } } };
   assert.match(card.shadowRoot.innerHTML, /class="banner warn"/);
   // Forced by the option, whatever the sun and the theme
   card.setConfig({ illustration_theme: 'night' });
@@ -265,7 +265,7 @@ test('illustrated header: night from the sun, the theme or the option; each part
   card.setConfig({ illustration_theme: 'day' });
   card.hass = { ...hass, themes: { darkMode: true } };
   assert.match(card.shadowRoot.innerHTML, /class="banner warn"/);
-  // No sun: Home Assistant's dark theme
+  // No sun: Home Assistant's dark theme alone
   card.setConfig({});
   card.hass = { ...hass, themes: { darkMode: true } };
   card._renderStatus();
