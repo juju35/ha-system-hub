@@ -1851,7 +1851,7 @@
         "card_show_subtitle": "Vis undertitel",
         "card_illustration": "Illustration",
         "card_illustration_theme": "Illustrationstema",
-        "card_theme_auto": "Automatisk (sol eller mørkt tema)",
+        "card_theme_auto": "Automatisk (følger temaet)",
         "card_theme_day": "Dag",
         "card_theme_night": "Nat",
         "sc_allowed": "Tilladt",

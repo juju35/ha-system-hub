@@ -1851,7 +1851,7 @@
         "card_show_subtitle": "Показване на подзаглавието",
         "card_illustration": "Илюстрация",
         "card_illustration_theme": "Тема на илюстрацията",
-        "card_theme_auto": "Автоматично (слънце или тъмна тема)",
+        "card_theme_auto": "Автоматично (следва темата)",
         "card_theme_day": "Ден",
         "card_theme_night": "Нощ",
         "sc_allowed": "Разрешена",

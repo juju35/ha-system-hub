@@ -1851,7 +1851,7 @@
         "card_show_subtitle": "Show subtitle",
         "card_illustration": "Illustration",
         "card_illustration_theme": "Illustration theme",
-        "card_theme_auto": "Automatic (sun or dark theme)",
+        "card_theme_auto": "Automatic (follows the theme)",
         "card_theme_day": "Day",
         "card_theme_night": "Night",
         "sc_allowed": "Allowed",
