@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import contextlib
 import logging
 from collections.abc import Callable
 from datetime import datetime, timedelta
 from typing import Final
 
-from homeassistant.const import EVENT_HOMEASSISTANT_STARTED
-from homeassistant.core import CoreState, Event, HomeAssistant, callback
+from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.event import async_track_time_interval
+from homeassistant.helpers.start import async_at_started
 from homeassistant.util import dt as dt_util
 
 from . import RECORDER_DOMAIN, async_size, engine
@@ -38,22 +37,18 @@ class DatabaseMonitor:
 
     async def async_start(self) -> None:
         """Read at once once Home Assistant runs (the recorder's database is ready then), then every 15 minutes."""
-        if self.hass.state is CoreState.running:
+
+        async def _started(_hass: HomeAssistant) -> None:
             await self.async_refresh()
-        else:
 
-            async def _started(_event: Event) -> None:
-                await self.async_refresh()
-
-            self._unsubs.append(self.hass.bus.async_listen_once(EVENT_HOMEASSISTANT_STARTED, _started))
+        # async_at_started runs at once if HA already runs, and its unsub stays safe once fired
+        self._unsubs.append(async_at_started(self.hass, _started))
         self._unsubs.append(async_track_time_interval(self.hass, self._tick, INTERVAL))
 
     @callback
     def async_stop(self) -> None:
         while self._unsubs:
-            # The start listener already fired: nothing to remove
-            with contextlib.suppress(ValueError):
-                self._unsubs.pop()()
+            self._unsubs.pop()()
 
     async def _tick(self, _now: datetime) -> None:
         await self.async_refresh()

@@ -145,3 +145,19 @@ def test_engine_and_server_size() -> None:
     assert engine(Instance()) == "mysql"
     Instance.db_url = "sqlite://"
     assert _server_size(Instance()) is None
+
+
+async def test_stop_after_start_logs_nothing(recorder_mock, hass: HomeAssistant, caplog) -> None:
+    """Set up before the start, then unloaded once started: no unknown job listener to remove."""
+    from homeassistant.const import EVENT_HOMEASSISTANT_STARTED  # noqa: PLC0415
+    from homeassistant.core import CoreState  # noqa: PLC0415
+
+    hass.set_state(CoreState.starting)
+    entry = await _setup(hass)
+    hass.set_state(CoreState.running)
+    hass.bus.async_fire(EVENT_HOMEASSISTANT_STARTED)
+    await hass.async_block_till_done()
+    assert entry.runtime_data.database.engine == "sqlite"
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert "Unable to remove unknown job listener" not in caplog.text

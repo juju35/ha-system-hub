@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.10.1 - 2026-11-17
+
+### Fixes
+- **Database module**: no more `Unable to remove unknown job listener` error in the log when the module stops (reload, disable, restart) after Home Assistant has started — the first read now waits for the start with `async_at_started`, whose unsubscribe stays safe once fired.
+
 ## 2.10.0 - 2026-11-17
 
 ### Features
