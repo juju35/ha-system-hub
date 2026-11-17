@@ -734,18 +734,21 @@ test('narrow header: the title keeps a few characters, the pill shrinks to a dot
   assert.match(rule('.pill.compact .dot'), /display: block/);
   assert.doesNotMatch(rule('.pill.compact .ptext'), /display: none/);
   assert.match(rule('.pill.compact .ptext'), /clip-path: inset\(50%\)/);
-  // A phone's 6 columns (156 px card, 132 px of content): the dot sits on the badge's corner, out of the header's row,
-  // so badge + title + check button fit (it was pushed 13 px out of the card at 160 px).
+  // The pill right after the title, with its dot; short of room it wraps whole onto its own line under the title
+  // (then only its dot if even that line is too short), and never leaves the header's row.
+  assert.match(rule('.title-row'), /flex-wrap: wrap/);
+  assert.match(rule('.title-row > .title'), /flex: 0 1 auto/);
+  assert.match(rule('.title-row > .pill'), /max-width: 100%/);
+  assert.match(rule('.dot'), /display: block/);
+  assert.doesNotMatch(css, /\.pill, \.pill\.compact \{[^}]*position: absolute/);
+  // A phone's 6 columns (156 px card, 132 px of content): a smaller badge.
   const six = css.indexOf('@container (max-width: 170px)');
   assert.ok(six >= 0, '6-column container query');
-  assert.match(rule('.pill, .pill.compact', six), /position: absolute/);
-  assert.match(rule('.dot', six), /display: block/);
-  assert.match(rule('.ptext', six), /clip-path: inset\(50%\)/);
   assert.match(rule('.badge', six), /width: 32px/);
   assert.match(rule('.head'), /position: relative/);
   // The pill's full text in its tooltip.
   const out = html(render({}, makeHass({ updates: ['update.mushroom_update', 'update.card_mod_update'], attrs: { failed: ['a/b'] } })));
-  assert.match(out, /<div class="pill" title="2 updates · 1 failed"><span class="dot" aria-hidden="true"><\/span><span class="ptext">2 updates · 1 failed<\/span><\/div>/);
+  assert.match(out, /<div class="title-row"><div class="title">[^<]+<\/div><div class="pill" title="2 updates · 1 failed"><span class="dot" aria-hidden="true"><\/span><span class="ptext">2 updates · 1 failed<\/span><\/div>/);
 });
 
 // A stand-in for the rendered pill: its label is cut when its full width is more than the room it is given.

@@ -1509,11 +1509,10 @@ class MarketplaceRefreshCard extends HTMLElement {
         <div class="head">
           <div class="badge"><ha-icon icon="${icon}"></ha-icon></div>
           <div class="heading">
-            <div class="title">${hrEsc(c.title || this._t('title'))}</div>
+            <div class="title-row"><div class="title">${hrEsc(c.title || this._t('title'))}</div>${this._pill(unavailable ? this._t('unavailable') : this._status(st, running, a, count, failed, error, installing))}</div>
             ${subtitle ? `<div class="subtitle" title="${hrEsc(last ? this._absolute(last) : '')}">${hrEsc(subtitle)}</div>` : ''}
           </div>
           ${this._checkButton(this._busy)}
-          ${this._pill(unavailable ? this._t('unavailable') : this._status(st, running, a, count, failed, error, installing))}
         </div>
         ${this._confirm ? this._confirmBox(this._installable.length) : ''}
         ${running ? `<div class="progress" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div>` : ''}
@@ -1739,10 +1738,14 @@ class MarketplaceRefreshCard extends HTMLElement {
               color: color-mix(in srgb, var(--c) 40%, var(--primary-text-color, #212121));
               background: color-mix(in srgb, var(--c) 14%, transparent); font-variant-numeric: tabular-nums; }
       .ptext { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .dot { display: none; flex: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
-      /* The pill keeps its words whenever they fit; when they don't (measured by _fitPill, class "compact"), only its
-         dot. 8 px gaps and a slimmer pill under 324 px; on a phone's 6 columns (156-194 px) a smaller badge with the dot
-         on its corner. */
+      .dot { display: block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+      /* The pill right after the title (8 px), a dot in the status colour before its words. Short of room beside the
+         title it takes its own line under it, whole; when even that line is too short (measured by _fitPill, class
+         "compact"), only its dot. 8 px gaps and a slimmer pill under 324 px; on a phone's 6 columns (156-194 px) a
+         smaller badge. */
+      .title-row { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: min(100%, 4.5ch); }
+      .title-row > .pill { max-width: 100%; }
       @container (max-width: 300px) { .head { gap: 8px; } .pill { padding: 1px 6px; } }
       .pill.compact { padding: 5px; }
       .pill.compact .dot { display: block; }
@@ -1750,10 +1753,6 @@ class MarketplaceRefreshCard extends HTMLElement {
       @container (max-width: 170px) {
         .badge { width: 32px; height: 32px; }
         .badge ha-icon { --mdc-icon-size: 20px; }
-        .pill, .pill.compact { position: absolute; left: 21px; top: 50%; margin-top: -19px; padding: 2px;
-                background: var(--ha-card-background, var(--card-background-color, #fff)); }
-        .dot { display: block; }
-        .ptext { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
       }
       .check { all: unset; cursor: pointer; flex: none; width: 26px; height: 26px; border-radius: 50%;
                display: grid; place-items: center; color: var(--secondary-text-color); }
