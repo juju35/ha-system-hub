@@ -440,7 +440,7 @@ class SystemHubCardEditorBase extends HTMLElement {
         { name: 'illustration', selector: { boolean: {} } },
         {
           name: 'illustration_theme',
-          selector: { select: { mode: 'dropdown', options: ['auto', 'day', 'night'].map((v) => ({ value: v, label: this._t(`card_theme_${v}`, { auto: 'Automatic (sun, dark theme)', day: 'Day', night: 'Night' }[v]) })) } },
+          selector: { select: { mode: 'dropdown', options: ['auto', 'day', 'night'].map((v) => ({ value: v, label: this._t(`card_theme_${v}`, { auto: 'Automatic (sun or dark theme)', day: 'Day', night: 'Night' }[v]) })) } },
         },
       );
       // The mini card shows only the summary and the areas to look at: these three change nothing there.

@@ -1851,7 +1851,7 @@
         "card_show_subtitle": "Показывать подзаголовок",
         "card_illustration": "Иллюстрация",
         "card_illustration_theme": "Тема иллюстрации",
-        "card_theme_auto": "Автоматически (солнце, тёмная тема)",
+        "card_theme_auto": "Автоматически (солнце или тёмная тема)",
         "card_theme_day": "День",
         "card_theme_night": "Ночь",
         "sc_allowed": "Разрешено",

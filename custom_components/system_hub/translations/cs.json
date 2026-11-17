@@ -1851,7 +1851,7 @@
         "card_show_subtitle": "Zobrazit podnázev",
         "card_illustration": "Ilustrace",
         "card_illustration_theme": "Motiv ilustrace",
-        "card_theme_auto": "Automaticky (slunce, tmavý motiv)",
+        "card_theme_auto": "Automaticky (slunce nebo tmavý motiv)",
         "card_theme_day": "Den",
         "card_theme_night": "Noc",
         "sc_allowed": "Povolený",
