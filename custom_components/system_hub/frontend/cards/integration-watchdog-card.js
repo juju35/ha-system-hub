@@ -1678,11 +1678,10 @@ class IntegrationWatchdogCard extends HTMLElement {
         <div class="head">
           <div class="badge"><ha-icon icon="${icon}"></ha-icon></div>
           <div class="heading">
-            <div class="title">${iwEsc(c.title || this._t('title'))}</div>
+            <div class="title-row"><div class="title">${iwEsc(c.title || this._t('title'))}</div>${this._pill(this._status(st, items, givenUp, checking))}</div>
             ${subtitle ? `<div class="subtitle" title="${iwEsc(checkedAt ? this._absolute(checkedAt) : '')}">${iwEsc(subtitle)}</div>` : ''}
           </div>
           ${this._checkButton(checking)}
-          ${this._pill(this._status(st, items, givenUp, checking))}
           ${this._headExtra()}
         </div>
         ${c.show_stats && st ? this._stats(items.length, reloads, ignored) : ''}
@@ -1902,7 +1901,20 @@ class IntegrationWatchdogCard extends HTMLElement {
       /* Short of room the status takes a second line before it is cut */
       .pill .ptxt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.25;
                     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
-      .pill .dot { display: none; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+      .pill .dot { flex: none; width: 6px; height: 6px; margin-right: 4px; border-radius: 50%; background: var(--c); }
+      /* The pill right after the title (8 px): the title gives way first, down to a few letters, then the pill. */
+      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 4.5ch; }
+      .title-row > .pill { flex: 0 0.01 auto; max-width: none; }
+      /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the check button on the
+         same top line at its left; the header keeps clear of them. */
+      ha-card:has(.zoom) { position: relative; }
+      .head:has(> .zoom) { padding-right: 21px; }
+      .head:has(> .zoom):has(> .check) { padding-right: 49px; }
+      .head > .zoom, .head:has(> .zoom) > .check { position: absolute; z-index: 2; top: 5px; width: 24px; height: 24px; margin: 0;
+                                                 background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
+      .head > .zoom { right: 5px; }
+      .head:has(> .zoom) > .check { right: 33px; }
       @container (max-width: 200px) {
         .head .pill { padding: 5px; }
         .head .pill .dot { display: block; }
@@ -2133,9 +2145,8 @@ class IntegrationWatchdogMiniCard extends IntegrationWatchdogCard {
           <div class="badge"><ha-icon icon="${icon}"></ha-icon></div>
           <div class="body">
             <div class="head">
-              <div class="heading"><div class="title">${iwEsc(this._config.title || this._t('title'))}</div></div>
+              <div class="heading"><div class="title-row"><div class="title">${iwEsc(this._config.title || this._t('title'))}</div>${this._pill(this._status(st, items, givenUp, checking))}</div></div>
               ${this._checkButton(checking)}
-              ${this._pill(this._status(st, items, givenUp, checking))}
               ${this._headExtra()}
             </div>
             <div class="rs">${this._chips(m)}</div>

@@ -2817,14 +2817,14 @@ const BASE_STYLE = `
      (then an ellipsis); only then is the pill cut, and on a narrow header it shows its dot only (its text stays in
      title and aria-label). The buttons never shrink. */
   .title-row { display: flex; align-items: center; gap: 8px; }
-  .title-row > .name { flex: 1 1 0; min-width: min(6.5ch, 100%); }
+  .title-row > .name { flex: 0 1 auto; min-width: min(6.5ch, 100%); }
   .name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* Round icon of the showcase site, tinted with the status colour like the pill. */
   .logo { flex: none; border-radius: 50%; display: grid; place-items: center;
           background: color-mix(in srgb, var(--c, var(--sm-ok)) 16%, transparent); }
   .logo .icon { width: 24px; height: 24px; fill: currentColor; color: var(--c, var(--sm-ok)); }
-  .title-row > .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; }
+  .title-row > .chip { flex: 0 0.01 auto; min-width: 0; white-space: nowrap; }
   .title-row > .chip > .chip-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   @container sm-header (max-width: 180px) {
     .title-row > .chip { padding: 4px; }
@@ -2836,9 +2836,11 @@ const BASE_STYLE = `
     .header .logo { display: none; }
   }
   .warning { padding: 16px; color: color-mix(in srgb, var(--sm-warn) 45%, var(--primary-text-color)); }
-  /* Zoom button of the mini card: rightmost in the header, 8 px from the card's right edge. */
-  .zoom { all: unset; flex: none; cursor: pointer; width: 24px; height: 24px; margin: -4px -4px -4px 0; border-radius: 50%;
-          display: grid; place-items: center; color: var(--secondary-text-color); }
+  /* Zoom button of the mini card: in the card's top right corner (24 px, round); the header keeps clear of it. */
+  .zoom { all: unset; position: absolute; z-index: 2; top: 5px; right: 5px; cursor: pointer; width: 24px; height: 24px; border-radius: 50%;
+          display: grid; place-items: center; color: var(--secondary-text-color);
+          background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
+  .header:has(> .zoom) { padding-right: 38px; }
   .zoom .icon { width: 16px; height: 16px; }
   .zoom:hover { background: color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color: var(--primary-text-color); }
   .zoom:focus-visible { outline: 2px solid var(--sm-focus); outline-offset: 1px; }
@@ -3074,7 +3076,10 @@ class SystemMonitorBase extends HTMLElement {
     // A subclass may tint it red instead (the compact view of the mini card, while a process is stopped).
     const iconCls = this._logoAlert(sm) ? "crit" : pending ? "warn" : unknown ? "muted" : "good";
     let chip;
-    if (pending) {
+    // The icon red for stopped processes (compact mini card): the pill says so, in the same colour.
+    const stopped = iconCls === "crit" ? this._stopped(sm) : [];
+    if (stopped.length) chip = pill("clickable crit", stopped[0], this._t(stopped.length === 1 ? "st_stopped_one" : "st_stopped").replace("{n}", stopped.length));
+    else if (pending) {
       const text = `${this._t("update")} ${pending.attributes.latest_version || ""}`.trim();
       chip = pill("clickable warn", pending.entity_id, text);
     } else if (unknown) chip = pill("clickable muted", unknown.entity_id, this._t("st_unknown"));
@@ -3760,8 +3765,6 @@ const NET_STYLE = `
 const MINI_STYLE = `
   /* The full card's logo size: the compact view does not shrink it. */
   .logo { height: 40px; width: 40px; align-self: flex-start; }
-  /* The status shows in the footer. */
-  .title-row > .chip { display: none; }
   .name { font-size: 16px; }
   /* One grid for every metric: the label column widens for the longest label (Datenträger), the same for all rows.
      At phone width (6 columns of a 320 px screen, 132 px inside) the gaps and the label give way (ellipsis), the bar

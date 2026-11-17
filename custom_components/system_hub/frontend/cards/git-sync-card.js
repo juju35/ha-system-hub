@@ -2240,10 +2240,9 @@ class GitSyncCard extends HTMLElement {
         <div class="header">
           <div class="badge"><ha-icon icon="mdi:git"></ha-icon></div>
           <div class="titles">
-            <div class="title">${gsEsc(c.title || this._t('title'))}</div>
+            <div class="title-row"><div class="title">${gsEsc(c.title || this._t('title'))}</div><span class="pill${busy ? ' busy' : ''}" title="${gsEsc(pillText)}" aria-label="${gsEsc(pillText)}"><span class="pill-text">${gsEsc(pillText)}</span></span></div>
             <div class="subtitle">${subtitle}</div>
           </div>
-          <span class="pill${busy ? ' busy' : ''}" title="${gsEsc(pillText)}" aria-label="${gsEsc(pillText)}"><span class="pill-text">${gsEsc(pillText)}</span></span>
           ${this._zoomButton()}
         </div>
         ${body}
@@ -2294,6 +2293,10 @@ class GitSyncCard extends HTMLElement {
         .pill-text { display: none; }
       }
       .pill.busy::before { animation: gs-pulse 1s ease-in-out infinite; }
+      /* The pill right after the title (8 px): the title gives way first, down to a few letters, then the pill. */
+      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 4.5ch; }
+      .title-row > .pill { flex: 0 0.01 auto; align-self: center; margin-top: 0; }
 
       .commit { margin-top: 14px; padding: 10px 12px; border-radius: 12px;
                 background: var(--secondary-background-color, rgba(127,127,127,.08)); }
@@ -2375,10 +2378,13 @@ class GitSyncCard extends HTMLElement {
       /* The diff button in the full card's action row keeps its square shape beside the wide buttons. */
       .actions button.icon-btn { flex: none; margin-left: 0; min-height: 38px; height: 38px; width: 38px; }
 
-      /* Mini card: zoom button at the far right of the header. */
-      .zoom { flex: none; align-self: flex-start; width: 24px; height: 24px; margin: 0 -4px 0 -2px; padding: 0;
+      /* Mini card: the expand / collapse button in the card's top right corner (24 px, round); the header keeps
+         clear of it. */
+      .zoom { position: absolute; z-index: 2; top: 5px; right: 5px; width: 24px; height: 24px; margin: 0; padding: 0;
               border: none; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
-              background: transparent; color: var(--secondary-text-color); transition: background .15s ease; }
+              background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); color: var(--secondary-text-color);
+              transition: background .15s ease; }
+      .header:has(> .zoom) { padding-right: 18px; }
       .zoom ha-icon { --mdc-icon-size: 16px; }
       .zoom:hover { background: color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color: var(--primary-text-color); }
       .zoom:focus-visible { outline: 2px solid var(--gs-accent); outline-offset: 1px; }

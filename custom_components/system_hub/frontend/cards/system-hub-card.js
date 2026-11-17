@@ -68,6 +68,12 @@ function shCardStatus(probe, config) {
   return { areas: shown, all: areas, counts, score, tone, points };
 }
 
+// The status pill after the title: a dot and the health score, in the overall tone (the header icon's colour).
+function shCardPill(status) {
+  var text = `${status.score}/100`;
+  return `<span class="chip ${status.tone}" title="${shCardEsc(text)}" aria-label="${shCardEsc(text)}"><span class="cdot"></span><span class="ct">${shCardEsc(text)}</span></span>`;
+}
+
 function shCardOpen(tab) {
   history.pushState(null, '', `/system-hub/${tab}`);
   window.dispatchEvent(new CustomEvent('location-changed', { detail: { replace: false } }));
@@ -143,6 +149,8 @@ var SH_HUB_STYLE = `
   .htext .sub { font-size:13px; color:#3b5b78; }
   .night .htext .sub { color:rgba(255,255,255,.78); }
   .htext .dots { justify-content:flex-start; max-width:none; margin-top:4px; }
+  .banner .chip { background:color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color:color-mix(in srgb, var(--c) 45%, #0d2a45); }
+  .banner.night .chip { background:color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color:color-mix(in srgb, var(--c) 35%, #ffffff); }
   .body { padding:0 16px 14px; }
   .sh-blink { animation:sh-bl 1.2s steps(2) infinite; }
   .sh-gauge { animation:sh-bl 3s ease-in-out infinite; }
@@ -168,8 +176,8 @@ var SH_CARD_STYLE = `
   .title { font-size:17px; color:var(--primary-text-color); }
   .mini .title { font-size:15px; }
   .sub { font-size:12.5px; color:var(--secondary-text-color); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  :host([hide-title]) .head .who > .title, :host([hide-subtitle]) .head .who > .sub,
-  :host([hide-title]) .htext .who > .title, :host([hide-subtitle]) .htext .who > .sub { display:none; }
+  :host([hide-title]) .head .who > .trow > .title, :host([hide-subtitle]) .head .who > .sub,
+  :host([hide-title]) .htext .who > .trow > .title, :host([hide-subtitle]) .htext .who > .sub { display:none; }
   .open { color:var(--secondary-text-color); --mdc-icon-size:20px; }
   .group { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--secondary-text-color); margin:12px 0 6px; }
   .areas { display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr)); gap:6px; }
@@ -182,6 +190,14 @@ var SH_CARD_STYLE = `
   .mini { display:flex; align-items:center; gap:12px; padding:10px 14px; cursor:pointer; }
   .dots { display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end; max-width:40%; }
   .note { color:var(--secondary-text-color); }
+  /* The title and the status pill right after it (8 px); short of room the pill takes the next line, whole. */
+  .trow { display:flex; flex-wrap:wrap; align-items:center; gap:2px 8px; min-width:0; }
+  .trow > .title { flex:0 1 auto; min-width:4.5ch; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .chip { --c:var(--sh-tone); flex:0 0.01 auto; min-width:0; display:inline-flex; align-items:center; gap:5px; padding:1px 8px; border-radius:12px;
+          font-size:11px; font-weight:500; line-height:16px; white-space:nowrap; color:color-mix(in srgb, var(--c) 50%, var(--primary-text-color));
+          background:color-mix(in srgb, var(--c) 15%, transparent); }
+  .chip .cdot { width:7px; height:7px; border-radius:50%; flex:none; background:var(--c); }
+  .chip .ct { min-width:0; overflow:hidden; text-overflow:ellipsis; }
 `;
 
 // A card of a module (its own card element), or the Status card
@@ -301,7 +317,8 @@ class SystemHubCardBase extends HTMLElement {
     ]
       .filter(([tone]) => status.counts[tone])
       .map(([tone, key]) => p._t(key, { n: status.counts[tone] }));
-    return { title, sub: [`${status.score}/100`, ...parts].join(' · ') };
+    // The score is in the pill after the title.
+    return { title, sub: parts.join(' · ') };
   }
 
   _statusCard(status) {
@@ -316,9 +333,9 @@ class SystemHubCardBase extends HTMLElement {
       .join('');
     if (this._config.illustration === false) {
       return `<ha-card><div class="head ${status.tone}" data-tab="status"><div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
-      <div class="who"><div class="title">${shCardEsc(title)}</div><div class="sub">${shCardEsc(sub)}</div></div><ha-icon class="open" icon="mdi:open-in-new"></ha-icon></div>${groups}</ha-card>`;
+      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}</div><ha-icon class="open" icon="mdi:open-in-new"></ha-icon></div>${groups}</ha-card>`;
     }
-    var head = `<div class="who"><div class="title">${shCardEsc(title)}</div><div class="sub">${shCardEsc(sub)}</div></div>`;
+    var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}</div>`;
     return `<ha-card class="illus">${this._banner(status, head)}${groups ? `<div class="body">${groups}</div>` : ''}</ha-card>`;
   }
 
@@ -365,14 +382,14 @@ class SystemHubMiniCard extends SystemHubCardBase {
           .slice(0, 3)
           .map(([, [, value]]) => value)
           .join(' · ')
-      : `${status.score}/100`;
+      : '';
     var dots = look.map(([tab, [tone]]) => `<span class="dot ${tone}" title="${shCardEsc(p._tabName(tab))}"></span>`).join('');
     if (this._config.illustration !== false) {
-      var head = `<div class="who"><div class="title">${shCardEsc(title)}</div><div class="sub">${shCardEsc(sub)}</div>${dots ? `<div class="dots">${dots}</div>` : ''}</div>`;
+      var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}${dots ? `<div class="dots">${dots}</div>` : ''}</div>`;
       return `<ha-card class="illus">${this._banner(status, head)}</ha-card>`;
     }
     return `<ha-card class="mini ${status.tone}" data-tab="status"><div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
-      <div class="who"><div class="title">${shCardEsc(title)}</div><div class="sub">${shCardEsc(sub)}</div></div><div class="dots">${dots}</div></ha-card>`;
+      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub">${shCardEsc(sub)}</div>` : ''}</div><div class="dots">${dots}</div></ha-card>`;
   }
 }
 

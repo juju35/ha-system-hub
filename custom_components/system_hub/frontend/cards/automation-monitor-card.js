@@ -1686,6 +1686,20 @@ const BASE_STYLE = `
   }
   /* The title block takes the room left, truncates, and keeps a few characters whatever the chip and buttons need. */
   .titles { flex: 1 1 0; min-width: 5ch; }
+  /* The status chip right after the name (8 px): the name gives way first, down to a few characters, then the chip. */
+  .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .title-row > .name { flex: 0 1 auto; min-width: 4.5ch; }
+  .title-row > .chip { flex: 0 0.01 auto; }
+  /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the Refresh button on the
+     same top line at its left; the header keeps clear of them. */
+  ha-card:has(> .header > .zoom) { position: relative; }
+  .header:has(> .zoom) { padding-right: 38px; }
+  .header:has(> .zoom):has(> .refresh) { padding-right: 66px; }
+  .header > .zoom, .header:has(> .zoom) > .refresh { position: absolute; z-index: 2; top: 5px; width: 24px; height: 24px; margin: 0;
+                                                     background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
+  .header > .zoom { right: 5px; }
+  .header:has(> .zoom) > .refresh { right: 33px; }
+  .header:has(> .zoom) > .refresh .icon { width: 16px; height: 16px; }
   .name { font-size: 16px; font-weight: 500; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .sub { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   /* As ha-alert: theme text colour, warning colour on the left border and a light tint. */
@@ -2167,12 +2181,11 @@ class AutomationMonitorBase extends HTMLElement {
       <div class="header">
         <div class="logo ${status.cls}" aria-hidden="true">${svgIcon(ICONS.robot_confused)}</div>
         <div class="titles">
-          <div class="name">${esc(c.title || "Automation Monitor")}</div>
+          <div class="title-row"><div class="name">${esc(c.title || "Automation Monitor")}</div><span class="chip clickable ${status.cls}" role="button" tabindex="0" data-entity="${esc(status.entity || "")}" title="${esc(status.text)}" aria-label="${esc(
+            status.text
+          )}"><span class="dot"></span><span class="txt">${esc(status.text)}</span></span></div>
           ${sub ? `<div class="sub">${esc(sub)}</div>` : ""}
         </div>
-        <span class="chip clickable ${status.cls}" role="button" tabindex="0" data-entity="${esc(status.entity || "")}" title="${esc(status.text)}" aria-label="${esc(
-          status.text
-        )}"><span class="dot"></span><span class="txt">${esc(status.text)}</span></span>
         ${
           this._admin
             ? `<button class="refresh ${this._refreshing ? "spin" : ""}" data-action="rebuild" title="${esc(`${this._t("rebuild")} · ${this._t("rebuild_title")}`)}" aria-label="${esc(this._t("rebuild"))}">${svgIcon(ICONS.refresh)}</button>`

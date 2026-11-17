@@ -658,7 +658,8 @@ test('narrow header: the pill keeps its full text while there is room, the title
   assert.equal(compact['.head .pill .dot'].display, 'block');
   // The text is hidden visually only: screen readers still read it.
   assert.match(compact['.head .pill .ptxt'].clip || compact['.head .pill .ptxt']['clip-path'], /rect|inset/);
-  assert.equal(css['.pill .dot'].display, 'none');
+  // The dot shows at every width (dot + status, in the status colour); the text gives way only when narrow.
+  assert.equal(css['.pill .dot'].display, undefined);
   // In the rows, the outcome on the right gives way (up to half the row) instead of hiding the name.
   for (const sel of ['.tag', '.when']) {
     assert.equal(css[sel].flex, '0 1 auto', sel);

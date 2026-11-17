@@ -175,7 +175,9 @@ test('status: the areas by group, the summary; hide_ok and groups narrow it', as
   assert.match(html, /mdi:nas/);
   assert.match(html, /class="sh-scene"/);
   assert.match(html, /st_points:\{&#34;n&#34;:3\}/);
-  assert.match(html, /75\/100 · st_n_bad:\{&#34;n&#34;:1\} · st_n_warn:\{&#34;n&#34;:2\}/);
+  // The score in the status pill after the title (dot and score, in the overall tone), the counts under it.
+  assert.match(html, /<div class="title">[^<]+<\/div><span class="chip \w+" title="75\/100" aria-label="75\/100"><span class="cdot"><\/span><span class="ct">75\/100<\/span><\/span>/);
+  assert.match(html, /<div class="sub">st_n_bad:\{&#34;n&#34;:1\} · st_n_warn:\{&#34;n&#34;:2\}<\/div>/);
   assert.match(html, /Group system[\s\S]*Tab system[\s\S]*Disk 93 %[\s\S]*Group reliability[\s\S]*Group maintenance[\s\S]*Group devices/);
   card.setConfig({ hide_ok: true, groups: ['devices', 'maintenance'] });
   const narrow = card.shadowRoot.innerHTML;

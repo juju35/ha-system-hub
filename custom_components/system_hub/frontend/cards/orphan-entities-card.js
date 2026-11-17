@@ -2584,11 +2584,10 @@ class OrphanEntitiesCard extends HTMLElement {
     return `<div class="head">
           <div class="badge"><ha-icon icon="${this._badgeIcon()}"></ha-icon></div>
           <div class="heading">
-            <div class="title">${oeEsc(this._config.title || this._t('title'))}</div>
+            <div class="title-row"><div class="title">${oeEsc(this._config.title || this._t('title'))}</div>${this._pill(this._status(items, scanned))}</div>
             ${subtitle ? `<div class="subtitle" title="${oeEsc(scannedAt ? this._absolute(scannedAt) : '')}">${oeEsc(subtitle)}</div>` : ''}
           </div>
           ${this._scanButton()}
-          ${this._pill(this._status(items, scanned))}
           ${this._headExtra()}
         </div>`;
   }
@@ -3067,7 +3066,20 @@ class OrphanEntitiesCard extends HTMLElement {
               background: color-mix(in srgb, var(--c) 14%, transparent); }
       .pill .ptxt { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: normal; line-height: 1.25;
                     display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; }
-      .pill .dot { display: none; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+      .pill .dot { flex: none; width: 6px; height: 6px; margin-right: 4px; border-radius: 50%; background: var(--c); }
+      /* The pill right after the title (8 px): the title gives way first, down to a few letters, then the pill. */
+      .title-row { display: flex; align-items: center; gap: 8px; min-width: 0; }
+      .title-row > .title { flex: 0 1 auto; min-width: 4.5ch; }
+      .title-row > .pill { flex: 0 0.01 auto; max-width: none; }
+      /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the scan button on the
+         same top line at its left; the header keeps clear of them. */
+      ha-card:has(.zoom) { position: relative; }
+      .head:has(> .zoom) { padding-right: 21px; }
+      .head:has(> .zoom):has(> .scan) { padding-right: 49px; }
+      .head > .zoom, .head:has(> .zoom) > .scan { position: absolute; z-index: 2; top: 5px; width: 24px; height: 24px; margin: 0;
+                                                 background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
+      .head > .zoom { right: 5px; }
+      .head:has(> .zoom) > .scan { right: 33px; }
       /* Dot only: under 200 px, and whenever the text or the title would be cut (class compact, set by _fitPill) */
       .head .pill.compact { padding: 5px; }
       .head .pill.compact .dot { display: block; }
@@ -3400,9 +3412,8 @@ class OrphanEntitiesMiniCard extends OrphanEntitiesCard {
           <div class="badge"><ha-icon icon="${this._badgeIcon()}"></ha-icon></div>
           <div class="body">
             <div class="head">
-              <div class="heading"><div class="title">${oeEsc(this._config.title || this._t('title'))}</div></div>
+              <div class="heading"><div class="title-row"><div class="title">${oeEsc(this._config.title || this._t('title'))}</div>${this._pill(this._status(items, scanned))}</div></div>
               ${this._scanButton()}
-              ${this._pill(this._status(items, scanned))}
               ${this._headExtra()}
             </div>
             <div class="rs">${m.st ? this._chips(items, scanned, scannedAt) : ''}</div>

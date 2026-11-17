@@ -2041,7 +2041,7 @@ class BatteryMonitorCard extends HTMLElement {
   // The title, the "Notify now" button and the status pill, in a block of their own between the badge and the full
   // screen (or close) button: short of room on one line, the pill goes under the title, whole, rather than being cut.
   _headMain(title, status) {
-    return `<div class="main"><div class="title">${bmEsc(title)}</div>${this._notifyButton()}${this._pill(status)}</div>`;
+    return `<div class="main"><div class="title">${bmEsc(title)}</div>${this._pill(status)}${this._notifyButton()}</div>`;
   }
 
   // The status pill: its whole text, on its own line under the title when the header is short of room.
@@ -2523,12 +2523,16 @@ class BatteryMonitorCard extends HTMLElement {
       .badge { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
                background: color-mix(in srgb, var(--c) 16%, transparent); color: var(--c); }
       .badge ha-icon { --mdc-icon-size: 24px; }
-      .title { flex: 1 1 0; min-width: min(100%, 8ch); font-size: 16px; font-weight: 500; color: var(--primary-text-color);
+      .title { flex: 0 1 auto; min-width: min(100%, 8ch); font-size: 16px; font-weight: 500; color: var(--primary-text-color);
                white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .pill { flex: 0 1 auto; min-width: 0; max-width: 100%; overflow-wrap: anywhere;
               box-sizing: border-box; font-size: 11px; font-weight: 500; padding: 1px 8px; border-radius: 9px;
               color: var(--ct); background: color-mix(in srgb, var(--c) 14%, transparent); }
       .pt { display: block; }
+      /* The pill right after the title, a dot in the status colour before its text. */
+      .pill { display: inline-flex; align-items: center; gap: 4px; }
+      .pill::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--c); }
+      .pill .pt { min-width: 0; }
       .notify { all: unset; cursor: pointer; flex: none; width: 26px; height: 26px; border-radius: 50%;
                 display: grid; place-items: center; color: var(--secondary-text-color); }
       .notify:hover { background: color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
@@ -2553,6 +2557,18 @@ class BatteryMonitorCard extends HTMLElement {
       .zoom ha-icon { --mdc-icon-size: 16px; }
       /* The header icon of the mini card keeps the full card's size (40px), even narrow. */
       ha-card.mini .badge { display: grid; width: 40px; height: 40px; }
+      /* Mini card: the expand / collapse button in the card's top right corner (24 px, round), the header's other
+         buttons (full screen, notify now) on the same top line at its left; the header keeps clear of them. */
+      ha-card:has(.zoom) { position: relative; }
+      .head:has(> .zoom) { padding-right: 21px; }
+      .head:has(> .zoom):has(.full, .notify) { padding-right: 49px; }
+      .head:has(> .zoom):has(> .full):has(.notify) { padding-right: 77px; }
+      .head > .zoom, .head:has(> .zoom) .full, .head:has(> .zoom) .notify {
+        position: absolute; z-index: 2; top: 5px; width: 24px; height: 24px; margin: 0;
+        background: color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
+      .head > .zoom { right: 5px; }
+      .head:has(> .zoom) .full, .head:has(> .zoom):not(:has(> .full)) .notify { right: 33px; }
+      .head:has(> .zoom):has(> .full) .notify { right: 61px; }
       ha-card.mini .badge ha-icon { --mdc-icon-size: 24px; }
 
       /* Up to --cols columns, each at least 160px wide (or the whole card, if narrower): fewer columns when they do not fit */
