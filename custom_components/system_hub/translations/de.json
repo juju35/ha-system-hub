@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Was in Ordnung ist ausblenden",
         "card_show_title": "Titel anzeigen",
         "card_show_subtitle": "Untertitel anzeigen",
+        "card_illustration": "Illustration",
+        "card_illustration_theme": "Illustrationsthema",
+        "card_theme_auto": "Automatisch (Sonne, dunkles Design)",
+        "card_theme_day": "Tag",
+        "card_theme_night": "Nacht",
         "sc_allowed": "Erlaubt",
         "sc_allow": "Erlauben",
         "sc_disallow": "Zurücknehmen"

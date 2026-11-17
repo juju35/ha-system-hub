@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Verberg wat in orde is",
         "card_show_title": "Titel tonen",
         "card_show_subtitle": "Ondertitel tonen",
+        "card_illustration": "Illustratie",
+        "card_illustration_theme": "Illustratiethema",
+        "card_theme_auto": "Automatisch (zon, donker thema)",
+        "card_theme_day": "Dag",
+        "card_theme_night": "Nacht",
         "sc_allowed": "Toegestaan",
         "sc_allow": "Toestaan",
         "sc_disallow": "Intrekken"

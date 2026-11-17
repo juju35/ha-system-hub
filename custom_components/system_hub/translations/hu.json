@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Rendben lévők elrejtése",
         "card_show_title": "Cím megjelenítése",
         "card_show_subtitle": "Alcím megjelenítése",
+        "card_illustration": "Illusztráció",
+        "card_illustration_theme": "Illusztráció témája",
+        "card_theme_auto": "Automatikus (nap, sötét téma)",
+        "card_theme_day": "Nappal",
+        "card_theme_night": "Éjszaka",
         "sc_allowed": "Engedélyezve",
         "sc_allow": "Engedélyezés",
         "sc_disallow": "Visszavonás"

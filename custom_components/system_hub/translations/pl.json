@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Ukryj to, co w porządku",
         "card_show_title": "Pokaż tytuł",
         "card_show_subtitle": "Pokaż podtytuł",
+        "card_illustration": "Ilustracja",
+        "card_illustration_theme": "Motyw ilustracji",
+        "card_theme_auto": "Automatyczny (słońce, ciemny motyw)",
+        "card_theme_day": "Dzień",
+        "card_theme_night": "Noc",
         "sc_allowed": "Dozwolony",
         "sc_allow": "Zezwól",
         "sc_disallow": "Cofnij"

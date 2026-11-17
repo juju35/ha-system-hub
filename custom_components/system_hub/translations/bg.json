@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Скрий наред",
         "card_show_title": "Показване на заглавието",
         "card_show_subtitle": "Показване на подзаглавието",
+        "card_illustration": "Илюстрация",
+        "card_illustration_theme": "Тема на илюстрацията",
+        "card_theme_auto": "Автоматично (слънце, тъмна тема)",
+        "card_theme_day": "Ден",
+        "card_theme_night": "Нощ",
         "sc_allowed": "Разрешена",
         "sc_allow": "Разреши",
         "sc_disallow": "Оттегли"

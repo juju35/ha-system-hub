@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Paslēpt to, kas ir kārtībā",
         "card_show_title": "Rādīt virsrakstu",
         "card_show_subtitle": "Rādīt apakšvirsrakstu",
+        "card_illustration": "Ilustrācija",
+        "card_illustration_theme": "Ilustrācijas motīvs",
+        "card_theme_auto": "Automātiski (saule, tumšais motīvs)",
+        "card_theme_day": "Diena",
+        "card_theme_night": "Nakts",
         "sc_allowed": "Atļauts",
         "sc_allow": "Atļaut",
         "sc_disallow": "Atsaukt"

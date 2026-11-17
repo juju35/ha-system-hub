@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Dölj det som är okej",
         "card_show_title": "Visa rubrik",
         "card_show_subtitle": "Visa underrubrik",
+        "card_illustration": "Illustration",
+        "card_illustration_theme": "Illustrationstema",
+        "card_theme_auto": "Automatiskt (sol, mörkt tema)",
+        "card_theme_day": "Dag",
+        "card_theme_night": "Natt",
         "sc_allowed": "Tillåtet",
         "sc_allow": "Tillåt",
         "sc_disallow": "Återkalla"

@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Skryť, čo je v poriadku",
         "card_show_title": "Zobraziť názov",
         "card_show_subtitle": "Zobraziť podnázov",
+        "card_illustration": "Ilustrácia",
+        "card_illustration_theme": "Téma ilustrácie",
+        "card_theme_auto": "Automaticky (slnko, tmavá téma)",
+        "card_theme_day": "Deň",
+        "card_theme_night": "Noc",
         "sc_allowed": "Povolený",
         "sc_allow": "Povoliť",
         "sc_disallow": "Odvolať"

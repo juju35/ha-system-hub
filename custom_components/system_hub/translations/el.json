@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Απόκρυψη όσων είναι εντάξει",
         "card_show_title": "Εμφάνιση τίτλου",
         "card_show_subtitle": "Εμφάνιση υπότιτλου",
+        "card_illustration": "Εικονογράφηση",
+        "card_illustration_theme": "Θέμα εικονογράφησης",
+        "card_theme_auto": "Αυτόματο (ήλιος, σκούρο θέμα)",
+        "card_theme_day": "Ημέρα",
+        "card_theme_night": "Νύχτα",
         "sc_allowed": "Επιτρέπεται",
         "sc_allow": "Να επιτρέπεται",
         "sc_disallow": "Ανάκληση"

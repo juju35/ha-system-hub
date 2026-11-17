@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Ascunde ce e în regulă",
         "card_show_title": "Afișează titlul",
         "card_show_subtitle": "Afișează subtitlul",
+        "card_illustration": "Ilustrație",
+        "card_illustration_theme": "Tema ilustrației",
+        "card_theme_auto": "Automat (soare, temă întunecată)",
+        "card_theme_day": "Zi",
+        "card_theme_night": "Noapte",
         "sc_allowed": "Permis",
         "sc_allow": "Permite",
         "sc_disallow": "Retrage"

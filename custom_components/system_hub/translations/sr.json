@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Сакриј оно што је у реду",
         "card_show_title": "Прикажи наслов",
         "card_show_subtitle": "Прикажи поднаслов",
+        "card_illustration": "Илустрација",
+        "card_illustration_theme": "Тема илустрације",
+        "card_theme_auto": "Аутоматски (сунце, тамна тема)",
+        "card_theme_day": "Дан",
+        "card_theme_night": "Ноћ",
         "sc_allowed": "Дозвољено",
         "sc_allow": "Дозволи",
         "sc_disallow": "Опозови"

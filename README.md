@@ -233,15 +233,19 @@ System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-
 
 ## Status cards
 
-`module: status` (the default) shows the **Status** tab of the panel: the emblem in the colour of the status, the points to check and the score, then each area by group with its level and details; a click on an area opens its tab in the panel. The mini card puts it on one line: the emblem, the points to check, the details of the first areas to look at and a dot per area. They read the status as the panel does (its own code, without showing it), every 30 seconds, so the cards, the panel and the sidebar icon always agree. Administrators only, as the panel.
+`module: status` (the default) shows the **Status** tab of the panel: an illustrated header with the points to check and the score, then each area by group with its level and details; a click on an area opens its tab in the panel, a click on the header opens the Status tab. The mini card shows the same header with the points to check, the details of the first areas to look at and a dot per area.
+
+The header (90 px, on both cards) draws a home server's dashboard: the server icon in the colour of the status (green when all is good, amber with points to watch, red with critical ones), the host, the health score ring, the containers, the batteries, the updates and the watchdog, each in the colour of its own area, animated (motion is stopped when the system asks for reduced motion), over a concrete floor. It turns to night when the sun is below the horizon (or, without `sun.sun`, with a dark theme); `illustration_theme: day | night` forces it, and `illustration: false` brings back the classic header with the status emblem. They read the status as the panel does (its own code, without showing it), every 30 seconds, so the cards, the panel and the sidebar icon always agree. Administrators only, as the panel.
 
 ```yaml
 type: custom:system-hub-card
 groups: [system, reliability]   # optional: only these groups (system, reliability, maintenance, devices)
 hide_ok: true                     # optional: hide the areas that are fine
+illustration: false               # optional: the classic header instead of the illustrated one (default: true)
+illustration_theme: night         # optional: auto (default: sun, then dark theme), day or night
 ```
 
-The mini card takes `groups` only: its single line has no header, and it already shows only the areas to look at, so `show_title`, `show_subtitle` and `hide_ok` apply to the full card.
+The mini card takes `groups`, `illustration` and `illustration_theme` (both): it already shows only the areas to look at, so `show_title`, `show_subtitle` and `hide_ok` apply to the full card.
 
 | `system-hub-card` | `system-hub-mini-card` |
 |---|---|

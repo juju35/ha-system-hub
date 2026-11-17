@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Hide what is fine",
         "card_show_title": "Show title",
         "card_show_subtitle": "Show subtitle",
+        "card_illustration": "Illustration",
+        "card_illustration_theme": "Illustration theme",
+        "card_theme_auto": "Automatic (sun, dark theme)",
+        "card_theme_day": "Day",
+        "card_theme_night": "Night",
         "sc_allowed": "Allowed",
         "sc_allow": "Allow",
         "sc_disallow": "Withdraw"

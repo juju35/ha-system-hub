@@ -170,7 +170,10 @@ test('status: the areas by group, the summary; hide_ok and groups narrow it', as
   card.hass = hass;
   await card._read();
   const html = card.shadowRoot.innerHTML;
-  assert.match(html, /system-hub:warn/);
+  // The illustrated header: the server icon and the picture in the overall tone, by day (no sun, light theme)
+  assert.match(html, /class="banner warn" data-tab="status"/);
+  assert.match(html, /mdi:nas/);
+  assert.match(html, /class="sh-scene"/);
   assert.match(html, /st_points:\{&#34;n&#34;:3\}/);
   assert.match(html, /75\/100 · st_n_bad:\{&#34;n&#34;:1\} · st_n_warn:\{&#34;n&#34;:2\}/);
   assert.match(html, /Group system[\s\S]*Tab system[\s\S]*Disk 93 %[\s\S]*Group reliability[\s\S]*Group maintenance[\s\S]*Group devices/);
@@ -217,15 +220,63 @@ test('editor: the module first, then its own editor; another module starts its o
   const form = editor.shadowRoot.querySelector('.form').children[0];
   form.handlers['value-changed']({ stopPropagation() {}, detail: { value: { module: 'status' } } });
   assert.equal(JSON.stringify(editor.events.at(-1).detail.config), JSON.stringify({ type: 'custom:system-hub-card', module: 'status' }));
-  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,show_title,show_subtitle,hide_ok');
+  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,illustration,illustration_theme,show_title,show_subtitle,hide_ok');
+  // The defaults (illustration on, automatic theme) are left out of the YAML
+  form.handlers['value-changed']({ stopPropagation() {}, detail: { value: { module: 'status', illustration: true, illustration_theme: 'auto' } } });
+  assert.equal(JSON.stringify(editor.events.at(-1).detail.config), JSON.stringify({ type: 'custom:system-hub-card', module: 'status' }));
+  form.handlers['value-changed']({ stopPropagation() {}, detail: { value: { module: 'status', illustration: false, illustration_theme: 'night' } } });
+  assert.equal(
+    JSON.stringify(editor.events.at(-1).detail.config),
+    JSON.stringify({ type: 'custom:system-hub-card', module: 'status', illustration: false, illustration_theme: 'night' }),
+  );
   assert.equal(inner.children.length, 0);
 });
 
-test('mini editor, status: the groups only, the options the one-line card ignores left out', () => {
+test('mini editor, status: the groups and the illustration, the options the mini card ignores left out', () => {
   const { registry } = load();
   const editor = new (registry.get('system-hub-mini-card-editor'))();
   editor.hass = hass;
   editor.setConfig({ type: 'custom:system-hub-mini-card', module: 'status' });
   const form = editor.shadowRoot.querySelector('.form').children[0];
-  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups');
+  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,illustration,illustration_theme');
+});
+
+test('illustrated header: night from the sun, the theme or the option; each part in the tone of its area; classic header', async () => {
+  const { registry } = load();
+  const card = new (registry.get('system-hub-card'))();
+  card.setConfig({});
+  card.hass = { ...hass, states: { 'sun.sun': { state: 'below_horizon' } } };
+  await card._read();
+  let html = card.shadowRoot.innerHTML;
+  assert.match(html, /class="banner warn night"/);
+  // The system area is critical: the host's light and frame in red; the batteries to watch: a low amber level
+  assert.match(html, /cx="11" cy="9" r="1.4" fill="#e5484d"/);
+  assert.match(html, /y="2" width="8" height="6" rx="1" fill="#f5a623"/);
+  // The score fills the ring
+  assert.match(html, /stroke-dasharray="56.5 100"/);
+  // The sun goes up: drawn again by day without a new read
+  card.hass = { ...hass, states: { 'sun.sun': { state: 'above_horizon' } } };
+  assert.match(card.shadowRoot.innerHTML, /class="banner warn"/);
+  // Forced by the option, whatever the sun and the theme
+  card.setConfig({ illustration_theme: 'night' });
+  assert.match(card.shadowRoot.innerHTML, /class="banner warn night"/);
+  card.setConfig({ illustration_theme: 'day' });
+  card.hass = { ...hass, themes: { darkMode: true } };
+  assert.match(card.shadowRoot.innerHTML, /class="banner warn"/);
+  // No sun: Home Assistant's dark theme
+  card.setConfig({});
+  card.hass = { ...hass, themes: { darkMode: true } };
+  card._renderStatus();
+  assert.match(card.shadowRoot.innerHTML, /class="banner warn night"/);
+  // illustration: false keeps the classic header and its emblem
+  card.setConfig({ illustration: false });
+  html = card.shadowRoot.innerHTML;
+  assert.match(html, /system-hub:warn/);
+  assert.doesNotMatch(html, /banner|sh-scene/);
+  // The mini card: the same banner, the details and the dots on its background
+  const mini = new (registry.get('system-hub-mini-card'))();
+  mini.setConfig({});
+  mini.hass = hass;
+  await mini._read();
+  assert.match(mini.shadowRoot.innerHTML, /class="banner warn"[\s\S]*Disk 93 %[\s\S]*class="dots"/);
 });

@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Сховати те, що гаразд",
         "card_show_title": "Показувати заголовок",
         "card_show_subtitle": "Показувати підзаголовок",
+        "card_illustration": "Ілюстрація",
+        "card_illustration_theme": "Тема ілюстрації",
+        "card_theme_auto": "Автоматично (сонце, темна тема)",
+        "card_theme_day": "День",
+        "card_theme_night": "Ніч",
         "sc_allowed": "Дозволено",
         "sc_allow": "Дозволити",
         "sc_disallow": "Відкликати"

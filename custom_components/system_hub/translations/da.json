@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Skjul det, der er i orden",
         "card_show_title": "Vis titel",
         "card_show_subtitle": "Vis undertitel",
+        "card_illustration": "Illustration",
+        "card_illustration_theme": "Illustrationstema",
+        "card_theme_auto": "Automatisk (sol, mørkt tema)",
+        "card_theme_day": "Dag",
+        "card_theme_night": "Nat",
         "sc_allowed": "Tilladt",
         "sc_allow": "Tillad",
         "sc_disallow": "Tilbagekald"

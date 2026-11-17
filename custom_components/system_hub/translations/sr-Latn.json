@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Sakrij ono što je u redu",
         "card_show_title": "Prikaži naslov",
         "card_show_subtitle": "Prikaži podnaslov",
+        "card_illustration": "Ilustracija",
+        "card_illustration_theme": "Tema ilustracije",
+        "card_theme_auto": "Automatski (sunce, tamna tema)",
+        "card_theme_day": "Dan",
+        "card_theme_night": "Noć",
         "sc_allowed": "Dozvoljeno",
         "sc_allow": "Dozvoli",
         "sc_disallow": "Opozovi"

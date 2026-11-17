@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Скрыть то, что в порядке",
         "card_show_title": "Показывать заголовок",
         "card_show_subtitle": "Показывать подзаголовок",
+        "card_illustration": "Иллюстрация",
+        "card_illustration_theme": "Тема иллюстрации",
+        "card_theme_auto": "Автоматически (солнце, тёмная тема)",
+        "card_theme_day": "День",
+        "card_theme_night": "Ночь",
         "sc_allowed": "Разрешено",
         "sc_allow": "Разрешить",
         "sc_disallow": "Отозвать"

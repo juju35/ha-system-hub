@@ -1849,6 +1849,11 @@
         "card_hide_ok": "Ocultar o que está bem",
         "card_show_title": "Mostrar o título",
         "card_show_subtitle": "Mostrar o subtítulo",
+        "card_illustration": "Ilustração",
+        "card_illustration_theme": "Tema da ilustração",
+        "card_theme_auto": "Automático (sol, tema escuro)",
+        "card_theme_day": "Dia",
+        "card_theme_night": "Noite",
         "sc_allowed": "Permitido",
         "sc_allow": "Permitir",
         "sc_disallow": "Retirar"
