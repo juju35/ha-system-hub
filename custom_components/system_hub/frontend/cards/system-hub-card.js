@@ -79,13 +79,12 @@ function shCardOpen(tab) {
 var SH_HUB_COLORS = { good: '#43a047', warn: '#f5a623', bad: '#e5484d', info: '#2f80ed' };
 var SH_HUB_LED = { good: '#43c463', warn: '#f5a623', bad: '#e5484d', info: '#43c463' };
 
-// Night picture: forced by illustration_theme, else the sun below the horizon, else Home Assistant's dark mode.
+// Night picture: forced by illustration_theme, else the sun below the horizon or Home Assistant's dark mode (a day
+// picture on a dark card would glare).
 function shHubIsNight(hass, config) {
   if (config?.illustration_theme === 'night') return true;
   if (config?.illustration_theme === 'day') return false;
-  var sun = hass?.states?.['sun.sun'];
-  if (sun && sun.state !== 'unavailable' && sun.state !== 'unknown') return sun.state === 'below_horizon';
-  return !!hass?.themes?.darkMode;
+  return hass?.states?.['sun.sun']?.state === 'below_horizon' || !!hass?.themes?.darkMode;
 }
 
 // The tone of each part of the picture: its Status area when the module is on (whatever groups the card shows),

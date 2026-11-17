@@ -1588,9 +1588,15 @@ ORPHANS_CONFIRM = """async () => {
 }"""
 
 # A status card on its own, next to the panel (hidden): the panel's hass, as a dashboard gives it.
-CARD_MOUNT = """async (type) => {
+CARD_MOUNT = """async ([type, dark]) => {
     const panel = document.querySelector("system-hub-panel");
-    const hass = { ...panel._hass, panels: { "system-hub": { config: { _panel_custom: { module_url: "" } } } } };
+    // The sun up in both themes: the dark shots get the night picture from Home Assistant's dark mode alone.
+    const hass = {
+        ...panel._hass,
+        panels: { "system-hub": { config: { _panel_custom: { module_url: "" } } } },
+        themes: { darkMode: dark },
+        states: { ...panel._hass.states, "sun.sun": { entity_id: "sun.sun", state: "above_horizon", attributes: {} } },
+    };
     panel.style.display = "none";
     const card = document.createElement(type);
     card.id = "card";
@@ -1895,7 +1901,7 @@ def main():
             if shot.get("card"):
                 page.add_script_tag(content=ICONS_JS)
                 page.add_script_tag(content=CARD_JS)
-                page.evaluate(CARD_MOUNT, shot["card"])
+                page.evaluate(CARD_MOUNT, [shot["card"], shot["theme"] == "dark"])
                 page.wait_for_timeout(400)
                 capture(
                     page, out / f"{shot['file']}.png", clip=page.locator("#card").bounding_box(), animations="disabled"

@@ -268,6 +268,11 @@ test('illustrated header: night from the sun, the theme or the option; each part
   card.hass = { ...hass, themes: { darkMode: true } };
   card._renderStatus();
   assert.match(card.shadowRoot.innerHTML, /class="banner warn night"/);
+  // The sun up but the dark theme: night all the same (a day picture would glare on a dark card), drawn again
+  card.hass = { ...hass, themes: { darkMode: true }, states: { 'sun.sun': { state: 'above_horizon' } } };
+  assert.match(card.shadowRoot.innerHTML, /class="banner warn night"/);
+  card.hass = { ...hass, themes: { darkMode: false }, states: { 'sun.sun': { state: 'above_horizon' } } };
+  assert.match(card.shadowRoot.innerHTML, /class="banner warn"/);
   // illustration: false keeps the classic header and its emblem
   card.setConfig({ illustration: false });
   html = card.shadowRoot.innerHTML;
