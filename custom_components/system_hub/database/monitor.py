@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import logging
 from collections.abc import Callable
 from datetime import datetime, timedelta
@@ -50,11 +51,9 @@ class DatabaseMonitor:
     @callback
     def async_stop(self) -> None:
         while self._unsubs:
-            try:
+            # The start listener already fired: nothing to remove
+            with contextlib.suppress(ValueError):
                 self._unsubs.pop()()
-            except ValueError:
-                # The start listener already fired
-                pass
 
     async def _tick(self, _now: datetime) -> None:
         await self.async_refresh()
