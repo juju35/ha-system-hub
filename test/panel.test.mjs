@@ -1199,7 +1199,7 @@ test('backups tab: the last success, the locations and their failures, the last 
     agent_errors: { 'cloud.cloud': 'Token expired' },
     backups: [
       { backup_id: 'a1', name: 'Automatic', date: iso(9), with_automatic_settings: true, failed_agent_ids: ['cloud.cloud'], agents: { 'backup.local': { size: 1073741824 }, 'hassio.nas': { size: 1073741824 } } },
-      { backup_id: 'm1', name: 'Before an update', date: iso(30), with_automatic_settings: false, agents: { 'backup.local': { size: 314572800 } } },
+      { backup_id: 'm1', name: 'Before an update', date: iso(57), with_automatic_settings: false, agents: { 'backup.local': { size: 314572800 } } },
     ],
   };
   const agents = { agents: [{ agent_id: 'backup.local', name: 'Local' }, { agent_id: 'hassio.nas', name: 'NAS' }, { agent_id: 'cloud.cloud', name: 'Cloud' }] };
