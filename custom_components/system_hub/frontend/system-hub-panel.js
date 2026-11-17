@@ -1166,6 +1166,10 @@ class SystemHubPanel extends HTMLElement {
     .dbdev.on { background:rgba(var(--rgb-primary-color, 3,169,244), .08); }
     .dbdev .dbrow { flex:1; min-width:0; }
     .dbdev .dbfold-space { width:36px; flex:none; }
+    /* A table of the database: aligned with the devices' counts above (their chevron's room kept) */
+    .dbtable { padding-right:56px; }
+    .dbtable .who { flex:1; min-width:0; }
+    .dbtable .dbcount { flex:none; }
     .dbents { border-left:2px solid var(--divider-color, rgba(127,127,127,.2)); margin-left:24px; padding-right:42px; }
     .dbent { padding-left:14px; }
     .dbent .n { font-size:13px; }
@@ -3374,8 +3378,8 @@ class SystemHubPanel extends HTMLElement {
         var pct = total ? Math.round(((t[key] || 0) / total) * 100) : 0;
         var sub = `${approx}${this._t(t.rows === 1 ? 'db_rows_one' : 'db_rows', { n: (t.rows || 0).toLocaleString(lang) })}`;
         var value = sized ? shBytes(t.size || 0) : (t.rows || 0).toLocaleString(lang);
-        return `<div class="item dbrow"><ha-icon icon="mdi:table"></ha-icon>
-          <div class="who"><div class="n mono">${shEsc(t.name)}</div><div class="s">${shEsc(sub)}</div>
+        return `<div class="item dbtable"><ha-icon icon="mdi:table"></ha-icon>
+          <div class="who"><div class="n">${shEsc(t.name)}</div><div class="s">${shEsc(sub)}</div>
             <div class="dbbar"><span style="width:${Math.max(pct, 1)}%"></span></div></div>
           <span class="dbcount"><b>${shEsc(value)}</b><span class="s">${pct} %</span></span></div>`;
       })
