@@ -48,6 +48,7 @@ from .database import settings as database_settings
 from .entity import unique_id as entity_unique_id
 from .logs import CONF_IGNORED_MESSAGES
 from .logs import settings as logs_settings
+from .marketplace import refresher as refresher_module
 from .orphans import panel as orphans_panel
 from .orphans.services import NO_RELOAD_KEY
 from .security import CONF_ALLOWED_ADDONS, CONF_IGNORED_IPS, security_state
@@ -376,8 +377,22 @@ def _watchdog(hass: HomeAssistant, watchdog: Any) -> dict[str, Any]:
     }
 
 
+def _marketplace_repositories(hass: HomeAssistant) -> dict[str, Any]:
+    """The repositories installed from the Marketplace by id (an update entity's unique id), else none."""
+    marketplace = refresher_module._loaded_marketplace(hass)  # noqa: SLF001 - same package, patched in tests
+    try:
+        return {str(repo.data.id): repo.data for repo in marketplace.repositories.list_installed}
+    except AttributeError:
+        return {}
+
+
 def _marketplace_updates(hass: HomeAssistant, installing: list[str]) -> list[dict[str, Any]]:
-    """The Marketplace's update entities with an update: versions, release, picture, and whether it is installing."""
+    """The Marketplace's update entities with an update: versions, release, picture, and whether it is installing.
+
+    Each carries its repository's category (integration, plugin, theme…): the Updates tab draws a card's or a theme's
+    icon when it has no picture, and an integration's logo from Home Assistant's brands (its domain).
+    """
+    repositories = _marketplace_repositories(hass)
     updates = []
     for entry in er.async_get(hass).entities.values():
         if entry.platform != "marketplace" or entry.domain != "update":
@@ -387,6 +402,11 @@ def _marketplace_updates(hass: HomeAssistant, installing: list[str]) -> list[dic
             continue
         update = _update(entry.entity_id, state)
         update["installing"] = update["installing"] or entry.entity_id in installing
+        repo = repositories.get(str(entry.unique_id))
+        update["category"] = getattr(repo, "category", None)
+        domain = getattr(repo, "domain", None)
+        if update["category"] == "integration" and isinstance(domain, str) and domain:
+            update["integration"] = domain
         updates.append(update)
     return sorted(updates, key=lambda u: str(u["title"]).lower())
 

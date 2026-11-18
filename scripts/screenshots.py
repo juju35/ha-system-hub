@@ -1267,6 +1267,7 @@ def mock_state():
                     "release_summary": "Sorting by attribute, a fix for nested cards and faster updates.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
                 {
                     "entity_id": "update.bubble_card_update",
@@ -1277,6 +1278,7 @@ def mock_state():
                     "release_summary": "Fixes the pop-up hash on iOS and the slider in the dark theme.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
                 {
                     "entity_id": "update.mushroom_update",
@@ -1287,6 +1289,7 @@ def mock_state():
                     "release_summary": "Breaking: a new card editor; some YAML options are renamed.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
                 {
                     "entity_id": "update.weather_plus_card_update",
@@ -1297,6 +1300,7 @@ def mock_state():
                     "release_summary": "Smoother rain at night and a fix for the pollen levels.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
             ],
             "failed": ["someone/abandoned-card"],
@@ -1466,7 +1470,7 @@ def mock_state():
 
 
 # Mounts the panel as Home Assistant does: its strings come from loadBackendTranslation, its data from callWS.
-MOUNT = """([state, strings, tab, narrow, view, forms]) => {
+MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
     const localize = (key, vars) => {
         let text = strings[key];
         if (text === undefined) return "";
@@ -1514,6 +1518,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
         language: "en",
         locale: { language: "en" },
         user: { is_admin: true },
+        // The illustrated headers draw their night picture in Home Assistant's dark mode
+        themes: { darkMode: dark },
         // ZHA loaded: the Silent devices tab's Zigbee view reads its mesh from zha/devices
         config: { components: ["zha", "matter"] },
         localize,
@@ -1896,7 +1902,18 @@ def main():
             shown = checking_state(state) if shot.get("checking") else state
             shown = automations_state(shown) if shot.get("automations") else shown
             shown = health_state(shown) if shot.get("health") else shown
-            page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view"), FORMS])
+            page.evaluate(
+                MOUNT,
+                [
+                    shown,
+                    STRINGS,
+                    shot["tab"],
+                    bool(shot.get("phone")),
+                    shot.get("view"),
+                    FORMS,
+                    shot["theme"] == "dark",
+                ],
+            )
             page.wait_for_timeout(400)
             if shot.get("card"):
                 page.add_script_tag(content=ICONS_JS)

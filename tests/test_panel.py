@@ -375,7 +375,39 @@ async def test_marketplace_updates_for_the_panel(hass: HomeAssistant) -> None:
         "release_summary": None,
         "picture": "/p.png",
         "installing": False,
+        "category": None,
     }
+
+
+async def test_marketplace_updates_carry_their_category(hass: HomeAssistant, fake_marketplace) -> None:
+    """A card, a theme or an integration: its repository's category, and an integration's domain for its logo."""
+    from types import SimpleNamespace  # noqa: PLC0415
+
+    from homeassistant.helpers import entity_registry as er  # noqa: PLC0415
+
+    from custom_components.system_hub.panel import _marketplace_updates  # noqa: PLC0415
+
+    repos = fake_marketplace.repositories.list_installed
+    repos.append(SimpleNamespace(data=SimpleNamespace(id="77", full_name="x/neutral", category="theme")))
+    repos[0].data.domain = "git_sync"
+    registry = er.async_get(hass)
+    for uid, title in (
+        (repos[0].data.id, "Git Sync"),
+        (repos[2].data.id, "Mushroom"),
+        ("77", "Neutral"),
+        ("99", "Gone"),
+    ):
+        entry = registry.async_get_or_create("update", "marketplace", uid, suggested_object_id=f"repo_{uid}")
+        hass.states.async_set(entry.entity_id, "on", {"title": title, "installed_version": "1", "latest_version": "2"})
+
+    updates = {u["title"]: u for u in _marketplace_updates(hass, [])}
+    assert updates["Git Sync"]["category"] == "integration"
+    assert updates["Git Sync"]["integration"] == "git_sync"
+    assert updates["Mushroom"]["category"] == "plugin"
+    assert "integration" not in updates["Mushroom"]
+    assert updates["Neutral"]["category"] == "theme"
+    # A repository the Marketplace no longer lists: no category
+    assert updates["Gone"]["category"] is None
 
 
 async def test_system_updates_for_the_panel(hass: HomeAssistant) -> None:
