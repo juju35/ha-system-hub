@@ -1960,7 +1960,8 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   p._tab = 'settings';
   html = p._banner();
   assert.match(html, /class="shbanner idle"/);
-  assert.doesNotMatch(html, /shpill/);
+  // Settings: the modules turned on as its pill, how to order the tabs under it
+  assert.match(html, /class="shpill">\d+ \/ \d+ · Modules and tabs</);
   // The dark theme: the night picture
   p._hass.themes = { darkMode: true };
   p._tab = 'system';

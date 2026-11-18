@@ -5771,7 +5771,7 @@ var SH_STATUS_METHODS = {
         ${worst
           .map(
             ([tab, [tone, value, details]]) => `<div class="item ${tone}"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(value)}</div>${details ? `<div class="s">${shEsc(details)}</div>` : ''}</div>
+          <div class="who"><div class="n">${shEsc(value)}</div>${details ? `<div class="s">${shEsc(details.split(' · ').slice(0, 3).join(' · '))}</div>` : ''}</div>
           <span class="muted stwhere">${shEsc(this._tabName(tab))}</span><button class="act quiet" data-action="st_open" data-tab="${tab}"><ha-icon icon="mdi:chevron-right"></ha-icon>${shEsc(this._t('st_view'))}</button></div>`,
           )
           .join('')}</ha-card>`
@@ -6251,6 +6251,36 @@ var SH_BANNER_STYLE = `
     .shtop .shbody .msg { font-size:12px; }
     .bgroup .ghead .gname { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
     .bgroup .ghead { --mdc-icon-size:16px; color:var(--secondary-text-color); min-height:30px; }
+    /* The round icons in their tone itself, as the mockups (the text keeps its readable shade) */
+    .list .item:is(.bad, .warn, .info) > :is(ha-icon:first-child, input[type='checkbox'] + ha-icon), .tile:is(.bad, .warn, .info) .avatar,
+    .sttile:is(.bad, .warn, .info) .stic, .lggroup .lhead > ha-icon { color:var(--tone); }
+    /* Settings: its title and how to order the tabs are in the banner */
+    ha-card.block.cfg > h2, ha-card.block.cfg > .msg { display:none; }
+    ha-card.block.cfg .cfggrid { margin-top:0; }
+    /* Database, as its mockup: the checkbox then the bar beside the name, the counts small at the right */
+    .tiles { grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); }
+    .list .item.dbrow > ha-icon:first-child { width:auto; height:auto; background:none; --mdc-icon-size:20px; color:var(--secondary-text-color); }
+    .dbrow.on > ha-icon:first-child { color:var(--primary-color); }
+    :is(.dbrow, .dbtable) .who { display:grid; grid-template-columns:minmax(0, 1fr) minmax(80px, 38%); column-gap:16px; align-items:center; }
+    :is(.dbrow, .dbtable) .who > :not(.dbbar) { grid-column:1; }
+    :is(.dbrow, .dbtable) .who .dbbar { grid-column:2; grid-row:1 / span 2; margin:0; }
+    .dbcount { font-size:12px; color:var(--secondary-text-color); min-width:64px; }
+    .dbcount b { font-size:13px; font-weight:500; color:var(--primary-text-color); }
+    .dbents { border-left:0; margin-left:28px; display:flex; flex-direction:column; gap:6px; }
+    .dbdev { gap:6px; padding-right:0; border-radius:12px; }
+    .dbdev.on { background:none; }
+    .dbtable { padding-right:10px; }
+    .dbtable .who .n { font-family:var(--code-font-family, monospace); font-size:13px; }
+    /* System's rings, as its mockup: a compact 64 px ring, the name under it, the last 24 hours as a thin line below */
+    .ring { padding:12px 10px 34px; gap:4px; }
+    .ring .gauge { width:64px; height:64px; }
+    .ring .gauge circle { stroke-width:8; }
+    .ring .rv { top:12px; height:64px; }
+    .ring .rv b { font-size:16px; }
+    .ring .rv span { font-size:10px; margin-top:3px; }
+    .ring .rl { font-size:13.5px; }
+    .ring .behind { height:30px; }
+    .ring .behind polygon { opacity:.08; }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;
@@ -6289,7 +6319,12 @@ var SH_BANNER_METHODS = {
       var worst = (list) => (list.includes('bad') ? 'bad' : list.includes('warn') ? 'warn' : list.includes('info') ? 'info' : 'good');
       extra = { score, groups: Object.keys(SH_GROUPS).map((g) => worst(areas.filter(([t]) => shGroupOf(t) === g).map(([, a]) => a[0]))) };
     } else if (tab === 'settings') {
+      // As its mockup: the modules turned on out of all of them as the pill, how to order them as the subtitle
       tone = 'idle';
+      var all = Object.keys(SH_MODULE_ICONS).filter((t) => t !== 'status' && t !== 'settings');
+      var on = all.filter((t) => t === 'system' || (this._state.modules || []).includes(t));
+      pill = `${on.length} / ${all.length} · ${this._t('modules_tabs')}`;
+      sub = this._t('modules_tabs_hint');
     } else {
       var area = this._stArea(tab);
       if (area) [tone, pill, sub] = area;
