@@ -6,6 +6,7 @@ import vm from "node:vm";
 export const load = (file, names) => {
   const src = readFileSync(new URL(`../../custom_components/system_hub/frontend/cards/${file}`, import.meta.url), "utf8");
   class HTMLElement {
+    style = {};
     attachShadow() {
       this.shadowRoot = { addEventListener() {}, querySelector: () => null, innerHTML: "" };
       return this.shadowRoot;

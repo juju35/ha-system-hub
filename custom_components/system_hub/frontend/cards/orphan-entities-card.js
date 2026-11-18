@@ -5,7 +5,7 @@
  * Served and added to the dashboard resources by System Hub (formerly bundled with Orphan Entities).
  * https://github.com/juju35/ha-system-hub
  */
-var ORPHAN_ENTITIES_CARD_VERSION = '2.10.2';
+var ORPHAN_ENTITIES_CARD_VERSION = '2.10.3';
 // The integration, its module and the prefix of the module's actions
 const OE_DOMAIN = 'system_hub';
 
@@ -2372,6 +2372,7 @@ class OrphanEntitiesCard extends HTMLElement {
   }
 
   setConfig(config) {
+    this.connectedWhileHidden = true;
     this._config = { ...OE_DEFAULTS, ...config };
     // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.('hide-title', config.show_title === false);
@@ -2413,21 +2414,36 @@ class OrphanEntitiesCard extends HTMLElement {
     this._render();
   }
 
+  get editMode() {
+    return this._editMode;
+  }
+
   set preview(value) {
     this._preview = value;
     this._sig = null;
     this._render();
   }
 
-  // Hides the host and tells Lovelace (card-visibility-changed), so that a sections view drops the card's slot too.
+  get preview() {
+    return this._preview;
+  }
+
+  // Hides the card and tells Lovelace (card-visibility-changed): hui-card reads the `hidden` property and then
+  // drops the card's slot in a sections view. connectedWhileHidden keeps the card in the DOM so that it keeps
+  // following its entities and shows again on its own. Never hidden in the editor preview / edit mode.
   _setHidden(hidden) {
-    const changed = !!this._hidden !== hidden;
-    this._hidden = hidden;
+    hidden = !!hidden && !this._editMode && !this._preview;
+    this.connectedWhileHidden = true;
     this.style.display = hidden ? 'none' : '';
-    if (changed) this.dispatchEvent(new CustomEvent('card-visibility-changed', { bubbles: true, composed: true }));
+    if (!!this.hidden !== hidden) {
+      this.hidden = hidden;
+      this.dispatchEvent(new CustomEvent('card-visibility-changed', { detail: { value: !hidden }, bubbles: true, composed: true }));
+    }
+    return hidden;
   }
 
   getCardSize() {
+    if (this.hidden) return 0;
     return 3 + (this._rows || 0);
   }
 
@@ -3056,6 +3072,7 @@ class OrphanEntitiesCard extends HTMLElement {
 
   static get styles() {
     return `
+      :host([hidden]) { display: none !important; }
       :host {
         display: block;
         min-width: 0;
@@ -3415,6 +3432,7 @@ class OrphanEntitiesMiniCard extends OrphanEntitiesCard {
   }
 
   getCardSize() {
+    if (this.hidden) return 0;
     return this._zoomed ? super.getCardSize() : 2;
   }
 

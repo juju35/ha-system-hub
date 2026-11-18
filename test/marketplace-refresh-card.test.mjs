@@ -752,15 +752,28 @@ test("a phone's 6 columns: the version and Update all wrap instead of being cut"
 test('hide_when_ok: the hidden card shows again in edit mode and in the editor preview', () => {
   const card = render({ hide_when_ok: true }, makeHass({ updates: [] }));
   const events = [];
-  card.dispatchEvent = (ev) => events.push(ev.type);
+  const values = [];
+  card.dispatchEvent = (ev) => {
+    events.push(ev.type);
+    values.push(ev.detail?.value);
+  };
   assert.equal(card.style.display, 'none');
+  // hui-card reads the hidden property to drop the slot, and keeps the card in the DOM (connectedWhileHidden).
+  assert.equal(card.hidden, true);
+  assert.equal(card.connectedWhileHidden, true);
+  assert.equal(card.getCardSize(), 0);
   card.editMode = true;
   assert.equal(card.style.display, '');
+  assert.equal(card.hidden, false);
+  assert.equal(card.editMode, true);
   card.editMode = false;
   assert.equal(card.style.display, 'none');
   card.preview = true;
   assert.equal(card.style.display, '');
+  assert.equal(card.hidden, false);
+  assert.equal(card.preview, true);
   assert.deepEqual(events, ['card-visibility-changed', 'card-visibility-changed', 'card-visibility-changed']);
+  assert.deepEqual(values, [true, false, true]);
 });
 
 test('an update without a title is named after its device, not its bare friendly_name', () => {

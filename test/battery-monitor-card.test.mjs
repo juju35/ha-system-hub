@@ -1174,21 +1174,34 @@ test('hide_when_ok: hidden when every battery is fine, shown again in edit mode 
   const fine = { state: '0', attributes: { batteries: [BATTERIES[4]] } };
   const card = makeCard({ hide_when_ok: true });
   const events = [];
-  card.dispatchEvent = (ev) => events.push(ev.type);
+  const values = [];
+  card.dispatchEvent = (ev) => {
+    events.push(ev.type);
+    values.push(ev.detail?.value);
+  };
   card.hass = hassWith(registry(), { [SENSOR]: fine });
   assert.equal(card.style.display, 'none');
+  // hui-card reads the hidden property to drop the slot, and keeps the card in the DOM (connectedWhileHidden).
+  assert.equal(card.hidden, true);
+  assert.equal(card.connectedWhileHidden, true);
+  assert.equal(card.getCardSize(), 0);
   assert.deepEqual(events, ['card-visibility-changed']);
   card.editMode = true;
   assert.equal(card.style.display, '');
+  assert.equal(card.hidden, false);
+  assert.equal(card.editMode, true);
   assert.ok(html(card).includes('Lamp'));
   card.editMode = false;
   assert.equal(card.style.display, 'none');
   card.preview = true;
   assert.equal(card.style.display, '');
+  assert.equal(card.hidden, false);
+  assert.equal(card.preview, true);
   card.preview = false;
   card.hass = hassWith(registry(), { [SENSOR]: realState });
   assert.equal(card.style.display, '');
   assert.equal(events.length, 6);
+  assert.deepEqual(values.slice(0, 3), [false, true, false]);
 });
 
 test('full screen by replacement date: now, within 30 days, later, no forecast; next replacement and CSV', () => {

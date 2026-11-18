@@ -716,11 +716,16 @@ test("hide_when_ok hides the cards while all is good, and tells Lovelace; never 
   for (const Card of [AutomationMonitorCard, AutomationMonitorMiniCard]) {
     const el = make(Card, { hide_when_ok: true }, ok);
     assert.equal(el.hidden, true, Card.name);
+    assert.equal(el.style.display, "none", Card.name);
+    // connectedWhileHidden: hui-card keeps the hidden card in the DOM, so that it shows again on its own.
+    assert.equal(el.connectedWhileHidden, true, Card.name);
+    assert.equal(el.getCardSize(), 0, Card.name);
     assert.deepEqual(el.events, ["card-visibility-changed"], Card.name);
     // A failure: shown again, Lovelace told once more.
     el._hass = { states: baseStates(), entities, devices, language: "en", user: admin };
     el._applyVisibility();
     assert.equal(el.hidden, false, Card.name);
+    assert.equal(el.style.display, "", Card.name);
     assert.equal(el.events.length, 2, Card.name);
     // Edited dashboard or card editor preview: always shown.
     el._hass = { states: ok, entities, devices, language: "en", user: admin };

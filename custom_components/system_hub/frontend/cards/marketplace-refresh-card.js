@@ -6,7 +6,7 @@
  */
 // Requests left under which the card says the checks may wait for GitHub's limit to reset.
 const MR_RATE_LOW = 1500;
-var MARKETPLACE_REFRESH_CARD_VERSION = '2.10.2';
+var MARKETPLACE_REFRESH_CARD_VERSION = '2.10.3';
 // System Hub: its entities (platform system_hub, translation keys marketplace_*) and actions (system_hub.marketplace_*)
 var HR_DOMAIN = 'system_hub';
 var HR_PREFIX = 'marketplace_';
@@ -1271,6 +1271,7 @@ class MarketplaceRefreshCard extends HTMLElement {
   }
 
   setConfig(config) {
+    this.connectedWhileHidden = true;
     this._config = { ...HR_DEFAULTS, ...config };
     // show_title / show_subtitle: the header's title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.('hide-title', config.show_title === false);
@@ -1307,21 +1308,36 @@ class MarketplaceRefreshCard extends HTMLElement {
     this._render();
   }
 
+  get editMode() {
+    return this._editMode;
+  }
+
   set preview(value) {
     this._preview = value;
     this._sig = null;
     this._render();
   }
 
-  // Hides the host and tells Lovelace (card-visibility-changed), so that a sections view drops the card's slot too.
+  get preview() {
+    return this._preview;
+  }
+
+  // Hides the card and tells Lovelace (card-visibility-changed): hui-card reads the `hidden` property and then
+  // drops the card's slot in a sections view. connectedWhileHidden keeps the card in the DOM so that it keeps
+  // following its entities and shows again on its own. Never hidden in the editor preview / edit mode.
   _setHidden(hidden) {
-    const changed = !!this._hidden !== hidden;
-    this._hidden = hidden;
+    hidden = !!hidden && !this._editMode && !this._preview;
+    this.connectedWhileHidden = true;
     this.style.display = hidden ? 'none' : '';
-    if (changed) this.dispatchEvent(new CustomEvent('card-visibility-changed', { bubbles: true, composed: true }));
+    if (!!this.hidden !== hidden) {
+      this.hidden = hidden;
+      this.dispatchEvent(new CustomEvent('card-visibility-changed', { detail: { value: !hidden }, bubbles: true, composed: true }));
+    }
+    return hidden;
   }
 
   getCardSize() {
+    if (this.hidden) return 0;
     return 2 + (this._rows || 0);
   }
 
@@ -1732,6 +1748,7 @@ class MarketplaceRefreshCard extends HTMLElement {
 
   static get styles() {
     return `
+      :host([hidden]) { display: none !important; }
       :host {
         --hr-ok: var(--success-color, #43a047);
         --hr-info: var(--info-color, #039be5);

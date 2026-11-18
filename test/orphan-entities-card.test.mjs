@@ -593,16 +593,29 @@ test('mini card: chip text is readable in light and dark themes (WCAG AA, 4.5:1)
 test('hide_when_empty: the hidden card shows again in edit mode and in the editor preview', () => {
   const card = render({ hide_when_empty: true }, makeHass({ items: [] }));
   const events = [];
-  card.dispatchEvent = (ev) => events.push(ev.type);
+  const values = [];
+  card.dispatchEvent = (ev) => {
+    events.push(ev.type);
+    values.push(ev.detail?.value);
+  };
   assert.equal(card.style.display, 'none');
+  // hui-card reads the hidden property to drop the slot, and keeps the card in the DOM (connectedWhileHidden).
+  assert.equal(card.hidden, true);
+  assert.equal(card.connectedWhileHidden, true);
+  assert.equal(card.getCardSize(), 0);
   card.editMode = true;
   assert.equal(card.style.display, '');
+  assert.equal(card.hidden, false);
+  assert.equal(card.editMode, true);
   assert.match(html(card), /No orphan/);
   card.editMode = false;
   assert.equal(card.style.display, 'none');
   card.preview = true;
   assert.equal(card.style.display, '');
+  assert.equal(card.hidden, false);
+  assert.equal(card.preview, true);
   assert.deepEqual(events, ['card-visibility-changed', 'card-visibility-changed', 'card-visibility-changed']);
+  assert.deepEqual(values, [true, false, true]);
 });
 
 test('orphan devices: listed under the entities, removed together after a confirmation (admins only)', async () => {

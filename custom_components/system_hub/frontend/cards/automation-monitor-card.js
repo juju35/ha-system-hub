@@ -1643,7 +1643,7 @@ const BASE_STYLE = `
      (one word), so a 1fr column, or a <div> wrapping the card in one, can make it as narrow as it needs.
      min-width: 0 lets a grid or flex layout shrink the host itself. */
   :host { display: block; min-width: 0; }
-  :host([hidden]) { display: none; }
+  :host([hidden]) { display: none !important; }
   :host::before { content: "${"x ".repeat(35).trim()}"; display: block; height: 0; overflow: hidden; visibility: hidden;
                   font: 10px/0 monospace; }
   ha-card { contain: inline-size; }
@@ -1844,6 +1844,7 @@ class AutomationMonitorBase extends HTMLElement {
 
   setConfig(config) {
     if (!config) throw new Error("Invalid configuration");
+    this.connectedWhileHidden = true;
     this._config = { ...config };
     // show_title / show_subtitle: the header"s title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.("hide-title", config.show_title === false);
@@ -2042,14 +2043,19 @@ class AutomationMonitorBase extends HTMLElement {
     return this._preview;
   }
 
-  // hide_when_ok: hidden while the status is "All good" (never while a sensor can't be read). The hidden
-  // property hides the host, and card-visibility-changed tells Lovelace to drop its grid slot too.
+  // hide_when_ok: hidden while the status is "All good" (never while a sensor can't be read).
+  // Hides the card and tells Lovelace (card-visibility-changed): hui-card reads the `hidden` property and then
+  // drops the card's slot in a sections view. connectedWhileHidden keeps the card in the DOM so that it keeps
+  // following its entities and shows again on its own. Never hidden in the editor preview / edit mode.
   _applyVisibility() {
     const data = this._data();
     const hide = this._config.hide_when_ok === true && !this._editMode && !this._preview && !data.error && this._status(data).cls === "ok";
-    if (!!this.hidden === hide) return;
+    this.connectedWhileHidden = true;
+    this.style.display = hide ? "none" : "";
+    if (!!this.hidden === hide) return hide;
     this.hidden = hide;
-    this.dispatchEvent(new CustomEvent("card-visibility-changed", { bubbles: true, composed: true }));
+    this.dispatchEvent(new CustomEvent("card-visibility-changed", { detail: { value: !hide }, bubbles: true, composed: true }));
+    return hide;
   }
 
   _update(sig) {
@@ -2350,6 +2356,7 @@ class AutomationMonitorCard extends AutomationMonitorBase {
   }
 
   getCardSize() {
+    if (this.hidden) return 0;
     return 6;
   }
 
@@ -2541,6 +2548,7 @@ class AutomationMonitorMiniCard extends AutomationMonitorCard {
   }
 
   getCardSize() {
+    if (this.hidden) return 0;
     return this._zoomed ? super.getCardSize() : 3;
   }
 
