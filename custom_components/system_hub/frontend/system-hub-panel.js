@@ -5739,10 +5739,12 @@ var SH_STATUS_METHODS = {
   // The version of Home Assistant and how long it has been up: the Status header's subtitle
   _stMeta() {
     var core = (this._state.updates || []).find((u) => u.key === 'core');
+    var os = (this._state.updates || []).find((u) => u.key === 'os');
     var boot = (this._state.system || []).find((x) => x.key === 'last_boot');
     var bootAt = boot ? Date.parse(boot.state) : NaN;
     return [
       core?.installed ? `Home Assistant ${core.installed}` : '',
+      os?.installed ? `OS ${os.installed}` : '',
       Number.isNaN(bootAt) ? '' : this._t('st_up', { time: this._uptime(Date.now() - bootAt).replace(/<[^>]+>/g, '') }),
     ].filter(Boolean);
   },
