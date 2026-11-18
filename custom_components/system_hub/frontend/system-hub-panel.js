@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.10.3';
+var SYSTEM_HUB_PANEL_VERSION = '2.10.4';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -3240,7 +3240,7 @@ class SystemHubPanel extends HTMLElement {
         statistic_ids: [entityId],
         period: 'day',
         types: ['mean'],
-        units: { data_size: 'B' },
+        units: { information: 'B' },
       });
       var points = (stats?.[entityId] || [])
         .map((p) => [typeof p.start === 'number' ? p.start : Date.parse(p.start), shNum(p.mean)])

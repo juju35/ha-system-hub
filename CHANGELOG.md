@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.10.4 - 2026-11-18
+
+### Fixes
+- **Database tab**: the growth chart reads the size statistics with the recorder's `information` unit class, so Home Assistant no longer logs `not a valid option at 'units.data_size'. Got 'B'` each time the panel opens, and the chart shows again.
+
 ## 2.10.3 - 2026-11-18
 
 ### Fixes
