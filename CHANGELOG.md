@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.12.1 - 2026-11-18
+
+### Fixes
+- **Updates tab**: the install progress card's bar and percentage now show the progress of the whole run (the updates done plus the share done of the current one) instead of starting over at each update; the current update's own percentage stays on its card (#109).
+
 ## 2.12.0 - 2026-11-18
 
 ### Features

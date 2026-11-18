@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.12.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.12.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -3728,10 +3728,14 @@ class SystemHubPanel extends HTMLElement {
     };
   }
 
-  // Installs running: "Backing up Home Assistant…", then "Installing 2 / 5: name" with the share done of the current
-  // update when its entity reports it (update_percentage), else a moving bar
+  // Installs running: "Backing up Home Assistant…", then "Installing 2 / 5: name" with the share done of the whole run:
+  // the updates finished plus the share done of the current one when its entity reports it (update_percentage; its
+  // card shows it too). A moving bar while backing up, or for a single update that doesn't report its progress
   _instProgress(run) {
-    var pct = run.backup || !run.entity ? null : this._updLive(run.entity).pct;
+    var current = run.backup || !run.entity ? null : this._updLive(run.entity).pct;
+    var pct = run.backup || (current === null && !(run.total > 1))
+      ? null
+      : Math.round((Math.max(0, run.n - 1) + (current ?? 0) / 100) / Math.max(1, run.total) * 100);
     var title = run.backup ? this._t('mk_backing_up') : this._t('mk_installing', { n: run.n, total: run.total, name: run.name || '' });
     var value = pct === null ? '' : ` aria-valuenow="${pct}"`;
     return `<ha-card class="progress inst" role="progressbar" aria-label="${shEsc(title)}" aria-valuemin="0" aria-valuemax="100"${value}>

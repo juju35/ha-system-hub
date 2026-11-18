@@ -1804,7 +1804,9 @@ test('updates tab: install progress — backup, then "Installing n / total: name
   marketplace.backing_up = false;
   p._hass.states = { 'update.espsomfy': { attributes: { in_progress: true, update_percentage: 70 } } };
   html = p._content();
-  assert.match(html, /Installing 2 \/ 5: ESPSomfy-RTS<\/span><span class="ppct">70 %<\/span>/);
+  // The main bar: the whole run, 1 update done + 70 % of the 2nd out of 5 = 34 %; the 70 % is on the card
+  assert.match(html, /Installing 2 \/ 5: ESPSomfy-RTS<\/span><span class="ppct">34 %<\/span>/);
+  assert.match(html, /aria-valuenow="34">.*<div class="pbar"><span style="width:34%">/s);
   // On its card: the percentage next to the button and a bar along the card; the next one waits
   assert.match(p._mkCard(list[0]), /<span class="mkpct">70 %<\/span>.*<div class="pbar mkbar" aria-hidden="true"><span style="width:70%">/s);
   assert.match(p._mkCard({ ...list[1], installing: true }), /<span class="mkpct muted">Waiting<\/span>/);
@@ -1813,6 +1815,8 @@ test('updates tab: install progress — backup, then "Installing n / total: name
   p._hass.states = { 'update.espsomfy': { attributes: { in_progress: true } } };
   assert.match(p._mkCard(list[0]), /class="pbar mkbar busy"/);
   assert.doesNotMatch(p._mkCard(list[0]), /mkpct/);
+  // ...while the main bar still shows the updates done: 1 / 5 = 20 %
+  assert.match(p._content(), /<span class="ppct">20 %<\/span><\/div>\s*<div class="pbar"><span style="width:20%">/);
   // Idle: nothing
   marketplace.installing_updates = false;
   marketplace.install_total = 0;
@@ -1835,7 +1839,7 @@ test('updates tab: Update all counts the Marketplace and the other updates toget
   p._updRun = { ...p._updRun, base: 1, item: system_updates.available[0] };
   p._hass.states = { 'update.zigbee': { attributes: { in_progress: true, update_percentage: 42 } } };
   html = p._content();
-  assert.match(html, /Installing 2 \/ 2: Lamp<\/span><span class="ppct">42 %/);
+  assert.match(html, /Installing 2 \/ 2: Lamp<\/span><span class="ppct">71 %/);
 });
 
 test('updates tab: drawn again when an update moves on (#109)', () => {
