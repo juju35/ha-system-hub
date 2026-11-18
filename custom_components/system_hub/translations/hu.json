@@ -670,6 +670,12 @@
           "installing": {
             "name": "Telepítés alatt"
           },
+          "install_total": {
+            "name": "Telepítendő frissítések"
+          },
+          "backing_up": {
+            "name": "Biztonsági mentés folyamatban"
+          },
           "install_failed": {
             "name": "Nem sikerült telepíteni"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Éjszaka",
         "sc_allowed": "Engedélyezve",
         "sc_allow": "Engedélyezés",
-        "sc_disallow": "Visszavonás"
+        "sc_disallow": "Visszavonás",
+        "mk_backing_up": "Home Assistant biztonsági mentése…",
+        "mk_installing": "Telepítés {n} / {total}: {name}",
+        "mk_queued": "Várakozik"
       }
     },
     "battery_type": {

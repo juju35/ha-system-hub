@@ -670,6 +670,12 @@
           "installing": {
             "name": "Instalují se"
           },
+          "install_total": {
+            "name": "Aktualizace k instalaci"
+          },
+          "backing_up": {
+            "name": "Probíhá zálohování"
+          },
           "install_failed": {
             "name": "Nepodařilo se nainstalovat"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Noc",
         "sc_allowed": "Povolený",
         "sc_allow": "Povolit",
-        "sc_disallow": "Odvolat"
+        "sc_disallow": "Odvolat",
+        "mk_backing_up": "Zálohování Home Assistant…",
+        "mk_installing": "Instalace {n} / {total}: {name}",
+        "mk_queued": "Čeká"
       }
     },
     "battery_type": {

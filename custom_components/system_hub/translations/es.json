@@ -670,6 +670,12 @@
           "installing": {
             "name": "Instalándose"
           },
+          "install_total": {
+            "name": "Actualizaciones por instalar"
+          },
+          "backing_up": {
+            "name": "Copia de seguridad en curso"
+          },
           "install_failed": {
             "name": "No se pudieron instalar"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Noche",
         "sc_allowed": "Permitido",
         "sc_allow": "Permitir",
-        "sc_disallow": "Retirar"
+        "sc_disallow": "Retirar",
+        "mk_backing_up": "Haciendo copia de seguridad de Home Assistant…",
+        "mk_installing": "Instalando {n} / {total}: {name}",
+        "mk_queued": "En espera"
       }
     },
     "battery_type": {

@@ -670,6 +670,12 @@
           "installing": {
             "name": "W trakcie instalacji"
           },
+          "install_total": {
+            "name": "Aktualizacje do zainstalowania"
+          },
+          "backing_up": {
+            "name": "Tworzenie kopii zapasowej"
+          },
           "install_failed": {
             "name": "Nie udało się zainstalować"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Noc",
         "sc_allowed": "Dozwolony",
         "sc_allow": "Zezwól",
-        "sc_disallow": "Cofnij"
+        "sc_disallow": "Cofnij",
+        "mk_backing_up": "Tworzenie kopii zapasowej Home Assistant…",
+        "mk_installing": "Instalowanie {n} / {total}: {name}",
+        "mk_queued": "Oczekuje"
       }
     },
     "battery_type": {

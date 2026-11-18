@@ -869,6 +869,43 @@ async def test_install_updates_backs_up_first_when_asked(hass, fake_marketplace)
     assert calls == ["backup", "update.card_mod", "update.mushroom"]
 
 
+async def test_install_updates_reports_its_progress(hass, fake_marketplace):
+    """Backing up, then how many of how many and which one, for the panel (issue #109)."""
+    from custom_components.system_hub.panel import _marketplace  # noqa: PLC0415
+
+    entry = await _setup(hass)
+    _marketplace_update_entities(hass, {"mushroom": "on", "card_mod": "on"})
+    refresher = entry.runtime_data.marketplace
+    backup_done = asyncio.Event()
+    release = asyncio.Event()
+
+    async def create(call) -> None:
+        await backup_done.wait()
+
+    async def install(call) -> None:
+        await release.wait()
+        hass.states.async_set(call.data["entity_id"], "off")
+
+    hass.services.async_register("backup", "create_automatic", create)
+    hass.services.async_register("update", "install", install)
+    await hass.services.async_call(DOMAIN, "marketplace_install_updates", {"backup": True}, blocking=True)
+    await hass.async_block_till_done(wait_background_tasks=False)
+    data = _marketplace(refresher)
+    assert data["backing_up"] is True
+    assert (data["install_total"], data["install_done"]) == (2, 0)
+    assert hass.states.get(STATUS).attributes["backing_up"] is True
+    backup_done.set()
+    await hass.async_block_till_done(wait_background_tasks=False)
+    data = _marketplace(refresher)
+    assert data["backing_up"] is False
+    assert data["install_current"] == "Card Mod"
+    release.set()
+    await hass.async_block_till_done(wait_background_tasks=True)
+    data = _marketplace(refresher)
+    assert (data["install_total"], data["install_done"], data["install_current"]) == (0, 0, None)
+    assert hass.states.get(STATUS).attributes["install_total"] == 0
+
+
 async def test_install_updates_follows_the_backup_option(hass, fake_marketplace):
     entry = await _setup(hass)
     result = await _marketplace_flow(hass, entry)

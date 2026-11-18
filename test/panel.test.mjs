@@ -1789,3 +1789,69 @@ test('a tab chosen after a route is shown at the first click (each click used to
   delete context.history;
   delete context.window;
 });
+
+test('updates tab: install progress — backup, then "Installing n / total: name" with the percentage (#109)', () => {
+  const list = [
+    { entity_id: 'update.espsomfy', title: 'ESPSomfy-RTS', installed: '2.4.0', latest: '2.4.1' },
+    { entity_id: 'update.mushroom', title: 'Mushroom', installed: '4.0.0', latest: '4.1.0' },
+  ];
+  const marketplace = { state: 'idle', updates: 2, list, installing_updates: true, installing: ['update.espsomfy', 'update.mushroom'], install_total: 5, install_done: 1, install_current: 'ESPSomfy-RTS', backing_up: true };
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace');
+  p._hass.states = {};
+  let html = p._content();
+  assert.match(html, /Backing up Home Assistant…/);
+  assert.doesNotMatch(html, /Installing 2 \/ 5/);
+  marketplace.backing_up = false;
+  p._hass.states = { 'update.espsomfy': { attributes: { in_progress: true, update_percentage: 70 } } };
+  html = p._content();
+  assert.match(html, /Installing 2 \/ 5: ESPSomfy-RTS<\/span><span class="ppct">70 %<\/span>/);
+  // On its card: the percentage next to the button and a bar along the card; the next one waits
+  assert.match(p._mkCard(list[0]), /<span class="mkpct">70 %<\/span>.*<div class="pbar mkbar" aria-hidden="true"><span style="width:70%">/s);
+  assert.match(p._mkCard({ ...list[1], installing: true }), /<span class="mkpct muted">Waiting<\/span>/);
+  assert.doesNotMatch(p._mkCard({ ...list[1], installing: true }), /mkbar/);
+  // Without update_percentage: a moving bar, no percentage
+  p._hass.states = { 'update.espsomfy': { attributes: { in_progress: true } } };
+  assert.match(p._mkCard(list[0]), /class="pbar mkbar busy"/);
+  assert.doesNotMatch(p._mkCard(list[0]), /mkpct/);
+  // Idle: nothing
+  marketplace.installing_updates = false;
+  marketplace.install_total = 0;
+  marketplace.installing = [];
+  p._hass.states = {};
+  html = p._content();
+  assert.doesNotMatch(html, /Installing|Backing up|mkbar/);
+});
+
+test('updates tab: Update all counts the Marketplace and the other updates together (#109)', () => {
+  const marketplace = { state: 'idle', list: [{ entity_id: 'update.mushroom', title: 'Mushroom' }], installing_updates: true, installing: ['update.mushroom'], install_total: 1, install_done: 0, install_current: 'Mushroom' };
+  const system_updates = { available: [{ entity_id: 'update.zigbee', title: 'Lamp', kind: 'device' }], up_to_date: {} };
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace, system_updates }, 'marketplace');
+  p._hass.states = {};
+  p._updRun = { total: 2, base: 0, item: null, first: 'Mushroom' };
+  let html = p._content();
+  assert.match(html, /Installing 1 \/ 2: Mushroom/);
+  // Shown once, in the Update all header, not again under the Marketplace's
+  assert.equal(html.match(/class="progress inst"/g).length, 1);
+  p._updRun = { ...p._updRun, base: 1, item: system_updates.available[0] };
+  p._hass.states = { 'update.zigbee': { attributes: { in_progress: true, update_percentage: 42 } } };
+  html = p._content();
+  assert.match(html, /Installing 2 \/ 2: Lamp<\/span><span class="ppct">42 %/);
+});
+
+test('updates tab: drawn again when an update moves on (#109)', () => {
+  const marketplace = { state: 'idle', list: [{ entity_id: 'update.mushroom', title: 'Mushroom' }] };
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace');
+  let renders = 0;
+  p._render = () => renders++;
+  p._hass.states = { 'update.mushroom': { attributes: {} } };
+  p._updLiveChanged();
+  assert.equal(renders, 0);
+  p._hass.states = { 'update.mushroom': { attributes: { in_progress: true, update_percentage: 10 } } };
+  p._updLiveChanged();
+  p._updLiveChanged();
+  assert.equal(renders, 1);
+  p._tab = 'system';
+  p._hass.states = { 'update.mushroom': { attributes: { in_progress: true, update_percentage: 50 } } };
+  p._updLiveChanged();
+  assert.equal(renders, 1);
+});

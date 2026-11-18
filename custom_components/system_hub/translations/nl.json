@@ -670,6 +670,12 @@
           "installing": {
             "name": "Wordt geïnstalleerd"
           },
+          "install_total": {
+            "name": "Te installeren updates"
+          },
+          "backing_up": {
+            "name": "Back-up bezig"
+          },
           "install_failed": {
             "name": "Kon niet worden geïnstalleerd"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Nacht",
         "sc_allowed": "Toegestaan",
         "sc_allow": "Toestaan",
-        "sc_disallow": "Intrekken"
+        "sc_disallow": "Intrekken",
+        "mk_backing_up": "Back-up van Home Assistant maken…",
+        "mk_installing": "Installeren {n} / {total}: {name}",
+        "mk_queued": "Wachten"
       }
     },
     "battery_type": {

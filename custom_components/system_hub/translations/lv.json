@@ -670,6 +670,12 @@
           "installing": {
             "name": "Tiek instalēti"
           },
+          "install_total": {
+            "name": "Instalējamie atjauninājumi"
+          },
+          "backing_up": {
+            "name": "Notiek dublēšana"
+          },
           "install_failed": {
             "name": "Neizdevās instalēt"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Nakts",
         "sc_allowed": "Atļauts",
         "sc_allow": "Atļaut",
-        "sc_disallow": "Atsaukt"
+        "sc_disallow": "Atsaukt",
+        "mk_backing_up": "Veido Home Assistant dublējumu…",
+        "mk_installing": "Instalē {n} / {total}: {name}",
+        "mk_queued": "Gaida"
       }
     },
     "battery_type": {

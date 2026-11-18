@@ -222,6 +222,8 @@ class MarketplaceStatusSensor(MarketplaceEntity, SensorEntity):
             "error": r.error,
             "checking": sorted(r.checking),
             "installing": list(r.installing),
+            "install_total": r.install_total,
+            "backing_up": r.backing_up,
             "install_failed": list(r.install_failed),
             "github_connected": r.github_connected,
             # GitHub's rate limit as read at the last check (None without a GitHub account)

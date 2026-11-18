@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.12.0 - 2026-11-18
+
+### Features
+- **Updates tab: install progress** instead of a bare spinner (#109). While installs run, a progress card says *Backing up Home Assistant…* during the backup before installing, then *Installing 2 / 5: name* — for the Marketplace's **Update all**, one card's **Update**, and the tab's **Update all** (Marketplace repositories and the other updates counted together) — with the share done of the current update when its entity reports it (`update_percentage`), else a moving bar. Each card being installed shows its percentage next to its button and a thin bar along its bottom; the next Marketplace updates in the queue say *Waiting*. The progress follows the update entities live, and the state is read every 2 seconds while the installs run. The Marketplace status sensor gains the `install_total` and `backing_up` attributes.
+
 ## 2.11.1 - 2026-11-18
 
 ### Fixes

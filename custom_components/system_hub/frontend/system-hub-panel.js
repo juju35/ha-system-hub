@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.11.1';
+var SYSTEM_HUB_PANEL_VERSION = '2.12.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1218,6 +1218,11 @@ class SystemHubPanel extends HTMLElement {
     .mkver b { font-size:15px; }
     .mknotes { font-size:13px; color:var(--secondary-text-color); line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; white-space:normal; }
     .mkcard .actions { margin-top:auto; }
+    .mkcard { position:relative; overflow:hidden; }
+    .mkbar { position:absolute; left:0; right:0; bottom:0; height:3px; border-radius:0; }
+    .mkbar > span { border-radius:0; }
+    .mkpct { font-size:13px; font-weight:500; font-variant-numeric:tabular-nums; color:var(--primary-text-color); }
+    .mkpct.muted { font-weight:400; color:var(--secondary-text-color); }
     .pill > ha-icon { --mdc-icon-size:14px; vertical-align:-2px; margin-right:2px; }
     .loading { display:flex; align-items:center; gap:10px; color:var(--secondary-text-color); --mdc-icon-size:20px; }
     .loading ha-icon { color:var(--primary-color); }
@@ -1490,6 +1495,40 @@ class SystemHubPanel extends HTMLElement {
     if (this._menu) this._menu.hass = hass;
     if (first) this._start();
     else if (hass.language !== language) this._loadStrings();
+    else this._updLiveChanged();
+  }
+
+  // The Updates tab shown: drawn again when an update starts, moves on (update_percentage) or ends, between two reads
+  // of the state, so the progress of each install follows the entity (issue #109)
+  _updLiveChanged() {
+    if (this._tab !== 'marketplace' || !this._state) return;
+    var ids = [...(this._state.marketplace?.list || []), ...(this._state.system_updates?.available || [])].map((u) => u.entity_id);
+    var key = ids
+      .map((id) => {
+        var attrs = this._hass.states?.[id]?.attributes || {};
+        return `${id}:${attrs.in_progress ?? ''}:${attrs.update_percentage ?? ''}`;
+      })
+      .join('|');
+    if (key === this._updLiveKey) return;
+    var seen = this._updLiveKey !== undefined;
+    this._updLiveKey = key;
+    if (seen) this._render();
+  }
+
+  // An update as its entity says now: installing (in_progress) and the share done (update_percentage, else a number in
+  // in_progress as before Home Assistant 2024.11), null when it doesn't report its progress
+  _updLive(entityId) {
+    var attrs = this._hass?.states?.[entityId]?.attributes || {};
+    var installing = Boolean(attrs.in_progress);
+    var raw = attrs.update_percentage ?? (typeof attrs.in_progress === 'number' ? attrs.in_progress : null);
+    var pct = installing && typeof raw === 'number' && Number.isFinite(raw) ? Math.max(0, Math.min(100, Math.round(raw))) : null;
+    return { installing, pct };
+  }
+
+  // Installs started: the state read again soon, after which it is read every 2 seconds while they run
+  _kickLoad() {
+    clearTimeout(this._kick);
+    this._kick = setTimeout(() => this.isConnected && this._load(), 1000);
   }
 
   set narrow(narrow) {
@@ -1539,6 +1578,7 @@ class SystemHubPanel extends HTMLElement {
   disconnectedCallback() {
     clearInterval(this._timer);
     clearTimeout(this._fast);
+    clearTimeout(this._kick);
     clearTimeout(this._retry);
     this._timer = null;
     document.removeEventListener?.('visibilitychange', this._onVisible);
@@ -1594,9 +1634,10 @@ class SystemHubPanel extends HTMLElement {
     try {
       this._state = await this._hass.callWS({ type: 'system_hub/state' });
       this._error = null;
-      // A check running on the Marketplace tab: its progress every 2 seconds rather than every 10
+      // A check or installs running on the Marketplace tab: their progress every 2 seconds rather than every 10
       clearTimeout(this._fast);
-      if (this._state?.marketplace?.state === 'running' && this._tab === 'marketplace' && this.isConnected) {
+      var mkBusy = this._state?.marketplace?.state === 'running' || this._state?.marketplace?.installing_updates;
+      if (mkBusy && this._tab === 'marketplace' && this.isConnected) {
         this._fast = setTimeout(() => this._load(), 2000);
       }
       // The Orphans tab shown: its whole list, read again with the state
@@ -2534,7 +2575,7 @@ class SystemHubPanel extends HTMLElement {
       .join('');
     if (list.length) this._mkFetchNotes(list);
     var system = this._state.system_updates;
-    return `${system ? this._sysUpdates(system) : ''}${system ? `<h2 class="stsec">${shEsc(this._t('upd_marketplace'))}</h2>` : ''}${header}${running ? this._progress(data) : ''}${confirm}
+    return `${system ? this._sysUpdates(system) : ''}${system ? `<h2 class="stsec">${shEsc(this._t('upd_marketplace'))}</h2>` : ''}${header}${running ? this._progress(data) : ''}${installing && !this._updRun ? this._mkRunProgress(data) : ''}${confirm}
       ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
       ${cards ? `<div class="mkgrid">${cards}</div>` : ''}
       ${notInstalled && !installing ? `<ha-card class="list">${notInstalled}</ha-card>` : ''}
@@ -3658,6 +3699,47 @@ class SystemHubPanel extends HTMLElement {
       <div class="sctwo">${this._scList('mdi:web', this._t('sc_exposure'), '', exposure)}${addonsCard}</div>${configCard}`;
   }
 
+  // The Marketplace's installs running (its Update all, or one card's Update): the backup first, then which one of how
+  // many, with the share done of the current one
+  _mkRunProgress(data) {
+    if (!data.backing_up && !data.install_total) return '';
+    return this._instProgress({
+      backup: Boolean(data.backing_up),
+      n: Math.min(data.install_total, (data.install_done || 0) + 1),
+      total: data.install_total,
+      name: data.install_current,
+      entity: data.installing?.[0],
+    });
+  }
+
+  // The tab's Update all running: the Marketplace's repositories first (their progress from the server), then the
+  // other updates one by one
+  _updRunNow() {
+    var run = this._updRun;
+    if (!run) return null;
+    if (run.item) return { n: run.base + 1, total: run.total, name: run.item.title, entity: run.item.entity_id, backup: false };
+    var mk = this._state.marketplace || {};
+    return {
+      n: Math.min(run.total, (mk.install_done || 0) + 1),
+      total: run.total,
+      name: mk.install_current || run.first,
+      entity: mk.installing?.[0],
+      backup: Boolean(mk.backing_up),
+    };
+  }
+
+  // Installs running: "Backing up Home Assistant…", then "Installing 2 / 5: name" with the share done of the current
+  // update when its entity reports it (update_percentage), else a moving bar
+  _instProgress(run) {
+    var pct = run.backup || !run.entity ? null : this._updLive(run.entity).pct;
+    var title = run.backup ? this._t('mk_backing_up') : this._t('mk_installing', { n: run.n, total: run.total, name: run.name || '' });
+    var value = pct === null ? '' : ` aria-valuenow="${pct}"`;
+    return `<ha-card class="progress inst" role="progressbar" aria-label="${shEsc(title)}" aria-valuemin="0" aria-valuemax="100"${value}>
+      <div class="phead"><ha-icon icon="${run.backup ? 'mdi:backup-restore' : 'mdi:autorenew'}"></ha-icon><span class="ptitle">${shEsc(title)}</span>${pct === null ? '' : `<span class="ppct">${pct} %</span>`}</div>
+      <div class="pbar${pct === null ? ' busy' : ''}"><span style="width:${pct ?? 30}%"></span></div>
+    </ha-card>`;
+  }
+
   // The updates outside the Marketplace: Home Assistant (Core, Supervisor, OS), the add-ons, the devices and services;
   // one card each, installed one at a time with Home Assistant's update.install, a backup first when chosen
   _sysUpdates(data) {
@@ -3697,7 +3779,8 @@ class SystemHubPanel extends HTMLElement {
           ${this._button('upd_all', 'mdi:package-down', this._t('install_all'))}
           ${this._button('cancel', 'mdi:close', this._t('cancel'), { quiet: true })}</div>`
         : '';
-    var head = `<div class="actions"><span class="s grow" title="${shEsc(detail.join('\n'))}">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${this._message('upd')}`;
+    var now = this._updRunNow();
+    var head = `<div class="actions"><span class="s grow" title="${shEsc(detail.join('\n'))}">${shEsc(summary.join(' · '))}</span>${toggle}${all}</div>${confirm}${now ? this._instProgress(now) : ''}${this._message('upd')}`;
     // One grid, in the order of the server (Core, Supervisor, OS, add-ons, devices); each card says what it is
     return `${head}${available.length ? `<h2 class="stsec">${shEsc(this._t('upd_heading'))}</h2><div class="mkgrid">${available.map((u) => this._mkCard(u, backup)).join('')}</div>` : ''}`;
   }
@@ -3732,12 +3815,16 @@ class SystemHubPanel extends HTMLElement {
     this._confirm = null;
     this._busy.upd_all = true;
     delete this._messages.upd;
+    var first = (this._state.marketplace?.list || []).find((u) => u.entity_id === plan.repos[0]);
+    this._updRun = { total: plan.count, base: 0, item: null, first: first?.title };
     this._render();
     try {
       if (plan.repos.length) {
+        this._kickLoad();
         await this._hass.callService(SH_DOMAIN, 'marketplace_install_updates', { entity_id: plan.repos, wait: true, backup });
       }
-      for (var u of plan.items) {
+      for (var [i, u] of plan.items.entries()) {
+        this._updRun = { ...this._updRun, base: plan.repos.length + i, item: u };
         this._busy[`upd_install:${u.entity_id}`] = true;
         this._render();
         await this._hass.callService('update', 'install', { entity_id: u.entity_id, ...(backup && u.backup ? { backup: true } : {}) });
@@ -3749,6 +3836,7 @@ class SystemHubPanel extends HTMLElement {
     }
     for (var key of Object.keys(this._busy)) if (key.startsWith('upd_install:')) delete this._busy[key];
     delete this._busy.upd_all;
+    this._updRun = null;
     await this._load();
     this._render();
   }
@@ -3759,7 +3847,13 @@ class SystemHubPanel extends HTMLElement {
   _mkCard(u, backup) {
     var change = shChange(u.installed, u.latest);
     var system = Boolean(u.kind);
-    var busy = u.installing || this._busy[`${system ? 'upd' : 'mk'}_install:${u.entity_id}`];
+    var live = this._updLive(u.entity_id);
+    var busy = u.installing || live.installing || this._busy[`${system ? 'upd' : 'mk'}_install:${u.entity_id}`];
+    // Next in the Marketplace's queue (the first one is installing): waiting, not moving yet
+    var queued = !system && !live.installing && (this._state.marketplace?.installing || []).indexOf(u.entity_id) > 0;
+    // The share done when its entity reports it (update_percentage), next to the button, and a thin bar along the card
+    var status = live.pct !== null ? `<span class="mkpct">${live.pct} %</span>` : queued ? `<span class="mkpct muted">${shEsc(this._t('mk_queued'))}</span>` : '';
+    var bar = busy && !queued ? `<div class="pbar mkbar${live.pct === null ? ' busy' : ''}" aria-hidden="true"><span style="width:${live.pct ?? 30}%"></span></div>` : '';
     var restart = { core: 'upd_restart_core', supervisor: 'upd_restart_supervisor', os: 'upd_restart_os' }[u.kind];
     var install = system
       ? this._confirm === `upd:${u.entity_id}`
@@ -3789,7 +3883,7 @@ class SystemHubPanel extends HTMLElement {
       ${typeof notes === 'string' && notes ? `<div class="s mknotes">${shEsc(notes)}</div>` : ''}
       ${restart ? `<div class="mkrestart"><ha-icon icon="mdi:restart"></ha-icon>${shEsc(this._t(restart))}</div>` : ''}
       ${this._confirm === `upd:${u.entity_id}` ? `<div class="s" role="alert">${shEsc(this._t('upd_confirm', { name: u.title, version: u.latest || '' }))}</div>` : ''}
-      <div class="actions">${link}<span class="grow"></span>${install}</div></ha-card>`;
+      <div class="actions">${link}<span class="grow"></span>${status}${install}</div>${bar}</ha-card>`;
   }
 
   // A brand image of Home Assistant (/api/brands/…) needs its access token, read once (brands/access_token)
@@ -4432,11 +4526,13 @@ class SystemHubPanel extends HTMLElement {
     }
     if (action === 'mk_install') {
       var target = button.dataset.entity;
+      this._kickLoad();
       return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target], wait: true }, null, SH_DOMAIN, `mk_install:${target}`);
     }
     if (action === 'marketplace_install_updates') {
       this._confirm = null;
       // wait: the service answers once the installs have ended, so a failed one shows next to the buttons
+      this._kickLoad();
       return this._run(action, action, { wait: true });
     }
     return this._run(action, action, {});

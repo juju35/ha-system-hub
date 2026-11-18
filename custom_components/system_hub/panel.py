@@ -391,6 +391,12 @@ def _marketplace_updates(hass: HomeAssistant, installing: list[str]) -> list[dic
     return sorted(updates, key=lambda u: str(u["title"]).lower())
 
 
+def _title(hass: HomeAssistant, entity_id: str) -> str:
+    """The title of an update entity, else its name, else its id."""
+    state = hass.states.get(entity_id)
+    return (state.attributes.get("title") or state.name) if state is not None else entity_id
+
+
 def _marketplace(refresher: Any) -> dict[str, Any]:
     return {
         "list": _marketplace_updates(refresher.hass, list(refresher.installing)),
@@ -410,6 +416,11 @@ def _marketplace(refresher: Any) -> dict[str, Any]:
         "error": refresher.error,
         "installing": list(refresher.installing),
         "installing_updates": refresher.installing_updates,
+        # The run's progress: the updates it started with, the ones done, the one installing, the backup first (#109)
+        "install_total": refresher.install_total,
+        "install_done": refresher.install_total - len(refresher.installing),
+        "install_current": _title(refresher.hass, refresher.installing[0]) if refresher.installing else None,
+        "backing_up": refresher.backing_up,
         "last_check": refresher.last_check.isoformat() if refresher.last_check else None,
         "next_due": refresher.next_due.isoformat() if refresher.next_due else None,
         "scan_interval": refresher.scan_interval,

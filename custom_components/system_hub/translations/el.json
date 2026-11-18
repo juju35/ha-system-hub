@@ -670,6 +670,12 @@
           "installing": {
             "name": "Υπό εγκατάσταση"
           },
+          "install_total": {
+            "name": "Ενημερώσεις προς εγκατάσταση"
+          },
+          "backing_up": {
+            "name": "Δημιουργία αντιγράφου ασφαλείας"
+          },
           "install_failed": {
             "name": "Δεν ήταν δυνατή η εγκατάσταση"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Νύχτα",
         "sc_allowed": "Επιτρέπεται",
         "sc_allow": "Να επιτρέπεται",
-        "sc_disallow": "Ανάκληση"
+        "sc_disallow": "Ανάκληση",
+        "mk_backing_up": "Δημιουργία αντιγράφου ασφαλείας του Home Assistant…",
+        "mk_installing": "Εγκατάσταση {n} / {total}: {name}",
+        "mk_queued": "Σε αναμονή"
       }
     },
     "battery_type": {

@@ -200,6 +200,10 @@ class MarketplaceRefresher:
         # Update entities left to install (the one being installed first), and the ones that failed ("title: error").
         self.installing: list[str] = []
         self.install_failed: list[str] = []
+        # How many updates the run started with (the done ones: install_total - len(installing)), and whether it is
+        # backing up Home Assistant before the first one: the panel's "Backing up… → Installing 2 / 5" (issue #109).
+        self.install_total = 0
+        self.backing_up = False
         self._install_task: asyncio.Task | None = None
         self._listeners: list[CALLBACK_TYPE] = []
         # When the entities were last notified of the full check's progress (loop time).
@@ -490,6 +494,7 @@ class MarketplaceRefresher:
             raise ServiceValidationError(translation_domain=DOMAIN, translation_key="marketplace_install_running")
         _marketplace(self.hass)  # fail now, in the caller, if the Marketplace can't be used
         self.installing = self._installable(entity_ids)
+        self.install_total = len(self.installing)
         self.install_failed = []
         # Tied to the entry, like the check: unloading it cancels the installs left.
         self._install_task = self.entry.async_create_background_task(
@@ -524,8 +529,14 @@ class MarketplaceRefresher:
             if self._task is not None:
                 with contextlib.suppress(HomeAssistantError):
                     await self.async_wait()
-            if backup and self.installing and not await self._async_backup(context):
-                return
+            if backup and self.installing:
+                self.backing_up = True
+                self._notify()
+                try:
+                    if not await self._async_backup(context):
+                        return
+                finally:
+                    self.backing_up = False
             # One at a time: the Marketplace writes its data after each install.
             while self.installing:
                 entity_id = self.installing[0]
@@ -537,6 +548,7 @@ class MarketplaceRefresher:
                 self._notify()
         finally:
             self.installing = []
+            self.install_total = 0
             self._install_task = None
             self._notify()
             # A check due meanwhile runs now; not after an unload, which cancels this task.

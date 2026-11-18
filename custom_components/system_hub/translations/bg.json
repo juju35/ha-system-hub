@@ -670,6 +670,12 @@
           "installing": {
             "name": "В процес на инсталиране"
           },
+          "install_total": {
+            "name": "Актуализации за инсталиране"
+          },
+          "backing_up": {
+            "name": "Архивиране"
+          },
           "install_failed": {
             "name": "Не можаха да бъдат инсталирани"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Нощ",
         "sc_allowed": "Разрешена",
         "sc_allow": "Разреши",
-        "sc_disallow": "Оттегли"
+        "sc_disallow": "Оттегли",
+        "mk_backing_up": "Архивиране на Home Assistant…",
+        "mk_installing": "Инсталиране {n} / {total}: {name}",
+        "mk_queued": "Изчаква"
       }
     },
     "battery_type": {

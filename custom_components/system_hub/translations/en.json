@@ -670,6 +670,12 @@
           "installing": {
             "name": "Being installed"
           },
+          "install_total": {
+            "name": "Updates to install"
+          },
+          "backing_up": {
+            "name": "Backing up"
+          },
           "install_failed": {
             "name": "Could not be installed"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Night",
         "sc_allowed": "Allowed",
         "sc_allow": "Allow",
-        "sc_disallow": "Withdraw"
+        "sc_disallow": "Withdraw",
+        "mk_backing_up": "Backing up Home Assistant…",
+        "mk_installing": "Installing {n} / {total}: {name}",
+        "mk_queued": "Waiting"
       }
     },
     "battery_type": {

@@ -670,6 +670,12 @@
           "installing": {
             "name": "În curs de instalare"
           },
+          "install_total": {
+            "name": "Actualizări de instalat"
+          },
+          "backing_up": {
+            "name": "Backup în curs"
+          },
           "install_failed": {
             "name": "Nu au putut fi instalate"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Noapte",
         "sc_allowed": "Permis",
         "sc_allow": "Permite",
-        "sc_disallow": "Retrage"
+        "sc_disallow": "Retrage",
+        "mk_backing_up": "Se face backup pentru Home Assistant…",
+        "mk_installing": "Se instalează {n} / {total}: {name}",
+        "mk_queued": "În așteptare"
       }
     },
     "battery_type": {

@@ -670,6 +670,12 @@
           "installing": {
             "name": "V nameščanju"
           },
+          "install_total": {
+            "name": "Posodobitve za namestitev"
+          },
+          "backing_up": {
+            "name": "Varnostno kopiranje poteka"
+          },
           "install_failed": {
             "name": "Ni bilo mogoče namestiti"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Noč",
         "sc_allowed": "Dovoljen",
         "sc_allow": "Dovoli",
-        "sc_disallow": "Prekliči"
+        "sc_disallow": "Prekliči",
+        "mk_backing_up": "Varnostno kopiranje Home Assistant…",
+        "mk_installing": "Nameščanje {n} / {total}: {name}",
+        "mk_queued": "Čaka"
       }
     },
     "battery_type": {

@@ -670,6 +670,12 @@
           "installing": {
             "name": "Инсталира се"
           },
+          "install_total": {
+            "name": "Ажурирања за инсталацију"
+          },
+          "backing_up": {
+            "name": "Прављење резервне копије"
+          },
           "install_failed": {
             "name": "Није могуће инсталирати"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Ноћ",
         "sc_allowed": "Дозвољено",
         "sc_allow": "Дозволи",
-        "sc_disallow": "Опозови"
+        "sc_disallow": "Опозови",
+        "mk_backing_up": "Прављење резервне копије Home Assistant-а…",
+        "mk_installing": "Инсталирање {n} / {total}: {name}",
+        "mk_queued": "На чекању"
       }
     },
     "battery_type": {

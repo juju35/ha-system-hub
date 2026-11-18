@@ -670,6 +670,12 @@
           "installing": {
             "name": "Installeres"
           },
+          "install_total": {
+            "name": "Opdateringer, der skal installeres"
+          },
+          "backing_up": {
+            "name": "Sikkerhedskopiering i gang"
+          },
           "install_failed": {
             "name": "Kunne ikke installeres"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Nat",
         "sc_allowed": "Tilladt",
         "sc_allow": "Tillad",
-        "sc_disallow": "Tilbagekald"
+        "sc_disallow": "Tilbagekald",
+        "mk_backing_up": "Sikkerhedskopierer Home Assistant…",
+        "mk_installing": "Installerer {n} / {total}: {name}",
+        "mk_queued": "Venter"
       }
     },
     "battery_type": {

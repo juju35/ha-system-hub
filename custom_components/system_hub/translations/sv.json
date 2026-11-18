@@ -670,6 +670,12 @@
           "installing": {
             "name": "Installeras"
           },
+          "install_total": {
+            "name": "Uppdateringar att installera"
+          },
+          "backing_up": {
+            "name": "Säkerhetskopiering pågår"
+          },
           "install_failed": {
             "name": "Kunde inte installeras"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Natt",
         "sc_allowed": "Tillåtet",
         "sc_allow": "Tillåt",
-        "sc_disallow": "Återkalla"
+        "sc_disallow": "Återkalla",
+        "mk_backing_up": "Säkerhetskopierar Home Assistant…",
+        "mk_installing": "Installerar {n} / {total}: {name}",
+        "mk_queued": "Väntar"
       }
     },
     "battery_type": {

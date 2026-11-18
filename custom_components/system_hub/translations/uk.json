@@ -670,6 +670,12 @@
           "installing": {
             "name": "Встановлюються"
           },
+          "install_total": {
+            "name": "Оновлення до встановлення"
+          },
+          "backing_up": {
+            "name": "Триває резервне копіювання"
+          },
           "install_failed": {
             "name": "Не вдалося встановити"
           },
@@ -1857,7 +1863,10 @@
         "card_theme_night": "Ніч",
         "sc_allowed": "Дозволено",
         "sc_allow": "Дозволити",
-        "sc_disallow": "Відкликати"
+        "sc_disallow": "Відкликати",
+        "mk_backing_up": "Резервне копіювання Home Assistant…",
+        "mk_installing": "Встановлення {n} / {total}: {name}",
+        "mk_queued": "Очікування"
       }
     },
     "battery_type": {
