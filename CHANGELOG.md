@@ -5,6 +5,11 @@
 ### Features
 - **Illustrated header on every module card**, as on the Status cards: the Watchdog, Batteries, Marketplace, System Monitor, Git Sync, Orphans and Automations cards (and their mini cards) open on a 90 px header with their own part of the Status picture, large, on the right — the shield, the battery, the update arrow, the gauge, the branch, the puzzle piece, the robot — on a halo in the colour of the card's status (green, amber, red, grey), animated, over the concrete floor. The header's icon takes the same colour, and its buttons (check now, notify, details, zoom…) become small frosted buttons in the top right corner. Night with a dark Home Assistant theme; `illustration_theme: day | night` forces it, `illustration: false` keeps the classic header. Both options are in each card's visual editor (labels from the integration's translations, in every language). Reduced motion stops the animations.
 
+## 2.10.4 - 2026-11-18
+
+### Fixes
+- **Database tab**: the growth chart reads the size statistics with the recorder's `information` unit class, so Home Assistant no longer logs `not a valid option at 'units.data_size'. Got 'B'` each time the panel opens, and the chart shows again.
+
 ## 2.10.3 - 2026-11-18
 
 ### Fixes

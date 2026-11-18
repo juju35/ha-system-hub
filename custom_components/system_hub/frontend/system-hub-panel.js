@@ -3240,7 +3240,7 @@ class SystemHubPanel extends HTMLElement {
         statistic_ids: [entityId],
         period: 'day',
         types: ['mean'],
-        units: { data_size: 'B' },
+        units: { information: 'B' },
       });
       var points = (stats?.[entityId] || [])
         .map((p) => [typeof p.start === 'number' ? p.start : Date.parse(p.start), shNum(p.mean)])
