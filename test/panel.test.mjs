@@ -1132,11 +1132,17 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   const p = panel(state, 'status');
   assert.deepEqual([...p._tabs()].slice(0, 2), ['status', 'batteries']);
   const html = p._content();
-  const order = [...html.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
+  const order = [...html.matchAll(/class="sttile \w+" data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
   // By group, in the order of their first tab, under the group's name
   assert.deepEqual(order, ['batteries', 'orphans', 'system', 'containers', 'watchdog', 'git_sync', 'marketplace']);
-  const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
-  assert.deepEqual(sections, ['Devices', 'System', 'Reliability', 'Maintenance']);
+  const sections = [...html.matchAll(/<h2 class="stsec"><span class="stgdot (\w+)"><\/span>([^<]+)<span class="muted">(\d+)<\/span><\/h2>/g)].map((m) => `${m[2]} ${m[1]} ${m[3]}`);
+  // Each group with its worst tone and its count
+  assert.deepEqual(sections, ['Devices warn 2', 'System bad 2', 'Reliability bad 1', 'Maintenance warn 2']);
+  // The counts as tiles, then the critical areas to handle first, each with a button to its tab
+  assert.match(html, /^<div class="tiles stkpis">/);
+  const prio = html.match(/<ha-card class="list stprio">[\s\S]*?<\/ha-card>/)[0];
+  assert.match(prio, /To handle first · 3/);
+  assert.deepEqual([...prio.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]), ['system', 'containers', 'watchdog']);
   // Batteries to watch, the disk above its red threshold, a given-up integration and a process stopped: needing action
   assert.match(html, /sttile warn" data-action="st_open" data-tab="batteries"/);
   assert.match(html, /sttile bad" data-action="st_open" data-tab="system"/);
@@ -1145,8 +1151,8 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   assert.match(html, /sttile warn" data-action="st_open" data-tab="marketplace"[\s\S]*?2 available/);
   assert.match(html, /sttile good" data-action="st_open" data-tab="git_sync"/);
   // 100 − 3 × 15 − 2 × 5
-  assert.match(html, /<b>45<\/b>/);
-  assert.match(html, /5 points to check/);
+  assert.match(html, /<b>45<\/b> \/ 100/);
+  assert.match(p._banner(), /<span class="shtitle">5 points to check<\/span><span class="shpill">3 critical · 2 to watch<\/span>/);
   p._render = () => {};
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'st_open', tab: 'watchdog' } } : null) } });
   assert.equal(p._tab, 'watchdog');
@@ -1212,13 +1218,11 @@ test('processes: one that may be stopped is grey, not counted on the Status tab'
   assert.equal(p._stArea('containers')[0], 'bad');
 });
 
-test('status: the house of the logo beside the score, with the colour of the ring and its badge', () => {
+test('status: all good, no area to handle first, the score as the pill', () => {
   const base = { loaded: true, modules: [], tabs: ['status', 'system'], system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '10' }] };
-  const pulse = /class="stbadge good"[^>]*><svg[\s\S]*<polyline points="-34,3/;
-  assert.match(panel(base, 'status')._content(), pulse);
-  const hot = { ...base, system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '99' }] };
-  // One area critical: 85, still green
-  assert.match(panel(hot, 'status')._content(), pulse);
+  const p = panel(base, 'status');
+  assert.doesNotMatch(p._content(), /stprio/);
+  assert.match(p._banner(), /<span class="shtitle">All good<\/span><span class="shpill">100 \/ 100<\/span>/);
 });
 
 test('backups tab: the last success, the locations and their failures, the last 30 days; Back up now', async () => {
@@ -1934,9 +1938,10 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   const { tone, score, counts } = p._stTone();
   assert.match(html, new RegExp(`class="shbanner ${tone}" style="--sh-wall:${tone === 'good' ? '#eef1f6' : 'color-mix'}`));
   assert.match(html, new RegExp(`>${score}</text>`));
-  assert.match(html, /<span class="shtitle">Status<\/span>/);
   const points = counts.bad + counts.warn + counts.info;
-  assert.match(html, new RegExp(`class="shpill">${points} points? to check<`));
+  assert.match(html, new RegExp(`<span class="shtitle">${points} points? to check</span>`));
+  // One dot per area under the title
+  assert.equal([...html.matchAll(/class="shdot /g)].length, counts.bad + counts.warn + counts.info + counts.good);
   assert.match(html, /class="shground g-parquet"/);
   // A module's tab: its Status area
   p._tab = 'batteries';

@@ -2047,8 +2047,8 @@ def main():
                 page.close()
                 continue
             if shot.get("hero"):
-                # The Status hero alone (the score ring, the emblem and the pills), with a 16 px frame of the theme.
-                capture(page, out / f"{shot['file']}.png", clip=framed(page, ".sthero"), animations="disabled")
+                # The Status header card alone (its banner, the score and the counts), with a 16 px frame of the theme.
+                capture(page, out / f"{shot['file']}.png", clip=framed(page, ".shtop"), animations="disabled")
                 page.close()
                 continue
             if shot["tab"] == "database":

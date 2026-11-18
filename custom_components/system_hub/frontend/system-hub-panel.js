@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.13.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.14.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1099,29 +1099,12 @@ class SystemHubPanel extends HTMLElement {
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
     .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
     .spin { animation:sh-spin 1s linear infinite; }
-    .sthero { display:flex; align-items:center; gap:28px; padding:20px 28px; flex-wrap:wrap;
-              background:linear-gradient(135deg, color-mix(in srgb, var(--tone, var(--primary-color)) 10%, var(--card-background-color, #fff)), var(--card-background-color, #fff)); }
-        .stscore { position:relative; width:170px; height:170px; flex:none; }
-    .stscore svg { width:100%; height:100%; }
-    .sttrack { fill:none; stroke:var(--divider-color, rgba(127,127,127,.2)); stroke-width:14; }
-    .starc { fill:none; stroke:var(--tone); stroke-width:14; stroke-linecap:round; transition:stroke-dashoffset .8s ease; }
-    .stnum { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .stnum b { font-size:46px; font-weight:300; line-height:1; }
-    .stnum span { font-size:12px; color:var(--secondary-text-color); margin-top:4px; }
-    .stbadge { width:104px; height:104px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
-               color:var(--tone); background:color-mix(in srgb, var(--tone) 16%, transparent); }
-    .sthero .who { flex:1; min-width:220px; }
-    .sttitle { font-size:24px; font-weight:500; }
-    .sthero .s { font-size:14px; margin:6px 0 12px; white-space:normal; }
-    .stpills { display:flex; flex-wrap:wrap; gap:6px; }
     .stgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
     .sttile { position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; gap:8px; text-align:left; cursor:pointer;
               padding:16px; border-radius:var(--ha-card-border-radius, 12px); border:1px solid var(--divider-color, rgba(127,127,127,.15));
               background:var(--card-background-color, #fff); color:var(--primary-text-color); font:inherit; }
     .sttile:hover { border-color:color-mix(in srgb, var(--tone) 50%, transparent); }
     .sttile:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
-    .stglow { position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 100% 0, color-mix(in srgb, var(--tone) 20%, transparent), transparent 60%); }
-    .sthead { position:relative; display:flex; align-items:center; gap:10px; }
     .stic { width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:none; --mdc-icon-size:22px;
             color:var(--tone); background:color-mix(in srgb, var(--tone) 16%, transparent); }
     .stname { flex:1; font-size:14px; font-weight:500; }
@@ -1129,9 +1112,6 @@ class SystemHubPanel extends HTMLElement {
     .stval { position:relative; font-size:19px; font-weight:500; }
     .stdet { position:relative; font-size:12px; color:var(--secondary-text-color); line-height:1.4;
              display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    @media (max-width:600px) { .sthero { gap:16px; padding:16px; } .stscore { width:130px; height:130px; } .stnum b { font-size:36px; }
-      .stbadge { width:76px; height:76px; } }
-    .stbadge svg { width:66%; height:66%; overflow:visible; }
     .cfg { gap:0; }
     .cfg h2 { margin-bottom:4px; }
     .cfgrow { padding:6px 0; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); }
@@ -1879,6 +1859,33 @@ class SystemHubPanel extends HTMLElement {
     // The button or row with the focus keeps it through the refresh every few seconds
     var focusSel = !focusKey && active && main.contains(active) ? shFocusSelector(active) : null;
     main.innerHTML = this._top() + this._content();
+    // As the mockups: what opens the tab (its tiles, actions, rings) sits in the header card, under the banner
+    var top = main.querySelector(':scope > .shtop');
+    if (top) {
+      var body = document.createElement('div');
+      body.className = 'shbody';
+      var next = top.nextElementSibling;
+      while (next && next.tagName !== 'HA-CARD' && next.tagName !== 'H2' && next.tagName !== 'SECTION' && !next.matches('.stgroups, .mkgrid, .pair, .sctwo')) {
+        var after = next.nextElementSibling;
+        body.append(next);
+        next = after;
+      }
+      if (body.children.length) top.append(body);
+    }
+    // The Updates tab: each heading and its tiles (and the Marketplace's status) in one card, as the other sections
+    if (this._tab === 'marketplace') {
+      for (var h2 of [...main.querySelectorAll(':scope > h2.stsec')]) {
+        var sec = document.createElement('ha-card');
+        sec.className = 'mksec';
+        h2.before(sec);
+        var node = h2;
+        while (node && (node === h2 || (node.tagName !== 'H2' && !node.matches('ha-card.list')))) {
+          var following = node.nextElementSibling;
+          sec.append(node);
+          node = following;
+        }
+      }
+    }
     var netSvg = main.querySelector('svg.nsvg');
     if (netSvg) this._slFixZoom(netSvg);
     if (this._tab === 'settings') this._cfgMount(main);
@@ -5491,22 +5498,6 @@ var SH_STATUS_GLYPHS = {
   bad: '<path d="M-18 -18 L18 18 M18 -18 L-18 18" stroke="#fff" stroke-width="12" stroke-linecap="round"/>',
 };
 
-function shStatusEmblem(tone) {
-  var nodes = [
-    [196, 250],
-    [316, 250],
-    [196, 352],
-    [316, 352],
-  ];
-  var links = nodes.map(([x, y]) => `<line x1="256" y1="300" x2="${x}" y2="${y}" stroke-width="12" stroke-linecap="round"/>`).join('');
-  var dots = nodes.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" stroke="none"/>`).join('');
-  return `<svg viewBox="64 56 412 380" aria-hidden="true"><defs><mask id="st-cut"><rect x="0" y="0" width="512" height="512" fill="#fff"/><circle cx="398" cy="128" r="66" fill="#000"/></mask></defs>
-    <g mask="url(#st-cut)" fill="none" stroke="currentColor"><path d="M96 236 L256 104 L416 236" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M138 214 V388 Q138 404 154 404 H358 Q374 404 374 388 V214" stroke-width="26" stroke-linejoin="round"/>
-      ${links}<g fill="currentColor">${dots}<circle cx="256" cy="300" r="27" stroke="none"/></g></g>
-    <g transform="translate(398 128)"><circle r="52" fill="currentColor"/>${SH_STATUS_GLYPHS[tone] || SH_STATUS_GLYPHS.good}</g></svg>`;
-}
-
 var SH_STATUS_METHODS = {
   // One area: [tone, value, details] or null when there is nothing to show (module off, nothing read yet)
   _stArea(tab) {
@@ -5711,47 +5702,57 @@ var SH_STATUS_METHODS = {
     globalThis.systemHubSetBadge?.(counts.bad + counts.warn + counts.info, tone);
   },
 
-  _status() {
-    var { areas, counts, score, tone: ringTone } = this._stTone();
-    var points = counts.bad + counts.warn + counts.info;
-    var r = 84;
-    var circ = 2 * Math.PI * r;
+  // The version of Home Assistant and how long it has been up: the Status header's subtitle
+  _stMeta() {
     var core = (this._state.updates || []).find((u) => u.key === 'core');
     var boot = (this._state.system || []).find((x) => x.key === 'last_boot');
     var bootAt = boot ? Date.parse(boot.state) : NaN;
-    var meta = [
+    return [
       core?.installed ? `Home Assistant ${core.installed}` : '',
       Number.isNaN(bootAt) ? '' : this._t('st_up', { time: this._uptime(Date.now() - bootAt).replace(/<[^>]+>/g, '') }),
     ].filter(Boolean);
-    var pills = [
-      ['bad', 'st_n_bad'],
-      ['warn', 'st_n_warn'],
-      ['info', 'st_n_info'],
-      ['good', 'st_n_good'],
-    ]
-      .filter(([tone]) => counts[tone])
-      .map(([tone, key]) => `<span class="pill ${tone}">${shEsc(this._t(key, { n: counts[tone] }))}</span>`)
-      .join('');
-    var hero = `<ha-card class="sthero ${ringTone}">
-      <div class="stscore" role="img" aria-label="${shEsc(`${score} / 100`)}"><svg viewBox="0 0 200 200" aria-hidden="true">
-        <circle cx="100" cy="100" r="${r}" class="sttrack"></circle>
-        <circle cx="100" cy="100" r="${r}" class="starc" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - score / 100)}" transform="rotate(-90 100 100)"></circle></svg>
-        <div class="stnum"><b>${score}</b><span>${shEsc(this._t('st_score'))}</span></div></div>
-      <div class="stbadge ${ringTone}" aria-hidden="true">${shStatusEmblem(ringTone)}</div>
-      <div class="who"><div class="sttitle">${shEsc(points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good'))}</div>
-        ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}<div class="stpills">${pills}</div></div></ha-card>`;
+  },
+
+  // The Status tab, as its mockup: the counts as tiles (in the header card), the critical areas to handle first, then
+  // one compact tile per area, in four columns by group
+  _status() {
+    var { areas, counts, score, tone: ringTone } = this._stTone();
+    var word = (key) => this._t(key, { n: '' }).replace(/\s+/g, ' ').trim();
+    var kpis = [
+      this._tile('mdi:heart-pulse', `<b>${score}</b> / 100`, this._t('st_score').replace(/\s*\/\s*100\s*/, '').trim() || this._t('st_score'), ringTone),
+      this._tile('mdi:alert-circle-outline', `<b>${counts.bad}</b>`, word('st_n_bad'), counts.bad ? 'bad' : ''),
+      this._tile('mdi:alert-outline', `<b>${counts.warn}</b>`, word('st_n_warn'), counts.warn ? 'warn' : ''),
+      this._tile('mdi:layers-outline', `<b>${counts.info}</b>`, word('st_n_info'), counts.info ? 'info' : ''),
+      this._tile('mdi:check-circle-outline', `<b>${counts.good}</b>`, word('st_n_good'), ''),
+    ];
+    var head = `<div class="tiles stkpis">${kpis.join('')}</div>`;
+    // The areas to handle first: the critical ones, else those to watch
+    var worst = areas.filter(([, [tone]]) => tone === 'bad');
+    if (!worst.length) worst = areas.filter(([, [tone]]) => tone === 'warn');
+    var priority = worst.length
+      ? `<ha-card class="list stprio"><div class="lhead"><ha-icon icon="mdi:alert-outline"></ha-icon><span class="lname">${shEsc(this._t('st_priority'))} · ${worst.length}</span><span class="muted">${shEsc(this._t('st_priority_hint'))}</span></div>
+        ${worst
+          .map(
+            ([tab, [tone, value, details]]) => `<div class="item ${tone}"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>
+          <div class="who"><div class="n">${shEsc(value)}</div>${details ? `<div class="s">${shEsc(details)}</div>` : ''}</div>
+          <span class="muted stwhere">${shEsc(this._tabName(tab))}</span><button class="act quiet" data-action="st_open" data-tab="${tab}"><ha-icon icon="mdi:chevron-right"></ha-icon>${shEsc(this._t('st_view'))}</button></div>`,
+          )
+          .join('')}</ha-card>`
+      : '';
     var tile = ([tab, [tone, value, details]]) => `<button class="sttile ${tone}" data-action="st_open" data-tab="${tab}" aria-label="${shEsc(`${this._tabName(tab)}: ${value}`)}">
-        <span class="stglow"></span>
-        <span class="sthead"><span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._tabName(tab))}</span><span class="stdot"></span></span>
-        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</button>`;
-    // The tiles by group, under the group's name, in the order of the tabs
-    var sections = this._groups()
+        <span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="sttxt"><span class="stname">${shEsc(this._tabName(tab))}</span>
+        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</span><span class="stdot"></span></button>`;
+    var rank = { bad: 3, warn: 2, info: 1, good: 0 };
+    // The tiles by group, under the group's name with its worst tone and its count, in the order of the tabs
+    var groups = this._groups()
       .map((group) => {
         var mine = areas.filter(([tab]) => shGroupOf(tab) === group);
-        return mine.length ? `<h2 class="stsec">${shEsc(this._groupName(group))}</h2><div class="stgrid">${mine.map(tile).join('')}</div>` : '';
+        if (!mine.length) return '';
+        var gtone = mine.reduce((w, [, [t]]) => (rank[t] > rank[w] ? t : w), 'good');
+        return `<section class="stgroup"><h2 class="stsec"><span class="stgdot ${gtone}"></span>${shEsc(this._groupName(group))}<span class="muted">${mine.length}</span></h2><div class="stgrid">${mine.map(tile).join('')}</div></section>`;
       })
       .join('');
-    return `${hero}${sections}`;
+    return `${head}${priority}<div class="stgroups">${groups}</div>`;
   },
 };
 
@@ -6081,14 +6082,69 @@ var SH_BANNER_STYLE = `
     @keyframes sh-drive { 0%, 100% { transform:translateX(2px); } 50% { transform:translate(-2px, -.5px); } }
     @keyframes sh-ping { from { transform:scale(1); opacity:.9; } to { transform:scale(2.6); opacity:0; } }
     @media (prefers-reduced-motion: reduce) { .shscene * { animation:none !important; } }
-    /* The cards' charter: pill buttons, round icons, uppercase section titles, rows tinted by their tone */
-    .act { border-radius:18px; }
+    /* The cards' charter, as the mockups: the tab's header card holds what opens it; tiles and rows are filled and
+       rounded (tile B: a round icon, tinted unless all is well), an alert's row tinted and outlined; pill buttons;
+       uppercase list titles */
+    :host { --sh-sec: color-mix(in srgb, var(--primary-text-color) 6%, var(--card-background-color, #fff)); }
+    .shtop .shbody { padding:12px 16px 16px; display:flex; flex-direction:column; gap:12px; }
+    .tiles { gap:8px; }
+    .tile { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; min-height:56px; box-sizing:border-box;
+            padding:8px 10px 8px 8px; gap:10px; }
+    .tile .avatar { width:40px; height:40px; --mdc-icon-size:22px; }
+    .tile:not(.warn):not(.bad):not(.info) .avatar { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .tile .who .n b { font-weight:400; }
+    .tile:is(.warn, .bad, .info) .who .n b { color:var(--tone-text); }
+    ha-card.list { padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px; }
+    .list .lhead { padding:0 0 4px; min-height:30px; }
     .lhead .lname { font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
-    .list { padding:6px 8px; }
-    .list .item { border-radius:12px; padding:8px; }
-    .list :where(.item.bad, .item.warn) { background:color-mix(in srgb, var(--tone) 8%, transparent); }
-    .sttile { border-radius:12px; }
+    .list .item { background:var(--sh-sec); border:1px solid transparent; border-radius:12px; min-height:56px; box-sizing:border-box; padding:8px 10px 8px 8px; gap:10px; }
+    .list .item:is(.bad, .warn) { background:color-mix(in srgb, var(--tone) 9%, var(--sh-sec)); border-color:color-mix(in srgb, var(--tone) 22%, transparent); }
+    .list .item.link:hover { background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
+    .list .item > ha-icon:first-child { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px;
+                                        color:var(--tone-text, var(--primary-text-color));
+                                        background:color-mix(in srgb, var(--tone, var(--secondary-text-color)) 16%, transparent); }
+    .list .item.good > ha-icon:first-child { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .act { min-height:34px; box-sizing:border-box; padding:0 14px; border-radius:18px; }
+    .lhead .act { min-height:30px; padding:0 12px; }
+    .act.quiet { background:var(--sh-sec); }
+    .sttile, .stic { border-radius:12px; }
     .stic { border-radius:50%; }
+    /* Status: the counts in the header card, the areas to handle first, then a compact tile per area in four columns */
+    .stkpis { grid-template-columns:repeat(5, minmax(0, 1fr)); }
+    .stprio .stwhere { flex:none; font-size:12px; }
+    .stgroups { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:16px 12px; align-items:start; }
+    .stgroup .stsec { display:flex; align-items:center; gap:8px; margin:0 4px 8px; font-size:14px; letter-spacing:0; text-transform:none; color:var(--primary-text-color); }
+    .stgroup .stsec .muted { margin-left:auto; font-size:12px; font-weight:400; }
+    .stgdot { width:8px; height:8px; border-radius:50%; flex:none; background:var(--tone); }
+    .stgroup .stgrid { grid-template-columns:minmax(0, 1fr); gap:8px; }
+    .sttile { flex-direction:row; align-items:center; gap:10px; min-height:56px; padding:8px 10px 8px 8px; border:1px solid transparent; background:var(--sh-sec); }
+    .sttile:hover { border-color:transparent; background:color-mix(in srgb, var(--tone) 13%, var(--sh-sec)); }
+    .sttile .stic { width:40px; height:40px; }
+    .sttile.good .stic { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .sttxt { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .sttile .stname { font-size:14px; font-weight:500; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sttile .stval { font-size:12px; line-height:1.25; color:var(--tone-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sttile.good .stval { color:var(--secondary-text-color); font-weight:400; }
+    .sttile .stdet { font-size:12px; line-height:1.25; -webkit-line-clamp:1; }
+    .sttile .stdot { position:absolute; top:8px; right:8px; width:7px; height:7px; box-shadow:none; }
+    .sttile.good .stdot { display:none; }
+    .shdots { display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle; }
+    .shdot { width:7px; height:7px; border-radius:50%; background:var(--tone); }
+    /* Updates: kept as tiles, filled and rounded, each group in its card under an uppercase title */
+    .mksec { padding:12px 16px 14px; display:flex; flex-direction:column; gap:10px; }
+    .mksec > h2.stsec { margin:0; min-height:30px; display:flex; align-items:center; }
+    .mksec .mkgrid { gap:8px; }
+    .mksec .mkcard, .mksec .mkhead { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; }
+    .mksec .mkhead { padding:10px 12px; }
+    .mksec .mkcard { padding:12px; }
+    .mksec .mkcard.link:hover { background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
+    div.mklogo:not(.mkproj) { border-radius:50%; }
+    .mksec :is(.mkcard, .mkhead) .act.quiet { background:var(--card-background-color, #fff); }
+    /* System: the rings as tiles, the charts' titles as the sections' */
+    .ring { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; }
+    .ctitle { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+    @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;
 
 var SH_BANNER_METHODS = {
@@ -6102,20 +6158,25 @@ var SH_BANNER_METHODS = {
     var pill = '';
     var sub = '';
     var extra = {};
+    var statusTitle = '';
+    var dots = '';
     if (tab === 'status') {
       var { areas, counts, score, tone: ringTone } = this._stTone();
       var points = counts.bad + counts.warn + counts.info;
       tone = ringTone;
-      pill = points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good');
-      sub = [
+      // As its mockup: the points to check as the title, the critical and to-watch counts as the pill, Home Assistant's
+      // version and uptime then one dot per area under it
+      statusTitle = points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good');
+      pill = [
         ['bad', 'st_n_bad'],
         ['warn', 'st_n_warn'],
-        ['info', 'st_n_info'],
-        ['good', 'st_n_good'],
       ]
         .filter(([t]) => counts[t])
         .map(([t, key]) => this._t(key, { n: counts[t] }))
         .join(' · ');
+      if (!pill) pill = `${score} / 100`;
+      sub = this._stMeta().join(' · ');
+      dots = areas.map(([t, [areaTone]]) => `<span class="shdot ${areaTone}" title="${shEsc(this._tabName(t))}"></span>`).join('');
       // The worst tone of each group of modules: the lines of the screen
       var worst = (list) => (list.includes('bad') ? 'bad' : list.includes('warn') ? 'warn' : list.includes('info') ? 'info' : 'good');
       extra = { score, groups: Object.keys(SH_GROUPS).map((g) => worst(areas.filter(([t]) => shGroupOf(t) === g).map(([, a]) => a[0]))) };
@@ -6142,14 +6203,14 @@ var SH_BANNER_METHODS = {
     // The Status tab: its wall takes a little of the overall tone
     var wall = night ? dark : day;
     if (tab === 'status' && tone !== 'good') wall = `color-mix(in srgb, ${hex} ${night ? 14 : 9}%, ${wall})`;
-    var title = tab === 'status' ? this._t('tab_status') : this._tabName(tab);
+    var title = tab === 'status' ? statusTitle : this._tabName(tab);
     var scene = `${shDecor(SH_DECOR[tab] || 'A', night)}<g transform="translate(160 0)">${shScene(tab, tone, night, extra)}</g>`;
     return `<div class="shbanner ${tone}${night ? ' night' : ''}" style="--sh-wall:${wall}">
       <svg class="shscene" viewBox="0 0 360 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true" focusable="false">${scene}</svg>
       <div class="shground g-${floor}"></div>
       <div class="shhead"><span class="shbadge" aria-hidden="true"><ha-icon icon="${SH_MODULE_ICONS[tab] || SH_MODULE_ICONS.status}"></ha-icon></span>
         <div class="shtitles"><div class="shtrow"><span class="shtitle">${shEsc(title)}</span>${pill ? `<span class="shpill">${shEsc(pill)}</span>` : ''}</div>
-          ${sub ? `<span class="shsub">${shEsc(sub)}</span>` : ''}</div></div></div>`;
+          ${sub || dots ? `<span class="shsub">${shEsc(sub)}${dots ? `<span class="shdots">${dots}</span>` : ''}</span>` : ''}</div></div></div>`;
   },
 };
 Object.assign(SystemHubPanel.prototype, SH_BANNER_METHODS);
