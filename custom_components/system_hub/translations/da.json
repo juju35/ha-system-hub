@@ -1440,6 +1440,7 @@
         "remaining": "≈ {t} tilbage",
         "failed_count": "{n} mislykkedes",
         "could_not_check": "Kunne ikke kontrolleres",
+        "could_not_install": "Kunne ikke installeres",
         "not_checked": "{n} repositories ikke kontrolleret: ingen GitHub-konto er forbundet til Marketplace",
         "rate_limit": "GitHub: {n} forespørgsler tilbage",
         "sec": "{n} s",

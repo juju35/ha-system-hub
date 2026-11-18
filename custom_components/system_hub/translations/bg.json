@@ -1440,6 +1440,7 @@
         "remaining": "≈ остават {t}",
         "failed_count": "Неуспешни: {n}",
         "could_not_check": "Не можаха да бъдат проверени",
+        "could_not_install": "Неуспешно инсталиране",
         "not_checked": "Непроверени хранилища: {n} — няма свързан акаунт в GitHub към Marketplace",
         "rate_limit": "GitHub: остават заявки: {n}",
         "sec": "{n} с",

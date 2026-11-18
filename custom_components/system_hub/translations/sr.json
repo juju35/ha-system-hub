@@ -1440,6 +1440,7 @@
         "remaining": "≈ преостало {t}",
         "failed_count": "Неуспешно: {n}",
         "could_not_check": "Није могло да се провери",
+        "could_not_install": "Није могуће инсталирати",
         "not_checked": "Непроверени репозиторијуми: {n} — ниједан GitHub налог није повезан са Marketplace",
         "rate_limit": "GitHub: преостали захтеви: {n}",
         "sec": "{n} с",

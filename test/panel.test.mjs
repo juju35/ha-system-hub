@@ -163,6 +163,31 @@ test('marketplace tab: update all asks first', () => {
   assert.match(p._content(), /data-action="marketplace_install_updates"/);
 });
 
+test('marketplace tab: Update all waits for the installs, a failed one shows next to the buttons and in the list', async () => {
+  const marketplace = { state: 'idle', updates: 1, list: [], install_failed: ['ESPSomfy RTS: The espsomfy_rts directory belongs to rstrouse/ESPSomfy-RTS-HA'] };
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace');
+  let html = p._content();
+  assert.match(html, /class="mkhead warn"/);
+  assert.match(html, /<div class="n">ESPSomfy RTS<\/div><div class="s">Could not be installed · The espsomfy_rts directory belongs to rstrouse\/ESPSomfy-RTS-HA<\/div>/);
+  // Hidden while installing: the list is emptied at the start of the next install
+  p._busy.marketplace_install_updates = true;
+  assert.doesNotMatch(p._content(), /Could not be installed/);
+  delete p._busy.marketplace_install_updates;
+  const calls = [];
+  p._hass.callService = async (...args) => {
+    calls.push(args);
+    throw new Error('Could not install: ESPSomfy RTS: The espsomfy_rts directory belongs to rstrouse/ESPSomfy-RTS-HA');
+  };
+  p._render = () => {};
+  p._load = async () => {};
+  p._confirm = 'install';
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'marketplace_install_updates' } } : null) } });
+  await new Promise((r) => setImmediate(r));
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), ['system_hub', 'marketplace_install_updates', { wait: true }]);
+  html = p._content();
+  assert.match(html, /class="msg[^"]*"[^>]*>[^<]*directory belongs to rstrouse/);
+});
+
 test('batteries tab: lowest first, unavailable on top', () => {
   const html = panel(
     {
@@ -910,7 +935,7 @@ test('marketplace tab: a card per update with the size of the change, its notes,
   p._load = async () => {};
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'mk_install', entity: 'update.mushroom' } } : null) } });
   await new Promise((r) => setImmediate(r));
-  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), ['system_hub', 'marketplace_install_updates', { entity_id: ['update.mushroom'] }]);
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), ['system_hub', 'marketplace_install_updates', { entity_id: ['update.mushroom'], wait: true }]);
 });
 
 test('settings tab: a module opens on its Configure form, driven through the options flow, and saves', async () => {

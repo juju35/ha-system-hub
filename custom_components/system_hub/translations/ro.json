@@ -1440,6 +1440,7 @@
         "remaining": "≈ {t} rămase",
         "failed_count": "{n} eșuate",
         "could_not_check": "Nu au putut fi verificate",
+        "could_not_install": "Nu au putut fi instalate",
         "not_checked": "{n} depozite neverificate: niciun cont GitHub nu este conectat la Marketplace",
         "rate_limit": "GitHub: {n} cereri rămase",
         "sec": "{n} s",

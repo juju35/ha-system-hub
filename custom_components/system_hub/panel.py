@@ -400,6 +400,8 @@ def _marketplace(refresher: Any) -> dict[str, Any]:
         "updates": refresher.updates,
         "pending": list(refresher.pending or []),
         "failed": list(refresher.failed),
+        # The updates whose install failed (after its retries), "name: error": started from here or automatically
+        "install_failed": list(refresher.install_failed),
         "not_checked": len(refresher.not_checked),
         "started_at": refresher.started_at.isoformat() if refresher.started_at else None,
         "github_connected": refresher.github_connected,

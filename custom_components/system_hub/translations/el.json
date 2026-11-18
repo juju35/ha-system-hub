@@ -1440,6 +1440,7 @@
         "remaining": "≈ απομένουν {t}",
         "failed_count": "Αποτυχίες: {n}",
         "could_not_check": "Δεν ήταν δυνατός ο έλεγχος",
+        "could_not_install": "Αποτυχία εγκατάστασης",
         "not_checked": "Μη ελεγμένα αποθετήρια: {n} — δεν έχει συνδεθεί λογαριασμός GitHub στο Marketplace",
         "rate_limit": "GitHub: απομένουν αιτήματα: {n}",
         "sec": "{n} δ",

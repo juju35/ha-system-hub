@@ -1440,6 +1440,7 @@
         "remaining": "≈ še {t}",
         "failed_count": "Neuspešno: {n}",
         "could_not_check": "Ni bilo mogoče preveriti",
+        "could_not_install": "Ni bilo mogoče namestiti",
         "not_checked": "Nepreverjeni repozitoriji: {n} — z Marketplace ni povezan noben račun GitHub",
         "rate_limit": "GitHub: preostale zahteve: {n}",
         "sec": "{n} s",

@@ -1440,6 +1440,7 @@
         "remaining": "≈ noch {t}",
         "failed_count": "{n} fehlgeschlagen",
         "could_not_check": "Konnten nicht geprüft werden",
+        "could_not_install": "Nicht installierbar",
         "not_checked": "{n} Repositorys nicht geprüft: Kein GitHub-Konto ist mit dem Marketplace verbunden",
         "rate_limit": "GitHub: noch {n} Anfragen",
         "sec": "{n} s",

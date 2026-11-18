@@ -924,7 +924,7 @@ async def test_install_updates_only_the_entities_given(hass, fake_marketplace):
 
 
 async def test_install_updates_reports_failures_and_goes_on(hass, fake_marketplace):
-    await _setup(hass)
+    entry = await _setup(hass)
     _marketplace_update_entities(hass, {"mushroom": "on", "card_mod": "on"})
     calls = _fake_update_install(hass, fail={"update.card_mod"})
     with pytest.raises(HomeAssistantError, match="Card Mod: download failed"):
@@ -932,6 +932,10 @@ async def test_install_updates_reports_failures_and_goes_on(hass, fake_marketpla
     # Tried 3 times (2 retries), then the next one.
     assert calls == ["update.card_mod"] * 3 + ["update.mushroom"]
     assert hass.states.get(STATUS).attributes["install_failed"] == ["Card Mod: download failed"]
+    # The panel lists it too (issue #101)
+    from custom_components.system_hub.panel import _marketplace  # noqa: PLC0415
+
+    assert _marketplace(entry.runtime_data.marketplace)["install_failed"] == ["Card Mod: download failed"]
 
 
 async def test_install_updates_retries_a_failed_download(hass, fake_marketplace, caplog):

@@ -1440,6 +1440,7 @@
         "remaining": "≈ atlikušas {t}",
         "failed_count": "Neizdevās: {n}",
         "could_not_check": "Neizdevās pārbaudīt",
+        "could_not_install": "Neizdevās instalēt",
         "not_checked": "Nepārbaudīti repozitoriji: {n} — Marketplace nav pievienots GitHub konts",
         "rate_limit": "GitHub: atlikuši pieprasījumi: {n}",
         "sec": "{n} s",

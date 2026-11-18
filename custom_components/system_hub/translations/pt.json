@@ -1440,6 +1440,7 @@
         "remaining": "≈ faltam {t}",
         "failed_count": "{n} falharam",
         "could_not_check": "Não foi possível verificar",
+        "could_not_install": "Não foi possível instalar",
         "not_checked": "{n} repositórios não verificados: nenhuma conta GitHub está ligada ao Marketplace",
         "rate_limit": "GitHub: faltam {n} pedidos",
         "sec": "{n} s",

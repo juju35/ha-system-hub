@@ -1440,6 +1440,7 @@
         "remaining": "≈ {t} van hátra",
         "failed_count": "{n} sikertelen",
         "could_not_check": "Nem sikerült ellenőrizni",
+        "could_not_install": "Nem sikerült telepíteni",
         "not_checked": "{n} tároló nincs ellenőrizve: nincs GitHub-fiók csatlakoztatva a Marketplace-hez",
         "rate_limit": "GitHub: {n} kérés maradt",
         "sec": "{n} mp",

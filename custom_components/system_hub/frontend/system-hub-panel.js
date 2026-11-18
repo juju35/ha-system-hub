@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.11.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.11.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -2483,9 +2483,10 @@ class SystemHubPanel extends HTMLElement {
     // is gone from both the cards and the count
     var n = Array.isArray(data.list) ? list.length : data.updates || 0;
     var failedNames = data.failed || [];
+    var installFailed = data.install_failed || [];
     var installing = data.installing_updates || this._busy.marketplace_install_updates;
     var title = n ? this._t(n === 1 ? 'mk_title_one' : 'mk_title', { n }) : running ? this._t('checking') : this._t('no_updates');
-    var tone = data.state === 'error' ? 'bad' : n || failedNames.length ? 'warn' : 'good';
+    var tone = data.state === 'error' ? 'bad' : n || failedNames.length || installFailed.length ? 'warn' : 'good';
     var meta = [
       data.last_check ? this._t('mk_checked', { when: this._rel(data.last_check) }) : '',
       data.scan_interval && data.next_due ? this._t('mk_next', { when: this._rel(data.next_due) }) : '',
@@ -2522,11 +2523,21 @@ class SystemHubPanel extends HTMLElement {
         ${name.includes('/') ? `<a class="act quiet" href="https://github.com/${shEsc(name)}" target="_blank" rel="noreferrer"><ha-icon icon="mdi:open-in-new"></ha-icon>GitHub</a>` : ''}</div>`,
       )
       .join('');
+    // The installs that failed (after their retries), "name: error" — from this panel or the automatic updates
+    var notInstalled = installFailed
+      .map((text) => {
+        var i = String(text).indexOf(': ');
+        var name = i > 0 ? text.slice(0, i) : text;
+        var why = i > 0 ? text.slice(i + 2) : '';
+        return `<div class="item warn"><ha-icon icon="mdi:package-variant-remove"></ha-icon><div class="who"><div class="n">${shEsc(name)}</div><div class="s">${shEsc(this._t('could_not_install'))}${why ? ` · ${shEsc(why)}` : ''}</div></div></div>`;
+      })
+      .join('');
     if (list.length) this._mkFetchNotes(list);
     var system = this._state.system_updates;
     return `${system ? this._sysUpdates(system) : ''}${system ? `<h2 class="stsec">${shEsc(this._t('upd_marketplace'))}</h2>` : ''}${header}${running ? this._progress(data) : ''}${confirm}
       ${this._messages.marketplace_check_updates || this._messages.marketplace_install_updates ? `<div class="actions">${this._message('marketplace_check_updates')}${this._message('marketplace_install_updates')}</div>` : ''}
       ${cards ? `<div class="mkgrid">${cards}</div>` : ''}
+      ${notInstalled && !installing ? `<ha-card class="list">${notInstalled}</ha-card>` : ''}
       ${failed && !running ? `<ha-card class="list">${failed}</ha-card>` : ''}`;
   }
 
@@ -4421,11 +4432,12 @@ class SystemHubPanel extends HTMLElement {
     }
     if (action === 'mk_install') {
       var target = button.dataset.entity;
-      return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target] }, null, SH_DOMAIN, `mk_install:${target}`);
+      return this._run('marketplace_install_updates', 'marketplace_install_updates', { entity_id: [target], wait: true }, null, SH_DOMAIN, `mk_install:${target}`);
     }
-        if (action === 'marketplace_install_updates') {
+    if (action === 'marketplace_install_updates') {
       this._confirm = null;
-      return this._run(action, action, {});
+      // wait: the service answers once the installs have ended, so a failed one shows next to the buttons
+      return this._run(action, action, { wait: true });
     }
     return this._run(action, action, {});
   }

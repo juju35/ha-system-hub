@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.11.1 - 2026-11-18
+
+### Fixes
+- **Updates tab**: a Marketplace update that could not be installed is now reported. *Update* on an update card and *Update all* wait for the installs to end, so the error shows next to the buttons instead of a success toast, and the updates whose install failed (after the retries, including those started by the automatic updates) are listed with their error, as on the Marketplace refresh card (#101).
+
 ## 2.11.0 - 2026-11-18
 
 ### Features

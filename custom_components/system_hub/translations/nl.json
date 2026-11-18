@@ -1440,6 +1440,7 @@
         "remaining": "≈ nog {t}",
         "failed_count": "{n} mislukt",
         "could_not_check": "Konden niet worden gecontroleerd",
+        "could_not_install": "Kon niet worden geïnstalleerd",
         "not_checked": "{n} repositories niet gecontroleerd: er is geen GitHub-account met de Marketplace verbonden",
         "rate_limit": "GitHub: nog {n} verzoeken",
         "sec": "{n} s",

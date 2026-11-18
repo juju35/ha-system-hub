@@ -1440,6 +1440,7 @@
         "remaining": "≈ zostáva {t}",
         "failed_count": "Neúspešné: {n}",
         "could_not_check": "Nepodarilo sa skontrolovať",
+        "could_not_install": "Nepodarilo sa nainštalovať",
         "not_checked": "Neskontrolované repozitáre: {n} — k Marketplace nie je pripojený žiadny účet GitHub",
         "rate_limit": "GitHub: zostávajúce požiadavky: {n}",
         "sec": "{n} s",

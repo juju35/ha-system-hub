@@ -1440,6 +1440,7 @@
         "remaining": "≈ осталось {t}",
         "failed_count": "Ошибок: {n}",
         "could_not_check": "Не удалось проверить",
+        "could_not_install": "Не удалось установить",
         "not_checked": "Не проверено репозиториев: {n} — к Marketplace не подключена учётная запись GitHub",
         "rate_limit": "GitHub: осталось запросов: {n}",
         "sec": "{n} с",
