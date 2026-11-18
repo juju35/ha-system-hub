@@ -1420,6 +1420,8 @@
         "diff_close": "Luk",
         "diff_files_one": "{n} fil",
         "diff_files_many": "{n} filer",
+        "diff_lines_added": "Tilføjede linjer",
+        "diff_lines_deleted": "Fjernede linjer",
         "chart_system": "CPU, RAM og temperatur",
         "chart_network": "Netværk",
         "chart_disks": "Diskforbrug",

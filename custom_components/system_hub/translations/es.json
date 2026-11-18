@@ -1420,6 +1420,8 @@
         "diff_close": "Cerrar",
         "diff_files_one": "{n} archivo",
         "diff_files_many": "{n} archivos",
+        "diff_lines_added": "Líneas añadidas",
+        "diff_lines_deleted": "Líneas eliminadas",
         "chart_system": "CPU, RAM y temperatura",
         "chart_network": "Red",
         "chart_disks": "Uso de discos",

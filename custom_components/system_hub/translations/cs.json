@@ -1420,6 +1420,8 @@
         "diff_close": "Zavřít",
         "diff_files_one": "{n} soubor",
         "diff_files_many": "Soubory: {n}",
+        "diff_lines_added": "Přidané řádky",
+        "diff_lines_deleted": "Odebrané řádky",
         "chart_system": "CPU, RAM a teplota",
         "chart_network": "Síť",
         "chart_disks": "Obsazení disků",

@@ -1420,6 +1420,8 @@
         "diff_close": "Bezárás",
         "diff_files_one": "{n} fájl",
         "diff_files_many": "{n} fájl",
+        "diff_lines_added": "Hozzáadott sorok",
+        "diff_lines_deleted": "Eltávolított sorok",
         "chart_system": "CPU, RAM és hőmérséklet",
         "chart_network": "Hálózat",
         "chart_disks": "Lemezhasználat",
