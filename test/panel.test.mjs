@@ -528,6 +528,10 @@ test('settings tab: the top bar hidden for no one, everyone or the non-admins', 
   q._state.hide_header = 'off';
   q._applyHeader();
   assert.equal(attrs['hide-bar'], false);
+  // Before the state is read: the choice last seen in this browser (none here: the bar shows)
+  q._state = null;
+  q._applyHeader();
+  assert.equal(attrs['hide-bar'], false);
 });
 
 test('automations tab: failures and unavailable linked entities from Automation Monitor, or how to add it', () => {

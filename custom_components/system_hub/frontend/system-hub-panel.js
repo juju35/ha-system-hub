@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.2.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.2.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -594,6 +594,9 @@ function shSpark(values) {
   var d = points.map((v, i) => `${(i * step).toFixed(1)},${(30 - (Math.min(Math.max(v, 0), 100) * 30) / 100).toFixed(1)}`);
   return `<svg class="spark" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><polyline points="${d.join(' ')}"/></svg>`;
 }
+
+// Settings → Hide the top bar, as last seen in this browser: applied before the state is read
+var SH_HIDE_BAR_KEY = 'system_hub_hide_bar';
 
 // Status letter and colour of a file in the diff viewer, as in an editor's source control view.
 var SH_DIFF_STATUS = {
@@ -1604,9 +1607,25 @@ class SystemHubPanel extends HTMLElement {
   }
 
   // Settings → Hide the top bar: for no one (off), everyone (all) or the users who are not administrators (non_admin)
+  // Until the state is read, the choice last seen in this browser: the bar does not show for a moment on load, then go
   _applyHeader() {
-    var mode = this._state?.hide_header || 'off';
-    this.toggleAttribute('hide-bar', mode === 'all' || (mode === 'non_admin' && !this._hass?.user?.is_admin));
+    var hidden;
+    if (this._state?.loaded) {
+      var mode = this._state.hide_header || 'off';
+      hidden = mode === 'all' || (mode === 'non_admin' && !this._hass?.user?.is_admin);
+      try {
+        localStorage.setItem(SH_HIDE_BAR_KEY, hidden ? '1' : '0');
+      } catch (_err) {
+        // no storage (private mode): the bar may show for a moment on the next load
+      }
+    } else {
+      try {
+        hidden = localStorage.getItem(SH_HIDE_BAR_KEY) === '1';
+      } catch (_err) {
+        hidden = false;
+      }
+    }
+    this.toggleAttribute('hide-bar', hidden);
   }
 
   set panel(panel) {
