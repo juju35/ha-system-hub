@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.13.0';
+var SYSTEM_HUB_PANEL_VERSION = '2.13.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -6081,12 +6081,12 @@ var SH_BANNER_STYLE = `
     @keyframes sh-drive { 0%, 100% { transform:translateX(2px); } 50% { transform:translate(-2px, -.5px); } }
     @keyframes sh-ping { from { transform:scale(1); opacity:.9; } to { transform:scale(2.6); opacity:0; } }
     @media (prefers-reduced-motion: reduce) { .shscene * { animation:none !important; } }
-    /* The cards' charter: pill buttons, round icons, uppercase section titles, rows tinted by their tone */
+    /* The cards' charter: pill buttons, round icons, uppercase section titles; an alert's row keeps a plain background
+       (its icon and pill carry the tone) */
     .act { border-radius:18px; }
     .lhead .lname { font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
     .list { padding:6px 8px; }
     .list .item { border-radius:12px; padding:8px; }
-    .list :where(.item.bad, .item.warn) { background:color-mix(in srgb, var(--tone) 8%, transparent); }
     .sttile { border-radius:12px; }
     .stic { border-radius:50%; }
 `;

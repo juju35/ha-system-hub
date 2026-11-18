@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.13.1 - 2026-11-18
+
+### Fixes
+- **Panel**: the rows of a problem (a failed reload, an unavailable integration…) no longer get a tinted background, a brown block in the dark theme that broke the list's alignment; as in the cards, the tone stays on the row's icon and pill.
+
 ## 2.13.0 - 2026-11-18
 
 ### Features
