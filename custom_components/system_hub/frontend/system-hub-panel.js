@@ -803,6 +803,7 @@ class SystemHubDiffDialog extends HTMLElement {
 
   _css() {
     return `
+      ha-icon { display:inline-flex; align-items:center; justify-content:center; flex:none; line-height:0; }
       :host { --sh-ok: var(--success-color, #43a047); --sh-warn: var(--warning-color, #ffa600);
               --sh-info: var(--info-color, #039be5); --sh-alert: var(--error-color, #db4437);
               --sh-off: var(--disabled-text-color, #9e9e9e); --sh-accent: var(--primary-color, #03a9f4);
