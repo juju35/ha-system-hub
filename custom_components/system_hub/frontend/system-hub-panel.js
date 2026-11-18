@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.1.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.2.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1104,8 +1104,15 @@ class SystemHubPanel extends HTMLElement {
                background:var(--app-header-background-color, var(--primary-color)); color:var(--app-header-text-color, #fff);
                font-size:20px; position:sticky; top:0; z-index:2; }
     .toolbar .grow { flex:1; }
-    .tabs { display:flex; gap:4px; padding:0 12px; overflow-x:auto; background:var(--app-header-background-color, var(--primary-color));
-            position:sticky; top:var(--header-height, 56px); z-index:2; }
+    .tabsbar { display:flex; background:var(--app-header-background-color, var(--primary-color));
+               color:var(--app-header-text-color, #fff); position:sticky; top:var(--header-height, 56px); z-index:2; }
+    .tabs { flex:1; min-width:0; display:flex; gap:4px; padding:0 12px; overflow-x:auto; }
+    /* Settings → Hide the top bar: the tabs at the top; on a phone, the menu button beside them */
+    .tabmenu { display:none !important; }
+    :host([hide-bar]) .toolbar { display:none; }
+    :host([hide-bar]) .tabsbar { top:0; }
+    :host([hide-bar][narrow]) .tabmenu { display:flex !important; align-self:center; margin-left:4px; }
+    :host([hide-bar][narrow]) .tabs { padding-left:0; }
     .tab { background:none; border:none; border-bottom:2px solid transparent; color:var(--app-header-text-color, #fff); opacity:.75;
            padding:12px 14px; font:inherit; font-size:14px; cursor:pointer; white-space:nowrap; }
     .tab:hover, .tab:focus-visible { opacity:1; outline:none; }
@@ -1547,7 +1554,9 @@ class SystemHubPanel extends HTMLElement {
     }
     var language = this._hass?.language;
     this._hass = hass;
-    if (this._menu) this._menu.hass = hass;
+    this._menus?.forEach((menu) => {
+      menu.hass = hass;
+    });
     if (first) this._start();
     else if (hass.language !== language) this._loadStrings();
     else this._updLiveChanged();
@@ -1588,7 +1597,16 @@ class SystemHubPanel extends HTMLElement {
 
   set narrow(narrow) {
     this._narrow = narrow;
-    if (this._menu) this._menu.narrow = narrow;
+    this.toggleAttribute('narrow', Boolean(narrow));
+    this._menus?.forEach((menu) => {
+      menu.narrow = narrow;
+    });
+  }
+
+  // Settings → Hide the top bar: for no one (off), everyone (all) or the users who are not administrators (non_admin)
+  _applyHeader() {
+    var mode = this._state?.hide_header || 'off';
+    this.toggleAttribute('hide-bar', mode === 'all' || (mode === 'non_admin' && !this._hass?.user?.is_admin));
   }
 
   set panel(panel) {
@@ -1843,13 +1861,14 @@ class SystemHubPanel extends HTMLElement {
     if (root.querySelector('.toolbar')) return;
     root.innerHTML = `<style>${SystemHubPanel.STYLE}</style>
       <div class="toolbar"><ha-menu-button></ha-menu-button><span class="grow">System Hub</span></div>
-      <nav class="tabs" role="tablist"></nav>
+      <div class="tabsbar"><ha-menu-button class="tabmenu"></ha-menu-button><nav class="tabs" role="tablist"></nav></div>
       <main></main>`;
-    this._menu = root.querySelector('ha-menu-button');
-    if (this._menu) {
-      this._menu.hass = this._hass;
-      this._menu.narrow = this._narrow;
-    }
+    this._menus = [...root.querySelectorAll('ha-menu-button')];
+    this._menu = this._menus[0];
+    this._menus.forEach((menu) => {
+      menu.hass = this._hass;
+      menu.narrow = this._narrow;
+    });
     root.querySelector('.tabs').addEventListener('click', (ev) => {
       var group = ev.target.closest?.('[data-group]')?.dataset.group;
       if (group) this._goGroup(group);
@@ -1919,6 +1938,7 @@ class SystemHubPanel extends HTMLElement {
     // Read for the sidebar icon only (system-hub-icons.js): nothing shown
     if (this._headless) return;
     this._renderShell();
+    this._applyHeader();
     var root = this.shadowRoot;
     this._applyRoute();
     var current = shGroupOf(this._tab);
@@ -4444,7 +4464,7 @@ class SystemHubPanel extends HTMLElement {
   // Settings: the modules turned on, and the order of the tabs
   _settings() {
     var modules = this._draft.modules || this._state.modules || [];
-    var changed = Boolean(this._draft.modules || this._draft.tabs);
+    var changed = Boolean(this._draft.modules || this._draft.tabs || this._draft.hide_header);
     return `${this._settingsModules(modules)}
       ${
         changed || this._busy.save
@@ -4454,6 +4474,22 @@ class SystemHubPanel extends HTMLElement {
           : ''
       }
       <div class="actions">${this._message('save')}</div>`;
+  }
+
+  // Settings → Display: who the top bar is hidden for
+  _settingsDisplay() {
+    var mode = this._draft.hide_header || this._state.hide_header || 'off';
+    var choices = ['off', 'all', 'non_admin']
+      .map((value) => {
+        var on = value === mode;
+        return `<button class="seg${on ? ' active' : ''}" data-action="hide_header" data-value="${value}" aria-pressed="${on}">${shEsc(this._t(`hide_header_${value}`))}</button>`;
+      })
+      .join('');
+    var hint = mode === 'non_admin' ? `${this._t('hide_header_hint')} ${this._t('hide_header_non_admin_note')}` : this._t('hide_header_hint');
+    return `<section class="cfgcard"><div class="cfgsec cfggroup"><ha-icon icon="mdi:monitor-dashboard"></ha-icon><span class="grow">${shEsc(this._t('settings_display'))}</span></div>
+      <div class="cfglist"><div class="row cfgrow cfgdisplay"><span class="cfgpad"></span><ha-icon icon="mdi:dock-top"></ha-icon>
+        <div class="who"><div class="n">${shEsc(this._t('hide_header'))}</div><div class="s">${shEsc(hint)}</div></div></div>
+        <div class="segs cfgsegs" role="group" aria-label="${shEsc(this._t('hide_header'))}">${choices}</div></div></section>`;
   }
 
   _onClick(ev) {
@@ -4541,6 +4577,12 @@ class SystemHubPanel extends HTMLElement {
     if (action === 'discard') {
       this._draft.modules = null;
       this._draft.tabs = null;
+      this._draft.hide_header = null;
+      return this._render();
+    }
+    if (action === 'hide_header') {
+      var hideValue = button.dataset.value;
+      this._draft.hide_header = hideValue === (this._state.hide_header || 'off') ? null : hideValue;
       return this._render();
     }
     if (action.startsWith('auto_')) return this._autoAction(action, button);
@@ -4881,6 +4923,7 @@ class SystemHubPanel extends HTMLElement {
     var msg = { type: 'system_hub/update_settings' };
     if (this._draft.modules) msg.modules = this._draft.modules;
     if (this._draft.tabs) msg.tabs = this._draft.tabs;
+    if (this._draft.hide_header) msg.hide_header = this._draft.hide_header;
     delete this._messages.save;
     try {
       await this._hass.callWS(msg);
@@ -4888,6 +4931,7 @@ class SystemHubPanel extends HTMLElement {
       await new Promise((resolve) => setTimeout(resolve, 1500));
       this._draft.modules = null;
       this._draft.tabs = null;
+      this._draft.hide_header = null;
       await this._load();
       this._toast(this._t('saved'));
     } catch (err) {
@@ -5347,7 +5391,7 @@ var SH_SETTINGS_METHODS = {
         ${enabledRows ? `<div class="cfglist" data-group="${group}">${enabledRows}</div>` : ''}${disabledRows ? `<div class="cfglist off">${disabledRows}</div>` : ''}</section>`;
     });
     return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules_tabs'))}</h2><span class="msg">${shEsc(this._t('modules_tabs_hint'))}</span>
-      <div class="cfggrid">${sections.join('')}</div></ha-card>`;
+      <div class="cfggrid">${sections.join('')}${this._settingsDisplay()}</div></ha-card>`;
   },
 
   // Moves a tab among the ones of its group turned on (the ones turned off keep their place): to the index `to` of that list
@@ -6307,6 +6351,9 @@ var SH_BANNER_STYLE = `
     .cfgcard .cfggroup { display:flex; align-items:center; gap:6px; padding:0; min-height:30px; --mdc-icon-size:16px; }
     .cfgcard .cfggroup .icon-btn { --mdc-icon-size:18px; }
     .cfgcard .cfglist { gap:6px; }
+    /* Settings → Display: the hint on as many lines as it needs, the choices under the row */
+    .cfgcard .cfgrow.cfgdisplay .who .s { white-space:normal; }
+    .cfgsegs { align-self:flex-start; margin-left:4px; }
     .cfgcard .cfgrow { border:0; padding:6px 10px 6px 4px; border-radius:12px; background:var(--sh-sec); align-items:center; }
     .cfgcard .cfgrow > ha-icon { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px; flex:none;
                                  color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); }

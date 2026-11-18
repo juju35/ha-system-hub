@@ -23,12 +23,15 @@ from homeassistant.helpers import entity_registry as er
 from . import automations
 from .const import (
     CONF_BACKUP_MAX_AGE,
+    CONF_HIDE_HEADER,
     CONF_MODULES,
     CONF_SYSTEM,
     CONF_TABS,
     DEFAULT_BACKUP_MAX_AGE,
     DEFAULT_THRESHOLDS,
     DOMAIN,
+    HIDE_HEADER_CHOICES,
+    HIDE_HEADER_OFF,
     MODULE_AUTOMATIONS,
     MODULE_BACKUPS,
     MODULE_DATABASE,
@@ -154,6 +157,12 @@ def async_remove_panel(hass: HomeAssistant) -> None:
 
     if PANEL_PATH in hass.data.get(frontend.DATA_PANELS, {}):
         frontend.async_remove_panel(hass, PANEL_PATH)
+
+
+def hide_header(options: dict[str, Any]) -> str:
+    """Who the panel's top bar is hidden for: off (no one, the default), all, or non_admin."""
+    value = options.get(CONF_HIDE_HEADER)
+    return value if value in HIDE_HEADER_CHOICES else HIDE_HEADER_OFF
 
 
 def tab_order(options: dict[str, Any]) -> list[str]:
@@ -511,6 +520,7 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         "entry_id": entry.entry_id,
         "modules": enabled_modules(entry),
         "tabs": tab_order(dict(entry.options)),
+        "hide_header": hide_header(dict(entry.options)),
         "git_sync_configured": data.git_sync is not None,
         "system": _system(hass, stoppable_processes(dict(entry.options))),
         "updates": _updates(hass),
@@ -561,13 +571,14 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         vol.Required("type"): "system_hub/update_settings",
         vol.Optional("modules"): [vol.In(MODULES)],
         vol.Optional("tabs"): [vol.In(TABS)],
+        vol.Optional("hide_header"): vol.In(HIDE_HEADER_CHOICES),
     }
 )
 @websocket_api.async_response
 async def ws_update_settings(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
 ) -> None:
-    """Turn modules on or off and order the tabs; the entry reloads with them."""
+    """Turn modules on or off, order the tabs and hide the top bar; the entry reloads with them."""
     entry = _entry(hass) or next(iter(hass.config_entries.async_entries(DOMAIN)), None)
     if entry is None:
         connection.send_error(msg["id"], "not_found", "System Hub is not set up")
@@ -583,8 +594,13 @@ async def ws_update_settings(
         options[CONF_MODULES] = modules
     if "tabs" in msg:
         options[CONF_TABS] = tab_order({CONF_TABS: msg["tabs"]})
+    if "hide_header" in msg:
+        options[CONF_HIDE_HEADER] = msg["hide_header"]
     hass.config_entries.async_update_entry(entry, options=options)
-    connection.send_result(msg["id"], {"modules": options.get(CONF_MODULES), "tabs": tab_order(options)})
+    connection.send_result(
+        msg["id"],
+        {"modules": options.get(CONF_MODULES), "tabs": tab_order(options), "hide_header": hide_header(options)},
+    )
 
 
 @websocket_api.require_admin

@@ -236,6 +236,22 @@ async def test_commands_are_for_administrators(
         assert response["error"]["code"] == "unauthorized"
 
 
+async def test_update_settings_hides_the_top_bar(hass: HomeAssistant, hass_ws_client) -> None:
+    entry = await _setup(hass, ["watchdog"])
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "system_hub/state"})
+    assert (await client.receive_json())["result"]["hide_header"] == "off"
+    await client.send_json_auto_id({"type": "system_hub/update_settings", "hide_header": "non_admin"})
+    response = await client.receive_json()
+    assert response["success"] is True
+    assert response["result"]["hide_header"] == "non_admin"
+    await hass.async_block_till_done()
+    assert entry.options["hide_header"] == "non_admin"
+    assert entry.options[CONF_MODULES] == ["watchdog"]
+    await client.send_json_auto_id({"type": "system_hub/update_settings", "hide_header": "sometimes"})
+    assert (await client.receive_json())["success"] is False
+
+
 async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
     entry = await _setup(hass, ["watchdog"])
     client = await hass_ws_client(hass)
