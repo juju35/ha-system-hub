@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.14.0 - 2026-11-18
+## 3.0.0 - 2026-11-18
 
 ### Features
 - **Panel, as its mockups**: what opens a tab (its tiles, actions, rings) now sits in the header card, under the illustrated banner and the sub-tabs. Tiles and list rows are filled and rounded with a round icon (neutral when all is well), the rows of a problem tinted and outlined, buttons are pills and list titles uppercase; the System tab's rings are tiles and its charts' titles the sections'.
