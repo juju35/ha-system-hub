@@ -227,6 +227,8 @@ System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-
 | `automations` | [Automations](#automation-monitor-cards) | ✓ | `automation-monitor-card`, [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) |
 | `orphans` | [Cleanup](#cards) | ✓ | `orphan-entities-card`, [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) |
 
+**Illustrated header**: every module's card (and mini card) opens on the same 90 px header as the Status cards: its own part of the Status picture, large, on the right — the shield (Watchdog), the battery (Batteries), the update arrow (Marketplace), the gauge (System Monitor), the branch (Git Sync), the puzzle piece (Orphans), the robot (Automations) — in the colour of the card's status (green, amber, red, grey), over the concrete floor, with the header's buttons as small frosted buttons in its top right corner. It turns to night with a dark Home Assistant theme; `illustration_theme: day | night` forces it, and `illustration: false` keeps the classic header. Both options are in each card's visual editor.
+
 **Cards only**: the cards are files of the integration, served by it, so System Hub must be added in **Settings → Devices & services** for a dashboard to load them; downloading it from the Marketplace is not enough, and removing the integration removes the cards from the dashboard resources. To use only the cards, add System Hub with every module turned off: nothing is monitored, no entity is created, and the cards that read other integrations (the System Monitor cards, which read the core System Monitor integration) work as before. The **System Hub** sidebar item can be hidden for your user like any other one: long press the sidebar's title, or **Profile → Change the order and hide items from the sidebar**.
 
 **From 1.x**: the card types before 2.0 (`custom:system-hub-card` (`module: batteries`), `custom:system-hub-mini-card` (`module: watchdog`)…) no longer exist. At every start, System Hub moves the cards of the dashboards edited from the UI to the new type and its module, wherever they are (a view, a section, a stack, a conditional card, a popup), their options kept; each dashboard is saved first in `.storage/system_hub.dashboards_backup`. A dashboard written in YAML is not rewritten: a repair in **Settings → Repairs** lists its cards to change, and goes away once none is left.
@@ -384,6 +386,8 @@ cpu_critical: 90
 |---|---|---|---|
 | `title` | all | `Home Assistant` | Card title |
 | `show_title` | all | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `illustration` | all | `true` | The illustrated header with the gauge (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | all | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `show_subtitle` | all | `true` | Show the subtitle under the title |
 | `show_system` | full, mini | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
 | `show_disk` | full, mini | `true` | The disk gauge of the System section (root file system, else the first mount point); `false` leaves the disk to the Storage section |
@@ -721,6 +725,8 @@ It reads the Watchdog module's entities (`sensor.system_hub_sentinel_unavailable
 | `entity` | found automatically | The **Unavailable integrations** sensor of System Hub |
 | `title` | Watchdog | Card title |
 | `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `illustration` | `true` | The illustrated header with the shield (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_stats` | `true` | Summary tiles |
 | `show_unavailable` | `true` | Unavailable integrations |
@@ -877,6 +883,8 @@ Every option is in the visual editor:
 | `entity` | found automatically | The Marketplace **Status** sensor (`sensor.system_hub_updates_status`); its **Last check** sensor or **Check for updates** button lead to it, and an entity that no longer exists (from the old integration, say) falls back to it |
 | `title` | Marketplace updates | Card title |
 | `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `illustration` | `true` | The illustrated header with the update arrow (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_updates` | `true` | Updates available |
 | `show_failed` | `true` | Repositories that couldn't be checked, and the error of a failed check |
@@ -1020,6 +1028,8 @@ module: batteries
 | `entity` | Auto | The System Hub **Low batteries** sensor; found automatically |
 | `title` | `Batteries` | Card title |
 | `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `illustration` | `true` | The illustrated header with the battery (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `columns` | `1` | Number of battery columns (1–3); a card too narrow for them shows fewer, each at least 160 px wide |
 | `only_low` | `false` | Show only the batteries below the threshold or unavailable |
 | `hide_when_ok` | `false` | Hide the whole card when every battery is above the threshold and available (always shown while editing the dashboard) |
@@ -1124,6 +1134,8 @@ module: automations
 |---|---|---|---|
 | `title` | both | `Automation Monitor` | Card title |
 | `show_title` | both | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `illustration` | both | `true` | The illustrated header with the robot (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | both | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `show_subtitle` | both | `true` | Show the subtitle under the title |
 | `show_failed` | both | `true` | Failed automations (counter and list) |
 | `show_linked` | both | `true` | Unavailable linked entities (counter and list) |
@@ -1387,6 +1399,8 @@ Every option is in the visual editor:
 | `entity` | found automatically | The Git Sync **Status** sensor (`sensor.system_hub_versioning_status`); any other Git Sync entity leads to it, and an entity that isn't one (from the old integration, say) falls back to it |
 | `title` | Git Sync | Card title |
 | `show_title` | `true` | Show the title in the header (e.g. `false` under a section heading of your own) |
+| `illustration` | `true` | The illustrated header with the branch (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_files` | `true` | Collapsible list of the changed files |
 | `show_export` | `true` | Last export and the **Export dashboards** button |

@@ -24,11 +24,11 @@ PAIRS = [
 SHOTS = light_dark(PAIRS)
 
 MOUNT = (
-    """([type, states, entities, zoom, clicks]) => {
+    """([type, states, entities, zoom, clicks, dark]) => {
   const el = document.createElement(type);
   el.setConfig({ type: `custom:${type}` });
   el.hass = {
-    states, entities, language: "en", locale: { language: "en" }, user: { is_admin: true }, callService: () => {},
+    states, entities, language: "en", locale: { language: "en" }, user: { is_admin: true }, callService: () => {}, themes: { darkMode: dark },
   };
   document.getElementById("root").appendChild(el);
 """
@@ -46,7 +46,14 @@ def main():
         if shot.get("ok"):
             for entity_id, override in mock["allGood"].items():
                 states[entity_id] = {**states[entity_id], **override}
-        return [shot["type"], states, mock["entities"], bool(shot.get("zoom")), shot.get("clicks", [])]
+        return [
+            shot["type"],
+            states,
+            mock["entities"],
+            bool(shot.get("zoom")),
+            shot.get("clicks", []),
+            shot["theme"] == "dark",
+        ]
 
     render("automation-monitor-card.js", SHOTS, MOUNT, args)
 

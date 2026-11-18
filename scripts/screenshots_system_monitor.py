@@ -28,7 +28,7 @@ PAIRS = [
 SHOTS = light_dark(PAIRS)
 
 MOUNT = (
-    """([type, config, states, entities, devices, zoom]) => {
+    """([type, config, states, entities, devices, zoom, dark]) => {
   const el = document.createElement(type);
   el.setConfig({ type: `custom:${type}`, ...config });
   // Recorder statistics: a 24 h rate curve for each rate sensor (busy evening, quiet night), and percentages for the
@@ -48,7 +48,7 @@ MOUNT = (
     );
   el.hass = {
     states, entities, devices, callWS,
-    config: { version: "2026.10.2" }, language: "en", locale: { language: "en" }, user: { is_admin: true },
+    config: { version: "2026.10.2" }, language: "en", locale: { language: "en" }, user: { is_admin: true }, themes: { darkMode: dark },
   };
   document.getElementById("root").appendChild(el);
 """
@@ -62,7 +62,15 @@ def main():
 
     def args(shot):
         states = {**mock["states"], **(mock["procsRunning"] if shot.get("procs_ok") else {})}
-        return [shot["type"], {}, states, mock["entities"], mock["devices"], bool(shot.get("zoom"))]
+        return [
+            shot["type"],
+            {},
+            states,
+            mock["entities"],
+            mock["devices"],
+            bool(shot.get("zoom")),
+            shot["theme"] == "dark",
+        ]
 
     render("system-monitor-card.js", SHOTS, MOUNT, args)
 

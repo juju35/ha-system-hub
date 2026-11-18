@@ -200,10 +200,10 @@ def page_html(theme, width=WIDTH, padding=16):
 
 # Mounts the card on a new page (the card's top-level declarations would clash in a reused page); `view` opens its
 # full screen view, by room or by type.
-MOUNT = """([hass, config, view, tag]) => {
+MOUNT = """([hass, config, view, tag, dark]) => {
     const el = document.createElement(tag);
     el.setConfig({ type: `custom:${tag}`, ...config });
-    el.hass = { ...hass, callService: async () => {} };
+    el.hass = { ...hass, themes: { darkMode: dark }, callService: async () => {} };
     document.getElementById("root").appendChild(el);
     if (view) {
         el._view = view;
@@ -229,7 +229,7 @@ def open_card(browser, shot, config, viewport, view=None):
     page.set_content(page_html(shot["theme"]))
     page.add_script_tag(content=HA_ELEMENTS)
     page.add_script_tag(content=CARD_JS)
-    page.evaluate(MOUNT, [mock_hass(), config, view, shot.get("tag", "sh-batteries-card")])
+    page.evaluate(MOUNT, [mock_hass(), config, view, shot.get("tag", "sh-batteries-card"), shot["theme"] == "dark"])
     if view:
         page.evaluate(FRAME_POPUP)
     page.wait_for_timeout(500 if view else 300)
