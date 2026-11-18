@@ -3709,14 +3709,20 @@ class SystemHubPanel extends HTMLElement {
   // The Marketplace's installs running (its Update all, or one card's Update): the backup first, then which one of how
   // many, with the share done of the current one
   _mkRunProgress(data) {
-    if (!data.backing_up && !data.install_total) return '';
-    return this._instProgress({
+    var run = this._mkRunNow(data);
+    return run ? this._instProgress(run) : '';
+  }
+
+  // Where the Marketplace's installs are: the backup first, then which one of how many
+  _mkRunNow(data) {
+    if (!data.backing_up && !data.install_total) return null;
+    return {
       backup: Boolean(data.backing_up),
       n: Math.min(data.install_total, (data.install_done || 0) + 1),
       total: data.install_total,
       name: data.install_current,
       entity: data.installing?.[0],
-    });
+    };
   }
 
   // The tab's Update all running: the Marketplace's repositories first (their progress from the server), then the
@@ -5950,7 +5956,7 @@ function shScene(name, tone, n, extra = {}) {
     var bx = (x, y, w, h) =>
       `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1" fill="${p('#c9a06a', '#7a6040')}"/><rect x="${x + w / 2 - 3}" y="${y}" width="6" height="2" fill="${p('#e5c48f', '#9a8058')}"/>`;
     var truck = extra.installing
-      ? `<g transform="translate(168 52)"><rect width="22" height="16" rx="2" fill="#2f80ed"/><rect x="22" y="6" width="9" height="10" rx="2" fill="#1f63c7"/><circle cx="6" cy="17" r="3" fill="${dark}"/><circle cx="25" cy="17" r="3" fill="${dark}"/></g>`
+      ? `<g transform="translate(160 57)"><g class="sh-drive"><rect width="24" height="17" rx="2" fill="#2f80ed"/><path d="M4 6 h10 M4 10 h7" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/><path d="M24 7 h5 l3 4 v6 h-8z" fill="#1f63c7"/><rect x="26" y="8.5" width="3.5" height="3" rx=".6" fill="#cfe8f8"/><circle cx="6" cy="18" r="3" fill="${dark}"/><circle cx="27" cy="18" r="3" fill="${dark}"/></g></g>`
       : bx(158, 62, 26, 18);
     return `<g transform="translate(64 14)"><rect x="0" y="0" width="3" height="66" fill="${woodd}"/><rect x="81" y="0" width="3" height="66" fill="${woodd}"/><rect x="0" y="30" width="84" height="3" fill="${wood}"/><rect x="0" y="63" width="84" height="3" fill="${wood}"/></g>
       ${bx(70, 24, 18, 20)}${bx(90, 30, 14, 14)}${bx(108, 20, 24, 24)}${bx(70, 59, 22, 18)}${bx(96, 53, 20, 24)}${bx(120, 63, 24, 14)}${up(120, 12, '#2f80ed')}${truck}
@@ -6058,6 +6064,7 @@ var SH_BANNER_STYLE = `
     .shscene .sh-pir { opacity:.14; animation:sh-pir 2s ease-in-out infinite; }
     .shscene .sh-glow { animation:sh-glow 3s ease-in-out infinite; }
     .shscene .sh-float, .shscene .sh-dust { animation:sh-float 3s ease-in-out infinite; }
+    .shscene .sh-drive { animation:sh-drive 2s ease-in-out infinite; }
     .shscene :is(.sh-spin, .sh-rot, .sh-rot-rev, .sh-rot-fast, .sh-ping) { transform-box:fill-box; transform-origin:center; }
     .shscene .sh-spin { animation:sh-spin 1.6s linear infinite; }
     .shscene .sh-rot { animation:sh-spin 9s linear infinite; }
@@ -6071,6 +6078,7 @@ var SH_BANNER_STYLE = `
     @keyframes sh-pir { 0%, 100% { opacity:.06; } 50% { opacity:.18; } }
     @keyframes sh-glow { 50% { opacity:.06; } }
     @keyframes sh-float { 50% { transform:translateY(-3px); } }
+    @keyframes sh-drive { 0%, 100% { transform:translateX(2px); } 50% { transform:translate(-2px, -.5px); } }
     @keyframes sh-ping { from { transform:scale(1); opacity:.9; } to { transform:scale(2.6); opacity:0; } }
     @media (prefers-reduced-motion: reduce) { .shscene * { animation:none !important; } }
     /* The cards' charter: pill buttons, round icons, uppercase section titles, rows tinted by their tone */
@@ -6118,7 +6126,14 @@ var SH_BANNER_METHODS = {
       if (area) [tone, pill, sub] = area;
       if (tab === 'marketplace') {
         var mk = this._state.marketplace || {};
-        extra = { installing: Boolean(mk.installing_updates), count: (mk.list || []).length + (this._state.system_updates?.available || []).length };
+        // Installs running (the tab's Update all, or the Marketplace's): which one of how many as the pill, the
+        // delivery truck at the shelves
+        var run = this._updRunNow() || (mk.installing_updates || mk.backing_up ? this._mkRunNow(mk) : null);
+        if (run) {
+          tone = 'info';
+          pill = run.backup ? this._t('mk_backing_up') : this._t('mk_installing', { n: run.n, total: run.total, name: run.name || '' });
+        }
+        extra = { installing: Boolean(run), count: (mk.list || []).length + (this._state.system_updates?.available || []).length };
       }
       if (tab === 'backups') extra = { failing: Boolean(this._bkSummary?.()?.failing?.length) };
     }

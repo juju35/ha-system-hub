@@ -1954,7 +1954,20 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   p._hass.themes = { darkMode: true };
   p._tab = 'system';
   assert.match(p._banner(), /class="shbanner \w+ night" style="--sh-wall:#262c3a"/);
+  // The Updates tab installing: which one of how many as its pill, the delivery truck at the shelves
+  p._hass.themes = {};
+  p._tab = 'marketplace';
+  state.marketplace = { list: [{ entity_id: 'update.a', title: 'A' }], installing_updates: true, installing: ['update.b'], install_total: 4, install_done: 1, install_current: 'Bubble Card' };
+  html = p._banner();
+  assert.match(html, /class="shbanner info"/);
+  assert.match(html, /class="shpill">Installing 2 \/ 4: Bubble Card</);
+  assert.match(html, /class="sh-drive"/);
+  state.marketplace = { ...state.marketplace, backing_up: true };
+  assert.match(p._banner(), /class="shpill">Backing up Home Assistant…</);
+  state.marketplace = { list: [{ entity_id: 'update.a', title: 'A' }] };
+  assert.doesNotMatch(p._banner(), /sh-drive|Installing/);
   // The header card: the banner then the sub-tabs, kept as they were; nothing before the state is read
+  p._tab = 'system';
   assert.match(p._top(), /^<ha-card class="shtop"><div class="shbanner[\s\S]*<nav class="subtabs"[\s\S]*<\/ha-card>$/);
   assert.equal(panel(null)._top(), '');
 });

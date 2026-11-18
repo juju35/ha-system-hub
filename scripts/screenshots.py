@@ -1668,7 +1668,7 @@ SHOTS = [
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
     {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},
     {"file": "panel-orphans-confirm-dark", "theme": "dark", "tab": "orphans", "orphans_confirm": True},
-    # The illustrated header of each tab, animated (one GIF per scene), and the Status tab's three states: some
+    # The illustrated header of each tab, animated (one GIF per scene), and the Status tab's three states (and the Updates tab installing): some
     # areas critical (its beacon turning), only some to watch, and everything fine (its green ping)
     *(
         {
@@ -1684,6 +1684,17 @@ SHOTS = [
     *(
         {"file": f"header-status-{name}{suffix}", "theme": theme, "tab": "status", "gif": True, name: True}
         for name in ("health", "fine")
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
+    # The Updates tab installing: the delivery truck at its shelves
+    *(
+        {
+            "file": f"header-marketplace-installing{suffix}",
+            "theme": theme,
+            "tab": "marketplace",
+            "gif": True,
+            "installing": True,
+        }
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
     # Each module's settings, opened in place in the Settings tab: config-<step>
@@ -1850,6 +1861,14 @@ def checking_state(state):
     return {**state, "marketplace": running}
 
 
+def installing_state(state):
+    """The Marketplace's Update all running: 1 of 4 installed, Bubble Card installing, the next ones waiting."""
+    queue = [u["entity_id"] for u in state["marketplace"]["list"][1:]]
+    running = {**state["marketplace"], "installing_updates": True, "installing": queue, "install_total": 4}
+    running |= {"install_done": 1, "install_current": "Bubble Card", "backing_up": False}
+    return {**state, "marketplace": running}
+
+
 def open_page(browser, name, viewport, html):
     """A new page at the frozen clock, Paris time, with `html` in it; page errors are printed."""
     page = browser.new_page(
@@ -1994,6 +2013,7 @@ def main():
             shown = automations_state(shown) if shot.get("automations") else shown
             shown = health_state(shown) if shot.get("health") else shown
             shown = fine_state(shown) if shot.get("fine") else shown
+            shown = installing_state(shown) if shot.get("installing") else shown
             page.evaluate(
                 MOUNT,
                 [
