@@ -1873,7 +1873,8 @@ class SystemHubPanel extends HTMLElement {
       if (body.children.length) top.append(body);
       // The module's settings: a round frosted button in the banner's corner, as on the cards
       var corner = top.querySelector('.shbanner');
-      var settings = top.querySelector('.shbody [data-action^="open_settings:"]');
+      // The tab's own module (the first of its buttons that opens a module's settings, wherever the tab puts it)
+      var settings = main.querySelector(`[data-action="open_settings:${this._tab}"]`);
       if (corner && settings) {
         // The spacer _configure put before it goes with it
         if (settings.previousElementSibling?.matches('span.grow')) settings.previousElementSibling.remove();
@@ -6236,6 +6237,20 @@ var SH_BANNER_STYLE = `
     .shtop .subtab ha-icon, .shtop .subtab.active ha-icon { color:var(--zc); }
     .shtop .subtab.active { border-bottom-color:var(--zc); }
     .shtop .subdot { display:none; }
+    /* One look for the controls of every tab, as the mockups: segmented choices on a filled track, the one picked
+       raised on the card's background; search fields and lists filled pills; round icon buttons */
+    .btabs, .segs { display:inline-flex; gap:4px; padding:3px; border-radius:12px; background:var(--sh-sec); overflow:visible; }
+    .btab, .seg { padding:6px 10px; border-radius:9px; font-size:12.5px; font-weight:500; color:var(--secondary-text-color); background:none; }
+    .btab.on, .seg.active { background:var(--card-background-color, #fff); color:var(--primary-text-color); box-shadow:0 1px 3px rgba(0, 0, 0, .15); }
+    .box { border:0; border-radius:18px; background:var(--sh-sec); min-height:34px; padding:0 4px 0 12px; box-sizing:border-box; --mdc-icon-size:18px; color:var(--secondary-text-color); }
+    .box:focus-within { box-shadow:inset 0 0 0 2px var(--primary-color); }
+    .box input { font-size:13px; padding:6px 8px; color:var(--primary-text-color); }
+    .ofilters select { border:0; border-radius:18px; background:var(--sh-sec); padding:7px 12px; font-size:13px; min-height:34px; }
+    .icon-btn { border-radius:50%; }
+    .icon-btn:hover:not([disabled]) { background:color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color:var(--primary-text-color); }
+    .shtop .shbody .msg { font-size:12px; }
+    .bgroup .ghead .gname { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    .bgroup .ghead { --mdc-icon-size:16px; color:var(--secondary-text-color); min-height:30px; }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;
