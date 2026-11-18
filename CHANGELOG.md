@@ -7,6 +7,7 @@
 - **Status tab**: the header says how many points need a look, with the critical and to-watch counts as its pill and a dot per area; the score and the counts are tiles; the critical areas come next under *To handle first*, each with **View** to open its tab; then a compact tile per area in four columns by group, each group with its worst tone and its count. The large score ring and emblem are gone.
 - **Every tab, as its mockup**: the page as wide (1180 px), rows and tiles denser, status pills with their dot; the module's settings as a round button in the banner's corner; sections side by side where the mockups put them (Security, Sentinel's power cycles and recent reloads, Backups' locations and last 30 days).
 - **Settings tab**: a card per group, two by two, each module a filled row with its round icon, switch and settings (a group with a module's settings open takes the whole width).
+- **Sub-tabs**: as the heating card's zones — each icon in its module's tone, the tab shown underlined in that tone, with the header card's margins.
 - **Containers & process**: each container by its name (*Matter Server*), the container and its image under it in monospace, its state as the last pill.
 - **Silent devices**: the views and the integration filters on one row, the devices in their card with what *silent* and *weak* mean under them, **Device** and **Ignore** as icons.
 - **Batteries**: *By level* shows what to replace beside the batteries that are fine.

@@ -6228,6 +6228,16 @@ var SH_BANNER_STYLE = `
     .lggroup .lgmsg { background:var(--sh-sec); border-radius:10px; padding:8px 10px; font-size:12.5px; }
     .who .s.mono { font-size:12px; }
     .item .side.fixed + .pill { margin-left:4px; }
+    /* Sub-tabs, as the mockups (the heating card's zones): under the banner with a margin, each icon in its module's
+       tone, the one shown underlined in that tone */
+    .shtop .subtabs { margin:0 16px; padding:0; }
+    .shtop .subtab { --zc:var(--tone-good); padding:8px 10px; }
+    .shtop .subtab:has(.subdot.warn) { --zc:var(--tone-warn); }
+    .shtop .subtab:has(.subdot.bad) { --zc:var(--tone-bad); }
+    .shtop .subtab:has(.subdot.info) { --zc:var(--info-color, #039be5); }
+    .shtop .subtab ha-icon, .shtop .subtab.active ha-icon { color:var(--zc); }
+    .shtop .subtab.active { border-bottom-color:var(--zc); }
+    .shtop .subdot { display:none; }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;
