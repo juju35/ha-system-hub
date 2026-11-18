@@ -1420,6 +1420,8 @@
         "diff_close": "Затвори",
         "diff_files_one": "{n} датотека",
         "diff_files_many": "Датотека: {n}",
+        "diff_lines_added": "Додате линије",
+        "diff_lines_deleted": "Уклоњене линије",
         "chart_system": "CPU, RAM и температура",
         "chart_network": "Мрежа",
         "chart_disks": "Заузетост дискова",

@@ -1420,6 +1420,8 @@
         "diff_close": "Sluiten",
         "diff_files_one": "{n} bestand",
         "diff_files_many": "{n} bestanden",
+        "diff_lines_added": "Toegevoegde regels",
+        "diff_lines_deleted": "Verwijderde regels",
         "chart_system": "CPU, RAM en temperatuur",
         "chart_network": "Netwerk",
         "chart_disks": "Schijfgebruik",

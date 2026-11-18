@@ -1420,6 +1420,8 @@
         "diff_close": "Stäng",
         "diff_files_one": "{n} fil",
         "diff_files_many": "{n} filer",
+        "diff_lines_added": "Tillagda rader",
+        "diff_lines_deleted": "Borttagna rader",
         "chart_system": "CPU, RAM och temperatur",
         "chart_network": "Nätverk",
         "chart_disks": "Diskanvändning",

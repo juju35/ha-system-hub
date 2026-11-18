@@ -1420,6 +1420,8 @@
         "diff_close": "Aizvērt",
         "diff_files_one": "{n} fails",
         "diff_files_many": "Faili: {n}",
+        "diff_lines_added": "Pievienotās rindas",
+        "diff_lines_deleted": "Noņemtās rindas",
         "chart_system": "CPU, RAM un temperatūra",
         "chart_network": "Tīkls",
         "chart_disks": "Disku aizpildījums",

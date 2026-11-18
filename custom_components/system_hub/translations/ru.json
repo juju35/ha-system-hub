@@ -1420,6 +1420,8 @@
         "diff_close": "Закрыть",
         "diff_files_one": "{n} файл",
         "diff_files_many": "Файлы: {n}",
+        "diff_lines_added": "Добавлено строк",
+        "diff_lines_deleted": "Удалено строк",
         "chart_system": "CPU, RAM и температура",
         "chart_network": "Сеть",
         "chart_disks": "Заполнение дисков",

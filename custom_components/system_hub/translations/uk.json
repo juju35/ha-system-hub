@@ -1420,6 +1420,8 @@
         "diff_close": "Закрити",
         "diff_files_one": "{n} файл",
         "diff_files_many": "Файли: {n}",
+        "diff_lines_added": "Додано рядків",
+        "diff_lines_deleted": "Видалено рядків",
         "chart_system": "CPU, RAM і температура",
         "chart_network": "Мережа",
         "chart_disks": "Заповнення дисків",

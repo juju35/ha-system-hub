@@ -1420,6 +1420,8 @@
         "diff_close": "Închide",
         "diff_files_one": "{n} fișier",
         "diff_files_many": "Fișiere: {n}",
+        "diff_lines_added": "Linii adăugate",
+        "diff_lines_deleted": "Linii eliminate",
         "chart_system": "CPU, RAM și temperatură",
         "chart_network": "Rețea",
         "chart_disks": "Ocuparea discurilor",

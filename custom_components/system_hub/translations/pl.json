@@ -1420,6 +1420,8 @@
         "diff_close": "Zamknij",
         "diff_files_one": "{n} plik",
         "diff_files_many": "Pliki: {n}",
+        "diff_lines_added": "Dodane wiersze",
+        "diff_lines_deleted": "Usunięte wiersze",
         "chart_system": "CPU, RAM i temperatura",
         "chart_network": "Sieć",
         "chart_disks": "Zajętość dysków",

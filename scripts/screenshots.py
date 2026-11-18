@@ -1659,6 +1659,8 @@ SHOTS = [
     {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
+    {"file": "panel-git-sync-diff-phone", "theme": "light", "tab": "git_sync", "diff": True, "phone": True},
+    {"file": "panel-git-sync-diff-phone-dark", "theme": "dark", "tab": "git_sync", "diff": True, "phone": True},
     # The Status tab with every area, Automation Monitor's included
     {"file": "panel-status", "theme": "light", "tab": "status", "automations": True, "scored": True},
     {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True, "scored": True},
@@ -2074,7 +2076,7 @@ def main():
                 page.wait_for_timeout(200)
             if shot.get("diff"):
                 # The viewer covers the window: the capture is the window.
-                page.set_viewport_size({"width": width, "height": 760})
+                page.set_viewport_size({"width": width, "height": PHONE[1] if shot.get("phone") else 760})
                 page.evaluate(OPEN_DIFF)
                 page.wait_for_timeout(400)
                 capture(page, out / f"{shot['file']}.png", animations="disabled")

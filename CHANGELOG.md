@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.1.0 - 2026-11-18
+
+### Features
+- **Versioning, the changes viewer as its mockup**: Versioning's illustrated banner as its header (the branch, the files changed as its pill, what is left to push, a round close button in its corner); the changed files, lines added, lines removed and last push as tiles; the files as filled rows with their round A/M/D badge, the selected one tinted and outlined; the diff in a filled panel. At its foot, the commit message, **Write with AI** and **Commit and push**: a commit is written and sent from the viewer, its message shared with the tab's field. On a phone, the files as chips above the diff and the tiles two by two.
+
 ## 3.0.0 - 2026-11-18
 
 ### Features

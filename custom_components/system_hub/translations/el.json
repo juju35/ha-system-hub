@@ -1420,6 +1420,8 @@
         "diff_close": "Κλείσιμο",
         "diff_files_one": "{n} αρχείο",
         "diff_files_many": "{n} αρχεία",
+        "diff_lines_added": "Γραμμές που προστέθηκαν",
+        "diff_lines_deleted": "Γραμμές που αφαιρέθηκαν",
         "chart_system": "CPU, RAM και θερμοκρασία",
         "chart_network": "Δίκτυο",
         "chart_disks": "Χρήση δίσκων",
