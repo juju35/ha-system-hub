@@ -1842,6 +1842,54 @@ test('updates tab: Update all counts the Marketplace and the other updates toget
   assert.match(html, /Installing 2 \/ 2: Lamp<\/span><span class="ppct">71 %/);
 });
 
+test('updates tab: the install bar shows the whole run, every case (#111)', () => {
+  const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace: { state: 'idle', list: [] } }, 'marketplace');
+  // The main bar as drawn: its percentage (null for the moving bar), checked against its aria-valuenow and its width
+  const bar = (run, attributes) => {
+    p._hass.states = attributes ? { 'update.x': { attributes } } : {};
+    const html = p._instProgress({ name: 'X', entity: 'update.x', backup: false, ...run });
+    const shown = html.match(/<span class="ppct">(\d+) %<\/span>/);
+    if (!shown) {
+      assert.match(html, /class="pbar busy"/);
+      assert.doesNotMatch(html, /aria-valuenow/);
+      return null;
+    }
+    const pct = Number(shown[1]);
+    assert.match(html, new RegExp(`aria-valuenow="${pct}"`));
+    assert.match(html, new RegExp(`<div class="pbar"><span style="width:${pct}%">`));
+    return pct;
+  };
+  const live = (pct) => ({ in_progress: true, update_percentage: pct });
+
+  // The backup: a moving bar, whatever the current update says
+  assert.equal(bar({ backup: true, n: 1, total: 5 }, live(50)), null);
+  // A single update: its own percentage, else the moving bar
+  assert.equal(bar({ n: 1, total: 1 }, live(37)), 37);
+  assert.equal(bar({ n: 1, total: 1 }, { in_progress: true }), null);
+  assert.equal(bar({ n: 1, total: 1, entity: undefined }), null);
+  // Several: the updates done, plus the share of the current one when it reports it
+  assert.equal(bar({ n: 1, total: 4 }, { in_progress: true }), 0);
+  assert.equal(bar({ n: 1, total: 4 }, live(50)), 13);
+  assert.equal(bar({ n: 3, total: 4 }), 50);
+  assert.equal(bar({ n: 3, total: 4, entity: undefined }), 50);
+  assert.equal(bar({ n: 4, total: 4 }, live(100)), 100);
+  // A number in in_progress (before Home Assistant 2024.11) counts as the share done
+  assert.equal(bar({ n: 2, total: 2 }, { in_progress: 50 }), 75);
+  // Not installing (in_progress false): no share yet
+  assert.equal(bar({ n: 2, total: 2 }, { in_progress: false, update_percentage: 80 }), 50);
+  // Out-of-range values stay within 0-100
+  assert.equal(bar({ n: 2, total: 2 }, live(150)), 100);
+  assert.equal(bar({ n: 2, total: 2 }, live(-20)), 50);
+  assert.equal(bar({ n: 0, total: 3 }), 0);
+
+  // Never goes back as the run moves on: each update from 0 to 100 %, then the next one from 0
+  const seen = [];
+  for (let n = 1; n <= 3; n++) for (const pct of [0, 25, 50, 75, 100]) seen.push(bar({ n, total: 3 }, live(pct)));
+  for (let i = 1; i < seen.length; i++) assert.ok(seen[i] >= seen[i - 1], `${seen.join()} went back at ${i}`);
+  assert.equal(seen[0], 0);
+  assert.equal(seen.at(-1), 100);
+});
+
 test('updates tab: drawn again when an update moves on (#109)', () => {
   const marketplace = { state: 'idle', list: [{ entity_id: 'update.mushroom', title: 'Mushroom' }] };
   const p = panel({ loaded: true, modules: ['marketplace'], tabs: ['marketplace'], marketplace }, 'marketplace');
