@@ -1660,8 +1660,8 @@ SHOTS = [
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
     # The Status tab with every area, Automation Monitor's included
-    {"file": "panel-status", "theme": "light", "tab": "status", "automations": True},
-    {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True},
+    {"file": "panel-status", "theme": "light", "tab": "status", "automations": True, "scored": True},
+    {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True, "scored": True},
     {"file": "status-score", "theme": "light", "tab": "status", "health": True, "hero": True},
     {"file": "status-score-dark", "theme": "dark", "tab": "status", "health": True, "hero": True},
     {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
@@ -1764,6 +1764,19 @@ def health_state(state):
         "git_sync",
         "git_sync_diff",
     ):
+        s.pop(key, None)
+    return s
+
+
+def scored_state(state):
+    """The Status tab's main shot, as its mockup: three areas critical (Security, Sentinel, Automations), the others to
+    watch or fine, so the health score shows a part of its ring (100 - 3x15 - 5x5 - 1 = 29), not 0. The disk falls back
+    to normal, and the containers and the log are left out."""
+    s = copy.deepcopy(state)
+    for sensor in s.get("system", []):
+        if sensor.get("key") == "disk_use_percent":
+            sensor["state"] = "55"
+    for key in ("containers", "logs", "system_log"):
         s.pop(key, None)
     return s
 
@@ -2013,6 +2026,7 @@ def main():
             shown = automations_state(shown) if shot.get("automations") else shown
             shown = health_state(shown) if shot.get("health") else shown
             shown = fine_state(shown) if shot.get("fine") else shown
+            shown = scored_state(shown) if shot.get("scored") else shown
             shown = installing_state(shown) if shot.get("installing") else shown
             page.evaluate(
                 MOUNT,
