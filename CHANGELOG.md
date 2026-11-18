@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.13.0 - 2026-11-18
+
+### Features
+- **Panel: the cards' illustrated look**. Each tab opens on a header drawn like the ha-* cards (ha-room-card, heating, safety…): the module's icon in a frosted badge, its name and its status as a pill with the details under it, on a wall with a floor and a scene at the right — a rack of servers, containers on a crane, a vault, a wall screen with the health score… — whose look follows the module's status (blinking LEDs, a beacon turning on the Status tab when something is wrong). While updates install, the Updates header says which one of how many and a delivery truck comes to its shelves. The Status tab's wall takes the overall tone, and its screen shows the score and one line per group. The night picture follows Home Assistant's dark theme; the scenes stop moving with *reduce motion*. The sub-tabs sit under the header, buttons are pills, icons round and the section titles uppercase. Nothing else changes: the same tabs, data, actions, install progress and diff viewer.
+- **Updates tab**: a Marketplace card or theme without a picture shows a dashboard or a palette icon, round and in the tone of its release (patch, minor, major), instead of its initial; a Marketplace integration without a picture shows its logo from Home Assistant's brands. The panel's Marketplace updates carry their repository's `category`.
+
+### Maintenance
+- **Screenshots**: the screenshot script records each tab's animated header as a GIF, light and dark (the Status tab critical, to watch and all good, the Updates tab installing), shown in the README; the panel's shots get the night picture of the dark theme.
+
 ## 2.12.1 - 2026-11-18
 
 ### Fixes

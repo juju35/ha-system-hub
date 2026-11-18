@@ -924,6 +924,15 @@ test('marketplace tab: a card per update with the size of the change, its notes,
   assert.match(card('https://github.com/juju35/ha-freebox-card/releases/tag/v1.0.1'), /--logo:#cd1e25"><ha-icon icon="mdi:router-wireless">/);
   assert.match(card('https://github.com/juju35/ha-3d-printer-card/releases/tag/v1.0.1'), /icon="mdi:printer-3d-nozzle"/);
   assert.doesNotMatch(card('https://github.com/someone/ha-heating-card/releases/tag/v1.0.1'), /mkproj/);
+  // A card or a theme of someone else without a picture: its kind's icon, round, in the tone of its row (a minor or a
+  // major release); an integration keeps its initial
+  const kind = (category, latest) => p._mkCard({ entity_id: 'update.y', title: 'Y', installed: '1.0.0', latest, category, picture: null });
+  assert.match(kind('plugin', '1.1.0'), /<div class="mklogo mkproj warn" style="--logo:var\(--tone\)"><ha-icon icon="mdi:view-dashboard">/);
+  assert.match(kind('theme', '2.0.0'), /<div class="mklogo mkproj bad" style="--logo:var\(--tone\)"><ha-icon icon="mdi:palette">/);
+  assert.match(kind('theme', '1.0.1'), /mklogo mkproj good/);
+  assert.match(kind('integration', '1.0.1'), /class="mklogo" style="--logo:hsl[^"]*">Y<\/div>/);
+  // A theme's own project icon wins over the kind's
+  assert.match(p._mkCard({ entity_id: 'update.z', title: 'Z', category: 'theme', release_url: 'https://github.com/juju35/ha-heating-card/releases/tag/v1', picture: null }), /icon="mdi:radiator"/);
   // With a picture (an integration's brand icon), the picture first, the project's icon if it doesn't load
   assert.match(
     p._mkCard({ entity_id: 'update.parcel', title: 'Parcel', release_url: 'https://github.com/juju35/ha-parcel/releases/tag/v1.6.0', picture: '/p.png' }),
@@ -1906,4 +1915,59 @@ test('updates tab: drawn again when an update moves on (#109)', () => {
   p._hass.states = { 'update.mushroom': { attributes: { in_progress: true, update_percentage: 50 } } };
   p._updLiveChanged();
   assert.equal(renders, 1);
+});
+
+test('header: each tab opens on its illustrated banner, its status as the pill, the night with the dark theme', () => {
+  const state = {
+    loaded: true,
+    modules: ['watchdog', 'batteries', 'containers'],
+    tabs: ['status', 'system', 'containers', 'watchdog', 'batteries'],
+    thresholds: { cpu: [70, 90], ram: [70, 90], disk: [80, 90], temperature: [70, 85], swap: [50, 80] },
+    system: [{ key: 'processor_use', entity_id: 'sensor.cpu', name: 'CPU', state: '14' }],
+    watchdog: { unavailable: [{ title: 'Printer', gave_up: true }], max_reloads: 5 },
+    batteries: { low: 1, unavailable: 0, batteries: [{ name: 'Door', level: '8', low: true }] },
+    containers: { containers: [{ name: 'Core', container: 'homeassistant', state: 'started' }] },
+  };
+  const p = panel(state, 'status');
+  let html = p._banner();
+  // The Status tab: the overall tone on the wall, the score and a line per group on its screen, the points as its pill
+  const { tone, score, counts } = p._stTone();
+  assert.match(html, new RegExp(`class="shbanner ${tone}" style="--sh-wall:${tone === 'good' ? '#eef1f6' : 'color-mix'}`));
+  assert.match(html, new RegExp(`>${score}</text>`));
+  assert.match(html, /<span class="shtitle">Status<\/span>/);
+  const points = counts.bad + counts.warn + counts.info;
+  assert.match(html, new RegExp(`class="shpill">${points} points? to check<`));
+  assert.match(html, /class="shground g-parquet"/);
+  // A module's tab: its Status area
+  p._tab = 'batteries';
+  const [areaTone, value] = p._stArea('batteries');
+  html = p._banner();
+  assert.match(html, new RegExp(`class="shbanner ${areaTone}"`));
+  assert.match(html, new RegExp(`class="shpill">${shEsc(value)}<`));
+  assert.match(html, /icon="mdi:battery-heart-variant"/);
+  // Settings: neutral, no pill
+  p._tab = 'settings';
+  html = p._banner();
+  assert.match(html, /class="shbanner idle"/);
+  assert.doesNotMatch(html, /shpill/);
+  // The dark theme: the night picture
+  p._hass.themes = { darkMode: true };
+  p._tab = 'system';
+  assert.match(p._banner(), /class="shbanner \w+ night" style="--sh-wall:#262c3a"/);
+  // The Updates tab installing: which one of how many as its pill, the delivery truck at the shelves
+  p._hass.themes = {};
+  p._tab = 'marketplace';
+  state.marketplace = { list: [{ entity_id: 'update.a', title: 'A' }], installing_updates: true, installing: ['update.b'], install_total: 4, install_done: 1, install_current: 'Bubble Card' };
+  html = p._banner();
+  assert.match(html, /class="shbanner info"/);
+  assert.match(html, /class="shpill">Installing 2 \/ 4: Bubble Card</);
+  assert.match(html, /class="sh-drive"/);
+  state.marketplace = { ...state.marketplace, backing_up: true };
+  assert.match(p._banner(), /class="shpill">Backing up Home Assistant…</);
+  state.marketplace = { list: [{ entity_id: 'update.a', title: 'A' }] };
+  assert.doesNotMatch(p._banner(), /sh-drive|Installing/);
+  // The header card: the banner then the sub-tabs, kept as they were; nothing before the state is read
+  p._tab = 'system';
+  assert.match(p._top(), /^<ha-card class="shtop"><div class="shbanner[\s\S]*<nav class="subtabs"[\s\S]*<\/ha-card>$/);
+  assert.equal(panel(null)._top(), '');
 });

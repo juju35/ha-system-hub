@@ -12,6 +12,7 @@ import json
 import os
 import shutil
 import subprocess
+import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -1267,6 +1268,7 @@ def mock_state():
                     "release_summary": "Sorting by attribute, a fix for nested cards and faster updates.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
                 {
                     "entity_id": "update.bubble_card_update",
@@ -1277,6 +1279,7 @@ def mock_state():
                     "release_summary": "Fixes the pop-up hash on iOS and the slider in the dark theme.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
                 {
                     "entity_id": "update.mushroom_update",
@@ -1287,6 +1290,7 @@ def mock_state():
                     "release_summary": "Breaking: a new card editor; some YAML options are renamed.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
                 {
                     "entity_id": "update.weather_plus_card_update",
@@ -1297,6 +1301,7 @@ def mock_state():
                     "release_summary": "Smoother rain at night and a fix for the pollen levels.",
                     "picture": None,
                     "installing": False,
+                    "category": "plugin",
                 },
             ],
             "failed": ["someone/abandoned-card"],
@@ -1466,7 +1471,7 @@ def mock_state():
 
 
 # Mounts the panel as Home Assistant does: its strings come from loadBackendTranslation, its data from callWS.
-MOUNT = """([state, strings, tab, narrow, view, forms]) => {
+MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
     const localize = (key, vars) => {
         let text = strings[key];
         if (text === undefined) return "";
@@ -1514,6 +1519,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms]) => {
         language: "en",
         locale: { language: "en" },
         user: { is_admin: true },
+        // The illustrated headers draw their night picture in Home Assistant's dark mode
+        themes: { darkMode: dark },
         // ZHA loaded: the Silent devices tab's Zigbee view reads its mesh from zha/devices
         config: { components: ["zha", "matter"] },
         localize,
@@ -1661,6 +1668,35 @@ SHOTS = [
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
     {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},
     {"file": "panel-orphans-confirm-dark", "theme": "dark", "tab": "orphans", "orphans_confirm": True},
+    # The illustrated header of each tab, animated (one GIF per scene), and the Status tab's three states (and the Updates tab installing): some
+    # areas critical (its beacon turning), only some to watch, and everything fine (its green ping)
+    *(
+        {
+            "file": f"header-{tab.replace('_', '-')}{suffix}",
+            "theme": theme,
+            "tab": tab,
+            "gif": True,
+            "automations": tab in ("status", "automations"),
+        }
+        for tab in (*TABS, "automations")
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
+    *(
+        {"file": f"header-status-{name}{suffix}", "theme": theme, "tab": "status", "gif": True, name: True}
+        for name in ("health", "fine")
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
+    # The Updates tab installing: the delivery truck at its shelves
+    *(
+        {
+            "file": f"header-marketplace-installing{suffix}",
+            "theme": theme,
+            "tab": "marketplace",
+            "gif": True,
+            "installing": True,
+        }
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
     # Each module's settings, opened in place in the Settings tab: config-<step>
     *(
         {
@@ -1728,6 +1764,14 @@ def health_state(state):
         "git_sync",
         "git_sync_diff",
     ):
+        s.pop(key, None)
+    return s
+
+
+def fine_state(state):
+    """Everything fine, for the Status header's healthy state: only System (its disk back to normal) and Backups."""
+    s = health_state(state)
+    for key in ("security", "database", "silent", "batteries", "orphans", "automations"):
         s.pop(key, None)
     return s
 
@@ -1817,6 +1861,14 @@ def checking_state(state):
     return {**state, "marketplace": running}
 
 
+def installing_state(state):
+    """The Marketplace's Update all running: 1 of 4 installed, Bubble Card installing, the next ones waiting."""
+    queue = [u["entity_id"] for u in state["marketplace"]["list"][1:]]
+    running = {**state["marketplace"], "installing_updates": True, "installing": queue, "install_total": 4}
+    running |= {"install_done": 1, "install_current": "Bubble Card", "backing_up": False}
+    return {**state, "marketplace": running}
+
+
 def open_page(browser, name, viewport, html):
     """A new page at the frozen clock, Paris time, with `html` in it; page errors are printed."""
     page = browser.new_page(
@@ -1870,16 +1922,80 @@ def pixels(path):
     return size, raw
 
 
+def framed(page, selector):
+    """The clip of the element `selector` with a 16 px frame of the theme around it."""
+    box = page.locator(selector).bounding_box()
+    return {
+        "x": max(0, box["x"] - 16),
+        "y": max(0, box["y"] - 16),
+        "width": box["width"] + 32,
+        "height": box["height"] + 32,
+    }
+
+
 def capture(page, path, **kwargs):
     """Screenshot to a temporary file next to `path`, kept only if its pixels differ from the file already there."""
     tmp = path.with_name(f".new-{path.name}")
     page.screenshot(path=str(tmp), **kwargs)
+    keep(tmp, path)
+
+
+def keep(tmp, path):
+    """Move the fresh capture `tmp` onto `path`, unless `path` already holds the same pixels (every GIF frame)."""
     if path.exists() and (old := pixels(path)) is not None and old == pixels(tmp):
         tmp.unlink()
         print(path.relative_to(ROOT), "(unchanged)")
         return
     shutil.move(str(tmp), path)
     print(path.relative_to(ROOT))
+
+
+# Pause every animation (those in the panel's shadow roots included) at `t` ms; returns how many there are
+STEP_ANIMATIONS = """(t) => {
+  const roots = [document];
+  for (let i = 0; i < roots.length; i++)
+    for (const el of roots[i].querySelectorAll('*')) if (el.shadowRoot) roots.push(el.shadowRoot);
+  const all = new Set(roots.flatMap((root) => root.getAnimations()));
+  all.forEach((a) => { a.pause(); a.currentTime = t; });
+  return all.size;
+}"""
+
+
+def record(page, path, fps=15, seconds=4):
+    """Record a tab's header card (its illustrated banner and sub-tabs), framed, as a looping GIF (needs ffmpeg).
+
+    Every animation is paused and stepped frame by frame, so the GIF is the same whatever the machine's speed; it
+    is kept only if a frame differs from the GIF already there.
+    """
+    clip = framed(page, ".shtop")
+    with tempfile.TemporaryDirectory() as frames:
+        for i in range(fps * seconds):
+            if not page.evaluate(STEP_ANIMATIONS, i * 1000 / fps):
+                raise RuntimeError(f"{path.name}: no animation to step in the header")
+            page.screenshot(path=f"{frames}/f{i:03d}.png", clip=clip)
+        tmp = path.with_name(f".new-{path.name}")
+        palette = (
+            "split[a][b];[a]palettegen=max_colors=128:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4"
+        )
+        subprocess.run(
+            [
+                "ffmpeg",
+                "-y",
+                "-loglevel",
+                "error",
+                "-framerate",
+                str(fps),
+                "-i",
+                f"{frames}/f%03d.png",
+                "-vf",
+                f"scale={int(clip['width'])}:-1:flags=lanczos,{palette}",
+                "-loop",
+                "0",
+                str(tmp),
+            ],
+            check=True,
+        )
+    keep(tmp, path)
 
 
 def main():
@@ -1896,7 +2012,20 @@ def main():
             shown = checking_state(state) if shot.get("checking") else state
             shown = automations_state(shown) if shot.get("automations") else shown
             shown = health_state(shown) if shot.get("health") else shown
-            page.evaluate(MOUNT, [shown, STRINGS, shot["tab"], bool(shot.get("phone")), shot.get("view"), FORMS])
+            shown = fine_state(shown) if shot.get("fine") else shown
+            shown = installing_state(shown) if shot.get("installing") else shown
+            page.evaluate(
+                MOUNT,
+                [
+                    shown,
+                    STRINGS,
+                    shot["tab"],
+                    bool(shot.get("phone")),
+                    shot.get("view"),
+                    FORMS,
+                    shot["theme"] == "dark",
+                ],
+            )
             page.wait_for_timeout(400)
             if shot.get("card"):
                 page.add_script_tag(content=ICONS_JS)
@@ -1913,16 +2042,13 @@ def main():
                 capture(page, out / f"{shot['file']}.png", clip=clip, full_page=True, animations="disabled")
                 page.close()
                 continue
+            if shot.get("gif"):
+                record(page, out / f"{shot['file']}.gif")
+                page.close()
+                continue
             if shot.get("hero"):
                 # The Status hero alone (the score ring, the emblem and the pills), with a 16 px frame of the theme.
-                box = page.locator(".sthero").bounding_box()
-                clip = {
-                    "x": max(0, box["x"] - 16),
-                    "y": max(0, box["y"] - 16),
-                    "width": box["width"] + 32,
-                    "height": box["height"] + 32,
-                }
-                capture(page, out / f"{shot['file']}.png", clip=clip, animations="disabled")
+                capture(page, out / f"{shot['file']}.png", clip=framed(page, ".sthero"), animations="disabled")
                 page.close()
                 continue
             if shot["tab"] == "database":
