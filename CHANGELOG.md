@@ -5,6 +5,8 @@
 ### Features
 - **Panel, as its mockups**: what opens a tab (its tiles, actions, rings) now sits in the header card, under the illustrated banner and the sub-tabs. Tiles and list rows are filled and rounded with a round icon (neutral when all is well), the rows of a problem tinted and outlined, buttons are pills and list titles uppercase; the System tab's rings are tiles and its charts' titles the sections'.
 - **Status tab**: the header says how many points need a look, with the critical and to-watch counts as its pill and a dot per area; the score and the counts are tiles; the critical areas come next under *To handle first*, each with **View** to open its tab; then a compact tile per area in four columns by group, each group with its worst tone and its count. The large score ring and emblem are gone.
+- **Every tab, as its mockup**: the page as wide (1180 px), rows and tiles denser, status pills with their dot; the module's settings as a round button in the banner's corner; sections side by side where the mockups put them (Security, Sentinel's power cycles and recent reloads, Backups' locations and last 30 days).
+- **Settings tab**: a card per group, two by two, each module a filled row with its round icon, switch and settings (a group with a module's settings open takes the whole width).
 - **Updates tab**: kept as tiles, in the new style — filled, rounded, each group (Home Assistant, add-ons and devices; Marketplace) in its own card under an uppercase title; an initial's logo is round.
 
 ## 2.13.0 - 2026-11-18

@@ -1871,6 +1871,36 @@ class SystemHubPanel extends HTMLElement {
         next = after;
       }
       if (body.children.length) top.append(body);
+      // The module's settings: a round frosted button in the banner's corner, as on the cards
+      var corner = top.querySelector('.shbanner');
+      var settings = top.querySelector('.shbody [data-action^="open_settings:"]');
+      if (corner && settings) {
+        var label = settings.textContent.trim();
+        settings.className = 'shzoom';
+        settings.title = label;
+        settings.setAttribute('aria-label', label);
+        for (var t of [...settings.childNodes]) if (t.nodeType === 3) t.remove();
+        var zooms = document.createElement('div');
+        zooms.className = 'shzooms';
+        zooms.append(settings);
+        corner.append(zooms);
+      }
+    }
+    // Sections side by side, as the mockups lay them out: the cards after the first ones go in two columns
+    var span = { watchdog: [1, 3], backups: [0, 2], security: [0, 99] }[this._tab];
+    if (span) {
+      var cards = [...main.querySelectorAll(':scope > ha-card:not(.shtop), :scope > .sctwo')];
+      var rest = cards.slice(...span);
+      if (rest.length > 1) {
+        var cols = document.createElement('div');
+        cols.className = 'shcols';
+        rest[0].before(cols);
+        for (var c of rest) {
+          if (c.matches('.sctwo')) cols.append(...c.children);
+          else cols.append(c);
+          if (c.matches('.sctwo')) c.remove();
+        }
+      }
     }
     // The Updates tab: each heading and its tiles (and the Marketplace's status) in one card, as the other sections
     if (this._tab === 'marketplace') {
@@ -5208,11 +5238,11 @@ var SH_SETTINGS_METHODS = {
         `<button class="icon-btn" data-action="cfg_group" data-group="${group}" data-dir="${dir}"${disabled ? ' disabled' : ''} title="${shEsc(this._t(dir < 0 ? 'move_up' : 'move_down'))}" aria-label="${shEsc(`${this._t(dir < 0 ? 'move_up' : 'move_down')} · ${gname}`)}"><ha-icon icon="${icon}"></ha-icon></button>`;
       var enabledRows = mine.filter(on).map((t) => row(t, true)).join('');
       var disabledRows = mine.filter((t) => !on(t)).map((t) => row(t, false)).join('');
-      return `<div class="cfgsec cfggroup"><span class="grow">${shEsc(gname)}</span>${arrow(-1, 'mdi:arrow-up', i === 0)}${arrow(1, 'mdi:arrow-down', i === groups.length - 1)}</div>
-        ${enabledRows ? `<div class="cfglist" data-group="${group}">${enabledRows}</div>` : ''}${disabledRows ? `<div class="cfglist off">${disabledRows}</div>` : ''}`;
+      return `<section class="cfgcard"><div class="cfgsec cfggroup"><ha-icon icon="${SH_MODULE_ICONS[mine[0]]}"></ha-icon><span class="grow">${shEsc(gname)}</span>${arrow(-1, 'mdi:arrow-up', i === 0)}${arrow(1, 'mdi:arrow-down', i === groups.length - 1)}</div>
+        ${enabledRows ? `<div class="cfglist" data-group="${group}">${enabledRows}</div>` : ''}${disabledRows ? `<div class="cfglist off">${disabledRows}</div>` : ''}</section>`;
     });
     return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules_tabs'))}</h2><span class="msg">${shEsc(this._t('modules_tabs_hint'))}</span>
-      ${sections.join('')}</ha-card>`;
+      <div class="cfggrid">${sections.join('')}</div></ha-card>`;
   },
 
   // Moves a tab among the ones of its group turned on (the ones turned off keep their place): to the index `to` of that list
@@ -6100,10 +6130,10 @@ var SH_BANNER_STYLE = `
     .list .item { background:var(--sh-sec); border:1px solid transparent; border-radius:12px; min-height:56px; box-sizing:border-box; padding:8px 10px 8px 8px; gap:10px; }
     .list .item:is(.bad, .warn) { background:color-mix(in srgb, var(--tone) 9%, var(--sh-sec)); border-color:color-mix(in srgb, var(--tone) 22%, transparent); }
     .list .item.link:hover { background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
-    .list .item > ha-icon:first-child { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px;
+    .list .item > :is(ha-icon:first-child, input[type='checkbox'] + ha-icon) { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px;
                                         color:var(--tone-text, var(--primary-text-color));
                                         background:color-mix(in srgb, var(--tone, var(--secondary-text-color)) 16%, transparent); }
-    .list .item.good > ha-icon:first-child { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .list .item.good > :is(ha-icon:first-child, input[type='checkbox'] + ha-icon) { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
     .act { min-height:34px; box-sizing:border-box; padding:0 14px; border-radius:18px; }
     .lhead .act { min-height:30px; padding:0 12px; }
     .act.quiet { background:var(--sh-sec); }
@@ -6143,6 +6173,44 @@ var SH_BANNER_STYLE = `
     /* System: the rings as tiles, the charts' titles as the sections' */
     .ring { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; }
     .ctitle { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    /* As the mockups: the page as wide, the rows and tiles denser, the status pills with their dot, two columns */
+    main { max-width:1180px; }
+    .list .item { min-height:48px; }
+    .list .item .who .n { font-size:13.5px; font-weight:500; }
+    .list .item .who .s { font-size:12px; }
+    .tile .who .n { font-size:13.5px; }
+    .tile .who .n b { font-size:20px; }
+    .tile .who .s { font-size:12px; }
+    .pill { display:inline-flex; align-items:center; gap:4px; padding:1px 8px; line-height:16px; }
+    .pill::before { content:""; width:6px; height:6px; border-radius:50%; flex:none; background:var(--tone, var(--secondary-text-color)); }
+    .shzooms { position:absolute; z-index:2; top:5px; right:5px; display:flex; gap:5px; }
+    .shzoom { appearance:none; border:0; padding:0; cursor:pointer; width:24px; height:24px; border-radius:50%; display:grid; place-items:center;
+              --mdc-icon-size:16px; color:#33506b; background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px rgba(255,255,255,.7); }
+    .shzoom:hover { background:rgba(255,255,255,.75); }
+    .night .shzoom { color:#fff; background:rgba(255,255,255,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.2); }
+    .shscene { right:34px; }
+    .shcols { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; align-items:start; }
+    .shcols > * { min-width:0; margin:0; }
+    ha-card.block > h2 { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    @media (max-width:900px) { .shcols { grid-template-columns:minmax(0, 1fr); } }
+    /* Settings, as its mockup: a card per group, two by two, its modules as filled rows */
+    ha-card.block.cfg { background:none; box-shadow:none; border:0; padding:0; }
+    .cfggrid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; align-items:start; margin-top:10px; }
+    .cfgcard { background:var(--card-background-color, #fff); border:1px solid var(--divider-color, rgba(127,127,127,.15)); border-radius:var(--ha-card-border-radius, 12px);
+               padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .cfgcard .cfggroup { display:flex; align-items:center; gap:6px; padding:0; min-height:30px; --mdc-icon-size:16px; }
+    .cfgcard .cfggroup .icon-btn { --mdc-icon-size:18px; }
+    .cfgcard .cfglist { gap:6px; }
+    .cfgcard .cfgrow { border:0; padding:6px 10px 6px 4px; border-radius:12px; background:var(--sh-sec); align-items:center; }
+    .cfgcard .cfgrow > ha-icon { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px; flex:none;
+                                 color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); }
+    .cfgcard .cfgrow.off > ha-icon { color:var(--secondary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .cfgcard .cfgrow .who .n { font-size:13.5px; font-weight:500; }
+    .cfgcard .cfgrow .who .s { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cfgcard .cfgrow.open { margin:0; background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
+    .cfgcard .cfgbody { padding:8px 4px 12px; }
+    .cfgcard:has(.cfgrow.open) { grid-column:1 / -1; }
+    @media (max-width:900px) { .cfggrid { grid-template-columns:minmax(0, 1fr); } }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;
