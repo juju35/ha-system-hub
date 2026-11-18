@@ -1436,6 +1436,7 @@
         "cells_one": "1 комад",
         "cells_many": "{n} комада",
         "to_replace": "За замену",
+        "batt_fine": "У реду",
         "nothing_to_replace": "Ништа за замену",
         "next_replacement": "Следећа замена",
         "hours": "{n} h",

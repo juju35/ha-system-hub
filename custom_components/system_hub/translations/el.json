@@ -1436,6 +1436,7 @@
         "cells_one": "1 μπαταρία",
         "cells_many": "{n} μπαταρίες",
         "to_replace": "Για αντικατάσταση",
+        "batt_fine": "Εντάξει",
         "nothing_to_replace": "Τίποτα για αντικατάσταση",
         "next_replacement": "Επόμενη αντικατάσταση",
         "hours": "{n} ώ.",

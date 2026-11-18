@@ -1436,6 +1436,7 @@
         "cells_one": "1 batterij",
         "cells_many": "{n} batterijen",
         "to_replace": "Te vervangen",
+        "batt_fine": "In orde",
         "nothing_to_replace": "Niets te vervangen",
         "next_replacement": "Volgende vervanging",
         "hours": "{n} u",

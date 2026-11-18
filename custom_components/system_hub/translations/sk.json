@@ -1436,6 +1436,7 @@
         "cells_one": "1 batéria",
         "cells_many": "Batérie: {n}",
         "to_replace": "Na výmenu",
+        "batt_fine": "V poriadku",
         "nothing_to_replace": "Nič na výmenu",
         "next_replacement": "Ďalšia výmena",
         "hours": "{n} h",

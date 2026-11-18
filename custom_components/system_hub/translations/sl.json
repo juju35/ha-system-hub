@@ -1436,6 +1436,7 @@
         "cells_one": "1 baterija",
         "cells_many": "Baterije: {n}",
         "to_replace": "Za zamenjavo",
+        "batt_fine": "V redu",
         "nothing_to_replace": "Nič za zamenjavo",
         "next_replacement": "Naslednja zamenjava",
         "hours": "{n} h",

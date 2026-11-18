@@ -1436,6 +1436,7 @@
         "cells_one": "1 pila",
         "cells_many": "{n} pile",
         "to_replace": "Da sostituire",
+        "batt_fine": "Buone",
         "nothing_to_replace": "Niente da sostituire",
         "next_replacement": "Prossima sostituzione",
         "hours": "{n} h",

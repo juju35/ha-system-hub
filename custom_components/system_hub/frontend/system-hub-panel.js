@@ -1274,8 +1274,8 @@ class SystemHubPanel extends HTMLElement {
     .nextb b { font-weight:500; }
     .bgroups { columns:3 300px; column-gap:28px; }
     .bgroup { break-inside:avoid; display:flex; flex-direction:column; gap:6px; margin-bottom:20px; }
-    .bgroups.flat { columns:auto; }
-    .bgroups.flat .glist { grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+    .bgroups.bylevel { columns:2 300px; column-gap:16px; }
+    .bgroups.bylevel .glist { grid-template-columns:minmax(0, 1fr); }
     .ghead { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; --mdc-icon-size:18px; }
     .ghead ha-icon { color:var(--secondary-text-color); }
     .gname { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1875,6 +1875,8 @@ class SystemHubPanel extends HTMLElement {
       var corner = top.querySelector('.shbanner');
       var settings = top.querySelector('.shbody [data-action^="open_settings:"]');
       if (corner && settings) {
+        // The spacer _configure put before it goes with it
+        if (settings.previousElementSibling?.matches('span.grow')) settings.previousElementSibling.remove();
         var label = settings.textContent.trim();
         settings.className = 'shzoom';
         settings.title = label;
@@ -2470,20 +2472,19 @@ class SystemHubPanel extends HTMLElement {
         var cpu = shNum(c.cpu_percent);
         var mem = shNum(c.memory_percent);
         var spark = shSpark((history[c.slug] || []).map((p) => p[1]));
-        // As Docker lists it: the container's name, then what it is and its image (or its version)
-        var sub = [c.container ? c.name : this._t(c.kind), c.image || c.version].filter(Boolean);
+        // As its mockup: what it is as the title, then the container's name and its image (or its version)
+        var sub = [c.container || this._t(c.kind), c.image || c.version].filter(Boolean);
         var update = c.update_available ? `<span class="pill warn" title="${shEsc(this._t('update', { version: c.version_latest }))}"><ha-icon icon="mdi:arrow-up-circle-outline"></ha-icon>${shEsc(c.version_latest || '')}</span>` : '';
         return `<div class="item ${tone}"><ha-icon icon="${icons[c.kind] || 'mdi:docker'}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(c.container || c.name)}</div><div class="s" title="${shEsc(sub.join(' · '))}">${shEsc(sub.join(' · '))}</div></div>${update}
+          <div class="who"><div class="n">${shEsc(c.name || c.container)}</div><div class="s mono" title="${shEsc(sub.join(' · '))}">${shEsc(sub.join(' · '))}</div></div>${update}
           ${spark ? `<div class="trend ${tone}">${spark}</div>` : ''}
-          <span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span>
           <div class="side fixed">${
             on
               ? `<span>CPU ${cpu === null ? '—' : `${Math.round(cpu)}%`} · RAM ${mem === null ? '—' : `${Math.round(mem)}%`}</span>
             <div class="meter ${shTone(mem)}"><span style="width:${Math.min(mem || 0, 100)}%"></span></div>
             <span class="muted">${shBytes(c.memory_usage)}</span>`
               : ''
-          }</div></div>`;
+          }</div><span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span></div>`;
       })
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>
@@ -2709,9 +2710,12 @@ class SystemHubPanel extends HTMLElement {
             var first = String(e.message?.[0] ?? '');
             var source = Array.isArray(e.source) ? `${String(e.source[0]).split('/').slice(-2).join('/')}:${e.source[1]}` : '';
             var trace = e.exception ? `<details><summary class="s">${shEsc(this._t('lg_traceback'))}</summary><pre class="lgpre">${shEsc(e.exception)}</pre></details>` : '';
-            return `<div class="lgentry"><div class="lgmsg">${shEsc(first)}</div>
-              <div class="s">${shEsc([`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name, source].filter(Boolean).join(' · '))}</div>${trace}
-              <div class="actions">${this._button('lg_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { key: this._lgKey(e) }, busy: this._busy[`lg_ignore:${this._lgKey(e)}`] })}</div></div>`;
+            // As its mockup: how often and where, Ignore as an icon at the right, then the message in its box
+            var key = this._lgKey(e);
+            var busy = this._busy[`lg_ignore:${key}`];
+            var ignore = `<button class="icon-btn lgignore" data-action="lg_ignore" data-key="${shEsc(key)}" title="${shEsc(this._t('sl_ignore'))}" aria-label="${shEsc(this._t('sl_ignore'))}"${busy ? ' disabled aria-busy="true"' : ''}><ha-icon${busy ? ' class="spin"' : ''} icon="${busy ? 'mdi:loading' : 'mdi:eye-off-outline'}"></ha-icon></button>`;
+            return `<div class="lgentry"><div class="lgtop"><div class="s">${shEsc([`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name, source].filter(Boolean).join(' · '))}</div>${ignore}</div>
+              <div class="lgmsg">${shEsc(first)}</div>${trace}</div>`;
           })
           .join('');
         return `<ha-card class="list lggroup ${tone}"><div class="lhead"><ha-icon icon="${g.custom ? 'mdi:puzzle-outline' : 'mdi:home-assistant'}"></ha-icon><span class="lname">${shEsc(shIntegration(g.domain))} <span class="pill ${tone}">${shEsc(counts)}</span></span>${reload}</div>${entries}</ha-card>`;
@@ -2761,10 +2765,12 @@ class SystemHubPanel extends HTMLElement {
       ? `<div class="btabs nviews" role="group">${vtab('list', this._t('sl_view_list'))}${nets.map((v) => vtab(v, this._t(`sl_view_${v}`))).join('')}</div>`
       : '';
     if (view !== 'list') return views + this._slNetwork(view);
-    return views + this._silentList();
+    return this._silentList(views);
   }
 
-  _silentList() {
+  // As its mockup: the counts, then the views and the integrations on one row, the devices to look at in their card
+  // with what silent and weak mean under them
+  _silentList(views = '') {
     var data = this._state.silent || {};
     var all = data.devices || [];
     var quiet = all.filter((d) => d.silent);
@@ -2790,15 +2796,15 @@ class SystemHubPanel extends HTMLElement {
         return `<div class="item ${tone}"><ha-icon icon="${d.silent ? 'mdi:access-point-off' : 'mdi:wifi-strength-1-alert'}"></ha-icon>
           <div class="who"><div class="n">${shEsc(d.name)}</div><div class="s">${shEsc([d.area, shIntegration(d.integration), heard, signal, power].filter(Boolean).join(' · '))}</div></div>
           <span class="pill ${tone}">${shEsc(this._t(d.silent ? 'sl_silent' : 'sl_weak'))}</span>
-          <a class="act quiet" href="/config/devices/device/${encodeURIComponent(d.device_id)}"><ha-icon icon="mdi:open-in-new"></ha-icon>${shEsc(this._t('open_device'))}</a>
-          ${this._button('sl_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { device: d.device_id, name: d.name }, busy: this._busy[`sl_ignore:${d.device_id}`] })}</div>`;
+          <a class="icon-btn" href="/config/devices/device/${encodeURIComponent(d.device_id)}" title="${shEsc(this._t('open_device'))}" aria-label="${shEsc(`${this._t('open_device')} · ${d.name}`)}"><ha-icon icon="mdi:open-in-new"></ha-icon></a>
+          <button class="icon-btn" data-action="sl_ignore" data-device="${shEsc(d.device_id)}" data-name="${shEsc(d.name)}" title="${shEsc(this._t('sl_ignore'))}" aria-label="${shEsc(`${this._t('sl_ignore')} · ${d.name}`)}"${this._busy[`sl_ignore:${d.device_id}`] ? ' disabled aria-busy="true"' : ''}><ha-icon icon="mdi:eye-off-outline"></ha-icon></button></div>`;
       })
       .join('');
     var hint = this._t('sl_hint', { battery: data.battery_hours ?? 24, mains: data.mains_hours ?? 24 });
     return `<div class="tiles">${tiles.join('')}</div>
-      <div class="actions">${filters}${this._message('sl')}${this._configure()}</div>
-      <span class="msg">${shEsc(hint)}</span>
-      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('sl_none'))}</div>`}</ha-card>`;
+      <div class="actions">${views}<span class="grow"></span>${filters}${this._message('sl')}${this._configure()}</div>
+      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:access-point-off"></ha-icon><span class="lname">${shEsc(this._tabName('silent'))} · ${list.length}</span></div>
+      ${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('sl_none'))}</div>`}<span class="msg slhint">${shEsc(hint)}</span></ha-card>`;
   }
 
   // A device left out of the module: saved in its settings at once, gone from the list
@@ -4047,7 +4053,7 @@ class SystemHubPanel extends HTMLElement {
       })
       .join('');
     var body = list.length
-      ? `<div class="bgroups${view === 'level' ? ' flat' : ''}">${groups}</div>`
+      ? `<div class="bgroups${view === 'level' ? ' bylevel' : ''}">${groups}</div>`
       : query
         ? `<div class="empty">${shEsc(this._t('no_match'))}</div>`
         : `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
@@ -4200,16 +4206,17 @@ class SystemHubPanel extends HTMLElement {
     var rank = (b) => (b.unavailable ? 0 : b.alert || b.low ? 1 : 2);
     var byLevel = (a, b) => rank(a) - rank(b) || (a.level ?? 101) - (b.level ?? 101) || a.name.localeCompare(b.name);
     if (view === 'forecast') return this._battForecast(list);
-    // By level: one list, the batteries in error (unavailable) first, then the lowest
+    // By level, as its mockup: what to replace (the batteries in error first, then the lowest) beside the ones that
+    // are fine
     if (view === 'level') {
+      var item = (b) => ({ b, context: [b.area, this._battTypeName(b.battery_type || '')].filter(Boolean).join(' · ') });
+      var sorted = [...list].sort(byLevel);
+      var due = sorted.filter((b) => b.unavailable || b.alert || b.low);
+      var fine = sorted.filter((b) => !(b.unavailable || b.alert || b.low));
       return [
-        {
-          key: '',
-          name: '',
-          icon: '',
-          items: [...list].sort(byLevel).map((b) => ({ b, context: [b.area, this._battTypeName(b.battery_type || '')].filter(Boolean).join(' · ') })),
-        },
-      ];
+        { key: 'replace', name: this._t('to_replace'), icon: 'mdi:battery-alert-variant-outline', items: due.map(item) },
+        { key: 'fine', name: this._t('batt_fine'), icon: 'mdi:battery-check-outline', items: fine.map(item) },
+      ].filter((g) => g.items.length);
     }
     var map = new Map();
     [...list].sort(byLevel).forEach((b) => {
@@ -6211,6 +6218,16 @@ var SH_BANNER_STYLE = `
     .cfgcard .cfgbody { padding:8px 4px 12px; }
     .cfgcard:has(.cfgrow.open) { grid-column:1 / -1; }
     @media (max-width:900px) { .cfggrid { grid-template-columns:minmax(0, 1fr); } }
+    /* Logs, as its mockup: the integration's name as is beside its round icon, each message in its box */
+    .lggroup .lhead > ha-icon { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px; flex:none;
+                                color:var(--tone-text); background:color-mix(in srgb, var(--tone) 16%, transparent); }
+    .lggroup .lhead .lname { font-family:var(--code-font-family, monospace); font-size:14px; letter-spacing:0; text-transform:none; color:var(--primary-text-color); }
+    .lggroup .lgentry { border-top:0; padding:0; gap:6px; }
+    .lgtop { display:flex; align-items:center; gap:8px; min-width:0; }
+    .lgtop .s { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lggroup .lgmsg { background:var(--sh-sec); border-radius:10px; padding:8px 10px; font-size:12.5px; }
+    .who .s.mono { font-size:12px; }
+    .item .side.fixed + .pill { margin-left:4px; }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;

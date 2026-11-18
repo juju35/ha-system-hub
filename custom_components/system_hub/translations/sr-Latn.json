@@ -1436,6 +1436,7 @@
         "cells_one": "1 komad",
         "cells_many": "{n} komada",
         "to_replace": "Za zamenu",
+        "batt_fine": "U redu",
         "nothing_to_replace": "Ništa za zamenu",
         "next_replacement": "Sledeća zamena",
         "hours": "{n} h",

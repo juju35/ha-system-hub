@@ -1436,6 +1436,7 @@
         "cells_one": "1 Batterie",
         "cells_many": "{n} Batterien",
         "to_replace": "Zu ersetzen",
+        "batt_fine": "In Ordnung",
         "nothing_to_replace": "Nichts zu ersetzen",
         "next_replacement": "Nächster Austausch",
         "hours": "{n} h",

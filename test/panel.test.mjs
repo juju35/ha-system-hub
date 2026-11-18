@@ -227,7 +227,11 @@ test('batteries tab: by room, by battery type, by replacement date', () => {
   };
   const p = panel(state, 'batteries');
   const names = (view) => JSON.parse(JSON.stringify(p._battGroups(state.batteries.batteries, view).map((g) => [g.name, g.items.map((x) => x.b.name)])));
-  assert.deepEqual(names('level'), [['', ['Door', 'Remote', 'Window', 'Lamp']]]);
+  // By level: what to replace beside the ones that are fine
+  assert.deepEqual(names('level'), [
+    ['To replace', ['Door']],
+    ['Fine', ['Remote', 'Window', 'Lamp']],
+  ]);
   assert.deepEqual(names('room'), [
     ['Entrance', ['Door']],
     ['Kitchen', ['Remote', 'Window']],
@@ -877,7 +881,7 @@ test('containers tab: the Docker containers with their image', () => {
   const html = p._content();
   assert.ok(html.indexOf('hassio_supervisor') < html.indexOf('hassio_dns'));
   assert.ok(html.indexOf('hassio_dns') < html.indexOf('app_a0d7b954_vscode'));
-  assert.match(html, /Studio Code Server · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
+  assert.match(html, /<div class="n">Studio Code Server<\/div><div class="s mono"[^>]*>app_a0d7b954_vscode · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
   assert.match(html, /7\.3\.0/);
   // The processes are listed with the containers, no longer in the System tab
   assert.equal(p._tabName('containers'), 'Containers & process');

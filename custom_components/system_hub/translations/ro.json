@@ -1436,6 +1436,7 @@
         "cells_one": "1 baterie",
         "cells_many": "Baterii: {n}",
         "to_replace": "De înlocuit",
+        "batt_fine": "În regulă",
         "nothing_to_replace": "Nimic de înlocuit",
         "next_replacement": "Următoarea înlocuire",
         "hours": "{n} h",

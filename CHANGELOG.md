@@ -7,6 +7,10 @@
 - **Status tab**: the header says how many points need a look, with the critical and to-watch counts as its pill and a dot per area; the score and the counts are tiles; the critical areas come next under *To handle first*, each with **View** to open its tab; then a compact tile per area in four columns by group, each group with its worst tone and its count. The large score ring and emblem are gone.
 - **Every tab, as its mockup**: the page as wide (1180 px), rows and tiles denser, status pills with their dot; the module's settings as a round button in the banner's corner; sections side by side where the mockups put them (Security, Sentinel's power cycles and recent reloads, Backups' locations and last 30 days).
 - **Settings tab**: a card per group, two by two, each module a filled row with its round icon, switch and settings (a group with a module's settings open takes the whole width).
+- **Containers & process**: each container by its name (*Matter Server*), the container and its image under it in monospace, its state as the last pill.
+- **Silent devices**: the views and the integration filters on one row, the devices in their card with what *silent* and *weak* mean under them, **Device** and **Ignore** as icons.
+- **Batteries**: *By level* shows what to replace beside the batteries that are fine.
+- **Logs**: each integration under its name with its round icon, each message in its box with **Ignore** as an icon.
 - **Updates tab**: kept as tiles, in the new style — filled, rounded, each group (Home Assistant, add-ons and devices; Marketplace) in its own card under an uppercase title; an initial's logo is round.
 
 ## 2.13.0 - 2026-11-18

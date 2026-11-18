@@ -1436,6 +1436,7 @@
         "cells_one": "1 батерия",
         "cells_many": "{n} батерии",
         "to_replace": "За смяна",
+        "batt_fine": "Наред",
         "nothing_to_replace": "Няма нищо за смяна",
         "next_replacement": "Следваща смяна",
         "hours": "{n} ч",

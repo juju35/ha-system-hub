@@ -1436,6 +1436,7 @@
         "cells_one": "1 batteri",
         "cells_many": "{n} batterier",
         "to_replace": "Att byta",
+        "batt_fine": "Bra",
         "nothing_to_replace": "Inget att byta",
         "next_replacement": "Nästa byte",
         "hours": "{n} h",

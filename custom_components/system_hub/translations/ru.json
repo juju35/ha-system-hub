@@ -1436,6 +1436,7 @@
         "cells_one": "1 батарейка",
         "cells_many": "Батарейки: {n}",
         "to_replace": "Заменить",
+        "batt_fine": "В порядке",
         "nothing_to_replace": "Нечего заменять",
         "next_replacement": "Следующая замена",
         "hours": "{n} ч",

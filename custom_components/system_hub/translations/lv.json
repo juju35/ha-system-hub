@@ -1436,6 +1436,7 @@
         "cells_one": "1 baterija",
         "cells_many": "Baterijas: {n}",
         "to_replace": "Jānomaina",
+        "batt_fine": "Kārtībā",
         "nothing_to_replace": "Nav ko nomainīt",
         "next_replacement": "Nākamā nomaiņa",
         "hours": "{n} h",

@@ -1436,6 +1436,7 @@
         "cells_one": "1 batteri",
         "cells_many": "{n} batterier",
         "to_replace": "Skal udskiftes",
+        "batt_fine": "I orden",
         "nothing_to_replace": "Intet at udskifte",
         "next_replacement": "Næste udskiftning",
         "hours": "{n} t",

@@ -1436,6 +1436,7 @@
         "cells_one": "1 elem",
         "cells_many": "{n} elem",
         "to_replace": "Cserélendő",
+        "batt_fine": "Rendben",
         "nothing_to_replace": "Nincs mit cserélni",
         "next_replacement": "Következő csere",
         "hours": "{n} ó",
