@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.1 - 2026-11-19
+
+### Fixes
+- **Hide the top bar**: the bar no longer shows for a moment on load before going; the choice last seen in the browser applies from the first paint, until the settings are read.
+
 ## 3.2.0 - 2026-11-19
 
 ### Features
