@@ -6,7 +6,7 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "3.1.0"
+VERSION: Final = "3.2.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
@@ -45,6 +45,10 @@ MODULES: Final = (
 
 # Panel: the order of its tabs (the System tab and the modules; Settings always comes last).
 CONF_TABS: Final = "tabs"
+# Panel: hide its top bar (the title and the menu button) for no one, everyone or the users who are not administrators.
+CONF_HIDE_HEADER: Final = "hide_header"
+HIDE_HEADER_OFF: Final = "off"
+HIDE_HEADER_CHOICES: Final = (HIDE_HEADER_OFF, "all", "non_admin")
 TAB_STATUS: Final = "status"
 TAB_SYSTEM: Final = "system"
 # The System tab's thresholds (orange, red) in %, °C for the temperature, in the options under "system".

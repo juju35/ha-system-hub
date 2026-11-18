@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.2.0 - 2026-11-19
+
+### Features
+- **Settings → Display → Hide the top bar**: the bar with the title and the menu button above the tabs can be hidden for everyone, or only for users who are not administrators (the panel is only open to administrators for now: that choice applies if it is opened to others). The tabs then sit at the top; on a phone, the menu button moves beside them.
+
 ## 3.1.0 - 2026-11-18
 
 ### Features

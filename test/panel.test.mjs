@@ -494,6 +494,42 @@ test('settings tab: every module with its switch, the tabs to order', () => {
   assert.match(changed, /data-action="discard"/);
 });
 
+test('settings tab: the top bar hidden for no one, everyone or the non-admins', () => {
+  const p = panel({ loaded: true, modules: ['watchdog'], tabs: ['system', 'watchdog'], hide_header: 'off' }, 'settings');
+  p._render = () => {};
+  const html = p._content();
+  assert.match(html, /Hide the top bar/);
+  assert.match(html, /data-action="hide_header" data-value="off" aria-pressed="true">No</);
+  assert.doesNotMatch(html, /class="savebar"/);
+  // A choice: the save bar, the note on non-admins; the saved one again: nothing to save
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'hide_header', value: 'non_admin' } } : null) } });
+  assert.equal(p._draft.hide_header, 'non_admin');
+  const changed = p._content();
+  assert.match(changed, /class="savebar"/);
+  assert.match(changed, /only open to administrators/);
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'hide_header', value: 'off' } } : null) } });
+  assert.equal(p._draft.hide_header, null);
+  // Applied to the panel: hidden for everyone, or for a user who is not an administrator only
+  const attrs = {};
+  const q = panel({ loaded: true, modules: [], tabs: [], hide_header: 'non_admin' });
+  q.toggleAttribute = (name, on) => {
+    attrs[name] = on;
+  };
+  q._hass.user = { is_admin: true };
+  q._applyHeader();
+  assert.equal(attrs['hide-bar'], false);
+  q._hass.user = { is_admin: false };
+  q._applyHeader();
+  assert.equal(attrs['hide-bar'], true);
+  q._state.hide_header = 'all';
+  q._hass.user = { is_admin: true };
+  q._applyHeader();
+  assert.equal(attrs['hide-bar'], true);
+  q._state.hide_header = 'off';
+  q._applyHeader();
+  assert.equal(attrs['hide-bar'], false);
+});
+
 test('automations tab: failures and unavailable linked entities from Automation Monitor, or how to add it', () => {
   const failures = Array.from({ length: 7 }, (_v, i) => ({
     entity_id: `automation.a${i}`,
