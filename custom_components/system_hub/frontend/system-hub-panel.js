@@ -1882,10 +1882,7 @@ class SystemHubPanel extends HTMLElement {
         settings.title = label;
         settings.setAttribute('aria-label', label);
         for (var t of [...settings.childNodes]) if (t.nodeType === 3) t.remove();
-        var zooms = document.createElement('div');
-        zooms.className = 'shzooms';
-        zooms.append(settings);
-        corner.append(zooms);
+        corner.querySelector('.shzooms')?.append(settings);
       }
     }
     // Sections side by side, as the mockups lay them out: the cards after the first ones go in two columns
@@ -5756,10 +5753,10 @@ var SH_STATUS_METHODS = {
     var { areas, counts, score, tone: ringTone } = this._stTone();
     var word = (key) => this._t(key, { n: '' }).replace(/\s+/g, ' ').trim();
     var kpis = [
-      this._tile('mdi:heart-pulse', `<b>${score}</b> / 100`, this._t('st_score').replace(/\s*\/\s*100\s*/, '').trim() || this._t('st_score'), ringTone),
+      this._tile('mdi:heart-pulse', `<b>${score} / 100</b>`, this._t('st_score').replace(/\s*\/\s*100\s*/, '').trim() || this._t('st_score'), ringTone),
       this._tile('mdi:alert-circle-outline', `<b>${counts.bad}</b>`, word('st_n_bad'), counts.bad ? 'bad' : ''),
       this._tile('mdi:alert-outline', `<b>${counts.warn}</b>`, word('st_n_warn'), counts.warn ? 'warn' : ''),
-      this._tile('mdi:layers-outline', `<b>${counts.info}</b>`, word('st_n_info'), counts.info ? 'info' : ''),
+      this._tile('mdi:layers-outline', `<b>${counts.info}</b>`, word('st_n_info'), ''),
       this._tile('mdi:check-circle-outline', `<b>${counts.good}</b>`, word('st_n_good'), ''),
     ];
     var head = `<div class="tiles stkpis">${kpis.join('')}</div>`;
@@ -6062,7 +6059,7 @@ var SH_BANNER_STYLE = `
     .shtop { padding:0; overflow:hidden; }
     .shbanner { position:relative; height:90px; overflow:hidden; color:#1d2733; background:var(--sh-wall); --sh-sub:#4a5a6c; container-type:inline-size; }
     .shbanner.night { color:#fff; --sh-sub:rgba(255,255,255,.78); }
-    .shscene { position:absolute; right:0; bottom:10px; height:80px; width:min(360px, 46%); }
+    .shscene { position:absolute; right:62px; bottom:10px; height:80px; width:min(360px, 44%); }
     .shground { position:absolute; left:0; right:0; bottom:0; height:10px; }
     .g-parquet { background:repeating-linear-gradient(90deg, #c99a6b 0 38px, #b98a5c 38px 40px); box-shadow:inset 0 2px 0 #a97c50; }
     .night .g-parquet { background:repeating-linear-gradient(90deg, #4a3a2c 0 38px, #3e3024 38px 40px); box-shadow:inset 0 2px 0 #5c4836; }
@@ -6070,7 +6067,7 @@ var SH_BANNER_STYLE = `
     .night .g-tiles { background:repeating-linear-gradient(90deg, #3a4250 0 18px, #2e3542 18px 19px); box-shadow:inset 0 2px 0 #4a5262; }
     .g-concrete { background:#9aa1a9; box-shadow:inset 0 2px 0 #b5bbc2; }
     .night .g-concrete { background:#2c323b; box-shadow:inset 0 2px 0 #3a414c; }
-    .shhead { position:absolute; z-index:1; left:0; top:0; bottom:10px; right:calc(min(360px, 46%) + 4px); padding:6px 12px; box-sizing:border-box;
+    .shhead { position:absolute; z-index:1; left:0; top:0; bottom:10px; right:calc(min(360px, 44%) + 66px); padding:6px 12px; box-sizing:border-box;
               display:flex; align-items:center; gap:10px; min-width:0; }
     .shbadge { width:40px; height:40px; flex:none; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:24px; color:var(--tone);
                background:rgba(255,255,255,.62); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tone) 24%, transparent); }
@@ -6085,7 +6082,7 @@ var SH_BANNER_STYLE = `
     .night .shpill { background:color-mix(in srgb, var(--tone) 30%, rgba(8,18,38,.55)); color:color-mix(in srgb, var(--tone) 35%, #fff); }
     .shsub { font-size:13px; line-height:18px; color:var(--sh-sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .idle { --tone:#8a96a6; }
-    @container (max-width:560px) { .shscene { width:42%; } .shhead { right:42%; } .shtrow { flex-wrap:wrap; row-gap:2px; } .shpill { max-width:100%; } }
+    @container (max-width:560px) { .shscene { width:40%; right:34px; } .shhead { right:calc(40% + 34px); } .shtrow { flex-wrap:wrap; row-gap:2px; } .shpill { max-width:100%; } }
     @container (max-width:340px) { .shscene { display:none; } .shhead { right:0; } }
     .shtop .subtabs { gap:4px; padding:0 12px; border-bottom:1px solid var(--divider-color, rgba(127,127,127,.2)); overflow-x:auto; flex-wrap:nowrap; }
     .shtop .subtab { min-height:0; padding:8px 10px; border:0; border-bottom:2px solid transparent; border-radius:6px 6px 0 0; margin-bottom:-1px;
@@ -6195,7 +6192,6 @@ var SH_BANNER_STYLE = `
               --mdc-icon-size:16px; color:#33506b; background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px rgba(255,255,255,.7); }
     .shzoom:hover { background:rgba(255,255,255,.75); }
     .night .shzoom { color:#fff; background:rgba(255,255,255,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.2); }
-    .shscene { right:34px; }
     .shcols { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; align-items:start; }
     .shcols > * { min-width:0; margin:0; }
     ha-card.block > h2 { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
@@ -6303,6 +6299,7 @@ var SH_BANNER_METHODS = {
     return `<div class="shbanner ${tone}${night ? ' night' : ''}" style="--sh-wall:${wall}">
       <svg class="shscene" viewBox="0 0 360 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true" focusable="false">${scene}</svg>
       <div class="shground g-${floor}"></div>
+      <div class="shzooms"><button class="shzoom" data-action="reload" title="${shEsc(this._t('refresh'))}" aria-label="${shEsc(this._t('refresh'))}"><ha-icon icon="mdi:refresh"></ha-icon></button></div>
       <div class="shhead"><span class="shbadge" aria-hidden="true"><ha-icon icon="${SH_MODULE_ICONS[tab] || SH_MODULE_ICONS.status}"></ha-icon></span>
         <div class="shtitles"><div class="shtrow"><span class="shtitle">${shEsc(title)}</span>${pill ? `<span class="shpill">${shEsc(pill)}</span>` : ''}</div>
           ${sub || dots ? `<span class="shsub">${shEsc(sub)}${dots ? `<span class="shdots">${dots}</span>` : ''}</span>` : ''}</div></div></div>`;

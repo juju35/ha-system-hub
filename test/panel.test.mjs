@@ -1155,7 +1155,7 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   assert.match(html, /sttile warn" data-action="st_open" data-tab="marketplace"[\s\S]*?2 available/);
   assert.match(html, /sttile good" data-action="st_open" data-tab="git_sync"/);
   // 100 − 3 × 15 − 2 × 5
-  assert.match(html, /<b>45<\/b> \/ 100/);
+  assert.match(html, /<b>45 \/ 100<\/b>/);
   assert.match(p._banner(), /<span class="shtitle">5 points to check<\/span><span class="shpill">3 critical · 2 to watch<\/span>/);
   p._render = () => {};
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'st_open', tab: 'watchdog' } } : null) } });
@@ -1947,6 +1947,8 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   // One dot per area under the title
   assert.equal([...html.matchAll(/class="shdot /g)].length, counts.bad + counts.warn + counts.info + counts.good);
   assert.match(html, /class="shground g-parquet"/);
+  // Refresh as a round button in the banner's corner, as the mockups
+  assert.match(html, /<div class="shzooms"><button class="shzoom" data-action="reload"/);
   // A module's tab: its Status area
   p._tab = 'batteries';
   const [areaTone, value] = p._stArea('batteries');
