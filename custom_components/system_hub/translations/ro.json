@@ -1719,6 +1719,7 @@
         "tab_logs": "Jurnale",
         "lg_n_errors": "{n} erori",
         "lg_n_warnings": "{n} avertismente",
+        "lg_frequent": "Frecventă",
         "lg_no_errors": "Nicio eroare",
         "lg_no_frequent": "Nicio eroare frecventă",
         "lg_n_occasional": "{n} erori ocazionale",

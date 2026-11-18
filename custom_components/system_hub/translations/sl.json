@@ -1719,6 +1719,7 @@
         "tab_logs": "Dnevniki",
         "lg_n_errors": "Napake: {n}",
         "lg_n_warnings": "Opozorila: {n}",
+        "lg_frequent": "Pogosta",
         "lg_no_errors": "Ni napak",
         "lg_no_frequent": "Ni pogostih napak",
         "lg_n_occasional": "Občasne napake: {n}",

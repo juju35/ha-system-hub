@@ -13,7 +13,7 @@
 - **Containers & process**: each container by its name (*Matter Server*), the container and its image under it in monospace, its state as the last pill.
 - **Silent devices**: the views and the integration filters on one row, the devices in their card with what *silent* and *weak* mean under them, **Device** and **Ignore** as icons.
 - **Batteries**: *By level* shows what to replace beside the batteries that are fine.
-- **Logs**: each integration under its name with its round icon, each message in its box with **Ignore** as an icon.
+- **Logs**: one row per integration — its round icon, its name, the first message's count, time and logger, *Frequent* when it reaches the threshold, its count, **Reload** and **Ignore** — then each message in its box (its source file in the tooltip).
 - **Updates tab**: kept as tiles, in the new style — filled, rounded, each group (Home Assistant, add-ons and devices; Marketplace) in its own card under an uppercase title; an initial's logo is round.
 
 ## 2.13.0 - 2026-11-18

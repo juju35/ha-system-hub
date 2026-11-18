@@ -1719,6 +1719,7 @@
         "tab_logs": "Naplók",
         "lg_n_errors": "{n} hiba",
         "lg_n_warnings": "{n} figyelmeztetés",
+        "lg_frequent": "Gyakori",
         "lg_no_errors": "Nincs hiba",
         "lg_no_frequent": "Nincs gyakori hiba",
         "lg_n_occasional": "{n} alkalmi hiba",

@@ -2700,11 +2700,12 @@ class SystemHubPanel extends HTMLElement {
       ${this._button('lg_clear_confirm', 'mdi:delete-sweep-outline', this._t('lg_clear'), { quiet: true, busy: this._busy.lg_clear })}${this._configure()}</div>${confirm}`;
     var cards = groups
       .map((g) => {
+        var head = {};
         var tone = g.errors >= threshold ? 'bad' : g.errors ? 'warn' : 'info';
         var counts = [g.errors ? this._t('lg_n_errors', { n: g.errors }) : '', g.warnings ? this._t('lg_n_warnings', { n: g.warnings }) : ''].filter(Boolean).join(' · ');
         var reload = g.domain !== 'homeassistant' ? this._button('lg_reload', 'mdi:reload', this._t('lg_reload'), { quiet: true, data: { domain: g.domain }, busy: this._busy[`lg_reload:${g.domain}`] }) : '';
         var entries = g.entries
-          .map((e) => {
+          .map((e, i) => {
             var first = String(e.message?.[0] ?? '');
             var source = Array.isArray(e.source) ? `${String(e.source[0]).split('/').slice(-2).join('/')}:${e.source[1]}` : '';
             var trace = e.exception ? `<details><summary class="s">${shEsc(this._t('lg_traceback'))}</summary><pre class="lgpre">${shEsc(e.exception)}</pre></details>` : '';
@@ -2712,11 +2713,21 @@ class SystemHubPanel extends HTMLElement {
             var key = this._lgKey(e);
             var busy = this._busy[`lg_ignore:${key}`];
             var ignore = `<button class="icon-btn lgignore" data-action="lg_ignore" data-key="${shEsc(key)}" title="${shEsc(this._t('sl_ignore'))}" aria-label="${shEsc(this._t('sl_ignore'))}"${busy ? ' disabled aria-busy="true"' : ''}><ha-icon${busy ? ' class="spin"' : ''} icon="${busy ? 'mdi:loading' : 'mdi:eye-off-outline'}"></ha-icon></button>`;
-            return `<div class="lgentry"><div class="lgtop"><div class="s">${shEsc([`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name, source].filter(Boolean).join(' · '))}</div>${ignore}</div>
+            var meta = [`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name].filter(Boolean).join(' · ');
+            // As its mockup: the first message's count, time and logger under the integration's name, its Ignore in the
+            // row; the next messages with their own line
+            if (i === 0) {
+              head = { meta, ignore, source };
+              return `<div class="lgentry"><div class="lgmsg" title="${shEsc(source)}">${shEsc(first)}</div>${trace}</div>`;
+            }
+            return `<div class="lgentry"><div class="lgtop"><div class="s">${shEsc([meta, source].filter(Boolean).join(' · '))}</div>${ignore}</div>
               <div class="lgmsg">${shEsc(first)}</div>${trace}</div>`;
           })
           .join('');
-        return `<ha-card class="list lggroup ${tone}"><div class="lhead"><ha-icon icon="${g.custom ? 'mdi:puzzle-outline' : 'mdi:home-assistant'}"></ha-icon><span class="lname">${shEsc(shIntegration(g.domain))} <span class="pill ${tone}">${shEsc(counts)}</span></span>${reload}</div>${entries}</ha-card>`;
+        var frequent = g.errors >= threshold ? `<span class="pill bad">${shEsc(this._t('lg_frequent'))}</span>` : '';
+        return `<ha-card class="list lggroup ${tone}"><div class="item lgrow ${tone}"><ha-icon icon="${g.custom ? 'mdi:puzzle-outline' : 'mdi:home-assistant'}"></ha-icon>
+          <div class="who"><div class="n lgname">${shEsc(shIntegration(g.domain))}</div><div class="s">${shEsc(head.meta || '')}</div></div>
+          ${frequent}<span class="pill ${tone}">${shEsc(counts)}</span>${reload}${head.ignore || ''}</div>${entries}</ha-card>`;
       })
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>${actions}
@@ -6281,6 +6292,14 @@ var SH_BANNER_STYLE = `
     .ring .rl { font-size:13.5px; }
     .ring .behind { height:30px; }
     .ring .behind polygon { opacity:.08; }
+    /* Logs, as its mockup: one row per integration (its name, the first message's count, time and logger, its pills,
+       Reload and Ignore), the message in its box under it */
+    .lggroup { padding:8px 10px 10px; gap:8px; }
+    .lggroup .lgrow { background:none; border:0; padding:0; min-height:48px; }
+    .lggroup .lgrow:is(.bad, .warn) { background:none; border:0; }
+    .lggroup .lgname { font-family:var(--code-font-family, monospace); font-size:13.5px; }
+    .lggroup .lgentry { margin-left:0; }
+    .lggroup .lgrow .act { min-height:32px; }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;

@@ -1719,6 +1719,7 @@
         "tab_logs": "Protokoly",
         "lg_n_errors": "Chyby: {n}",
         "lg_n_warnings": "Upozornění: {n}",
+        "lg_frequent": "Častá",
         "lg_no_errors": "Žádné chyby",
         "lg_no_frequent": "Žádné časté chyby",
         "lg_n_occasional": "Občasné chyby: {n}",

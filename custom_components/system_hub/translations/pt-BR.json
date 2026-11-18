@@ -1719,6 +1719,7 @@
         "tab_logs": "Logs",
         "lg_n_errors": "{n} erros",
         "lg_n_warnings": "{n} avisos",
+        "lg_frequent": "Frequente",
         "lg_no_errors": "Sem erros",
         "lg_no_frequent": "Sem erros frequentes",
         "lg_n_occasional": "{n} erros ocasionais",

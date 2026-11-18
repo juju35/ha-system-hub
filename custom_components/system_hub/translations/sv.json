@@ -1719,6 +1719,7 @@
         "tab_logs": "Loggar",
         "lg_n_errors": "{n} fel",
         "lg_n_warnings": "{n} varningar",
+        "lg_frequent": "Frekvent",
         "lg_no_errors": "Inga fel",
         "lg_no_frequent": "Inga återkommande fel",
         "lg_n_occasional": "{n} enstaka fel",

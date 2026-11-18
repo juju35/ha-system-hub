@@ -1719,6 +1719,7 @@
         "tab_logs": "Журнали",
         "lg_n_errors": "Грешки: {n}",
         "lg_n_warnings": "Предупреждения: {n}",
+        "lg_frequent": "Честа",
         "lg_no_errors": "Няма грешки",
         "lg_no_frequent": "Няма чести грешки",
         "lg_n_occasional": "Единични грешки: {n}",

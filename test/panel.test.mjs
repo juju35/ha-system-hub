@@ -1465,7 +1465,7 @@ test('logs tab: the errors and warnings by integration, a level and a period; Ig
   assert.match(html, /<b>30<\/b>[\s\S]*?Errors/);
   assert.match(html, /lggroup bad[\s\S]*?tapo_cameras[\s\S]*?21 errors/);
   assert.match(html, /<details><summary class="s">Traceback/);
-  assert.match(html, /×21 · [^·]+ · custom_components\.tapo_cameras\.coordinator · x\/coordinator\.py:142/);
+  assert.match(html, /×21 · [^·]+ · custom_components\.tapo_cameras\.coordinator<[\s\S]*title="x\/coordinator\.py:142"/);
   // Status: only the integration beyond the threshold counts (mqtt's 9 errors are occasional)
   assert.deepEqual([...p._stArea('logs')], ['bad', '21 errors', 'tapo_cameras ×21']);
   // Below the threshold, occasional errors leave the status in good health
