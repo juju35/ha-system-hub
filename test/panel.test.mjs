@@ -227,7 +227,11 @@ test('batteries tab: by room, by battery type, by replacement date', () => {
   };
   const p = panel(state, 'batteries');
   const names = (view) => JSON.parse(JSON.stringify(p._battGroups(state.batteries.batteries, view).map((g) => [g.name, g.items.map((x) => x.b.name)])));
-  assert.deepEqual(names('level'), [['', ['Door', 'Remote', 'Window', 'Lamp']]]);
+  // By level: what to replace beside the ones that are fine
+  assert.deepEqual(names('level'), [
+    ['To replace', ['Door']],
+    ['Fine', ['Remote', 'Window', 'Lamp']],
+  ]);
   assert.deepEqual(names('room'), [
     ['Entrance', ['Door']],
     ['Kitchen', ['Remote', 'Window']],
@@ -877,7 +881,7 @@ test('containers tab: the Docker containers with their image', () => {
   const html = p._content();
   assert.ok(html.indexOf('hassio_supervisor') < html.indexOf('hassio_dns'));
   assert.ok(html.indexOf('hassio_dns') < html.indexOf('app_a0d7b954_vscode'));
-  assert.match(html, /Studio Code Server · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
+  assert.match(html, /<div class="n">Studio Code Server<\/div><div class="s mono"[^>]*>app_a0d7b954_vscode · ghcr\.io\/hassio-addons\/vscode:7\.2\.0/);
   assert.match(html, /7\.3\.0/);
   // The processes are listed with the containers, no longer in the System tab
   assert.equal(p._tabName('containers'), 'Containers & process');
@@ -1132,11 +1136,17 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   const p = panel(state, 'status');
   assert.deepEqual([...p._tabs()].slice(0, 2), ['status', 'batteries']);
   const html = p._content();
-  const order = [...html.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
+  const order = [...html.matchAll(/class="sttile \w+" data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]);
   // By group, in the order of their first tab, under the group's name
   assert.deepEqual(order, ['batteries', 'orphans', 'system', 'containers', 'watchdog', 'git_sync', 'marketplace']);
-  const sections = [...html.matchAll(/<h2 class="stsec">([^<]+)<\/h2>/g)].map((m) => m[1]);
-  assert.deepEqual(sections, ['Devices', 'System', 'Reliability', 'Maintenance']);
+  const sections = [...html.matchAll(/<h2 class="stsec"><span class="stgdot (\w+)"><\/span>([^<]+)<span class="muted">(\d+)<\/span><\/h2>/g)].map((m) => `${m[2]} ${m[1]} ${m[3]}`);
+  // Each group with its worst tone and its count
+  assert.deepEqual(sections, ['Devices warn 2', 'System bad 2', 'Reliability bad 1', 'Maintenance warn 2']);
+  // The counts as tiles, then the critical areas to handle first, each with a button to its tab
+  assert.match(html, /^<div class="tiles stkpis">/);
+  const prio = html.match(/<ha-card class="list stprio">[\s\S]*?<\/ha-card>/)[0];
+  assert.match(prio, /To handle first · 3/);
+  assert.deepEqual([...prio.matchAll(/data-action="st_open" data-tab="(\w+)"/g)].map((m) => m[1]), ['system', 'containers', 'watchdog']);
   // Batteries to watch, the disk above its red threshold, a given-up integration and a process stopped: needing action
   assert.match(html, /sttile warn" data-action="st_open" data-tab="batteries"/);
   assert.match(html, /sttile bad" data-action="st_open" data-tab="system"/);
@@ -1145,8 +1155,8 @@ test('status tab: a score, one tile per area in the order of the tabs, each open
   assert.match(html, /sttile warn" data-action="st_open" data-tab="marketplace"[\s\S]*?2 available/);
   assert.match(html, /sttile good" data-action="st_open" data-tab="git_sync"/);
   // 100 − 3 × 15 − 2 × 5
-  assert.match(html, /<b>45<\/b>/);
-  assert.match(html, /5 points to check/);
+  assert.match(html, /<b>45 \/ 100<\/b>/);
+  assert.match(p._banner(), /<span class="shtitle">5 points to check<\/span><span class="shpill">3 critical · 2 to watch<\/span>/);
   p._render = () => {};
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'st_open', tab: 'watchdog' } } : null) } });
   assert.equal(p._tab, 'watchdog');
@@ -1212,13 +1222,11 @@ test('processes: one that may be stopped is grey, not counted on the Status tab'
   assert.equal(p._stArea('containers')[0], 'bad');
 });
 
-test('status: the house of the logo beside the score, with the colour of the ring and its badge', () => {
+test('status: all good, no area to handle first, the score as the pill', () => {
   const base = { loaded: true, modules: [], tabs: ['status', 'system'], system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '10' }] };
-  const pulse = /class="stbadge good"[^>]*><svg[\s\S]*<polyline points="-34,3/;
-  assert.match(panel(base, 'status')._content(), pulse);
-  const hot = { ...base, system: [{ key: 'processor_use', entity_id: 'sensor.cpu', state: '99' }] };
-  // One area critical: 85, still green
-  assert.match(panel(hot, 'status')._content(), pulse);
+  const p = panel(base, 'status');
+  assert.doesNotMatch(p._content(), /stprio/);
+  assert.match(p._banner(), /<span class="shtitle">All good<\/span><span class="shpill">100 \/ 100<\/span>/);
 });
 
 test('backups tab: the last success, the locations and their failures, the last 30 days; Back up now', async () => {
@@ -1457,7 +1465,7 @@ test('logs tab: the errors and warnings by integration, a level and a period; Ig
   assert.match(html, /<b>30<\/b>[\s\S]*?Errors/);
   assert.match(html, /lggroup bad[\s\S]*?tapo_cameras[\s\S]*?21 errors/);
   assert.match(html, /<details><summary class="s">Traceback/);
-  assert.match(html, /×21 · [^·]+ · custom_components\.tapo_cameras\.coordinator · x\/coordinator\.py:142/);
+  assert.match(html, /×21 · [^·]+ · custom_components\.tapo_cameras\.coordinator<[\s\S]*title="x\/coordinator\.py:142"/);
   // Status: only the integration beyond the threshold counts (mqtt's 9 errors are occasional)
   assert.deepEqual([...p._stArea('logs')], ['bad', '21 errors', 'tapo_cameras ×21']);
   // Below the threshold, occasional errors leave the status in good health
@@ -1934,10 +1942,13 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   const { tone, score, counts } = p._stTone();
   assert.match(html, new RegExp(`class="shbanner ${tone}" style="--sh-wall:${tone === 'good' ? '#eef1f6' : 'color-mix'}`));
   assert.match(html, new RegExp(`>${score}</text>`));
-  assert.match(html, /<span class="shtitle">Status<\/span>/);
   const points = counts.bad + counts.warn + counts.info;
-  assert.match(html, new RegExp(`class="shpill">${points} points? to check<`));
+  assert.match(html, new RegExp(`<span class="shtitle">${points} points? to check</span>`));
+  // One dot per area under the title
+  assert.equal([...html.matchAll(/class="shdot /g)].length, counts.bad + counts.warn + counts.info + counts.good);
   assert.match(html, /class="shground g-parquet"/);
+  // Refresh as a round button in the banner's corner, as the mockups
+  assert.match(html, /<div class="shzooms"><button class="shzoom" data-action="reload"/);
   // A module's tab: its Status area
   p._tab = 'batteries';
   const [areaTone, value] = p._stArea('batteries');
@@ -1949,7 +1960,8 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   p._tab = 'settings';
   html = p._banner();
   assert.match(html, /class="shbanner idle"/);
-  assert.doesNotMatch(html, /shpill/);
+  // Settings: the modules turned on as its pill, how to order the tabs under it
+  assert.match(html, /class="shpill">\d+ \/ \d+ · Modules and tabs</);
   // The dark theme: the night picture
   p._hass.themes = { darkMode: true };
   p._tab = 'system';

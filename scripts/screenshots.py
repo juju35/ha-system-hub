@@ -101,8 +101,8 @@ customElements.define("ha-icon", class extends HTMLElement {
       return;
     }
     const path = ICONS[icon.replace("mdi:", "")] || "";
-    this.style.display = "inline-flex";
-    this.innerHTML = '<svg viewBox="0 0 24 24" style="width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px);fill:currentColor"><path d="' + path + '"/></svg>';
+    // As Home Assistant draws it: <ha-icon> left inline, its icon an inline-flex box on the line's middle (ha-svg-icon)
+    this.innerHTML = '<span style="display:inline-flex;vertical-align:middle;position:relative;width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px)"><svg viewBox="0 0 24 24" style="width:100%;height:100%;display:block;fill:currentColor"><path d="' + path + '"/></svg></span>';
   }
 });
 customElements.define("ha-menu-button", class extends HTMLElement {
@@ -1660,8 +1660,8 @@ SHOTS = [
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},
     {"file": "panel-git-sync-diff-dark", "theme": "dark", "tab": "git_sync", "diff": True},
     # The Status tab with every area, Automation Monitor's included
-    {"file": "panel-status", "theme": "light", "tab": "status", "automations": True},
-    {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True},
+    {"file": "panel-status", "theme": "light", "tab": "status", "automations": True, "scored": True},
+    {"file": "panel-status-dark", "theme": "dark", "tab": "status", "automations": True, "scored": True},
     {"file": "status-score", "theme": "light", "tab": "status", "health": True, "hero": True},
     {"file": "status-score-dark", "theme": "dark", "tab": "status", "health": True, "hero": True},
     {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
@@ -1764,6 +1764,19 @@ def health_state(state):
         "git_sync",
         "git_sync_diff",
     ):
+        s.pop(key, None)
+    return s
+
+
+def scored_state(state):
+    """The Status tab's main shot, as its mockup: three areas critical (Security, Sentinel, Automations), the others to
+    watch or fine, so the health score shows a part of its ring (100 - 3x15 - 5x5 - 1 = 29), not 0. The disk falls back
+    to normal, and the containers and the log are left out."""
+    s = copy.deepcopy(state)
+    for sensor in s.get("system", []):
+        if sensor.get("key") == "disk_use_percent":
+            sensor["state"] = "55"
+    for key in ("containers", "logs", "system_log"):
         s.pop(key, None)
     return s
 
@@ -2013,6 +2026,7 @@ def main():
             shown = automations_state(shown) if shot.get("automations") else shown
             shown = health_state(shown) if shot.get("health") else shown
             shown = fine_state(shown) if shot.get("fine") else shown
+            shown = scored_state(shown) if shot.get("scored") else shown
             shown = installing_state(shown) if shot.get("installing") else shown
             page.evaluate(
                 MOUNT,
@@ -2047,8 +2061,8 @@ def main():
                 page.close()
                 continue
             if shot.get("hero"):
-                # The Status hero alone (the score ring, the emblem and the pills), with a 16 px frame of the theme.
-                capture(page, out / f"{shot['file']}.png", clip=framed(page, ".sthero"), animations="disabled")
+                # The Status header card alone (its banner, the score and the counts), with a 16 px frame of the theme.
+                capture(page, out / f"{shot['file']}.png", clip=framed(page, ".shtop"), animations="disabled")
                 page.close()
                 continue
             if shot["tab"] == "database":

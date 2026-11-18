@@ -1,5 +1,25 @@
 # Changelog
 
+## 3.0.0 - 2026-11-18
+
+### Features
+- **Panel, as its mockups**: what opens a tab (its tiles, actions, rings) now sits in the header card, under the illustrated banner and the sub-tabs. Tiles and list rows are filled and rounded with a round icon (neutral when all is well), the rows of a problem tinted and outlined, buttons are pills and list titles uppercase; the System tab's rings are tiles and its charts' titles the sections'.
+- **Status tab**: the header says how many points need a look, with the critical and to-watch counts as its pill and a dot per area; the score and the counts are tiles; the critical areas come next under *To handle first*, each with **View** to open its tab; then a compact tile per area in four columns by group, each group with its worst tone and its count. The large score ring and emblem are gone.
+- **Every tab, as its mockup**: the page as wide (1180 px), rows and tiles denser, status pills with their dot; **Refresh** and the module's settings as round buttons in the banner's corner, the scene beside them as in the mockups; sections side by side where the mockups put them (Security, Sentinel's power cycles and recent reloads, Backups' locations and last 30 days).
+- **Settings tab**: a card per group, two by two, each module a filled row with its round icon, switch and settings (a group with a module's settings open takes the whole width).
+- **Consistency across the tabs**: one look for the segmented choices (the one picked raised on a filled track), search fields and lists as filled pills, round icon buttons; every tab's module settings in the banner's corner (Versioning and the Marketplace included); the battery groups' titles as the other sections'.
+- **Database**: each device and table with its checkbox, its bar beside the name and its counts small at the right; **Settings**: the modules turned on and how to order the tabs in the banner; **Resources**: compact 64 px rings; round icons in their tone itself; *To handle first* keeps the first details of each area.
+- **Icons centred**: in Home Assistant, an icon sat a few pixels high in its round badge (an inline `<ha-icon>` on the text's line); every icon is now a box of its own, centred. The screenshot script draws `<ha-icon>` as Home Assistant does, so its shots show it.
+- **Cards, icons centred** too (checkmarks of the selection boxes, badges, buttons); the screenshot scripts draw `<ha-icon>` as Home Assistant does.
+- **Mini cards**: folded, a card ends on its banner's ground strip (no blank band under it); a chip that does not fit on the banner's line is left out instead of being cut (the full view has them all).
+- **Orphan Entities card**: the *Used by N* badge sits in its row, at its right, so every row has the list's width.
+- **Sub-tabs**: as the heating card's zones — each icon in its module's tone, the tab shown underlined in that tone, with the header card's margins.
+- **Containers & process**: each container by its name (*Matter Server*), the container and its image under it in monospace, its state as the last pill.
+- **Silent devices**: the views and the integration filters on one row, the devices in their card with what *silent* and *weak* mean under them, **Device** and **Ignore** as icons.
+- **Batteries**: *By level* shows what to replace beside the batteries that are fine.
+- **Logs**: one row per integration — its round icon, its name, the first message's count, time and logger, *Frequent* when it reaches the threshold, its count, **Reload** and **Ignore** — then each message in its box (its source file in the tooltip).
+- **Updates tab**: kept as tiles, in the new style — filled, rounded, each group (Home Assistant, add-ons and devices; Marketplace) in its own card under an uppercase title; an initial's logo is round.
+
 ## 2.13.0 - 2026-11-18
 
 ### Features

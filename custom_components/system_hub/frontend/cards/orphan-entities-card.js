@@ -2439,6 +2439,8 @@ var SHB_STYLE = `
                margin:calc(-1 * var(--shb-py)) calc(-1 * var(--shb-px)) 8px; padding:0 calc(min(200px, 62%) * .62) 10px 14px;
                border-radius:var(--ha-card-border-radius, 12px) var(--ha-card-border-radius, 12px) 0 0;
                background:linear-gradient(90deg, #f4f7fb 0%, #eef2f7 45%, #e4eaf2 100%); color:#0d2a45; container:shb / inline-size; --shb-tone:${SHB_COLORS.good}; }
+  /* Nothing under the banner (a mini card folded): the card ends on its ground strip */
+  .sh-banner:last-child { margin-bottom:calc(-1 * var(--shb-py)); }
   .sh-banner.night { background:linear-gradient(90deg, #222a3a 0%, #1c2230 50%, #161b27 100%); color:#fff; }
   .sh-banner.shb-warn { --shb-tone:${SHB_COLORS.warn}; } .sh-banner.shb-bad { --shb-tone:${SHB_COLORS.bad}; }
   .sh-banner.shb-info { --shb-tone:${SHB_COLORS.info}; } .sh-banner.shb-idle { --shb-tone:${SHB_COLORS.idle}; }
@@ -2465,8 +2467,10 @@ var SHB_STYLE = `
   .sh-banner :is(.head, .header, .mini) > :is(button, ha-icon-button):nth-last-of-type(2) { right:33px; }
   .sh-banner :is(.head, .header, .mini) > :is(button, ha-icon-button):nth-last-of-type(3) { right:61px; }
   .sh-banner.night :is(.head, .header, .mini) > :is(button, ha-icon-button) { background:rgba(255,255,255,.12) !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.2) !important; color:#fff !important; fill:#fff !important; }
-  .sh-banner .rs { flex-wrap:nowrap !important; overflow:hidden; margin-top:3px !important; }
-  .sh-banner .rs > * { flex:none; }
+  /* The chips on one line: one that does not fit wraps out of sight instead of being cut (the full view has them all);
+     a single chip too long for the line ends in an ellipsis */
+  .sh-banner .rs { flex-wrap:wrap !important; align-items:center; row-gap:40px !important; max-height:22px; overflow:hidden; margin-top:3px !important; }
+  .sh-banner .rs > * { flex:none; max-width:100%; }
   @container shb (max-width: 170px) { .shb-scene { display:none; } .sh-banner { padding-right:14px; } }
   .shb-blink { animation:shb-bl 1.2s steps(2) infinite; }
   .shb-gauge, .shb-pop { animation:shb-bl 3s ease-in-out infinite; }
@@ -3184,7 +3188,7 @@ class OrphanEntitiesCard extends HTMLElement {
         return `<li><ha-icon icon="${OE_REF_ICONS[r.type] || 'mdi:link-variant'}"></ha-icon><span class="rk">${oeEsc(kind(r))}</span>${link}</li>`;
       })
       .join('');
-    return `<div class="item">${row}<button class="used" data-used="${oeEsc(id)}" data-focus="u:${oeEsc(id)}" aria-expanded="${open}" title="${oeEsc(tip)}"><ha-icon icon="mdi:link-variant"></ha-icon><span>${oeEsc(label)}</span></button>${open ? `<ul class="refs">${refs}</ul>` : ''}</div>`;
+    return `<div class="item"><div class="rowwrap">${row}<button class="used" data-used="${oeEsc(id)}" data-focus="u:${oeEsc(id)}" aria-expanded="${open}" title="${oeEsc(tip)}"><ha-icon icon="mdi:link-variant"></ha-icon><span>${oeEsc(label)}</span></button></div>${open ? `<ul class="refs">${refs}</ul>` : ''}</div>`;
   }
 
   // Above the list while entities are selected: their count, then Ignore, Remove and clear.
@@ -3272,6 +3276,8 @@ class OrphanEntitiesCard extends HTMLElement {
   static get styles() {
     return `
       :host([hidden]) { display: none !important; }
+      /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+      ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
       :host {
         display: block;
         min-width: 0;
@@ -3430,9 +3436,12 @@ class OrphanEntitiesCard extends HTMLElement {
       .when > span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .when .lbl { font-size: 12px; font-weight: 500; line-height: 1.2; color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); }
       .when .ago { font-size: 11px; line-height: 1.2; color: var(--oe-muted); }
-      /* A row still in use: its "Used by N" badge (orange, tinted) at its right, its list under it when open */
+      /* A row still in use: its "Used by N" badge (orange, tinted) in the row at its right, its list under it when open */
       .item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
-      .item > .row { flex: 1 1 0; }
+      /* The badge sits in the row, at its right (the row keeps its room), so every row has the list's width */
+      .rowwrap { position: relative; flex: 1 1 100%; min-width: 0; display: flex; }
+      .rowwrap > .row { flex: 1 1 0; padding-right: 112px; }
+      .rowwrap > .used { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
       .used { --t: var(--oe-warn); all: unset; cursor: pointer; flex: none; box-sizing: border-box; display: inline-flex;
               align-items: center; gap: 3px; height: 24px; padding: 0 8px; border-radius: 12px; font-size: 11px; font-weight: 500;
               white-space: nowrap; color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color));

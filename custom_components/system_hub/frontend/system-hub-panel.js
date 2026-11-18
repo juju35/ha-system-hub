@@ -12,7 +12,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '2.13.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.0.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -803,6 +803,7 @@ class SystemHubDiffDialog extends HTMLElement {
 
   _css() {
     return `
+      ha-icon { display:inline-flex; align-items:center; justify-content:center; flex:none; line-height:0; }
       :host { --sh-ok: var(--success-color, #43a047); --sh-warn: var(--warning-color, #ffa600);
               --sh-info: var(--info-color, #039be5); --sh-alert: var(--error-color, #db4437);
               --sh-off: var(--disabled-text-color, #9e9e9e); --sh-accent: var(--primary-color, #03a9f4);
@@ -1099,29 +1100,12 @@ class SystemHubPanel extends HTMLElement {
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
     .act.danger:hover:not([disabled]) { background:color-mix(in srgb, var(--error-color, #db4437) 20%, transparent); }
     .spin { animation:sh-spin 1s linear infinite; }
-    .sthero { display:flex; align-items:center; gap:28px; padding:20px 28px; flex-wrap:wrap;
-              background:linear-gradient(135deg, color-mix(in srgb, var(--tone, var(--primary-color)) 10%, var(--card-background-color, #fff)), var(--card-background-color, #fff)); }
-        .stscore { position:relative; width:170px; height:170px; flex:none; }
-    .stscore svg { width:100%; height:100%; }
-    .sttrack { fill:none; stroke:var(--divider-color, rgba(127,127,127,.2)); stroke-width:14; }
-    .starc { fill:none; stroke:var(--tone); stroke-width:14; stroke-linecap:round; transition:stroke-dashoffset .8s ease; }
-    .stnum { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .stnum b { font-size:46px; font-weight:300; line-height:1; }
-    .stnum span { font-size:12px; color:var(--secondary-text-color); margin-top:4px; }
-    .stbadge { width:104px; height:104px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
-               color:var(--tone); background:color-mix(in srgb, var(--tone) 16%, transparent); }
-    .sthero .who { flex:1; min-width:220px; }
-    .sttitle { font-size:24px; font-weight:500; }
-    .sthero .s { font-size:14px; margin:6px 0 12px; white-space:normal; }
-    .stpills { display:flex; flex-wrap:wrap; gap:6px; }
     .stgrid { display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:12px; }
     .sttile { position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:stretch; gap:8px; text-align:left; cursor:pointer;
               padding:16px; border-radius:var(--ha-card-border-radius, 12px); border:1px solid var(--divider-color, rgba(127,127,127,.15));
               background:var(--card-background-color, #fff); color:var(--primary-text-color); font:inherit; }
     .sttile:hover { border-color:color-mix(in srgb, var(--tone) 50%, transparent); }
     .sttile:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
-    .stglow { position:absolute; inset:0; pointer-events:none; background:radial-gradient(circle at 100% 0, color-mix(in srgb, var(--tone) 20%, transparent), transparent 60%); }
-    .sthead { position:relative; display:flex; align-items:center; gap:10px; }
     .stic { width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex:none; --mdc-icon-size:22px;
             color:var(--tone); background:color-mix(in srgb, var(--tone) 16%, transparent); }
     .stname { flex:1; font-size:14px; font-weight:500; }
@@ -1129,9 +1113,6 @@ class SystemHubPanel extends HTMLElement {
     .stval { position:relative; font-size:19px; font-weight:500; }
     .stdet { position:relative; font-size:12px; color:var(--secondary-text-color); line-height:1.4;
              display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-    @media (max-width:600px) { .sthero { gap:16px; padding:16px; } .stscore { width:130px; height:130px; } .stnum b { font-size:36px; }
-      .stbadge { width:76px; height:76px; } }
-    .stbadge svg { width:66%; height:66%; overflow:visible; }
     .cfg { gap:0; }
     .cfg h2 { margin-bottom:4px; }
     .cfgrow { padding:6px 0; border-top:1px solid var(--divider-color, rgba(127,127,127,.15)); }
@@ -1294,8 +1275,8 @@ class SystemHubPanel extends HTMLElement {
     .nextb b { font-weight:500; }
     .bgroups { columns:3 300px; column-gap:28px; }
     .bgroup { break-inside:avoid; display:flex; flex-direction:column; gap:6px; margin-bottom:20px; }
-    .bgroups.flat { columns:auto; }
-    .bgroups.flat .glist { grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); }
+    .bgroups.bylevel { columns:2 300px; column-gap:16px; }
+    .bgroups.bylevel .glist { grid-template-columns:minmax(0, 1fr); }
     .ghead { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; --mdc-icon-size:18px; }
     .ghead ha-icon { color:var(--secondary-text-color); }
     .gname { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -1879,6 +1860,63 @@ class SystemHubPanel extends HTMLElement {
     // The button or row with the focus keeps it through the refresh every few seconds
     var focusSel = !focusKey && active && main.contains(active) ? shFocusSelector(active) : null;
     main.innerHTML = this._top() + this._content();
+    // As the mockups: what opens the tab (its tiles, actions, rings) sits in the header card, under the banner
+    var top = main.querySelector(':scope > .shtop');
+    if (top) {
+      var body = document.createElement('div');
+      body.className = 'shbody';
+      var next = top.nextElementSibling;
+      while (next && next.tagName !== 'HA-CARD' && next.tagName !== 'H2' && next.tagName !== 'SECTION' && !next.matches('.stgroups, .mkgrid, .pair, .sctwo')) {
+        var after = next.nextElementSibling;
+        body.append(next);
+        next = after;
+      }
+      if (body.children.length) top.append(body);
+      // The module's settings: a round frosted button in the banner's corner, as on the cards
+      var corner = top.querySelector('.shbanner');
+      // The tab's own module (the first of its buttons that opens a module's settings, wherever the tab puts it)
+      var settings = main.querySelector(`[data-action="open_settings:${this._tab}"]`);
+      if (corner && settings) {
+        // The spacer _configure put before it goes with it
+        if (settings.previousElementSibling?.matches('span.grow')) settings.previousElementSibling.remove();
+        var label = settings.textContent.trim();
+        settings.className = 'shzoom';
+        settings.title = label;
+        settings.setAttribute('aria-label', label);
+        for (var t of [...settings.childNodes]) if (t.nodeType === 3) t.remove();
+        corner.querySelector('.shzooms')?.append(settings);
+      }
+    }
+    // Sections side by side, as the mockups lay them out: the cards after the first ones go in two columns
+    var span = { watchdog: [1, 3], backups: [0, 2], security: [0, 99] }[this._tab];
+    if (span) {
+      var cards = [...main.querySelectorAll(':scope > ha-card:not(.shtop), :scope > .sctwo')];
+      var rest = cards.slice(...span);
+      if (rest.length > 1) {
+        var cols = document.createElement('div');
+        cols.className = 'shcols';
+        rest[0].before(cols);
+        for (var c of rest) {
+          if (c.matches('.sctwo')) cols.append(...c.children);
+          else cols.append(c);
+          if (c.matches('.sctwo')) c.remove();
+        }
+      }
+    }
+    // The Updates tab: each heading and its tiles (and the Marketplace's status) in one card, as the other sections
+    if (this._tab === 'marketplace') {
+      for (var h2 of [...main.querySelectorAll(':scope > h2.stsec')]) {
+        var sec = document.createElement('ha-card');
+        sec.className = 'mksec';
+        h2.before(sec);
+        var node = h2;
+        while (node && (node === h2 || (node.tagName !== 'H2' && !node.matches('ha-card.list')))) {
+          var following = node.nextElementSibling;
+          sec.append(node);
+          node = following;
+        }
+      }
+    }
     var netSvg = main.querySelector('svg.nsvg');
     if (netSvg) this._slFixZoom(netSvg);
     if (this._tab === 'settings') this._cfgMount(main);
@@ -2433,20 +2471,19 @@ class SystemHubPanel extends HTMLElement {
         var cpu = shNum(c.cpu_percent);
         var mem = shNum(c.memory_percent);
         var spark = shSpark((history[c.slug] || []).map((p) => p[1]));
-        // As Docker lists it: the container's name, then what it is and its image (or its version)
-        var sub = [c.container ? c.name : this._t(c.kind), c.image || c.version].filter(Boolean);
+        // As its mockup: what it is as the title, then the container's name and its image (or its version)
+        var sub = [c.container || this._t(c.kind), c.image || c.version].filter(Boolean);
         var update = c.update_available ? `<span class="pill warn" title="${shEsc(this._t('update', { version: c.version_latest }))}"><ha-icon icon="mdi:arrow-up-circle-outline"></ha-icon>${shEsc(c.version_latest || '')}</span>` : '';
         return `<div class="item ${tone}"><ha-icon icon="${icons[c.kind] || 'mdi:docker'}"></ha-icon>
-          <div class="who"><div class="n">${shEsc(c.container || c.name)}</div><div class="s" title="${shEsc(sub.join(' · '))}">${shEsc(sub.join(' · '))}</div></div>${update}
+          <div class="who"><div class="n">${shEsc(c.name || c.container)}</div><div class="s mono" title="${shEsc(sub.join(' · '))}">${shEsc(sub.join(' · '))}</div></div>${update}
           ${spark ? `<div class="trend ${tone}">${spark}</div>` : ''}
-          <span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span>
           <div class="side fixed">${
             on
               ? `<span>CPU ${cpu === null ? '—' : `${Math.round(cpu)}%`} · RAM ${mem === null ? '—' : `${Math.round(mem)}%`}</span>
             <div class="meter ${shTone(mem)}"><span style="width:${Math.min(mem || 0, 100)}%"></span></div>
             <span class="muted">${shBytes(c.memory_usage)}</span>`
               : ''
-          }</div></div>`;
+          }</div><span class="pill ${tone}">${shEsc(c.down ? this._t('down') : on ? this._t('running') : this._t('stopped'))}</span></div>`;
       })
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>
@@ -2664,20 +2701,34 @@ class SystemHubPanel extends HTMLElement {
       ${this._button('lg_clear_confirm', 'mdi:delete-sweep-outline', this._t('lg_clear'), { quiet: true, busy: this._busy.lg_clear })}${this._configure()}</div>${confirm}`;
     var cards = groups
       .map((g) => {
+        var head = {};
         var tone = g.errors >= threshold ? 'bad' : g.errors ? 'warn' : 'info';
         var counts = [g.errors ? this._t('lg_n_errors', { n: g.errors }) : '', g.warnings ? this._t('lg_n_warnings', { n: g.warnings }) : ''].filter(Boolean).join(' · ');
         var reload = g.domain !== 'homeassistant' ? this._button('lg_reload', 'mdi:reload', this._t('lg_reload'), { quiet: true, data: { domain: g.domain }, busy: this._busy[`lg_reload:${g.domain}`] }) : '';
         var entries = g.entries
-          .map((e) => {
+          .map((e, i) => {
             var first = String(e.message?.[0] ?? '');
             var source = Array.isArray(e.source) ? `${String(e.source[0]).split('/').slice(-2).join('/')}:${e.source[1]}` : '';
             var trace = e.exception ? `<details><summary class="s">${shEsc(this._t('lg_traceback'))}</summary><pre class="lgpre">${shEsc(e.exception)}</pre></details>` : '';
-            return `<div class="lgentry"><div class="lgmsg">${shEsc(first)}</div>
-              <div class="s">${shEsc([`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name, source].filter(Boolean).join(' · '))}</div>${trace}
-              <div class="actions">${this._button('lg_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { key: this._lgKey(e) }, busy: this._busy[`lg_ignore:${this._lgKey(e)}`] })}</div></div>`;
+            // As its mockup: how often and where, Ignore as an icon at the right, then the message in its box
+            var key = this._lgKey(e);
+            var busy = this._busy[`lg_ignore:${key}`];
+            var ignore = `<button class="icon-btn lgignore" data-action="lg_ignore" data-key="${shEsc(key)}" title="${shEsc(this._t('sl_ignore'))}" aria-label="${shEsc(this._t('sl_ignore'))}"${busy ? ' disabled aria-busy="true"' : ''}><ha-icon${busy ? ' class="spin"' : ''} icon="${busy ? 'mdi:loading' : 'mdi:eye-off-outline'}"></ha-icon></button>`;
+            var meta = [`×${e.count || 1}`, this._rel(new Date(e.timestamp * 1000).toISOString()), e.name].filter(Boolean).join(' · ');
+            // As its mockup: the first message's count, time and logger under the integration's name, its Ignore in the
+            // row; the next messages with their own line
+            if (i === 0) {
+              head = { meta, ignore, source };
+              return `<div class="lgentry"><div class="lgmsg" title="${shEsc(source)}">${shEsc(first)}</div>${trace}</div>`;
+            }
+            return `<div class="lgentry"><div class="lgtop"><div class="s">${shEsc([meta, source].filter(Boolean).join(' · '))}</div>${ignore}</div>
+              <div class="lgmsg">${shEsc(first)}</div>${trace}</div>`;
           })
           .join('');
-        return `<ha-card class="list lggroup ${tone}"><div class="lhead"><ha-icon icon="${g.custom ? 'mdi:puzzle-outline' : 'mdi:home-assistant'}"></ha-icon><span class="lname">${shEsc(shIntegration(g.domain))} <span class="pill ${tone}">${shEsc(counts)}</span></span>${reload}</div>${entries}</ha-card>`;
+        var frequent = g.errors >= threshold ? `<span class="pill bad">${shEsc(this._t('lg_frequent'))}</span>` : '';
+        return `<ha-card class="list lggroup ${tone}"><div class="item lgrow ${tone}"><ha-icon icon="${g.custom ? 'mdi:puzzle-outline' : 'mdi:home-assistant'}"></ha-icon>
+          <div class="who"><div class="n lgname">${shEsc(shIntegration(g.domain))}</div><div class="s">${shEsc(head.meta || '')}</div></div>
+          ${frequent}<span class="pill ${tone}">${shEsc(counts)}</span>${reload}${head.ignore || ''}</div>${entries}</ha-card>`;
       })
       .join('');
     return `<div class="tiles">${tiles.join('')}</div>${actions}
@@ -2724,10 +2775,12 @@ class SystemHubPanel extends HTMLElement {
       ? `<div class="btabs nviews" role="group">${vtab('list', this._t('sl_view_list'))}${nets.map((v) => vtab(v, this._t(`sl_view_${v}`))).join('')}</div>`
       : '';
     if (view !== 'list') return views + this._slNetwork(view);
-    return views + this._silentList();
+    return this._silentList(views);
   }
 
-  _silentList() {
+  // As its mockup: the counts, then the views and the integrations on one row, the devices to look at in their card
+  // with what silent and weak mean under them
+  _silentList(views = '') {
     var data = this._state.silent || {};
     var all = data.devices || [];
     var quiet = all.filter((d) => d.silent);
@@ -2753,15 +2806,15 @@ class SystemHubPanel extends HTMLElement {
         return `<div class="item ${tone}"><ha-icon icon="${d.silent ? 'mdi:access-point-off' : 'mdi:wifi-strength-1-alert'}"></ha-icon>
           <div class="who"><div class="n">${shEsc(d.name)}</div><div class="s">${shEsc([d.area, shIntegration(d.integration), heard, signal, power].filter(Boolean).join(' · '))}</div></div>
           <span class="pill ${tone}">${shEsc(this._t(d.silent ? 'sl_silent' : 'sl_weak'))}</span>
-          <a class="act quiet" href="/config/devices/device/${encodeURIComponent(d.device_id)}"><ha-icon icon="mdi:open-in-new"></ha-icon>${shEsc(this._t('open_device'))}</a>
-          ${this._button('sl_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { device: d.device_id, name: d.name }, busy: this._busy[`sl_ignore:${d.device_id}`] })}</div>`;
+          <a class="icon-btn" href="/config/devices/device/${encodeURIComponent(d.device_id)}" title="${shEsc(this._t('open_device'))}" aria-label="${shEsc(`${this._t('open_device')} · ${d.name}`)}"><ha-icon icon="mdi:open-in-new"></ha-icon></a>
+          <button class="icon-btn" data-action="sl_ignore" data-device="${shEsc(d.device_id)}" data-name="${shEsc(d.name)}" title="${shEsc(this._t('sl_ignore'))}" aria-label="${shEsc(`${this._t('sl_ignore')} · ${d.name}`)}"${this._busy[`sl_ignore:${d.device_id}`] ? ' disabled aria-busy="true"' : ''}><ha-icon icon="mdi:eye-off-outline"></ha-icon></button></div>`;
       })
       .join('');
     var hint = this._t('sl_hint', { battery: data.battery_hours ?? 24, mains: data.mains_hours ?? 24 });
     return `<div class="tiles">${tiles.join('')}</div>
-      <div class="actions">${filters}${this._message('sl')}${this._configure()}</div>
-      <span class="msg">${shEsc(hint)}</span>
-      <ha-card class="list">${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('sl_none'))}</div>`}</ha-card>`;
+      <div class="actions">${views}<span class="grow"></span>${filters}${this._message('sl')}${this._configure()}</div>
+      <ha-card class="list"><div class="lhead"><ha-icon icon="mdi:access-point-off"></ha-icon><span class="lname">${shEsc(this._tabName('silent'))} · ${list.length}</span></div>
+      ${rows || `<div class="empty good"><ha-icon icon="mdi:check-circle-outline"></ha-icon>${shEsc(this._t('sl_none'))}</div>`}<span class="msg slhint">${shEsc(hint)}</span></ha-card>`;
   }
 
   // A device left out of the module: saved in its settings at once, gone from the list
@@ -4010,7 +4063,7 @@ class SystemHubPanel extends HTMLElement {
       })
       .join('');
     var body = list.length
-      ? `<div class="bgroups${view === 'level' ? ' flat' : ''}">${groups}</div>`
+      ? `<div class="bgroups${view === 'level' ? ' bylevel' : ''}">${groups}</div>`
       : query
         ? `<div class="empty">${shEsc(this._t('no_match'))}</div>`
         : `<div class="empty good"><ha-icon icon="mdi:battery-check-outline"></ha-icon>${shEsc(this._t('all_good', { threshold: data.threshold ?? '' }))}</div>`;
@@ -4163,16 +4216,17 @@ class SystemHubPanel extends HTMLElement {
     var rank = (b) => (b.unavailable ? 0 : b.alert || b.low ? 1 : 2);
     var byLevel = (a, b) => rank(a) - rank(b) || (a.level ?? 101) - (b.level ?? 101) || a.name.localeCompare(b.name);
     if (view === 'forecast') return this._battForecast(list);
-    // By level: one list, the batteries in error (unavailable) first, then the lowest
+    // By level, as its mockup: what to replace (the batteries in error first, then the lowest) beside the ones that
+    // are fine
     if (view === 'level') {
+      var item = (b) => ({ b, context: [b.area, this._battTypeName(b.battery_type || '')].filter(Boolean).join(' · ') });
+      var sorted = [...list].sort(byLevel);
+      var due = sorted.filter((b) => b.unavailable || b.alert || b.low);
+      var fine = sorted.filter((b) => !(b.unavailable || b.alert || b.low));
       return [
-        {
-          key: '',
-          name: '',
-          icon: '',
-          items: [...list].sort(byLevel).map((b) => ({ b, context: [b.area, this._battTypeName(b.battery_type || '')].filter(Boolean).join(' · ') })),
-        },
-      ];
+        { key: 'replace', name: this._t('to_replace'), icon: 'mdi:battery-alert-variant-outline', items: due.map(item) },
+        { key: 'fine', name: this._t('batt_fine'), icon: 'mdi:battery-check-outline', items: fine.map(item) },
+      ].filter((g) => g.items.length);
     }
     var map = new Map();
     [...list].sort(byLevel).forEach((b) => {
@@ -5201,11 +5255,11 @@ var SH_SETTINGS_METHODS = {
         `<button class="icon-btn" data-action="cfg_group" data-group="${group}" data-dir="${dir}"${disabled ? ' disabled' : ''} title="${shEsc(this._t(dir < 0 ? 'move_up' : 'move_down'))}" aria-label="${shEsc(`${this._t(dir < 0 ? 'move_up' : 'move_down')} · ${gname}`)}"><ha-icon icon="${icon}"></ha-icon></button>`;
       var enabledRows = mine.filter(on).map((t) => row(t, true)).join('');
       var disabledRows = mine.filter((t) => !on(t)).map((t) => row(t, false)).join('');
-      return `<div class="cfgsec cfggroup"><span class="grow">${shEsc(gname)}</span>${arrow(-1, 'mdi:arrow-up', i === 0)}${arrow(1, 'mdi:arrow-down', i === groups.length - 1)}</div>
-        ${enabledRows ? `<div class="cfglist" data-group="${group}">${enabledRows}</div>` : ''}${disabledRows ? `<div class="cfglist off">${disabledRows}</div>` : ''}`;
+      return `<section class="cfgcard"><div class="cfgsec cfggroup"><ha-icon icon="${SH_MODULE_ICONS[mine[0]]}"></ha-icon><span class="grow">${shEsc(gname)}</span>${arrow(-1, 'mdi:arrow-up', i === 0)}${arrow(1, 'mdi:arrow-down', i === groups.length - 1)}</div>
+        ${enabledRows ? `<div class="cfglist" data-group="${group}">${enabledRows}</div>` : ''}${disabledRows ? `<div class="cfglist off">${disabledRows}</div>` : ''}</section>`;
     });
     return `<ha-card class="block cfg"><h2>${shEsc(this._t('modules_tabs'))}</h2><span class="msg">${shEsc(this._t('modules_tabs_hint'))}</span>
-      ${sections.join('')}</ha-card>`;
+      <div class="cfggrid">${sections.join('')}</div></ha-card>`;
   },
 
   // Moves a tab among the ones of its group turned on (the ones turned off keep their place): to the index `to` of that list
@@ -5491,22 +5545,6 @@ var SH_STATUS_GLYPHS = {
   bad: '<path d="M-18 -18 L18 18 M18 -18 L-18 18" stroke="#fff" stroke-width="12" stroke-linecap="round"/>',
 };
 
-function shStatusEmblem(tone) {
-  var nodes = [
-    [196, 250],
-    [316, 250],
-    [196, 352],
-    [316, 352],
-  ];
-  var links = nodes.map(([x, y]) => `<line x1="256" y1="300" x2="${x}" y2="${y}" stroke-width="12" stroke-linecap="round"/>`).join('');
-  var dots = nodes.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="17" stroke="none"/>`).join('');
-  return `<svg viewBox="64 56 412 380" aria-hidden="true"><defs><mask id="st-cut"><rect x="0" y="0" width="512" height="512" fill="#fff"/><circle cx="398" cy="128" r="66" fill="#000"/></mask></defs>
-    <g mask="url(#st-cut)" fill="none" stroke="currentColor"><path d="M96 236 L256 104 L416 236" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
-      <path d="M138 214 V388 Q138 404 154 404 H358 Q374 404 374 388 V214" stroke-width="26" stroke-linejoin="round"/>
-      ${links}<g fill="currentColor">${dots}<circle cx="256" cy="300" r="27" stroke="none"/></g></g>
-    <g transform="translate(398 128)"><circle r="52" fill="currentColor"/>${SH_STATUS_GLYPHS[tone] || SH_STATUS_GLYPHS.good}</g></svg>`;
-}
-
 var SH_STATUS_METHODS = {
   // One area: [tone, value, details] or null when there is nothing to show (module off, nothing read yet)
   _stArea(tab) {
@@ -5711,47 +5749,59 @@ var SH_STATUS_METHODS = {
     globalThis.systemHubSetBadge?.(counts.bad + counts.warn + counts.info, tone);
   },
 
-  _status() {
-    var { areas, counts, score, tone: ringTone } = this._stTone();
-    var points = counts.bad + counts.warn + counts.info;
-    var r = 84;
-    var circ = 2 * Math.PI * r;
+  // The version of Home Assistant and how long it has been up: the Status header's subtitle
+  _stMeta() {
     var core = (this._state.updates || []).find((u) => u.key === 'core');
+    var os = (this._state.updates || []).find((u) => u.key === 'os');
     var boot = (this._state.system || []).find((x) => x.key === 'last_boot');
     var bootAt = boot ? Date.parse(boot.state) : NaN;
-    var meta = [
+    return [
       core?.installed ? `Home Assistant ${core.installed}` : '',
+      os?.installed ? `OS ${os.installed}` : '',
       Number.isNaN(bootAt) ? '' : this._t('st_up', { time: this._uptime(Date.now() - bootAt).replace(/<[^>]+>/g, '') }),
     ].filter(Boolean);
-    var pills = [
-      ['bad', 'st_n_bad'],
-      ['warn', 'st_n_warn'],
-      ['info', 'st_n_info'],
-      ['good', 'st_n_good'],
-    ]
-      .filter(([tone]) => counts[tone])
-      .map(([tone, key]) => `<span class="pill ${tone}">${shEsc(this._t(key, { n: counts[tone] }))}</span>`)
-      .join('');
-    var hero = `<ha-card class="sthero ${ringTone}">
-      <div class="stscore" role="img" aria-label="${shEsc(`${score} / 100`)}"><svg viewBox="0 0 200 200" aria-hidden="true">
-        <circle cx="100" cy="100" r="${r}" class="sttrack"></circle>
-        <circle cx="100" cy="100" r="${r}" class="starc" stroke-dasharray="${circ}" stroke-dashoffset="${circ * (1 - score / 100)}" transform="rotate(-90 100 100)"></circle></svg>
-        <div class="stnum"><b>${score}</b><span>${shEsc(this._t('st_score'))}</span></div></div>
-      <div class="stbadge ${ringTone}" aria-hidden="true">${shStatusEmblem(ringTone)}</div>
-      <div class="who"><div class="sttitle">${shEsc(points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good'))}</div>
-        ${meta.length ? `<div class="s">${shEsc(meta.join(' · '))}</div>` : ''}<div class="stpills">${pills}</div></div></ha-card>`;
+  },
+
+  // The Status tab, as its mockup: the counts as tiles (in the header card), the critical areas to handle first, then
+  // one compact tile per area, in four columns by group
+  _status() {
+    var { areas, counts, score, tone: ringTone } = this._stTone();
+    var word = (key) => this._t(key, { n: '' }).replace(/\s+/g, ' ').trim();
+    var kpis = [
+      this._tile('mdi:heart-pulse', `<b>${score} / 100</b>`, this._t('st_score').replace(/\s*\/\s*100\s*/, '').trim() || this._t('st_score'), ringTone),
+      this._tile('mdi:alert-circle-outline', `<b>${counts.bad}</b>`, word('st_n_bad'), counts.bad ? 'bad' : ''),
+      this._tile('mdi:alert-outline', `<b>${counts.warn}</b>`, word('st_n_warn'), counts.warn ? 'warn' : ''),
+      this._tile('mdi:layers-outline', `<b>${counts.info}</b>`, word('st_n_info'), ''),
+      this._tile('mdi:check-circle-outline', `<b>${counts.good}</b>`, word('st_n_good'), ''),
+    ];
+    var head = `<div class="tiles stkpis">${kpis.join('')}</div>`;
+    // The areas to handle first: the critical ones, else those to watch
+    var worst = areas.filter(([, [tone]]) => tone === 'bad');
+    if (!worst.length) worst = areas.filter(([, [tone]]) => tone === 'warn');
+    var priority = worst.length
+      ? `<ha-card class="list stprio"><div class="lhead"><ha-icon icon="mdi:alert-outline"></ha-icon><span class="lname">${shEsc(this._t('st_priority'))} · ${worst.length}</span><span class="muted">${shEsc(this._t('st_priority_hint'))}</span></div>
+        ${worst
+          .map(
+            ([tab, [tone, value, details]]) => `<div class="item ${tone}"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>
+          <div class="who"><div class="n">${shEsc(value)}</div>${details ? `<div class="s">${shEsc(details.split(' · ').slice(0, 3).join(' · '))}</div>` : ''}</div>
+          <span class="muted stwhere">${shEsc(this._tabName(tab))}</span><button class="act quiet" data-action="st_open" data-tab="${tab}"><ha-icon icon="mdi:chevron-right"></ha-icon>${shEsc(this._t('st_view'))}</button></div>`,
+          )
+          .join('')}</ha-card>`
+      : '';
     var tile = ([tab, [tone, value, details]]) => `<button class="sttile ${tone}" data-action="st_open" data-tab="${tab}" aria-label="${shEsc(`${this._tabName(tab)}: ${value}`)}">
-        <span class="stglow"></span>
-        <span class="sthead"><span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="stname">${shEsc(this._tabName(tab))}</span><span class="stdot"></span></span>
-        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</button>`;
-    // The tiles by group, under the group's name, in the order of the tabs
-    var sections = this._groups()
+        <span class="stic"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon></span><span class="sttxt"><span class="stname">${shEsc(this._tabName(tab))}</span>
+        <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</span><span class="stdot"></span></button>`;
+    var rank = { bad: 3, warn: 2, info: 1, good: 0 };
+    // The tiles by group, under the group's name with its worst tone and its count, in the order of the tabs
+    var groups = this._groups()
       .map((group) => {
         var mine = areas.filter(([tab]) => shGroupOf(tab) === group);
-        return mine.length ? `<h2 class="stsec">${shEsc(this._groupName(group))}</h2><div class="stgrid">${mine.map(tile).join('')}</div>` : '';
+        if (!mine.length) return '';
+        var gtone = mine.reduce((w, [, [t]]) => (rank[t] > rank[w] ? t : w), 'good');
+        return `<section class="stgroup"><h2 class="stsec"><span class="stgdot ${gtone}"></span>${shEsc(this._groupName(group))}<span class="muted">${mine.length}</span></h2><div class="stgrid">${mine.map(tile).join('')}</div></section>`;
       })
       .join('');
-    return `${hero}${sections}`;
+    return `${head}${priority}<div class="stgroups">${groups}</div>`;
   },
 };
 
@@ -6024,7 +6074,7 @@ var SH_BANNER_STYLE = `
     .shtop { padding:0; overflow:hidden; }
     .shbanner { position:relative; height:90px; overflow:hidden; color:#1d2733; background:var(--sh-wall); --sh-sub:#4a5a6c; container-type:inline-size; }
     .shbanner.night { color:#fff; --sh-sub:rgba(255,255,255,.78); }
-    .shscene { position:absolute; right:0; bottom:10px; height:80px; width:min(360px, 46%); }
+    .shscene { position:absolute; right:62px; bottom:10px; height:80px; width:min(360px, 44%); }
     .shground { position:absolute; left:0; right:0; bottom:0; height:10px; }
     .g-parquet { background:repeating-linear-gradient(90deg, #c99a6b 0 38px, #b98a5c 38px 40px); box-shadow:inset 0 2px 0 #a97c50; }
     .night .g-parquet { background:repeating-linear-gradient(90deg, #4a3a2c 0 38px, #3e3024 38px 40px); box-shadow:inset 0 2px 0 #5c4836; }
@@ -6032,7 +6082,7 @@ var SH_BANNER_STYLE = `
     .night .g-tiles { background:repeating-linear-gradient(90deg, #3a4250 0 18px, #2e3542 18px 19px); box-shadow:inset 0 2px 0 #4a5262; }
     .g-concrete { background:#9aa1a9; box-shadow:inset 0 2px 0 #b5bbc2; }
     .night .g-concrete { background:#2c323b; box-shadow:inset 0 2px 0 #3a414c; }
-    .shhead { position:absolute; z-index:1; left:0; top:0; bottom:10px; right:calc(min(360px, 46%) + 4px); padding:6px 12px; box-sizing:border-box;
+    .shhead { position:absolute; z-index:1; left:0; top:0; bottom:10px; right:calc(min(360px, 44%) + 66px); padding:6px 12px; box-sizing:border-box;
               display:flex; align-items:center; gap:10px; min-width:0; }
     .shbadge { width:40px; height:40px; flex:none; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:24px; color:var(--tone);
                background:rgba(255,255,255,.62); box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--tone) 24%, transparent); }
@@ -6047,7 +6097,7 @@ var SH_BANNER_STYLE = `
     .night .shpill { background:color-mix(in srgb, var(--tone) 30%, rgba(8,18,38,.55)); color:color-mix(in srgb, var(--tone) 35%, #fff); }
     .shsub { font-size:13px; line-height:18px; color:var(--sh-sub); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .idle { --tone:#8a96a6; }
-    @container (max-width:560px) { .shscene { width:42%; } .shhead { right:42%; } .shtrow { flex-wrap:wrap; row-gap:2px; } .shpill { max-width:100%; } }
+    @container (max-width:560px) { .shscene { width:40%; right:34px; } .shhead { right:calc(40% + 34px); } .shtrow { flex-wrap:wrap; row-gap:2px; } .shpill { max-width:100%; } }
     @container (max-width:340px) { .shscene { display:none; } .shhead { right:0; } }
     .shtop .subtabs { gap:4px; padding:0 12px; border-bottom:1px solid var(--divider-color, rgba(127,127,127,.2)); overflow-x:auto; flex-wrap:nowrap; }
     .shtop .subtab { min-height:0; padding:8px 10px; border:0; border-bottom:2px solid transparent; border-radius:6px 6px 0 0; margin-bottom:-1px;
@@ -6081,14 +6131,181 @@ var SH_BANNER_STYLE = `
     @keyframes sh-drive { 0%, 100% { transform:translateX(2px); } 50% { transform:translate(-2px, -.5px); } }
     @keyframes sh-ping { from { transform:scale(1); opacity:.9; } to { transform:scale(2.6); opacity:0; } }
     @media (prefers-reduced-motion: reduce) { .shscene * { animation:none !important; } }
-    /* The cards' charter: pill buttons, round icons, uppercase section titles, rows tinted by their tone */
-    .act { border-radius:18px; }
+    /* The cards' charter, as the mockups: the tab's header card holds what opens it; tiles and rows are filled and
+       rounded (tile B: a round icon, tinted unless all is well), an alert's row tinted and outlined; pill buttons;
+       uppercase list titles */
+    :host { --sh-sec: color-mix(in srgb, var(--primary-text-color) 6%, var(--card-background-color, #fff)); }
+    .shtop .shbody { padding:12px 16px 16px; display:flex; flex-direction:column; gap:12px; }
+    .tiles { gap:8px; }
+    .tile { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; min-height:56px; box-sizing:border-box;
+            padding:8px 10px 8px 8px; gap:10px; }
+    .tile .avatar { width:40px; height:40px; --mdc-icon-size:22px; }
+    .tile:not(.warn):not(.bad):not(.info) .avatar { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .tile .who .n b { font-weight:400; }
+    .tile:is(.warn, .bad, .info) .who .n b { color:var(--tone-text); }
+    ha-card.list { padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px; }
+    .list .lhead { padding:0 0 4px; min-height:30px; }
     .lhead .lname { font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
-    .list { padding:6px 8px; }
-    .list .item { border-radius:12px; padding:8px; }
-    .list :where(.item.bad, .item.warn) { background:color-mix(in srgb, var(--tone) 8%, transparent); }
-    .sttile { border-radius:12px; }
+    .list .item { background:var(--sh-sec); border:1px solid transparent; border-radius:12px; min-height:56px; box-sizing:border-box; padding:8px 10px 8px 8px; gap:10px; }
+    .list .item:is(.bad, .warn) { background:color-mix(in srgb, var(--tone) 9%, var(--sh-sec)); border-color:color-mix(in srgb, var(--tone) 22%, transparent); }
+    .list .item.link:hover { background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
+    .list .item > :is(ha-icon:first-child, input[type='checkbox'] + ha-icon) { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px;
+                                        color:var(--tone-text, var(--primary-text-color));
+                                        background:color-mix(in srgb, var(--tone, var(--secondary-text-color)) 16%, transparent); }
+    .list .item.good > :is(ha-icon:first-child, input[type='checkbox'] + ha-icon) { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .act { min-height:34px; box-sizing:border-box; padding:0 14px; border-radius:18px; }
+    .lhead .act { min-height:30px; padding:0 12px; }
+    .act.quiet { background:var(--sh-sec); }
+    .sttile, .stic { border-radius:12px; }
     .stic { border-radius:50%; }
+    /* Status: the counts in the header card, the areas to handle first, then a compact tile per area in four columns */
+    .stkpis { grid-template-columns:repeat(5, minmax(0, 1fr)); }
+    .stprio .stwhere { flex:none; font-size:12px; }
+    .stgroups { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:16px 12px; align-items:start; }
+    .stgroup .stsec { display:flex; align-items:center; gap:8px; margin:0 4px 8px; font-size:14px; letter-spacing:0; text-transform:none; color:var(--primary-text-color); }
+    .stgroup .stsec .muted { margin-left:auto; font-size:12px; font-weight:400; }
+    .stgdot { width:8px; height:8px; border-radius:50%; flex:none; background:var(--tone); }
+    .stgroup .stgrid { grid-template-columns:minmax(0, 1fr); gap:8px; }
+    .sttile { flex-direction:row; align-items:center; gap:10px; min-height:56px; padding:8px 10px 8px 8px; border:1px solid transparent; background:var(--sh-sec); }
+    .sttile:hover { border-color:transparent; background:color-mix(in srgb, var(--tone) 13%, var(--sh-sec)); }
+    .sttile .stic { width:40px; height:40px; }
+    .sttile.good .stic { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .sttxt { flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+    .sttile .stname { font-size:14px; font-weight:500; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sttile .stval { font-size:12px; line-height:1.25; color:var(--tone-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .sttile.good .stval { color:var(--secondary-text-color); font-weight:400; }
+    .sttile .stdet { font-size:12px; line-height:1.25; -webkit-line-clamp:1; }
+    .sttile .stdot { position:absolute; top:8px; right:8px; width:7px; height:7px; box-shadow:none; }
+    .sttile.good .stdot { display:none; }
+    .shdots { display:inline-flex; gap:4px; margin-left:10px; vertical-align:middle; }
+    .shdot { width:7px; height:7px; border-radius:50%; background:var(--tone); }
+    /* Updates: kept as tiles, filled and rounded, each group in its card under an uppercase title */
+    .mksec { padding:12px 16px 14px; display:flex; flex-direction:column; gap:10px; }
+    .mksec > h2.stsec { margin:0; min-height:30px; display:flex; align-items:center; }
+    .mksec .mkgrid { gap:8px; }
+    .mksec .mkcard, .mksec .mkhead { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; }
+    .mksec .mkhead { padding:10px 12px; }
+    .mksec .mkcard { padding:12px; }
+    .mksec .mkcard.link:hover { background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
+    div.mklogo:not(.mkproj) { border-radius:50%; }
+    .mksec :is(.mkcard, .mkhead) .act.quiet { background:var(--card-background-color, #fff); }
+    /* System: the rings as tiles, the charts' titles as the sections' */
+    .ring { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; }
+    .ctitle { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    /* As the mockups: the page as wide, the rows and tiles denser, the status pills with their dot, two columns */
+    main { max-width:1180px; }
+    .list .item { min-height:48px; }
+    .list .item .who .n { font-size:13.5px; font-weight:500; }
+    .list .item .who .s { font-size:12px; }
+    .tile .who .n { font-size:13.5px; }
+    .tile .who .n b { font-size:20px; }
+    .tile .who .s { font-size:12px; }
+    .pill { display:inline-flex; align-items:center; gap:4px; padding:1px 8px; line-height:16px; }
+    .pill::before { content:""; width:6px; height:6px; border-radius:50%; flex:none; background:var(--tone, var(--secondary-text-color)); }
+    .shzooms { position:absolute; z-index:2; top:5px; right:5px; display:flex; gap:5px; }
+    .shzoom { appearance:none; border:0; padding:0; cursor:pointer; width:24px; height:24px; border-radius:50%; display:grid; place-items:center;
+              --mdc-icon-size:16px; color:#33506b; background:rgba(255,255,255,.55); box-shadow:inset 0 0 0 1px rgba(255,255,255,.7); }
+    .shzoom:hover { background:rgba(255,255,255,.75); }
+    .night .shzoom { color:#fff; background:rgba(255,255,255,.12); box-shadow:inset 0 0 0 1px rgba(255,255,255,.2); }
+    .shcols { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; align-items:start; }
+    .shcols > * { min-width:0; margin:0; }
+    ha-card.block > h2 { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    @media (max-width:900px) { .shcols { grid-template-columns:minmax(0, 1fr); } }
+    /* Settings, as its mockup: a card per group, two by two, its modules as filled rows */
+    ha-card.block.cfg { background:none; box-shadow:none; border:0; padding:0; }
+    .cfggrid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px; align-items:start; margin-top:10px; }
+    .cfgcard { background:var(--card-background-color, #fff); border:1px solid var(--divider-color, rgba(127,127,127,.15)); border-radius:var(--ha-card-border-radius, 12px);
+               padding:12px 16px 14px; display:flex; flex-direction:column; gap:6px; min-width:0; }
+    .cfgcard .cfggroup { display:flex; align-items:center; gap:6px; padding:0; min-height:30px; --mdc-icon-size:16px; }
+    .cfgcard .cfggroup .icon-btn { --mdc-icon-size:18px; }
+    .cfgcard .cfglist { gap:6px; }
+    .cfgcard .cfgrow { border:0; padding:6px 10px 6px 4px; border-radius:12px; background:var(--sh-sec); align-items:center; }
+    .cfgcard .cfgrow > ha-icon { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px; flex:none;
+                                 color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); }
+    .cfgcard .cfgrow.off > ha-icon { color:var(--secondary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }
+    .cfgcard .cfgrow .who .n { font-size:13.5px; font-weight:500; }
+    .cfgcard .cfgrow .who .s { font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .cfgcard .cfgrow.open { margin:0; background:color-mix(in srgb, var(--primary-color) 8%, var(--sh-sec)); }
+    .cfgcard .cfgbody { padding:8px 4px 12px; }
+    .cfgcard:has(.cfgrow.open) { grid-column:1 / -1; }
+    @media (max-width:900px) { .cfggrid { grid-template-columns:minmax(0, 1fr); } }
+    /* Logs, as its mockup: the integration's name as is beside its round icon, each message in its box */
+    .lggroup .lhead > ha-icon { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px; flex:none;
+                                color:var(--tone-text); background:color-mix(in srgb, var(--tone) 16%, transparent); }
+    .lggroup .lhead .lname { font-family:var(--code-font-family, monospace); font-size:14px; letter-spacing:0; text-transform:none; color:var(--primary-text-color); }
+    .lggroup .lgentry { border-top:0; padding:0; gap:6px; }
+    .lgtop { display:flex; align-items:center; gap:8px; min-width:0; }
+    .lgtop .s { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .lggroup .lgmsg { background:var(--sh-sec); border-radius:10px; padding:8px 10px; font-size:12.5px; }
+    .who .s.mono { font-size:12px; }
+    .item .side.fixed + .pill { margin-left:4px; }
+    /* Sub-tabs, as the mockups (the heating card's zones): under the banner with a margin, each icon in its module's
+       tone, the one shown underlined in that tone */
+    .shtop .subtabs { margin:0 16px; padding:0; }
+    .shtop .subtab { --zc:var(--tone-good); padding:8px 10px; }
+    .shtop .subtab:has(.subdot.warn) { --zc:var(--tone-warn); }
+    .shtop .subtab:has(.subdot.bad) { --zc:var(--tone-bad); }
+    .shtop .subtab:has(.subdot.info) { --zc:var(--info-color, #039be5); }
+    .shtop .subtab ha-icon, .shtop .subtab.active ha-icon { color:var(--zc); }
+    .shtop .subtab.active { border-bottom-color:var(--zc); }
+    .shtop .subdot { display:none; }
+    /* One look for the controls of every tab, as the mockups: segmented choices on a filled track, the one picked
+       raised on the card's background; search fields and lists filled pills; round icon buttons */
+    .btabs, .segs { display:inline-flex; gap:4px; padding:3px; border-radius:12px; background:var(--sh-sec); overflow:visible; }
+    .btab, .seg { padding:6px 10px; border-radius:9px; font-size:12.5px; font-weight:500; color:var(--secondary-text-color); background:none; }
+    .btab.on, .seg.active { background:var(--card-background-color, #fff); color:var(--primary-text-color); box-shadow:0 1px 3px rgba(0, 0, 0, .15); }
+    .box { border:0; border-radius:18px; background:var(--sh-sec); min-height:34px; padding:0 4px 0 12px; box-sizing:border-box; --mdc-icon-size:18px; color:var(--secondary-text-color); }
+    .box:focus-within { box-shadow:inset 0 0 0 2px var(--primary-color); }
+    .box input { font-size:13px; padding:6px 8px; color:var(--primary-text-color); }
+    .ofilters select { border:0; border-radius:18px; background:var(--sh-sec); padding:7px 12px; font-size:13px; min-height:34px; }
+    .icon-btn { border-radius:50%; }
+    .icon-btn:hover:not([disabled]) { background:color-mix(in srgb, var(--secondary-text-color) 16%, transparent); color:var(--primary-text-color); }
+    .shtop .shbody .msg { font-size:12px; }
+    .bgroup .ghead .gname { font-size:12px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--secondary-text-color); }
+    .bgroup .ghead { --mdc-icon-size:16px; color:var(--secondary-text-color); min-height:30px; }
+    /* The round icons in their tone itself, as the mockups (the text keeps its readable shade) */
+    .list .item:is(.bad, .warn, .info) > :is(ha-icon:first-child, input[type='checkbox'] + ha-icon), .tile:is(.bad, .warn, .info) .avatar,
+    .sttile:is(.bad, .warn, .info) .stic, .lggroup .lhead > ha-icon { color:var(--tone); }
+    /* Settings: its title and how to order the tabs are in the banner */
+    ha-card.block.cfg > h2, ha-card.block.cfg > .msg { display:none; }
+    ha-card.block.cfg .cfggrid { margin-top:0; }
+    /* Database, as its mockup: the checkbox then the bar beside the name, the counts small at the right */
+    .tiles { grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); }
+    .list .item.dbrow > ha-icon:first-child { width:auto; height:auto; background:none; --mdc-icon-size:20px; color:var(--secondary-text-color); }
+    .dbrow.on > ha-icon:first-child { color:var(--primary-color); }
+    :is(.dbrow, .dbtable) .who { display:grid; grid-template-columns:minmax(0, 1fr) minmax(80px, 38%); column-gap:16px; align-items:center; }
+    :is(.dbrow, .dbtable) .who > :not(.dbbar) { grid-column:1; }
+    :is(.dbrow, .dbtable) .who .dbbar { grid-column:2; grid-row:1 / span 2; margin:0; }
+    .dbcount { font-size:12px; color:var(--secondary-text-color); min-width:64px; }
+    .dbcount b { font-size:13px; font-weight:500; color:var(--primary-text-color); }
+    .dbents { border-left:0; margin-left:28px; display:flex; flex-direction:column; gap:6px; }
+    .dbdev { gap:6px; padding-right:0; border-radius:12px; }
+    .dbdev.on { background:none; }
+    .dbtable { padding-right:10px; }
+    .dbtable .who .n { font-family:var(--code-font-family, monospace); font-size:13px; }
+    /* System's rings, as its mockup: a compact 64 px ring, the name under it, the last 24 hours as a thin line below */
+    .ring { padding:12px 10px 34px; gap:4px; }
+    .ring .gauge { width:64px; height:64px; }
+    .ring .gauge circle { stroke-width:8; }
+    .ring .rv { top:12px; height:64px; }
+    .ring .rv b { font-size:16px; }
+    .ring .rv span { font-size:10px; margin-top:3px; }
+    .ring .rl { font-size:13.5px; }
+    .ring .behind { height:30px; }
+    .ring .behind polygon { opacity:.08; }
+    /* Logs, as its mockup: one row per integration (its name, the first message's count, time and logger, its pills,
+       Reload and Ignore), the message in its box under it */
+    .lggroup { padding:8px 10px 10px; gap:8px; }
+    .lggroup .lgrow { background:none; border:0; padding:0; min-height:48px; }
+    .lggroup .lgrow:is(.bad, .warn) { background:none; border:0; }
+    .lggroup .lgname { font-family:var(--code-font-family, monospace); font-size:13.5px; }
+    .lggroup .lgentry { margin-left:0; }
+    .lggroup .lgrow .act { min-height:32px; }
+    /* <ha-icon> is an inline element whose icon sits on the line's middle: as a box of its own, it is centred in its
+       round badge instead of riding a few pixels high */
+    ha-icon { display:inline-flex; align-items:center; justify-content:center; flex:none; line-height:0; }
+    @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
+    @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;
 
 var SH_BANNER_METHODS = {
@@ -6102,25 +6319,35 @@ var SH_BANNER_METHODS = {
     var pill = '';
     var sub = '';
     var extra = {};
+    var statusTitle = '';
+    var dots = '';
     if (tab === 'status') {
       var { areas, counts, score, tone: ringTone } = this._stTone();
       var points = counts.bad + counts.warn + counts.info;
       tone = ringTone;
-      pill = points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good');
-      sub = [
+      // As its mockup: the points to check as the title, the critical and to-watch counts as the pill, Home Assistant's
+      // version and uptime then one dot per area under it
+      statusTitle = points ? this._t(points === 1 ? 'st_point' : 'st_points', { n: points }) : this._t('st_all_good');
+      pill = [
         ['bad', 'st_n_bad'],
         ['warn', 'st_n_warn'],
-        ['info', 'st_n_info'],
-        ['good', 'st_n_good'],
       ]
         .filter(([t]) => counts[t])
         .map(([t, key]) => this._t(key, { n: counts[t] }))
         .join(' · ');
+      if (!pill) pill = `${score} / 100`;
+      sub = this._stMeta().join(' · ');
+      dots = areas.map(([t, [areaTone]]) => `<span class="shdot ${areaTone}" title="${shEsc(this._tabName(t))}"></span>`).join('');
       // The worst tone of each group of modules: the lines of the screen
       var worst = (list) => (list.includes('bad') ? 'bad' : list.includes('warn') ? 'warn' : list.includes('info') ? 'info' : 'good');
       extra = { score, groups: Object.keys(SH_GROUPS).map((g) => worst(areas.filter(([t]) => shGroupOf(t) === g).map(([, a]) => a[0]))) };
     } else if (tab === 'settings') {
+      // As its mockup: the modules turned on out of all of them as the pill, how to order them as the subtitle
       tone = 'idle';
+      var all = Object.keys(SH_MODULE_ICONS).filter((t) => t !== 'status' && t !== 'settings');
+      var on = all.filter((t) => t === 'system' || (this._state.modules || []).includes(t));
+      pill = `${on.length} / ${all.length} · ${this._t('modules_tabs')}`;
+      sub = this._t('modules_tabs_hint');
     } else {
       var area = this._stArea(tab);
       if (area) [tone, pill, sub] = area;
@@ -6142,14 +6369,15 @@ var SH_BANNER_METHODS = {
     // The Status tab: its wall takes a little of the overall tone
     var wall = night ? dark : day;
     if (tab === 'status' && tone !== 'good') wall = `color-mix(in srgb, ${hex} ${night ? 14 : 9}%, ${wall})`;
-    var title = tab === 'status' ? this._t('tab_status') : this._tabName(tab);
+    var title = tab === 'status' ? statusTitle : this._tabName(tab);
     var scene = `${shDecor(SH_DECOR[tab] || 'A', night)}<g transform="translate(160 0)">${shScene(tab, tone, night, extra)}</g>`;
     return `<div class="shbanner ${tone}${night ? ' night' : ''}" style="--sh-wall:${wall}">
       <svg class="shscene" viewBox="0 0 360 80" preserveAspectRatio="xMaxYMax slice" aria-hidden="true" focusable="false">${scene}</svg>
       <div class="shground g-${floor}"></div>
+      <div class="shzooms"><button class="shzoom" data-action="reload" title="${shEsc(this._t('refresh'))}" aria-label="${shEsc(this._t('refresh'))}"><ha-icon icon="mdi:refresh"></ha-icon></button></div>
       <div class="shhead"><span class="shbadge" aria-hidden="true"><ha-icon icon="${SH_MODULE_ICONS[tab] || SH_MODULE_ICONS.status}"></ha-icon></span>
         <div class="shtitles"><div class="shtrow"><span class="shtitle">${shEsc(title)}</span>${pill ? `<span class="shpill">${shEsc(pill)}</span>` : ''}</div>
-          ${sub ? `<span class="shsub">${shEsc(sub)}</span>` : ''}</div></div></div>`;
+          ${sub || dots ? `<span class="shsub">${shEsc(sub)}${dots ? `<span class="shdots">${dots}</span>` : ''}</span>` : ''}</div></div></div>`;
   },
 };
 Object.assign(SystemHubPanel.prototype, SH_BANNER_METHODS);
