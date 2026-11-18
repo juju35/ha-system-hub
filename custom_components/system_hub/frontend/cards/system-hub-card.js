@@ -171,6 +171,8 @@ var SH_HUB_STYLE = `
 `;
 
 var SH_CARD_STYLE = `
+  /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+  ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
   :host { display:block; }
   ha-card { padding:14px 16px; --sh-good: var(--success-color, #43a047); --sh-warn: var(--warning-color, #ffa600);
             --sh-bad: var(--error-color, #db4437); --sh-info: var(--info-color, #039be5); }

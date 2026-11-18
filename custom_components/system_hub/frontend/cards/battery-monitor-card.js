@@ -2758,6 +2758,8 @@ class BatteryMonitorCard extends HTMLElement {
     return `
       /* A block, never narrower than its grid or flex track (min-width: 0): see the size container below. */
       :host([hidden]) { display: none !important; }
+      /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+      ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
       :host {
         display: block;
         min-width: 0;

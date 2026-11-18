@@ -2504,6 +2504,8 @@ class GitSyncCard extends HTMLElement {
 
   _css() {
     return `
+      /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+      ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
       :host { display: block; --gs-ok: var(--success-color, #43a047); --gs-warn: var(--warning-color, #ffa600);
               --gs-info: var(--info-color, #039be5); --gs-alert: var(--error-color, #db4437);
               --gs-off: var(--disabled-text-color, #9e9e9e); --gs-accent: var(--primary-color, #03a9f4); }

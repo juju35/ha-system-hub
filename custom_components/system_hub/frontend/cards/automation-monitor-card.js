@@ -1632,6 +1632,8 @@ const tracePath = (hass, entityId, uniqueId) => {
 const BASE_STYLE = `
   /* Text in a state or accent colour is mixed with the theme's text colour (darker in light themes, lighter in dark
      ones) to stay readable (WCAG AA 4.5:1); dots, borders, badges and icons keep the pure colour. */
+  /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+  ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
   :host { --am-blue: #1db6ec; --am-ok: var(--success-color, #43a047); --am-warn: var(--warning-color, #ffa600);
           --am-crit: var(--error-color, #db4437);
           --am-blue-text: color-mix(in srgb, var(--am-blue) 40%, var(--primary-text-color, #212121)); }

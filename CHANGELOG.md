@@ -10,6 +10,8 @@
 - **Consistency across the tabs**: one look for the segmented choices (the one picked raised on a filled track), search fields and lists as filled pills, round icon buttons; every tab's module settings in the banner's corner (Versioning and the Marketplace included); the battery groups' titles as the other sections'.
 - **Database**: each device and table with its checkbox, its bar beside the name and its counts small at the right; **Settings**: the modules turned on and how to order the tabs in the banner; **Resources**: compact 64 px rings; round icons in their tone itself; *To handle first* keeps the first details of each area.
 - **Icons centred**: in Home Assistant, an icon sat a few pixels high in its round badge (an inline `<ha-icon>` on the text's line); every icon is now a box of its own, centred. The screenshot script draws `<ha-icon>` as Home Assistant does, so its shots show it.
+- **Cards, icons centred** too (checkmarks of the selection boxes, badges, buttons); the screenshot scripts draw `<ha-icon>` as Home Assistant does.
+- **Orphan Entities card**: the *Used by N* badge sits in its row, at its right, so every row has the list's width.
 - **Sub-tabs**: as the heating card's zones — each icon in its module's tone, the tab shown underlined in that tone, with the header card's margins.
 - **Containers & process**: each container by its name (*Matter Server*), the container and its image under it in monospace, its state as the last pill.
 - **Silent devices**: the views and the integration filters on one row, the devices in their card with what *silent* and *weak* mean under them, **Device** and **Ignore** as icons.

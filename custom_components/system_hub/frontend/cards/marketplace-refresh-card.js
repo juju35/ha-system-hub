@@ -1948,6 +1948,8 @@ class MarketplaceRefreshCard extends HTMLElement {
   static get styles() {
     return `
       :host([hidden]) { display: none !important; }
+      /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+      ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
       :host {
         --hr-ok: var(--success-color, #43a047);
         --hr-info: var(--info-color, #039be5);

@@ -3184,7 +3184,7 @@ class OrphanEntitiesCard extends HTMLElement {
         return `<li><ha-icon icon="${OE_REF_ICONS[r.type] || 'mdi:link-variant'}"></ha-icon><span class="rk">${oeEsc(kind(r))}</span>${link}</li>`;
       })
       .join('');
-    return `<div class="item">${row}<button class="used" data-used="${oeEsc(id)}" data-focus="u:${oeEsc(id)}" aria-expanded="${open}" title="${oeEsc(tip)}"><ha-icon icon="mdi:link-variant"></ha-icon><span>${oeEsc(label)}</span></button>${open ? `<ul class="refs">${refs}</ul>` : ''}</div>`;
+    return `<div class="item"><div class="rowwrap">${row}<button class="used" data-used="${oeEsc(id)}" data-focus="u:${oeEsc(id)}" aria-expanded="${open}" title="${oeEsc(tip)}"><ha-icon icon="mdi:link-variant"></ha-icon><span>${oeEsc(label)}</span></button></div>${open ? `<ul class="refs">${refs}</ul>` : ''}</div>`;
   }
 
   // Above the list while entities are selected: their count, then Ignore, Remove and clear.
@@ -3272,6 +3272,8 @@ class OrphanEntitiesCard extends HTMLElement {
   static get styles() {
     return `
       :host([hidden]) { display: none !important; }
+      /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+      ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
       :host {
         display: block;
         min-width: 0;
@@ -3430,9 +3432,12 @@ class OrphanEntitiesCard extends HTMLElement {
       .when > span { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .when .lbl { font-size: 12px; font-weight: 500; line-height: 1.2; color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color)); }
       .when .ago { font-size: 11px; line-height: 1.2; color: var(--oe-muted); }
-      /* A row still in use: its "Used by N" badge (orange, tinted) at its right, its list under it when open */
+      /* A row still in use: its "Used by N" badge (orange, tinted) in the row at its right, its list under it when open */
       .item { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; }
-      .item > .row { flex: 1 1 0; }
+      /* The badge sits in the row, at its right (the row keeps its room), so every row has the list's width */
+      .rowwrap { position: relative; flex: 1 1 100%; min-width: 0; display: flex; }
+      .rowwrap > .row { flex: 1 1 0; padding-right: 112px; }
+      .rowwrap > .used { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); }
       .used { --t: var(--oe-warn); all: unset; cursor: pointer; flex: none; box-sizing: border-box; display: inline-flex;
               align-items: center; gap: 3px; height: 24px; padding: 0 8px; border-radius: 12px; font-size: 11px; font-weight: 500;
               white-space: nowrap; color: color-mix(in srgb, var(--t) 40%, var(--primary-text-color));

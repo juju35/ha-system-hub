@@ -2792,6 +2792,8 @@ const fireMoreInfo = (node, entityId) => {
 
 const BASE_STYLE = `
   /* A block host: in Home Assistant the card sits in hui-card (no display), and an inline host has no size of its own. */
+  /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
+  ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
   :host { display: block; }
   :host { --sm-blue: #18bcf2; --sm-ok: var(--success-color, #43a047); --sm-warn: var(--warning-color, #ffa600); --sm-crit: var(--error-color, #db4437);
           --sm-focus: var(--primary-color, #03a9f4); }
