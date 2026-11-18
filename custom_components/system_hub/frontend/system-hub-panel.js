@@ -6300,6 +6300,9 @@ var SH_BANNER_STYLE = `
     .lggroup .lgname { font-family:var(--code-font-family, monospace); font-size:13.5px; }
     .lggroup .lgentry { margin-left:0; }
     .lggroup .lgrow .act { min-height:32px; }
+    /* <ha-icon> is an inline element whose icon sits on the line's middle: as a box of its own, it is centred in its
+       round badge instead of riding a few pixels high */
+    ha-icon { display:inline-flex; align-items:center; justify-content:center; flex:none; line-height:0; }
     @media (max-width:900px) { .stgroups { grid-template-columns:repeat(2, minmax(0, 1fr)); } .stkpis { grid-template-columns:repeat(3, minmax(0, 1fr)); } }
     @media (max-width:600px) { .stgroups { grid-template-columns:minmax(0, 1fr); } .stkpis { grid-template-columns:repeat(2, minmax(0, 1fr)); } .shdots { display:none; } }
 `;

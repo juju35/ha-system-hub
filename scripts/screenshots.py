@@ -101,8 +101,8 @@ customElements.define("ha-icon", class extends HTMLElement {
       return;
     }
     const path = ICONS[icon.replace("mdi:", "")] || "";
-    this.style.display = "inline-flex";
-    this.innerHTML = '<svg viewBox="0 0 24 24" style="width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px);fill:currentColor"><path d="' + path + '"/></svg>';
+    // As Home Assistant draws it: <ha-icon> left inline, its icon an inline-flex box on the line's middle (ha-svg-icon)
+    this.innerHTML = '<span style="display:inline-flex;vertical-align:middle;position:relative;width:var(--mdc-icon-size,24px);height:var(--mdc-icon-size,24px)"><svg viewBox="0 0 24 24" style="width:100%;height:100%;display:block;fill:currentColor"><path d="' + path + '"/></svg></span>';
   }
 });
 customElements.define("ha-menu-button", class extends HTMLElement {
