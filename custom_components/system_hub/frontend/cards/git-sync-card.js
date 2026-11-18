@@ -1927,6 +1927,8 @@ var SHB_STYLE = `
                margin:calc(-1 * var(--shb-py)) calc(-1 * var(--shb-px)) 8px; padding:0 calc(min(200px, 62%) * .62) 10px 14px;
                border-radius:var(--ha-card-border-radius, 12px) var(--ha-card-border-radius, 12px) 0 0;
                background:linear-gradient(90deg, #f4f7fb 0%, #eef2f7 45%, #e4eaf2 100%); color:#0d2a45; container:shb / inline-size; --shb-tone:${SHB_COLORS.good}; }
+  /* Nothing under the banner (a mini card folded): the card ends on its ground strip */
+  .sh-banner:last-child { margin-bottom:calc(-1 * var(--shb-py)); }
   .sh-banner.night { background:linear-gradient(90deg, #222a3a 0%, #1c2230 50%, #161b27 100%); color:#fff; }
   .sh-banner.shb-warn { --shb-tone:${SHB_COLORS.warn}; } .sh-banner.shb-bad { --shb-tone:${SHB_COLORS.bad}; }
   .sh-banner.shb-info { --shb-tone:${SHB_COLORS.info}; } .sh-banner.shb-idle { --shb-tone:${SHB_COLORS.idle}; }
@@ -1953,8 +1955,10 @@ var SHB_STYLE = `
   .sh-banner :is(.head, .header, .mini) > :is(button, ha-icon-button):nth-last-of-type(2) { right:33px; }
   .sh-banner :is(.head, .header, .mini) > :is(button, ha-icon-button):nth-last-of-type(3) { right:61px; }
   .sh-banner.night :is(.head, .header, .mini) > :is(button, ha-icon-button) { background:rgba(255,255,255,.12) !important; box-shadow:inset 0 0 0 1px rgba(255,255,255,.2) !important; color:#fff !important; fill:#fff !important; }
-  .sh-banner .rs { flex-wrap:nowrap !important; overflow:hidden; margin-top:3px !important; }
-  .sh-banner .rs > * { flex:none; }
+  /* The chips on one line: one that does not fit wraps out of sight instead of being cut (the full view has them all);
+     a single chip too long for the line ends in an ellipsis */
+  .sh-banner .rs { flex-wrap:wrap !important; align-items:center; row-gap:40px !important; max-height:22px; overflow:hidden; margin-top:3px !important; }
+  .sh-banner .rs > * { flex:none; max-width:100%; }
   @container shb (max-width: 170px) { .shb-scene { display:none; } .sh-banner { padding-right:14px; } }
   .shb-blink { animation:shb-bl 1.2s steps(2) infinite; }
   .shb-gauge, .shb-pop { animation:shb-bl 3s ease-in-out infinite; }
