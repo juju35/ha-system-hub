@@ -2065,3 +2065,13 @@ test('the tab banner goes up as the top bar, the menu button in it, and the empt
   p._mountBanner({ querySelector: () => null });
   assert.deepEqual(bar.kids, []);
 });
+
+test('the top bar Settings cog opens the Settings tab', () => {
+  const p = panel({ loaded: true, modules: [], tabs: [] });
+  let went = null;
+  p._goTab = (tab) => {
+    went = tab;
+  };
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'go_settings' } } : null) } });
+  assert.equal(went, 'settings');
+});
