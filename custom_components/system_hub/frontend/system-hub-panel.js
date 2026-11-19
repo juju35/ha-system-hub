@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.3.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.3.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1106,8 +1106,21 @@ class SystemHubPanel extends HTMLElement {
             --tone-good: var(--success-color, #43a047); --tone-warn: var(--warning-color, #ffa600); --tone-bad: var(--error-color, #db4437); }
     /* The top bar: the tab's illustrated banner, full width, the menu button before its icon */
     .topbar:empty { display:none; }
-    .topbar .shhead { padding-left:4px; gap:6px; }
+    .topbar .shhead { padding-left:4px; gap:6px; right:calc(min(360px, 44%) + var(--acts) + 8px); }
     .topbar .bmenu { flex:none; color:inherit; }
+    /* As the other ha-* panels: a neutral wall and the wooden floor (the status is the badge's and the pill's), the
+       title at 20 px, the buttons as frosted rounds at the right, centred on the wall, the scene left of them */
+    .topbar .shbanner { --acts:96px; background:#f2efe9; }
+    .topbar .shbanner.night { background:#2a2b33; }
+    .topbar .shbanner:has(.shzooms > :nth-child(3)) { --acts:136px; }
+    .topbar .shground { background:repeating-linear-gradient(90deg, #c99a6b 0 38px, #b98a5c 38px 40px); box-shadow:inset 0 2px 0 #a97c50; }
+    .topbar .night .shground { background:repeating-linear-gradient(90deg, #4a3a2c 0 38px, #3e3024 38px 40px); box-shadow:inset 0 2px 0 #5a4634; }
+    .topbar .shscene { right:var(--acts); }
+    .topbar .shtitle { font-size:20px; }
+    .topbar .shzooms { top:calc((100% - 10px) / 2 - 17px); right:12px; gap:6px; }
+    .topbar .shzoom { width:34px; height:34px; --mdc-icon-size:20px; }
+    .topbar .shzoom:hover { background:rgba(255,255,255,.82); }
+    @container (max-width:560px) { .topbar .shscene { display:none; } .topbar .shhead { right:var(--acts); } }
     /* The tabs under it, on the page's background */
     .tabsbar { display:flex; background:var(--primary-background-color); color:var(--primary-text-color); position:sticky; top:0; z-index:2;
                border-bottom:1px solid var(--divider-color, rgba(127,127,127,.2)); }
@@ -1118,9 +1131,9 @@ class SystemHubPanel extends HTMLElement {
     :host([hide-bar][narrow]) .tabmenu { display:flex !important; align-self:center; margin-left:4px; }
     :host([hide-bar][narrow]) .tabs { padding-left:0; }
     .tab { background:none; border:none; border-bottom:2px solid transparent; color:var(--secondary-text-color);
-           padding:12px 14px; font:inherit; font-size:14px; cursor:pointer; white-space:nowrap; }
+           padding:12px 14px; font:inherit; font-size:14px; font-weight:500; cursor:pointer; white-space:nowrap; }
     .tab:hover, .tab:focus-visible { color:var(--primary-text-color); outline:none; }
-    .tab.active { color:var(--primary-text-color); font-weight:500; border-bottom-color:var(--primary-color); }
+    .tab.active { color:var(--primary-text-color); border-bottom-color:var(--primary-color); }
     .tbadge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:6px;
               box-sizing:border-box; border-radius:9px; font-size:11px; font-weight:500; line-height:1;
               color:color-mix(in srgb, var(--tone-warn) 70%, var(--primary-text-color)); background:color-mix(in srgb, var(--tone-warn) 20%, transparent); }
@@ -1901,6 +1914,8 @@ class SystemHubPanel extends HTMLElement {
       this._goGroup(groups[(i + groups.length) % groups.length], 'group');
       ev.preventDefault();
     });
+    // The top bar's buttons (the banner is out of main): Refresh, Settings, the tab's own settings
+    root.querySelector('.topbar').addEventListener('click', (ev) => this._onClick(ev));
     root.querySelector('main').addEventListener('click', (ev) => {
       var sub = ev.target.closest?.('[data-subtab]')?.dataset.subtab;
       if (sub) return this._goTab(sub);
@@ -1999,6 +2014,8 @@ class SystemHubPanel extends HTMLElement {
         settings.title = label;
         settings.setAttribute('aria-label', label);
         for (var t of [...settings.childNodes]) if (t.nodeType === 3) t.remove();
+        // The same cog as the other ha-* panels' top bars
+        settings.querySelector('ha-icon')?.setAttribute('icon', 'mdi:cog');
         corner.querySelector('.shzooms')?.append(settings);
       }
     }
@@ -2063,6 +2080,12 @@ class SystemHubPanel extends HTMLElement {
     var menu = this._menus[0];
     menu.hidden = false;
     banner.querySelector('.shhead')?.prepend(menu);
+    // Settings as a cog beside Refresh, where the tab has no settings of its own (and not on Settings itself)
+    var acts = banner.querySelector('.shzooms');
+    if (acts && this._tab !== 'settings' && !acts.querySelector('[data-action^="open_settings"]')) {
+      var label = shEsc(this._tabName('settings'));
+      acts.insertAdjacentHTML('beforeend', `<button class="shzoom" data-action="go_settings" title="${label}" aria-label="${label}"><ha-icon icon="mdi:cog"></ha-icon></button>`);
+    }
     bar.replaceChildren(banner);
     if (!top.children.length) top.remove();
   }
@@ -4565,6 +4588,7 @@ class SystemHubPanel extends HTMLElement {
     var action = button.dataset.action;
     if ((action.startsWith('cfg_') || action.startsWith('open_settings')) && this._cfgClick(button)) return;
     if (action === 'reload') return this._load();
+    if (action === 'go_settings') return this._goTab('settings');
     if (action === 'cancel' || action === 'confirm_install') {
       this._haCheck = null;
       this._confirm = action === 'confirm_install' ? 'install' : null;

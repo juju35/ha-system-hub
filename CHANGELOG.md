@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.3.1 - 2026-11-19
+
+### Fixes
+- **Top bar, as the other ha-* panels**: a neutral wall (day and night) and the wooden floor on every tab, the status carried by the round badge and the pill; the title at 20 px; Refresh and Settings as frosted round buttons at the right, centred on the wall, the scene left of them (hidden on a phone). The cog opens the Settings tab, or the tab's own settings where it has some.
+- **Top bar buttons**: Refresh and a module's settings work again from the top bar (3.3.0 moved the banner out of the area listening to clicks).
+- **Tabs**: every tab in medium weight, as in the other panels.
+
 ## 3.3.0 - 2026-11-19
 
 ### Features
