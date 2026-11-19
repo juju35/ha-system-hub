@@ -2023,3 +2023,45 @@ test('header: each tab opens on its illustrated banner, its status as the pill, 
   assert.match(p._top(), /^<ha-card class="shtop"><div class="shbanner[\s\S]*<nav class="subtabs"[\s\S]*<\/ha-card>$/);
   assert.equal(panel(null)._top(), '');
 });
+
+test('the tab banner goes up as the top bar, the menu button in it, and the emptied header card goes', () => {
+  const node = (cls, kids = []) => {
+    const n = {
+      cls,
+      kids,
+      hidden: true,
+      removed: false,
+      querySelector: (sel) => n.kids.find((k) => sel.includes(k.cls)) || null,
+      prepend: (k) => n.kids.unshift(k),
+      replaceChildren: (...k) => {
+        n.kids = k;
+      },
+      remove: () => {
+        n.removed = true;
+      },
+      get children() {
+        return n.kids;
+      },
+    };
+    return n;
+  };
+  const p = panel({ loaded: true, modules: [], tabs: [] });
+  const bar = node('topbar');
+  const menu = node('bmenu');
+  p.shadowRoot = { querySelector: () => bar };
+  p._menus = [menu];
+  const head = node('shhead');
+  const banner = node('shbanner', [head]);
+  // A header card holding only its banner: once the banner is up, the card, empty, goes
+  const top = node('shtop', []);
+  top.querySelector = () => banner;
+  const main = { querySelector: () => top };
+  p._mountBanner(main);
+  assert.deepEqual(bar.kids, [banner]);
+  assert.equal(head.kids[0], menu);
+  assert.equal(menu.hidden, false);
+  assert.equal(top.removed, true);
+  // No banner (the state not read yet): the top bar is emptied
+  p._mountBanner({ querySelector: () => null });
+  assert.deepEqual(bar.kids, []);
+});

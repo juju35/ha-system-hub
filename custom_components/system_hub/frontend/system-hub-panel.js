@@ -2,7 +2,8 @@
  * System Hub sidebar panel (administrators): Status, the modules in four groups (System, Reliability, Maintenance,
  * Devices), and Settings.
  *
- * Tabs under the toolbar, as in Smart Comfort: text, the active one underlined, Settings last; a group's modules turned
+ * The tab's illustrated banner as the top bar, the menu button in it, as the ha-* panels (ENT ONE, IPTV); then the tabs on
+ * the page's background, as in Smart Comfort: text, the active one underlined, Settings last; a group's modules turned
  * on are sub-tabs under it. The module shown is in the address (/system-hub/<module>, or a group's name for its first). The panel draws its own content from the system_hub/state WebSocket command, read
  * again every 10 seconds while it is shown and after each action; its buttons call the integration's own actions.
  * Settings turns modules on or off and orders the tabs (system_hub/update_settings).
@@ -12,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.2.1';
+var SYSTEM_HUB_PANEL_VERSION = '3.3.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1103,27 +1104,28 @@ class SystemHubPanel extends HTMLElement {
   static STYLE = `
     :host { display:block; min-height:100%; background:var(--primary-background-color); color:var(--primary-text-color);
             --tone-good: var(--success-color, #43a047); --tone-warn: var(--warning-color, #ffa600); --tone-bad: var(--error-color, #db4437); }
-    .toolbar { height:var(--header-height, 56px); display:flex; align-items:center; gap:8px; padding:0 12px; box-sizing:border-box;
-               background:var(--app-header-background-color, var(--primary-color)); color:var(--app-header-text-color, #fff);
-               font-size:20px; position:sticky; top:0; z-index:2; }
-    .toolbar .grow { flex:1; }
-    .tabsbar { display:flex; background:var(--app-header-background-color, var(--primary-color));
-               color:var(--app-header-text-color, #fff); position:sticky; top:var(--header-height, 56px); z-index:2; }
+    /* The top bar: the tab's illustrated banner, full width, the menu button before its icon */
+    .topbar:empty { display:none; }
+    .topbar .shhead { padding-left:4px; gap:6px; }
+    .topbar .bmenu { flex:none; color:inherit; }
+    /* The tabs under it, on the page's background */
+    .tabsbar { display:flex; background:var(--primary-background-color); color:var(--primary-text-color); position:sticky; top:0; z-index:2;
+               border-bottom:1px solid var(--divider-color, rgba(127,127,127,.2)); }
     .tabs { flex:1; min-width:0; display:flex; gap:4px; padding:0 12px; overflow-x:auto; }
     /* Settings → Hide the top bar: the tabs at the top; on a phone, the menu button beside them */
     .tabmenu { display:none !important; }
-    :host([hide-bar]) .toolbar { display:none; }
-    :host([hide-bar]) .tabsbar { top:0; }
+    :host([hide-bar]) .topbar { display:none; }
     :host([hide-bar][narrow]) .tabmenu { display:flex !important; align-self:center; margin-left:4px; }
     :host([hide-bar][narrow]) .tabs { padding-left:0; }
-    .tab { background:none; border:none; border-bottom:2px solid transparent; color:var(--app-header-text-color, #fff); opacity:.75;
+    .tab { background:none; border:none; border-bottom:2px solid transparent; color:var(--secondary-text-color);
            padding:12px 14px; font:inherit; font-size:14px; cursor:pointer; white-space:nowrap; }
-    .tab:hover, .tab:focus-visible { opacity:1; outline:none; }
-    .tab.active { opacity:1; border-bottom-color:var(--app-header-text-color, #fff); }
-    .tbadge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 5px; margin-left:6px;
-              box-sizing:border-box; border-radius:9px; font-size:11px; font-weight:600; line-height:1; color:rgba(0,0,0,.87); background:var(--tone-warn); }
-    .tbadge.bad { color:#fff; background:var(--tone-bad); }
-    .tbadge.info { background:var(--info-color, #039be5); }
+    .tab:hover, .tab:focus-visible { color:var(--primary-text-color); outline:none; }
+    .tab.active { color:var(--primary-text-color); font-weight:500; border-bottom-color:var(--primary-color); }
+    .tbadge { display:inline-flex; align-items:center; justify-content:center; min-width:18px; height:18px; padding:0 6px; margin-left:6px;
+              box-sizing:border-box; border-radius:9px; font-size:11px; font-weight:500; line-height:1;
+              color:color-mix(in srgb, var(--tone-warn) 70%, var(--primary-text-color)); background:color-mix(in srgb, var(--tone-warn) 20%, transparent); }
+    .tbadge.bad { color:var(--tone-bad); background:color-mix(in srgb, var(--tone-bad) 15%, transparent); }
+    .tbadge.info { color:var(--info-color, #039be5); background:color-mix(in srgb, var(--info-color, #039be5) 15%, transparent); }
     .subtabs { display:flex; flex-wrap:wrap; gap:8px; }
     .subtab { display:inline-flex; align-items:center; gap:8px; min-height:40px; padding:0 16px; border-radius:20px; cursor:pointer; font:inherit;
               font-size:14px; color:var(--primary-text-color); background:var(--card-background-color, #fff); --mdc-icon-size:18px;
@@ -1877,9 +1879,9 @@ class SystemHubPanel extends HTMLElement {
 
   _renderShell() {
     var root = this.shadowRoot;
-    if (root.querySelector('.toolbar')) return;
+    if (root.querySelector('.tabsbar')) return;
     root.innerHTML = `<style>${SystemHubPanel.STYLE}</style>
-      <div class="toolbar"><ha-menu-button></ha-menu-button><span class="grow">System Hub</span></div>
+      <header class="topbar"></header><ha-menu-button class="bmenu" hidden></ha-menu-button>
       <div class="tabsbar"><ha-menu-button class="tabmenu"></ha-menu-button><nav class="tabs" role="tablist"></nav></div>
       <main></main>`;
     this._menus = [...root.querySelectorAll('ha-menu-button')];
@@ -2030,6 +2032,7 @@ class SystemHubPanel extends HTMLElement {
         }
       }
     }
+    this._mountBanner(main);
     var netSvg = main.querySelector('svg.nsvg');
     if (netSvg) this._slFixZoom(netSvg);
     if (this._tab === 'settings') this._cfgMount(main);
@@ -2045,6 +2048,23 @@ class SystemHubPanel extends HTMLElement {
     } else if (focusSel) {
       main.querySelector(focusSel)?.focus?.({ preventScroll: true });
     }
+  }
+
+  // The tab's banner goes up as the top bar, full width, the menu button before its icon; the header card keeps the
+  // sub-tabs and what opens the tab, and goes when nothing is left in it
+  _mountBanner(main) {
+    var bar = this.shadowRoot.querySelector('.topbar');
+    var top = main.querySelector(':scope > .shtop');
+    var banner = top?.querySelector(':scope > .shbanner');
+    if (!banner) {
+      bar.replaceChildren();
+      return;
+    }
+    var menu = this._menus[0];
+    menu.hidden = false;
+    banner.querySelector('.shhead')?.prepend(menu);
+    bar.replaceChildren(banner);
+    if (!top.children.length) top.remove();
   }
 
   // The tab's header card: its illustrated banner, then the sub-tabs of its group

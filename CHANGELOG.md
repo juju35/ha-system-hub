@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.3.0 - 2026-11-19
+
+### Features
+- **Panel, the illustrated banner as the top bar**: the blue bar with the title gives way to the tab's illustrated banner, full width, with the menu button before its icon (on Status, its points to check, pill and versions; on a module, its own banner, status pill and buttons), as in the other ha-* panels. The tabs sit under it on the page's background, the active one underlined, their badges tinted. The content of each tab is unchanged. **Hide the top bar** now hides the banner and keeps the tabs.
+
 ## 3.2.1 - 2026-11-19
 
 ### Fixes
