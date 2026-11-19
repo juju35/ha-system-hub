@@ -1937,15 +1937,10 @@ def pixels(path):
     return size, raw
 
 
-def framed(page, selector):
-    """The clip of the element `selector` with a 16 px frame of the theme around it."""
+def down_to(page, selector, margin=0):
+    """The clip from the top of the page (the top bar, full width) down to the element `selector`, plus `margin` px."""
     box = page.locator(selector).bounding_box()
-    return {
-        "x": max(0, box["x"] - 16),
-        "y": max(0, box["y"] - 16),
-        "width": box["width"] + 32,
-        "height": box["height"] + 32,
-    }
+    return {"x": 0, "y": 0, "width": page.viewport_size["width"], "height": box["y"] + box["height"] + margin}
 
 
 def capture(page, path, **kwargs):
@@ -1977,12 +1972,12 @@ STEP_ANIMATIONS = """(t) => {
 
 
 def record(page, path, fps=15, seconds=4):
-    """Record a tab's header card (its illustrated banner and sub-tabs), framed, as a looping GIF (needs ffmpeg).
+    """Record a tab's top bar (its illustrated banner, full width) as a looping GIF (needs ffmpeg).
 
     Every animation is paused and stepped frame by frame, so the GIF is the same whatever the machine's speed; it
     is kept only if a frame differs from the GIF already there.
     """
-    clip = framed(page, ".shtop")
+    clip = down_to(page, ".topbar")
     with tempfile.TemporaryDirectory() as frames:
         for i in range(fps * seconds):
             if not page.evaluate(STEP_ANIMATIONS, i * 1000 / fps):
@@ -2063,8 +2058,8 @@ def main():
                 page.close()
                 continue
             if shot.get("hero"):
-                # The Status header card alone (its banner, the score and the counts), with a 16 px frame of the theme.
-                capture(page, out / f"{shot['file']}.png", clip=framed(page, ".shtop"), animations="disabled")
+                # The Status top bar, its tabs and its header card (the score and the counts), down to a 16 px margin.
+                capture(page, out / f"{shot['file']}.png", clip=down_to(page, ".shtop", 16), animations="disabled")
                 page.close()
                 continue
             if shot["tab"] == "database":
