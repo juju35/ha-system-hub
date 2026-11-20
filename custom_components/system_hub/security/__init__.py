@@ -13,6 +13,7 @@ from __future__ import annotations
 import asyncio
 import ipaddress
 import logging
+import os
 import re
 import time
 from pathlib import Path
@@ -290,14 +291,21 @@ async def _addons(hass: HomeAssistant) -> list[dict[str, Any]] | None:
     return rows
 
 
+def _yaml_files(root: Path) -> list[Path]:
+    """The YAML files of the configuration, in order, secrets.yaml left out. The folders skipped (www, deps,
+    node_modules, .storage, .git…) are not walked at all: they can hold tens of thousands of files."""
+    files: list[Path] = []
+    for folder, dirs, names in os.walk(root):
+        dirs[:] = [d for d in dirs if d not in _SKIP_DIRS and not d.startswith(".")]
+        files.extend(Path(folder, n) for n in names if n.endswith(".yaml") and n != "secrets.yaml")
+    return sorted(files)
+
+
 def scan_config(folder: str) -> list[dict[str, Any]]:
     """The credentials written in clear in the YAML files: the file, the line and the key, never the value."""
     root = Path(folder)
     found: list[dict[str, Any]] = []
-    for path in sorted(root.rglob("*.yaml")):
-        parts = path.relative_to(root).parts
-        if any(p in _SKIP_DIRS or p.startswith(".") for p in parts[:-1]) or path.name == "secrets.yaml":
-            continue
+    for path in _yaml_files(root):
         try:
             lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
         except OSError:
