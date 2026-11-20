@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.4.1 - 2026-11-20
+
+### Fixes
+- Sidebar: the panel's icon no longer stays blank on a page's first load (until a reload). Home Assistant draws an icon whose set is not registered yet in a legacy mode it never leaves; the icon module now clears it and draws the icon again once the sidebar is there.
+
 ## 3.4.0 - 2026-11-20
 
 ### Features
