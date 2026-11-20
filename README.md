@@ -274,11 +274,18 @@ illustration: false               # optional: the classic header instead of the 
 illustration_theme: night         # optional: auto (default: follows the Home Assistant theme), day or night
 ```
 
-The mini card takes `groups`, `illustration` and `illustration_theme` (both): it already shows only the areas to look at, so `show_title`, `show_subtitle` and `hide_ok` apply to the full card.
+The mini card takes `groups`, `illustration`, `illustration_theme` and `hide_ok` (both), and `zoom` (mini only); `show_title` and `show_subtitle` apply to the full card. A small round button (`mdi:arrow-expand`) in the top right corner of its header shows the full card's areas by group under it, and turns into `mdi:arrow-collapse` to bring the compact view back; a click anywhere outside the card does too (a tap on iOS included), but not a click in a dialog opened from it, and the card is compact again when it leaves the page. `hide_ok` applies to that detail view. A click on the header still opens the Status tab.
 
-| `system-hub-card` | `system-hub-mini-card` |
-|---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status.png" alt="system-hub-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini.png" alt="system-hub-mini-card, status" width="400"> |
+```yaml
+type: custom:system-hub-mini-card
+module: status                    # optional: the default
+hide_ok: true                     # optional: hide the areas that are fine in the detail view
+zoom: false                       # optional: remove the detail button (default: true)
+```
+
+| `system-hub-card` | `system-hub-mini-card` | `system-hub-mini-card`, zoomed in |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status.png" alt="system-hub-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini.png" alt="system-hub-mini-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini-zoom.png" alt="system-hub-mini-card, status, zoomed in" width="400"> |
 
 ## System Monitor cards
 

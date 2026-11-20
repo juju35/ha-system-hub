@@ -159,6 +159,11 @@ var SH_HUB_STYLE = `
   .banner .chip { background:color-mix(in srgb, var(--c) 18%, rgba(255,255,255,.78)); color:color-mix(in srgb, var(--c) 45%, #0d2a45); }
   .banner.night .chip { background:color-mix(in srgb, var(--c) 30%, rgba(8,18,38,.55)); color:color-mix(in srgb, var(--c) 35%, #ffffff); }
   .body { padding:0 16px 14px; }
+  /* The mini card's expand / collapse button: 24 px, round, smoked glass, in the banner's top right corner */
+  .banner > .zoom { color:#3b5b78; background:rgba(255,255,255,.55); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px);
+                    box-shadow:inset 0 0 0 1px rgba(0,0,0,.06); }
+  .banner.night > .zoom { color:rgba(255,255,255,.85); background:rgba(255,255,255,.12); }
+  .banner:has(> .zoom) .htext { padding-right:30px; }
   .sh-blink { animation:sh-bl 1.2s steps(2) infinite; }
   .sh-gauge { animation:sh-bl 3s ease-in-out infinite; }
   .sh-up { animation:sh-up 1.4s ease-in-out infinite; }
@@ -199,6 +204,16 @@ var SH_CARD_STYLE = `
   .mini { display:flex; align-items:center; gap:12px; padding:10px 14px; cursor:pointer; }
   .dots { display:flex; gap:3px; flex-wrap:wrap; justify-content:flex-end; max-width:40%; }
   .note { color:var(--secondary-text-color); }
+  /* The mini card's expand / collapse button, top right in both views (smoked glass on the illustrated header) */
+  ha-card:has(.zoom) { position:relative; }
+  .zoom { all:unset; position:absolute; z-index:2; top:5px; right:5px; width:24px; height:24px; border-radius:50%; display:grid;
+          place-items:center; cursor:pointer; --mdc-icon-size:16px; color:var(--secondary-text-color);
+          background:color-mix(in srgb, var(--secondary-text-color) 10%, transparent); }
+  .zoom:hover { color:var(--primary-text-color); }
+  .zoom:focus-visible { outline:2px solid var(--primary-color); outline-offset:2px; }
+  ha-card.mini:has(> .zoom), .zoomed > .mini { padding-right:35px; }
+  .zoomed { padding:0 0 14px; }
+  .zoomed > .groups { padding:0 16px; }
   .trow > .title { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .chip { --c:var(--sh-tone); display:inline-flex; align-items:center; gap:5px; padding:1px 8px; border-radius:12px;
           font-size:11px; font-weight:500; line-height:16px; white-space:nowrap; color:color-mix(in srgb, var(--c) 50%, var(--primary-text-color));
@@ -226,6 +241,42 @@ var SH_CARD_STYLE = `
 
 // The parts of the header that hold the status pill (see _fitPill).
 var SH_CARD_PILL = { block: '.who', row: '.trow', name: '.title', chip: '.chip', sub: '.sub' };
+
+// "A click elsewhere" is caught on the pointer, not only on the click event: on iOS (Safari and the companion app) a
+// tap on something that is not clickable (the background, an empty spot) sends no click to the page. It counts when
+// the press and the release are both outside (a slider dragged out of the card does not fold it); a scroll does not
+// (the browser cancels the pointer). Keyboard clicks still go through the click event.
+function shCardOutside(isOut, handler) {
+  var pressedOut = false;
+  var down = (ev) => {
+    pressedOut = isOut(ev);
+  };
+  var up = (ev) => {
+    if (pressedOut && isOut(ev)) handler(ev);
+    pressedOut = false;
+  };
+  var key = (ev) => {
+    if (ev.detail === 0 && isOut(ev)) handler(ev);
+  };
+  var events = [
+    ['pointerdown', down],
+    ['pointerup', up],
+    ['click', key],
+  ];
+  return {
+    on() {
+      for (var [type, fn] of events) document.addEventListener?.(type, fn, true);
+    },
+    off() {
+      for (var [type, fn] of events) document.removeEventListener?.(type, fn, true);
+    },
+    // A tap (press and release at the same spot), for the tests
+    tap(ev) {
+      down(ev);
+      up(ev);
+    },
+  };
+}
 
 // A card of a module (its own card element), or the Status card
 class SystemHubCardBase extends HTMLElement {
@@ -382,6 +433,7 @@ class SystemHubCardBase extends HTMLElement {
         shCardOpen(ev.currentTarget.dataset.tab);
       });
     }
+    this._bindZoom?.();
   }
 
   _summary(status) {
@@ -398,16 +450,21 @@ class SystemHubCardBase extends HTMLElement {
     return { title, sub: parts.join(' · ') };
   }
 
-  _statusCard(status) {
+  // The areas of the Status tab by group, each opening its tab
+  _groups(status) {
     var p = this._probe;
-    var { title, sub } = this._summary(status);
     var Panel = p.constructor;
     var area = ([tab, [tone, value]]) => `<button class="area ${tone}" data-tab="${tab}" title="${shCardEsc(p._tabName(tab))}">
         <ha-icon icon="${Panel.ICONS[tab]}"></ha-icon><div class="who"><div>${shCardEsc(p._tabName(tab))}</div><div>${shCardEsc(value)}</div></div><span class="dot"></span></button>`;
-    var groups = SH_CARD_GROUPS.map((g) => [g, status.areas.filter(([tab]) => Panel.groupOf(tab) === g)])
+    return SH_CARD_GROUPS.map((g) => [g, status.areas.filter(([tab]) => Panel.groupOf(tab) === g)])
       .filter(([, list]) => list.length)
       .map(([g, list]) => `<div class="group">${shCardEsc(p._groupName(g))}</div><div class="areas">${list.map(area).join('')}</div>`)
       .join('');
+  }
+
+  _statusCard(status) {
+    var { title, sub } = this._summary(status);
+    var groups = this._groups(status);
     if (this._config.illustration === false) {
       return `<ha-card><div class="head ${status.tone}" data-tab="status"><div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
       <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}</div><ha-icon class="open" icon="mdi:open-in-new"></ha-icon></div>${groups}</ha-card>`;
@@ -418,10 +475,10 @@ class SystemHubCardBase extends HTMLElement {
 
   // The illustrated header: the server icon in the overall tone, the text on the background at the left, the picture
   // at the right (each part in the tone of its area) and the floor under it. The whole banner opens the Status tab.
-  _banner(status, head) {
+  _banner(status, head, extra = '') {
     var night = shHubIsNight(this._hass, this._config);
     return `<div class="banner ${status.tone}${night ? ' night' : ''}" data-tab="status">${shHubScene(shHubTones(status), night)}<div class="ground"></div>
-      <div class="htext"><div class="hicon" title="System Hub"><ha-icon icon="mdi:nas"></ha-icon></div>${head}</div></div>`;
+      <div class="htext"><div class="hicon" title="System Hub"><ha-icon icon="mdi:nas"></ha-icon></div>${head}</div>${extra}</div>`;
   }
 }
 
@@ -448,7 +505,70 @@ class SystemHubMiniCard extends SystemHubCardBase {
     return { module: 'status' };
   }
 
-  // One line: the emblem, the summary, the details of the first areas to look at and a dot per area
+  // The Status mini card's detail button (top right, `zoom: false` removes it) shows the full Status card's areas
+  // under its header, and back; a click anywhere else brings the compact view back too, unless it lands in a dialog
+  // opened from the card. Left (another view, a conditional card hidden), it is compact again on return.
+  constructor() {
+    super();
+    this._zoomed = false;
+    this._unzoom = shCardOutside(
+      (ev) => {
+        var path = ev.composedPath?.() || [];
+        return !path.includes(this) && !path.some((n) => ['ha-more-info-dialog', 'ha-dialog', 'dialog'].includes(n?.localName));
+      },
+      () => this._zoom(false),
+    );
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    this._unzoom.on();
+    // Back on the page: drawn again (compact), the status pill fitted again
+    if (this._config?.module === 'status' && this._probe) this._renderStatus();
+  }
+
+  disconnectedCallback() {
+    this._unzoom.off();
+    // Compact again, before the base card lets its observers go
+    this._zoom(false);
+    super.disconnectedCallback();
+  }
+
+  setConfig(config) {
+    if (config?.zoom != null && typeof config.zoom !== 'boolean') throw new Error('zoom must be true or false');
+    super.setConfig(config);
+  }
+
+  getCardSize() {
+    if (this._config?.module === 'status' && this._zoomed) return 6;
+    return super.getCardSize();
+  }
+
+  _zoom(on) {
+    if (this._zoomed === on) return;
+    this._zoomed = on;
+    this._renderStatus();
+  }
+
+  _zoomButton() {
+    if (this._config.zoom === false || !this._probe?._state || this._error) return '';
+    var label = shCardEsc(shCardT(this._hass, this._zoomed ? 'card_zoom_out' : 'card_zoom_in', this._zoomed ? 'Back to the compact view' : 'Show details'));
+    var icon = this._zoomed ? 'mdi:arrow-collapse' : 'mdi:arrow-expand';
+    return `<button class="zoom" title="${label}" aria-label="${label}" aria-expanded="${this._zoomed}"><ha-icon icon="${icon}"></ha-icon></button>`;
+  }
+
+  _bindZoom() {
+    this.shadowRoot.querySelector?.('.zoom')?.addEventListener('click', (ev) => {
+      // Not the banner's click (it opens the panel)
+      ev.stopPropagation();
+      this._zoom(!this._zoomed);
+      // The button was replaced: keyboard use (Enter / Space, no click count) keeps the focus on the new one
+      if (ev.detail === 0) this.shadowRoot.querySelector?.('.zoom')?.focus({ preventScroll: true });
+    });
+  }
+
+  // One line: the emblem, the summary, the details of the first areas to look at and a dot per area; zoomed, the
+  // full Status card's areas by group under it
   _statusCard(status) {
     var p = this._probe;
     var { title } = this._summary(status);
@@ -461,12 +581,16 @@ class SystemHubMiniCard extends SystemHubCardBase {
           .join(' · ')
       : '';
     var dots = look.map(([tab, [tone]]) => `<span class="dot ${tone}" title="${shCardEsc(p._tabName(tab))}"></span>`).join('');
+    var zoom = this._zoomButton();
+    var groups = this._zoomed && zoom ? this._groups(status) : '';
     if (this._config.illustration !== false) {
       var head = `<div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}${dots ? `<div class="dots">${dots}</div>` : ''}</div>`;
-      return `<ha-card class="illus">${this._banner(status, head)}</ha-card>`;
+      return `<ha-card class="illus">${this._banner(status, head, zoom)}${groups ? `<div class="body">${groups}</div>` : ''}</ha-card>`;
     }
-    return `<ha-card class="mini ${status.tone}" data-tab="status"><div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
-      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}</div><div class="dots">${dots}</div></ha-card>`;
+    var row = `<div class="badge"><ha-icon icon="system-hub:${status.tone}"></ha-icon></div>
+      <div class="who"><div class="trow"><div class="title">${shCardEsc(title)}</div>${shCardPill(status)}</div>${sub ? `<div class="sub" title="${shCardEsc(sub)}">${shCardEsc(sub)}</div>` : ''}</div><div class="dots">${dots}</div>`;
+    if (groups) return `<ha-card class="zoomed"><div class="mini ${status.tone}" data-tab="status">${row}</div>${zoom}<div class="groups">${groups}</div></ha-card>`;
+    return `<ha-card class="mini ${status.tone}" data-tab="status">${row}${zoom}</ha-card>`;
   }
 }
 
@@ -520,13 +644,15 @@ class SystemHubCardEditorBase extends HTMLElement {
           selector: { select: { mode: 'dropdown', options: ['auto', 'day', 'night'].map((v) => ({ value: v, label: this._t(`card_theme_${v}`, { auto: 'Automatic (follows the theme)', day: 'Day', night: 'Night' }[v]) })) } },
         },
       );
-      // The mini card shows only the summary and the areas to look at: these three change nothing there.
+      // The mini card shows only the summary and the areas to look at; its detail view takes hide_ok, as the full card.
       if (!this.constructor.mini) {
         schema.push(
           { name: 'show_title', selector: { boolean: {} } },
           { name: 'show_subtitle', selector: { boolean: {} } },
           { name: 'hide_ok', selector: { boolean: {} } },
         );
+      } else {
+        schema.push({ name: 'hide_ok', selector: { boolean: {} } }, { name: 'zoom', selector: { boolean: {} } });
       }
     }
     return schema;
@@ -554,7 +680,7 @@ class SystemHubCardEditorBase extends HTMLElement {
     if (!this._form) {
       this._form = document.createElement('ha-form');
       this._form.computeLabel = (s) =>
-        ({ module: this._t('card_module', 'Module'), groups: this._t('card_groups', 'Groups'), hide_ok: this._t('card_hide_ok', 'Hide what is fine'), show_title: this._t('card_show_title', 'Show title'), show_subtitle: this._t('card_show_subtitle', 'Show subtitle'), illustration: this._t('card_illustration', 'Illustration'), illustration_theme: this._t('card_illustration_theme', 'Illustration theme') })[s.name] || s.name;
+        ({ module: this._t('card_module', 'Module'), groups: this._t('card_groups', 'Groups'), hide_ok: this._t('card_hide_ok', 'Hide what is fine'), show_title: this._t('card_show_title', 'Show title'), show_subtitle: this._t('card_show_subtitle', 'Show subtitle'), illustration: this._t('card_illustration', 'Illustration'), illustration_theme: this._t('card_illustration_theme', 'Illustration theme'), zoom: this._t('card_zoom', 'Detail button') })[s.name] || s.name;
       this._form.addEventListener('value-changed', (ev) => {
         ev.stopPropagation();
         var value = ev.detail.value;
@@ -570,6 +696,7 @@ class SystemHubCardEditorBase extends HTMLElement {
         if (config.show_title === true) delete config.show_title;
         if (config.show_subtitle === true) delete config.show_subtitle;
         if (config.illustration === true) delete config.illustration;
+        if (config.zoom === true) delete config.zoom;
         if (!config.illustration_theme || config.illustration_theme === 'auto') delete config.illustration_theme;
         this._emit(config);
       });
@@ -577,7 +704,7 @@ class SystemHubCardEditorBase extends HTMLElement {
     }
     this._form.hass = this._hass;
     this._form.schema = this._schema();
-    this._form.data = this._config.module === 'status' ? { show_title: true, show_subtitle: true, illustration: true, illustration_theme: 'auto', ...this._config } : this._config;
+    this._form.data = this._config.module === 'status' ? { show_title: true, show_subtitle: true, illustration: true, illustration_theme: 'auto', ...(this.constructor.mini ? { zoom: true } : {}), ...this._config } : this._config;
     this._mountInner();
   }
 

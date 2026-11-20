@@ -1595,7 +1595,7 @@ ORPHANS_CONFIRM = """async () => {
 }"""
 
 # A status card on its own, next to the panel (hidden): the panel's hass, as a dashboard gives it.
-CARD_MOUNT = """async ([type, dark]) => {
+CARD_MOUNT = """async ([type, dark, zoom]) => {
     const panel = document.querySelector("system-hub-panel");
     // The sun up in both themes: the dark shots get the night picture from Home Assistant's dark mode alone.
     const hass = {
@@ -1612,6 +1612,9 @@ CARD_MOUNT = """async ([type, dark]) => {
     document.querySelector("#root").appendChild(card);
     card.hass = hass;
     await card._read();
+    // The mini card's detail view: its expand button clicked
+    // (a pointer click, detail 1: no keyboard focus ring on it)
+    if (zoom) card.shadowRoot.querySelector(".zoom").dispatchEvent(new MouseEvent("click", { bubbles: true, composed: true, detail: 1 }));
 }"""
 
 # Unfolds the first device of the Database tab.
@@ -1738,6 +1741,18 @@ SHOTS = [
             "automations": True,
         }
         for mini in ("", "-mini")
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
+    # The status mini card zoomed in: its expand button shows the full card's areas under its header
+    *(
+        {
+            "file": f"card-status-mini-zoom{suffix}",
+            "theme": theme,
+            "tab": "status",
+            "card": "system-hub-mini-card",
+            "automations": True,
+            "zoom": True,
+        }
         for theme, suffix in (("light", ""), ("dark", "-dark"))
     ),
     {"file": "panel-phone", "theme": "light", "tab": "system", "phone": True},
@@ -2041,7 +2056,7 @@ def main():
             if shot.get("card"):
                 page.add_script_tag(content=ICONS_JS)
                 page.add_script_tag(content=CARD_JS)
-                page.evaluate(CARD_MOUNT, [shot["card"], shot["theme"] == "dark"])
+                page.evaluate(CARD_MOUNT, [shot["card"], shot["theme"] == "dark", bool(shot.get("zoom"))])
                 page.wait_for_timeout(400)
                 capture(
                     page, out / f"{shot['file']}.png", clip=page.locator("#card").bounding_box(), animations="disabled"
