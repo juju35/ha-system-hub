@@ -1,5 +1,18 @@
 # Changelog
 
+## 3.3.2 - 2026-11-20
+
+### Fixes
+- **Security module**: its watch on refused logins is removed with a setup that fails half-way, instead of staying behind (and counting each refused login twice after the next setup).
+- **Status card, classic header** (`illustration: false`): the status pastille is round and 40 px, the same size on the mini card and the full card, as the other ha-* headers.
+
+### Performance
+- **Security → credentials in clear**: the folders left out (`www`, `node_modules`, `deps`, `.storage`, `.git`, backups…) are no longer walked at all, only skipped afterwards: a large `www` folder costs nothing.
+
+### Maintenance
+- **CI**: the version consistency check also reads the panel's version (as the Release job does), and the translations split the release makes is tried before merging (`split-frontend.mjs --check`).
+- **README**: the Status card's example lists `module`, `show_title` and `show_subtitle`.
+
 ## 3.3.1 - 2026-11-19
 
 ### Fixes
