@@ -846,6 +846,42 @@ def mock_matter():
     return registry, diagnostics
 
 
+def mock_zwave():
+    """A Z-Wave network: the stick, four plugs (one routed through another), their sensors; the back door dead.
+
+    Returns the device registry entries, what zwave_js/network_status answers and each node's statistics.
+    """
+    nodes = [
+        # node id, name, routes, RSSI, last working route (repeaters), alive
+        (1, "Z-Wave stick", True, None, None, True),
+        (2, "Entrance plug", True, -58, [], True),
+        (3, "Office plug", True, -66, [], True),
+        (4, "Attic plug", True, -79, ["z3"], True),
+        (5, "Porch light", True, -71, ["z2"], True),
+        (6, "Office motion", False, -63, ["z3"], True),
+        (7, "Attic thermostat", False, -86, ["z3", "z4"], True),
+        (8, "Back door", False, -82, ["z2"], False),
+        (9, "Entrance keypad", False, -61, ["z2"], True),
+        (10, "Porch sensor", False, -74, ["z2", "z5"], True),
+    ]
+    registry = [{"id": f"z{n}", "name": name, "identifiers": [["zwave_js", f"3901-{n}"]]} for n, name, *_ in nodes]
+    status = {
+        "controller": {
+            "home_id": 3901,
+            "nodes": [
+                {"node_id": n, "is_controller_node": n == 1, "is_routing": routing, "status": 4 if up else 3}
+                for n, _, routing, _, _, up in nodes
+            ],
+        }
+    }
+    stats = {
+        f"z{n}": {"rssi": rssi, "lwr": {"repeaters": route, "rssi": rssi}}
+        for n, _, _, rssi, route, _ in nodes
+        if route is not None
+    }
+    return registry, status, stats
+
+
 def mock_silent():
     """The Silent devices module: a cellar sensor quiet for 3 days, a plug gone, two weak signals."""
 
@@ -1095,7 +1131,10 @@ def mock_state():
         "silent": mock_silent(),
         # Its Zigbee network: a ZHA device in the registry offers the view, zha/devices gives the mesh;
         # and its Matter network: the Matter devices in the registry, what matter/node_diagnostics answers
-        "device_registry": [{"id": "d1", "identifiers": [["zha", "r4e0"]]}, *mock_matter()[0]],
+        # and its Z-Wave network: zwave_js/network_status, then each node's statistics (their subscription's first message)
+        "device_registry": [{"id": "d1", "identifiers": [["zha", "r4e0"]]}, *mock_matter()[0], *mock_zwave()[0]],
+        "zwave_status": mock_zwave()[1],
+        "zwave_stats": mock_zwave()[2],
         "matter_diagnostics": mock_matter()[1],
         "zha_devices": mock_zha(),
         # The Orphans tab: the counts with the state, the whole list from its own command
@@ -1522,7 +1561,13 @@ MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
         // The illustrated headers draw their night picture in Home Assistant's dark mode
         themes: { darkMode: dark },
         // ZHA loaded: the Silent devices tab's Zigbee view reads its mesh from zha/devices
-        config: { components: ["zha", "matter"] },
+        config: { components: ["zha", "matter", "zwave_js"] },
+        connection: {
+            subscribeMessage: async (cb, msg) => {
+                if (msg.type === "zwave_js/subscribe_node_statistics") setTimeout(() => cb(state.zwave_stats[msg.device_id] || {}), 0);
+                return () => {};
+            },
+        },
         localize,
         loadBackendTranslation: async () => localize,
         areas: {
@@ -1555,6 +1600,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
                   ? state.zha_devices
                   : msg.type === "matter/node_diagnostics"
                   ? state.matter_diagnostics[msg.device_id]
+                  : msg.type === "zwave_js/network_status"
+                  ? state.zwave_status
                   : msg.type === "backup/info"
                   ? state.backup_info
                   : msg.type === "backup/agents/info"
@@ -1658,6 +1705,8 @@ SHOTS = [
     {"file": "panel-silent-zigbee-dark", "theme": "dark", "tab": "silent", "view": "zigbee"},
     {"file": "panel-silent-matter", "theme": "light", "tab": "silent", "view": "matter"},
     {"file": "panel-silent-matter-dark", "theme": "dark", "tab": "silent", "view": "matter"},
+    {"file": "panel-silent-zwave", "theme": "light", "tab": "silent", "view": "zwave"},
+    {"file": "panel-silent-zwave-dark", "theme": "dark", "tab": "silent", "view": "zwave"},
     {"file": "panel-marketplace-checking", "theme": "light", "tab": "marketplace", "checking": True},
     {"file": "panel-marketplace-checking-dark", "theme": "dark", "tab": "marketplace", "checking": True},
     {"file": "panel-git-sync-diff", "theme": "light", "tab": "git_sync", "diff": True},

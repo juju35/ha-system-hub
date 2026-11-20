@@ -31,8 +31,8 @@ const context = {
   clearTimeout() {},
 };
 vm.createContext(context);
-vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors, shZhaGraph, shZ2mGraph, shMatterGraph, shNetLayout };`, context);
-const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors, shZhaGraph, shZ2mGraph, shMatterGraph, shNetLayout } = context.panel;
+vm.runInContext(`${source}\nthis.panel = { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors, shZhaGraph, shZ2mGraph, shMatterGraph, shZwaveGraph, shNetLayout };`, context);
+const { SystemHubPanel, shBytes, shTone, shSpark, shEsc, shErr, shFormData, shFormSubmit, shFormErrors, shZhaGraph, shZ2mGraph, shMatterGraph, shZwaveGraph, shNetLayout } = context.panel;
 
 // The strings as Home Assistant's localize returns them from the integration's English translations
 function localize(key, vars = {}) {
@@ -1479,6 +1479,81 @@ test('silent devices networks: the Zigbee mesh from ZHA or Zigbee2MQTT, Matter b
   p._resetTabState();
   assert.equal(p._slView, 'list');
   assert.equal(p._slOnly, false);
+});
+
+test('silent devices networks: Z-Wave from Z-Wave JS, each node under the last repeater of its route', async () => {
+  const reg = [
+    { id: 'zc', name: 'Z-Stick', identifiers: [['zwave_js', '42-1'], ['zwave_js', '42-1-134:1:90']] },
+    { id: 'zr1', name: 'Hall plug', identifiers: [['zwave_js', '42-2']] },
+    { id: 'zr2', name: 'Attic plug', identifiers: [['zwave_js', '42-3']] },
+    { id: 'ze1', name: 'Attic sensor', identifiers: [['zwave_js', '42-4']] },
+    { id: 'ze2', name_by_user: 'Back door', name: 'Door sensor', identifiers: [['zwave_js', '42-5']] },
+  ];
+  const status = {
+    home_id: 42,
+    nodes: [
+      { node_id: 1, is_controller_node: true, is_routing: true, status: 4 },
+      { node_id: 2, is_controller_node: false, is_routing: true, status: 4 },
+      { node_id: 3, is_controller_node: false, is_routing: true, status: 4 },
+      { node_id: 4, is_controller_node: false, is_routing: false, status: 1 },
+      { node_id: 5, is_controller_node: false, is_routing: false, status: 3 },
+    ],
+  };
+  const stats = {
+    zr1: { rssi: -62, lwr: { repeaters: [], rssi: -62 } },
+    zr2: { rssi: 127, lwr: { repeaters: ['zr1'], rssi: -77 } },
+    ze1: { rssi: -88, lwr: { repeaters: ['zr1', 'zr2'] }, nlwr: { repeaters: ['zr2'] } },
+    ze2: { rssi: null, lwr: null },
+  };
+  const graph = shZwaveGraph([status], reg, Object.entries(stats));
+  const node = (id) => graph.nodes.find((n) => n.id === id);
+  assert.equal(graph.source, 'zwave');
+  assert.deepEqual([node('42-1').role, node('42-2').role, node('42-4').role], ['coordinator', 'router', 'end']);
+  assert.deepEqual([node('42-2').parent, node('42-3').parent, node('42-4').parent, node('42-5').parent], ['42-1', '42-2', '42-3', '42-1']);
+  // 127: no reading, so the last route's RSSI
+  assert.deepEqual([node('42-2').rssi, node('42-3').rssi, node('42-4').rssi, node('42-5').rssi], [-62, -77, -88, null]);
+  assert.deepEqual([node('42-5').available, node('42-5').name, node('42-4').available], [false, 'Back door', true]);
+  const keys = Array.from(graph.links, (l) => [l.a, l.b].sort().join('|')).sort();
+  assert.deepEqual(keys, ['42-1|42-2', '42-1|42-3', '42-2|42-3', '42-3|42-4']);
+  // Routes that loop: the node goes back under its controller
+  const loop = shZwaveGraph([status], reg, [['zr1', { lwr: { repeaters: ['zr2'] } }], ['zr2', { lwr: { repeaters: ['zr1'] } }]]);
+  assert.ok(['42-2', '42-3'].some((id) => loop.nodes.find((n) => n.id === id).parent === '42-1'));
+
+  // The panel: a Z-Wave view, read from the network status and each node's statistics
+  const state = { loaded: true, modules: ['silent'], tabs: ['silent'], silent: { tracked: 4, ignored: 0, integrations: ['zwave_js'], devices: [] } };
+  const p = panel(state, 'silent');
+  const calls = [];
+  p._hass.config = { components: ['zwave_js'] };
+  p._hass.callWS = async (msg) => {
+    calls.push(msg);
+    if (msg.type === 'config/device_registry/list') return reg;
+    if (msg.type === 'zwave_js/network_status') return { controller: status };
+    return state;
+  };
+  const subs = [];
+  p._hass.connection = {
+    subscribeMessage: async (cb, msg) => {
+      subs.push(msg);
+      setImmediate(() => cb(stats[msg.device_id]));
+      return () => {};
+    },
+  };
+  p._render = () => {};
+  p._content();
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.match(p._content(), /data-action="sl_view" data-view="zwave"/);
+  p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'sl_view', view: 'zwave' } } : null) } });
+  p._content();
+  for (let i = 0; i < 6; i++) await new Promise((resolve) => setImmediate(resolve));
+  assert.ok(calls.some((m) => m.type === 'zwave_js/network_status' && m.device_id === 'zc'));
+  assert.equal(subs.length, 4);
+  assert.ok(subs.every((m) => m.type === 'zwave_js/subscribe_node_statistics'));
+  const html = p._content();
+  assert.match(html, /<svg class="nsvg" data-net="zwave"/);
+  assert.match(html, /Z-Wave JS/);
+  assert.match(html, /last working route/);
+  assert.match(html, /class="nn end silent" data-action="sl_pick" data-node="42-5"/);
+  assert.match(p._slHover.tips.get('42-4'), /RSSI<\/span>-88 dBm[\s\S]*?Parent<\/span>Attic plug/);
 });
 
 test('logs tab: the errors and warnings by integration, a level and a period; Ignore, Reload, Clear', async () => {
