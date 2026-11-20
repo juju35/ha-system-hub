@@ -360,6 +360,8 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
     if MODULE_SECURITY in modules:
         data.security = SecurityWatcher(hass, module_options(entry, MODULE_SECURITY))
         await data.security.async_start()
+        # Also when a later step of the setup fails: its log handler is not left behind (then added twice).
+        entry.async_on_unload(data.security.async_stop)
     if MODULE_DATABASE in modules:
         data.database = DatabaseMonitor(hass)
         await data.database.async_start()
@@ -409,8 +411,6 @@ def _async_remove_disabled(hass: HomeAssistant, entry: ConfigEntry, modules: lis
 async def async_unload_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -> bool:
     if (batteries := entry.runtime_data.batteries) is not None:
         await batteries.async_save()
-    if (security := entry.runtime_data.security) is not None:
-        await security.async_stop()
     return await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
 
 
