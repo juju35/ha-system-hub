@@ -177,9 +177,9 @@ var SH_CARD_STYLE = `
   ha-card { padding:14px 16px; --sh-good: var(--success-color, #43a047); --sh-warn: var(--warning-color, #ffa600);
             --sh-bad: var(--error-color, #db4437); --sh-info: var(--info-color, #039be5); }
   .head { display:flex; align-items:center; gap:12px; cursor:pointer; }
-  .badge { width:48px; height:48px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
-           --mdc-icon-size:30px; color:var(--sh-tone); background:color-mix(in srgb, var(--sh-tone) 14%, transparent); }
-  .mini .badge { width:36px; height:36px; --mdc-icon-size:22px; }
+  /* The round 40 px status pastille of the ha-* headers, the same size folded (mini) and full */
+  .badge { width:40px; height:40px; border-radius:50%; flex:none; display:flex; align-items:center; justify-content:center;
+           --mdc-icon-size:24px; color:var(--sh-tone); background:color-mix(in srgb, var(--sh-tone) 14%, transparent); }
   .good { --sh-tone: var(--sh-good); } .warn { --sh-tone: var(--sh-warn); } .bad { --sh-tone: var(--sh-bad); } .info { --sh-tone: var(--sh-info); }
   .who { flex:1; min-width:0; }
   .title { font-size:17px; color:var(--primary-text-color); }

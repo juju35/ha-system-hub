@@ -287,3 +287,9 @@ test('illustrated header: night from the theme or the option; each part in the t
   await mini._read();
   assert.match(mini.shadowRoot.innerHTML, /class="banner warn"[\s\S]*Disk 93 %[\s\S]*class="dots"/);
 });
+
+test('the classic header pastille is round, 40 px, the same size folded and full (ha-* charter)', () => {
+  const badge = source.match(/\n\s*\.badge \{([^}]*)\}/)[1];
+  assert.match(badge, /width:40px; height:40px; border-radius:50%/);
+  assert.doesNotMatch(source, /\.mini \.badge \{/);
+});
