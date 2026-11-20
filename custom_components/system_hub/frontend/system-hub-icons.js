@@ -54,13 +54,16 @@ window.customIcons['system-hub'] = {
   getIconList: async () => Object.keys(SH_ICON_PATHS).map((name) => ({ name })),
 };
 
-// The icons drawn before this set was known (shown blank until their icon changes): drawn again. The number found.
+// The icons drawn before this set was known: drawn again. The number found. Home Assistant draws an icon whose set is
+// not registered yet as a legacy <iron-icon>, and that ha-icon keeps the legacy mode for good (the flag is only cleared
+// for MDI icons), so changing its icon alone left it blank until the page was reloaded: the flag is cleared first.
 function shIconRedraw(root, depth = 0) {
   if (!root || depth > 8) return 0;
   let found = 0;
   for (const el of root.querySelectorAll('*')) {
     if (el.localName === 'ha-icon' && String(el.icon || '').startsWith('system-hub:')) {
       const icon = el.icon;
+      el._legacy = false;
       el.icon = '';
       requestAnimationFrame(() => {
         el.icon = icon;
@@ -72,8 +75,8 @@ function shIconRedraw(root, depth = 0) {
   return found;
 }
 
-// At once, then until the sidebar has drawn the icon (it may come after this module): every 250 ms for 5 seconds
-function shIconRedrawSoon(tries = 20) {
+// At once, then until the sidebar has drawn the icon (it may come after this module): every 250 ms for 15 seconds
+function shIconRedrawSoon(tries = 60) {
   if (shIconRedraw(document.querySelector('home-assistant')?.shadowRoot) || tries <= 1) return;
   setTimeout(() => shIconRedrawSoon(tries - 1), 250);
 }

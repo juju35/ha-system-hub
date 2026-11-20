@@ -58,7 +58,8 @@ test('icons drawn before the set was known are drawn again, each with its own ic
   const { context } = load(null);
   const frames = [];
   context.requestAnimationFrame = (fn) => frames.push(fn);
-  const sidebar = { localName: 'ha-icon', icon: 'system-hub:warn' };
+  // Drawn before the set was known: Home Assistant's legacy mode, cleared so the set is used
+  const sidebar = { localName: 'ha-icon', icon: 'system-hub:warn', _legacy: true };
   const other = { localName: 'ha-icon', icon: 'mdi:cog' };
   const inner = { localName: 'ha-icon', icon: 'system-hub:bad' };
   const after = { localName: 'div' };
@@ -67,6 +68,7 @@ test('icons drawn before the set was known are drawn again, each with its own ic
   assert.equal(sidebar.icon, '');
   for (const fn of frames) fn();
   assert.equal(sidebar.icon, 'system-hub:warn');
+  assert.equal(sidebar._legacy, false);
   assert.equal(inner.icon, 'system-hub:bad');
   assert.equal(other.icon, 'mdi:cog');
   assert.equal(after.icon, undefined);
