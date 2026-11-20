@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 from datetime import timedelta
 from unittest.mock import AsyncMock, patch
 
@@ -128,6 +129,27 @@ def test_credentials_in_clear(tmp_path) -> None:
     ]
 
 
+def test_credentials_skipped_folders_not_walked(tmp_path, monkeypatch) -> None:
+    """www, node_modules, .git… are pruned: never listed, so a large www folder costs nothing."""
+    (tmp_path / "packages" / "sub").mkdir(parents=True)
+    (tmp_path / "packages" / "sub" / "x.yaml").write_text("password: x\n", encoding="utf-8")
+    (tmp_path / "packages" / "sub" / "secrets.yaml").write_text("password: x\n", encoding="utf-8")
+    for skipped in ("www/community/card", "node_modules/pkg", ".git/refs", "deps/lib"):
+        (tmp_path / skipped).mkdir(parents=True)
+        (tmp_path / skipped / "x.yaml").write_text("password: x\n", encoding="utf-8")
+    walked: list[str] = []
+    real_walk = os.walk
+
+    def walk(top, *args, **kwargs):
+        for folder, dirs, names in real_walk(top, *args, **kwargs):
+            walked.append(os.path.relpath(folder, tmp_path))
+            yield folder, dirs, names
+
+    monkeypatch.setattr(os, "walk", walk)
+    assert scan_config(str(tmp_path)) == [{"file": "packages/sub/x.yaml", "line": 1, "key": "password"}]
+    assert sorted(walked) == [".", "packages", "packages/sub"]
+
+
 async def test_settings_step(hass: HomeAssistant) -> None:
     entry = await _setup(hass)
     result = await hass.config_entries.options.async_init(entry.entry_id)
@@ -199,3 +221,25 @@ async def test_settings_offer_the_installed_addons(hass: HomeAssistant) -> None:
         {"value": "a0d7b954_ssh", "label": "Advanced SSH & Web Terminal"},
         {"value": "gone", "label": "gone"},
     ]
+
+
+async def test_failed_setup_leaves_no_log_handler(hass: HomeAssistant) -> None:
+    """A step after the Security module failing: its handler on the ban logger is removed with the failed setup."""
+    logger = logging.getLogger(BAN_LOGGER)
+    before = list(logger.handlers)
+    entry = MockConfigEntry(domain=DOMAIN, title="System Hub", options={CONF_MODULES: ["security", "database"]})
+    entry.add_to_hass(hass)
+    with patch("custom_components.system_hub.DatabaseMonitor.async_start", AsyncMock(side_effect=RuntimeError("boom"))):
+        assert not await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    assert logger.handlers == before
+
+
+async def test_unload_removes_log_handler(hass: HomeAssistant) -> None:
+    logger = logging.getLogger(BAN_LOGGER)
+    before = list(logger.handlers)
+    entry = await _setup(hass)
+    assert len(logger.handlers) == len(before) + 1
+    assert await hass.config_entries.async_unload(entry.entry_id)
+    await hass.async_block_till_done()
+    assert logger.handlers == before

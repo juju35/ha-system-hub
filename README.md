@@ -9,6 +9,10 @@
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/custom_components/system_hub/brand/icon.png" alt="System Hub" width="120"></p>
 
+<p align="center">
+  <a href="https://www.home-assistant.io/"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/homeassistant.png" alt="Home Assistant" width="64"></a>
+</p>
+
 Home Assistant integration that brings the care of your Home Assistant system together in one configurable admin panel: system resources, Home Assistant's own containers, Marketplace updates, the integration watchdog, battery levels, Git sync of your configuration and orphaned entities. Each feature is a module you can turn on or off.
 
 > System Hub replaces [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card), [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh), [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog), [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor), [ha-git-sync](https://github.com/juju35/ha-git-sync) and [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities): see [Migrating](#migrating) to move over.
@@ -238,7 +242,7 @@ On a phone:
 
 ## Lovelace cards
 
-System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. In the visual editor, pick the module first, then its options.
+System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. Only the cards of the modules turned on are loaded (the Status cards, the System Monitor cards and the Automation Monitor cards always are): the Watchdog, Batteries, Marketplace, Git Sync and Orphans cards would show nothing with their module off, so a dashboard does not download them, and such a card says which module to turn on. Turning a module back on adds its card again (after a restart with the resources in YAML mode). In the visual editor, pick the module first, then its options.
 
 | `module:` | `system-hub-card` | `system-hub-mini-card` | Formerly |
 |---|---|---|---|
@@ -265,17 +269,27 @@ The header (90 px, on both cards) draws a home server's dashboard: the server ic
 
 ```yaml
 type: custom:system-hub-card
+module: status                    # optional: the default
 groups: [system, reliability]   # optional: only these groups (system, reliability, maintenance, devices)
 hide_ok: true                     # optional: hide the areas that are fine
+show_title: false                 # optional: hide the header's title (default: true)
+show_subtitle: false              # optional: hide the header's subtitle (default: true)
 illustration: false               # optional: the classic header instead of the illustrated one (default: true)
 illustration_theme: night         # optional: auto (default: follows the Home Assistant theme), day or night
 ```
 
-The mini card takes `groups`, `illustration` and `illustration_theme` (both): it already shows only the areas to look at, so `show_title`, `show_subtitle` and `hide_ok` apply to the full card.
+The mini card takes `groups`, `illustration`, `illustration_theme` and `hide_ok` (both), and `zoom` (mini only); `show_title` and `show_subtitle` apply to the full card. A small round button (`mdi:arrow-expand`) in the top right corner of its header shows the full card's areas by group under it, and turns into `mdi:arrow-collapse` to bring the compact view back; a click anywhere outside the card does too (a tap on iOS included), but not a click in a dialog opened from it, and the card is compact again when it leaves the page. `hide_ok` applies to that detail view. A click on the header still opens the Status tab.
 
-| `system-hub-card` | `system-hub-mini-card` |
-|---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status.png" alt="system-hub-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini.png" alt="system-hub-mini-card, status" width="400"> |
+```yaml
+type: custom:system-hub-mini-card
+module: status                    # optional: the default
+hide_ok: true                     # optional: hide the areas that are fine in the detail view
+zoom: false                       # optional: remove the detail button (default: true)
+```
+
+| `system-hub-card` | `system-hub-mini-card` | `system-hub-mini-card`, zoomed in |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status.png" alt="system-hub-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini.png" alt="system-hub-mini-card, status" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-status-mini-zoom.png" alt="system-hub-mini-card, status, zoomed in" width="400"> |
 
 ## System Monitor cards
 

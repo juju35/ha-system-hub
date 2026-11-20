@@ -12,7 +12,7 @@ from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.system_hub import cards
-from custom_components.system_hub.const import CONF_MODULES, DOMAIN, VERSION
+from custom_components.system_hub.const import CONF_MODULES, DOMAIN, MODULES, VERSION
 
 URL = cards.CARDS_URL
 
@@ -112,3 +112,34 @@ async def test_cards_are_served(hass: HomeAssistant, hass_client) -> None:
     client = await hass_client()
     response = await client.get(f"{URL}/{names[0]}")
     assert response.status == 200
+
+
+def test_wanted_cards_by_module() -> None:
+    """A module's card is loaded only while the module is on; the others always."""
+    names = ["battery-monitor-card.js", "integration-watchdog-card.js", "system-hub-card.js", "system-monitor-card.js"]
+    assert cards.wanted_cards(names, {"watchdog"}) == [
+        "integration-watchdog-card.js",
+        "system-hub-card.js",
+        "system-monitor-card.js",
+    ]
+    assert cards.wanted_cards(names, set()) == ["system-hub-card.js", "system-monitor-card.js"]
+    # Every module's card is mapped to a real module, and shipped
+    shipped = cards.card_files()
+    assert set(cards.CARD_MODULES) <= set(shipped)
+    assert set(cards.CARD_MODULES.values()) <= set(MODULES)
+
+
+async def test_cards_of_modules_turned_off_left_out(hass: HomeAssistant, tmp_path: Path) -> None:
+    """Only the cards of the modules turned on are dashboard resources; turned on again, their card comes back."""
+    folder = tmp_path / "cards"
+    folder.mkdir()
+    for name in ("system-hub-card.js", "integration-watchdog-card.js", "orphan-entities-card.js"):
+        (folder / name).write_text("// card\n")
+    assert await async_setup_component(hass, "lovelace", {})
+    with patch.object(cards, "CARDS_DIR", folder), patch.object(cards.card_files, "__defaults__", (folder,)):
+        entry = await _setup(hass)  # every module turned off
+        assert _urls(hass) == [f"{URL}/system-hub-card.js?v={VERSION}"]
+        hass.config_entries.async_update_entry(entry, options={CONF_MODULES: ["orphans"]})
+        await hass.async_block_till_done()
+        await cards.async_register_cards(hass)
+        assert _urls(hass) == [f"{URL}/orphan-entities-card.js?v={VERSION}", f"{URL}/system-hub-card.js?v={VERSION}"]

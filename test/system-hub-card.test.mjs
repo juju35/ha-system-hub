@@ -234,13 +234,68 @@ test('editor: the module first, then its own editor; another module starts its o
   assert.equal(inner.children.length, 0);
 });
 
-test('mini editor, status: the groups and the illustration, the options the mini card ignores left out', () => {
+test('mini editor, status: the groups, the illustration, hide_ok of its detail view and the detail button', () => {
   const { registry } = load();
   const editor = new (registry.get('system-hub-mini-card-editor'))();
   editor.hass = hass;
   editor.setConfig({ type: 'custom:system-hub-mini-card', module: 'status' });
   const form = editor.shadowRoot.querySelector('.form').children[0];
-  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,illustration,illustration_theme');
+  assert.equal(form.schema.map((s) => s.name).join(), 'module,groups,illustration,illustration_theme,hide_ok,zoom');
+  assert.equal(form.data.zoom, true);
+  // The default (the button shown) is left out of the YAML; false is kept
+  form.handlers['value-changed']({ stopPropagation() {}, detail: { value: { module: 'status', zoom: true } } });
+  assert.equal(JSON.stringify(editor.events.at(-1).detail.config), JSON.stringify({ type: 'custom:system-hub-mini-card', module: 'status' }));
+  form.handlers['value-changed']({ stopPropagation() {}, detail: { value: { module: 'status', zoom: false } } });
+  assert.equal(JSON.stringify(editor.events.at(-1).detail.config), JSON.stringify({ type: 'custom:system-hub-mini-card', module: 'status', zoom: false }));
+});
+
+test('status mini card: the detail button shows the areas by group and back; a click elsewhere or leaving folds it', async () => {
+  const { registry } = load();
+  const mini = new (registry.get('system-hub-mini-card'))();
+  assert.throws(() => mini.setConfig({ zoom: 'yes' }), /zoom must be true or false/);
+  mini.setConfig({});
+  mini.hass = hass;
+  await mini._read();
+  let html = mini.shadowRoot.innerHTML;
+  // Compact: the button in the banner's top right corner, no areas
+  assert.match(html, /class="banner warn" data-tab="status">[\s\S]*<\/div><button class="zoom" title="Show details" aria-label="Show details" aria-expanded="false"><ha-icon icon="mdi:arrow-expand"><\/ha-icon><\/button><\/div><\/ha-card>$/);
+  assert.doesNotMatch(html, /class="group"/);
+  assert.equal(mini.getCardSize(), 1);
+  // Zoomed: the full card's areas by group under the same header, the button to come back
+  mini._zoom(true);
+  html = mini.shadowRoot.innerHTML;
+  assert.match(html, /aria-expanded="true"><ha-icon icon="mdi:arrow-collapse">/);
+  assert.match(html, /<div class="body"><div class="group">Group system[\s\S]*Disk 93 %[\s\S]*3 hours ago[\s\S]*Group devices/);
+  assert.equal(mini.getCardSize(), 6);
+  // A tap inside the card or in a dialog opened from it: still zoomed; anywhere else: compact
+  mini._unzoom.tap({ composedPath: () => [mini] });
+  mini._unzoom.tap({ composedPath: () => [{ localName: 'ha-more-info-dialog' }] });
+  assert.match(mini.shadowRoot.innerHTML, /class="group"/);
+  mini._unzoom.tap({ composedPath: () => [{ localName: 'div' }] });
+  assert.doesNotMatch(mini.shadowRoot.innerHTML, /class="group"/);
+  // Left while zoomed: compact on return
+  mini._zoom(true);
+  mini.disconnectedCallback();
+  assert.equal(mini._zoomed, false);
+  assert.doesNotMatch(mini.shadowRoot.innerHTML, /class="group"/);
+  // hide_ok narrows the detail view, as on the full card
+  mini.setConfig({ hide_ok: true });
+  mini._zoom(true);
+  assert.doesNotMatch(mini.shadowRoot.innerHTML, /3 hours ago/);
+  // The classic header: the button at the right of the row, the areas under it
+  mini.setConfig({ illustration: false });
+  assert.match(mini.shadowRoot.innerHTML, /<ha-card class="zoomed"><div class="mini warn" data-tab="status">[\s\S]*<\/div><button class="zoom"[\s\S]*<div class="groups"><div class="group">/);
+  mini._zoom(false);
+  assert.match(mini.shadowRoot.innerHTML, /<ha-card class="mini warn" data-tab="status">[\s\S]*<button class="zoom"[^>]*aria-expanded="false"/);
+  // zoom: false removes the button
+  mini.setConfig({ zoom: false });
+  assert.doesNotMatch(mini.shadowRoot.innerHTML, /class="zoom"/);
+});
+
+test('the Status mini card zoom button: 24 px, round, top right, smoked glass on the illustrated header (ha-* charter)', () => {
+  assert.match(source, /\.zoom \{ all:unset; position:absolute; z-index:2; top:5px; right:5px; width:24px; height:24px; border-radius:50%;/);
+  assert.match(source, /\.banner > \.zoom \{[^}]*backdrop-filter:blur\(6px\)/);
+  assert.match(source, /\.banner\.night > \.zoom \{ color:rgba\(255,255,255,\.85\); background:rgba\(255,255,255,\.12\); \}/);
 });
 
 test('illustrated header: night from the theme or the option; each part in the tone of its area; classic header', async () => {
@@ -286,4 +341,37 @@ test('illustrated header: night from the theme or the option; each part in the t
   mini.hass = hass;
   await mini._read();
   assert.match(mini.shadowRoot.innerHTML, /class="banner warn"[\s\S]*Disk 93 %[\s\S]*class="dots"/);
+});
+
+test('the classic header pastille is round, 40 px, the same size folded and full (ha-* charter)', () => {
+  const badge = source.match(/\n\s*\.badge \{([^}]*)\}/)[1];
+  assert.match(badge, /width:40px; height:40px; border-radius:50%/);
+  assert.doesNotMatch(source, /\.mini \.badge \{/);
+});
+
+test('a module turned off: its card never loads, the card says so instead of an empty spot', () => {
+  const { registry, context } = load();
+  let later;
+  context.setTimeout = (fn) => {
+    later = fn;
+    return 1;
+  };
+  context.clearTimeout = () => {};
+  registry.set(
+    'ha-card',
+    class extends registry.get('sh-batteries-card') {
+      style = {};
+    },
+  );
+  const card = new (registry.get('system-hub-card'))();
+  card.setConfig({ module: 'watchdog' });
+  card.hass = hass;
+  assert.equal(card.children.length, 0);
+  later();
+  assert.equal(card.children.length, 1);
+  assert.equal(card.children[0].textContent, 'System Hub: turn the watchdog module on to show this card');
+  // Its card defined in the meantime: nothing said
+  card.setConfig({ module: 'batteries' });
+  later();
+  assert.ok(card.children[0] instanceof registry.get('sh-batteries-card'));
 });
