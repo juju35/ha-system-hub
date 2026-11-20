@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.4.1';
+var SYSTEM_HUB_PANEL_VERSION = '3.5.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -347,6 +347,84 @@ function shMatterGraph(registry, diagnostics) {
   return { source: 'matter', nodes: [...hubs.values(), ...nodes], links: [] };
 }
 
+// A Z-Wave network as Z-Wave JS gives it: the nodes of zwave_js/network_status (the controller, the always listening
+// nodes that route, the others) and each node's last working route (zwave_js node statistics: the repeaters from the
+// controller to it, as Home Assistant device ids); a node hangs from its last repeater, else from the controller, the
+// hops of its routes are the mesh between repeaters; its signal is its RSSI (dBm). Several controllers, several networks
+function shZwaveGraph(networks, registry, stats) {
+  var ids = new Map();
+  var names = new Map();
+  for (var dev of registry || []) {
+    for (var [dom, id] of dev.identifiers || []) {
+      var m = dom === 'zwave_js' && /^(\d+)-(\d+)$/.exec(String(id));
+      if (m && !dev.disabled_by) {
+        ids.set(`${m[1]}-${m[2]}`, dev.id);
+        names.set(dev.id, dev.name_by_user || dev.name || '');
+      }
+    }
+  }
+  var info = new Map(stats || []);
+  var nodes = [];
+  var byDevice = new Map();
+  var controllers = new Map();
+  for (var net of networks || []) {
+    var home = String(net?.home_id ?? '');
+    for (var z of net?.nodes || []) {
+      var key = `${home}-${z.node_id}`;
+      var device = ids.get(key) || null;
+      // Its RSSI, else its last route's (Z-Wave JS reports 125 to 127 when it has no reading)
+      var rssi = [info.get(device)?.rssi, info.get(device)?.lwr?.rssi].map(shNum).find((v) => v !== null && v < 0) ?? null;
+      var node = {
+        id: key,
+        device_id: device,
+        name: names.get(device) || `Node ${z.node_id}`,
+        role: z.is_controller_node ? 'coordinator' : z.is_routing ? 'router' : 'end',
+        lqi: null,
+        rssi,
+        available: z.status !== 3,
+        seen: null,
+        parent: null,
+        home,
+      };
+      nodes.push(node);
+      if (device) byDevice.set(device, node);
+      if (node.role === 'coordinator') controllers.set(home, node);
+    }
+  }
+  var links = new Map();
+  var tie = (a, b) => {
+    if (!a || !b || a === b) return;
+    var key = [a.id, b.id].sort().join('|');
+    if (!links.has(key)) links.set(key, { a: a.id, b: b.id, lqi: null });
+  };
+  for (var n of nodes) {
+    if (n.role === 'coordinator') continue;
+    var root = controllers.get(n.home) || null;
+    var route = (r) => (r?.repeaters || []).map((d) => byDevice.get(d)).filter((x) => x && x !== n && x.home === n.home);
+    var last = route(info.get(n.device_id)?.lwr);
+    n.parent = (last.length ? last[last.length - 1] : root)?.id || null;
+    var routes = [info.get(n.device_id)?.lwr, info.get(n.device_id)?.nlwr].filter(Boolean).map(route);
+    for (var r of routes) {
+      var hops = [root, ...r, n];
+      for (var i = 1; i < hops.length; i++) tie(hops[i - 1], hops[i]);
+    }
+  }
+  // Routes read at different times can loop (A through B, B through A): such a node hangs from its controller
+  var byId = new Map(nodes.map((x) => [x.id, x]));
+  for (var x of nodes) {
+    var seen = new Set([x.id]);
+    for (var at = byId.get(x.parent); at; at = byId.get(at.parent)) {
+      if (seen.has(at.id)) {
+        x.parent = controllers.get(x.home)?.id || null;
+        break;
+      }
+      seen.add(at.id);
+    }
+  }
+  for (var y of nodes) delete y.home;
+  return { source: 'zwave', nodes, links: [...links.values()] };
+}
+
 // The order of a network's nodes: the coordinator or the network, the routers and bridges, the devices
 var SH_NET_RANK = { coordinator: 0, hub: 0, bridge: 1, router: 1, end: 2 };
 
@@ -432,6 +510,20 @@ function shNetForce(nodes, links, width, height) {
     return { id: c.id, r: reach.get(c.id) || 0, x: p[0] + (width - Math.min(width, height)) / 2, y: p[1] + (height - Math.min(width, height)) / 2, vx: 0, vy: 0 };
   });
   var at = new Map(pts.map((p, i) => [p.id, i]));
+  // A chain of routers (Z-Wave routes through repeaters) starts on one line, and the forces would keep it there: each
+  // node two hops or more from the root starts turned round its parent, one way then the other
+  var turn = 0;
+  for (var c0 of core) {
+    var up = at.has(c0.parent) ? core[at.get(c0.parent)] : null;
+    if (!up || !at.has(up.parent)) continue;
+    var me = pts[at.get(c0.id)];
+    var pa = pts[at.get(up.id)];
+    var ang = (turn++ % 2 ? -1 : 1) * 0.9;
+    var ox = me.x - pa.x;
+    var oy = me.y - pa.y;
+    me.x = pa.x + ox * Math.cos(ang) - oy * Math.sin(ang);
+    me.y = pa.y + ox * Math.sin(ang) + oy * Math.cos(ang);
+  }
   var springs = [];
   for (var c of core) if (at.has(c.parent)) springs.push([at.get(c.id), at.get(c.parent), 0.6]);
   for (var l of links || []) {
@@ -565,6 +657,19 @@ function shNetBox(pos, pxW, pxH) {
 function shLqiTone(lqi) {
   if (lqi === null || lqi === undefined) return '';
   return lqi >= 100 ? 'good' : lqi >= 50 ? 'warn' : 'bad';
+}
+
+// Tone of a Z-Wave RSSI (dBm): good from −70, warn from −80, weak below
+function shRssiTone(rssi) {
+  if (rssi === null || rssi === undefined) return '';
+  return rssi >= -70 ? 'good' : rssi >= -80 ? 'warn' : 'bad';
+}
+
+// A node's signal: its LQI (Zigbee) or its RSSI (Z-Wave), its tone and its strength from 0 to 1
+function shSignal(n) {
+  if (n?.lqi !== null && n?.lqi !== undefined) return { text: `LQI ${n.lqi}`, tone: shLqiTone(n.lqi), level: Math.min(255, n.lqi) / 255 };
+  if (n?.rssi !== null && n?.rssi !== undefined) return { text: `${n.rssi} dBm`, tone: shRssiTone(n.rssi), level: Math.max(0, Math.min(1, (n.rssi + 100) / 60)) };
+  return null;
 }
 
 function shTone(pct, warn = 70, bad = 90) {
@@ -3003,6 +3108,7 @@ class SystemHubPanel extends HTMLElement {
     var has = (test) => (this._slReg?.devices || []).some((d) => !d.disabled_by && (d.identifiers || []).some(test));
     var nets = [];
     if (has(([dom, id]) => dom === 'zha' || (dom === 'mqtt' && /^zigbee2mqtt_0x/i.test(String(id))))) nets.push('zigbee');
+    if (has(([dom, id]) => dom === 'zwave_js' && /^\d+-\d+$/.test(String(id)))) nets.push('zwave');
     if (has(([dom]) => dom === 'matter')) nets.push('matter');
     return nets;
   }
@@ -3014,7 +3120,7 @@ class SystemHubPanel extends HTMLElement {
     this._slMap = { ...(this._slMap || {}), [net]: { ...(had || {}), loading: true, error: null, at: Date.now() } };
     if (force) this._render();
     try {
-      var graph = net === 'zigbee' ? await this._slZigbee() : await this._slMatter();
+      var graph = net === 'zigbee' ? await this._slZigbee() : net === 'zwave' ? await this._slZwave() : await this._slMatter();
       this._slMap[net] = { ...graph, loading: false, error: null, at: Date.now() };
     } catch (err) {
       this._slMap[net] = { ...(had || {}), loading: false, error: shErr(err), at: Date.now() };
@@ -3059,6 +3165,49 @@ class SystemHubPanel extends HTMLElement {
         .then((stop) => stop?.())
         .catch(() => {});
     }
+  }
+
+  // Each Z-Wave network's status (one of its devices names it), then each node's statistics: the first message of their
+  // subscription, read a few at a time (none after 10 s: the node is drawn under its controller)
+  async _slZwave() {
+    var registry = this._slReg?.devices || [];
+    var homes = new Map();
+    for (var dev of registry) {
+      if (dev.disabled_by) continue;
+      for (var [dom, id] of dev.identifiers || []) {
+        var m = dom === 'zwave_js' && /^(\d+)-\d+$/.exec(String(id));
+        if (m && !homes.has(m[1])) homes.set(m[1], dev.id);
+      }
+    }
+    var networks = (await Promise.all([...homes.values()].map((device_id) => this._hass.callWS({ type: 'zwave_js/network_status', device_id }).catch(() => null))))
+      .map((s) => s?.controller)
+      .filter(Boolean);
+    if (!networks.length) throw new Error('zwave_js/network_status');
+    var graph = shZwaveGraph(networks, registry, []);
+    var devices = graph.nodes.filter((n) => n.device_id && n.role !== 'coordinator').map((n) => n.device_id);
+    var stats = [];
+    for (var i = 0; i < devices.length; i += 8) {
+      stats.push(...(await Promise.all(devices.slice(i, i + 8).map(async (d) => [d, await this._slZwaveStats(d)]))));
+    }
+    return shZwaveGraph(networks, registry, stats);
+  }
+
+  _slZwaveStats(device_id) {
+    var conn = this._hass.connection;
+    if (!conn?.subscribeMessage) return Promise.resolve(null);
+    return new Promise((resolve) => {
+      var unsub;
+      var done = (value) => {
+        clearTimeout(timer);
+        resolve(value);
+        Promise.resolve(unsub)
+          .then((stop) => stop?.())
+          .catch(() => {});
+      };
+      var timer = setTimeout(() => done(null), 10000);
+      unsub = conn.subscribeMessage((msg) => done(msg || null), { type: 'zwave_js/subscribe_node_statistics', device_id });
+      Promise.resolve(unsub).catch(() => done(null));
+    });
   }
 
   // Each Matter node's diagnostics (its network and whether it routes); the devices it bridges come with it
@@ -3106,8 +3255,8 @@ class SystemHubPanel extends HTMLElement {
     var silentCount = devices.filter((x) => x.silent).length;
     var counts = `<span class="pill good">${shEsc(this._t('sl_net_heard', { n: devices.length - silentCount }))}</span>
       <span class="pill ${silentCount ? 'warn' : 'good'}">${shEsc(this._t('sl_n_silent', { n: silentCount }))}</span>
-      <span class="pill">${shEsc(map.source === 'zha' ? 'ZHA' : map.source === 'z2m' ? 'Zigbee2MQTT' : 'Matter')}</span>`;
-    var hint = net === 'matter' ? `<span class="msg">${shEsc(this._t('sl_net_matter_hint'))}</span>` : '';
+      <span class="pill">${shEsc({ zha: 'ZHA', z2m: 'Zigbee2MQTT', zwave: 'Z-Wave JS' }[map.source] || 'Matter')}</span>`;
+    var hint = net === 'matter' || net === 'zwave' ? `<span class="msg">${shEsc(this._t(`sl_net_${net}_hint`))}</span>` : '';
     var treeOpen = Boolean(this._slTreeOpen);
     var tree = `<ha-card class="ntree"><button class="ntoggle" data-action="sl_tree" aria-expanded="${treeOpen}">
         <ha-icon icon="mdi:chevron-${treeOpen ? 'up' : 'down'}"></ha-icon>${shEsc(this._t('sl_net_tree'))}</button>
@@ -3152,8 +3301,9 @@ class SystemHubPanel extends HTMLElement {
       var [x1, y1] = pos[x.id];
       var [x2, y2] = pos[p.id];
       var mid = `${((x1 + x2) / 2).toFixed(1)},${((y1 + y2) / 2).toFixed(1)}`;
-      var tone = x.silent ? 'gone' : net === 'matter' ? (p.hub === 'thread' || byId.get(p.parent)?.hub === 'thread' ? 'thread' : p.role === 'hub' ? 'ip' : '') : shLqiTone(x.lqi);
-      var width = x.lqi !== null && x.lqi !== undefined ? 1.5 + (Math.min(255, x.lqi) / 255) * 2.5 : 2;
+      var signal = shSignal(x);
+      var tone = x.silent ? 'gone' : net === 'matter' ? (p.hub === 'thread' || byId.get(p.parent)?.hub === 'thread' ? 'thread' : p.role === 'hub' ? 'ip' : '') : signal?.tone || '';
+      var width = signal ? 1.5 + signal.level * 2.5 : 2;
       var dash = x.role === 'end' ? ' end' : '';
       lines.push(`<polyline class="nl ${tone}${dash}${fade(x)}" data-a="${shEsc(x.id)}" data-b="${shEsc(p.id)}" style="stroke-width:${width.toFixed(1)}px" ${pos[x.id][3] ? '' : `marker-mid="url(#sh-arrow-${tone || 'n'})" `}points="${x1.toFixed(1)},${y1.toFixed(1)} ${mid} ${x2.toFixed(1)},${y2.toFixed(1)}"/>`);
     }
@@ -3175,6 +3325,7 @@ class SystemHubPanel extends HTMLElement {
           [this._t('sl_net_role'), this._t(roles[z.role])],
           [this._t('sl_net_status'), z.silent ? this._t('sl_silent') + (heard ? ` · ${this._rel(heard)}` : '') : heard ? this._t('sl_heard', { when: this._rel(heard) }) : ''],
           ['LQI', z.lqi ?? ''],
+          ['RSSI', z.rssi !== null && z.rssi !== undefined ? `${z.rssi} dBm` : ''],
           [this._t('sl_net_parent'), parent && z.role !== 'hub' ? this._slName(parent) : ''],
           [this._t('sl_net_model'), z.maker],
           [this._t('sl_net_area'), z.area],
@@ -3222,7 +3373,7 @@ class SystemHubPanel extends HTMLElement {
     var key = (cls, label) => `<span><i class="nd ${cls}"></i>${shEsc(label)}</span>`;
     var legend = `<div class="nlegend">${net === 'matter' ? key('thread sq', 'Thread') + key('ip sq', this._t('sl_net_ip')) : key('coordinator sq', this._t('sl_role_coordinator'))}
       ${key('router', this._t('sl_role_router'))}${key('end', this._t('sl_role_end'))}${key('silent', this._t('sl_silent'))}
-      ${net === 'zigbee' ? `<span class="nlq">${shEsc(this._t('sl_net_legend'))}</span>` : ''}</div>`;
+      ${net === 'zigbee' || net === 'zwave' ? `<span class="nlq">${shEsc(this._t('sl_net_legend'))}</span>` : ''}</div>`;
     return `<ha-card class="nmap">${search}${tools}<div class="ntip" hidden></div>
       <svg class="nsvg" data-net="${net}" viewBox="${box.map((v) => v.toFixed(1)).join(' ')}" role="img" aria-label="${shEsc(this._t('sl_net_map'))}">
         <defs>${['n', 'good', 'warn', 'bad', 'thread', 'ip', 'gone'].map((t) => `<marker id="sh-arrow-${t}" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="${(3 * unit).toFixed(2)}" markerHeight="${(3 * unit).toFixed(2)}" orient="auto"><path class="na ${t}" d="M0,0 L10,5 L0,10 z"/></marker>`).join('')}</defs>
@@ -3344,8 +3495,9 @@ class SystemHubPanel extends HTMLElement {
         var side = '';
         if (node.silent) {
           side = `<span class="pill warn">${shEsc(this._t('sl_silent'))}${node.row?.last_heard ? ` · ${shEsc(this._rel(node.row.last_heard))}` : ''}</span>`;
-        } else if (node.lqi !== null && node.lqi !== undefined) {
-          side = `<span class="pill ${shLqiTone(node.lqi) === 'good' ? 'good' : shLqiTone(node.lqi) === 'warn' ? 'info' : 'warn'}">LQI ${node.lqi}</span>`;
+        } else if (shSignal(node)) {
+          var signal = shSignal(node);
+          side = `<span class="pill ${signal.tone === 'good' ? 'good' : signal.tone === 'warn' ? 'info' : 'warn'}">${shEsc(signal.text)}</span>`;
         } else if (node.seen) side = `<span class="s">${shEsc(this._rel(node.seen))}</span>`;
         var icon = node.role === 'hub' && (node.hub === 'wifi' || node.hub === 'ethernet') ? 'mdi:ip-network-outline' : icons[node.role];
         out.push(`<button class="nrow${node.silent ? ' silent' : ''}${node.id === sel ? ' sel' : ''}" style="padding-left:${8 + depth * 18}px" data-action="sl_pick" data-node="${shEsc(node.id)}" aria-pressed="${node.id === sel}">
@@ -3372,7 +3524,7 @@ class SystemHubPanel extends HTMLElement {
         ? this._t('sl_heard', { when: this._rel(n.seen) })
         : '';
     var power = row?.battery ? (row.level === null || row.level === undefined ? this._t('sl_battery_unknown') : this._t('sl_battery', { n: row.level })) : '';
-    var via = parent && n.role !== 'hub' ? this._t('sl_net_via', { name: this._slName(parent) }) + (n.lqi !== null && n.lqi !== undefined ? ` (LQI ${n.lqi})` : '') : '';
+    var via = parent && n.role !== 'hub' ? this._t('sl_net_via', { name: this._slName(parent) }) + (shSignal(n) ? ` (${shSignal(n).text})` : '') : '';
     var bits = [this._t(role), row?.area, heard, via, power].filter(Boolean).join(' · ');
     var open = n.device_id ? `<a class="act quiet" href="/config/devices/device/${encodeURIComponent(n.device_id)}"><ha-icon icon="mdi:open-in-new"></ha-icon>${shEsc(this._t('open_device'))}</a>` : '';
     var ignore = row ? this._button('sl_ignore', 'mdi:eye-off-outline', this._t('sl_ignore'), { quiet: true, data: { device: row.device_id, name: row.name }, busy: this._busy[`sl_ignore:${row.device_id}`] }) : '';

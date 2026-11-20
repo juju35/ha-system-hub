@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.0 - 2026-11-21
+
+### Features
+- **Silent devices → Z-Wave network**: a third network view beside Zigbee and Matter, offered when Z-Wave JS devices are in the device registry. Each network (one per controller) is read with `zwave_js/network_status`, then each node's statistics: a node hangs from the last repeater of its last working route, else from the controller, the hops of its last two working routes drawn as the mesh between repeaters; the controller as a square, the routing nodes as circles, the others as small circles, a dead node red. Each link is coloured by the node's RSSI (green −70 dBm and over, amber −80 to −71, red below −80) and thicker when stronger; the RSSI is in the tooltip, the tree and the detail. The radio is never turned off to read neighbour tables.
+
 ## 3.4.1 - 2026-11-20
 
 ### Fixes
