@@ -265,8 +265,11 @@ The header (90 px, on both cards) draws a home server's dashboard: the server ic
 
 ```yaml
 type: custom:system-hub-card
+module: status                    # optional: the default
 groups: [system, reliability]   # optional: only these groups (system, reliability, maintenance, devices)
 hide_ok: true                     # optional: hide the areas that are fine
+show_title: false                 # optional: hide the header's title (default: true)
+show_subtitle: false              # optional: hide the header's subtitle (default: true)
 illustration: false               # optional: the classic header instead of the illustrated one (default: true)
 illustration_theme: night         # optional: auto (default: follows the Home Assistant theme), day or night
 ```
