@@ -114,7 +114,11 @@ class SecurityWatcher:
         logging.getLogger(BAN_LOGGER).addHandler(self._handler)
 
     async def async_stop(self) -> None:
-        logging.getLogger(BAN_LOGGER).removeHandler(self._handler)
+        """Remove the log handler and save; a second call (failed setup, then unload callbacks) does nothing."""
+        logger = logging.getLogger(BAN_LOGGER)
+        if self._handler not in logger.handlers:
+            return
+        logger.removeHandler(self._handler)
         await self._store.async_save(self._data())
 
     def _data(self) -> dict[str, Any]:

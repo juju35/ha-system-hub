@@ -362,6 +362,21 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
         await data.security.async_start()
         # Also when a later step of the setup fails: its log handler is not left behind (then added twice).
         entry.async_on_unload(data.security.async_stop)
+    try:
+        await _async_setup_rest(hass, entry, modules, data)
+    except BaseException:
+        # Home Assistant before 2025.x does not run the unload callbacks of a failed setup.
+        if data.security is not None:
+            await data.security.async_stop()
+        raise
+    entry.async_on_unload(entry.add_update_listener(_async_reload))
+    return True
+
+
+async def _async_setup_rest(
+    hass: HomeAssistant, entry: SystemHubConfigEntry, modules: list[str], data: SystemHubData
+) -> None:
+    """The steps after the Security module: a failure there must not leave its log handler behind."""
     if MODULE_DATABASE in modules:
         data.database = DatabaseMonitor(hass)
         await data.database.async_start()
@@ -374,8 +389,6 @@ async def async_setup_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) ->
     _async_remove_disabled(hass, entry, modules)
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-    entry.async_on_unload(entry.add_update_listener(_async_reload))
-    return True
 
 
 def _async_remove_disabled(hass: HomeAssistant, entry: ConfigEntry, modules: list[str]) -> None:
