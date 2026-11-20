@@ -35,6 +35,7 @@ jobs:
         run: |
           VERSION="$(jq -r .version custom_components/system_hub/manifest.json)"
           grep -q "VERSION: Final = \"$VERSION\"" custom_components/system_hub/const.py || { echo "::error file=custom_components/system_hub/const.py::version $VERSION not found in custom_components/system_hub/const.py"; exit 1; }
+          grep -q "SYSTEM_HUB_PANEL_VERSION = '$VERSION'" custom_components/system_hub/frontend/system-hub-panel.js || { echo "::error file=custom_components/system_hub/frontend/system-hub-panel.js::version $VERSION not found in SYSTEM_HUB_PANEL_VERSION"; exit 1; }
           grep -q "^## $VERSION " CHANGELOG.md || { echo "::error file=CHANGELOG.md::no '## $VERSION' entry in CHANGELOG.md"; exit 1; }
           echo "Version $VERSION everywhere"
 
@@ -113,3 +114,10 @@ jobs:
 
       - name: Run panel tests
         run: node --test test/*.test.mjs
+
+      # The split the Release job makes before building the zip, on a copy: a card whose translations cannot be
+      # split fails here instead of failing the release after the merge.
+      - name: Translations split
+        run: |
+          npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/split-frontend.mjs --check
