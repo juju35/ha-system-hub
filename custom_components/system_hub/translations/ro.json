@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} tokenuri nefolosite",
         "card_admin_only": "System Hub: doar pentru administratori",
         "card_module": "Modul",
+        "card_module_off": "System Hub: activați modulul {module} pentru a afișa acest card",
         "card_groups": "Grupuri",
         "card_hide_ok": "Ascunde ce e în regulă",
         "card_show_title": "Afișează titlul",

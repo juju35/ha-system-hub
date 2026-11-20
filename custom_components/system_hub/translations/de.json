@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} ungenutzte Tokens",
         "card_admin_only": "System Hub: nur für Administratoren",
         "card_module": "Modul",
+        "card_module_off": "System Hub: Aktiviere das Modul {module}, um diese Karte anzuzeigen",
         "card_groups": "Gruppen",
         "card_hide_ok": "Was in Ordnung ist ausblenden",
         "card_show_title": "Titel anzeigen",

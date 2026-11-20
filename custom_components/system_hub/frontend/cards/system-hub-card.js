@@ -314,7 +314,27 @@ class SystemHubCardBase extends HTMLElement {
     };
     var Card = customElements.get(tag);
     if (Card) mount(Card);
-    else customElements.whenDefined(tag).then(mount);
+    else {
+      customElements.whenDefined(tag).then(mount);
+      this._waitModule(module, tag);
+    }
+  }
+
+  // A module turned off: its card is not loaded on the dashboards (cards.py), so it never comes. Said so after a
+  // while, rather than an empty spot; replaced by the card if it comes after all.
+  _waitModule(module, tag) {
+    if (typeof setTimeout !== 'function') return;
+    clearTimeout(this._moduleTimer);
+    this._moduleTimer = setTimeout(() => {
+      if (this._config?.module !== module || customElements.get(tag)) return;
+      var note = document.createElement('ha-card');
+      note.style.cssText = 'display:block;padding:12px 16px;color:var(--secondary-text-color)';
+      note.textContent = shCardT(this._hass, 'card_module_off', 'System Hub: turn the {module} module on to show this card', {
+        module: shCardT(this._hass, `tab_${module}`, module),
+      });
+      this._inner = null;
+      this.replaceChildren(note);
+    }, 5000);
   }
 
   set hass(hass) {

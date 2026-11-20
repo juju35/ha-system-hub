@@ -348,3 +348,30 @@ test('the classic header pastille is round, 40 px, the same size folded and full
   assert.match(badge, /width:40px; height:40px; border-radius:50%/);
   assert.doesNotMatch(source, /\.mini \.badge \{/);
 });
+
+test('a module turned off: its card never loads, the card says so instead of an empty spot', () => {
+  const { registry, context } = load();
+  let later;
+  context.setTimeout = (fn) => {
+    later = fn;
+    return 1;
+  };
+  context.clearTimeout = () => {};
+  registry.set(
+    'ha-card',
+    class extends registry.get('sh-batteries-card') {
+      style = {};
+    },
+  );
+  const card = new (registry.get('system-hub-card'))();
+  card.setConfig({ module: 'watchdog' });
+  card.hass = hass;
+  assert.equal(card.children.length, 0);
+  later();
+  assert.equal(card.children.length, 1);
+  assert.equal(card.children[0].textContent, 'System Hub: turn the watchdog module on to show this card');
+  // Its card defined in the meantime: nothing said
+  card.setConfig({ module: 'batteries' });
+  later();
+  assert.ok(card.children[0] instanceof registry.get('sh-batteries-card'));
+});

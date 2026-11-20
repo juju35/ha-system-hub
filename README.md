@@ -242,7 +242,7 @@ On a phone:
 
 ## Lovelace cards
 
-System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. In the visual editor, pick the module first, then its options.
+System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. Only the cards of the modules turned on are loaded (the Status cards, the System Monitor cards and the Automation Monitor cards always are): the Watchdog, Batteries, Marketplace, Git Sync and Orphans cards would show nothing with their module off, so a dashboard does not download them, and such a card says which module to turn on. Turning a module back on adds its card again (after a restart with the resources in YAML mode). In the visual editor, pick the module first, then its options.
 
 | `module:` | `system-hub-card` | `system-hub-mini-card` | Formerly |
 |---|---|---|---|

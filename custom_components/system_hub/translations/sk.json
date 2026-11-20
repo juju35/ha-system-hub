@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} nepoužívaných tokenov",
         "card_admin_only": "System Hub: len pre správcov",
         "card_module": "Modul",
+        "card_module_off": "System Hub: zapnite modul {module} na zobrazenie tejto karty",
         "card_groups": "Skupiny",
         "card_hide_ok": "Skryť, čo je v poriadku",
         "card_show_title": "Zobraziť názov",

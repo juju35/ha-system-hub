@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} neuporabljenih žetonov",
         "card_admin_only": "System Hub: samo za skrbnike",
         "card_module": "Modul",
+        "card_module_off": "System Hub: vklopite modul {module} za prikaz te kartice",
         "card_groups": "Skupine",
         "card_hide_ok": "Skrij, kar je v redu",
         "card_show_title": "Prikaži naslov",

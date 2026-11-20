@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} használatlan token",
         "card_admin_only": "System Hub: csak rendszergazdáknak",
         "card_module": "Modul",
+        "card_module_off": "System Hub: kapcsold be a(z) {module} modult a kártya megjelenítéséhez",
         "card_groups": "Csoportok",
         "card_hide_ok": "Rendben lévők elrejtése",
         "card_show_title": "Cím megjelenítése",

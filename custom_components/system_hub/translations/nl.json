@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} ongebruikte tokens",
         "card_admin_only": "System Hub: alleen voor beheerders",
         "card_module": "Module",
+        "card_module_off": "System Hub: zet de module {module} aan om deze kaart te tonen",
         "card_groups": "Groepen",
         "card_hide_ok": "Verberg wat in orde is",
         "card_show_title": "Titel tonen",

@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} неиспользуемых токенов",
         "card_admin_only": "System Hub: только для администраторов",
         "card_module": "Модуль",
+        "card_module_off": "System Hub: включите модуль {module}, чтобы показать эту карточку",
         "card_groups": "Группы",
         "card_hide_ok": "Скрыть то, что в порядке",
         "card_show_title": "Показывать заголовок",

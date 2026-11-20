@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} oanvända token",
         "card_admin_only": "System Hub: endast för administratörer",
         "card_module": "Modul",
+        "card_module_off": "System Hub: aktivera modulen {module} för att visa det här kortet",
         "card_groups": "Grupper",
         "card_hide_ok": "Dölj det som är okej",
         "card_show_title": "Visa rubrik",

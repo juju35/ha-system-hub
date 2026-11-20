@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} neizmantoti marķieri",
         "card_admin_only": "System Hub: tikai administratoriem",
         "card_module": "Modulis",
+        "card_module_off": "System Hub: ieslēdziet moduli {module}, lai parādītu šo karti",
         "card_groups": "Grupas",
         "card_hide_ok": "Paslēpt to, kas ir kārtībā",
         "card_show_title": "Rādīt virsrakstu",

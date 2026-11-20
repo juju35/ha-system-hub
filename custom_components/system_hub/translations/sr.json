@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} некоришћених токена",
         "card_admin_only": "System Hub: само за администраторе",
         "card_module": "Модул",
+        "card_module_off": "System Hub: укључите модул {module} да бисте приказали ову картицу",
         "card_groups": "Групе",
         "card_hide_ok": "Сакриј оно што је у реду",
         "card_show_title": "Прикажи наслов",

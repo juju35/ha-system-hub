@@ -1866,6 +1866,7 @@
         "sc_n_unused": "{n} jetons inutilisés",
         "card_admin_only": "System Hub : réservé aux administrateurs",
         "card_module": "Module",
+        "card_module_off": "System Hub : activez le module {module} pour afficher cette carte",
         "card_groups": "Groupes",
         "card_hide_ok": "Masquer ce qui va bien",
         "card_show_title": "Afficher le titre",
