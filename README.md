@@ -935,6 +935,7 @@ Every option is in the visual editor:
 | `illustration` | `true` | The illustrated header with the update arrow (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
 | `illustration_theme` | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
 | `show_subtitle` | `true` | Show the subtitle under the title |
+| `show_next_check` | `true` | Show *next in …* in the subtitle; `false` keeps only the last check, for a phone where the subtitle is cut |
 | `show_updates` | `true` | Updates available |
 | `show_failed` | `true` | Repositories that couldn't be checked, and the error of a failed check |
 | `check_button` | `true` | **Check for updates** button in the header |
