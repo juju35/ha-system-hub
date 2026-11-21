@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.5.1 - 2026-11-21
+
+### Fixes
+- Silent devices → Z-Wave network: each node's statistics subscription is closed once only — a second message, or the timeout after the first one, no longer asks Home Assistant to close it again — and a message delivered while subscribing still closes it.
+
 ## 3.5.0 - 2026-11-21
 
 ### Features
