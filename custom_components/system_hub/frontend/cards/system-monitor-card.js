@@ -121,6 +121,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Show the reload and restart buttons",
     show_actions_helper: "Administrators only. Rebooting the host needs Home Assistant OS or Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Show the uptime",
+    show_load: "Show the load",
+    show_ip: "Show the IP address",
+    tap_action: "Tap action",
+    tap_action_helper: "On a gauge, tile or line: open the entity's details, or nothing (the buttons still work)",
     ha_reload: "Reload configuration",
     ha_restart: "Restart Home Assistant",
     ha_reboot: "Reboot the host",
@@ -212,6 +218,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Afficher les boutons de rechargement et de redémarrage",
     show_actions_helper: "Administrateurs uniquement. Le redémarrage de l'hôte demande Home Assistant OS ou Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Afficher le temps de fonctionnement",
+    show_load: "Afficher la charge",
+    show_ip: "Afficher l'adresse IP",
+    tap_action: "Action au toucher",
+    tap_action_helper: "Sur une jauge, une tuile ou une ligne : ouvrir le détail de l'entité, ou rien (les boutons restent actifs)",
     ha_reload: "Recharger la configuration",
     ha_restart: "Redémarrer Home Assistant",
     ha_reboot: "Redémarrer l'hôte",
@@ -303,6 +315,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Schaltflächen zum Neuladen und Neustarten anzeigen",
     show_actions_helper: "Nur für Administratoren. Der Neustart des Hosts erfordert Home Assistant OS oder Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Laufzeit anzeigen",
+    show_load: "Last anzeigen",
+    show_ip: "IP-Adresse anzeigen",
+    tap_action: "Tippaktion",
+    tap_action_helper: "Auf einer Anzeige, Kachel oder Zeile: die Details der Entität öffnen oder nichts (die Schaltflächen funktionieren weiterhin)",
     ha_reload: "Konfiguration neu laden",
     ha_restart: "Home Assistant neu starten",
     ha_reboot: "Host neu starten",
@@ -394,6 +412,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Mostrar los botones de recarga y reinicio",
     show_actions_helper: "Solo administradores. Reiniciar el host requiere Home Assistant OS o Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Mostrar el tiempo activo",
+    show_load: "Mostrar la carga",
+    show_ip: "Mostrar la dirección IP",
+    tap_action: "Acción al tocar",
+    tap_action_helper: "En un indicador, mosaico o línea: abrir los detalles de la entidad, o nada (los botones siguen funcionando)",
     ha_reload: "Recargar la configuración",
     ha_restart: "Reiniciar Home Assistant",
     ha_reboot: "Reiniciar el host",
@@ -486,6 +510,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Прикажи дугмад за поновно учитавање и рестарт",
     show_actions_helper: "Само за администраторе. Рестарт хоста захтева Home Assistant OS или Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Прикажи време рада",
+    show_load: "Прикажи оптерећење",
+    show_ip: "Прикажи IP адресу",
+    tap_action: "Радња на додир",
+    tap_action_helper: "На мерачу, плочици или реду: отвори детаље ентитета или ништа (дугмад и даље раде)",
     ha_reload: "Поново учитај конфигурацију",
     ha_restart: "Поново покрени Home Assistant",
     ha_reboot: "Рестартуј хост",
@@ -578,6 +608,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Prikaži dugmad za ponovno učitavanje i restart",
     show_actions_helper: "Samo za administratore. Restart hosta zahteva Home Assistant OS ili Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Prikaži vreme rada",
+    show_load: "Prikaži opterećenje",
+    show_ip: "Prikaži IP adresu",
+    tap_action: "Radnja na dodir",
+    tap_action_helper: "Na meraču, pločici ili redu: otvori detalje entiteta ili ništa (dugmad i dalje rade)",
     ha_reload: "Ponovo učitaj konfiguraciju",
     ha_restart: "Ponovo pokreni Home Assistant",
     ha_reboot: "Restartuj host",
@@ -670,6 +706,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Mostra i pulsanti di ricarica e riavvio",
     show_actions_helper: "Solo amministratori. Il riavvio dell'host richiede Home Assistant OS o Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Mostra il tempo di attività",
+    show_load: "Mostra il carico",
+    show_ip: "Mostra l'indirizzo IP",
+    tap_action: "Azione al tocco",
+    tap_action_helper: "Su un indicatore, un riquadro o una riga: apre i dettagli dell'entità, o niente (i pulsanti funzionano comunque)",
     ha_reload: "Ricarica la configurazione",
     ha_restart: "Riavvia Home Assistant",
     ha_reboot: "Riavvia l'host",
@@ -762,6 +804,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Knoppen voor herladen en herstarten tonen",
     show_actions_helper: "Alleen beheerders. Het herstarten van de host vereist Home Assistant OS of Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Bedrijfstijd tonen",
+    show_load: "Belasting tonen",
+    show_ip: "IP-adres tonen",
+    tap_action: "Tikactie",
+    tap_action_helper: "Op een meter, tegel of regel: de details van de entiteit openen, of niets (de knoppen blijven werken)",
     ha_reload: "Configuratie herladen",
     ha_restart: "Home Assistant herstarten",
     ha_reboot: "Host herstarten",
@@ -854,6 +902,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Mostrar os botões de recarregar e reiniciar",
     show_actions_helper: "Apenas administradores. Reiniciar o anfitrião requer o Home Assistant OS ou Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Mostrar o tempo de atividade",
+    show_load: "Mostrar a carga",
+    show_ip: "Mostrar o endereço IP",
+    tap_action: "Ação ao tocar",
+    tap_action_helper: "Num indicador, mosaico ou linha: abrir os detalhes da entidade, ou nada (os botões continuam a funcionar)",
     ha_reload: "Recarregar a configuração",
     ha_restart: "Reiniciar o Home Assistant",
     ha_reboot: "Reiniciar o anfitrião",
@@ -946,6 +1000,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Pokaż przyciski przeładowania i ponownego uruchomienia",
     show_actions_helper: "Tylko administratorzy. Ponowne uruchomienie hosta wymaga Home Assistant OS lub Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Pokaż czas działania",
+    show_load: "Pokaż obciążenie",
+    show_ip: "Pokaż adres IP",
+    tap_action: "Akcja dotknięcia",
+    tap_action_helper: "Na wskaźniku, kafelku lub wierszu: otwórz szczegóły encji albo nic (przyciski nadal działają)",
     ha_reload: "Przeładuj konfigurację",
     ha_restart: "Uruchom ponownie Home Assistant",
     ha_reboot: "Uruchom ponownie hosta",
@@ -1038,6 +1098,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Afișează butoanele de reîncărcare și repornire",
     show_actions_helper: "Doar administratori. Repornirea gazdei necesită Home Assistant OS sau Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Afișează timpul de funcționare",
+    show_load: "Afișează încărcarea",
+    show_ip: "Afișează adresa IP",
+    tap_action: "Acțiune la atingere",
+    tap_action_helper: "Pe un indicator, o placă sau un rând: deschide detaliile entității sau nimic (butoanele funcționează în continuare)",
     ha_reload: "Reîncarcă configurația",
     ha_restart: "Repornește Home Assistant",
     ha_reboot: "Repornește gazda",
@@ -1130,6 +1196,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Vis knapperne til genindlæsning og genstart",
     show_actions_helper: "Kun administratorer. Genstart af værten kræver Home Assistant OS eller Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Vis oppetid",
+    show_load: "Vis belastning",
+    show_ip: "Vis IP-adresse",
+    tap_action: "Tryk-handling",
+    tap_action_helper: "På en måler, et felt eller en linje: åbn enhedens detaljer eller intet (knapperne virker stadig)",
     ha_reload: "Genindlæs konfiguration",
     ha_restart: "Genstart Home Assistant",
     ha_reboot: "Genstart værten",
@@ -1222,6 +1294,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Visa knapparna för omläsning och omstart",
     show_actions_helper: "Endast administratörer. Omstart av värden kräver Home Assistant OS eller Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Visa drifttid",
+    show_load: "Visa belastning",
+    show_ip: "Visa IP-adress",
+    tap_action: "Tryckåtgärd",
+    tap_action_helper: "På en mätare, en ruta eller en rad: öppna entitetens detaljer eller ingenting (knapparna fungerar fortfarande)",
     ha_reload: "Läs om konfigurationen",
     ha_restart: "Starta om Home Assistant",
     ha_reboot: "Starta om värden",
@@ -1314,6 +1392,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Показване на бутоните за презареждане и рестартиране",
     show_actions_helper: "Само за администратори. Рестартирането на хоста изисква Home Assistant OS или Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Показване на времето на работа",
+    show_load: "Показване на натоварването",
+    show_ip: "Показване на IP адреса",
+    tap_action: "Действие при докосване",
+    tap_action_helper: "При индикатор, плочка или ред: отваряне на подробностите за обекта или нищо (бутоните продължават да работят)",
     ha_reload: "Презареждане на конфигурацията",
     ha_restart: "Рестартиране на Home Assistant",
     ha_reboot: "Рестартиране на хоста",
@@ -1406,6 +1490,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Показывать кнопки перезагрузки конфигурации и перезапуска",
     show_actions_helper: "Только для администраторов. Перезагрузка хоста требует Home Assistant OS или Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Показывать время работы",
+    show_load: "Показывать нагрузку",
+    show_ip: "Показывать IP-адрес",
+    tap_action: "Действие при нажатии",
+    tap_action_helper: "На индикаторе, плитке или строке: открыть сведения об объекте или ничего (кнопки по-прежнему работают)",
     ha_reload: "Перезагрузить конфигурацию",
     ha_restart: "Перезапустить Home Assistant",
     ha_reboot: "Перезагрузить хост",
@@ -1498,6 +1588,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Показувати кнопки перезавантаження конфігурації та перезапуску",
     show_actions_helper: "Лише для адміністраторів. Перезавантаження хоста потребує Home Assistant OS або Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Показувати час роботи",
+    show_load: "Показувати навантаження",
+    show_ip: "Показувати IP-адресу",
+    tap_action: "Дія при натисканні",
+    tap_action_helper: "На індикаторі, плитці чи рядку: відкрити відомості про об'єкт або нічого (кнопки й далі працюють)",
     ha_reload: "Перезавантажити конфігурацію",
     ha_restart: "Перезапустити Home Assistant",
     ha_reboot: "Перезавантажити хост",
@@ -1590,6 +1686,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Az újratöltés és újraindítás gombjainak megjelenítése",
     show_actions_helper: "Csak rendszergazdáknak. A gazdagép újraindításához Home Assistant OS vagy Supervised szükséges",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Üzemidő megjelenítése",
+    show_load: "Terhelés megjelenítése",
+    show_ip: "IP-cím megjelenítése",
+    tap_action: "Koppintási művelet",
+    tap_action_helper: "Mérőn, csempén vagy soron: az entitás részleteinek megnyitása, vagy semmi (a gombok továbbra is működnek)",
     ha_reload: "Konfiguráció újratöltése",
     ha_restart: "Home Assistant újraindítása",
     ha_reboot: "Gazdagép újraindítása",
@@ -1682,6 +1784,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Zobraziť tlačidlá opätovného načítania a reštartu",
     show_actions_helper: "Iba pre správcov. Reštart hostiteľa vyžaduje Home Assistant OS alebo Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Zobraziť dobu prevádzky",
+    show_load: "Zobraziť zaťaženie",
+    show_ip: "Zobraziť IP adresu",
+    tap_action: "Akcia pri ťuknutí",
+    tap_action_helper: "Na ukazovateli, dlaždici alebo riadku: otvoriť podrobnosti entity alebo nič (tlačidlá naďalej fungujú)",
     ha_reload: "Znovu načítať konfiguráciu",
     ha_restart: "Reštartovať Home Assistant",
     ha_reboot: "Reštartovať hostiteľa",
@@ -1774,6 +1882,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Zobrazit tlačítka opětovného načtení a restartu",
     show_actions_helper: "Pouze pro správce. Restart hostitele vyžaduje Home Assistant OS nebo Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Zobrazit dobu provozu",
+    show_load: "Zobrazit zatížení",
+    show_ip: "Zobrazit IP adresu",
+    tap_action: "Akce při klepnutí",
+    tap_action_helper: "Na ukazateli, dlaždici nebo řádku: otevřít podrobnosti entity, nebo nic (tlačítka dál fungují)",
     ha_reload: "Znovu načíst konfiguraci",
     ha_restart: "Restartovat Home Assistant",
     ha_reboot: "Restartovat hostitele",
@@ -1866,6 +1980,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Prikaži gumba za ponovno nalaganje in ponovni zagon",
     show_actions_helper: "Samo skrbniki. Ponovni zagon gostitelja zahteva Home Assistant OS ali Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Prikaži čas delovanja",
+    show_load: "Prikaži obremenitev",
+    show_ip: "Prikaži naslov IP",
+    tap_action: "Dejanje ob dotiku",
+    tap_action_helper: "Na merilniku, ploščici ali vrstici: odpri podrobnosti entitete ali nič (gumbi še vedno delujejo)",
     ha_reload: "Znova naloži konfiguracijo",
     ha_restart: "Znova zaženi Home Assistant",
     ha_reboot: "Znova zaženi gostitelja",
@@ -1958,6 +2078,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Rādīt pārlādes un restartēšanas pogas",
     show_actions_helper: "Tikai administratoriem. Resursdatora restartēšanai nepieciešams Home Assistant OS vai Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Rādīt darbības laiku",
+    show_load: "Rādīt slodzi",
+    show_ip: "Rādīt IP adresi",
+    tap_action: "Pieskāriena darbība",
+    tap_action_helper: "Uz mērītāja, flīzes vai rindas: atvērt entītijas informāciju vai neko (pogas joprojām darbojas)",
     ha_reload: "Pārlādēt konfigurāciju",
     ha_restart: "Restartēt Home Assistant",
     ha_reboot: "Restartēt resursdatoru",
@@ -2050,6 +2176,12 @@ const STRINGS = {
     // Reload, restart and reboot (show_actions); the panel's strings
     show_actions: "Εμφάνιση των κουμπιών επαναφόρτωσης και επανεκκίνησης",
     show_actions_helper: "Μόνο για διαχειριστές. Η επανεκκίνηση του κεντρικού υπολογιστή απαιτεί Home Assistant OS ή Supervised",
+    // Lines of the System section (show_uptime, show_load, show_ip) and tap_action: none (#129)
+    show_uptime: "Εμφάνιση χρόνου λειτουργίας",
+    show_load: "Εμφάνιση φόρτου",
+    show_ip: "Εμφάνιση διεύθυνσης IP",
+    tap_action: "Ενέργεια πατήματος",
+    tap_action_helper: "Σε δείκτη, πλακίδιο ή γραμμή: άνοιγμα των λεπτομερειών της οντότητας ή τίποτα (τα κουμπιά εξακολουθούν να λειτουργούν)",
     ha_reload: "Επαναφόρτωση ρυθμίσεων",
     ha_restart: "Επανεκκίνηση του Home Assistant",
     ha_reboot: "Επανεκκίνηση του κεντρικού υπολογιστή",
@@ -2785,6 +2917,24 @@ const fireMoreInfo = (node, entityId) => {
   node.dispatchEvent(new CustomEvent("hass-more-info", { detail: { entityId }, bubbles: true, composed: true }));
 };
 
+/** `tap_action: none` (or `{ action: none }`, as the visual editor saves it): a click on the card opens no entity. */
+const tapNone = (config) => (config?.tap_action?.action ?? config?.tap_action) === "none";
+
+/**
+ * With `tap_action: none`, the elements that only open an entity (gauges, tiles, rows, pills) are no longer buttons:
+ * no entity to open, no role, no tab stop, no pointer. The ones that also act (a fold, the zoom) keep their action.
+ */
+const inertHtml = (html) =>
+  html.replace(/<[a-z][\w-]*\s[^>]*\bdata-entity="[^"]*"[^>]*>/g, (tag) =>
+    /\bdata-action="/.test(tag)
+      ? tag.replace(/\s*\bdata-entity="[^"]*"/, "")
+      : tag
+          .replace(/\s*\bdata-entity="[^"]*"/, "")
+          .replace(/\s*\brole="button"/, "")
+          .replace(/\s*\btabindex="0"/, "")
+          .replace(/(\bclass="[^"]*?)\bclickable\b ?/, "$1")
+  );
+
 // ---------------------------------------------------------------------------
 // Shared styles
 // ---------------------------------------------------------------------------
@@ -3120,7 +3270,7 @@ class SystemMonitorBase extends HTMLElement {
         return;
       }
       const el = path.find((n) => n.dataset?.entity);
-      if (el) fireMoreInfo(this, el.dataset.entity);
+      if (el && !tapNone(this._config)) fireMoreInfo(this, el.dataset.entity);
     });
     // Keyboard: Enter / Space on an element with role="button" (gauges, tiles and rows open their entity).
     this.shadowRoot.addEventListener("keydown", (ev) => {
@@ -3179,7 +3329,10 @@ class SystemMonitorBase extends HTMLElement {
     if (this._pillWatch || typeof ResizeObserver !== "function") return;
     const fit = () => {
       cancelAnimationFrame(this._pillFrame);
-      this._pillFrame = requestAnimationFrame(() => this._fitPill());
+      this._pillFrame = requestAnimationFrame(() => {
+        this._fitPill();
+        this._fitActs?.();
+      });
     };
     this._pillWatch = [new ResizeObserver(fit), typeof MutationObserver === "function" ? new MutationObserver(fit) : null];
     this._pillWatch[0].observe(this);
@@ -3273,7 +3426,8 @@ class SystemMonitorBase extends HTMLElement {
       return;
     }
     this._dirty = false;
-    const html = shBanner(this._render(), { hass: this._hass, config: this._config, scene: 'system', pad: '0' });
+    const banner = shBanner(this._render(), { hass: this._hass, config: this._config, scene: 'system', pad: '0' });
+    const html = tapNone(this._config) ? inertHtml(banner) : banner;
     if (html !== this._html) {
       // Re-rendering replaces the buttons: keep the focus, without scrolling the page back to the card
       // (a mouse click focuses gauges and rows too).
@@ -3544,6 +3698,9 @@ const HA_ACTIONS = {
 const ACTIONS_STYLE = `
   .ha-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px; }
   .ha-msg { flex: 1 1 100%; font-size: 12px; text-align: right; }
+  .ha-main { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 100%; }
+  .ha-main.icons .ha-btn { padding: 4px 10px; }
+  .ha-main.icons .ha-btn > span { display: none; }
   .ha-msg.crit { color: color-mix(in srgb, var(--sm-crit) 45%, var(--primary-text-color)); }
   .ha-btn { all: unset; box-sizing: border-box; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 32px;
             padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; --c: var(--sm-focus);
@@ -3616,6 +3773,7 @@ class SystemMonitorCard extends SystemMonitorBase {
   }
 
   _system(sm, hist) {
+    const c = this._config;
     const sc = sm.scalars;
     const gauges = [];
     const cpu = num(this._s(sc.processor_use));
@@ -3648,12 +3806,13 @@ class SystemMonitorCard extends SystemMonitorBase {
       );
 
     const facts = [];
-    const up = uptimeSec(this._s(sc.last_boot));
+    // show_uptime / show_load / show_ip: each line of the System section can be left out (#129).
+    const up = c.show_uptime !== false ? uptimeSec(this._s(sc.last_boot)) : null;
     if (up !== null)
       facts.push(
         `<span class="clickable" data-entity="${sc.last_boot}" role="button" tabindex="0">${svgIcon(ICONS.timer)}${this._t("uptime")} ${fmtUptime(up, this._hass, this._config)}</span>`
       );
-    const loads = ["load_1m", "load_5m", "load_15m"].filter((k) => sc[k]);
+    const loads = c.show_load !== false ? ["load_1m", "load_5m", "load_15m"].filter((k) => sc[k]) : [];
     if (loads.length)
       facts.push(
         `<span class="clickable" data-entity="${sc[loads[0]]}" role="button" tabindex="0">${svgIcon(ICONS.load)}${this._t("load")} ${loads
@@ -3663,7 +3822,7 @@ class SystemMonitorCard extends SystemMonitorBase {
           })
           .join(" · ")}</span>`
       );
-    const ip = mainIp(this._hass, sm, this._config);
+    const ip = c.show_ip !== false ? mainIp(this._hass, sm, this._config) : null;
     if (ip) facts.push(`<span class="clickable" data-entity="${ip.entity_id}" role="button" tabindex="0">${svgIcon(ICONS.ip)}${esc(ip.state)}</span>`);
 
     if (!gauges.length && !facts.length) return "";
@@ -3684,13 +3843,31 @@ class SystemMonitorCard extends SystemMonitorBase {
     if (this._haConfirm) return this._haConfirmBox(this._haConfirm);
     const kinds = Object.keys(HA_ACTIONS).filter((k) => k !== "reboot" || this._hass.config?.components?.includes("hassio"));
     const msg = this._haMsg ? `<div class="ha-msg ${this._haMsg.tone}" role="status">${esc(this._haMsg.text)}</div>` : "";
-    return `<div class="ha-acts">${msg}${kinds.map((k) => this._haButton(`ha_ask:${k}`, k, this._t(`ha_${k}`), k === "reload" && this._haBusy)).join("")}</div>`;
+    // Icons only when the buttons with their labels would take more than one line (a phone, #129): see _fitActs.
+    const buttons = kinds.map((k) => this._haButton(`ha_ask:${k}`, k, this._t(`ha_${k}`), k === "reload" && this._haBusy, true)).join("");
+    return `<div class="ha-acts">${msg}<div class="ha-main${this._actsIcons ? " icons" : ""}">${buttons}</div></div>`;
   }
 
-  _haButton(action, kind, label, disabled = false) {
+  /** A button of show_actions; `named`: its label also in title and aria-label, for when only its icon shows. */
+  _haButton(action, kind, label, disabled = false, named = false) {
     const cls = HA_ACTIONS[kind]?.danger ? "danger" : "";
     const icon = HA_ACTIONS[kind]?.icon ?? ICONS.close;
-    return `<button type="button" class="ha-btn ${cls}" data-action="${action}"${disabled ? " disabled" : ""}>${svgIcon(icon)}<span>${esc(label)}</span></button>`;
+    const name = named ? ` title="${esc(label)}" aria-label="${esc(label)}"` : "";
+    return `<button type="button" class="ha-btn ${cls}" data-action="${action}"${name}${disabled ? " disabled" : ""}>${svgIcon(icon)}<span>${esc(label)}</span></button>`;
+  }
+
+  /**
+   * The reload, restart and reboot buttons stay on one line: with their labels while they fit, else as icons only
+   * (their labels in title and aria-label). Measured with the labels on each fit, never by a fixed width.
+   */
+  _fitActs() {
+    const row = this.shadowRoot?.querySelector?.(".ha-main");
+    const buttons = row ? [...row.children] : [];
+    if (buttons.length < 2 || !buttons[0].getBoundingClientRect) return;
+    row.classList.remove("icons");
+    const tops = buttons.map((b) => Math.round(b.getBoundingClientRect().top));
+    this._actsIcons = tops.some((top) => top !== tops[0]);
+    row.classList.toggle("icons", this._actsIcons);
   }
 
   _haConfirmBox(kind) {
@@ -4153,7 +4330,7 @@ class SystemMonitorMiniCard extends SystemMonitorZoomCard {
         `<span class="rates">${rate(n.throughput_network_in, "down", ICONS.down)}${rate(n.throughput_network_out, "up", ICONS.up)}</span>`
       );
     }
-    const up = uptimeSec(this._s(sc.last_boot));
+    const up = c.show_uptime !== false ? uptimeSec(this._s(sc.last_boot)) : null;
     if (up !== null)
       foot.push(`<span class="clickable" data-entity="${sc.last_boot}" role="button" tabindex="0">${svgIcon(ICONS.timer)}${fmtUptime(up, this._hass, this._config)}</span>`);
     return `<style>${BASE_STYLE}${MINI_STYLE}${NET_STYLE}</style>
@@ -4220,6 +4397,8 @@ class SystemMonitorEditorBase extends HTMLElement {
           ...[...this._booleans(), ...this._offBooleans()].map((name) => ({ name, selector: { boolean: {} } })),
         ],
       },
+      // tap_action (#129): open the entity's details (default) or nothing.
+      { name: "tap_action", selector: { ui_action: { actions: ["more-info", "none"], default_action: "more-info" } } },
       // Warning / critical thresholds, shown at their default values.
       {
         type: "grid",
@@ -4303,6 +4482,8 @@ class SystemMonitorEditorBase extends HTMLElement {
           const entities = Object.fromEntries(Object.entries(config.entities).filter(([, v]) => v !== "" && v !== undefined && v !== null));
           config.entities = Object.keys(entities).length ? entities : undefined;
         }
+        // tap_action at its default (more-info) is left out of the YAML.
+        if (config.tap_action && !tapNone(config)) delete config.tap_action;
         for (const [k, v] of Object.entries(config)) {
           // Keep the YAML minimal: drop empty values, toggles left at their default (true) and default thresholds.
           if (
@@ -4328,6 +4509,8 @@ class SystemMonitorEditorBase extends HTMLElement {
       const data = { ...THRESHOLDS, ...this._config };
       for (const name of this._booleans()) if (data[name] === undefined) data[name] = true;
       for (const name of this._offBooleans()) if (data[name] === undefined) data[name] = false;
+      // `tap_action: none` written in YAML as a plain string: the action selector reads an object.
+      if (typeof data.tap_action === "string") data.tap_action = { action: data.tap_action };
       this._form.data = shbData(data);
     }
     const schema = this._schema();
@@ -4341,7 +4524,7 @@ class SystemMonitorEditorBase extends HTMLElement {
 
 class SystemMonitorCardEditor extends SystemMonitorEditorBase {
   static get toggles() {
-    return ["show_system", "show_disk", "show_network", "show_history", "show_storage", "show_backups", "show_processes"];
+    return ["show_system", "show_disk", "show_uptime", "show_load", "show_ip", "show_network", "show_history", "show_storage", "show_backups", "show_processes"];
   }
 
   static get offToggles() {
@@ -4352,7 +4535,7 @@ class SystemMonitorCardEditor extends SystemMonitorEditorBase {
 class SystemMonitorMiniCardEditor extends SystemMonitorEditorBase {
   // The full card's sections too: the zoom button shows the full card with this same configuration.
   static get toggles() {
-    return ["show_storage", "show_backups", "show_network", "show_history", "zoom", "show_system", "show_disk", "show_processes"];
+    return ["show_storage", "show_backups", "show_network", "show_history", "show_uptime", "zoom", "show_system", "show_disk", "show_load", "show_ip", "show_processes"];
   }
 
   static get offToggles() {

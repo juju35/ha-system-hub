@@ -14,6 +14,7 @@ import "./system-monitor-card/narrow.mjs";
 import "./system-monitor-card/plurals.mjs";
 import "./system-monitor-card/processes-a11y.mjs";
 import "./system-monitor-card/style.mjs";
+import "./system-monitor-card/tap-lines.mjs";
 import "./system-monitor-card/temperature.mjs";
 import "./system-monitor-card/thresholds.mjs";
 import "./system-monitor-card/unavailable.mjs";
