@@ -1556,6 +1556,26 @@ test('silent devices networks: Z-Wave from Z-Wave JS, each node under the last r
   assert.match(p._slHover.tips.get('42-4'), /RSSI<\/span>-88 dBm[\s\S]*?Parent<\/span>Attic plug/);
 });
 
+test('z-wave node statistics: read once, unsubscribed once even when more messages come', async () => {
+  const p = panel({ loaded: true, modules: ['silent'], tabs: ['silent'] }, 'silent');
+  let stops = 0;
+  p._hass.connection = {
+    subscribeMessage: async (cb) => {
+      cb({ rssi: -60 });
+      cb({ rssi: -61 });
+      return () => {
+        stops += 1;
+      };
+    },
+  };
+  assert.deepEqual(await p._slZwaveStats('d1'), { rssi: -60 });
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.equal(stops, 1);
+  // No connection that subscribes: no statistics
+  p._hass.connection = {};
+  assert.equal(await p._slZwaveStats('d1'), null);
+});
+
 test('logs tab: the errors and warnings by integration, a level and a period; Ignore, Reload, Clear', async () => {
   const now = Date.now() / 1000;
   const entry = (name, level, message, count, hoursAgo, exception = '') => ({

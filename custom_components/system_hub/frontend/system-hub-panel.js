@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.5.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.5.1';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -3197,10 +3197,17 @@ class SystemHubPanel extends HTMLElement {
     if (!conn?.subscribeMessage) return Promise.resolve(null);
     return new Promise((resolve) => {
       var unsub;
+      var settled = false;
+      // Once only: the timeout, the first message, a failed subscription or a message already on its way after it
+      // would otherwise unsubscribe again (an error from Home Assistant for an unknown subscription)
       var done = (value) => {
+        if (settled) return;
+        settled = true;
         clearTimeout(timer);
         resolve(value);
-        Promise.resolve(unsub)
+        // Read once the call has returned: a message delivered while subscribing still finds the subscription
+        Promise.resolve()
+          .then(() => unsub)
           .then((stop) => stop?.())
           .catch(() => {});
       };
