@@ -24,6 +24,22 @@ PAIRS = [
         "procs_ok": True,
         "zoom": True,
     },
+    # gauge_style: bar and the level colours (#131); thresholds lowered so that the three levels show.
+    {
+        "file": "card-system-monitor-lines",
+        "type": "sh-system-card",
+        "width": 460,
+        "procs_ok": True,
+        "config": {
+            "gauge_style": "bar",
+            "ok_color": "green",
+            "warning_color": "orange",
+            "critical_color": "red",
+            "cpu_warning": 20,
+            "temp_warning": 40,
+            "temp_critical": 50,
+        },
+    },
 ]
 SHOTS = light_dark(PAIRS)
 
@@ -64,7 +80,7 @@ def main():
         states = {**mock["states"], **(mock["procsRunning"] if shot.get("procs_ok") else {})}
         return [
             shot["type"],
-            {},
+            shot.get("config", {}),
             states,
             mock["entities"],
             mock["devices"],

@@ -127,6 +127,14 @@ const STRINGS = {
     show_ip: "Show the IP address",
     tap_action: "Tap action",
     tap_action_helper: "On a gauge, tile or line: open the entity's details, or nothing (the buttons still work)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "System gauges",
+    gauge_ring: "Rings",
+    gauge_bar: "Lines with bars",
+    ok_color: "Normal level colour",
+    warning_color: "Warning level colour",
+    critical_color: "Critical level colour",
+    ok_color_helper: "A Home Assistant colour or any CSS colour; the levels follow the thresholds below",
     ha_reload: "Reload configuration",
     ha_restart: "Restart Home Assistant",
     ha_reboot: "Reboot the host",
@@ -224,6 +232,14 @@ const STRINGS = {
     show_ip: "Afficher l'adresse IP",
     tap_action: "Action au toucher",
     tap_action_helper: "Sur une jauge, une tuile ou une ligne : ouvrir le détail de l'entité, ou rien (les boutons restent actifs)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Jauges système",
+    gauge_ring: "Anneaux",
+    gauge_bar: "Lignes avec barres",
+    ok_color: "Couleur du niveau normal",
+    warning_color: "Couleur du niveau d’alerte",
+    critical_color: "Couleur du niveau critique",
+    ok_color_helper: "Une couleur de Home Assistant ou toute couleur CSS ; les niveaux suivent les seuils ci-dessous",
     ha_reload: "Recharger la configuration",
     ha_restart: "Redémarrer Home Assistant",
     ha_reboot: "Redémarrer l'hôte",
@@ -321,6 +337,14 @@ const STRINGS = {
     show_ip: "IP-Adresse anzeigen",
     tap_action: "Tippaktion",
     tap_action_helper: "Auf einer Anzeige, Kachel oder Zeile: die Details der Entität öffnen oder nichts (die Schaltflächen funktionieren weiterhin)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Systemanzeigen",
+    gauge_ring: "Ringe",
+    gauge_bar: "Zeilen mit Balken",
+    ok_color: "Farbe der Normalstufe",
+    warning_color: "Farbe der Warnstufe",
+    critical_color: "Farbe der kritischen Stufe",
+    ok_color_helper: "Eine Home-Assistant-Farbe oder eine beliebige CSS-Farbe; die Stufen folgen den Schwellen unten",
     ha_reload: "Konfiguration neu laden",
     ha_restart: "Home Assistant neu starten",
     ha_reboot: "Host neu starten",
@@ -418,6 +442,14 @@ const STRINGS = {
     show_ip: "Mostrar la dirección IP",
     tap_action: "Acción al tocar",
     tap_action_helper: "En un indicador, mosaico o línea: abrir los detalles de la entidad, o nada (los botones siguen funcionando)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Indicadores del sistema",
+    gauge_ring: "Anillos",
+    gauge_bar: "Líneas con barras",
+    ok_color: "Color del nivel normal",
+    warning_color: "Color del nivel de aviso",
+    critical_color: "Color del nivel crítico",
+    ok_color_helper: "Un color de Home Assistant o cualquier color CSS; los niveles siguen los umbrales de abajo",
     ha_reload: "Recargar la configuración",
     ha_restart: "Reiniciar Home Assistant",
     ha_reboot: "Reiniciar el host",
@@ -516,6 +548,14 @@ const STRINGS = {
     show_ip: "Прикажи IP адресу",
     tap_action: "Радња на додир",
     tap_action_helper: "На мерачу, плочици или реду: отвори детаље ентитета или ништа (дугмад и даље раде)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Мерачи система",
+    gauge_ring: "Прстенови",
+    gauge_bar: "Редови са тракама",
+    ok_color: "Боја нормалног нивоа",
+    warning_color: "Боја нивоа упозорења",
+    critical_color: "Боја критичног нивоа",
+    ok_color_helper: "Боја Home Assistant-а или било која CSS боја; нивои прате прагове испод",
     ha_reload: "Поново учитај конфигурацију",
     ha_restart: "Поново покрени Home Assistant",
     ha_reboot: "Рестартуј хост",
@@ -614,6 +654,14 @@ const STRINGS = {
     show_ip: "Prikaži IP adresu",
     tap_action: "Radnja na dodir",
     tap_action_helper: "Na meraču, pločici ili redu: otvori detalje entiteta ili ništa (dugmad i dalje rade)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Merači sistema",
+    gauge_ring: "Prstenovi",
+    gauge_bar: "Redovi sa trakama",
+    ok_color: "Boja normalnog nivoa",
+    warning_color: "Boja nivoa upozorenja",
+    critical_color: "Boja kritičnog nivoa",
+    ok_color_helper: "Boja Home Assistant-a ili bilo koja CSS boja; nivoi prate pragove ispod",
     ha_reload: "Ponovo učitaj konfiguraciju",
     ha_restart: "Ponovo pokreni Home Assistant",
     ha_reboot: "Restartuj host",
@@ -712,6 +760,14 @@ const STRINGS = {
     show_ip: "Mostra l'indirizzo IP",
     tap_action: "Azione al tocco",
     tap_action_helper: "Su un indicatore, un riquadro o una riga: apre i dettagli dell'entità, o niente (i pulsanti funzionano comunque)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Indicatori di sistema",
+    gauge_ring: "Anelli",
+    gauge_bar: "Righe con barre",
+    ok_color: "Colore del livello normale",
+    warning_color: "Colore del livello di avviso",
+    critical_color: "Colore del livello critico",
+    ok_color_helper: "Un colore di Home Assistant o qualsiasi colore CSS; i livelli seguono le soglie qui sotto",
     ha_reload: "Ricarica la configurazione",
     ha_restart: "Riavvia Home Assistant",
     ha_reboot: "Riavvia l'host",
@@ -810,6 +866,14 @@ const STRINGS = {
     show_ip: "IP-adres tonen",
     tap_action: "Tikactie",
     tap_action_helper: "Op een meter, tegel of regel: de details van de entiteit openen, of niets (de knoppen blijven werken)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Systeemmeters",
+    gauge_ring: "Ringen",
+    gauge_bar: "Regels met balken",
+    ok_color: "Kleur van het normale niveau",
+    warning_color: "Kleur van het waarschuwingsniveau",
+    critical_color: "Kleur van het kritieke niveau",
+    ok_color_helper: "Een Home Assistant-kleur of een willekeurige CSS-kleur; de niveaus volgen de drempels hieronder",
     ha_reload: "Configuratie herladen",
     ha_restart: "Home Assistant herstarten",
     ha_reboot: "Host herstarten",
@@ -908,6 +972,14 @@ const STRINGS = {
     show_ip: "Mostrar o endereço IP",
     tap_action: "Ação ao tocar",
     tap_action_helper: "Num indicador, mosaico ou linha: abrir os detalhes da entidade, ou nada (os botões continuam a funcionar)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Indicadores do sistema",
+    gauge_ring: "Anéis",
+    gauge_bar: "Linhas com barras",
+    ok_color: "Cor do nível normal",
+    warning_color: "Cor do nível de aviso",
+    critical_color: "Cor do nível crítico",
+    ok_color_helper: "Uma cor do Home Assistant ou qualquer cor CSS; os níveis seguem os limiares abaixo",
     ha_reload: "Recarregar a configuração",
     ha_restart: "Reiniciar o Home Assistant",
     ha_reboot: "Reiniciar o anfitrião",
@@ -1006,6 +1078,14 @@ const STRINGS = {
     show_ip: "Pokaż adres IP",
     tap_action: "Akcja dotknięcia",
     tap_action_helper: "Na wskaźniku, kafelku lub wierszu: otwórz szczegóły encji albo nic (przyciski nadal działają)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Wskaźniki systemu",
+    gauge_ring: "Pierścienie",
+    gauge_bar: "Wiersze z paskami",
+    ok_color: "Kolor poziomu normalnego",
+    warning_color: "Kolor poziomu ostrzeżenia",
+    critical_color: "Kolor poziomu krytycznego",
+    ok_color_helper: "Kolor Home Assistant lub dowolny kolor CSS; poziomy wynikają z progów poniżej",
     ha_reload: "Przeładuj konfigurację",
     ha_restart: "Uruchom ponownie Home Assistant",
     ha_reboot: "Uruchom ponownie hosta",
@@ -1104,6 +1184,14 @@ const STRINGS = {
     show_ip: "Afișează adresa IP",
     tap_action: "Acțiune la atingere",
     tap_action_helper: "Pe un indicator, o placă sau un rând: deschide detaliile entității sau nimic (butoanele funcționează în continuare)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Indicatoare de sistem",
+    gauge_ring: "Inele",
+    gauge_bar: "Rânduri cu bare",
+    ok_color: "Culoarea nivelului normal",
+    warning_color: "Culoarea nivelului de avertizare",
+    critical_color: "Culoarea nivelului critic",
+    ok_color_helper: "O culoare Home Assistant sau orice culoare CSS; nivelurile urmează pragurile de mai jos",
     ha_reload: "Reîncarcă configurația",
     ha_restart: "Repornește Home Assistant",
     ha_reboot: "Repornește gazda",
@@ -1202,6 +1290,14 @@ const STRINGS = {
     show_ip: "Vis IP-adresse",
     tap_action: "Tryk-handling",
     tap_action_helper: "På en måler, et felt eller en linje: åbn enhedens detaljer eller intet (knapperne virker stadig)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Systemmålere",
+    gauge_ring: "Ringe",
+    gauge_bar: "Linjer med bjælker",
+    ok_color: "Farve for normalt niveau",
+    warning_color: "Farve for advarselsniveau",
+    critical_color: "Farve for kritisk niveau",
+    ok_color_helper: "En Home Assistant-farve eller en vilkårlig CSS-farve; niveauerne følger tærsklerne nedenfor",
     ha_reload: "Genindlæs konfiguration",
     ha_restart: "Genstart Home Assistant",
     ha_reboot: "Genstart værten",
@@ -1300,6 +1396,14 @@ const STRINGS = {
     show_ip: "Visa IP-adress",
     tap_action: "Tryckåtgärd",
     tap_action_helper: "På en mätare, en ruta eller en rad: öppna entitetens detaljer eller ingenting (knapparna fungerar fortfarande)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Systemmätare",
+    gauge_ring: "Ringar",
+    gauge_bar: "Rader med staplar",
+    ok_color: "Färg för normal nivå",
+    warning_color: "Färg för varningsnivå",
+    critical_color: "Färg för kritisk nivå",
+    ok_color_helper: "En Home Assistant-färg eller valfri CSS-färg; nivåerna följer tröskelvärdena nedan",
     ha_reload: "Läs om konfigurationen",
     ha_restart: "Starta om Home Assistant",
     ha_reboot: "Starta om värden",
@@ -1398,6 +1502,14 @@ const STRINGS = {
     show_ip: "Показване на IP адреса",
     tap_action: "Действие при докосване",
     tap_action_helper: "При индикатор, плочка или ред: отваряне на подробностите за обекта или нищо (бутоните продължават да работят)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Системни индикатори",
+    gauge_ring: "Пръстени",
+    gauge_bar: "Редове с ленти",
+    ok_color: "Цвят на нормалното ниво",
+    warning_color: "Цвят на нивото на предупреждение",
+    critical_color: "Цвят на критичното ниво",
+    ok_color_helper: "Цвят на Home Assistant или произволен CSS цвят; нивата следват праговете по-долу",
     ha_reload: "Презареждане на конфигурацията",
     ha_restart: "Рестартиране на Home Assistant",
     ha_reboot: "Рестартиране на хоста",
@@ -1496,6 +1608,14 @@ const STRINGS = {
     show_ip: "Показывать IP-адрес",
     tap_action: "Действие при нажатии",
     tap_action_helper: "На индикаторе, плитке или строке: открыть сведения об объекте или ничего (кнопки по-прежнему работают)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Индикаторы системы",
+    gauge_ring: "Кольца",
+    gauge_bar: "Строки с полосами",
+    ok_color: "Цвет нормального уровня",
+    warning_color: "Цвет уровня предупреждения",
+    critical_color: "Цвет критического уровня",
+    ok_color_helper: "Цвет Home Assistant или любой цвет CSS; уровни следуют порогам ниже",
     ha_reload: "Перезагрузить конфигурацию",
     ha_restart: "Перезапустить Home Assistant",
     ha_reboot: "Перезагрузить хост",
@@ -1594,6 +1714,14 @@ const STRINGS = {
     show_ip: "Показувати IP-адресу",
     tap_action: "Дія при натисканні",
     tap_action_helper: "На індикаторі, плитці чи рядку: відкрити відомості про об'єкт або нічого (кнопки й далі працюють)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Індикатори системи",
+    gauge_ring: "Кільця",
+    gauge_bar: "Рядки зі смугами",
+    ok_color: "Колір нормального рівня",
+    warning_color: "Колір рівня попередження",
+    critical_color: "Колір критичного рівня",
+    ok_color_helper: "Колір Home Assistant або будь-який колір CSS; рівні визначаються порогами нижче",
     ha_reload: "Перезавантажити конфігурацію",
     ha_restart: "Перезапустити Home Assistant",
     ha_reboot: "Перезавантажити хост",
@@ -1692,6 +1820,14 @@ const STRINGS = {
     show_ip: "IP-cím megjelenítése",
     tap_action: "Koppintási művelet",
     tap_action_helper: "Mérőn, csempén vagy soron: az entitás részleteinek megnyitása, vagy semmi (a gombok továbbra is működnek)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Rendszermérők",
+    gauge_ring: "Gyűrűk",
+    gauge_bar: "Sorok sávokkal",
+    ok_color: "A normál szint színe",
+    warning_color: "A figyelmeztetési szint színe",
+    critical_color: "A kritikus szint színe",
+    ok_color_helper: "Egy Home Assistant-szín vagy bármely CSS-szín; a szintek az alábbi küszöböket követik",
     ha_reload: "Konfiguráció újratöltése",
     ha_restart: "Home Assistant újraindítása",
     ha_reboot: "Gazdagép újraindítása",
@@ -1790,6 +1926,14 @@ const STRINGS = {
     show_ip: "Zobraziť IP adresu",
     tap_action: "Akcia pri ťuknutí",
     tap_action_helper: "Na ukazovateli, dlaždici alebo riadku: otvoriť podrobnosti entity alebo nič (tlačidlá naďalej fungujú)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Ukazovatele systému",
+    gauge_ring: "Prstence",
+    gauge_bar: "Riadky s pruhmi",
+    ok_color: "Farba normálnej úrovne",
+    warning_color: "Farba úrovne upozornenia",
+    critical_color: "Farba kritickej úrovne",
+    ok_color_helper: "Farba Home Assistant alebo ľubovoľná farba CSS; úrovne sa riadia prahmi nižšie",
     ha_reload: "Znovu načítať konfiguráciu",
     ha_restart: "Reštartovať Home Assistant",
     ha_reboot: "Reštartovať hostiteľa",
@@ -1888,6 +2032,14 @@ const STRINGS = {
     show_ip: "Zobrazit IP adresu",
     tap_action: "Akce při klepnutí",
     tap_action_helper: "Na ukazateli, dlaždici nebo řádku: otevřít podrobnosti entity, nebo nic (tlačítka dál fungují)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Ukazatele systému",
+    gauge_ring: "Prstence",
+    gauge_bar: "Řádky s pruhy",
+    ok_color: "Barva normální úrovně",
+    warning_color: "Barva úrovně varování",
+    critical_color: "Barva kritické úrovně",
+    ok_color_helper: "Barva Home Assistant nebo libovolná barva CSS; úrovně se řídí prahy níže",
     ha_reload: "Znovu načíst konfiguraci",
     ha_restart: "Restartovat Home Assistant",
     ha_reboot: "Restartovat hostitele",
@@ -1986,6 +2138,14 @@ const STRINGS = {
     show_ip: "Prikaži naslov IP",
     tap_action: "Dejanje ob dotiku",
     tap_action_helper: "Na merilniku, ploščici ali vrstici: odpri podrobnosti entitete ali nič (gumbi še vedno delujejo)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Sistemski merilniki",
+    gauge_ring: "Obroči",
+    gauge_bar: "Vrstice s pasovi",
+    ok_color: "Barva običajne ravni",
+    warning_color: "Barva ravni opozorila",
+    critical_color: "Barva kritične ravni",
+    ok_color_helper: "Barva Home Assistanta ali katera koli barva CSS; ravni sledijo pragovom spodaj",
     ha_reload: "Znova naloži konfiguracijo",
     ha_restart: "Znova zaženi Home Assistant",
     ha_reboot: "Znova zaženi gostitelja",
@@ -2084,6 +2244,14 @@ const STRINGS = {
     show_ip: "Rādīt IP adresi",
     tap_action: "Pieskāriena darbība",
     tap_action_helper: "Uz mērītāja, flīzes vai rindas: atvērt entītijas informāciju vai neko (pogas joprojām darbojas)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Sistēmas mērītāji",
+    gauge_ring: "Gredzeni",
+    gauge_bar: "Rindas ar joslām",
+    ok_color: "Normāla līmeņa krāsa",
+    warning_color: "Brīdinājuma līmeņa krāsa",
+    critical_color: "Kritiskā līmeņa krāsa",
+    ok_color_helper: "Home Assistant krāsa vai jebkura CSS krāsa; līmeņi atbilst tālāk norādītajiem sliekšņiem",
     ha_reload: "Pārlādēt konfigurāciju",
     ha_restart: "Restartēt Home Assistant",
     ha_reboot: "Restartēt resursdatoru",
@@ -2182,6 +2350,14 @@ const STRINGS = {
     show_ip: "Εμφάνιση διεύθυνσης IP",
     tap_action: "Ενέργεια πατήματος",
     tap_action_helper: "Σε δείκτη, πλακίδιο ή γραμμή: άνοιγμα των λεπτομερειών της οντότητας ή τίποτα (τα κουμπιά εξακολουθούν να λειτουργούν)",
+    // gauge_style and the level colours (#131)
+    gauge_style: "Δείκτες συστήματος",
+    gauge_ring: "Δακτύλιοι",
+    gauge_bar: "Γραμμές με μπάρες",
+    ok_color: "Χρώμα κανονικού επιπέδου",
+    warning_color: "Χρώμα επιπέδου προειδοποίησης",
+    critical_color: "Χρώμα κρίσιμου επιπέδου",
+    ok_color_helper: "Ένα χρώμα του Home Assistant ή οποιοδήποτε χρώμα CSS· τα επίπεδα ακολουθούν τα παρακάτω όρια",
     ha_reload: "Επαναφόρτωση ρυθμίσεων",
     ha_restart: "Επανεκκίνηση του Home Assistant",
     ha_reboot: "Επανεκκίνηση του κεντρικού υπολογιστή",
@@ -2356,6 +2532,32 @@ const threshold = (config, key) => {
 
 /** The level ("ok", "warn", "crit") of a metric's value against the thresholds of the card's config. */
 const metricLevel = (config, metric, v) => level(v, threshold(config, `${metric}_warning`), threshold(config, `${metric}_critical`));
+
+// Home Assistant's theme colour names (the ui_color selector of the visual editor), drawn as `var(--<name>-color)`
+// with Home Assistant's default value as fallback (a theme that leaves one out).
+const UI_COLORS = {
+  primary: "#03a9f4", accent: "#ff9800", red: "#f44336", pink: "#e91e63", purple: "#926bc7", "deep-purple": "#6e41ab",
+  indigo: "#3f51b5", blue: "#2196f3", "light-blue": "#03a9f4", cyan: "#00bcd4", teal: "#009688", green: "#4caf50",
+  "light-green": "#8bc34a", lime: "#cddc39", yellow: "#ffeb3b", amber: "#ffc107", orange: "#ff9800", "deep-orange": "#ff6f22",
+  brown: "#795548", "light-grey": "#bdbdbd", grey: "#9e9e9e", "dark-grey": "#606060", "blue-grey": "#607d8b", black: "#000000",
+  white: "#ffffff", disabled: "#bdbdbd",
+};
+
+/**
+ * A level colour option (ok_color, warning_color, critical_color, #131) as a CSS colour: a Home Assistant colour name,
+ * an `[r, g, b]` list (the RGB selector) or any CSS colour (`#43a047`, `rgb(…)`, `var(--x)`); null when unset or
+ * unusable (a value that could leave the property is ignored).
+ */
+const levelColor = (v) => {
+  if (Array.isArray(v) && v.length === 3 && v.every((n) => Number.isFinite(Number(n)))) return `rgb(${v.map(Number).join(", ")})`;
+  if (typeof v !== "string") return null;
+  const s = v.trim();
+  if (!s || /[;{}<>"'\\]/.test(s)) return null;
+  return Object.hasOwn(UI_COLORS, s) ? `var(--${s}-color, ${UI_COLORS[s]})` : s;
+};
+
+// The custom property each level colour option sets on the card.
+const LEVEL_COLORS = { ok_color: "--sm-level-ok", warning_color: "--sm-warn", critical_color: "--sm-crit" };
 
 const svgIcon = (path, cls = "") => `<svg class="icon ${cls}" viewBox="0 0 24 24"><path d="${path}"/></svg>`;
 
@@ -2945,6 +3147,7 @@ const BASE_STYLE = `
   /* Home Assistant's <ha-icon> is inline: as a box of its own, its icon is centred in its badge */
   ha-icon { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; line-height: 0; }
   :host { display: block; }
+  /* ok_color / warning_color / critical_color (#131) set --sm-level-ok, --sm-warn and --sm-crit on the host itself. */
   :host { --sm-blue: #18bcf2; --sm-ok: var(--success-color, #43a047); --sm-warn: var(--warning-color, #ffa600); --sm-crit: var(--error-color, #db4437);
           --sm-focus: var(--primary-color, #03a9f4); }
   /* Status colours tint pills, dots, bars, rings and icons; text in a status colour is mixed with the text colour
@@ -2955,7 +3158,7 @@ const BASE_STYLE = `
   .muted { color: var(--secondary-text-color); --c: var(--secondary-text-color); }
   .clickable { cursor: pointer; }
   .clickable:focus-visible, [role="button"]:focus-visible { outline: 2px solid var(--sm-focus); outline-offset: -2px; }
-  .ok { --c: var(--sm-blue); } .warn { --c: var(--sm-warn); } .crit { --c: var(--sm-crit); } .good { --c: var(--sm-ok); }
+  .ok { --c: var(--sm-level-ok, var(--sm-blue)); } .warn { --c: var(--sm-warn); } .crit { --c: var(--sm-crit); } .good { --c: var(--sm-ok); }
   .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--c, var(--sm-ok)); flex: none; display: inline-block; }
   .chip { display: inline-flex; align-items: center; gap: 4px; padding: 1px 8px; border-radius: 12px; font-size: 11px; font-weight: 500;
           background: color-mix(in srgb, var(--c, var(--sm-ok)) 15%, transparent); color: color-mix(in srgb, var(--c, var(--sm-ok)) 45%, var(--primary-text-color)); }
@@ -3401,6 +3604,12 @@ class SystemMonitorBase extends HTMLElement {
     // show_title / show_subtitle: the header"s title / subtitle, hidden by the stylesheet
     this.toggleAttribute?.("hide-title", config.show_title === false);
     this.toggleAttribute?.("hide-subtitle", config.show_subtitle === false);
+    // ok_color / warning_color / critical_color (#131): on the host, over the stylesheet's defaults.
+    for (const [key, prop] of Object.entries(LEVEL_COLORS)) {
+      const color = levelColor(config[key]);
+      if (color) this.style?.setProperty(prop, color);
+      else this.style?.removeProperty(prop);
+    }
     this._html = "";
     this._update();
   }
@@ -3686,6 +3895,22 @@ const FULL_STYLE = `
   }
   .procs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .procs .chip { font-weight: 400; }
+  /* gauge_style: bar (#131): the System section's metrics as lines, like the mini card's, with the used / total size
+     before the value. One grid for every line: the label and size columns widen for the longest, the same for all. */
+  .lines { display: grid; gap: 8px min(8px, 3%);
+           grid-template-columns: 18px minmax(min(64px, 30%), max-content) minmax(16px, 1fr) max-content minmax(max-content, 44px); }
+  .line { grid-column: 1 / -1; display: grid; grid-template-columns: subgrid; align-items: center; font-size: 13px; position: relative; }
+  .line > :not(.spark) { position: relative; }
+  .line .spark { position: absolute; inset: -2px -4px; width: calc(100% + 8px); height: calc(100% + 4px); pointer-events: none; }
+  .line .icon { color: var(--secondary-text-color); }
+  .line .l { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .line .d { font-size: 11px; color: var(--secondary-text-color); white-space: nowrap; text-align: right; }
+  .line .v { text-align: right; font-weight: 500; white-space: nowrap; }
+  /* A narrow card: the used / total size gives its room to the bar (its column goes, the value stays last). */
+  @container sm-content (max-width: 300px) {
+    .line .d { display: none; }
+    .lines { column-gap: 6px; grid-template-columns: 18px minmax(min(64px, 30%), max-content) minmax(16px, 1fr) minmax(max-content, 44px); }
+  }
 `;
 
 // show_actions: what each button runs, its icon, and whether it is shown as dangerous (red).
@@ -3772,19 +3997,31 @@ class SystemMonitorCard extends SystemMonitorBase {
     </div>`;
   }
 
+  /** A metric of the System section as a line (gauge_style: bar, #131): icon, label, bar, used / total, value. */
+  _line(id, label, icon, value, display, cls, detail = "", hist = null, max = 100) {
+    const p = value === null ? 0 : Math.max(0, Math.min(100, (value / max) * 100));
+    return `<div class="line clickable ${cls}" data-entity="${id || ""}" role="button" tabindex="0">${spark(hist?.[id], hist?.end, max)}
+      ${svgIcon(icon)}<span class="l" title="${label}">${label}</span>
+      <div class="bar"><div style="width:${p}%"></div></div>
+      <span class="d">${detail}</span><span class="v">${display}</span>
+    </div>`;
+  }
+
   _system(sm, hist) {
     const c = this._config;
     const sc = sm.scalars;
     const gauges = [];
+    const lines = c.gauge_style === "bar";
+    const gauge = (...args) => (lines ? this._line(...args) : this._gauge(...args));
     const cpu = num(this._s(sc.processor_use));
     if (sc.processor_use)
-      gauges.push(this._gauge(sc.processor_use, this._t("cpu"), ICONS.cpu, cpu, cpu === null ? "—" : `${Math.round(cpu)}%`, metricLevel(this._config, "cpu", cpu), "", hist));
+      gauges.push(gauge(sc.processor_use, this._t("cpu"), ICONS.cpu, cpu, cpu === null ? "—" : `${Math.round(cpu)}%`, metricLevel(this._config, "cpu", cpu), "", hist));
 
     const mem = memUsage(this._hass, sc, "memory");
     if (sc.memory_use_percent || (sc.memory_use && sc.memory_free)) {
       const detail = mem.used !== null && mem.total !== null ? fmtBytesPair(mem.used, mem.total, this._loc()) : "";
       gauges.push(
-        this._gauge(sc.memory_use_percent || sc.memory_use, this._t("ram"), ICONS.ram, mem.pct, mem.pct === null ? "—" : `${Math.round(mem.pct)}%`, metricLevel(this._config, "ram", mem.pct), detail, hist)
+        gauge(sc.memory_use_percent || sc.memory_use, this._t("ram"), ICONS.ram, mem.pct, mem.pct === null ? "—" : `${Math.round(mem.pct)}%`, metricLevel(this._config, "ram", mem.pct), detail, hist)
       );
     }
 
@@ -3795,14 +4032,14 @@ class SystemMonitorCard extends SystemMonitorBase {
       const u = diskUsage(this._hass, d);
       const detail = u.used !== null && u.total !== null ? fmtBytesPair(u.used, u.total, this._loc()) : "";
       gauges.push(
-        this._gauge(d.disk_use_percent || d.disk_use || d.disk_free, `${this._t("disk")} ${esc(mount)}`, ICONS.disk, u.pct, u.pct === null ? "—" : `${Math.round(u.pct)}%`, metricLevel(this._config, "disk", u.pct), detail)
+        gauge(d.disk_use_percent || d.disk_use || d.disk_free, `${this._t("disk")} ${esc(mount)}`, ICONS.disk, u.pct, u.pct === null ? "—" : `${Math.round(u.pct)}%`, metricLevel(this._config, "disk", u.pct), detail)
       );
     }
 
     const temp = temperature(this._s(sc.processor_temperature), this._hass);
     if (sc.processor_temperature)
       gauges.push(
-        this._gauge(sc.processor_temperature, `${this._t("temperature")} ${this._t("cpu")}`, ICONS.temp, temp.c, esc(temp.display), metricLevel(this._config, "temp", temp.c), "", hist, temp.max)
+        gauge(sc.processor_temperature, `${this._t("temperature")} ${this._t("cpu")}`, ICONS.temp, temp.c, esc(temp.display), metricLevel(this._config, "temp", temp.c), "", hist, temp.max)
       );
 
     const facts = [];
@@ -3827,7 +4064,7 @@ class SystemMonitorCard extends SystemMonitorBase {
 
     if (!gauges.length && !facts.length) return "";
     return `<div>
-      ${gauges.length ? `<div class="gauges" style="--n:${gauges.length}">${gauges.join("")}</div>` : ""}
+      ${gauges.length ? (lines ? `<div class="lines">${gauges.join("")}</div>` : `<div class="gauges" style="--n:${gauges.length}">${gauges.join("")}</div>`) : ""}
       ${facts.length ? `<div class="facts">${facts.join("")}</div>` : ""}
     </div>`;
   }
@@ -4399,6 +4636,13 @@ class SystemMonitorEditorBase extends HTMLElement {
       },
       // tap_action (#129): open the entity's details (default) or nothing.
       { name: "tap_action", selector: { ui_action: { actions: ["more-info", "none"], default_action: "more-info" } } },
+      // gauge_style (#131): the System section's gauges as rings (default) or as lines with bars.
+      {
+        name: "gauge_style",
+        selector: { select: { mode: "dropdown", options: [{ value: "ring", label: tr("gauge_ring") }, { value: "bar", label: tr("gauge_bar") }] } },
+      },
+      // Level colours (#131): Home Assistant's colours, any CSS colour in YAML.
+      { type: "grid", name: "", schema: Object.keys(LEVEL_COLORS).map((name) => ({ name, selector: { ui_color: {} } })) },
       // Warning / critical thresholds, shown at their default values.
       {
         type: "grid",
@@ -4492,7 +4736,8 @@ class SystemMonitorEditorBase extends HTMLElement {
             v === null ||
             (this._booleans().includes(k) && v === true) ||
             (this._offBooleans().includes(k) && v === false) ||
-            THRESHOLDS[k] === v
+            THRESHOLDS[k] === v ||
+            (k === "gauge_style" && v === "ring")
           )
             delete config[k];
         }
@@ -4509,6 +4754,7 @@ class SystemMonitorEditorBase extends HTMLElement {
       const data = { ...THRESHOLDS, ...this._config };
       for (const name of this._booleans()) if (data[name] === undefined) data[name] = true;
       for (const name of this._offBooleans()) if (data[name] === undefined) data[name] = false;
+      if (data.gauge_style === undefined) data.gauge_style = "ring";
       // `tap_action: none` written in YAML as a plain string: the action selector reads an object.
       if (typeof data.tap_action === "string") data.tap_action = { action: data.tap_action };
       this._form.data = shbData(data);

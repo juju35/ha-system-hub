@@ -9,6 +9,7 @@ import "./system-monitor-card/editor.mjs";
 import "./system-monitor-card/entities.mjs";
 import "./system-monitor-card/history.mjs";
 import "./system-monitor-card/i18n.mjs";
+import "./system-monitor-card/lines.mjs";
 import "./system-monitor-card/mini-stopped.mjs";
 import "./system-monitor-card/narrow.mjs";
 import "./system-monitor-card/plurals.mjs";

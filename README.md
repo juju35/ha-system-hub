@@ -304,19 +304,23 @@ The cards are built on top of the core [System Monitor integration](https://www.
 |---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor.png" alt="system-monitor-card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-mini.png" alt="system-monitor-mini-card" width="400"> |
 
+`gauge_style: bar` with `ok_color: green`, `warning_color: orange` and `critical_color: red` (thresholds lowered to show the three levels):
+
+<img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-lines.png" alt="system-monitor-card, gauge_style: bar" width="400">
+
 ### Features
 
 - Two cards: a full **System Monitor Card** and a compact **System Monitor Mini Card**
 - **Zoom** on the mini card: a button at the top right switches it to the full System Monitor card (same options) and back; a click anywhere outside the card brings it back too
 - Automatic discovery of the System Monitor entities through the entity registry (any language)
-- CPU, RAM, disk and CPU temperature gauges, uptime, load average and IP address
+- CPU, RAM, disk and CPU temperature gauges, uptime, load average and IP address — as rings, or as lines with bars like the mini card's (`gauge_style: bar`)
 - Home Assistant Core and OS versions, with an orange badge when an update is available
 - Network download / upload rates and totals, per interface (virtual interfaces such as `docker0` or `hassio` are hidden)
 - **24 h history**: a discreet curve of the last 24 hours behind the CPU and RAM gauges (bars on the mini card) and each download / upload rate, on the full card and the mini card, from the recorder's statistics on a real time axis, with a break where the recorder has no data (refreshed every 5 minutes; `show_history: false` turns it off)
 - Storage: every monitored mount point and the swap, with used space, and the size of the Home Assistant database
 - Backups: when the last automatic backup was made and when the next one is due, orange / red when it gets old or the last attempt failed (the mini card shows it only then), from Home Assistant's own backup sensors
 - Monitored processes, green when running and red when stopped: hidden while they all run (their status tile shows the list on a click), always shown while one is stopped, with their overall status in the status row
-- Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature, swap), with thresholds you can change
+- Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature, swap), with thresholds you can change, and the three level colours too (`ok_color`, `warning_color`, `critical_color`)
 - Click any value to open its Home Assistant history (more-info dialog)
 - Visual editor in the dashboard UI for every card (no YAML needed)
 - Light and dark mode, English, French, German, Spanish, Serbian (Cyrillic and Latin), Italian, Dutch, European Portuguese, Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian and Greek
@@ -447,6 +451,8 @@ cpu_critical: 90
 | `disk_warning` / `disk_critical` | full, mini | `80` / `90` | Disk usage (%) from which the gauges and storage bars turn orange / red |
 | `temp_warning` / `temp_critical` | full, mini | `75` / `90` | CPU temperature (°C, whatever the unit of the sensor) from which the gauge turns orange / red |
 | `swap_warning` / `swap_critical` | full, mini | `50` / `80` | Swap usage (%) from which the swap bar turns orange / red |
+| `gauge_style` | full, mini | `ring` | `bar`: the System section's CPU, RAM, disk and temperature as lines (icon, label, bar, used / total size, value), close together like the mini card's, instead of rings (on the mini card, in its zoomed view); the 24 h curve stays behind the CPU, RAM and temperature lines |
+| `ok_color` / `warning_color` / `critical_color` | full, mini | blue / theme warning / theme error | Colour of each level (under the warning threshold, from it, from the critical one) for the gauges, lines, bars and pills: a Home Assistant colour name (`green`, `orange`, `red`…, as in the visual editor), an `[r, g, b]` list or any CSS colour (`"#43a047"`) |
 | `backup_warning` / `backup_critical` | full, mini | `2` / `7` | Days since the last successful automatic backup from which the backup turns orange / red (red also when the last attempt failed, or there was never one) |
 | `entities` | full, mini | — | Sensors of your choice, instead of or next to System Monitor's (see below) |
 | `language` | all | Auto | Force language: `en`, `fr`, `de`, `es`, `sr`, `sr-Latn`, `it`, `nl`, `pt`, `pl`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` (auto-detects from HA settings) |

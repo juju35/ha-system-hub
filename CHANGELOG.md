@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.8.0 - 2026-11-21
+
+### Features
+- **System Monitor card** ([#131](https://github.com/juju35/ha-system-hub/issues/131), thanks @thomasfav28):
+  - `gauge_style: bar` (also in the visual editor): the System section shows the CPU, RAM, disk and temperature as lines with a bar, close together like the mini card's, the used / total size before the value (it gives way on a narrow card); on the mini card, in its zoomed view. Rings stay the default.
+  - `ok_color`, `warning_color` and `critical_color` (also in the visual editor): the colour of each level of the thresholds — a Home Assistant colour, an `[r, g, b]` list or any CSS colour — on the full card and the mini card.
+
 ## 3.7.0 - 2026-11-21
 
 ### Features
