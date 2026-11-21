@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.6.0 - 2026-11-21
+
+### Features
+- Panel: past 24 px of scroll the top bar folds into one sticky bar, as on the dashboards' illustrated headers (ha-dashboard-header) — the icon, title and line, the tabs as round icon pills with their counts, the status pill and the round buttons; back at the top it unfolds. The content does not move. On a narrow panel the pills get a row of their own under the bar, the status turns to a dot and only the first round button is kept. The sub-tabs of the group shown get a row under the folded bar.
+
 ## 3.5.1 - 2026-11-21
 
 ### Fixes
