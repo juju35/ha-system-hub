@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.10.0 - 2026-11-21
+
+### Features
+- **Marketplace Refresh card: `show_next_check`** ([#137](https://github.com/juju35/ha-system-hub/issues/137), thanks @thomasfav28): `false` (also in the visual editor) leaves *next in …* out of the subtitle, which keeps only the last check — for a phone, where the subtitle was cut.
+
 ## 3.9.0 - 2026-11-21
 
 ### Features

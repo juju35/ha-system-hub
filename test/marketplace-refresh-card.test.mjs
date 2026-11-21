@@ -442,6 +442,12 @@ test('status unavailable or unknown: never shown as up to date, never hidden', (
   assert.match(html(render({}, fr)), /Indisponible/);
 });
 
+test('show_next_check: false keeps only the last check in the subtitle (#137)', () => {
+  const out = html(render({ show_next_check: false }, makeHass({ updates: [] })));
+  assert.match(out, /Checked 3 hours ago/);
+  assert.doesNotMatch(out, /next in/);
+});
+
 test('a next check already due is not shown in the past', () => {
   const hass = makeHass({ updates: [] });
   hass.states[LAST_CHECK] = { state: minutes(-27 * 60), attributes: { scan_interval: 24, next_check: minutes(-3 * 60) } };
