@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Рестартиране на хоста?",
         "ha_reboot_text": "Машината, на която работи Home Assistant, се рестартира заедно с Home Assistant и всички добавки: всичко е недостъпно за няколко минути.",
         "ha_rebooting": "Хостът се рестартира…",
+        "sc_file_editor": "Редактор на файлове",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Да се инсталират ли всички актуализации сега?",
         "cancel": "Отказ",
         "last_check": "Последна проверка",

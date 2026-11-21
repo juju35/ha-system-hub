@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Redémarrer l'hôte ?",
         "ha_reboot_text": "La machine qui fait tourner Home Assistant redémarre, avec Home Assistant et tous les add-ons : tout est indisponible quelques minutes.",
         "ha_rebooting": "L'hôte redémarre…",
+        "sc_file_editor": "Éditeur de fichiers",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Installer toutes les mises à jour maintenant ?",
         "cancel": "Annuler",
         "last_check": "Dernière vérification",

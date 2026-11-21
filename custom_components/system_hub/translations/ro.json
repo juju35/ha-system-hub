@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Repornești gazda?",
         "ha_reboot_text": "Mașina pe care rulează Home Assistant repornește, cu Home Assistant și toate suplimentele: totul este indisponibil câteva minute.",
         "ha_rebooting": "Gazda repornește…",
+        "sc_file_editor": "Editor de fișiere",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Instalați acum toate actualizările?",
         "cancel": "Anulează",
         "last_check": "Ultima verificare",

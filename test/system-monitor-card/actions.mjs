@@ -122,3 +122,19 @@ test("show_actions: in the card editor, off by default and left out of the YAML 
   assert.match(JSON.stringify(mini._form.schema), /"show_actions"/);
   assert.equal(mini._form.data.show_actions, false);
 });
+
+test("show_actions: shortcuts to the File editor and the Marketplace, only when their panel is in the sidebar (#133)", () => {
+  const none = card().c._render();
+  assert.doesNotMatch(none, /data-nav=/);
+  const { c } = card();
+  c._hass.panels = { core_configurator: {}, a0d7b954_vscode: {}, marketplace: {} };
+  const html = c._render();
+  assert.match(html, /<a class="ha-btn sc" href="\/core_configurator" data-nav="\/core_configurator" title="File editor"/);
+  assert.match(html, /<a class="ha-btn sc" href="\/marketplace" data-nav="\/marketplace" title="Marketplace"/);
+  // Before the reload, restart and reboot buttons.
+  assert.ok(html.indexOf('data-nav="/marketplace"') < html.indexOf('data-action="ha_ask:reload"'));
+  // Studio Code Server when the File editor is not installed.
+  c._hass.panels = { a0d7b954_vscode: {} };
+  assert.match(c._render(), /data-nav="\/a0d7b954_vscode"/);
+  assert.doesNotMatch(card({ admin: false }).c._render(), /data-nav=/);
+});

@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Перезавантажити хост?",
         "ha_reboot_text": "Комп'ютер, на якому працює Home Assistant, перезавантажується разом із Home Assistant і всіма доповненнями: усе недоступне кілька хвилин.",
         "ha_rebooting": "Хост перезавантажується…",
+        "sc_file_editor": "Редактор файлів",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Установити всі оновлення зараз?",
         "cancel": "Скасувати",
         "last_check": "Остання перевірка",

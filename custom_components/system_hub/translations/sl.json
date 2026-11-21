@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Znova zagnati gostitelja?",
         "ha_reboot_text": "Računalnik, na katerem teče Home Assistant, se znova zažene skupaj s Home Assistant in vsemi dodatki: vse je nekaj minut nedosegljivo.",
         "ha_rebooting": "Gostitelj se znova zaganja…",
+        "sc_file_editor": "Urejevalnik datotek",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Želite zdaj namestiti vse posodobitve?",
         "cancel": "Prekliči",
         "last_check": "Zadnje preverjanje",

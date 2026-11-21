@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.8.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.9.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -1668,6 +1668,7 @@ class SystemHubPanel extends HTMLElement {
            background:color-mix(in srgb, var(--primary-color) 14%, transparent); }
     .act:hover:not([disabled]) { background:color-mix(in srgb, var(--primary-color) 22%, transparent); }
     .act.quiet { color:var(--primary-text-color); background:var(--secondary-background-color, rgba(127,127,127,.12)); }
+    .act.sc { text-decoration:none; padding-inline:9px; }
     .act[disabled] { opacity:.5; cursor:default; }
     .act[aria-busy="true"] { opacity:.8; cursor:progress; }
     .act.danger { color:var(--error-color, #db4437); background:color-mix(in srgb, var(--error-color, #db4437) 12%, transparent); }
@@ -2891,6 +2892,23 @@ class SystemHubPanel extends HTMLElement {
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
   }
 
+  // Shortcuts to the File editor (else Studio Code Server) and the Marketplace, before the buttons below: a round
+  // icon each, shown only when its panel is in Home Assistant's sidebar (#133)
+  _haShortcuts() {
+    var panels = this._hass?.panels || {};
+    return [
+      ['file_editor', ['core_configurator', 'a0d7b954_vscode'], 'mdi:file-document-edit-outline'],
+      ['marketplace', ['marketplace'], 'mdi:storefront-outline'],
+    ]
+      .map(([key, paths, icon]) => {
+        var path = paths.find((p) => panels[p]);
+        if (!path) return '';
+        var label = shEsc(this._t(`sc_${key}`));
+        return `<a class="act quiet sc" href="/${path}" data-nav="/${path}" title="${label}" aria-label="${label}"><ha-icon icon="${icon}"></ha-icon></a>`;
+      })
+      .join('');
+  }
+
   // Reload the YAML configuration, restart Home Assistant and reboot the host (with the Supervisor only), each once
   // confirmed in a dialog; the restart checks the configuration first, as Home Assistant's own dialog does, and is
   // refused while it is invalid
@@ -2898,7 +2916,7 @@ class SystemHubPanel extends HTMLElement {
     var reboot = this._hass?.config?.components?.includes('hassio')
       ? this._button('ha_ask:reboot', 'mdi:power-cycle', this._t('ha_reboot'), { danger: true })
       : '';
-    return `<div class="actions ha-ctl">${this._message('ha')}<span class="grow"></span>
+    return `<div class="actions ha-ctl">${this._message('ha')}<span class="grow"></span>${this._haShortcuts()}
       ${this._button('ha_ask:reload', 'mdi:reload', this._t('ha_reload'), { quiet: true, busy: this._busy.ha_reload })}
       ${this._button('ha_ask:restart', 'mdi:restart', this._t('ha_restart'), { danger: true })}${reboot}</div>${this._haDialog()}`;
   }

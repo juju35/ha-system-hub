@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Genstart værten?",
         "ha_reboot_text": "Maskinen, der kører Home Assistant, genstarter med Home Assistant og alle tilføjelser: alt er utilgængeligt i et par minutter.",
         "ha_rebooting": "Værten genstarter…",
+        "sc_file_editor": "Fileditor",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Installere alle opdateringer nu?",
         "cancel": "Annuller",
         "last_check": "Seneste kontrol",

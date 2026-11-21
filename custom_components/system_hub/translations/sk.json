@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Reštartovať hostiteľa?",
         "ha_reboot_text": "Počítač, na ktorom beží Home Assistant, sa reštartuje spolu s Home Assistant a všetkými doplnkami: všetko je na niekoľko minút nedostupné.",
         "ha_rebooting": "Hostiteľ sa reštartuje…",
+        "sc_file_editor": "Editor súborov",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Nainštalovať teraz všetky aktualizácie?",
         "cancel": "Zrušiť",
         "last_check": "Posledná kontrola",

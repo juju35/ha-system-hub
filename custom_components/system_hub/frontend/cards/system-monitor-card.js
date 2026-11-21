@@ -149,6 +149,8 @@ const STRINGS = {
     ha_invalid: "The configuration is invalid: fix it before restarting.",
     ha_restarting: "Home Assistant is restarting…",
     ha_rebooting: "The host is rebooting…",
+    sc_file_editor: "File editor",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Cancel",
     ha_failed: "Failed: {error}",
   },
@@ -254,6 +256,8 @@ const STRINGS = {
     ha_invalid: "La configuration n'est pas valide : corrigez-la avant de redémarrer.",
     ha_restarting: "Home Assistant redémarre…",
     ha_rebooting: "L'hôte redémarre…",
+    sc_file_editor: "Éditeur de fichiers",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Annuler",
     ha_failed: "Échec : {error}",
   },
@@ -359,6 +363,8 @@ const STRINGS = {
     ha_invalid: "Die Konfiguration ist ungültig: Bitte vor dem Neustart korrigieren.",
     ha_restarting: "Home Assistant wird neu gestartet…",
     ha_rebooting: "Der Host wird neu gestartet…",
+    sc_file_editor: "Datei-Editor",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Abbrechen",
     ha_failed: "Fehlgeschlagen: {error}",
   },
@@ -464,6 +470,8 @@ const STRINGS = {
     ha_invalid: "La configuración no es válida: corrígela antes de reiniciar.",
     ha_restarting: "Home Assistant se está reiniciando…",
     ha_rebooting: "El host se está reiniciando…",
+    sc_file_editor: "Editor de archivos",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Cancelar",
     ha_failed: "Error: {error}",
   },
@@ -570,6 +578,8 @@ const STRINGS = {
     ha_invalid: "Конфигурација није исправна: исправите је пре поновног покретања.",
     ha_restarting: "Home Assistant се поново покреће…",
     ha_rebooting: "Хост се рестартује…",
+    sc_file_editor: "Уређивач датотека",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Откажи",
     ha_failed: "Неуспех: {error}",
   },
@@ -676,6 +686,8 @@ const STRINGS = {
     ha_invalid: "Konfiguracija nije ispravna: ispravite je pre ponovnog pokretanja.",
     ha_restarting: "Home Assistant se ponovo pokreće…",
     ha_rebooting: "Host se restartuje…",
+    sc_file_editor: "Uređivač datoteka",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Otkaži",
     ha_failed: "Neuspeh: {error}",
   },
@@ -782,6 +794,8 @@ const STRINGS = {
     ha_invalid: "La configurazione non è valida: correggila prima di riavviare.",
     ha_restarting: "Home Assistant si sta riavviando…",
     ha_rebooting: "L'host si sta riavviando…",
+    sc_file_editor: "Editor di file",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Annulla",
     ha_failed: "Errore: {error}",
   },
@@ -888,6 +902,8 @@ const STRINGS = {
     ha_invalid: "De configuratie is ongeldig: corrigeer deze voor het herstarten.",
     ha_restarting: "Home Assistant wordt herstart…",
     ha_rebooting: "De host wordt herstart…",
+    sc_file_editor: "Bestandseditor",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Annuleren",
     ha_failed: "Mislukt: {error}",
   },
@@ -994,6 +1010,8 @@ const STRINGS = {
     ha_invalid: "A configuração não é válida: corrija-a antes de reiniciar.",
     ha_restarting: "O Home Assistant está a reiniciar…",
     ha_rebooting: "O anfitrião está a reiniciar…",
+    sc_file_editor: "Editor de ficheiros",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Cancelar",
     ha_failed: "Falhou: {error}",
   },
@@ -1100,6 +1118,8 @@ const STRINGS = {
     ha_invalid: "Konfiguracja jest niepoprawna: popraw ją przed ponownym uruchomieniem.",
     ha_restarting: "Home Assistant uruchamia się ponownie…",
     ha_rebooting: "Host uruchamia się ponownie…",
+    sc_file_editor: "Edytor plików",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Anuluj",
     ha_failed: "Błąd: {error}",
   },
@@ -1206,6 +1226,8 @@ const STRINGS = {
     ha_invalid: "Configurația nu este validă: corectați-o înainte de repornire.",
     ha_restarting: "Home Assistant repornește…",
     ha_rebooting: "Gazda repornește…",
+    sc_file_editor: "Editor de fișiere",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Anulează",
     ha_failed: "Eșuat: {error}",
   },
@@ -1312,6 +1334,8 @@ const STRINGS = {
     ha_invalid: "Konfigurationen er ugyldig: ret den før genstart.",
     ha_restarting: "Home Assistant genstarter…",
     ha_rebooting: "Værten genstarter…",
+    sc_file_editor: "Fileditor",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Annuller",
     ha_failed: "Mislykkedes: {error}",
   },
@@ -1418,6 +1442,8 @@ const STRINGS = {
     ha_invalid: "Konfigurationen är ogiltig: rätta den innan omstart.",
     ha_restarting: "Home Assistant startar om…",
     ha_rebooting: "Värden startar om…",
+    sc_file_editor: "Filredigerare",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Avbryt",
     ha_failed: "Misslyckades: {error}",
   },
@@ -1524,6 +1550,8 @@ const STRINGS = {
     ha_invalid: "Конфигурацията не е валидна: коригирайте я преди рестартиране.",
     ha_restarting: "Home Assistant се рестартира…",
     ha_rebooting: "Хостът се рестартира…",
+    sc_file_editor: "Редактор на файлове",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Отказ",
     ha_failed: "Неуспех: {error}",
   },
@@ -1630,6 +1658,8 @@ const STRINGS = {
     ha_invalid: "Конфигурация некорректна: исправьте её перед перезапуском.",
     ha_restarting: "Home Assistant перезапускается…",
     ha_rebooting: "Хост перезагружается…",
+    sc_file_editor: "Редактор файлов",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Отмена",
     ha_failed: "Ошибка: {error}",
   },
@@ -1736,6 +1766,8 @@ const STRINGS = {
     ha_invalid: "Конфігурація некоректна: виправте її перед перезапуском.",
     ha_restarting: "Home Assistant перезапускається…",
     ha_rebooting: "Хост перезавантажується…",
+    sc_file_editor: "Редактор файлів",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Скасувати",
     ha_failed: "Помилка: {error}",
   },
@@ -1842,6 +1874,8 @@ const STRINGS = {
     ha_invalid: "A konfiguráció érvénytelen: javítsa ki újraindítás előtt.",
     ha_restarting: "A Home Assistant újraindul…",
     ha_rebooting: "A gazdagép újraindul…",
+    sc_file_editor: "Fájlszerkesztő",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Mégse",
     ha_failed: "Sikertelen: {error}",
   },
@@ -1948,6 +1982,8 @@ const STRINGS = {
     ha_invalid: "Konfigurácia nie je platná: pred reštartom ju opravte.",
     ha_restarting: "Home Assistant sa reštartuje…",
     ha_rebooting: "Hostiteľ sa reštartuje…",
+    sc_file_editor: "Editor súborov",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Zrušiť",
     ha_failed: "Zlyhalo: {error}",
   },
@@ -2054,6 +2090,8 @@ const STRINGS = {
     ha_invalid: "Konfigurace není platná: před restartem ji opravte.",
     ha_restarting: "Home Assistant se restartuje…",
     ha_rebooting: "Hostitel se restartuje…",
+    sc_file_editor: "Editor souborů",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Zrušit",
     ha_failed: "Selhalo: {error}",
   },
@@ -2160,6 +2198,8 @@ const STRINGS = {
     ha_invalid: "Konfiguracija ni veljavna: popravite jo pred ponovnim zagonom.",
     ha_restarting: "Home Assistant se znova zaganja…",
     ha_rebooting: "Gostitelj se znova zaganja…",
+    sc_file_editor: "Urejevalnik datotek",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Prekliči",
     ha_failed: "Ni uspelo: {error}",
   },
@@ -2266,6 +2306,8 @@ const STRINGS = {
     ha_invalid: "Konfigurācija nav derīga: izlabojiet to pirms restartēšanas.",
     ha_restarting: "Home Assistant restartējas…",
     ha_rebooting: "Resursdators tiek restartēts…",
+    sc_file_editor: "Failu redaktors",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Atcelt",
     ha_failed: "Neizdevās: {error}",
   },
@@ -2372,6 +2414,8 @@ const STRINGS = {
     ha_invalid: "Οι ρυθμίσεις δεν είναι έγκυρες: διορθώστε τες πριν από την επανεκκίνηση.",
     ha_restarting: "Το Home Assistant επανεκκινείται…",
     ha_rebooting: "Ο κεντρικός υπολογιστής επανεκκινείται…",
+    sc_file_editor: "Επεξεργαστής αρχείων",
+    sc_marketplace: "Marketplace",
     ha_cancel: "Ακύρωση",
     ha_failed: "Αποτυχία: {error}",
   },
@@ -3463,6 +3507,14 @@ class SystemMonitorBase extends HTMLElement {
     this._procsOpen = false;
     this.shadowRoot.addEventListener("click", (ev) => {
       const path = ev.composedPath();
+      // A shortcut (show_actions): Home Assistant's own navigation, without reloading the page; a new tab as a link.
+      const nav = path.find((n) => n.dataset?.nav);
+      if (nav && !ev.ctrlKey && !ev.metaKey && !ev.shiftKey && ev.button !== 1) {
+        ev.preventDefault();
+        history.pushState(null, "", nav.dataset.nav);
+        window.dispatchEvent(new CustomEvent("location-changed", { detail: { replace: false } }));
+        return;
+      }
       const action = path.find((n) => n.dataset?.action);
       if (action?.dataset.action === "zoom") return this._zoomClick?.(ev);
       if (action?.dataset.action.startsWith("ha_")) return this._haAction?.(action.dataset.action);
@@ -3920,6 +3972,13 @@ const HA_ACTIONS = {
   reboot: { service: ["hassio", "host_reboot"], icon: ICONS.reboot, danger: true },
 };
 
+// show_actions: shortcuts to the File editor (else Studio Code Server) and the Marketplace, each shown only when its
+// panel is in Home Assistant's sidebar (#133).
+const HA_SHORTCUTS = [
+  { key: "file_editor", panels: ["core_configurator", "a0d7b954_vscode"], icon: "M8,12H16V14H8V12M10,20H6V4H13V9H18V12.1L20,10.1V8L14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H10V20M8,18H12.1L13,17.1V16H8V18M20.2,13C20.3,13 20.5,13.1 20.6,13.2L21.9,14.5C22.1,14.7 22.1,15.1 21.9,15.3L20.9,16.3L18.8,14.2L19.8,13.2C19.9,13.1 20,13 20.2,13M20.2,16.9L14.1,23H12V20.9L18.1,14.8L20.2,16.9Z" },
+  { key: "marketplace", panels: ["marketplace"], icon: "M5.06 3C4.63 3 4.22 3.14 3.84 3.42S3.24 4.06 3.14 4.5L2.11 8.91C1.86 10 2.06 10.95 2.72 11.77L3 12.05V19C3 19.5 3.2 20 3.61 20.39S4.5 21 5 21H19C19.5 21 20 20.8 20.39 20.39S21 19.5 21 19V12.05L21.28 11.77C21.94 10.95 22.14 10 21.89 8.91L20.86 4.5C20.73 4.06 20.5 3.7 20.13 3.42C19.77 3.14 19.38 3 18.94 3H5.06M18.89 4.97L19.97 9.38C20.06 9.81 19.97 10.2 19.69 10.55C19.44 10.86 19.13 11 18.75 11C18.44 11 18.17 10.9 17.95 10.66C17.73 10.43 17.61 10.16 17.58 9.84L16.97 5L18.89 4.97M5.06 5H7.03L6.42 9.84C6.3 10.63 5.91 11 5.25 11C4.84 11 4.53 10.86 4.31 10.55C4.03 10.2 3.94 9.81 4.03 9.38L5.06 5M9.05 5H11V9.7C11 10.05 10.89 10.35 10.64 10.62C10.39 10.88 10.08 11 9.7 11C9.36 11 9.07 10.88 8.84 10.59S8.5 10 8.5 9.66V9.5L9.05 5M13 5H14.95L15.5 9.5C15.58 9.92 15.5 10.27 15.21 10.57C14.95 10.87 14.61 11 14.2 11C13.89 11 13.61 10.88 13.36 10.62C13.11 10.35 13 10.05 13 9.7V5M7.45 12.05C8.08 12.67 8.86 13 9.8 13C10.64 13 11.38 12.67 12 12.05C12.69 12.67 13.45 13 14.3 13C15.17 13 15.92 12.67 16.55 12.05C17.11 12.67 17.86 13 18.8 13H19.03V19H5V13H5.25C6.16 13 6.89 12.67 7.45 12.05Z" },
+];
+
 const ACTIONS_STYLE = `
   .ha-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px; }
   .ha-msg { flex: 1 1 100%; font-size: 12px; text-align: right; }
@@ -3931,6 +3990,7 @@ const ACTIONS_STYLE = `
             padding: 4px 12px; border-radius: 16px; font-size: 13px; font-weight: 500; --c: var(--sm-focus);
             color: color-mix(in srgb, var(--c) 45%, var(--primary-text-color)); background: color-mix(in srgb, var(--c) 12%, transparent); }
   .ha-btn.danger { --c: var(--sm-crit); }
+  .ha-btn.sc { padding: 4px 8px; text-decoration: none; }
   .ha-btn .icon { width: 16px; height: 16px; color: var(--c); }
   .ha-btn:hover { background: color-mix(in srgb, var(--c) 20%, transparent); }
   .ha-btn:focus-visible { outline: 2px solid var(--sm-focus); outline-offset: 1px; }
@@ -4081,8 +4141,19 @@ class SystemMonitorCard extends SystemMonitorBase {
     const kinds = Object.keys(HA_ACTIONS).filter((k) => k !== "reboot" || this._hass.config?.components?.includes("hassio"));
     const msg = this._haMsg ? `<div class="ha-msg ${this._haMsg.tone}" role="status">${esc(this._haMsg.text)}</div>` : "";
     // Icons only when the buttons with their labels would take more than one line (a phone, #129): see _fitActs.
-    const buttons = kinds.map((k) => this._haButton(`ha_ask:${k}`, k, this._t(`ha_${k}`), k === "reload" && this._haBusy, true)).join("");
+    const buttons = this._haShortcuts() + kinds.map((k) => this._haButton(`ha_ask:${k}`, k, this._t(`ha_${k}`), k === "reload" && this._haBusy, true)).join("");
     return `<div class="ha-acts">${msg}<div class="ha-main${this._actsIcons ? " icons" : ""}">${buttons}</div></div>`;
+  }
+
+  /** The shortcuts of show_actions: a round icon per panel found, before the reload, restart and reboot buttons. */
+  _haShortcuts() {
+    const panels = this._hass.panels || {};
+    return HA_SHORTCUTS.map((sc) => {
+      const path = sc.panels.find((p) => panels[p]);
+      if (!path) return "";
+      const label = esc(this._t(`sc_${sc.key}`));
+      return `<a class="ha-btn sc" href="/${path}" data-nav="/${path}" title="${label}" aria-label="${label}">${svgIcon(sc.icon)}</a>`;
+    }).join("");
   }
 
   /** A button of show_actions; `named`: its label also in title and aria-label, for when only its icon shows. */

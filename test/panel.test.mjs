@@ -688,6 +688,16 @@ test('system tab: Reboot the host, with the Supervisor only, asks first then cal
   assert.equal(p._confirm, null);
 });
 
+test('system tab: shortcuts to the File editor and the Marketplace when their panel is in the sidebar (#133)', () => {
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  assert.doesNotMatch(p._content(), /data-nav="\/core_configurator"/);
+  p._hass.panels = { core_configurator: {}, marketplace: {} };
+  const html = p._content();
+  assert.match(html, /class="act quiet sc" href="\/core_configurator" data-nav="\/core_configurator" title="File editor"/);
+  assert.match(html, /data-nav="\/marketplace" title="Marketplace"/);
+  assert.ok(html.indexOf('data-nav="/marketplace"') < html.indexOf('data-action="ha_ask:reload"'));
+});
+
 test('automations tab: Clear all with failures left out clears the listed ones only', async () => {
   const calls = [];
   const p = panel(
