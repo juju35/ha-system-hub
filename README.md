@@ -430,12 +430,16 @@ cpu_critical: 90
 | `show_subtitle` | all | `true` | Show the subtitle under the title |
 | `show_system` | full, mini | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
 | `show_disk` | full, mini | `true` | The disk gauge of the System section (root file system, else the first mount point); `false` leaves the disk to the Storage section |
+| `show_uptime` | full, mini | `true` | The uptime line of the System section (mini card: the uptime of its footer) |
+| `show_load` | full, mini | `true` | The load line (1, 5 and 15 min) of the System section |
+| `show_ip` | full, mini | `true` | The IP address of the System section |
 | `show_network` | full, mini | `true` | Network download / upload |
 | `show_history` | full, mini | `true` | 24 h curve behind the CPU, RAM and CPU temperature gauges (bars on the mini card; the temperature on a 0–100 °C scale, RAM from its `memory_use_percent` sensor, on a 0–100 % scale) and each download / upload rate, from the recorder's 5-minute statistics (one query for all of them) (on the mini card, the rates then show as tiles above the footer instead of in it) |
 | `show_storage` | full, mini | `true` | Full card: mount points, swap and database size. Mini card: disk bar |
 | `show_backups` | full, mini | `true` | Full card: the last and next automatic backups at the end of Storage. Mini card: an orange / red item when the last backup is too old or failed |
 | `show_processes` | full, mini | `true` | Monitored processes and their status tile (mini card: a stopped process shows as an item) |
-| `show_actions` | full, mini | `false` | Administrators only: **Reload configuration**, **Restart Home Assistant** and, with Home Assistant OS or Supervised, **Reboot the host** (`hassio.host_reboot`) at the bottom of the full card (on the mini card, of its zoomed view), each confirmed in the card first; the restart checks the configuration and is refused while it is invalid, as in the panel's System tab |
+| `show_actions` | full, mini | `false` | Administrators only: **Reload configuration**, **Restart Home Assistant** and, with Home Assistant OS or Supervised, **Reboot the host** (`hassio.host_reboot`) at the bottom of the full card (on the mini card, of its zoomed view), each confirmed in the card first; the restart checks the configuration and is refused while it is invalid, as in the panel's System tab. On one line: when their labels do not fit (a phone), the buttons show their icon only, the label in their tooltip |
+| `tap_action` | full, mini | `more-info` | `none` (or `action: none`): a click on a gauge, tile, line or pill opens nothing; the folds, the zoom button and the `show_actions` buttons still work |
 | `zoom` | mini | `true` | Zoom button at the top right: shows the full card, and back to the compact view. The full card's options (`show_system`, `show_disk`, `show_processes`, the swap thresholds) are set on the mini card too, in YAML or in its visual editor, and apply to that view |
 | `interface` | full, mini | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
 | `cpu_warning` / `cpu_critical` | full, mini | `70` / `90` | CPU usage (%) from which the gauge turns orange / red |

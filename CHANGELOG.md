@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.7.0 - 2026-11-21
+
+### Features
+- **System Monitor card** ([#129](https://github.com/juju35/ha-system-hub/issues/129), thanks @thomasfav28):
+  - `tap_action: none` (also in the visual editor): a click on a gauge, tile, line or pill no longer opens the entity's details; the folds, the zoom button and the reload / restart / reboot buttons still work.
+  - `show_uptime`, `show_load` and `show_ip` (on by default, in the visual editor): each line of the System section can be left out; `show_uptime: false` also removes the uptime from the mini card's footer.
+  - The reload, restart and reboot buttons (`show_actions`) stay on one line: when their labels do not fit (a phone), they show their icon only, the label in their tooltip.
+
 ## 3.6.0 - 2026-11-21
 
 ### Features

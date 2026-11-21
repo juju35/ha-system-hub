@@ -22,6 +22,8 @@ const NAMES = [
   "SystemMonitorMiniCard",
   "SystemMonitorCardEditor",
   "SystemMonitorMiniCardEditor",
+  "tapNone",
+  "inertHtml",
   "document",
   "window",
 ];
