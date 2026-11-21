@@ -23,6 +23,7 @@ const NAMES = [
   "SystemMonitorCardEditor",
   "SystemMonitorMiniCardEditor",
   "tapNone",
+  "levelColor",
   "inertHtml",
   "document",
   "window",
