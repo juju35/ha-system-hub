@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Restartovati host?",
         "ha_reboot_text": "Računar na kome radi Home Assistant se ponovo pokreće, zajedno sa Home Assistant-om i svim dodacima: sve je nedostupno nekoliko minuta.",
         "ha_rebooting": "Host se restartuje…",
+        "sc_file_editor": "Uređivač datoteka",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Instalirati sada sva ažuriranja?",
         "cancel": "Otkaži",
         "last_check": "Poslednja provera",

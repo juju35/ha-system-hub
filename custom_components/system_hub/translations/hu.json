@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Újraindítod a gazdagépet?",
         "ha_reboot_text": "A Home Assistantot futtató gép újraindul a Home Assistanttal és az összes bővítménnyel együtt: néhány percig semmi sem érhető el.",
         "ha_rebooting": "A gazdagép újraindul…",
+        "sc_file_editor": "Fájlszerkesztő",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Telepíted most az összes frissítést?",
         "cancel": "Mégse",
         "last_check": "Utolsó ellenőrzés",

@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Restartēt resursdatoru?",
         "ha_reboot_text": "Dators, kurā darbojas Home Assistant, tiek restartēts kopā ar Home Assistant un visiem papildinājumiem: viss uz dažām minūtēm nav pieejams.",
         "ha_rebooting": "Resursdators tiek restartēts…",
+        "sc_file_editor": "Failu redaktors",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Instalēt visus atjauninājumus tagad?",
         "cancel": "Atcelt",
         "last_check": "Pēdējā pārbaude",

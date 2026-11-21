@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Starta om värden?",
         "ha_reboot_text": "Datorn som kör Home Assistant startar om, med Home Assistant och alla tillägg: allt är otillgängligt i några minuter.",
         "ha_rebooting": "Värden startar om…",
+        "sc_file_editor": "Filredigerare",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Installera alla uppdateringar nu?",
         "cancel": "Avbryt",
         "last_check": "Senaste kontroll",

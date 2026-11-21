@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.9.0 - 2026-11-21
+
+### Features
+- **Shortcuts to the File editor and the Marketplace** ([#133](https://github.com/juju35/ha-system-hub/issues/133), thanks @thomasfav28): next to *Reload configuration*, *Restart* and *Reboot the host* — in the panel's System tab and in the System Monitor card's `show_actions` — a round icon opens the File editor (`/core_configurator`, else Studio Code Server) and another the Marketplace (`/marketplace`), with Home Assistant's own navigation. Each shows only when its panel is in the sidebar.
+
 ## 3.8.0 - 2026-11-21
 
 ### Features

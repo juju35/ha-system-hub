@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Reiniciar o host?",
         "ha_reboot_text": "A máquina que executa o Home Assistant reinicia, com o Home Assistant e todos os add-ons: tudo fica indisponível por alguns minutos.",
         "ha_rebooting": "O host está reiniciando…",
+        "sc_file_editor": "Editor de arquivos",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Instalar todas as atualizações agora?",
         "cancel": "Cancelar",
         "last_check": "Última verificação",

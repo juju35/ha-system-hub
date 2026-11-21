@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Uruchomić ponownie hosta?",
         "ha_reboot_text": "Komputer, na którym działa Home Assistant, uruchamia się ponownie wraz z Home Assistant i wszystkimi dodatkami: wszystko jest niedostępne przez kilka minut.",
         "ha_rebooting": "Host uruchamia się ponownie…",
+        "sc_file_editor": "Edytor plików",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Zainstalować teraz wszystkie aktualizacje?",
         "cancel": "Anuluj",
         "last_check": "Ostatnie sprawdzenie",

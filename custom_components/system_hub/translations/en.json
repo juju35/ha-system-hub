@@ -1367,6 +1367,8 @@
         "ha_reboot_title": "Reboot the host?",
         "ha_reboot_text": "The machine running Home Assistant restarts, with Home Assistant and every add-on: everything is unavailable for a few minutes.",
         "ha_rebooting": "The host is rebooting…",
+        "sc_file_editor": "File editor",
+        "sc_marketplace": "Marketplace",
         "confirm_install": "Install every update now?",
         "cancel": "Cancel",
         "last_check": "Last check",
