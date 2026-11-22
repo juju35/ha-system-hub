@@ -3855,7 +3855,7 @@ if (!customElements.get('sh-orphans-card')) {
     type: 'sh-orphans-card',
     name: 'Orphan Entities Card',
     description: 'The entities their integration no longer provides: filter, select and remove them in bulk',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-system-hub#orphans',
   });
   console.info(`%c ORPHAN-ENTITIES-CARD %c v${ORPHAN_ENTITIES_CARD_VERSION} `, 'background:#7e57c2;color:#fff;font-weight:700', '');
@@ -3867,7 +3867,7 @@ if (!customElements.get('sh-orphans-mini-card')) {
     type: 'sh-orphans-mini-card',
     name: 'Orphan Entities Mini Card',
     description: 'Orphaned entities by reason on two lines, with a detail button showing the full card',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-system-hub#orphans',
   });
 }

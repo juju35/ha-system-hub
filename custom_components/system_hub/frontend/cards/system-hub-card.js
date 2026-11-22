@@ -776,14 +776,14 @@ if (!customElements.get('system-hub-card')) {
       type: 'system-hub-card',
       name: 'System Hub',
       description: 'The status of Home Assistant at a glance, or one module of System Hub (module:)',
-      preview: true,
+      preview: false,
       documentationURL: 'https://github.com/juju35/ha-system-hub#lovelace-cards',
     },
     {
       type: 'system-hub-mini-card',
       name: 'System Hub Mini',
       description: 'The status of Home Assistant on one line, or the mini card of one module of System Hub (module:)',
-      preview: true,
+      preview: false,
       documentationURL: 'https://github.com/juju35/ha-system-hub#lovelace-cards',
     },
   );

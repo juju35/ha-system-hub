@@ -3161,14 +3161,14 @@ if (!customElements.get('sh-git-sync-card')) {
       type: 'sh-git-sync-card',
       name: 'Git Sync Card',
       description: 'Git status of the configuration, Commit & push and dashboard export',
-      preview: true,
+      preview: false,
       documentationURL: 'https://github.com/juju35/ha-system-hub',
     },
     {
       type: 'sh-git-sync-mini-card',
       name: 'Git Sync Mini Card',
       description: 'Compact Git status with Commit & push; its zoom button shows the full card',
-      preview: true,
+      preview: false,
       documentationURL: 'https://github.com/juju35/ha-system-hub',
     },
   );

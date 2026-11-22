@@ -3337,14 +3337,14 @@ if (!customElements.get('sh-batteries-card')) {
       type: 'sh-batteries-card',
       name: 'Battery Monitor Card',
       description: 'The batteries watched by System Hub: icon, name and level, the lowest first',
-      preview: true,
+      preview: false,
       documentationURL: 'https://github.com/juju35/ha-system-hub',
     },
     {
       type: 'sh-batteries-mini-card',
       name: 'Battery Monitor Mini Card',
       description: 'Compact: the status and only the batteries needing attention, with a button for the full card',
-      preview: true,
+      preview: false,
       documentationURL: 'https://github.com/juju35/ha-system-hub',
     },
   );
