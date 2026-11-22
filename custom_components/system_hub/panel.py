@@ -25,9 +25,11 @@ from .const import (
     CONF_BACKUP_MAX_AGE,
     CONF_HIDE_HEADER,
     CONF_MODULES,
+    CONF_SHORTCUTS,
     CONF_SYSTEM,
     CONF_TABS,
     DEFAULT_BACKUP_MAX_AGE,
+    DEFAULT_SHORTCUTS,
     DEFAULT_THRESHOLDS,
     DOMAIN,
     HIDE_HEADER_CHOICES,
@@ -41,6 +43,7 @@ from .const import (
     MODULE_SILENT,
     MODULES,
     PANEL_PATH,
+    SHORTCUTS,
     SOURCE_PANEL,
     TAB_STATUS,
     TAB_SYSTEM,
@@ -163,6 +166,14 @@ def hide_header(options: dict[str, Any]) -> str:
     """Who the panel's top bar is hidden for: off (no one, the default), all, or non_admin."""
     value = options.get(CONF_HIDE_HEADER)
     return value if value in HIDE_HEADER_CHOICES else HIDE_HEADER_OFF
+
+
+def shortcuts(options: dict[str, Any]) -> list[str]:
+    """The System tab's shortcuts turned on, in their own order; the default ones until a choice is saved."""
+    chosen = options.get(CONF_SHORTCUTS)
+    if not isinstance(chosen, list):
+        return list(DEFAULT_SHORTCUTS)
+    return [s for s in SHORTCUTS if s in chosen]
 
 
 def tab_order(options: dict[str, Any]) -> list[str]:
@@ -521,6 +532,7 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         "modules": enabled_modules(entry),
         "tabs": tab_order(dict(entry.options)),
         "hide_header": hide_header(dict(entry.options)),
+        "shortcuts": shortcuts(dict(entry.options)),
         "git_sync_configured": data.git_sync is not None,
         "system": _system(hass, stoppable_processes(dict(entry.options))),
         "updates": _updates(hass),
@@ -572,13 +584,14 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         vol.Optional("modules"): [vol.In(MODULES)],
         vol.Optional("tabs"): [vol.In(TABS)],
         vol.Optional("hide_header"): vol.In(HIDE_HEADER_CHOICES),
+        vol.Optional("shortcuts"): [vol.In(SHORTCUTS)],
     }
 )
 @websocket_api.async_response
 async def ws_update_settings(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
 ) -> None:
-    """Turn modules on or off, order the tabs and hide the top bar; the entry reloads with them."""
+    """Turn modules on or off, order the tabs, hide the top bar and pick the shortcuts; the entry reloads with them."""
     entry = _entry(hass) or next(iter(hass.config_entries.async_entries(DOMAIN)), None)
     if entry is None:
         connection.send_error(msg["id"], "not_found", "System Hub is not set up")
@@ -596,10 +609,17 @@ async def ws_update_settings(
         options[CONF_TABS] = tab_order({CONF_TABS: msg["tabs"]})
     if "hide_header" in msg:
         options[CONF_HIDE_HEADER] = msg["hide_header"]
+    if "shortcuts" in msg:
+        options[CONF_SHORTCUTS] = [s for s in SHORTCUTS if s in msg["shortcuts"]]
     hass.config_entries.async_update_entry(entry, options=options)
     connection.send_result(
         msg["id"],
-        {"modules": options.get(CONF_MODULES), "tabs": tab_order(options), "hide_header": hide_header(options)},
+        {
+            "modules": options.get(CONF_MODULES),
+            "tabs": tab_order(options),
+            "hide_header": hide_header(options),
+            "shortcuts": shortcuts(options),
+        },
     )
 
 

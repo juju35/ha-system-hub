@@ -698,6 +698,49 @@ test('system tab: shortcuts to the File editor and the Marketplace when their pa
   assert.ok(html.indexOf('data-nav="/marketplace"') < html.indexOf('data-action="ha_ask:reload"'));
 });
 
+test('system tab: the shortcuts chosen in Settings, Settings by default, each when its page is there (#144)', () => {
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.panels = { core_configurator: {}, marketplace: {}, config: {}, 'developer-tools': {} };
+  let html = p._content();
+  assert.match(html, /class="act quiet sc" href="\/config\/dashboard" data-nav="\/config\/dashboard" title="Settings" aria-label="Settings"><ha-icon icon="mdi:cog">/);
+  assert.doesNotMatch(html, /data-nav="\/developer-tools/);
+  p._state.shortcuts = ['settings', 'developer_tools'];
+  html = p._content();
+  assert.doesNotMatch(html, /data-nav="\/core_configurator"/);
+  assert.doesNotMatch(html, /data-nav="\/marketplace"/);
+  assert.match(html, /data-nav="\/developer-tools\/state" title="Developer tools"/);
+  p._state.shortcuts = [];
+  assert.doesNotMatch(p._content(), /class="act quiet sc"/);
+});
+
+test('settings: the shortcuts toggled on and off, saved with the other settings (#144)', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], hide_header: 'off', shortcuts: ['file_editor', 'marketplace'] }, 'settings');
+  p._render = () => {};
+  p._hass.callWS = async (msg) => {
+    calls.push(msg);
+    return {};
+  };
+  const click = (value) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'shortcut', value } } : null) } });
+  const html = p._settingsShortcuts();
+  assert.match(html, /data-action="shortcut" data-value="marketplace" aria-pressed="true"/);
+  assert.match(html, /data-action="shortcut" data-value="settings" aria-pressed="false"><ha-icon icon="mdi:cog"><\/ha-icon>Settings/);
+  click('settings');
+  assert.deepEqual([...p._draft.shortcuts], ['file_editor', 'marketplace', 'settings']);
+  click('marketplace');
+  assert.deepEqual([...p._draft.shortcuts], ['file_editor', 'settings']);
+  // Back to what is saved: nothing to save
+  click('marketplace');
+  click('settings');
+  assert.equal(p._draft.shortcuts, null);
+  click('file_editor');
+  assert.deepEqual([...p._draft.shortcuts], ['marketplace']);
+  assert.match(p._settings(), /data-action="save"/);
+  // The entry reloads after saving (a timer the test does not run): the message sent is what counts
+  p._save();
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), { type: 'system_hub/update_settings', shortcuts: ['marketplace'] });
+});
+
 test('automations tab: Clear all with failures left out clears the listed ones only', async () => {
   const calls = [];
   const p = panel(

@@ -40,6 +40,14 @@ PAIRS = [
             "temp_critical": 50,
         },
     },
+    # show_actions with the shortcuts chosen in `shortcuts` (#144), before Reload / Restart.
+    {
+        "file": "card-system-monitor-actions",
+        "type": "sh-system-card",
+        "width": 460,
+        "procs_ok": True,
+        "config": {"show_actions": True, "shortcuts": ["settings", "file_editor", "marketplace", "developer_tools"]},
+    },
 ]
 SHOTS = light_dark(PAIRS)
 
@@ -64,6 +72,7 @@ MOUNT = (
     );
   el.hass = {
     states, entities, devices, callWS,
+    panels: { core_configurator: {}, marketplace: {}, config: {}, "developer-tools": {} },
     config: { version: "2026.10.2" }, language: "en", locale: { language: "en" }, user: { is_admin: true }, themes: { darkMode: dark },
   };
   document.getElementById("root").appendChild(el);

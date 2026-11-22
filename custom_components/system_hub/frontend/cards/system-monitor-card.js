@@ -221,6 +221,10 @@ const STRINGS = {
     ha_rebooting: "The host is rebooting…",
     sc_file_editor: "File editor",
     sc_marketplace: "Marketplace",
+    sc_settings: "Settings",
+    sc_integrations: "Integrations",
+    sc_logs: "Logs",
+    sc_developer_tools: "Developer tools",
     ha_cancel: "Cancel",
     ha_failed: "Failed: {error}",
   },
@@ -328,6 +332,10 @@ const STRINGS = {
     ha_rebooting: "L'hôte redémarre…",
     sc_file_editor: "Éditeur de fichiers",
     sc_marketplace: "Marketplace",
+    sc_settings: "Paramètres",
+    sc_integrations: "Intégrations",
+    sc_logs: "Journaux",
+    sc_developer_tools: "Outils de développement",
     ha_cancel: "Annuler",
     ha_failed: "Échec : {error}",
   },
@@ -435,6 +443,10 @@ const STRINGS = {
     ha_rebooting: "Der Host wird neu gestartet…",
     sc_file_editor: "Datei-Editor",
     sc_marketplace: "Marketplace",
+    sc_settings: "Einstellungen",
+    sc_integrations: "Integrationen",
+    sc_logs: "Protokolle",
+    sc_developer_tools: "Entwicklerwerkzeuge",
     ha_cancel: "Abbrechen",
     ha_failed: "Fehlgeschlagen: {error}",
   },
@@ -542,6 +554,10 @@ const STRINGS = {
     ha_rebooting: "El host se está reiniciando…",
     sc_file_editor: "Editor de archivos",
     sc_marketplace: "Marketplace",
+    sc_settings: "Ajustes",
+    sc_integrations: "Integraciones",
+    sc_logs: "Registros",
+    sc_developer_tools: "Herramientas para desarrolladores",
     ha_cancel: "Cancelar",
     ha_failed: "Error: {error}",
   },
@@ -650,6 +666,10 @@ const STRINGS = {
     ha_rebooting: "Хост се рестартује…",
     sc_file_editor: "Уређивач датотека",
     sc_marketplace: "Marketplace",
+    sc_settings: "Подешавања",
+    sc_integrations: "Интеграције",
+    sc_logs: "Дневници",
+    sc_developer_tools: "Алати за програмере",
     ha_cancel: "Откажи",
     ha_failed: "Неуспех: {error}",
   },
@@ -758,6 +778,10 @@ const STRINGS = {
     ha_rebooting: "Host se restartuje…",
     sc_file_editor: "Uređivač datoteka",
     sc_marketplace: "Marketplace",
+    sc_settings: "Podešavanja",
+    sc_integrations: "Integracije",
+    sc_logs: "Dnevnici",
+    sc_developer_tools: "Alati za programere",
     ha_cancel: "Otkaži",
     ha_failed: "Neuspeh: {error}",
   },
@@ -866,6 +890,10 @@ const STRINGS = {
     ha_rebooting: "L'host si sta riavviando…",
     sc_file_editor: "Editor di file",
     sc_marketplace: "Marketplace",
+    sc_settings: "Impostazioni",
+    sc_integrations: "Integrazioni",
+    sc_logs: "Registri",
+    sc_developer_tools: "Strumenti per sviluppatori",
     ha_cancel: "Annulla",
     ha_failed: "Errore: {error}",
   },
@@ -974,6 +1002,10 @@ const STRINGS = {
     ha_rebooting: "De host wordt herstart…",
     sc_file_editor: "Bestandseditor",
     sc_marketplace: "Marketplace",
+    sc_settings: "Instellingen",
+    sc_integrations: "Integraties",
+    sc_logs: "Logboeken",
+    sc_developer_tools: "Ontwikkelhulpmiddelen",
     ha_cancel: "Annuleren",
     ha_failed: "Mislukt: {error}",
   },
@@ -1082,6 +1114,10 @@ const STRINGS = {
     ha_rebooting: "O anfitrião está a reiniciar…",
     sc_file_editor: "Editor de ficheiros",
     sc_marketplace: "Marketplace",
+    sc_settings: "Definições",
+    sc_integrations: "Integrações",
+    sc_logs: "Registos",
+    sc_developer_tools: "Ferramentas de programador",
     ha_cancel: "Cancelar",
     ha_failed: "Falhou: {error}",
   },
@@ -1190,6 +1226,10 @@ const STRINGS = {
     ha_rebooting: "Host uruchamia się ponownie…",
     sc_file_editor: "Edytor plików",
     sc_marketplace: "Marketplace",
+    sc_settings: "Ustawienia",
+    sc_integrations: "Integracje",
+    sc_logs: "Logi",
+    sc_developer_tools: "Narzędzia deweloperskie",
     ha_cancel: "Anuluj",
     ha_failed: "Błąd: {error}",
   },
@@ -1298,6 +1338,10 @@ const STRINGS = {
     ha_rebooting: "Gazda repornește…",
     sc_file_editor: "Editor de fișiere",
     sc_marketplace: "Marketplace",
+    sc_settings: "Setări",
+    sc_integrations: "Integrări",
+    sc_logs: "Jurnale",
+    sc_developer_tools: "Instrumente pentru dezvoltatori",
     ha_cancel: "Anulează",
     ha_failed: "Eșuat: {error}",
   },
@@ -1406,6 +1450,10 @@ const STRINGS = {
     ha_rebooting: "Værten genstarter…",
     sc_file_editor: "Fileditor",
     sc_marketplace: "Marketplace",
+    sc_settings: "Indstillinger",
+    sc_integrations: "Integrationer",
+    sc_logs: "Logfiler",
+    sc_developer_tools: "Udviklerværktøjer",
     ha_cancel: "Annuller",
     ha_failed: "Mislykkedes: {error}",
   },
@@ -1514,6 +1562,10 @@ const STRINGS = {
     ha_rebooting: "Värden startar om…",
     sc_file_editor: "Filredigerare",
     sc_marketplace: "Marketplace",
+    sc_settings: "Inställningar",
+    sc_integrations: "Integrationer",
+    sc_logs: "Loggar",
+    sc_developer_tools: "Utvecklarverktyg",
     ha_cancel: "Avbryt",
     ha_failed: "Misslyckades: {error}",
   },
@@ -1622,6 +1674,10 @@ const STRINGS = {
     ha_rebooting: "Хостът се рестартира…",
     sc_file_editor: "Редактор на файлове",
     sc_marketplace: "Marketplace",
+    sc_settings: "Настройки",
+    sc_integrations: "Интеграции",
+    sc_logs: "Журнали",
+    sc_developer_tools: "Инструменти за разработчици",
     ha_cancel: "Отказ",
     ha_failed: "Неуспех: {error}",
   },
@@ -1730,6 +1786,10 @@ const STRINGS = {
     ha_rebooting: "Хост перезагружается…",
     sc_file_editor: "Редактор файлов",
     sc_marketplace: "Marketplace",
+    sc_settings: "Настройки",
+    sc_integrations: "Интеграции",
+    sc_logs: "Журналы",
+    sc_developer_tools: "Панель разработчика",
     ha_cancel: "Отмена",
     ha_failed: "Ошибка: {error}",
   },
@@ -1838,6 +1898,10 @@ const STRINGS = {
     ha_rebooting: "Хост перезавантажується…",
     sc_file_editor: "Редактор файлів",
     sc_marketplace: "Marketplace",
+    sc_settings: "Налаштування",
+    sc_integrations: "Інтеграції",
+    sc_logs: "Журнали",
+    sc_developer_tools: "Інструменти розробника",
     ha_cancel: "Скасувати",
     ha_failed: "Помилка: {error}",
   },
@@ -1946,6 +2010,10 @@ const STRINGS = {
     ha_rebooting: "A gazdagép újraindul…",
     sc_file_editor: "Fájlszerkesztő",
     sc_marketplace: "Marketplace",
+    sc_settings: "Beállítások",
+    sc_integrations: "Integrációk",
+    sc_logs: "Naplók",
+    sc_developer_tools: "Fejlesztői eszközök",
     ha_cancel: "Mégse",
     ha_failed: "Sikertelen: {error}",
   },
@@ -2054,6 +2122,10 @@ const STRINGS = {
     ha_rebooting: "Hostiteľ sa reštartuje…",
     sc_file_editor: "Editor súborov",
     sc_marketplace: "Marketplace",
+    sc_settings: "Nastavenia",
+    sc_integrations: "Integrácie",
+    sc_logs: "Záznamy",
+    sc_developer_tools: "Nástroje pre vývojárov",
     ha_cancel: "Zrušiť",
     ha_failed: "Zlyhalo: {error}",
   },
@@ -2162,6 +2234,10 @@ const STRINGS = {
     ha_rebooting: "Hostitel se restartuje…",
     sc_file_editor: "Editor souborů",
     sc_marketplace: "Marketplace",
+    sc_settings: "Nastavení",
+    sc_integrations: "Integrace",
+    sc_logs: "Záznamy",
+    sc_developer_tools: "Vývojářské nástroje",
     ha_cancel: "Zrušit",
     ha_failed: "Selhalo: {error}",
   },
@@ -2270,6 +2346,10 @@ const STRINGS = {
     ha_rebooting: "Gostitelj se znova zaganja…",
     sc_file_editor: "Urejevalnik datotek",
     sc_marketplace: "Marketplace",
+    sc_settings: "Nastavitve",
+    sc_integrations: "Integracije",
+    sc_logs: "Dnevniki",
+    sc_developer_tools: "Orodja za razvijalce",
     ha_cancel: "Prekliči",
     ha_failed: "Ni uspelo: {error}",
   },
@@ -2378,6 +2458,10 @@ const STRINGS = {
     ha_rebooting: "Resursdators tiek restartēts…",
     sc_file_editor: "Failu redaktors",
     sc_marketplace: "Marketplace",
+    sc_settings: "Iestatījumi",
+    sc_integrations: "Integrācijas",
+    sc_logs: "Žurnāli",
+    sc_developer_tools: "Izstrādātāja rīki",
     ha_cancel: "Atcelt",
     ha_failed: "Neizdevās: {error}",
   },
@@ -2486,6 +2570,10 @@ const STRINGS = {
     ha_rebooting: "Ο κεντρικός υπολογιστής επανεκκινείται…",
     sc_file_editor: "Επεξεργαστής αρχείων",
     sc_marketplace: "Marketplace",
+    sc_settings: "Ρυθμίσεις",
+    sc_integrations: "Ενσωματώσεις",
+    sc_logs: "Αρχεία καταγραφής",
+    sc_developer_tools: "Εργαλεία προγραμματιστή",
     ha_cancel: "Ακύρωση",
     ha_failed: "Αποτυχία: {error}",
   },
@@ -4042,12 +4130,18 @@ const HA_ACTIONS = {
   reboot: { service: ["hassio", "host_reboot"], icon: ICONS.reboot, danger: true },
 };
 
-// show_actions: shortcuts to the File editor (else Studio Code Server) and the Marketplace, each shown only when its
-// panel is in Home Assistant's sidebar (#133).
+// show_actions: the shortcuts `shortcuts` may list, each shown only when its page is in Home Assistant — the File
+// editor (else Studio Code Server) and the Marketplace when in the sidebar (#133, #144); `path`: a page inside the panel.
 const HA_SHORTCUTS = [
   { key: "file_editor", panels: ["core_configurator", "a0d7b954_vscode"], icon: "M8,12H16V14H8V12M10,20H6V4H13V9H18V12.1L20,10.1V8L14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H10V20M8,18H12.1L13,17.1V16H8V18M20.2,13C20.3,13 20.5,13.1 20.6,13.2L21.9,14.5C22.1,14.7 22.1,15.1 21.9,15.3L20.9,16.3L18.8,14.2L19.8,13.2C19.9,13.1 20,13 20.2,13M20.2,16.9L14.1,23H12V20.9L18.1,14.8L20.2,16.9Z" },
   { key: "marketplace", panels: ["marketplace"], icon: "M5.06 3C4.63 3 4.22 3.14 3.84 3.42S3.24 4.06 3.14 4.5L2.11 8.91C1.86 10 2.06 10.95 2.72 11.77L3 12.05V19C3 19.5 3.2 20 3.61 20.39S4.5 21 5 21H19C19.5 21 20 20.8 20.39 20.39S21 19.5 21 19V12.05L21.28 11.77C21.94 10.95 22.14 10 21.89 8.91L20.86 4.5C20.73 4.06 20.5 3.7 20.13 3.42C19.77 3.14 19.38 3 18.94 3H5.06M18.89 4.97L19.97 9.38C20.06 9.81 19.97 10.2 19.69 10.55C19.44 10.86 19.13 11 18.75 11C18.44 11 18.17 10.9 17.95 10.66C17.73 10.43 17.61 10.16 17.58 9.84L16.97 5L18.89 4.97M5.06 5H7.03L6.42 9.84C6.3 10.63 5.91 11 5.25 11C4.84 11 4.53 10.86 4.31 10.55C4.03 10.2 3.94 9.81 4.03 9.38L5.06 5M9.05 5H11V9.7C11 10.05 10.89 10.35 10.64 10.62C10.39 10.88 10.08 11 9.7 11C9.36 11 9.07 10.88 8.84 10.59S8.5 10 8.5 9.66V9.5L9.05 5M13 5H14.95L15.5 9.5C15.58 9.92 15.5 10.27 15.21 10.57C14.95 10.87 14.61 11 14.2 11C13.89 11 13.61 10.88 13.36 10.62C13.11 10.35 13 10.05 13 9.7V5M7.45 12.05C8.08 12.67 8.86 13 9.8 13C10.64 13 11.38 12.67 12 12.05C12.69 12.67 13.45 13 14.3 13C15.17 13 15.92 12.67 16.55 12.05C17.11 12.67 17.86 13 18.8 13H19.03V19H5V13H5.25C6.16 13 6.89 12.67 7.45 12.05Z" },
+  { key: "settings", panels: ["config"], path: "/config/dashboard", icon: "M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" },
+  { key: "integrations", panels: ["config"], path: "/config/integrations/dashboard", icon: "M22,13.5C22,15.26 20.7,16.72 19,16.96V20A2,2 0 0,1 17,22H13.2V21.7A2.7,2.7 0 0,0 10.5,19C9,19 7.8,20.21 7.8,21.7V22H4A2,2 0 0,1 2,20V16.2H2.3C3.79,16.2 5,15 5,13.5C5,12 3.79,10.8 2.3,10.8H2V7A2,2 0 0,1 4,5H7.04C7.28,3.3 8.74,2 10.5,2C12.26,2 13.72,3.3 13.96,5H17A2,2 0 0,1 19,7V10.04C20.7,10.28 22,11.74 22,13.5M17,15H18.5A1.5,1.5 0 0,0 20,13.5A1.5,1.5 0 0,0 18.5,12H17V7H12V5.5A1.5,1.5 0 0,0 10.5,4A1.5,1.5 0 0,0 9,5.5V7H4V9.12C5.76,9.8 7,11.5 7,13.5C7,15.5 5.75,17.2 4,17.88V20H6.12C6.8,18.25 8.5,17 10.5,17C12.5,17 14.2,18.25 14.88,20H17V15Z" },
+  { key: "logs", panels: ["config"], path: "/config/logs", icon: "M18 7C16.9 7 16 7.9 16 9V15C16 16.1 16.9 17 18 17H20C21.1 17 22 16.1 22 15V11H20V15H18V9H22V7H18M2 7V17H8V15H4V7H2M11 7C9.9 7 9 7.9 9 9V15C9 16.1 9.9 17 11 17H13C14.1 17 15 16.1 15 15V9C15 7.9 14.1 7 13 7H11M11 9H13V15H11V9Z" },
+  { key: "developer_tools", panels: ["developer-tools"], path: "/developer-tools/state", icon: "M2 19.63L13.43 8.2L12.72 7.5L14.14 6.07L12 3.89C13.2 2.7 15.09 2.7 16.27 3.89L19.87 7.5L18.45 8.91H21.29L22 9.62L18.45 13.21L17.74 12.5V9.62L16.27 11.04L15.56 10.33L4.13 21.76L2 19.63Z" },
 ];
+// The shortcuts shown when `shortcuts` is not set.
+const HA_DEFAULT_SHORTCUTS = ["file_editor", "marketplace", "settings"];
 
 const ACTIONS_STYLE = `
   .ha-acts { display: flex; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 6px; }
@@ -4215,14 +4309,17 @@ class SystemMonitorCard extends SystemMonitorBase {
     return `<div class="ha-acts">${msg}<div class="ha-main${this._actsIcons ? " icons" : ""}">${buttons}</div></div>`;
   }
 
-  /** The shortcuts of show_actions: a round icon per panel found, before the reload, restart and reboot buttons. */
+  /** The shortcuts of show_actions, in the order of `shortcuts`: a round icon per page found, before the reload, restart and reboot buttons. */
   _haShortcuts() {
     const panels = this._hass.panels || {};
-    return HA_SHORTCUTS.map((sc) => {
-      const path = sc.panels.find((p) => panels[p]);
-      if (!path) return "";
+    const chosen = Array.isArray(this._config.shortcuts) ? this._config.shortcuts : HA_DEFAULT_SHORTCUTS;
+    return chosen.map((key) => {
+      const sc = HA_SHORTCUTS.find((s) => s.key === key);
+      const panel = sc?.panels.find((p) => panels[p]);
+      if (!panel) return "";
+      const path = sc.path || `/${panel}`;
       const label = esc(this._t(`sc_${sc.key}`));
-      return `<a class="ha-btn sc" href="/${path}" data-nav="/${path}" title="${label}" aria-label="${label}">${svgIcon(sc.icon)}</a>`;
+      return `<a class="ha-btn sc" href="${path}" data-nav="${path}" title="${label}" aria-label="${label}">${svgIcon(sc.icon)}</a>`;
     }).join("");
   }
 
