@@ -2327,7 +2327,7 @@ if (!customElements.get('sh-marketplace-card')) {
     type: 'sh-marketplace-card',
     name: 'Marketplace Refresh Card',
     description: 'The update check of Marketplace Refresh: status, last and next check, updates available and failed repositories',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-system-hub',
   });
   console.info(`%c MARKETPLACE-REFRESH-CARD %c v${MARKETPLACE_REFRESH_CARD_VERSION} `, 'background:#14b8a6;color:#fff;font-weight:700', '');

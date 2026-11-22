@@ -2665,7 +2665,7 @@ if (!customElements.get('sh-watchdog-card')) {
     type: 'sh-watchdog-card',
     name: 'Watchdog Card (System Hub)',
     description: 'The overall status of the System Hub Watchdog: unavailable integrations and recent reloads',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-system-hub',
   });
   console.info(
@@ -2681,7 +2681,7 @@ if (!customElements.get('sh-watchdog-mini-card')) {
     type: 'sh-watchdog-mini-card',
     name: 'Watchdog Mini Card (System Hub)',
     description: 'The System Hub Watchdog status and unavailable integrations on two lines, with a detail button showing the full card',
-    preview: true,
+    preview: false,
     documentationURL: 'https://github.com/juju35/ha-system-hub',
   });
 }

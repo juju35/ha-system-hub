@@ -2988,7 +2988,7 @@ for (const card of [
   },
 ]) {
   if (!window.systemHubCards.some((c) => c.type === card.type))
-    window.systemHubCards.push({ ...card, preview: true, documentationURL: "https://github.com/juju35/ha-system-hub#automation-monitor-cards" });
+    window.systemHubCards.push({ ...card, preview: false, documentationURL: "https://github.com/juju35/ha-system-hub#automation-monitor-cards" });
 }
 
 console.info(
