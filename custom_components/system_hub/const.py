@@ -6,7 +6,7 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "3.11.2"
+VERSION: Final = "3.12.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
@@ -49,6 +49,10 @@ CONF_TABS: Final = "tabs"
 CONF_HIDE_HEADER: Final = "hide_header"
 HIDE_HEADER_OFF: Final = "off"
 HIDE_HEADER_CHOICES: Final = (HIDE_HEADER_OFF, "all", "non_admin")
+# Panel: the shortcuts shown next to the restart buttons of the System tab, in this order (#144).
+CONF_SHORTCUTS: Final = "shortcuts"
+SHORTCUTS: Final = ("file_editor", "marketplace", "settings", "integrations", "logs", "developer_tools")
+DEFAULT_SHORTCUTS: Final = ("file_editor", "marketplace", "settings")
 TAB_STATUS: Final = "status"
 TAB_SYSTEM: Final = "system"
 # The System tab's thresholds (orange, red) in %, °C for the temperature, in the options under "system".

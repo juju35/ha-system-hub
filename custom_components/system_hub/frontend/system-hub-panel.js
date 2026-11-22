@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.11.2';
+var SYSTEM_HUB_PANEL_VERSION = '3.12.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -703,6 +703,17 @@ function shSpark(values) {
 
 // Settings → Hide the top bar, as last seen in this browser: applied before the state is read
 var SH_HIDE_BAR_KEY = 'system_hub_hide_bar';
+// The System tab's shortcuts, in their order: the panels that open them (the first one in Home Assistant) and, for a
+// page inside one, its path (#133, #144); the ones shown until a choice is saved in Settings → Display
+var SH_SHORTCUTS = {
+  file_editor: { panels: ['core_configurator', 'a0d7b954_vscode'], icon: 'mdi:file-document-edit-outline' },
+  marketplace: { panels: ['marketplace'], icon: 'mdi:storefront-outline' },
+  settings: { panels: ['config'], path: '/config/dashboard', icon: 'mdi:cog' },
+  integrations: { panels: ['config'], path: '/config/integrations/dashboard', icon: 'mdi:puzzle-outline' },
+  logs: { panels: ['config'], path: '/config/logs', icon: 'mdi:math-log' },
+  developer_tools: { panels: ['developer-tools'], path: '/developer-tools/state', icon: 'mdi:hammer' },
+};
+var SH_DEFAULT_SHORTCUTS = ['file_editor', 'marketplace', 'settings'];
 
 // Status letter and colour of a file in the diff viewer, as in an editor's source control view.
 var SH_DIFF_STATUS = {
@@ -2892,19 +2903,19 @@ class SystemHubPanel extends HTMLElement {
       ${charts.join('')}${pair.length ? `<div class="pair">${pair.join('')}</div>` : ''}${lists.length ? `<div class="pair">${lists.join('')}</div>` : ''}`;
   }
 
-  // Shortcuts to the File editor (else Studio Code Server) and the Marketplace, before the buttons below: a round
-  // icon each, shown only when its panel is in Home Assistant's sidebar (#133)
+  // The shortcuts chosen in Settings → Display (#133, #144), before the buttons below: a round icon each, shown only
+  // when its page is in Home Assistant (the File editor, else Studio Code Server, and the Marketplace in the sidebar)
   _haShortcuts() {
     var panels = this._hass?.panels || {};
-    return [
-      ['file_editor', ['core_configurator', 'a0d7b954_vscode'], 'mdi:file-document-edit-outline'],
-      ['marketplace', ['marketplace'], 'mdi:storefront-outline'],
-    ]
-      .map(([key, paths, icon]) => {
-        var path = paths.find((p) => panels[p]);
-        if (!path) return '';
+    var chosen = this._state?.shortcuts || SH_DEFAULT_SHORTCUTS;
+    return Object.entries(SH_SHORTCUTS)
+      .filter(([key]) => chosen.includes(key))
+      .map(([key, sc]) => {
+        var panel = sc.panels.find((p) => panels[p]);
+        if (!panel) return '';
+        var path = sc.path || `/${panel}`;
         var label = shEsc(this._t(`sc_${key}`));
-        return `<a class="act quiet sc" href="/${path}" data-nav="/${path}" title="${label}" aria-label="${label}"><ha-icon icon="${icon}"></ha-icon></a>`;
+        return `<a class="act quiet sc" href="${path}" data-nav="${path}" title="${label}" aria-label="${label}"><ha-icon icon="${sc.icon}"></ha-icon></a>`;
       })
       .join('');
   }
@@ -5105,7 +5116,7 @@ class SystemHubPanel extends HTMLElement {
   // Settings: the modules turned on, and the order of the tabs
   _settings() {
     var modules = this._draft.modules || this._state.modules || [];
-    var changed = Boolean(this._draft.modules || this._draft.tabs || this._draft.hide_header);
+    var changed = Boolean(this._draft.modules || this._draft.tabs || this._draft.hide_header || this._draft.shortcuts);
     return `${this._settingsModules(modules)}
       ${
         changed || this._busy.save
@@ -5130,7 +5141,21 @@ class SystemHubPanel extends HTMLElement {
     return `<section class="cfgcard"><div class="cfgsec cfggroup"><ha-icon icon="mdi:monitor-dashboard"></ha-icon><span class="grow">${shEsc(this._t('settings_display'))}</span></div>
       <div class="cfglist"><div class="row cfgrow cfgdisplay"><span class="cfgpad"></span><ha-icon icon="mdi:dock-top"></ha-icon>
         <div class="who"><div class="n">${shEsc(this._t('hide_header'))}</div><div class="s">${shEsc(hint)}</div></div></div>
-        <div class="segs cfgsegs" role="group" aria-label="${shEsc(this._t('hide_header'))}">${choices}</div></div></section>`;
+        <div class="segs cfgsegs" role="group" aria-label="${shEsc(this._t('hide_header'))}">${choices}</div>${this._settingsShortcuts()}</div></section>`;
+  }
+
+  // Settings → Display: the System tab's shortcuts, each turned on or off
+  _settingsShortcuts() {
+    var chosen = this._draft.shortcuts || this._state.shortcuts || SH_DEFAULT_SHORTCUTS;
+    var chips = Object.entries(SH_SHORTCUTS)
+      .map(([key, sc]) => {
+        var on = chosen.includes(key);
+        return `<button class="seg${on ? ' active' : ''}" data-action="shortcut" data-value="${key}" aria-pressed="${on}"><ha-icon icon="${sc.icon}"></ha-icon>${shEsc(this._t(`sc_${key}`))}</button>`;
+      })
+      .join('');
+    return `<div class="row cfgrow cfgdisplay"><span class="cfgpad"></span><ha-icon icon="mdi:gesture-tap-button"></ha-icon>
+        <div class="who"><div class="n">${shEsc(this._t('shortcuts'))}</div><div class="s">${shEsc(this._t('shortcuts_hint'))}</div></div></div>
+        <div class="segs cfgsegs scsegs" role="group" aria-label="${shEsc(this._t('shortcuts'))}">${chips}</div>`;
   }
 
   _onClick(ev) {
@@ -5220,6 +5245,14 @@ class SystemHubPanel extends HTMLElement {
       this._draft.modules = null;
       this._draft.tabs = null;
       this._draft.hide_header = null;
+      this._draft.shortcuts = null;
+      return this._render();
+    }
+    if (action === 'shortcut') {
+      var scSaved = Object.keys(SH_SHORTCUTS).filter((k) => (this._state.shortcuts || SH_DEFAULT_SHORTCUTS).includes(k));
+      var scNow = this._draft.shortcuts || scSaved;
+      var scNext = Object.keys(SH_SHORTCUTS).filter((k) => (k === button.dataset.value ? !scNow.includes(k) : scNow.includes(k)));
+      this._draft.shortcuts = scNext.join() === scSaved.join() ? null : scNext;
       return this._render();
     }
     if (action === 'hide_header') {
@@ -5566,6 +5599,7 @@ class SystemHubPanel extends HTMLElement {
     if (this._draft.modules) msg.modules = this._draft.modules;
     if (this._draft.tabs) msg.tabs = this._draft.tabs;
     if (this._draft.hide_header) msg.hide_header = this._draft.hide_header;
+    if (this._draft.shortcuts) msg.shortcuts = this._draft.shortcuts;
     delete this._messages.save;
     try {
       await this._hass.callWS(msg);
@@ -5574,6 +5608,7 @@ class SystemHubPanel extends HTMLElement {
       this._draft.modules = null;
       this._draft.tabs = null;
       this._draft.hide_header = null;
+      this._draft.shortcuts = null;
       await this._load();
       this._toast(this._t('saved'));
     } catch (err) {
@@ -6996,6 +7031,7 @@ var SH_BANNER_STYLE = `
     /* Settings → Display: the hint on as many lines as it needs, the choices under the row */
     .cfgcard .cfgrow.cfgdisplay .who .s { white-space:normal; }
     .cfgsegs { align-self:flex-start; margin-left:4px; }
+    .scsegs { flex-wrap:wrap; --mdc-icon-size:16px; }
     .cfgcard .cfgrow { border:0; padding:6px 10px 6px 4px; border-radius:12px; background:var(--sh-sec); align-items:center; }
     .cfgcard .cfgrow > ha-icon { width:40px; height:40px; border-radius:50%; display:grid; place-items:center; --mdc-icon-size:22px; flex:none;
                                  color:var(--primary-color); background:color-mix(in srgb, var(--primary-color) 14%, transparent); }

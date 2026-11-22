@@ -138,3 +138,17 @@ test("show_actions: shortcuts to the File editor and the Marketplace, only when 
   assert.match(c._render(), /data-nav="\/a0d7b954_vscode"/);
   assert.doesNotMatch(card({ admin: false }).c._render(), /data-nav=/);
 });
+
+test("show_actions: Settings by default, and the shortcuts listed in `shortcuts`, in their order (#144)", () => {
+  const { c } = card();
+  c._hass.panels = { core_configurator: {}, marketplace: {}, config: {}, "developer-tools": {} };
+  let html = c._render();
+  assert.match(html, /<a class="ha-btn sc" href="\/config\/dashboard" data-nav="\/config\/dashboard" title="Settings"/);
+  assert.doesNotMatch(html, /data-nav="\/developer-tools/);
+  c._config = { ...c._config, shortcuts: ["developer_tools", "logs", "unknown"] };
+  html = c._render();
+  assert.doesNotMatch(html, /data-nav="\/core_configurator"/);
+  assert.ok(html.indexOf('data-nav="/developer-tools/state"') < html.indexOf('data-nav="/config/logs"'));
+  c._config = { ...c._config, shortcuts: [] };
+  assert.doesNotMatch(c._render(), /class="ha-btn sc"/);
+});

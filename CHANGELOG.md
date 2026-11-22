@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.12.0 - 2026-11-22
+
+### Features
+- **Shortcuts to choose** ([#144](https://github.com/juju35/ha-system-hub/issues/144), thanks @thomasfav28): the round shortcuts next to *Reload configuration*, *Restart* and *Reboot the host* are chosen in **Settings → Display → Shortcuts** — *File editor*, *Marketplace*, *Settings* (Home Assistant's, `mdi:cog`), *Integrations*, *Logs* and *Developer tools*, each turned on or off. *Settings* joins the File editor and the Marketplace by default. On the System Monitor card, `shortcuts` (YAML) lists them in its own order (`[]` for none).
+
 ## 3.11.2 - 2026-11-22
 
 ### Performance

@@ -252,6 +252,26 @@ async def test_update_settings_hides_the_top_bar(hass: HomeAssistant, hass_ws_cl
     assert (await client.receive_json())["success"] is False
 
 
+async def test_update_settings_picks_the_shortcuts(hass: HomeAssistant, hass_ws_client) -> None:
+    entry = await _setup(hass, ["watchdog"])
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "system_hub/state"})
+    assert (await client.receive_json())["result"]["shortcuts"] == ["file_editor", "marketplace", "settings"]
+    await client.send_json_auto_id(
+        {"type": "system_hub/update_settings", "shortcuts": ["developer_tools", "settings", "settings"]}
+    )
+    response = await client.receive_json()
+    assert response["success"] is True
+    assert response["result"]["shortcuts"] == ["settings", "developer_tools"]
+    await hass.async_block_till_done()
+    assert entry.options["shortcuts"] == ["settings", "developer_tools"]
+    # None at all
+    await client.send_json_auto_id({"type": "system_hub/update_settings", "shortcuts": []})
+    assert (await client.receive_json())["result"]["shortcuts"] == []
+    await client.send_json_auto_id({"type": "system_hub/update_settings", "shortcuts": ["terminal"]})
+    assert (await client.receive_json())["success"] is False
+
+
 async def test_update_settings(hass: HomeAssistant, hass_ws_client) -> None:
     entry = await _setup(hass, ["watchdog"])
     client = await hass_ws_client(hass)
