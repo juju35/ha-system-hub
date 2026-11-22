@@ -1558,6 +1558,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
         language: "en",
         locale: { language: "en" },
         user: { is_admin: true },
+        // The System tab's shortcuts (#144): the File editor, the Marketplace and Home Assistant's Settings show
+        panels: { core_configurator: {}, marketplace: {}, config: {}, "developer-tools": {} },
         // The illustrated headers draw their night picture in Home Assistant's dark mode
         themes: { darkMode: dark },
         // ZHA loaded: the Silent devices tab's Zigbee view reads its mesh from zha/devices

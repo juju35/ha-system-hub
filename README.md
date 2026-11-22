@@ -308,6 +308,10 @@ The cards are built on top of the core [System Monitor integration](https://www.
 
 <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-lines.png" alt="system-monitor-card, gauge_style: bar" width="400">
 
+`show_actions: true` with `shortcuts: [settings, file_editor, marketplace, developer_tools]`: the round shortcuts before **Reload configuration** and **Restart Home Assistant**:
+
+<img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-system-monitor-actions.png" alt="system-monitor-card, show_actions with shortcuts" width="400">
+
 ### Features
 
 - Two cards: a full **System Monitor Card** and a compact **System Monitor Mini Card**
