@@ -32,9 +32,15 @@ REPOSITORIES = [
     ("update.button_card_update", "button-card", "v4.3.0", "v4.3.0"),
     ("update.spook_update", "Spook", "v4.0.0", "v4.0.0"),
 ]
+# Mock system updates (show_system_updates): (update entity, platform, title, installed, latest).
+SYSTEM = [
+    ("update.home_assistant_core_update", "hassio", "Home Assistant Core", "2026.11.1", "2026.11.2"),
+    ("update.file_editor_update", "hassio", "File editor", "5.8.0", "5.9.0"),
+    ("update.kitchen_plug_firmware", "zha", "Kitchen plug", "0x1d", "0x20"),
+]
 
 
-def mock_hass(status, attrs, with_updates):
+def mock_hass(status, attrs, with_updates, with_system=False):
     platform = {"platform": "system_hub", "device_id": "system_hub"}
     states = {
         STATUS: {
@@ -67,6 +73,13 @@ def mock_hass(status, attrs, with_updates):
             },
         }
         entities[entity_id] = {"platform": "marketplace"}
+    for entity_id, integration, title, installed, latest in SYSTEM if with_system else []:
+        states[entity_id] = {
+            "entity_id": entity_id,
+            "state": "on",
+            "attributes": {"title": title, "installed_version": installed, "latest_version": latest},
+        }
+        entities[entity_id] = {"platform": integration}
     # An administrator: the card offers "Update all".
     return {
         "states": states,
@@ -81,6 +94,7 @@ UPDATES = ("idle", {"updates": 3, "failed": ["someone/abandoned-card: 404 Not Fo
 CHECKING = ("running", {"done": 31, "total": 48}, True)
 UP_TO_DATE = ("idle", {}, False)
 INSTALLING = ("idle", {"updates": 3, "installing": ["update.card_mod_update", "update.mushroom_update"]}, True)
+SYSTEM_UPDATES = ("idle", {"updates": 3}, True, True)
 SHOTS = [
     {"file": "card-marketplace", "theme": "light", "hass": UPDATES},
     {"file": "card-marketplace-dark", "theme": "dark", "hass": UPDATES},
@@ -90,12 +104,24 @@ SHOTS = [
     {"file": "card-marketplace-ok-dark", "theme": "dark", "hass": UP_TO_DATE},
     {"file": "card-marketplace-installing", "theme": "light", "hass": INSTALLING},
     {"file": "card-marketplace-installing-dark", "theme": "dark", "hass": INSTALLING},
+    {
+        "file": "card-marketplace-system",
+        "theme": "light",
+        "hass": SYSTEM_UPDATES,
+        "config": {"show_system_updates": True},
+    },
+    {
+        "file": "card-marketplace-system-dark",
+        "theme": "dark",
+        "hass": SYSTEM_UPDATES,
+        "config": {"show_system_updates": True},
+    },
 ]
 
 
-MOUNT = """([hass, dark]) => {
+MOUNT = """([hass, dark, config]) => {
     const el = document.createElement("sh-marketplace-card");
-    el.setConfig({ type: "custom:marketplace-refresh-card" });
+    el.setConfig({ type: "custom:marketplace-refresh-card", ...config });
     el.hass = { ...hass, themes: { darkMode: dark }, callService: async () => {} };
     document.getElementById("root").appendChild(el);
 }"""
@@ -109,7 +135,7 @@ def main():
         browser = p.chromium.launch(executable_path=os.environ.get("CHROMIUM_PATH") or None)
         for shot in SHOTS:
             page = open_card_page(browser, shot["file"], shot["theme"], WIDTH, HA_ELEMENTS, CARD_JS)
-            page.evaluate(MOUNT, [mock_hass(*shot["hass"]), shot["theme"] == "dark"])
+            page.evaluate(MOUNT, [mock_hass(*shot["hass"]), shot["theme"] == "dark", shot.get("config", {})])
             page.wait_for_timeout(400)
             shoot(page, shot["file"], WIDTH)
         browser.close()
