@@ -30,6 +30,7 @@ const HR_I18N = {
     auto_off: 'automatic check off',
     check_now: 'Check for updates',
     updates_title: 'Updates available',
+    system_title: 'System updates',
     no_details: 'The Marketplace isn’t loaded: no details on these updates',
     failed_title: 'Could not be checked',
     no_github: 'GitHub isn’t connected to the Marketplace: the repositories added from a link couldn’t be checked',
@@ -55,6 +56,8 @@ const HR_I18N = {
     ed_title_helper: 'Leave empty for “Marketplace updates”',
     ed_show_updates: 'Updates available',
     ed_show_updates_helper: 'The repositories with an update, from their Marketplace update entities',
+    ed_show_system_updates: 'System updates',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), the apps and the device firmware with an update; a row opens it to install it',
     ed_show_failed: 'Repositories that could not be checked',
     ed_show_failed_helper: 'And the error of a check that failed',
     ed_check_button: '“Check for updates” button',
@@ -84,6 +87,7 @@ const HR_I18N = {
     auto_off: 'vérification automatique désactivée',
     check_now: 'Rechercher les mises à jour',
     updates_title: 'Mises à jour disponibles',
+    system_title: 'Mises à jour système',
     no_details: 'Le Marketplace n’est pas chargé : pas de détail sur ces mises à jour',
     failed_title: 'Impossible à vérifier',
     no_github: 'GitHub n’est pas connecté au Marketplace : les dépôts ajoutés depuis un lien n’ont pas pu être vérifiés',
@@ -109,6 +113,8 @@ const HR_I18N = {
     ed_title_helper: 'Laisser vide pour « Mises à jour Marketplace »',
     ed_show_updates: 'Mises à jour disponibles',
     ed_show_updates_helper: 'Les dépôts avec une mise à jour, d’après leurs entités de mise à jour du Marketplace',
+    ed_show_system_updates: 'Mises à jour système',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), les applications et les firmwares d’appareils avec une mise à jour ; une ligne l’ouvre pour l’installer',
     ed_show_failed: 'Dépôts impossibles à vérifier',
     ed_show_failed_helper: 'Et l’erreur d’une vérification qui a échoué',
     ed_check_button: 'Bouton « Rechercher les mises à jour »',
@@ -138,6 +144,7 @@ const HR_I18N = {
     auto_off: 'automatische Prüfung aus',
     check_now: 'Nach Updates suchen',
     updates_title: 'Verfügbare Updates',
+    system_title: 'System-Updates',
     no_details: 'Marketplace ist nicht geladen: keine Details zu diesen Updates',
     failed_title: 'Konnten nicht geprüft werden',
     no_github: 'GitHub ist nicht mit dem Marketplace verbunden: die über einen Link hinzugefügten Repositorys konnten nicht geprüft werden',
@@ -163,6 +170,8 @@ const HR_I18N = {
     ed_title_helper: 'Leer lassen für „Marketplace-Updates“',
     ed_show_updates: 'Verfügbare Updates',
     ed_show_updates_helper: 'Die Marketplace-Repositorys mit einem Update, aus ihren Update-Entitäten',
+    ed_show_system_updates: 'System-Updates',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), die Apps und die Geräte-Firmware mit einem Update; eine Zeile öffnet es zur Installation',
     ed_show_failed: 'Nicht prüfbare Repositorys',
     ed_show_failed_helper: 'Und der Fehler einer fehlgeschlagenen Prüfung',
     ed_check_button: 'Schaltfläche „Nach Updates suchen“',
@@ -192,6 +201,7 @@ const HR_I18N = {
     auto_off: 'comprobación automática desactivada',
     check_now: 'Buscar actualizaciones',
     updates_title: 'Actualizaciones disponibles',
+    system_title: 'Actualizaciones del sistema',
     no_details: 'Marketplace no está cargado: sin detalles de estas actualizaciones',
     failed_title: 'No se pudieron comprobar',
     no_github: 'GitHub no está conectado al Marketplace: los repositorios añadidos desde un enlace no se pudieron comprobar',
@@ -217,6 +227,8 @@ const HR_I18N = {
     ed_title_helper: 'Déjalo vacío para «Actualizaciones de Marketplace»',
     ed_show_updates: 'Actualizaciones disponibles',
     ed_show_updates_helper: 'Los repositorios de Marketplace con una actualización, según sus entidades de actualización',
+    ed_show_system_updates: 'Actualizaciones del sistema',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), las aplicaciones y el firmware de dispositivos con una actualización; una fila la abre para instalarla',
     ed_show_failed: 'Repositorios que no se pudieron comprobar',
     ed_show_failed_helper: 'Y el error de una comprobación fallida',
     ed_check_button: 'Botón «Buscar actualizaciones»',
@@ -247,6 +259,7 @@ const HR_I18N = {
     auto_off: 'аутоматска провера искључена',
     check_now: 'Провери ажурирања',
     updates_title: 'Доступна ажурирања',
+    system_title: 'Системска ажурирања',
     no_details: 'Marketplace није учитан: нема детаља о овим ажурирањима',
     failed_title: 'Није могуће проверити',
     no_github: 'GitHub није повезан са Marketplace-ом: репозиторијуми додати преко линка нису могли бити проверени',
@@ -273,6 +286,8 @@ const HR_I18N = {
     ed_title_helper: 'Оставите празно за „Marketplace ажурирања“',
     ed_show_updates: 'Доступна ажурирања',
     ed_show_updates_helper: 'Marketplace репозиторијуми са ажурирањем, према њиховим ентитетима ажурирања',
+    ed_show_system_updates: 'Системска ажурирања',
+    ed_show_system_updates_helper: 'Home Assistant, апликације и фирмвер уређаја са ажурирањем; ред га отвара за инсталацију',
     ed_show_failed: 'Репозиторијуми које није могуће проверити',
     ed_show_failed_helper: 'И грешка провере која није успела',
     ed_check_button: 'Дугме „Провери ажурирања“',
@@ -303,6 +318,7 @@ const HR_I18N = {
     auto_off: 'automatska provera isključena',
     check_now: 'Proveri ažuriranja',
     updates_title: 'Dostupna ažuriranja',
+    system_title: 'Sistemska ažuriranja',
     no_details: 'Marketplace nije učitan: nema detalja o ovim ažuriranjima',
     failed_title: 'Nije moguće proveriti',
     no_github: 'GitHub nije povezan sa Marketplace-om: repozitorijumi dodati preko linka nisu mogli biti provereni',
@@ -329,6 +345,8 @@ const HR_I18N = {
     ed_title_helper: 'Ostavite prazno za „Marketplace ažuriranja“',
     ed_show_updates: 'Dostupna ažuriranja',
     ed_show_updates_helper: 'Marketplace repozitorijumi sa ažuriranjem, prema njihovim entitetima ažuriranja',
+    ed_show_system_updates: 'Sistemska ažuriranja',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), aplikacije i firmver uređaja sa ažuriranjem; red ga otvara za instalaciju',
     ed_show_failed: 'Repozitorijumi koje nije moguće proveriti',
     ed_show_failed_helper: 'I greška provere koja nije uspela',
     ed_check_button: 'Dugme „Proveri ažuriranja“',
@@ -358,6 +376,7 @@ const HR_I18N = {
     auto_off: 'verifica automatica disattivata',
     check_now: 'Cerca aggiornamenti',
     updates_title: 'Aggiornamenti disponibili',
+    system_title: 'Aggiornamenti di sistema',
     no_details: 'Marketplace non è caricato: nessun dettaglio su questi aggiornamenti',
     failed_title: 'Impossibile verificare',
     no_github: 'GitHub non è connesso al Marketplace: i repository aggiunti da un link non sono stati verificati',
@@ -383,6 +402,8 @@ const HR_I18N = {
     ed_title_helper: 'Lascia vuoto per «Aggiornamenti Marketplace»',
     ed_show_updates: 'Aggiornamenti disponibili',
     ed_show_updates_helper: 'I repository Marketplace con un aggiornamento, dalle loro entità di aggiornamento',
+    ed_show_system_updates: 'Aggiornamenti di sistema',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), le app e i firmware dei dispositivi con un aggiornamento; una riga lo apre per installarlo',
     ed_show_failed: 'Repository che non è stato possibile verificare',
     ed_show_failed_helper: 'E l’errore di una verifica non riuscita',
     ed_check_button: 'Pulsante «Cerca aggiornamenti»',
@@ -412,6 +433,7 @@ const HR_I18N = {
     auto_off: 'automatische controle uit',
     check_now: 'Controleren op updates',
     updates_title: 'Beschikbare updates',
+    system_title: 'Systeemupdates',
     no_details: 'Marketplace is niet geladen: geen details over deze updates',
     failed_title: 'Kon niet worden gecontroleerd',
     no_github: 'GitHub is niet verbonden met de Marketplace: de via een link toegevoegde repository’s konden niet worden gecontroleerd',
@@ -437,6 +459,8 @@ const HR_I18N = {
     ed_title_helper: 'Laat leeg voor “Marketplace-updates”',
     ed_show_updates: 'Beschikbare updates',
     ed_show_updates_helper: 'De Marketplace-repository’s met een update, volgens hun update-entiteiten',
+    ed_show_system_updates: 'Systeemupdates',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), de apps en de apparaatfirmware met een update; een rij opent hem om te installeren',
     ed_show_failed: 'Repository’s die niet konden worden gecontroleerd',
     ed_show_failed_helper: 'En de fout van een mislukte controle',
     ed_check_button: 'Knop “Controleren op updates”',
@@ -466,6 +490,7 @@ const HR_I18N = {
     auto_off: 'verificação automática desativada',
     check_now: 'Procurar atualizações',
     updates_title: 'Atualizações disponíveis',
+    system_title: 'Atualizações do sistema',
     no_details: 'O Marketplace não está carregado: sem detalhes sobre estas atualizações',
     failed_title: 'Não foi possível verificar',
     no_github: 'O GitHub não está ligado ao Marketplace: os repositórios adicionados por ligação não puderam ser verificados',
@@ -491,6 +516,8 @@ const HR_I18N = {
     ed_title_helper: 'Deixe vazio para «Atualizações Marketplace»',
     ed_show_updates: 'Atualizações disponíveis',
     ed_show_updates_helper: 'Os repositórios Marketplace com uma atualização, segundo as suas entidades de atualização',
+    ed_show_system_updates: 'Atualizações do sistema',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), as aplicações e o firmware dos dispositivos com uma atualização; uma linha abre-a para a instalar',
     ed_show_failed: 'Repositórios que não foi possível verificar',
     ed_show_failed_helper: 'E o erro de uma verificação que falhou',
     ed_check_button: 'Botão «Procurar atualizações»',
@@ -521,6 +548,7 @@ const HR_I18N = {
     auto_off: 'automatyczne sprawdzanie wyłączone',
     check_now: 'Sprawdź aktualizacje',
     updates_title: 'Dostępne aktualizacje',
+    system_title: 'Aktualizacje systemu',
     no_details: 'Marketplace nie jest załadowany: brak szczegółów tych aktualizacji',
     failed_title: 'Nie udało się sprawdzić',
     no_github: 'GitHub nie jest połączony z Marketplace: repozytoria dodane z linku nie mogły zostać sprawdzone',
@@ -547,6 +575,8 @@ const HR_I18N = {
     ed_title_helper: 'Pozostaw puste dla „Aktualizacje Marketplace”',
     ed_show_updates: 'Dostępne aktualizacje',
     ed_show_updates_helper: 'Repozytoria Marketplace z aktualizacją, według ich encji aktualizacji',
+    ed_show_system_updates: 'Aktualizacje systemu',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), aplikacje i oprogramowanie urządzeń z aktualizacją; wiersz otwiera ją do instalacji',
     ed_show_failed: 'Repozytoria, których nie udało się sprawdzić',
     ed_show_failed_helper: 'Oraz błąd nieudanego sprawdzania',
     ed_check_button: 'Przycisk „Sprawdź aktualizacje”',
@@ -576,6 +606,7 @@ const HR_I18N = {
     auto_off: 'verificare automată dezactivată',
     check_now: 'Caută actualizări',
     updates_title: 'Actualizări disponibile',
+    system_title: 'Actualizări de sistem',
     no_details: 'Marketplace nu este încărcat: nu există detalii despre aceste actualizări',
     failed_title: 'Nu au putut fi verificate',
     no_github: 'GitHub nu este conectat la Marketplace: depozitele adăugate dintr-un link nu au putut fi verificate',
@@ -601,6 +632,8 @@ const HR_I18N = {
     ed_title_helper: 'Lăsați gol pentru „Actualizări Marketplace”',
     ed_show_updates: 'Actualizări disponibile',
     ed_show_updates_helper: 'Depozitele Marketplace cu o actualizare, după entitățile lor de actualizare',
+    ed_show_system_updates: 'Actualizări de sistem',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), aplicațiile și firmware-ul dispozitivelor cu o actualizare; un rând o deschide pentru instalare',
     ed_show_failed: 'Depozite care nu au putut fi verificate',
     ed_show_failed_helper: 'Și eroarea unei verificări eșuate',
     ed_check_button: 'Butonul „Caută actualizări”',
@@ -630,6 +663,7 @@ const HR_I18N = {
     auto_off: 'automatisk kontrol slået fra',
     check_now: 'Søg efter opdateringer',
     updates_title: 'Tilgængelige opdateringer',
+    system_title: 'Systemopdateringer',
     no_details: 'Marketplace er ikke indlæst: ingen detaljer om disse opdateringer',
     failed_title: 'Kunne ikke kontrolleres',
     no_github: 'GitHub er ikke forbundet til Marketplace: repositories tilføjet fra et link kunne ikke tjekkes',
@@ -655,6 +689,8 @@ const HR_I18N = {
     ed_title_helper: 'Lad stå tomt for “Marketplace-opdateringer”',
     ed_show_updates: 'Tilgængelige opdateringer',
     ed_show_updates_helper: 'Marketplace-repositories med en opdatering, ifølge deres opdateringsentiteter',
+    ed_show_system_updates: 'Systemopdateringer',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), apps og enhedsfirmware med en opdatering; en række åbner den til installation',
     ed_show_failed: 'Repositories, der ikke kunne kontrolleres',
     ed_show_failed_helper: 'Og fejlen fra en mislykket kontrol',
     ed_check_button: 'Knappen “Søg efter opdateringer”',
@@ -684,6 +720,7 @@ const HR_I18N = {
     auto_off: 'automatisk kontroll avstängd',
     check_now: 'Sök efter uppdateringar',
     updates_title: 'Uppdateringar',
+    system_title: 'Systemuppdateringar',
     no_details: 'Marketplace är inte inläst: inga detaljer om dessa uppdateringar',
     failed_title: 'Kunde inte kontrolleras',
     no_github: 'GitHub är inte anslutet till Marketplace: repositorier som lagts till från en länk kunde inte kontrolleras',
@@ -709,6 +746,8 @@ const HR_I18N = {
     ed_title_helper: 'Lämna tomt för ”Marketplace-uppdateringar”',
     ed_show_updates: 'Tillgängliga uppdateringar',
     ed_show_updates_helper: 'Marketplace-repositorier med en uppdatering, enligt deras uppdateringsentiteter',
+    ed_show_system_updates: 'Systemuppdateringar',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), apparna och enheternas firmware med en uppdatering; en rad öppnar den för installation',
     ed_show_failed: 'Repositorier som inte kunde kontrolleras',
     ed_show_failed_helper: 'Och felet från en misslyckad kontroll',
     ed_check_button: 'Knappen ”Sök efter uppdateringar”',
@@ -738,6 +777,7 @@ const HR_I18N = {
     auto_off: 'автоматичната проверка е изключена',
     check_now: 'Провери за актуализации',
     updates_title: 'Актуализации',
+    system_title: 'Системни актуализации',
     no_details: 'Marketplace не е зареден: няма подробности за тези актуализации',
     failed_title: 'Неуспешна проверка',
     no_github: 'GitHub не е свързан с Marketplace: хранилищата, добавени от връзка, не можаха да бъдат проверени',
@@ -763,6 +803,8 @@ const HR_I18N = {
     ed_title_helper: 'Оставете празно за „Актуализации на Marketplace“',
     ed_show_updates: 'Налични актуализации',
     ed_show_updates_helper: 'Хранилищата в Marketplace с актуализация, според техните обекти за актуализация',
+    ed_show_system_updates: 'Системни актуализации',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), приложенията и фърмуерът на устройствата с актуализация; ред я отваря за инсталиране',
     ed_show_failed: 'Хранилища, които не можаха да бъдат проверени',
     ed_show_failed_helper: 'И грешката от неуспешна проверка',
     ed_check_button: 'Бутон „Провери за актуализации“',
@@ -792,6 +834,7 @@ const HR_I18N = {
     auto_off: 'автоматическая проверка отключена',
     check_now: 'Проверить обновления',
     updates_title: 'Доступные обновления',
+    system_title: 'Системные обновления',
     no_details: 'Marketplace не загружен: нет сведений об этих обновлениях',
     failed_title: 'Не удалось проверить',
     no_github: 'GitHub не подключён к Marketplace: репозитории, добавленные по ссылке, не удалось проверить',
@@ -817,6 +860,8 @@ const HR_I18N = {
     ed_title_helper: 'Оставьте пустым для «Обновления Marketplace»',
     ed_show_updates: 'Доступные обновления',
     ed_show_updates_helper: 'Репозитории Marketplace с обновлением, по их объектам обновления',
+    ed_show_system_updates: 'Системные обновления',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), приложения и прошивки устройств с обновлением; строка открывает его для установки',
     ed_show_failed: 'Репозитории, которые не удалось проверить',
     ed_show_failed_helper: 'И ошибка неудавшейся проверки',
     ed_check_button: 'Кнопка «Проверить обновления»',
@@ -846,6 +891,7 @@ const HR_I18N = {
     auto_off: 'автоматичну перевірку вимкнено',
     check_now: 'Перевірити оновлення',
     updates_title: 'Доступні оновлення',
+    system_title: 'Системні оновлення',
     no_details: 'Marketplace не завантажено: немає відомостей про ці оновлення',
     failed_title: 'Не вдалося перевірити',
     no_github: 'GitHub не підключено до Marketplace: репозиторії, додані за посиланням, не вдалося перевірити',
@@ -871,6 +917,8 @@ const HR_I18N = {
     ed_title_helper: 'Залиште порожнім для «Оновлення Marketplace»',
     ed_show_updates: 'Доступні оновлення',
     ed_show_updates_helper: 'Репозиторії Marketplace з оновленням, за їхніми сутностями оновлення',
+    ed_show_system_updates: 'Системні оновлення',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), застосунки та прошивки пристроїв з оновленням; рядок відкриває його для встановлення',
     ed_show_failed: 'Репозиторії, які не вдалося перевірити',
     ed_show_failed_helper: 'І помилка невдалої перевірки',
     ed_check_button: 'Кнопка «Перевірити оновлення»',
@@ -900,6 +948,7 @@ const HR_I18N = {
     auto_off: 'automatikus ellenőrzés kikapcsolva',
     check_now: 'Frissítések keresése',
     updates_title: 'Elérhető frissítések',
+    system_title: 'Rendszerfrissítések',
     no_details: 'A Marketplace nincs betöltve: nincs részlet ezekről a frissítésekről',
     failed_title: 'Nem sikerült ellenőrizni',
     no_github: 'A GitHub nincs összekötve a Marketplace-szel: a hivatkozásból hozzáadott tárolókat nem lehetett ellenőrizni',
@@ -925,6 +974,8 @@ const HR_I18N = {
     ed_title_helper: 'Hagyja üresen a „Marketplace-frissítések” címhez',
     ed_show_updates: 'Elérhető frissítések',
     ed_show_updates_helper: 'A frissíthető Marketplace-tárolók, a frissítési entitásaik alapján',
+    ed_show_system_updates: 'Rendszerfrissítések',
+    ed_show_system_updates_helper: 'A frissíthető Home Assistant (Core, Supervisor, OS), alkalmazások és eszköz-firmware-ek; egy sor megnyitja a telepítéshez',
     ed_show_failed: 'Nem ellenőrizhető tárolók',
     ed_show_failed_helper: 'És egy sikertelen ellenőrzés hibája',
     ed_check_button: '„Frissítések keresése” gomb',
@@ -954,6 +1005,7 @@ const HR_I18N = {
     auto_off: 'automatická kontrola vypnutá',
     check_now: 'Skontrolovať aktualizácie',
     updates_title: 'Dostupné aktualizácie',
+    system_title: 'Systémové aktualizácie',
     no_details: 'Marketplace nie je načítaný: žiadne podrobnosti o týchto aktualizáciách',
     failed_title: 'Nepodarilo sa skontrolovať',
     no_github: 'GitHub nie je pripojený k Marketplace: repozitáre pridané z odkazu sa nepodarilo skontrolovať',
@@ -979,6 +1031,8 @@ const HR_I18N = {
     ed_title_helper: 'Ponechajte prázdne pre „Aktualizácie Marketplace“',
     ed_show_updates: 'Dostupné aktualizácie',
     ed_show_updates_helper: 'Repozitáre Marketplace s aktualizáciou podľa ich entít aktualizácie',
+    ed_show_system_updates: 'Systémové aktualizácie',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), aplikácie a firmvér zariadení s aktualizáciou; riadok ju otvorí na inštaláciu',
     ed_show_failed: 'Repozitáre, ktoré sa nepodarilo skontrolovať',
     ed_show_failed_helper: 'A chyba neúspešnej kontroly',
     ed_check_button: 'Tlačidlo „Skontrolovať aktualizácie“',
@@ -1008,6 +1062,7 @@ const HR_I18N = {
     auto_off: 'automatická kontrola vypnuta',
     check_now: 'Zkontrolovat aktualizace',
     updates_title: 'Dostupné aktualizace',
+    system_title: 'Systémové aktualizace',
     no_details: 'Marketplace není načten: žádné podrobnosti o těchto aktualizacích',
     failed_title: 'Nepodařilo se zkontrolovat',
     no_github: 'GitHub není připojen k Marketplace: repozitáře přidané z odkazu se nepodařilo zkontrolovat',
@@ -1033,6 +1088,8 @@ const HR_I18N = {
     ed_title_helper: 'Ponechte prázdné pro „Aktualizace Marketplace“',
     ed_show_updates: 'Dostupné aktualizace',
     ed_show_updates_helper: 'Repozitáře Marketplace s aktualizací podle jejich entit aktualizace',
+    ed_show_system_updates: 'Systémové aktualizace',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), aplikace a firmware zařízení s aktualizací; řádek ji otevře k instalaci',
     ed_show_failed: 'Repozitáře, které se nepodařilo zkontrolovat',
     ed_show_failed_helper: 'A chyba neúspěšné kontroly',
     ed_check_button: 'Tlačítko „Zkontrolovat aktualizace“',
@@ -1062,6 +1119,7 @@ const HR_I18N = {
     auto_off: 'samodejno preverjanje izklopljeno',
     check_now: 'Preveri posodobitve',
     updates_title: 'Razpoložljive posodobitve',
+    system_title: 'Sistemske posodobitve',
     no_details: 'Marketplace ni naložen: ni podrobnosti o teh posodobitvah',
     failed_title: 'Ni bilo mogoče preveriti',
     no_github: 'GitHub ni povezan z Marketplace: repozitorijev, dodanih prek povezave, ni bilo mogoče preveriti',
@@ -1087,6 +1145,8 @@ const HR_I18N = {
     ed_title_helper: 'Pustite prazno za »Posodobitve Marketplace«',
     ed_show_updates: 'Razpoložljive posodobitve',
     ed_show_updates_helper: 'Repozitoriji Marketplace s posodobitvijo, glede na njihove entitete posodobitev',
+    ed_show_system_updates: 'Sistemske posodobitve',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), aplikacije in vdelana programska oprema naprav s posodobitvijo; vrstica jo odpre za namestitev',
     ed_show_failed: 'Repozitoriji, ki jih ni bilo mogoče preveriti',
     ed_show_failed_helper: 'In napaka neuspešnega preverjanja',
     ed_check_button: 'Gumb »Preveri posodobitve«',
@@ -1116,6 +1176,7 @@ const HR_I18N = {
     auto_off: 'automātiskā pārbaude izslēgta',
     check_now: 'Meklēt atjauninājumus',
     updates_title: 'Pieejamie atjauninājumi',
+    system_title: 'Sistēmas atjauninājumi',
     no_details: 'Marketplace nav ielādēts: nav informācijas par šiem atjauninājumiem',
     failed_title: 'Neizdevās pārbaudīt',
     no_github: 'GitHub nav pievienots Marketplace: no saites pievienotās repozitorijas nevarēja pārbaudīt',
@@ -1141,6 +1202,8 @@ const HR_I18N = {
     ed_title_helper: 'Atstājiet tukšu, lai būtu “Marketplace atjauninājumi”',
     ed_show_updates: 'Pieejamie atjauninājumi',
     ed_show_updates_helper: 'Marketplace repozitoriji ar atjauninājumu, pēc to atjauninājumu vienībām',
+    ed_show_system_updates: 'Sistēmas atjauninājumi',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), lietotnes un ierīču programmaparatūra ar atjauninājumu; rinda to atver instalēšanai',
     ed_show_failed: 'Repozitoriji, kurus neizdevās pārbaudīt',
     ed_show_failed_helper: 'Un neizdevušās pārbaudes kļūda',
     ed_check_button: 'Poga “Meklēt atjauninājumus”',
@@ -1170,6 +1233,7 @@ const HR_I18N = {
     auto_off: 'αυτόματος έλεγχος απενεργοποιημένος',
     check_now: 'Έλεγχος για ενημερώσεις',
     updates_title: 'Διαθέσιμες ενημερώσεις',
+    system_title: 'Ενημερώσεις συστήματος',
     no_details: 'Το Marketplace δεν έχει φορτωθεί: δεν υπάρχουν λεπτομέρειες για αυτές τις ενημερώσεις',
     failed_title: 'Αποτυχία ελέγχου',
     no_github: 'Το GitHub δεν είναι συνδεδεμένο με το Marketplace: τα αποθετήρια που προστέθηκαν από σύνδεσμο δεν ήταν δυνατό να ελεγχθούν',
@@ -1195,6 +1259,8 @@ const HR_I18N = {
     ed_title_helper: 'Αφήστε κενό για «Ενημερώσεις Marketplace»',
     ed_show_updates: 'Διαθέσιμες ενημερώσεις',
     ed_show_updates_helper: 'Τα αποθετήρια Marketplace με ενημέρωση, σύμφωνα με τις οντότητες ενημέρωσής τους',
+    ed_show_system_updates: 'Ενημερώσεις συστήματος',
+    ed_show_system_updates_helper: 'Home Assistant (Core, Supervisor, OS), οι εφαρμογές και το υλικολογισμικό συσκευών με ενημέρωση· μια γραμμή την ανοίγει για εγκατάσταση',
     ed_show_failed: 'Αποθετήρια που δεν ήταν δυνατό να ελεγχθούν',
     ed_show_failed_helper: 'Και το σφάλμα ενός ελέγχου που απέτυχε',
     ed_check_button: 'Κουμπί «Έλεγχος για ενημερώσεις»',
@@ -1247,7 +1313,7 @@ const hrEsc = (s) =>
 
 // The focus the card gives back itself (after a re-render, a confirmation) never scrolls the page.
 const HR_FOCUS = { preventScroll: true };
-const HR_DEFAULTS = { show_title: true, show_subtitle: true, show_next_check: true, show_updates: true, show_failed: true, check_button: true, install_button: true, hide_when_ok: false };
+const HR_DEFAULTS = { show_title: true, show_subtitle: true, show_next_check: true, show_updates: true, show_system_updates: false, show_failed: true, check_button: true, install_button: true, hide_when_ok: false };
 
 // The integration's entities, from the entity registry: { device: { status, last_check, button } }.
 // Each entity is told apart by its translation key, else by the end of its entity ID (renamed IDs keep the key).
@@ -1279,6 +1345,15 @@ const hrStatusIds = (registry) => {
 // The Marketplace's own update entities: one per installed repository.
 const hrMarketplaceUpdates = (registry) =>
   Object.keys(registry || {}).filter((id) => id.startsWith('update.') && registry[id]?.platform === 'marketplace');
+
+// Every other update entity (show_system_updates): Home Assistant itself (Core, Supervisor, OS) and the apps, from the
+// Supervisor, then the devices and services (a Zigbee or ESPHome firmware…). The repositories of HACS are left out too,
+// and the hidden entities, like the Updates tab of the panel.
+const HR_REPOSITORY_PLATFORMS = ['marketplace', 'hacs'];
+const hrSystemUpdates = (registry) =>
+  Object.keys(registry || {}).filter(
+    (id) => id.startsWith('update.') && !HR_REPOSITORY_PLATFORMS.includes(registry[id]?.platform) && !registry[id]?.hidden,
+  );
 
 // The parts of the header that hold the status pill (see _fitPill).
 const MR_PILL = { block: '.heading', row: '.title-row', name: '.title', chip: '.pill', sub: '.subtitle' };
@@ -1675,18 +1750,19 @@ class MarketplaceRefreshCard extends HTMLElement {
     const registry = this._hass.entities;
     if (!this._reg || this._reg.registry !== registry) {
       const devices = hrDevices(registry);
-      this._reg = Object.keys(devices).length ? { registry, devices, updates: hrMarketplaceUpdates(registry) } : null;
+      this._reg = Object.keys(devices).length ? { registry, devices, updates: hrMarketplaceUpdates(registry), system: hrSystemUpdates(registry) } : null;
     }
     const devices = this._reg?.devices || {};
     const updates = this._reg?.updates || [];
+    const system = this._reg?.system || [];
     let status = this._config.entity;
     // An entity that no longer exists (one of the old Marketplace Refresh integration, say): the module's own is found.
     if (status && !this._hass.states[status]) status = null;
     if (!status) status = Object.values(devices).map((d) => d.status).find((id) => this._hass.states[id]);
-    if (!status) return { updates };
+    if (!status) return { updates, system };
     // Any of the device's entities (the Last check sensor, the button) leads to its status sensor.
     const device = Object.values(devices).find((d) => Object.values(d).includes(status));
-    return device?.status ? { ...device, updates } : { ...device, status, updates };
+    return device?.status ? { ...device, updates, system } : { ...device, status, updates, system };
   }
 
   // GitHub's rate limit as the last check read it: a line when it is low enough to hold the checks back (under
@@ -1709,7 +1785,8 @@ class MarketplaceRefreshCard extends HTMLElement {
     const st = unavailable ? null : raw;
     const lastSt = ids.last_check && states[ids.last_check];
     const buttonSt = ids.button && states[ids.button];
-    this._watched = [ids.status, ids.last_check, ids.button, ...ids.updates].filter(Boolean);
+    const systemIds = c.show_system_updates ? ids.system : [];
+    this._watched = [ids.status, ids.last_check, ids.button, ...ids.updates, ...systemIds].filter(Boolean);
     this._ids = ids;
 
     const minute = Math.floor(Date.now() / 60000);
@@ -1717,8 +1794,9 @@ class MarketplaceRefreshCard extends HTMLElement {
     const updateStates = ids.updates.map((id) => states[id]).filter((s) => s?.state === 'on');
     // Every update entity's state, not only the ones on: one coming back from unavailable changes the count.
     const updateSig = ids.updates.map((id) => states[id]?.state);
+    const systemStates = systemIds.map((id) => states[id]).filter((s) => s?.state === 'on');
     const admin = !!this._hass.user?.is_admin;
-    const sig = JSON.stringify([c, shbIsNight(this._hass, c), hrLocale(this._hass, c), ids, raw, lastSt, buttonSt?.state, updateStates, updateSig, minute, admin, !!this._confirm]);
+    const sig = JSON.stringify([c, shbIsNight(this._hass, c), hrLocale(this._hass, c), ids, raw, lastSt, buttonSt?.state, updateStates, updateSig, systemStates, minute, admin, !!this._confirm]);
     if (sig === this._sig) return;
     this._sig = sig;
 
@@ -1745,14 +1823,27 @@ class MarketplaceRefreshCard extends HTMLElement {
     // The Marketplace not loaded (setup retry, disabled): its entities are unavailable or gone, so they say nothing.
     const known = ids.updates.some((id) => ['on', 'off'].includes(states[id]?.state));
     const count = known ? updates.length : Number(a.updates) || 0;
-    const level = !st ? 'na' : error ? 'alert' : failed.length || installFailed.length ? 'warn' : running || installing.length || count ? 'info' : 'ok';
+    // Home Assistant, the apps first (the Supervisor's), then the devices and services; installed from their own dialog.
+    const system = systemStates
+      .map((s) => ({
+        id: s.entity_id,
+        title: s.attributes.title || this._deviceName(s.entity_id) || s.attributes.friendly_name || s.entity_id,
+        from: s.attributes.installed_version,
+        to: s.attributes.latest_version,
+        picture: s.attributes.entity_picture,
+        busy: !!s.attributes.in_progress,
+        hassio: this._hass.entities?.[s.entity_id]?.platform === 'hassio',
+      }))
+      .sort((x, y) => Number(y.hassio) - Number(x.hassio) || String(x.title).localeCompare(String(y.title)));
+    const total = count + system.length;
+    const level = !st ? 'na' : error ? 'alert' : failed.length || installFailed.length ? 'warn' : running || installing.length || total ? 'info' : 'ok';
 
     const hidden = c.hide_when_ok && st && level === 'ok' && !this._editMode && !this._preview;
     this._setHidden(hidden);
     if (hidden) return;
 
     const shownUpdates = c.show_updates && st ? updates : [];
-    this._rows = shownUpdates.length + (c.show_failed ? failed.length + installFailed.length : 0);
+    this._rows = shownUpdates.length + (st ? system.length : 0) + (c.show_failed ? failed.length + installFailed.length : 0);
     // Installed from the card: what it lists (and the confirmation counts) is what gets installed.
     this._installable = st && admin && c.install_button && !installing.length ? updates.map((u) => u.id) : [];
     if (!this._installable.length) this._confirm = false;
@@ -1787,7 +1878,7 @@ class MarketplaceRefreshCard extends HTMLElement {
         <div class="head">
           <div class="badge"><ha-icon icon="${icon}"></ha-icon></div>
           <div class="heading">
-            <div class="title-row"><div class="title">${hrEsc(c.title || this._t('title'))}</div>${this._pill(unavailable ? this._t('unavailable') : this._status(st, running, a, count, failed, error, installing))}</div>
+            <div class="title-row"><div class="title">${hrEsc(c.title || this._t('title'))}</div>${this._pill(unavailable ? this._t('unavailable') : this._status(st, running, a, total, failed, error, installing))}</div>
             ${subtitle ? `<div class="subtitle" title="${hrEsc(last ? this._absolute(last) : '')}">${hrEsc(subtitle)}</div>` : ''}
           </div>
           ${this._checkButton(this._busy)}
@@ -1796,6 +1887,7 @@ class MarketplaceRefreshCard extends HTMLElement {
         ${running ? `<div class="progress" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><span style="width:${pct}%"></span></div>` : ''}
         ${this._rateLow(a)}
         ${c.show_failed && error ? `<div class="error"><ha-icon icon="mdi:alert-circle-outline"></ha-icon><span><b>${hrEsc(this._t('error_title'))}</b><br>${hrEsc(error)}</span></div>` : ''}
+        ${st && system.length ? this._section('system_title', system.map((u) => this._updateRow(u, u.busy)).join(''), system.length) : ''}
         ${
           // No update: no section (the pill already says "Up to date").
           c.show_updates && st && count
@@ -2132,7 +2224,7 @@ class MarketplaceRefreshCard extends HTMLElement {
 }
 
 // ── Editor ───────────────────────────────────────────────────────────────────
-const HR_HELPERS = ['entity', 'title', 'show_updates', 'show_failed', 'check_button', 'install_button', 'hide_when_ok', 'language'];
+const HR_HELPERS = ['entity', 'title', 'show_updates', 'show_system_updates', 'show_failed', 'check_button', 'install_button', 'hide_when_ok', 'language'];
 
 class MarketplaceRefreshCardEditor extends HTMLElement {
   setConfig(config) {
@@ -2186,6 +2278,7 @@ class MarketplaceRefreshCardEditor extends HTMLElement {
       { name: 'show_subtitle', selector: { boolean: {} } },
       { name: 'show_next_check', selector: { boolean: {} } },
       { name: 'show_updates', selector: { boolean: {} } },
+      { name: 'show_system_updates', selector: { boolean: {} } },
       { name: 'show_failed', selector: { boolean: {} } },
       { name: 'check_button', selector: { boolean: {} } },
       { name: 'install_button', selector: { boolean: {} } },

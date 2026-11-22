@@ -917,10 +917,15 @@ module: marketplace
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace.png" alt="Card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-checking.png" alt="Card while checking" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-installing.png" alt="Card while installing" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-ok.png" alt="Card, up to date" width="400"> |
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-dark.png" alt="Card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-checking-dark.png" alt="Card while checking, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-installing-dark.png" alt="Card while installing, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-ok-dark.png" alt="Card, up to date, dark theme" width="400"> |
 
+| System updates (`show_system_updates: true`) | System updates, dark theme |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-system.png" alt="Card with the system updates" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-marketplace-system-dark.png" alt="Card with the system updates, dark theme" width="400"> |
+
 - **Header**: status (up to date, *n* updates, *n* failed, checking *done/total*, error), when the last check ran and when the next automatic one is due, and the **Check for updates** button
 - **Progress bar** while a check runs
 - **Few GitHub requests left**: under 1,500, a line with the number left and when GitHub's limit resets — checks wait for it
 - **Updates available** (with their number): the repositories with an update, from the Marketplace's own update entities, with the installed and new version, hidden when there is none. A row opens the update entity, to install it or read the release notes
+- **System updates** (`show_system_updates: true`): Home Assistant (Core, Supervisor, OS), the apps and the device firmware with an update, above the Marketplace ones; a row opens the update's own dialog to install it
 - **Update all (*n*)**: installs every update listed, one after the other, after a confirmation at the top of the card (administrators only). The rows being installed and the number left show the progress
 - **Could not be installed**: the updates that failed, with the error
 - **Could not be checked**: the repositories the last check couldn't fetch (and, without a GitHub account connected, the ones added from a link, with a line saying why), and the error of a check that failed
@@ -937,6 +942,7 @@ Every option is in the visual editor:
 | `show_subtitle` | `true` | Show the subtitle under the title |
 | `show_next_check` | `true` | Show *next in …* in the subtitle; `false` keeps only the last check, for a phone where the subtitle is cut |
 | `show_updates` | `true` | Updates available |
+| `show_system_updates` | `false` | Also list the **System updates** above the Marketplace ones: Home Assistant (Core, Supervisor, OS) and the apps first, then the device and service firmware (every other `update` entity with an update, hidden ones and HACS repositories left out); they count in the status. A row opens the update's own dialog to install it (with a backup when it offers one). **Update all** stays the Marketplace's: the panel's **Updates** tab installs everything in one go |
 | `show_failed` | `true` | Repositories that couldn't be checked, and the error of a failed check |
 | `check_button` | `true` | **Check for updates** button in the header |
 | `install_button` | `true` | **Update all** button on the updates available (administrators only) |

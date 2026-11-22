@@ -804,3 +804,50 @@ test('few GitHub requests left: a line until the limit resets, nothing otherwise
   assert.doesNotMatch(html(render({}, makeHass({ attrs: { rate_limit_remaining: 300, rate_limit_reset: minutes(-5) } }))), /class="rate"/);
   assert.doesNotMatch(html(render({}, makeHass({ attrs: { rate_limit_remaining: null, rate_limit_reset: null } }))), /class="rate"/);
 });
+
+// show_system_updates (#140): the update entities outside the Marketplace, Home Assistant's (Supervisor) first
+function systemHass(opts = {}) {
+  const hass = makeHass(opts);
+  hass.entities = {
+    ...REGISTRY,
+    'update.zigbee_plug_firmware': { platform: 'zha' },
+    'update.hidden_firmware': { platform: 'esphome', hidden: true },
+    'update.hacs_repo': { platform: 'hacs' },
+    'update.esphome_node': { platform: 'esphome' },
+  };
+  hass.states['update.core'].attributes = { title: 'Home Assistant Core', installed_version: '2026.11.1', latest_version: '2026.11.2' };
+  hass.states['update.zigbee_plug_firmware'] = { entity_id: 'update.zigbee_plug_firmware', state: 'on', attributes: { title: 'Plug firmware', installed_version: '1', latest_version: '2', in_progress: true } };
+  hass.states['update.hidden_firmware'] = { entity_id: 'update.hidden_firmware', state: 'on', attributes: { title: 'Hidden firmware' } };
+  hass.states['update.hacs_repo'] = { entity_id: 'update.hacs_repo', state: 'on', attributes: { title: 'HACS repo' } };
+  hass.states['update.esphome_node'] = { entity_id: 'update.esphome_node', state: 'off', attributes: { title: 'Node' } };
+  return hass;
+}
+
+test('show_system_updates: off by default, the Marketplace updates only', () => {
+  assert.equal(HR_DEFAULTS.show_system_updates, false);
+  const out = html(render({}, systemHass()));
+  assert.doesNotMatch(out, /System updates/);
+  assert.match(out, /1 update</);
+});
+
+test('show_system_updates: Home Assistant first, then the devices; hidden, HACS and up to date left out (#140)', () => {
+  const out = html(render({ show_system_updates: true }, systemHass()));
+  assert.match(out, /System updates <span class="count">· 2/);
+  assert.match(out, /2026\.11\.1 → 2026\.11\.2/);
+  assert.ok(out.indexOf('Home Assistant Core') < out.indexOf('Plug firmware'));
+  assert.ok(out.indexOf('System updates') < out.indexOf('Updates available'));
+  for (const name of ['Hidden firmware', 'HACS repo', '>Node<']) assert.doesNotMatch(out, new RegExp(name));
+  // The pill counts both; installing shows on its row; a row opens the update's own dialog
+  assert.match(out, /3 updates/);
+  assert.match(out, /row upd busy" data-id="update\.zigbee_plug_firmware"/);
+  // Update all stays the Marketplace's
+  assert.match(out, /Update all \(1\)/);
+});
+
+test('show_system_updates: a system update alone keeps the card shown with hide_when_ok', () => {
+  const card = render({ show_system_updates: true, hide_when_ok: true }, systemHass({ updates: [] }));
+  assert.equal(card.style.display, '');
+  assert.match(html(card), /lvl-info/);
+  const off = render({ hide_when_ok: true }, systemHass({ updates: [] }));
+  assert.equal(off.style.display, 'none');
+});

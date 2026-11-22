@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.11.0 - 2026-11-22
+
+### Features
+- **Marketplace Refresh card: `show_system_updates`** ([#140](https://github.com/juju35/ha-system-hub/issues/140), thanks @thomasfav28): `true` (also in the visual editor) adds a *System updates* section above the Marketplace ones — Home Assistant (Core, Supervisor, OS) and the apps first, then the device and service firmware — counted in the status pill and in `hide_when_ok`. A row opens the update's own dialog to install it (with a backup when it offers one); *Update all* stays the Marketplace's, and the panel's *Updates* tab still installs everything in one go. Default `false`, so nothing changes for existing dashboards.
+
 ## 3.10.0 - 2026-11-21
 
 ### Features
