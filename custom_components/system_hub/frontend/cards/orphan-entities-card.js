@@ -1,3 +1,73 @@
+/* jscpd:ignore-start */
+// ── Card picker: light previews ──────────────────────────────────────────────
+// Home Assistant's card picker builds a live preview of every card registered with `preview: true`, all at once and
+// with no lazy loading. A preview here is drawn only once it scrolls into view: the picker calls getStubConfig() right
+// before it creates the preview, which marks the next instance of that card; once connected under <hui-card-picker>,
+// that instance holds Home Assistant's state (no render, no history, no animation) until it is visible. Anywhere else
+// (a dashboard, the card editor) the card behaves as before. Editors and other elements are defined unchanged.
+function pickerDefine(tag, Card, options) {
+  const isCard = !tag.endsWith("-editor") && (typeof Card.getStubConfig === "function" || typeof Card.getConfigElement === "function");
+  if (!isCard || typeof IntersectionObserver !== "function") return customElements.define(tag, Card, options);
+  let marks = [];
+  const lazy = class extends Card {
+    static getStubConfig(...args) {
+      marks.push(Date.now());
+      return Card.getStubConfig ? Card.getStubConfig(...args) : {};
+    }
+
+    constructor() {
+      super();
+      const now = Date.now();
+      marks = marks.filter((t) => now - t < 5000);
+      if (marks.length) {
+        marks.shift();
+        this._plHold = true;
+      }
+    }
+
+    set hass(hass) {
+      if (this._plHold) this._plHass = hass;
+      else super.hass = hass;
+    }
+
+    get hass() {
+      return this._plHold ? this._plHass : super.hass;
+    }
+
+    connectedCallback() {
+      if (!this._plHold) return super.connectedCallback?.();
+      if (this.getRootNode()?.host?.localName !== "hui-card-picker") return this._plRelease();
+      if (this._plIo) return;
+      // A custom element is inline until its styles arrive: a block of a card's height keeps the cells apart, so
+      // that only the previews actually on screen intersect.
+      this.style.display = "block";
+      this.style.minHeight = "120px";
+      this._plIo = new IntersectionObserver((entries) => entries.some((e) => e.isIntersecting) && this._plRelease(), {
+        rootMargin: "200px",
+      });
+      this._plIo.observe(this);
+    }
+
+    disconnectedCallback() {
+      if (this._plHold) return;
+      super.disconnectedCallback?.();
+    }
+
+    _plRelease() {
+      this._plIo?.disconnect();
+      this._plIo = null;
+      this._plHold = false;
+      this.style.display = "";
+      this.style.minHeight = "";
+      if (this._plHass !== undefined) super.hass = this._plHass;
+      this._plHass = undefined;
+      if (this.isConnected) super.connectedCallback?.();
+    }
+  };
+  return customElements.define(tag, lazy, options);
+}
+/* jscpd:ignore-end */
+
 /**
  * orphan-entities-card — the entities their integration no longer provides (or stale for too long), listed by
  * System Hub's Orphans module: filter them, select them and remove them from the entity registry in bulk.
@@ -3849,25 +3919,25 @@ class OrphanEntitiesMiniCardEditor extends OrphanEntitiesCardEditor {
 // Each card is registered on its own: a page that already loaded an older copy of this file still gets the other.
 window.systemHubCards = window.systemHubCards || [];
 if (!customElements.get('sh-orphans-card')) {
-  customElements.define('sh-orphans-card', OrphanEntitiesCard);
-  customElements.define('sh-orphans-card-editor', OrphanEntitiesCardEditor);
+  pickerDefine('sh-orphans-card', OrphanEntitiesCard);
+  pickerDefine('sh-orphans-card-editor', OrphanEntitiesCardEditor);
   window.systemHubCards.push({
     type: 'sh-orphans-card',
     name: 'Orphan Entities Card',
     description: 'The entities their integration no longer provides: filter, select and remove them in bulk',
-    preview: false,
+    preview: true,
     documentationURL: 'https://github.com/juju35/ha-system-hub#orphans',
   });
   console.info(`%c ORPHAN-ENTITIES-CARD %c v${ORPHAN_ENTITIES_CARD_VERSION} `, 'background:#7e57c2;color:#fff;font-weight:700', '');
 }
 if (!customElements.get('sh-orphans-mini-card')) {
-  customElements.define('sh-orphans-mini-card', OrphanEntitiesMiniCard);
-  customElements.define('sh-orphans-mini-card-editor', OrphanEntitiesMiniCardEditor);
+  pickerDefine('sh-orphans-mini-card', OrphanEntitiesMiniCard);
+  pickerDefine('sh-orphans-mini-card-editor', OrphanEntitiesMiniCardEditor);
   window.systemHubCards.push({
     type: 'sh-orphans-mini-card',
     name: 'Orphan Entities Mini Card',
     description: 'Orphaned entities by reason on two lines, with a detail button showing the full card',
-    preview: false,
+    preview: true,
     documentationURL: 'https://github.com/juju35/ha-system-hub#orphans',
   });
 }
