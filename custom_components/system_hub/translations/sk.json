@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Panel je zatiaľ otvorený len pre administrátorov: táto voľba platí, ak sa otvorí aj iným používateľom.",
         "shortcuts": "Skratky",
         "shortcuts_hint": "Okrúhle ikony vedľa tlačidiel reštartu na karte Systém; každá sa zobrazí, len keď je jej stránka dostupná.",
+        "buttons": "Tlačidlá",
+        "buttons_hint": "Znovu načítať konfiguráciu, Reštartovať a Reštartovať hostiteľa na karte Systém; každé vypnuté je skryté.",
         "enabled": "Zapnuté",
         "disabled": "Vypnuté",
         "tab_default": "predvolená",

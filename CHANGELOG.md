@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.13.0 - 2026-11-23
+
+### Features
+- **Buttons to choose** ([#146](https://github.com/juju35/ha-system-hub/issues/146), thanks @thomasfav28): *Reload configuration*, *Restart* and *Reboot the host* are each turned on or off in **Settings → Display → Buttons**, next to the shortcuts; all three by default, and with none of them nor any shortcut the System tab shows no button bar. On the System Monitor card, `buttons` (YAML) lists the ones `show_actions` shows (`[reload]`, `[]` for none, the shortcuts staying).
+
 ## 3.12.0 - 2026-11-22
 
 ### Features

@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Panelen är tills vidare bara öppen för administratörer: valet gäller om den öppnas för andra användare.",
         "shortcuts": "Genvägar",
         "shortcuts_hint": "Runda ikoner bredvid omstartsknapparna på fliken System; var och en visas bara när dess sida är tillgänglig.",
+        "buttons": "Knappar",
+        "buttons_hint": "Läs in konfigurationen igen, Starta om och Starta om värden på fliken System; var och en som stängs av döljs.",
         "enabled": "Aktiverade",
         "disabled": "Inaktiverade",
         "tab_default": "standard",

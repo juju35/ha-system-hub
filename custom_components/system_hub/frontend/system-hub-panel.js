@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-var SYSTEM_HUB_PANEL_VERSION = '3.12.0';
+var SYSTEM_HUB_PANEL_VERSION = '3.13.0';
 var SH_DOMAIN = 'system_hub';
 var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -714,6 +714,9 @@ var SH_SHORTCUTS = {
   developer_tools: { panels: ['developer-tools'], path: '/developer-tools/state', icon: 'mdi:hammer' },
 };
 var SH_DEFAULT_SHORTCUTS = ['file_editor', 'marketplace', 'settings'];
+// The System tab's buttons, in their order, with their icon; all of them until a choice is saved in Settings → Display
+// (#146); the reboot with the Supervisor only
+var SH_BUTTONS = { reload: 'mdi:reload', restart: 'mdi:restart', reboot: 'mdi:power-cycle' };
 
 // Status letter and colour of a file in the diff viewer, as in an editor's source control view.
 var SH_DIFF_STATUS = {
@@ -2924,12 +2927,23 @@ class SystemHubPanel extends HTMLElement {
   // confirmed in a dialog; the restart checks the configuration first, as Home Assistant's own dialog does, and is
   // refused while it is invalid
   _haControls() {
-    var reboot = this._hass?.config?.components?.includes('hassio')
-      ? this._button('ha_ask:reboot', 'mdi:power-cycle', this._t('ha_reboot'), { danger: true })
-      : '';
-    return `<div class="actions ha-ctl">${this._message('ha')}<span class="grow"></span>${this._haShortcuts()}
-      ${this._button('ha_ask:reload', 'mdi:reload', this._t('ha_reload'), { quiet: true, busy: this._busy.ha_reload })}
-      ${this._button('ha_ask:restart', 'mdi:restart', this._t('ha_restart'), { danger: true })}${reboot}</div>${this._haDialog()}`;
+    var chosen = this._haButtons();
+    var reload = chosen.includes('reload') ? this._button('ha_ask:reload', SH_BUTTONS.reload, this._t('ha_reload'), { quiet: true, busy: this._busy.ha_reload }) : '';
+    var restart = chosen.includes('restart') ? this._button('ha_ask:restart', SH_BUTTONS.restart, this._t('ha_restart'), { danger: true }) : '';
+    var reboot = chosen.includes('reboot') ? this._button('ha_ask:reboot', SH_BUTTONS.reboot, this._t('ha_reboot'), { danger: true }) : '';
+    var shortcuts = this._haShortcuts();
+    var message = this._message('ha');
+    // Nothing chosen (#146): no bar at all
+    if (!reload && !restart && !reboot && !shortcuts && !message) return '';
+    return `<div class="actions ha-ctl">${message}<span class="grow"></span>${shortcuts}
+      ${reload}${restart}${reboot}</div>${this._haDialog()}`;
+  }
+
+  // The System tab's buttons that can show: the ones chosen in Settings → Display (#146), the reboot with the Supervisor
+  _haButtons() {
+    var chosen = this._state?.buttons || Object.keys(SH_BUTTONS);
+    var supervisor = this._hass?.config?.components?.includes('hassio');
+    return Object.keys(SH_BUTTONS).filter((k) => chosen.includes(k) && (k !== 'reboot' || supervisor));
   }
 
   _haDialog() {
@@ -5116,7 +5130,7 @@ class SystemHubPanel extends HTMLElement {
   // Settings: the modules turned on, and the order of the tabs
   _settings() {
     var modules = this._draft.modules || this._state.modules || [];
-    var changed = Boolean(this._draft.modules || this._draft.tabs || this._draft.hide_header || this._draft.shortcuts);
+    var changed = Boolean(this._draft.modules || this._draft.tabs || this._draft.hide_header || this._draft.shortcuts || this._draft.buttons);
     return `${this._settingsModules(modules)}
       ${
         changed || this._busy.save
@@ -5141,7 +5155,23 @@ class SystemHubPanel extends HTMLElement {
     return `<section class="cfgcard"><div class="cfgsec cfggroup"><ha-icon icon="mdi:monitor-dashboard"></ha-icon><span class="grow">${shEsc(this._t('settings_display'))}</span></div>
       <div class="cfglist"><div class="row cfgrow cfgdisplay"><span class="cfgpad"></span><ha-icon icon="mdi:dock-top"></ha-icon>
         <div class="who"><div class="n">${shEsc(this._t('hide_header'))}</div><div class="s">${shEsc(hint)}</div></div></div>
-        <div class="segs cfgsegs" role="group" aria-label="${shEsc(this._t('hide_header'))}">${choices}</div>${this._settingsShortcuts()}</div></section>`;
+        <div class="segs cfgsegs" role="group" aria-label="${shEsc(this._t('hide_header'))}">${choices}</div>${this._settingsShortcuts()}${this._settingsButtons()}</div></section>`;
+  }
+
+  // Settings → Display: the System tab's buttons (#146), each turned on or off; the reboot with the Supervisor only
+  _settingsButtons() {
+    var chosen = this._draft.buttons || this._state.buttons || Object.keys(SH_BUTTONS);
+    var supervisor = this._hass?.config?.components?.includes('hassio');
+    var chips = Object.entries(SH_BUTTONS)
+      .filter(([key]) => key !== 'reboot' || supervisor)
+      .map(([key, icon]) => {
+        var on = chosen.includes(key);
+        return `<button class="seg${on ? ' active' : ''}" data-action="ha_button" data-value="${key}" aria-pressed="${on}"><ha-icon icon="${icon}"></ha-icon>${shEsc(this._t(`ha_${key}`))}</button>`;
+      })
+      .join('');
+    return `<div class="row cfgrow cfgdisplay"><span class="cfgpad"></span><ha-icon icon="mdi:restart"></ha-icon>
+        <div class="who"><div class="n">${shEsc(this._t('buttons'))}</div><div class="s">${shEsc(this._t('buttons_hint'))}</div></div></div>
+        <div class="segs cfgsegs scsegs" role="group" aria-label="${shEsc(this._t('buttons'))}">${chips}</div>`;
   }
 
   // Settings → Display: the System tab's shortcuts, each turned on or off
@@ -5246,6 +5276,14 @@ class SystemHubPanel extends HTMLElement {
       this._draft.tabs = null;
       this._draft.hide_header = null;
       this._draft.shortcuts = null;
+      this._draft.buttons = null;
+      return this._render();
+    }
+    if (action === 'ha_button') {
+      var btSaved = Object.keys(SH_BUTTONS).filter((k) => (this._state.buttons || Object.keys(SH_BUTTONS)).includes(k));
+      var btNow = this._draft.buttons || btSaved;
+      var btNext = Object.keys(SH_BUTTONS).filter((k) => (k === button.dataset.value ? !btNow.includes(k) : btNow.includes(k)));
+      this._draft.buttons = btNext.join() === btSaved.join() ? null : btNext;
       return this._render();
     }
     if (action === 'shortcut') {
@@ -5600,6 +5638,7 @@ class SystemHubPanel extends HTMLElement {
     if (this._draft.tabs) msg.tabs = this._draft.tabs;
     if (this._draft.hide_header) msg.hide_header = this._draft.hide_header;
     if (this._draft.shortcuts) msg.shortcuts = this._draft.shortcuts;
+    if (this._draft.buttons) msg.buttons = this._draft.buttons;
     delete this._messages.save;
     try {
       await this._hass.callWS(msg);
@@ -5609,6 +5648,7 @@ class SystemHubPanel extends HTMLElement {
       this._draft.tabs = null;
       this._draft.hide_header = null;
       this._draft.shortcuts = null;
+      this._draft.buttons = null;
       await this._load();
       this._toast(this._t('saved'));
     } catch (err) {

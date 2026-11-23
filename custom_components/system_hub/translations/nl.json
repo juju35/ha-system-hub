@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Het paneel is voorlopig alleen open voor beheerders: deze keuze geldt als het voor andere gebruikers wordt opengesteld.",
         "shortcuts": "Snelkoppelingen",
         "shortcuts_hint": "Ronde pictogrammen naast de herstartknoppen op het tabblad Systeem; elk verschijnt alleen als de pagina beschikbaar is.",
+        "buttons": "Knoppen",
+        "buttons_hint": "Configuratie herladen, Herstarten en Host herstarten op het tabblad Systeem; elke uitgeschakelde wordt verborgen.",
         "enabled": "Ingeschakeld",
         "disabled": "Uitgeschakeld",
         "tab_default": "standaard",

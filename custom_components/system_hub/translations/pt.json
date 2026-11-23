@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Por agora o painel só está aberto aos administradores: esta opção aplica-se se for aberto a outros utilizadores.",
         "shortcuts": "Atalhos",
         "shortcuts_hint": "Ícones redondos ao lado dos botões de reinício do separador Sistema; cada um só aparece se a sua página estiver disponível.",
+        "buttons": "Botões",
+        "buttons_hint": "Recarregar configuração, Reiniciar e Reiniciar o anfitrião no separador Sistema; cada um desativado fica oculto.",
         "enabled": "Ativados",
         "disabled": "Desativados",
         "tab_default": "predefinido",

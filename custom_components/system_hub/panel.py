@@ -22,7 +22,9 @@ from homeassistant.helpers import entity_registry as er
 
 from . import automations
 from .const import (
+    BUTTONS,
     CONF_BACKUP_MAX_AGE,
+    CONF_BUTTONS,
     CONF_HIDE_HEADER,
     CONF_MODULES,
     CONF_SHORTCUTS,
@@ -166,6 +168,14 @@ def hide_header(options: dict[str, Any]) -> str:
     """Who the panel's top bar is hidden for: off (no one, the default), all, or non_admin."""
     value = options.get(CONF_HIDE_HEADER)
     return value if value in HIDE_HEADER_CHOICES else HIDE_HEADER_OFF
+
+
+def buttons(options: dict[str, Any]) -> list[str]:
+    """The System tab's buttons turned on, in their own order; all of them until a choice is saved."""
+    chosen = options.get(CONF_BUTTONS)
+    if not isinstance(chosen, list):
+        return list(BUTTONS)
+    return [b for b in BUTTONS if b in chosen]
 
 
 def shortcuts(options: dict[str, Any]) -> list[str]:
@@ -533,6 +543,7 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         "tabs": tab_order(dict(entry.options)),
         "hide_header": hide_header(dict(entry.options)),
         "shortcuts": shortcuts(dict(entry.options)),
+        "buttons": buttons(dict(entry.options)),
         "git_sync_configured": data.git_sync is not None,
         "system": _system(hass, stoppable_processes(dict(entry.options))),
         "updates": _updates(hass),
@@ -585,13 +596,14 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         vol.Optional("tabs"): [vol.In(TABS)],
         vol.Optional("hide_header"): vol.In(HIDE_HEADER_CHOICES),
         vol.Optional("shortcuts"): [vol.In(SHORTCUTS)],
+        vol.Optional("buttons"): [vol.In(BUTTONS)],
     }
 )
 @websocket_api.async_response
 async def ws_update_settings(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
 ) -> None:
-    """Turn modules on or off, order the tabs, hide the top bar and pick the shortcuts; the entry reloads with them."""
+    """Turn modules on or off, order the tabs, hide the top bar, pick the shortcuts and buttons; the entry reloads."""
     entry = _entry(hass) or next(iter(hass.config_entries.async_entries(DOMAIN)), None)
     if entry is None:
         connection.send_error(msg["id"], "not_found", "System Hub is not set up")
@@ -611,6 +623,8 @@ async def ws_update_settings(
         options[CONF_HIDE_HEADER] = msg["hide_header"]
     if "shortcuts" in msg:
         options[CONF_SHORTCUTS] = [s for s in SHORTCUTS if s in msg["shortcuts"]]
+    if "buttons" in msg:
+        options[CONF_BUTTONS] = [b for b in BUTTONS if b in msg["buttons"]]
     hass.config_entries.async_update_entry(entry, options=options)
     connection.send_result(
         msg["id"],
@@ -619,6 +633,7 @@ async def ws_update_settings(
             "tabs": tab_order(options),
             "hide_header": hide_header(options),
             "shortcuts": shortcuts(options),
+            "buttons": buttons(options),
         },
     )
 

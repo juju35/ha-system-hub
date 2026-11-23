@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Per ora il pannello è aperto solo agli amministratori: questa scelta si applica se viene aperto ad altri utenti.",
         "shortcuts": "Scorciatoie",
         "shortcuts_hint": "Icone rotonde accanto ai pulsanti di riavvio della scheda Sistema; ognuna appare solo se la sua pagina è disponibile.",
+        "buttons": "Pulsanti",
+        "buttons_hint": "Ricarica configurazione, Riavvia e Riavvia l'host nella scheda Sistema; ognuno disattivato viene nascosto.",
         "enabled": "Attivati",
         "disabled": "Disattivati",
         "tab_default": "predefinita",

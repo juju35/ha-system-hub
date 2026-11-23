@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Panelet er indtil videre kun åbent for administratorer: dette valg gælder, hvis det åbnes for andre brugere.",
         "shortcuts": "Genveje",
         "shortcuts_hint": "Runde ikoner ved siden af genstartsknapperne på fanen System; hvert vises kun, når dets side er tilgængelig.",
+        "buttons": "Knapper",
+        "buttons_hint": "Genindlæs konfiguration, Genstart og Genstart værten på fanen System; hver slået fra skjules.",
         "enabled": "Aktiveret",
         "disabled": "Deaktiveret",
         "tab_default": "standard",

@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Panel jest na razie dostępny tylko dla administratorów: ten wybór zadziała, jeśli zostanie udostępniony innym użytkownikom.",
         "shortcuts": "Skróty",
         "shortcuts_hint": "Okrągłe ikony obok przycisków ponownego uruchamiania na karcie System; każda pojawia się tylko, gdy jej strona jest dostępna.",
+        "buttons": "Przyciski",
+        "buttons_hint": "Przeładuj konfigurację, Uruchom ponownie i Uruchom ponownie hosta na karcie System; każdy wyłączony jest ukryty.",
         "enabled": "Włączone",
         "disabled": "Wyłączone",
         "tab_default": "domyślna",

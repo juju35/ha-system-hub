@@ -152,3 +152,19 @@ test("show_actions: Settings by default, and the shortcuts listed in `shortcuts`
   c._config = { ...c._config, shortcuts: [] };
   assert.doesNotMatch(c._render(), /class="ha-btn sc"/);
 });
+
+test("show_actions: the buttons listed in `buttons` (#146), none with `[]` while the shortcuts stay", () => {
+  const { c } = card();
+  c._config = { ...c._config, buttons: ["reload"] };
+  let html = c._render();
+  assert.match(html, /data-action="ha_ask:reload"/);
+  assert.doesNotMatch(html, /data-action="ha_ask:restart"/);
+  assert.doesNotMatch(html, /data-action="ha_ask:reboot"/);
+  c._hass.panels = { config: {} };
+  c._config = { ...c._config, buttons: [] };
+  html = c._render();
+  assert.doesNotMatch(html, /data-action="ha_ask:/);
+  assert.match(html, /class="ha-btn sc"/);
+  c._config = { ...c._config, buttons: [], shortcuts: [] };
+  assert.doesNotMatch(c._render(), /class="ha-acts"/);
+});

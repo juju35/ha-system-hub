@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Plošča je za zdaj odprta le skrbnikom: ta izbira velja, če se odpre drugim uporabnikom.",
         "shortcuts": "Bližnjice",
         "shortcuts_hint": "Okrogle ikone poleg gumbov za ponovni zagon na zavihku Sistem; vsaka se prikaže le, če je njena stran na voljo.",
+        "buttons": "Gumbi",
+        "buttons_hint": "Ponovno naloži konfiguracijo, Znova zaženi in Znova zaženi gostitelja na zavihku Sistem; vsak izklopljen je skrit.",
         "enabled": "Omogočeni",
         "disabled": "Onemogočeni",
         "tab_default": "privzeto",
