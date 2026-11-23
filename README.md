@@ -64,14 +64,14 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 
 | Integration | Used for |
 | --- | --- |
-| [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) | System tab of the panel |
-| [Supervisor](https://www.home-assistant.io/integrations/hassio/) | Containers module (Home Assistant OS and Supervised installations) |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/home_assistant.png" alt="" width="16"> [System Monitor](https://www.home-assistant.io/integrations/systemmonitor/) | System tab of the panel |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/home_assistant.png" alt="" width="16"> [Supervisor](https://www.home-assistant.io/integrations/hassio/) | Containers module (Home Assistant OS and Supervised installations) |
 | [Marketplace](https://www.home-assistant.io/integrations/marketplace/) | Updates module |
-| [Backup](https://www.home-assistant.io/integrations/backup/) | Backups module |
-| [Recorder](https://www.home-assistant.io/integrations/recorder/) (SQLite, MariaDB / MySQL or PostgreSQL) | Database module |
-| [System Log](https://www.home-assistant.io/integrations/system_log/) | Logs module |
-| ZHA, MQTT (Zigbee2MQTT), Z-Wave, Matter, ESPHome, deCONZ | Silent devices module (the integrations followed can be chosen) |
-| [AI Task](https://www.home-assistant.io/integrations/ai_task/) | Commit messages of the Git Sync module (optional) |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/home_assistant.png" alt="" width="16"> [Backup](https://www.home-assistant.io/integrations/backup/) | Backups module |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/home_assistant.png" alt="" width="16"> [Recorder](https://www.home-assistant.io/integrations/recorder/) (SQLite, MariaDB / MySQL or PostgreSQL) | Database module |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/home_assistant.png" alt="" width="16"> [System Log](https://www.home-assistant.io/integrations/system_log/) | Logs module |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/zha.png" alt="" width="16">&nbsp;<img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/mqtt.png" alt="" width="16">&nbsp;<img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/matter.png" alt="" width="16">&nbsp;<img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/esphome.png" alt="" width="16"> ZHA, MQTT (Zigbee2MQTT), Z-Wave, Matter, ESPHome, deCONZ | Silent devices module (the integrations followed can be chosen) |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/images/home_assistant.png" alt="" width="16"> [AI Task](https://www.home-assistant.io/integrations/ai_task/) | Commit messages of the Git Sync module (optional) |
 | [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor) (custom integration) | Automations module |
 
 ## Prerequisites
