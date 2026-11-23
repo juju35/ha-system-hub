@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Panelis pagaidām ir atvērts tikai administratoriem: šī izvēle darbojas, ja tas tiek atvērts citiem lietotājiem.",
         "shortcuts": "Īsceļi",
         "shortcuts_hint": "Apaļas ikonas blakus restartēšanas pogām cilnē Sistēma; katra redzama tikai tad, ja tās lapa ir pieejama.",
+        "buttons": "Pogas",
+        "buttons_hint": "Pārlādēt konfigurāciju, Restartēt un Restartēt resursdatoru cilnē Sistēma; katra izslēgtā tiek paslēpta.",
         "enabled": "Ieslēgti",
         "disabled": "Izslēgti",
         "tab_default": "noklusējuma",

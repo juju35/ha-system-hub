@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "A panel egyelőre csak rendszergazdák számára érhető el: ez a beállítás akkor érvényes, ha más felhasználóknak is megnyitják.",
         "shortcuts": "Parancsikonok",
         "shortcuts_hint": "Kerek ikonok az újraindító gombok mellett a Rendszer lapon; mindegyik csak akkor látszik, ha az oldala elérhető.",
+        "buttons": "Gombok",
+        "buttons_hint": "Konfiguráció újratöltése, Újraindítás és A gazdagép újraindítása a Rendszer lapon; a kikapcsoltak rejtve maradnak.",
         "enabled": "Bekapcsolva",
         "disabled": "Kikapcsolva",
         "tab_default": "alapértelmezett",

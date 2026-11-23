@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Panel je zatím otevřený jen správcům: tato volba platí, pokud se otevře i jiným uživatelům.",
         "shortcuts": "Zkratky",
         "shortcuts_hint": "Kulaté ikony vedle tlačítek restartu na kartě Systém; každá se zobrazí, jen když je její stránka dostupná.",
+        "buttons": "Tlačítka",
+        "buttons_hint": "Znovu načíst konfiguraci, Restartovat a Restartovat hostitele na kartě Systém; každé vypnuté je skryté.",
         "enabled": "Zapnuté",
         "disabled": "Vypnuté",
         "tab_default": "výchozí",

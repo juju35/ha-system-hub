@@ -4302,10 +4302,13 @@ class SystemMonitorCard extends SystemMonitorBase {
   _actions() {
     if (this._config.show_actions !== true || !this._hass.user?.is_admin) return "";
     if (this._haConfirm) return this._haConfirmBox(this._haConfirm);
-    const kinds = Object.keys(HA_ACTIONS).filter((k) => k !== "reboot" || this._hass.config?.components?.includes("hassio"));
+    // `buttons` (#146): the ones listed, in their own order (reload, restart, reboot); all three when not set
+    const chosen = Array.isArray(this._config.buttons) ? this._config.buttons : Object.keys(HA_ACTIONS);
+    const kinds = Object.keys(HA_ACTIONS).filter((k) => chosen.includes(k) && (k !== "reboot" || this._hass.config?.components?.includes("hassio")));
     const msg = this._haMsg ? `<div class="ha-msg ${this._haMsg.tone}" role="status">${esc(this._haMsg.text)}</div>` : "";
     // Icons only when the buttons with their labels would take more than one line (a phone, #129): see _fitActs.
     const buttons = this._haShortcuts() + kinds.map((k) => this._haButton(`ha_ask:${k}`, k, this._t(`ha_${k}`), k === "reload" && this._haBusy, true)).join("");
+    if (!buttons && !msg) return "";
     return `<div class="ha-acts">${msg}<div class="ha-main${this._actsIcons ? " icons" : ""}">${buttons}</div></div>`;
   }
 

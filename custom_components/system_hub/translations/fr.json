@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "Le panneau n’est ouvert qu’aux administrateurs pour l’instant : ce choix s’applique s’il est ouvert à d’autres utilisateurs.",
         "shortcuts": "Raccourcis",
         "shortcuts_hint": "Icônes rondes à côté des boutons de redémarrage de l’onglet Système ; chacune ne s’affiche que si sa page est disponible.",
+        "buttons": "Boutons",
+        "buttons_hint": "Recharger la configuration, Redémarrer et Redémarrer l’hôte dans l’onglet Système ; chacun désactivé est masqué.",
         "enabled": "Activés",
         "disabled": "Désactivés",
         "tab_default": "par défaut",

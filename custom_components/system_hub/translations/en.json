@@ -1630,6 +1630,8 @@
         "hide_header_non_admin_note": "The panel is only open to administrators for now: this choice applies if it is opened to other users.",
         "shortcuts": "Shortcuts",
         "shortcuts_hint": "Round icons next to the restart buttons of the System tab; each shows only when its page is available.",
+        "buttons": "Buttons",
+        "buttons_hint": "Reload configuration, Restart and Reboot the host in the System tab; each turned off is hidden.",
         "enabled": "Enabled",
         "disabled": "Disabled",
         "tab_default": "default",

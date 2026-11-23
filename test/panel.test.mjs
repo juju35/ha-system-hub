@@ -713,6 +713,45 @@ test('system tab: the shortcuts chosen in Settings, Settings by default, each wh
   assert.doesNotMatch(p._content(), /class="act quiet sc"/);
 });
 
+test('system tab: the buttons chosen in Settings, all by default, no bar with nothing to show (#146)', () => {
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], system: [] });
+  p._hass.config = { ...(p._hass.config || {}), components: ['hassio'] };
+  p._hass.panels = {};
+  let html = p._content();
+  assert.match(html, /data-action="ha_ask:reload"/);
+  assert.match(html, /data-action="ha_ask:restart"/);
+  assert.match(html, /data-action="ha_ask:reboot"/);
+  p._state.buttons = ['restart'];
+  html = p._content();
+  assert.doesNotMatch(html, /data-action="ha_ask:reload"/);
+  assert.match(html, /data-action="ha_ask:restart"/);
+  assert.doesNotMatch(html, /data-action="ha_ask:reboot"/);
+  p._state.buttons = [];
+  assert.doesNotMatch(p._content(), /class="actions ha-ctl"/);
+});
+
+test('settings: the buttons toggled on and off, saved with the other settings (#146)', async () => {
+  const calls = [];
+  const p = panel({ loaded: true, modules: [], tabs: ['system'], hide_header: 'off', buttons: ['reload', 'restart', 'reboot'] }, 'settings');
+  p._render = () => {};
+  p._hass.config = { ...(p._hass.config || {}), components: ['hassio'] };
+  p._hass.callWS = async (msg) => {
+    calls.push(msg);
+    return {};
+  };
+  const click = (value) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'ha_button', value } } : null) } });
+  assert.match(p._settingsButtons(), /data-action="ha_button" data-value="reboot" aria-pressed="true"><ha-icon icon="mdi:power-cycle"><\/ha-icon>Reboot the host/);
+  click('reload');
+  assert.deepEqual([...p._draft.buttons], ['restart', 'reboot']);
+  click('reload');
+  assert.equal(p._draft.buttons, null);
+  click('reboot');
+  click('reload');
+  assert.deepEqual([...p._draft.buttons], ['restart']);
+  p._save();
+  assert.deepEqual(JSON.parse(JSON.stringify(calls[0])), { type: 'system_hub/update_settings', buttons: ['restart'] });
+});
+
 test('settings: the shortcuts toggled on and off, saved with the other settings (#144)', async () => {
   const calls = [];
   const p = panel({ loaded: true, modules: [], tabs: ['system'], hide_header: 'off', shortcuts: ['file_editor', 'marketplace'] }, 'settings');
