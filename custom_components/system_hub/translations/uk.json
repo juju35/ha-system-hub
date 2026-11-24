@@ -1921,7 +1921,11 @@
         "sc_ob_none": "З'єднань ще не помічено.",
         "sc_n_outbound_new": "нових вихідних хостів: {n}",
         "sc_ob_unattributed": "Без прив'язки",
-        "sc_ob_partial": "Не вдалося перехопити резолвер aiohttp: більшість HTTP-з'єднань не видно."
+        "sc_ob_partial": "Не вдалося перехопити резолвер aiohttp: більшість HTTP-з'єднань не видно.",
+        "sub_security": "Входи",
+        "sub_security_accounts": "Облікові записи",
+        "sub_security_system": "Доповнення та конфігурація",
+        "sub_security_outbound": "Вихідні"
       }
     },
     "battery_type": {

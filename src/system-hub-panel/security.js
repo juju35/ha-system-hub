@@ -1,7 +1,7 @@
 // Security tab (Security module): refused logins, accounts and 2FA, long-lived tokens (Revoke), exposure, add-ons,
 // credentials written in clear and, when tracked, the outbound connections by integration. Everything comes from
 // system_hub/security, read when the tab is shown (every 5 minutes at most); its commands go through _scCall.
-import { shErr, shEsc } from "./core.js";
+import { shErr, shEsc, shTabBase } from "./core.js";
 import { SystemHubPanel } from "./panel.js";
 
 export var SH_SECURITY_METHODS = {
@@ -17,7 +17,7 @@ export var SH_SECURITY_METHODS = {
       this._sc = { ...this._sc, error: shErr(err) };
     }
     delete this._busy.sc_scan;
-    if (this._tab === 'security' || rescan) this._render();
+    if (shTabBase(this._tab) === 'security' || rescan) this._render();
   },
 
   // What needs a look: refusals from the Internet in 24 h, recent bans, add-ons not protected (bad); administrators
@@ -80,8 +80,23 @@ export var SH_SECURITY_METHODS = {
     return `<div class="item${tone ? ` ${tone}` : ''}"><ha-icon icon="${icon}"></ha-icon><div class="who"><div class="n">${name}</div><div class="s">${sub}</div></div>${end}</div>`;
   },
 
-  // Security: refused logins, accounts, long-lived tokens (Revoke), exposure, add-ons and credentials in clear
-  _security() {
+  // The tone of a sub-tab of Security (its dot): Logins — refusals from the Internet, bans, an external URL without
+  // HTTPS; Accounts — admins without 2FA, unused tokens; Add-ons & config — add-ons not protected, credentials in
+  // clear; Outbound — new hosts
+  _scSubTone(sub) {
+    var s = this._scSummary();
+    if (!s) return null;
+    var tone = (bad, warn) => (bad ? 'bad' : warn ? 'warn' : 'good');
+    if (sub === 'security_accounts') return tone(0, s.noMfa.length + s.unused.length);
+    if (sub === 'security_system') return tone(s.unprotected.length, s.clear.length);
+    if (sub === 'security_outbound') return tone(0, s.obNew);
+    return tone(s.refused.length + s.bans.length, s.http ? 1 : 0);
+  },
+
+  // Security, by sub-tab: Logins (refused logins, exposure), Accounts (accounts, long-lived tokens with Revoke),
+  // Add-ons & config (add-ons, credentials in clear), Outbound (the hosts contacted by integration). Each opens on its
+  // tiles, then Scan now and Configure
+  _security(sub = 'security') {
     var d = this._sc?.data;
     if (!d) {
       if (this._sc?.error) {
@@ -95,32 +110,30 @@ export var SH_SECURITY_METHODS = {
     var pill = (text, tone = '') => `<span class="pill${tone ? ` ${tone}` : ''}">${shEsc(text)}</span>`;
     var day = (d.refused || []).filter((r) => !r.ignored).reduce((n, r) => n + r.day, 0);
     var ex = d.exposure || {};
-    var tiles = [
-      this._tile('mdi:shield-alert-outline', `<b>${day}</b>`, this._t('sc_refused_day'), sum.refused.length || sum.bans.length ? 'bad' : day ? 'warn' : 'good'),
-      this._tile('mdi:account-key-outline', shEsc(this._t('sc_n_of', { n: sum.noMfa.length, total: sum.admins.length })), this._t('sc_admins_no_mfa'), sum.noMfa.length ? 'warn' : 'good'),
-      this._tile(
+    var tile = {
+      refused: this._tile('mdi:shield-alert-outline', `<b>${day}</b>`, this._t('sc_refused_day'), sum.refused.length || sum.bans.length ? 'bad' : day ? 'warn' : 'good'),
+      mfa: this._tile('mdi:account-key-outline', shEsc(this._t('sc_n_of', { n: sum.noMfa.length, total: sum.admins.length })), this._t('sc_admins_no_mfa'), sum.noMfa.length ? 'warn' : 'good'),
+      tokens: this._tile(
         'mdi:key-chain-variant',
         `<b>${(d.tokens || []).length}</b>${sum.unused.length ? ` · ${shEsc(this._t('sc_tokens_unused', { n: sum.unused.length }))}` : ''}`,
         this._t('sc_tokens'),
         sum.unused.length ? 'warn' : '',
       ),
-      this._tile(
+      exposure: this._tile(
         'mdi:web',
         shEsc(ex.external_url ? (ex.https ? 'HTTPS' : 'HTTP') : '—'),
         ex.external_url ? ex.external_url.replace(/^https?:\/\//, '') : this._t('sc_no_external'),
         ex.external_url ? (ex.https ? 'good' : 'warn') : '',
       ),
-    ];
-    if (d.outbound) {
-      tiles.push(
-        this._tile(
-          'mdi:lan-connect',
-          `<b>${d.outbound.hosts}</b>${sum.obNew ? ` · ${shEsc(this._t('sc_ob_new_n', { n: sum.obNew }))}` : ''}`,
-          this._t('sc_ob_hosts'),
-          sum.obNew ? 'warn' : '',
-        ),
-      );
-    }
+      outbound: d.outbound
+        ? this._tile(
+            'mdi:lan-connect',
+            `<b>${d.outbound.hosts}</b>${sum.obNew ? ` · ${shEsc(this._t('sc_ob_new_n', { n: sum.obNew }))}` : ''}`,
+            this._t('sc_ob_hosts'),
+            sum.obNew ? 'warn' : '',
+          )
+        : '',
+    };
     var actions = `<div class="actions">${this._message('sc')}<span class="grow"></span>
       <span class="scnote">${shEsc(this._t('sc_scanned', { when: this._scWhen(d.scanned_at) }))}</span>
       ${this._button('sc_scan', 'mdi:magnify-scan', this._t('sc_scan'), { quiet: true, busy: this._busy.sc_scan })}${this._configure()}</div>`;
@@ -224,10 +237,17 @@ export var SH_SECURITY_METHODS = {
       clear ? shEsc(this._t('sc_config_note')) : '',
     );
 
-    return `<div class="tiles">${tiles.join('')}</div>${actions}${this._scOutbound(d.outbound, pill)}${refusedCard}
-      ${this._scList('mdi:account-group-outline', this._t('sc_accounts'), String((d.users || []).length), users)}
-      ${(d.tokens || []).length ? this._scList('mdi:key-chain-variant', this._t('sc_tokens'), String(d.tokens.length), tokens, shEsc(this._t('sc_tokens_note'))) : ''}
-      <div class="sctwo">${this._scList('mdi:web', this._t('sc_exposure'), '', exposure)}${addonsCard}</div>${configCard}`;
+    var tilesOf = (...keys) => {
+      var shown = keys.map((k) => tile[k]).filter(Boolean);
+      return shown.length ? `<div class="tiles">${shown.join('')}</div>` : '';
+    };
+    var two = (a, b) => `<div class="sctwo">${a}${b}</div>`;
+    var accountsCard = this._scList('mdi:account-group-outline', this._t('sc_accounts'), String((d.users || []).length), users);
+    var tokensCard = (d.tokens || []).length ? this._scList('mdi:key-chain-variant', this._t('sc_tokens'), String(d.tokens.length), tokens, shEsc(this._t('sc_tokens_note'))) : '';
+    if (sub === 'security_accounts') return `${tilesOf('mfa', 'tokens')}${actions}${two(accountsCard, tokensCard)}`;
+    if (sub === 'security_system') return `${actions}${two(addonsCard, configCard)}`;
+    if (sub === 'security_outbound') return `${tilesOf('outbound')}${actions}${this._scOutbound(d.outbound, pill)}`;
+    return `${tilesOf('refused', 'exposure')}${actions}${two(refusedCard, this._scList('mdi:web', this._t('sc_exposure'), '', exposure))}`;
   },
 
   // The integrations whose hosts are unfolded: as chosen, else those with a new host

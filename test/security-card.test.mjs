@@ -138,6 +138,12 @@ test('the card: status pill, rows opening the Security tab, max_items and "+N mo
   assert.match(html, /scene|shb-scene/);
   card._open();
   assert.equal(pushed.at(-1), '/system-hub/security');
+  card._open('security_accounts');
+  assert.equal(pushed.at(-1), '/system-hub/security_accounts');
+  // Each row opens its sub-tab
+  assert.match(html, /data-open="security"[^>]*>[\s\S]*?185\.220\.101\.42/);
+  assert.match(html, /data-open="security_system"[^>]*>[\s\S]*?Advanced SSH/);
+  assert.match(html, /data-open="security_accounts"[^>]*>[\s\S]*?Admin two/);
   // show_ok: false drops the line
   const { html: plain } = await mount(SecurityCard, { show_ok: false });
   assert.doesNotMatch(plain, /The rest is in order/);

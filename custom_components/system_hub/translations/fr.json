@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Aucune connexion vue pour l'instant.",
         "sc_n_outbound_new": "{n} hosts sortants nouveaux",
         "sc_ob_unattributed": "Non attribuées",
-        "sc_ob_partial": "Le résolveur d'aiohttp n'a pas pu être intercepté : la plupart des connexions HTTP échappent au suivi."
+        "sc_ob_partial": "Le résolveur d'aiohttp n'a pas pu être intercepté : la plupart des connexions HTTP échappent au suivi.",
+        "sub_security": "Connexions",
+        "sub_security_accounts": "Comptes",
+        "sub_security_system": "Add-ons et config",
+        "sub_security_outbound": "Sortantes"
       }
     },
     "battery_type": {

@@ -1,4 +1,4 @@
-import { SC_DEFAULTS, SC_MAX_ITEMS, SC_PANEL, SC_PILL, SC_READ_MS, scEsc, scLang, scLocale, scPoints, scT } from "./i18n-helpers.js";
+import { SC_DEFAULTS, SC_MAX_ITEMS, SC_PANEL, SC_PILL, SC_READ_MS, SC_TABS, scEsc, scLang, scLocale, scPoints, scT } from "./i18n-helpers.js";
 import { shBanner, shbIsNight } from "./illustrated-header.js";
 import { scHoldUnderPress, scKeepsFocus } from "./mini-card.js";
 import { SC_I18N } from "./i18n/sc-i18n.js";
@@ -288,7 +288,7 @@ export class SecurityCard extends HTMLElement {
   }
 
   _bind() {
-    for (const el of this.shadowRoot.querySelectorAll('.row[data-open]')) el.addEventListener('click', () => this._open());
+    for (const el of this.shadowRoot.querySelectorAll('.row[data-open]')) el.addEventListener('click', () => this._open(el.dataset.open));
   }
 
   _status(r, points, bad) {
@@ -312,8 +312,12 @@ export class SecurityCard extends HTMLElement {
     return '';
   }
 
-  // A point as a row: { tone, icon, name, sub, tag, mono, key }.
+  // A point as a row: { tone, icon, name, sub, tag, mono, key, tab } — tab: the Security sub-tab it opens.
   _point(p) {
+    return { ...this._pointRow(p), tab: SC_TABS[p.kind] };
+  }
+
+  _pointRow(p) {
     if (p.kind === 'refused') {
       return { ...p, icon: 'mdi:shield-alert-outline', name: p.ip, mono: true, sub: this._t('refused_sub', { n: p.count, d: this._ago(p.last) }), tag: p.banned ? this._t('banned') : `×${p.count}` };
     }
@@ -332,17 +336,17 @@ export class SecurityCard extends HTMLElement {
     return { ...p, icon: 'mdi:web', name: this._t('http_name'), sub: p.url, tag: 'HTTP' };
   }
 
-  // A row: a button opening the panel's Security tab.
-  _row({ tone, icon, name, sub, tag, mono, key }) {
+  // A row: a button opening the panel's Security sub-tab it belongs to.
+  _row({ tone, icon, name, sub, tag, mono, key, tab = 'security' }) {
     const t = scEsc(`${name} — ${sub}`);
-    return `<button class="row ${tone}" data-open data-focus="${scEsc(key)}" title="${t}">
+    return `<button class="row ${tone}" data-open="${scEsc(tab)}" data-focus="${scEsc(key)}" title="${t}">
             <span class="ic"><ha-icon icon="${icon}"></ha-icon></span>
             <span class="txt"><span class="name${mono ? ' mono' : ''}">${scEsc(name)}</span><span class="sub">${scEsc(sub)}</span></span>
             ${tag ? `<span class="tag">${scEsc(tag)}</span>` : ''}</button>`;
   }
 
   _more(n) {
-    return `<button class="row more" data-open data-focus="more"><span class="ic"><ha-icon icon="mdi:dots-horizontal"></ha-icon></span><span class="txt"><span class="name">${scEsc(this._count('more', n))}</span></span><span class="tag">${scEsc(this._t('open_panel'))}</span></button>`;
+    return `<button class="row more" data-open="security" data-focus="more"><span class="ic"><ha-icon icon="mdi:dots-horizontal"></ha-icon></span><span class="txt"><span class="name">${scEsc(this._count('more', n))}</span></span><span class="tag">${scEsc(this._t('open_panel'))}</span></button>`;
   }
 
   // In order: a line telling the rest (or everything) is in order, what it covers; the outbound hosts when tracked
@@ -357,13 +361,13 @@ export class SecurityCard extends HTMLElement {
     ].filter(Boolean);
     const rows = [this._row({ tone: 'good', icon: 'mdi:check-circle-outline', name: this._t(problems ? 'rest_ok' : 'ok_title'), sub: parts.join(' · '), key: 'ok' })];
     const ob = d.outbound;
-    if (ob && !problems) rows.push(this._row({ tone: 'idle', icon: 'mdi:lan-connect', name: this._count('hosts', ob.hosts), sub: this._t('no_new_host'), key: 'ob' }));
+    if (ob && !problems) rows.push(this._row({ tone: 'idle', icon: 'mdi:lan-connect', name: this._count('hosts', ob.hosts), sub: this._t('no_new_host'), key: 'ob', tab: 'security_outbound' }));
     return rows;
   }
 
-  // The panel's Security tab
-  _open() {
-    window.history.pushState(null, '', SC_PANEL);
+  // The panel's Security tab, on a sub-tab (security: Logins, the first)
+  _open(tab = 'security') {
+    window.history.pushState(null, '', `${SC_PANEL}${tab === 'security' ? '' : tab.slice('security'.length)}`);
     window.dispatchEvent(new CustomEvent('location-changed', { detail: { replace: false } }));
   }
 

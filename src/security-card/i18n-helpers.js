@@ -35,6 +35,8 @@ export const SC_MINI_ITEMS = 3;
 // Read again every 5 minutes at most, as the panel's Security tab
 export const SC_READ_MS = 300000;
 export const SC_PANEL = '/system-hub/security';
+// The panel's Security sub-tab of each kind of point
+export const SC_TABS = { refused: 'security', ban: 'security', http: 'security', mfa: 'security_accounts', tokens: 'security_accounts', addon: 'security_system', clear: 'security_system', host: 'security_outbound' };
 
 // What needs a look in system_hub/security's answer, the worst first: [{ tone, kind, key, ... }]. bad: refused logins
 // from the Internet in 24 h (and the bans of that day), add-ons running unprotected without being allowed; warn:

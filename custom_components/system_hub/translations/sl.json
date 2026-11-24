@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Še ni videne povezave.",
         "sc_n_outbound_new": "novi odhodni gostitelji: {n}",
         "sc_ob_unattributed": "Nepripisane",
-        "sc_ob_partial": "Razreševalnika aiohttp ni bilo mogoče prestreči: večina povezav HTTP uide."
+        "sc_ob_partial": "Razreševalnika aiohttp ni bilo mogoče prestreči: večina povezav HTTP uide.",
+        "sub_security": "Prijave",
+        "sub_security_accounts": "Računi",
+        "sub_security_system": "Dodatki in konfiguracija",
+        "sub_security_outbound": "Odhodne"
       }
     },
     "battery_type": {

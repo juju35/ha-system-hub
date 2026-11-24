@@ -1,5 +1,5 @@
 // ── End of the folded top bar ──
-import { SH_AUTO_MAX, SH_DOMAIN, SH_GIT_FILES_MAX, SH_GROUPS, SH_MODULE_ICONS, SH_MODULE_NAMES, SH_REFRESH_MS, SH_RETRY_MS, SYSTEM_HUB_PANEL_VERSION, shChange, shErr, shEsc, shExcerpt, shFocusSelector, shGroupOf, shGroupTabs, shHue, shIntegration, shNum, shProject } from "./core.js";
+import { SH_AUTO_MAX, SH_DOMAIN, SH_GIT_FILES_MAX, SH_GROUPS, SH_SUBTAB_ICONS, SH_SUBTABS, SH_MODULE_ICONS, SH_MODULE_NAMES, SH_REFRESH_MS, SH_RETRY_MS, SYSTEM_HUB_PANEL_VERSION, shChange, shErr, shEsc, shExcerpt, shFocusSelector, shGroupOf, shGroupTabs, shHue, shIntegration, shNum, shProject, shTabBase } from "./core.js";
 import { SH_NET_RANK, shBytes, shMatterGraph, shNetBox, shNetForce, shNetTree, shSignal, shSpark, shTone, shZ2mGraph, shZhaGraph, shZwaveGraph } from "./network-graphs.js";
 import { SH_BUTTONS, SH_DEFAULT_SHORTCUTS, SH_HIDE_BAR_KEY, SH_SHORTCUTS } from "./diff-dialog.js";
 import { SH_BUCKETS, SH_COLORS, SH_ORPHANS_STYLE, SH_THRESHOLDS, SH_VIRTUAL_IF, shArea, shBuckets, shIface, shMount, shNiceMax, shPoints, shProcess, shRate, shRound } from "./monitor-helpers.js";
@@ -699,7 +699,9 @@ export class SystemHubPanel extends HTMLElement {
     if (!this._state) return [];
     if (!this._state.loaded) return ['system', 'settings'];
     var modules = this._state.modules || [];
-    return [...shGroupTabs(this._state.tabs).filter((t) => t === 'status' || t === 'system' || modules.includes(t)), 'settings'];
+    var shown = shGroupTabs(this._state.tabs).filter((t) => t === 'status' || t === 'system' || modules.includes(t));
+    // A module whose sections are sub-tabs: its sub-tabs in its place
+    return [...shown.flatMap((t) => SH_SUBTABS[t] || [t]), 'settings'];
   }
 
   // The tabs under the toolbar: Status, the groups with a tab shown, Settings
@@ -721,8 +723,8 @@ export class SystemHubPanel extends HTMLElement {
 
   _groupName(group) {
     if (!SH_GROUPS[group]) return this._tabName(group);
-    // A group of one module goes by the module's name
-    if (SH_GROUPS[group].length === 1) return this._tabName(SH_GROUPS[group][0]);
+    // A group of one module (its sections as sub-tabs, or none) goes by the module's name
+    if (SH_GROUPS[group].length === 1 || SH_SUBTABS[group]) return this._tabName(group);
     return group === 'system' ? this._t('system') : this._t(`group_${group}`);
   }
 
@@ -957,7 +959,7 @@ export class SystemHubPanel extends HTMLElement {
       // The module's settings: a round frosted button in the banner's corner, as on the cards
       var corner = top.querySelector('.shbanner');
       // The tab's own module (the first of its buttons that opens a module's settings, wherever the tab puts it)
-      var settings = main.querySelector(`[data-action="open_settings:${this._tab}"]`);
+      var settings = main.querySelector(`[data-action="open_settings:${shTabBase(this._tab)}"]`);
       if (corner && settings) {
         // The spacer _configure put before it goes with it
         if (settings.previousElementSibling?.matches('span.grow')) settings.previousElementSibling.remove();
@@ -972,7 +974,7 @@ export class SystemHubPanel extends HTMLElement {
       }
     }
     // Sections side by side, as the mockups lay them out: the cards after the first ones go in two columns
-    var span = { watchdog: [1, 3], backups: [0, 2], security: [0, 99] }[this._tab];
+    var span = { watchdog: [1, 3], backups: [0, 2] }[this._tab];
     if (span) {
       var cards = [...main.querySelectorAll(':scope > ha-card:not(.shtop), :scope > .sctwo')];
       var rest = cards.slice(...span);
@@ -1056,9 +1058,12 @@ export class SystemHubPanel extends HTMLElement {
     return `<nav class="subtabs" role="tablist" aria-label="${shEsc(this._groupName(shGroupOf(this._tab)))}">${subs
       .map((tab) => {
         var selected = tab === this._tab;
-        var tone = this._stArea(tab)?.[0];
+        // A module's section: its own tone, icon and name
+        var section = SH_SUBTABS[shTabBase(tab)];
+        var tone = section ? this._scSubTone(tab) : this._stArea(tab)?.[0];
         var dot = tone && tone !== 'good' ? `<span class="subdot ${tone}" aria-hidden="true"></span>` : '';
-        return `<button class="subtab${selected ? ' active' : ''}" role="tab" data-subtab="${tab}" aria-selected="${selected}" tabindex="${selected ? 0 : -1}"><ha-icon icon="${SH_MODULE_ICONS[tab]}"></ha-icon>${shEsc(this._tabName(tab))}${dot}</button>`;
+        var name = section ? this._t(`sub_${tab}`) : this._tabName(tab);
+        return `<button class="subtab${selected ? ' active' : ''}" role="tab" data-subtab="${tab}" aria-selected="${selected}" tabindex="${selected ? 0 : -1}"><ha-icon icon="${section ? SH_SUBTAB_ICONS[tab] : SH_MODULE_ICONS[tab]}"></ha-icon>${shEsc(name)}${dot}</button>`;
       })
       .join('')}</nav>`;
   }
@@ -1078,7 +1083,10 @@ export class SystemHubPanel extends HTMLElement {
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
       database: () => this._database(),
-      security: () => this._security(),
+      security: () => this._security('security'),
+      security_accounts: () => this._security('security_accounts'),
+      security_system: () => this._security('security_system'),
+      security_outbound: () => this._security('security_outbound'),
       logs: () => this._logs(),
       silent: () => this._silent(),
       batteries: () => this._batteries(),
@@ -1108,7 +1116,7 @@ export class SystemHubPanel extends HTMLElement {
 
   // The module settings (Configure), at the end of a tab's buttons
   _configure() {
-    return `<span class="grow"></span>${this._button(`open_settings:${this._tab}`, 'mdi:cog-outline', this._t('configure'), { quiet: true })}`;
+    return `<span class="grow"></span>${this._button(`open_settings:${shTabBase(this._tab)}`, 'mdi:cog-outline', this._t('configure'), { quiet: true })}`;
   }
 
   // Something being read: a spinner and what it is

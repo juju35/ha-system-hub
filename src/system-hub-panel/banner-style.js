@@ -1,4 +1,4 @@
-import { SH_GROUPS, SH_MODULE_ICONS, shEsc, shGroupOf } from "./core.js";
+import { SH_GROUPS, SH_MODULE_ICONS, shEsc, shGroupOf, shTabBase } from "./core.js";
 import { SystemHubPanel } from "./panel.js";
 import { SH_DECOR, SH_TONE_HEX, SH_WALLS, shDecor, shScene } from "./illustrated-header.js";
 
@@ -250,7 +250,8 @@ export var SH_BANNER_METHODS = {
   // diff viewer's header is Versioning's)
   _banner(over = {}) {
     if (!this._state?.loaded) return '';
-    var tab = over.tab || this._tab;
+    // A sub-tab (a module's section): its module's header
+    var tab = shTabBase(over.tab || this._tab);
     var night = Boolean(this._hass?.themes?.darkMode);
     var tone = 'good';
     var pill = '';

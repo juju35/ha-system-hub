@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Још није виђена ниједна веза.",
         "sc_n_outbound_new": "нових одлазних хостова: {n}",
         "sc_ob_unattributed": "Неприписане",
-        "sc_ob_partial": "Резолвер библиотеке aiohttp није могао да се пресретне: већина HTTP веза се не види."
+        "sc_ob_partial": "Резолвер библиотеке aiohttp није могао да се пресретне: већина HTTP веза се не види.",
+        "sub_security": "Пријаве",
+        "sub_security_accounts": "Налози",
+        "sub_security_system": "Додаци и конфигурација",
+        "sub_security_outbound": "Одлазне"
       }
     },
     "battery_type": {
