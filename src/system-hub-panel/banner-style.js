@@ -93,7 +93,7 @@ export var SH_BANNER_STYLE = `
     /* Status: the counts in the header card, the areas to handle first, then a compact tile per area in four columns */
     .stkpis { grid-template-columns:repeat(5, minmax(0, 1fr)); }
     .stprio .stwhere { flex:none; font-size:12px; }
-    .stgroups { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:16px 12px; align-items:start; }
+    .stgroups { display:grid; grid-template-columns:repeat(var(--stcols, 4), minmax(0, 1fr)); gap:16px 12px; align-items:start; }
     .stgroup .stsec { display:flex; align-items:center; gap:8px; margin:0 4px 8px; font-size:14px; letter-spacing:0; text-transform:none; color:var(--primary-text-color); }
     .stgroup .stsec .muted { margin-left:auto; font-size:12px; font-weight:400; }
     .stgdot { width:8px; height:8px; border-radius:50%; flex:none; background:var(--tone); }

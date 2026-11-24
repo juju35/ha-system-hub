@@ -58,7 +58,7 @@ The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section 
 - **Automations**: the failed automations and the unavailable entities they use, as reported by [Automation Monitor](https://github.com/olli-dot-dev/ha-automation-monitor), with their trace and editor.
 - **Cleanup** (formerly Orphans): the entities their integration no longer provides and the devices left behind, with what still uses them, removed or ignored in bulk.
 - **Modules**: Containers, Database, Security, Logs, Updates, Backups, Silent devices, Sentinel, Batteries, Versioning, Automations and Cleanup can each be turned on or off; a module turned off stops its checks, removes its entities and hides its tab.
-- **Admin panel**: one sidebar panel with a **Status** tab and the modules in four groups, each a tab with its modules as sub-tabs: **System** (Resources, Containers, Database, Security), **Reliability** (Logs, Sentinel, Automations), **Maintenance** (Updates, Backups, Versioning) and **Devices** (Silent devices, Batteries, Cleanup); the groups and the modules inside them can be ordered.
+- **Admin panel**: one sidebar panel with a **Status** tab and the modules in five groups, each a tab with its modules as sub-tabs: **System** (Resources, Containers, Database), **Security**, **Reliability** (Logs, Sentinel, Automations), **Maintenance** (Updates, Backups, Versioning) and **Devices** (Silent devices, Batteries, Cleanup); the groups and the modules inside them can be ordered.
 
 ## Supported integrations
 
@@ -156,7 +156,7 @@ Each module's settings, opened in place:
 
 ## Sidebar panel
 
-**System Hub** in the sidebar (administrators only) gathers everything on one page. At the top, the tab's illustrated banner (its icon, status pill and buttons, the menu button before them); under it: **Status**, then four groups, **System** (Resources, Containers, Database, Security), **Reliability** (Logs, Sentinel, Automations), **Maintenance** (Updates, Backups, Versioning) and **Devices** (Silent devices, Batteries, Cleanup), and **Settings**. A group shows only when one of its modules is turned on; with two modules or more, they are sub-tabs under it, and the group's tab carries a badge with how many of them need a look, in the colour of the worst. The module shown is in the address (`/system-hub/watchdog`, or a group's name such as `/system-hub/devices` for its first module), so a link or a reload opens it again. The panel reads the modules every 10 seconds while it is shown.
+**System Hub** in the sidebar (administrators only) gathers everything on one page. At the top, the tab's illustrated banner (its icon, status pill and buttons, the menu button before them); under it: **Status**, then five groups, **System** (Resources, Containers, Database), **Security**, **Reliability** (Logs, Sentinel, Automations), **Maintenance** (Updates, Backups, Versioning) and **Devices** (Silent devices, Batteries, Cleanup), and **Settings**. A group shows only when one of its modules is turned on; with two modules or more, they are sub-tabs under it, and the group's tab carries a badge with how many of them need a look, in the colour of the worst. The module shown is in the address (`/system-hub/watchdog`, or a group's name such as `/system-hub/devices` for its first module), so a link or a reload opens it again. The panel reads the modules every 10 seconds while it is shown.
 
 The sidebar icon is the **Status** tab's emblem, its badge following the status: a pulse when healthy, **!** to watch, **×** for a problem. Beside it, a count badge shows how many points need a look — the Status tab's total — in the same tone as the emblem (healthy, alert or problem); it goes away when there is nothing to check, like the notifications count. Both are drawn in each browser from the status it reads: the panel when it is open, else an administrator's page every 5 minutes (the panel's own reading, without showing it); the browser keeps the last one, so the sidebar shows it at once.
 
@@ -243,12 +243,13 @@ On a phone:
 
 ## Lovelace cards
 
-System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. Only the cards of the modules turned on are loaded (the Status cards, the System Monitor cards and the Automation Monitor cards always are): the Watchdog, Batteries, Marketplace, Git Sync and Orphans cards would show nothing with their module off, so a dashboard does not download them, and such a card says which module to turn on. Turning a module back on adds its card again (after a restart with the resources in YAML mode). In the visual editor, pick the module first, then its options.
+System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-mini-card`**: `module:` picks what they show, and the options of each module's card stay the same. There is nothing to install: they are added to **Settings → Dashboards → Resources** by themselves (`/system_hub_static/cards/<file>.js`, with the version in its URL so an update is fetched again), and removed with the integration. With the dashboard resources in YAML mode, they are loaded on every page instead. Only the cards of the modules turned on are loaded (the Status cards, the System Monitor cards and the Automation Monitor cards always are): the Security, Watchdog, Batteries, Marketplace, Git Sync and Orphans cards would show nothing with their module off, so a dashboard does not download them, and such a card says which module to turn on. Turning a module back on adds its card again (after a restart with the resources in YAML mode). In the visual editor, pick the module first, then its options.
 
 | `module:` | `system-hub-card` | `system-hub-mini-card` | Formerly |
 |---|---|---|---|
 | `status` (default) | [The Status tab at a glance](#status-cards) | [On one line](#status-cards) | — |
 | `system` | [System Monitor](#system-monitor-cards) | ✓ | `system-monitor-card`, [ha-system-monitor-card](https://github.com/juju35/ha-system-monitor-card) |
+| `security` | [Security](#security-card) | ✓ | — |
 | `watchdog` | [Sentinel](#watchdog-card) | ✓ | `integration-watchdog-card`, [ha-integration-watchdog](https://github.com/juju35/ha-integration-watchdog) |
 | `marketplace` | [Updates](#marketplace-refresh-card) | — | `marketplace-refresh-card`, [ha-marketplace-refresh](https://github.com/juju35/ha-marketplace-refresh) |
 | `batteries` | [Batteries](#battery-monitor-card) | ✓ | `battery-monitor-card`, [ha-battery-monitor](https://github.com/juju35/ha-battery-monitor) |
@@ -256,7 +257,7 @@ System Hub has two cards, **`custom:system-hub-card`** and **`custom:system-hub-
 | `automations` | [Automations](#automation-monitor-cards) | ✓ | `automation-monitor-card`, [ha-automation-monitor-card](https://github.com/juju35/ha-automation-monitor-card) |
 | `orphans` | [Cleanup](#cards) | ✓ | `orphan-entities-card`, [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) |
 
-**Illustrated header**: every module's card (and mini card) opens on the same 90 px header as the Status cards, with a small animated scene of its own drawn like the Status one: the main piece in the colour of the card's status (green, amber, red, grey) — the shield (Watchdog), the battery (Batteries), the store (Marketplace), the gauge (System Monitor), the branch head (Git Sync), the puzzle (Orphans), the robot (Automations) — with what it watches around it on dashed links, over the concrete floor, and the header's buttons as small frosted buttons in its top right corner. It turns to night with a dark Home Assistant theme; `illustration_theme: day | night` forces it, and `illustration: false` keeps the classic header. Both options are in each card's visual editor.
+**Illustrated header**: every module's card (and mini card) opens on the same 90 px header as the Status cards, with a small animated scene of its own drawn like the Status one: the main piece in the colour of the card's status (green, amber, red, grey) — the padlocked shield (Security), the shield (Watchdog), the battery (Batteries), the store (Marketplace), the gauge (System Monitor), the branch head (Git Sync), the puzzle (Orphans), the robot (Automations) — with what it watches around it on dashed links, over the concrete floor, and the header's buttons as small frosted buttons in its top right corner. It turns to night with a dark Home Assistant theme; `illustration_theme: day | night` forces it, and `illustration: false` keeps the classic header. Both options are in each card's visual editor.
 
 **Cards only**: the cards are files of the integration, served by it, so System Hub must be added in **Settings → Devices & services** for a dashboard to load them; downloading it from the Marketplace is not enough, and removing the integration removes the cards from the dashboard resources. To use only the cards, add System Hub with every module turned off: nothing is monitored, no entity is created, and the cards that read other integrations (the System Monitor cards, which read the core System Monitor integration) work as before. The **System Hub** sidebar item can be hidden for your user like any other one: long press the sidebar's title, or **Profile → Change the order and hide items from the sidebar**.
 
@@ -751,6 +752,54 @@ actions:
 | `unavailable_since` | When its last entity became unavailable |
 | `attempt` | Power cycle number in a row (1, 2…) |
 | `max_reloads` | Power cycles in a row before giving up |
+
+### Security card
+
+**Security** (`module: security`) shows what needs a look in the Security module, the worst first, each row opening the panel's **Security** tab. Search for **Security Card (System Hub)** when adding a card, or in YAML:
+
+```yaml
+type: custom:system-hub-card
+module: security
+```
+
+| Points to look at | Everything in order |
+|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security.png" alt="Security card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-ok.png" alt="Security card, everything in order" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-dark.png" alt="Security card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-ok-dark.png" alt="Security card, everything in order, dark theme" width="400"> |
+
+- **Header**: the status (*n* to fix, *n* to check, nothing to report) and when the add-ons and files were last scanned
+- **To fix** (red): refused logins from the Internet in the last 24 hours (banned or not), the bans of that day, add-ons running with their protection mode off and not allowed
+- **To check** (amber): administrators without 2FA, hosts new for an integration (when the outbound connections are tracked), unused long-lived tokens, credentials written in clear in the YAML files, an external URL without HTTPS
+- At most `max_items` rows, then **+N more**; then a line telling the rest (or everything) is in order: HTTPS, IP ban, how many administrators have 2FA, and the hosts contacted when nothing is new
+- Read from the panel's command (`system_hub/security`) every 5 minutes: the details are for **administrators only**, other users see a short notice
+
+| Option | Default | Description |
+|---|---|---|
+| `title` | Security | Card title |
+| `show_title` | `true` | Show the title in the header |
+| `show_subtitle` | `true` | Show when it was last scanned |
+| `illustration` | `true` | The illustrated header with the padlocked shield (see [Lovelace cards](#lovelace-cards)); `false` for the classic header |
+| `illustration_theme` | `auto` | `day` or `night` picture; `auto` follows the Home Assistant theme |
+| `max_items` | `6` | Points shown, the worst first, from 1 to 20; the others under **+N more** |
+| `show_ok` | `true` | The line telling what is in order |
+| `hide_when_ok` | `false` | Hide the card while nothing needs a look (always shown while editing the dashboard) |
+| `language` | Home Assistant's | `en`, `fr`, `de`, `es`, `it`, `nl`, `pt`, `pl`, `sr`, `sr-Latn`, `ro`, `da`, `sv`, `bg`, `ru`, `uk`, `hu`, `sk`, `cs`, `sl`, `lv` or `el` |
+
+#### Security mini card
+
+`custom:system-hub-mini-card` (`module: security`) shows the header and the three worst points, then **+N more**; its **detail** button (top right) switches it to the full card and back, as does a click anywhere else on the page. It takes every option of the full card (they set its detail view), plus `zoom` (`true`; `false` removes the detail button).
+
+```yaml
+type: custom:system-hub-mini-card
+module: security
+```
+
+| Points to look at | Everything in order | Zoomed in |
+|---|---|---|
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-mini.png" alt="Security mini card" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-mini-ok.png" alt="Security mini card, everything in order" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-mini-zoom.png" alt="Security mini card zoomed in" width="400"> |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-mini-dark.png" alt="Security mini card, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-mini-ok-dark.png" alt="Security mini card, everything in order, dark theme" width="400"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security-mini-zoom-dark.png" alt="Security mini card zoomed in, dark theme" width="400"> |
+
+The screenshots are made by `python scripts/screenshots_security.py`.
 
 ### Watchdog card
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.15.0 - 2026-11-24
+
+### Features
+- **Security, a tab of its own**: Security leaves the System group for a group of its own, between System and Reliability (with its badge; a group of one module has no sub-tabs). The Status tab shows its groups in as many columns as there are (five), and the Status picture draws one bar per group. On the Status card, Security is a section of its own; a card listing `groups: [system]` still shows it.
+- **Security card** (`module: security`, card and mini card): what needs a look, the worst first — refused logins from the Internet in 24 hours and the bans of that day, add-ons not protected, then administrators without 2FA, hosts new for an integration, unused tokens, credentials in clear, an external URL without HTTPS — at most `max_items` rows then **+N more**, and a line telling the rest is in order. Every row opens the Security tab. Illustrated header with a padlocked shield. The mini card shows the three worst points and its detail button. Administrators only (read from `system_hub/security`).
+
+### Maintenance
+- The panel's Security tab is a module of its own (`src/system-hub-panel/security.js`), as the Status, Cleanup and Settings tabs.
+
 ## 3.14.0 - 2026-11-24
 
 ### Features

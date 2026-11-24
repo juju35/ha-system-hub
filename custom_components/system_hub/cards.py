@@ -27,6 +27,7 @@ from .const import (
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
+    MODULE_SECURITY,
     MODULE_WATCHDOG,
     MODULES,
     VERSION,
@@ -43,6 +44,7 @@ CARD_MODULES = {
     "integration-watchdog-card.js": MODULE_WATCHDOG,
     "marketplace-refresh-card.js": MODULE_MARKETPLACE,
     "orphan-entities-card.js": MODULE_ORPHANS,
+    "security-card.js": MODULE_SECURITY,
 }
 
 

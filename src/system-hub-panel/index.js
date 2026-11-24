@@ -8,6 +8,7 @@ import "./fold-css.js";
 import "./fold.js";
 import "./panel.js";
 import "./orphans.js";
+import "./security.js";
 import "./register.js";
 import "./settings.js";
 import "./status.js";

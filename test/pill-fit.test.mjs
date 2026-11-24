@@ -13,6 +13,7 @@ const CARDS = {
   "integration-watchdog-card.js": "IW_PILL",
   "marketplace-refresh-card.js": "MR_PILL",
   "orphan-entities-card.js": "OE_PILL",
+  "security-card.js": "SC_PILL",
   "system-hub-card.js": "SH_CARD_PILL",
   "system-monitor-card.js": "SM_PILL",
 };

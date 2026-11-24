@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-export var SYSTEM_HUB_PANEL_VERSION = '3.14.0';
+export var SYSTEM_HUB_PANEL_VERSION = '3.15.0';
 export var SH_DOMAIN = 'system_hub';
 export var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -52,7 +52,9 @@ export var SH_MODULE_NAMES = {
 };
 // The tabs under the toolbar: Status, one per group of modules (its modules as sub-tabs), Settings last
 export var SH_GROUPS = {
-  system: ['system', 'containers', 'database', 'security'],
+  system: ['system', 'containers', 'database'],
+  // A group of its own: one module, no sub-tabs
+  security: ['security'],
   reliability: ['logs', 'watchdog', 'automations'],
   maintenance: ['marketplace', 'backups', 'git_sync'],
   devices: ['silent', 'batteries', 'orphans'],
