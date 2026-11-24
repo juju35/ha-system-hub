@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Još nije viđena nijedna veza.",
         "sc_n_outbound_new": "novih odlaznih hostova: {n}",
         "sc_ob_unattributed": "Nepripisane",
-        "sc_ob_partial": "Rezolver biblioteke aiohttp nije mogao da se presretne: većina HTTP veza se ne vidi."
+        "sc_ob_partial": "Rezolver biblioteke aiohttp nije mogao da se presretne: većina HTTP veza se ne vidi.",
+        "sub_security": "Prijave",
+        "sub_security_accounts": "Nalozi",
+        "sub_security_system": "Dodaci i konfiguracija",
+        "sub_security_outbound": "Odlazne"
       }
     },
     "battery_type": {

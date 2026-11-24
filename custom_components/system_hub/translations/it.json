@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Nessuna connessione vista finora.",
         "sc_n_outbound_new": "{n} nuovi host in uscita",
         "sc_ob_unattributed": "Non attribuite",
-        "sc_ob_partial": "Non è stato possibile intercettare il resolver di aiohttp: la maggior parte delle connessioni HTTP sfugge."
+        "sc_ob_partial": "Non è stato possibile intercettare il resolver di aiohttp: la maggior parte delle connessioni HTTP sfugge.",
+        "sub_security": "Accessi",
+        "sub_security_accounts": "Account",
+        "sub_security_system": "Componenti aggiuntivi e config",
+        "sub_security_outbound": "In uscita"
       }
     },
     "battery_type": {

@@ -1,16 +1,16 @@
 // System Hub's Lovelace cards: one card and one mini card, `module:` picking what they show.
-//   type: custom:system-hub-card        module: status (default), system, watchdog, marketplace, batteries, git_sync,
+//   type: custom:system-hub-card        module: status (default), system, security, watchdog, marketplace, batteries,
+//                                       git_sync, automations, orphans
+//   type: custom:system-hub-mini-card   module: status (default), system, security, watchdog, batteries, git_sync,
 //                                       automations, orphans
-//   type: custom:system-hub-mini-card   module: status (default), system, watchdog, batteries, git_sync, automations,
-//                                       orphans
 // A module's card is the one its own file defines (sh-<module>-card, sh-<module>-mini-card), with its options
 // unchanged. The status cards show the Status tab of the panel: they read it with the panel's own code (its module,
 // without showing it), as the sidebar icon does, so the three always agree. Administrators only, as the panel.
 
 export var SYSTEM_HUB_CARD_VERSION = '2.11.0';
-export var SH_CARD_MODULES = ['status', 'system', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations', 'orphans'];
-export var SH_MINI_MODULES = ['status', 'system', 'watchdog', 'batteries', 'git_sync', 'automations', 'orphans'];
-export var SH_CARD_GROUPS = ['system', 'reliability', 'maintenance', 'devices'];
+export var SH_CARD_MODULES = ['status', 'system', 'security', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations', 'orphans'];
+export var SH_MINI_MODULES = ['status', 'system', 'security', 'watchdog', 'batteries', 'git_sync', 'automations', 'orphans'];
+export var SH_CARD_GROUPS = ['system', 'security', 'reliability', 'maintenance', 'devices'];
 export var SH_CARD_TAG = (module, mini) => `sh-${module.replace('_', '-')}${mini ? '-mini' : ''}-card`;
 // The status read again every 30 seconds at most, whichever card asks
 export var SH_CARD_READ_MS = 30000;
@@ -62,7 +62,9 @@ export async function shCardProbe(hass) {
 export function shCardStatus(probe, config) {
   var Panel = probe.constructor;
   var { areas, counts, score, tone } = probe._stTone();
-  var groups = Array.isArray(config.groups) && config.groups.length ? config.groups : SH_CARD_GROUPS;
+  var groups = Array.isArray(config.groups) && config.groups.length ? [...config.groups] : SH_CARD_GROUPS;
+  // Security was in the System group until 3.15: a card listing system still shows it
+  if (groups.includes('system') && !groups.includes('security')) groups.push('security');
   var shown = areas.filter(([tab, [t]]) => groups.includes(Panel.groupOf(tab)) && !(config.hide_ok && t === 'good'));
   var points = counts.bad + counts.warn + counts.info;
   return { areas: shown, all: areas, counts, score, tone, points };

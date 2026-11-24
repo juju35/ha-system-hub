@@ -40,7 +40,7 @@ export class SystemHubCardEditorBase extends HTMLElement {
             select: {
               multiple: true,
               mode: 'list',
-              options: SH_CARD_GROUPS.map((g) => ({ value: g, label: g === 'system' ? this._t('system', 'System') : this._t(`group_${g}`, g) })),
+              options: SH_CARD_GROUPS.map((g) => ({ value: g, label: g === 'system' ? this._t('system', 'System') : g === 'security' ? this._t('tab_security', 'Security') : this._t(`group_${g}`, g) })),
             },
           },
         },

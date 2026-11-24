@@ -265,15 +265,16 @@ export var SH_STATUS_METHODS = {
         <span class="stval">${shEsc(value)}</span>${details ? `<span class="stdet">${shEsc(details)}</span>` : ''}</span><span class="stdot"></span></button>`;
     var rank = { bad: 3, warn: 2, info: 1, good: 0 };
     // The tiles by group, under the group's name with its worst tone and its count, in the order of the tabs
-    var groups = this._groups()
+    var shown = this._groups().filter((group) => areas.some(([tab]) => shGroupOf(tab) === group));
+    var groups = shown
       .map((group) => {
         var mine = areas.filter(([tab]) => shGroupOf(tab) === group);
-        if (!mine.length) return '';
         var gtone = mine.reduce((w, [, [t]]) => (rank[t] > rank[w] ? t : w), 'good');
         return `<section class="stgroup"><h2 class="stsec"><span class="stgdot ${gtone}"></span>${shEsc(this._groupName(group))}<span class="muted">${mine.length}</span></h2><div class="stgrid">${mine.map(tile).join('')}</div></section>`;
       })
       .join('');
-    return `${head}${priority}<div class="stgroups">${groups}</div>`;
+    // One column per group shown, five at most (narrow screens: their own columns)
+    return `${head}${priority}<div class="stgroups" style="--stcols:${Math.min(5, Math.max(1, shown.length))}">${groups}</div>`;
   },
 };
 

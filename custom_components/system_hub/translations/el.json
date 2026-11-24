@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Δεν έχει εμφανιστεί ακόμη καμία σύνδεση.",
         "sc_n_outbound_new": "{n} νέοι εξερχόμενοι διακομιστές",
         "sc_ob_unattributed": "Χωρίς απόδοση",
-        "sc_ob_partial": "Δεν ήταν δυνατή η υποκλοπή του επιλυτή του aiohttp: οι περισσότερες συνδέσεις HTTP διαφεύγουν."
+        "sc_ob_partial": "Δεν ήταν δυνατή η υποκλοπή του επιλυτή του aiohttp: οι περισσότερες συνδέσεις HTTP διαφεύγουν.",
+        "sub_security": "Συνδέσεις",
+        "sub_security_accounts": "Λογαριασμοί",
+        "sub_security_system": "Πρόσθετα και ρυθμίσεις",
+        "sub_security_outbound": "Εξερχόμενες"
       }
     },
     "battery_type": {

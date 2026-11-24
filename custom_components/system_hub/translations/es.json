@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Aún no se ha visto ninguna conexión.",
         "sc_n_outbound_new": "{n} hosts salientes nuevos",
         "sc_ob_unattributed": "Sin atribuir",
-        "sc_ob_partial": "No se pudo interceptar el resolvedor de aiohttp: la mayoría de las conexiones HTTP no se ven."
+        "sc_ob_partial": "No se pudo interceptar el resolvedor de aiohttp: la mayoría de las conexiones HTTP no se ven.",
+        "sub_security": "Inicios de sesión",
+        "sub_security_accounts": "Cuentas",
+        "sub_security_system": "Complementos y config.",
+        "sub_security_outbound": "Salientes"
       }
     },
     "battery_type": {

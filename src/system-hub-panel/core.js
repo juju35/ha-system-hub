@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-export var SYSTEM_HUB_PANEL_VERSION = '3.14.0';
+export var SYSTEM_HUB_PANEL_VERSION = '3.15.0';
 export var SH_DOMAIN = 'system_hub';
 export var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -52,11 +52,25 @@ export var SH_MODULE_NAMES = {
 };
 // The tabs under the toolbar: Status, one per group of modules (its modules as sub-tabs), Settings last
 export var SH_GROUPS = {
-  system: ['system', 'containers', 'database', 'security'],
+  system: ['system', 'containers', 'database'],
+  // A group of its own: one module, its sections as sub-tabs (SH_SUBTABS)
+  security: ['security', 'security_accounts', 'security_system', 'security_outbound'],
   reliability: ['logs', 'watchdog', 'automations'],
   maintenance: ['marketplace', 'backups', 'git_sync'],
   devices: ['silent', 'batteries', 'orphans'],
 };
+// A module whose sections are sub-tabs: the first keeps the module's name (and its address, /system-hub/security)
+export var SH_SUBTABS = { security: ['security', 'security_accounts', 'security_system', 'security_outbound'] };
+export var SH_SUBTAB_ICONS = {
+  security: 'mdi:login-variant',
+  security_accounts: 'mdi:account-key-outline',
+  security_system: 'mdi:puzzle-outline',
+  security_outbound: 'mdi:lan-connect',
+};
+// The module a tab shows: a sub-tab's module, else the tab itself
+export function shTabBase(tab) {
+  return Object.keys(SH_SUBTABS).find((m) => SH_SUBTABS[m].includes(tab)) || tab;
+}
 // The group of a tab; Status and Settings are groups of their own
 export function shGroupOf(tab) {
   return Object.keys(SH_GROUPS).find((g) => SH_GROUPS[g].includes(tab)) || tab;

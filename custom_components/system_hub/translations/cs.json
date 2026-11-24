@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Zatím nebylo zaznamenáno žádné připojení.",
         "sc_n_outbound_new": "noví odchozí hostitelé: {n}",
         "sc_ob_unattributed": "Nepřiřazené",
-        "sc_ob_partial": "Resolver aiohttp se nepodařilo zachytit: většina HTTP připojení uniká."
+        "sc_ob_partial": "Resolver aiohttp se nepodařilo zachytit: většina HTTP připojení uniká.",
+        "sub_security": "Přihlášení",
+        "sub_security_accounts": "Účty",
+        "sub_security_system": "Doplňky a konfigurace",
+        "sub_security_outbound": "Odchozí"
       }
     },
     "battery_type": {

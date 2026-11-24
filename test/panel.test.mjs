@@ -1910,7 +1910,23 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
   };
   p._render = () => {};
   await p._scLoad(true);
-  const html = p._content();
+  // Its four sub-tabs, each with its own sections; the first keeps the module's name
+  const subs = ['security', 'security_accounts', 'security_system', 'security_outbound'];
+  assert.equal(JSON.stringify(p._tabs().filter((t) => t.startsWith('security'))), JSON.stringify(subs));
+  assert.equal(p._groupName('security'), 'Security');
+  const content = (tab) => {
+    p._tab = tab;
+    return p._content();
+  };
+  assert.match(content('security'), /Refused logins · 24 h[\s\S]*?Exposure/);
+  assert.doesNotMatch(content('security'), /Old script|Advanced SSH/);
+  assert.match(content('security_accounts'), /Admins without 2FA[\s\S]*?Marie[\s\S]*?Old script/);
+  assert.match(content('security_system'), /Advanced SSH[\s\S]*?configuration\.yaml/);
+  assert.match(content('security_outbound'), /Not tracked/);
+  // The sub-tabs' dots: logins and add-ons in red, accounts in amber, outbound fine
+  p._tab = 'security';
+  assert.match(p._subtabs(), /data-subtab="security"[^>]*>[\s\S]*?Logins<span class="subdot bad"[\s\S]*?Accounts<span class="subdot warn"[\s\S]*?Add-ons &#38; config<span class="subdot bad"[\s\S]*?Outbound<\/button>/);
+  const html = subs.map(content).join('');
   assert.match(html, /tile bad[\s\S]*?<b>5<\/b>[\s\S]*?Refused logins · 24 h/);
   assert.match(html, /1 of 2[\s\S]*?Admins without 2FA/);
   assert.match(html, /8\.8\.8\.8[\s\S]*?dns\.google · Internet · ×5[\s\S]*?Banned/);
@@ -1929,7 +1945,7 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
   // Revoke asks first; Ignore and Scan now call the server
   const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
   click('sc_revoke_confirm', { token: 't1' });
-  assert.match(p._content(), /Revoke the token “Old script”\?/);
+  assert.match(content('security_accounts'), /Revoke the token “Old script”\?/);
   await click('sc_revoke', { token: 't1' });
   await click('sc_ignore', { ip: '192.168.1.37', ignore: 'true' });
   await click('sc_allow', { slug: 'ssh', allow: 'true' });
@@ -1972,8 +1988,10 @@ test('security tab: outbound connections by integration (new ones unfolded, Know
   };
   p._render = () => {};
   await p._scLoad(true);
+  p._tab = 'security_outbound';
   let html = p._content();
   assert.match(html, /tile warn[\s\S]*?<b>3<\/b> · 1 new[\s\S]*?Hosts contacted · 7 days/);
+  assert.match(p._subtabs(), /Outbound<span class="subdot warn"/);
   assert.match(html, /Outbound connections[\s\S]*?3 integrations · 3 hosts/);
   // The integration with a new host unfolded, the other folded
   assert.match(html, /IPTV[\s\S]*?1 new[\s\S]*?Custom[\s\S]*?collector\.example\.net[\s\S]*?first contact[\s\S]*?data-mark="known"[^>]*data-host="collector\.example\.net"[^>]*data-domain="iptv"/);

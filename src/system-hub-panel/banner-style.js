@@ -1,4 +1,4 @@
-import { SH_GROUPS, SH_MODULE_ICONS, shEsc, shGroupOf } from "./core.js";
+import { SH_GROUPS, SH_MODULE_ICONS, shEsc, shGroupOf, shTabBase } from "./core.js";
 import { SystemHubPanel } from "./panel.js";
 import { SH_DECOR, SH_TONE_HEX, SH_WALLS, shDecor, shScene } from "./illustrated-header.js";
 
@@ -93,7 +93,7 @@ export var SH_BANNER_STYLE = `
     /* Status: the counts in the header card, the areas to handle first, then a compact tile per area in four columns */
     .stkpis { grid-template-columns:repeat(5, minmax(0, 1fr)); }
     .stprio .stwhere { flex:none; font-size:12px; }
-    .stgroups { display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:16px 12px; align-items:start; }
+    .stgroups { display:grid; grid-template-columns:repeat(var(--stcols, 4), minmax(0, 1fr)); gap:16px 12px; align-items:start; }
     .stgroup .stsec { display:flex; align-items:center; gap:8px; margin:0 4px 8px; font-size:14px; letter-spacing:0; text-transform:none; color:var(--primary-text-color); }
     .stgroup .stsec .muted { margin-left:auto; font-size:12px; font-weight:400; }
     .stgdot { width:8px; height:8px; border-radius:50%; flex:none; background:var(--tone); }
@@ -250,7 +250,8 @@ export var SH_BANNER_METHODS = {
   // diff viewer's header is Versioning's)
   _banner(over = {}) {
     if (!this._state?.loaded) return '';
-    var tab = over.tab || this._tab;
+    // A sub-tab (a module's section): its module's header
+    var tab = shTabBase(over.tab || this._tab);
     var night = Boolean(this._hass?.themes?.darkMode);
     var tone = 'good';
     var pill = '';

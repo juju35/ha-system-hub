@@ -103,10 +103,10 @@ export function shScene(name, tone, n, extra = {}) {
     var mark = { bad: 'M-2.6 -2.6 l5.2 5.2 M2.6 -2.6 l-5.2 5.2', warn: 'M0 -3.4 v3.6 M0 2.6 v.3' }[tone] || 'M-3 0 l2 2.2 l4 -4.4';
     var groups = extra.groups || [];
     var bars = groups
-      .slice(0, 4)
+      .slice(0, 5)
       .map((g, i) => {
         var col = SH_TONE_HEX[g] || good;
-        return `<circle cx="52" cy="${11 + i * 8.5}" r="2" fill="${col}"${g === 'bad' ? ' class="sh-blink"' : ''}/><rect x="57" y="${9.3 + i * 8.5}" width="${[20, 14, 18, 12][i]}" height="3.4" rx="1.7" fill="${col}"/>`;
+        return `<circle cx="52" cy="${11 + i * 8.5}" r="2" fill="${col}"${g === 'bad' ? ' class="sh-blink"' : ''}/><rect x="57" y="${9.3 + i * 8.5}" width="${[20, 14, 18, 12, 16][i]}" height="3.4" rx="1.7" fill="${col}"/>`;
       })
       .join('');
     var beams = ok ? '' : `<g transform="translate(178 42)"><g class="sh-rot-fast"><path d="M0 0 L-30 -9 L-30 9Z M0 0 L30 -9 L30 9Z" fill="${c}" opacity=".35"/></g></g>`;

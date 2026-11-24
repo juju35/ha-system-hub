@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Noch keine Verbindung erfasst.",
         "sc_n_outbound_new": "{n} neue ausgehende Hosts",
         "sc_ob_unattributed": "Nicht zugeordnet",
-        "sc_ob_partial": "Der Resolver von aiohttp konnte nicht eingehängt werden: die meisten HTTP-Verbindungen werden nicht erfasst."
+        "sc_ob_partial": "Der Resolver von aiohttp konnte nicht eingehängt werden: die meisten HTTP-Verbindungen werden nicht erfasst.",
+        "sub_security": "Anmeldungen",
+        "sub_security_accounts": "Konten",
+        "sub_security_system": "Add-ons & Konfiguration",
+        "sub_security_outbound": "Ausgehend"
       }
     },
     "battery_type": {

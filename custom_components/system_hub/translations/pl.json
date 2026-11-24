@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Nie widziano jeszcze żadnego połączenia.",
         "sc_n_outbound_new": "nowe hosty wychodzące: {n}",
         "sc_ob_unattributed": "Nieprzypisane",
-        "sc_ob_partial": "Nie udało się przechwycić resolvera aiohttp: większość połączeń HTTP jest pomijana."
+        "sc_ob_partial": "Nie udało się przechwycić resolvera aiohttp: większość połączeń HTTP jest pomijana.",
+        "sub_security": "Logowania",
+        "sub_security_accounts": "Konta",
+        "sub_security_system": "Dodatki i konfiguracja",
+        "sub_security_outbound": "Wychodzące"
       }
     },
     "battery_type": {

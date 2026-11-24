@@ -1921,7 +1921,11 @@
         "sc_ob_none": "Nog geen verbinding gezien.",
         "sc_n_outbound_new": "{n} nieuwe uitgaande hosts",
         "sc_ob_unattributed": "Niet toegewezen",
-        "sc_ob_partial": "De resolver van aiohttp kon niet worden onderschept: de meeste HTTP-verbindingen worden gemist."
+        "sc_ob_partial": "De resolver van aiohttp kon niet worden onderschept: de meeste HTTP-verbindingen worden gemist.",
+        "sub_security": "Aanmeldingen",
+        "sub_security_accounts": "Accounts",
+        "sub_security_system": "Add-ons & configuratie",
+        "sub_security_outbound": "Uitgaand"
       }
     },
     "battery_type": {
