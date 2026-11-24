@@ -57,6 +57,8 @@ _SECRET_KEY = re.compile(
     r"[A-Za-z0-9_]*)\s*:\s*(?P<value>\S.*?)\s*$",
     re.IGNORECASE,
 )
+# The files that hold the secrets themselves: Home Assistant's and ESPHome's secrets.yaml, Zigbee2MQTT's secret.yaml
+_SECRET_FILES: Final = {"secrets.yaml", "secret.yaml"}
 _SKIP_DIRS: Final = {".storage", ".cloud", "custom_components", "deps", "tts", "www", "node_modules", ".git", "backups"}
 
 
@@ -296,12 +298,14 @@ async def _addons(hass: HomeAssistant) -> list[dict[str, Any]] | None:
 
 
 def _yaml_files(root: Path) -> list[Path]:
-    """The YAML files of the configuration, in order, secrets.yaml left out. The folders skipped (www, deps,
-    node_modules, .storage, .git…) are not walked at all: they can hold tens of thousands of files."""
+    """The YAML files of the configuration, in order, the secret files (secrets.yaml, secret.yaml) left out.
+
+    The folders skipped (www, deps, node_modules, .storage, .git…) are not walked at all: they can hold tens of
+    thousands of files."""
     files: list[Path] = []
     for folder, dirs, names in os.walk(root):
         dirs[:] = [d for d in dirs if d not in _SKIP_DIRS and not d.startswith(".")]
-        files.extend(Path(folder, n) for n in names if n.endswith(".yaml") and n != "secrets.yaml")
+        files.extend(Path(folder, n) for n in names if n.endswith(".yaml") and n not in _SECRET_FILES)
     return sorted(files)
 
 

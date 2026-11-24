@@ -129,6 +129,16 @@ def test_credentials_in_clear(tmp_path) -> None:
     ]
 
 
+def test_credentials_zigbee2mqtt_secret_file(tmp_path) -> None:
+    """Zigbee2MQTT keeps its credentials in secret.yaml (no s) and points to them with !secret.yaml."""
+    (tmp_path / "zigbee2mqtt").mkdir()
+    (tmp_path / "zigbee2mqtt" / "secret.yaml").write_text("mqtt_password: hunter2\n", encoding="utf-8")
+    (tmp_path / "zigbee2mqtt" / "configuration.yaml").write_text(
+        "mqtt:\n  password: '!secret.yaml mqtt_password'\n  user: '!secret mqtt_user'\n", encoding="utf-8"
+    )
+    assert scan_config(str(tmp_path)) == []
+
+
 def test_credentials_skipped_folders_not_walked(tmp_path, monkeypatch) -> None:
     """www, node_modules, .git… are pruned: never listed, so a large www folder costs nothing."""
     (tmp_path / "packages" / "sub").mkdir(parents=True)
