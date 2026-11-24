@@ -19,7 +19,7 @@ Home Assistant integration that brings the care of your Home Assistant system to
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/panel-status.png" alt="System Hub sidebar panel, Status tab" width="800"></p>
 
-The Status tab scores the home's health out of 100 — `100` minus a weight for every area to watch. Its header says how many points need a look, with a dot per area, then the score and the counts as tiles; below come the critical areas to handle first, each with **View** to open its tab, then a tile per area in four columns by group:
+The Status tab scores the home's health out of 100 — `100` minus a weight for every area to watch. Its header says how many points need a look, with a dot per area, then the score and the counts as tiles; below come the critical areas to handle first, each with **View** to open its tab, then a tile per area in five columns, one per group:
 
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/status-score.png" alt="Status tab header, the health score and the counts" width="640"></p>
 <p align="center"><img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/status-score-dark.png" alt="Status tab header, the health score and the counts, dark theme" width="640"></p>
@@ -36,9 +36,9 @@ The sidebar entry carries a badge with the number of points to check, in the Sta
 |---|---|---|
 | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-batteries.png" alt="Battery Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-git-sync.png" alt="Git Sync card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/orphans-card.png" alt="Orphan Entities card" width="260"> |
 
-| Automation Monitor | | |
+| Automation Monitor | Security | |
 |---|---|---|
-| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor.png" alt="Automation Monitor card" width="260"> | | |
+| <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-automation-monitor.png" alt="Automation Monitor card" width="260"> | <img src="https://raw.githubusercontent.com/juju35/ha-system-hub/main/screenshots/card-security.png" alt="Security card" width="260"> | |
 
 The [Lovelace cards](#lovelace-cards) served by System Hub; each card's section shows its mini card, its states and its dark theme.
 
