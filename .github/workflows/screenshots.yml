@@ -7,6 +7,7 @@ on:
     paths:
       - "custom_components/**/frontend/**"
       - "scripts/**"
+      - "src/**"
       - "custom_components/**/translations/en.json"
       - ".github/workflows/screenshots.yml"
 
@@ -56,6 +57,11 @@ jobs:
       # The checkout belongs to another user than the container's root: git refuses it otherwise.
       - name: Trust the checkout
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+      # The panel and the cards the screenshots load are assembled from src/ (not committed).
+      - name: Build the frontend
+        run: |
+          npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/build-frontend.mjs
       # Python, ffmpeg (required), Roboto, then Playwright with Chromium and its libraries, from Debian's mirrors: each
       # apt call time-boxed and retried so a flaky mirror is abandoned and retried instead of hanging.
       - name: Install Python, ffmpeg, Roboto and Chromium

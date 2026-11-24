@@ -35,7 +35,7 @@ jobs:
         run: |
           VERSION="$(jq -r .version custom_components/system_hub/manifest.json)"
           grep -q "VERSION: Final = \"$VERSION\"" custom_components/system_hub/const.py || { echo "::error file=custom_components/system_hub/const.py::version $VERSION not found in custom_components/system_hub/const.py"; exit 1; }
-          grep -q "SYSTEM_HUB_PANEL_VERSION = '$VERSION'" custom_components/system_hub/frontend/system-hub-panel.js || { echo "::error file=custom_components/system_hub/frontend/system-hub-panel.js::version $VERSION not found in SYSTEM_HUB_PANEL_VERSION"; exit 1; }
+          grep -q "SYSTEM_HUB_PANEL_VERSION = '$VERSION'" src/system-hub-panel/core.js || { echo "::error file=src/system-hub-panel/core.js::version $VERSION not found in SYSTEM_HUB_PANEL_VERSION"; exit 1; }
           grep -q "^## $VERSION " CHANGELOG.md || { echo "::error file=CHANGELOG.md::no '## $VERSION' entry in CHANGELOG.md"; exit 1; }
           echo "Version $VERSION everywhere"
 
@@ -61,6 +61,12 @@ jobs:
         uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: "3.14"
+
+      # The served panel and cards are assembled from src/ (not committed); the runner's Node is enough.
+      - name: Build the frontend
+        run: |
+          npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/build-frontend.mjs
 
       - name: Install dependencies
         run: pip install -r requirements_test.txt
@@ -94,6 +100,12 @@ jobs:
 
       # 0.13.190 pins homeassistant==2024.12.0, the minimum in hacs.json, which pins this frontend.
       # Its cleanup check predates the shutdown thread of pycares 4.9+, which it would report as a leaked thread.
+      # The served panel and cards are assembled from src/ (not committed); the runner's Node is enough.
+      - name: Build the frontend
+        run: |
+          npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/build-frontend.mjs
+
       - name: Install dependencies
         run: pip install pytest-homeassistant-custom-component==0.13.190 home-assistant-frontend==20241127.4 "pycares<4.9"
 
@@ -112,12 +124,17 @@ jobs:
         with:
           node-version: "22"
 
+      # The tests read the panel and the cards assembled from src/
       - name: Run panel tests
-        run: node --test test/*.test.mjs
+        run: |
+          npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/build-frontend.mjs
+          node --test test/*.test.mjs
 
       # The split the Release job makes before building the zip, on a copy: a card whose translations cannot be
       # split fails here instead of failing the release after the merge.
       - name: Translations split
         run: |
           npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/build-frontend.mjs
           node scripts/split-frontend.mjs --check

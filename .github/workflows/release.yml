@@ -45,7 +45,7 @@ jobs:
         run: |
           VERSION="$(jq -r .version custom_components/system_hub/manifest.json)"
           grep -q "VERSION: Final = \"$VERSION\"" custom_components/system_hub/const.py
-          grep -q "SYSTEM_HUB_PANEL_VERSION = '$VERSION'" custom_components/system_hub/frontend/system-hub-panel.js
+          grep -q "SYSTEM_HUB_PANEL_VERSION = '$VERSION'" src/system-hub-panel/core.js
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
@@ -59,12 +59,14 @@ jobs:
         with:
           node-version: "22"
 
-      # Only English stays in the frontend files of the zip; each other language is its own file next to them,
+      # The frontend files are assembled from src/ (scripts/build-frontend.mjs, not committed), then
+      # only English stays in the frontend files of the zip; each other language is its own file next to them,
       # fetched when needed (scripts/split-frontend.mjs). The repository keeps every language in the sources.
       - name: Split the translations
         if: steps.version.outputs.exists == 'false'
         run: |
           npm install --no-save --no-package-lock acorn@8.19.0
+          node scripts/build-frontend.mjs
           node scripts/split-frontend.mjs
 
       - name: Build zip and notes

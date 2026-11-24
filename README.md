@@ -1606,6 +1606,17 @@ A module turned on for the first time takes over the settings of the integration
 
 [ha-orphan-entities](https://github.com/juju35/ha-orphan-entities) is replaced by the Orphans module: its cards are now `custom:system-hub-card` and `custom:system-hub-mini-card` with `module: orphans`, moved at System Hub's next start; once Orphan Entities is removed, point a card's `entity` (if set) to the Cleanup module's *Orphaned entities* sensor. Its ignored integrations and entities are taken over when the Orphans module is turned on.
 
+## Development
+
+```bash
+npm install --no-save --no-package-lock acorn@8.19.0
+node scripts/build-frontend.mjs                  # assembles src/ into custom_components/system_hub/frontend/
+pip install -r requirements_test.txt && pytest   # integration tests
+node --test test/*.test.mjs                      # panel and card tests
+```
+
+The panel and the cards are plain JavaScript served by the integration. Their source is split into ES modules under `src/system-hub-panel/` and `src/<card>/` (entry `index.js`, the cards' translations one file per language in `i18n/`); `scripts/build-frontend.mjs` assembles each into the classic script `frontend/system-hub-panel.js` or `frontend/cards/<card>.js`, which is not committed (the release builds it into the zip). The modules share one scope, so top-level names stay unique across them, and a new module must be listed in its `index.js`.
+
 ## Translations
 
 English, French, German, Spanish, Italian, Dutch, Portuguese (Portugal and Brazil), Polish, Romanian, Danish, Swedish, Bulgarian, Russian, Ukrainian, Hungarian, Slovak, Czech, Slovenian, Latvian, Greek and Serbian (Cyrillic and Latin).
