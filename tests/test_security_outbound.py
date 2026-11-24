@@ -21,7 +21,6 @@ from custom_components.system_hub.security.outbound import (
     is_local,
 )
 
-ORIGINAL_SOCKET = socket.getaddrinfo
 ORIGINAL_RESOLVE = TCPConnector._resolve_host  # noqa: SLF001
 
 
@@ -64,17 +63,21 @@ def test_domains_and_local_hosts() -> None:
 
 
 async def test_off_by_default_nothing_hooked(hass: HomeAssistant) -> None:
+    # The test harness wraps socket.getaddrinfo for each test: the one in place now is the original here
+    original = socket.getaddrinfo
     entry = await _setup(hass)
     assert entry.runtime_data.security.outbound is None
-    assert socket.getaddrinfo is ORIGINAL_SOCKET
+    assert socket.getaddrinfo is original
     assert TCPConnector._resolve_host is ORIGINAL_RESOLVE  # noqa: SLF001
     assert "getaddrinfo" not in hass.loop.__dict__
 
 
 async def test_counted_by_integration_then_unhooked(hass: HomeAssistant, hass_ws_client) -> None:
+    # The test harness wraps socket.getaddrinfo for each test: the one in place now is the original here
+    original = socket.getaddrinfo
     entry = await _setup(hass, outbound=True)
     monitor = entry.runtime_data.security.outbound
-    assert socket.getaddrinfo is not ORIGINAL_SOCKET
+    assert socket.getaddrinfo is not original
     assert "getaddrinfo" in hass.loop.__dict__
     # Through the event loop, from a custom integration's code
     await _afrom("/config/custom_components/iptv/api.py", "loop.getaddrinfo('localhost', 8080)", loop=hass.loop)
@@ -125,7 +128,7 @@ async def test_counted_by_integration_then_unhooked(hass: HomeAssistant, hass_ws
 
     # Turned off: every function put back
     assert await hass.config_entries.async_unload(entry.entry_id)
-    assert socket.getaddrinfo is ORIGINAL_SOCKET
+    assert socket.getaddrinfo is original
     assert TCPConnector._resolve_host is ORIGINAL_RESOLVE  # noqa: SLF001
     assert "getaddrinfo" not in hass.loop.__dict__
 
@@ -229,12 +232,13 @@ async def test_learning_again_after_a_long_pause(hass: HomeAssistant, hass_stora
 
 async def test_aiohttp_resolver_missing(hass: HomeAssistant, monkeypatch, caplog) -> None:
     monkeypatch.setattr("aiohttp.connector.TCPConnector", type("TCPConnector", (), {}))
+    original = socket.getaddrinfo
     monitor = OutboundMonitor(hass)
     await monitor.async_start()
     try:
         assert monitor.state()["aiohttp"] is False
         assert "could not be hooked" in caplog.text
-        assert socket.getaddrinfo is not ORIGINAL_SOCKET
+        assert socket.getaddrinfo is not original
     finally:
         await monitor.async_stop()
-    assert socket.getaddrinfo is ORIGINAL_SOCKET
+    assert socket.getaddrinfo is original
