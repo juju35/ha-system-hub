@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.14.0 - 2026-11-24
+
+### Features
+- **Security → Outbound connections**: the hosts Home Assistant Core contacts, grouped by the integration that asks (custom or core), each with its ports, connections, first and last contact. The hosts seen during the first day count as known; after that, a host new for an integration is flagged (a point to check in the tab and the Status) until marked **Known** (or **Mark all as known**); a host can be **Ignored**. Filters: new, custom only, ignored. A tile gives the hosts contacted and the new ones. Off by default: **Track outbound connections** in **Settings → Security**.
+
+### Performance
+- Outbound connections cost nothing while off: nothing is hooked. On, only new connections are seen (kept-alive ones never come back), each costing a walk up the stack (the integration of each source file read once) and a dict update; kept in memory (500 hosts at most, 7 days), saved at most once an hour and only when something changed, no entity and nothing in the recorder. The time spent is shown under the list.
+
 ## 3.13.2 - 2026-11-24
 
 ### Fixes

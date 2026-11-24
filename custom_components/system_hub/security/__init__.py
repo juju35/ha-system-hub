@@ -5,7 +5,8 @@ logger, homeassistant.components.http.ban) and kept 7 days in a store; a refusal
 persistent notification and the notify actions chosen) unless turned off. The rest is read when the panel asks
 (system_hub/security): the accounts and their tokens from the auth manager, the IP bans and the HTTP settings from
 the http component, the add-ons from the Supervisor and the YAML files for credentials written in clear (both once an
-hour; the file, the line and the key, never the value). No entities of its own.
+hour; the file, the line and the key, never the value). Optionally (off by default), the outbound connections of
+Home Assistant Core by integration (outbound.py). No entities of its own.
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from homeassistant.helpers.translation import async_get_translations
 
 from ..const import DOMAIN
 from ..notify import async_send_notify
+from .outbound import OutboundMonitor
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,6 +38,8 @@ CONF_TOKEN_DAYS: Final = "token_unused_days"
 CONF_IGNORED_IPS: Final = "ignored_ips"
 # Add-ons allowed to run with their protection mode off (an SSH terminal, say): flagged, not counted as a problem
 CONF_ALLOWED_ADDONS: Final = "allowed_addons"
+# The hosts Home Assistant Core contacts, by integration: off by default, nothing hooked while off
+CONF_OUTBOUND: Final = "outbound"
 DEFAULT_TOKEN_DAYS: Final = 90
 KEEP_SECONDS: Final = 7 * 86400
 MAX_ATTEMPTS: Final = 1000
@@ -71,6 +75,7 @@ def settings(options: Any) -> dict[str, Any]:
         CONF_TOKEN_DAYS: int(options.get(CONF_TOKEN_DAYS) or DEFAULT_TOKEN_DAYS),
         CONF_IGNORED_IPS: [str(s) for s in options.get(CONF_IGNORED_IPS) or []],
         CONF_ALLOWED_ADDONS: [str(s) for s in options.get(CONF_ALLOWED_ADDONS) or []],
+        CONF_OUTBOUND: bool(options.get(CONF_OUTBOUND, False)),
     }
 
 
@@ -107,6 +112,7 @@ class SecurityWatcher:
         self._store: Store[dict[str, Any]] = Store(hass, 1, STORE_KEY)
         self._handler = _Handler(self)
         self._notified: dict[str, float] = {}
+        self.outbound: OutboundMonitor | None = OutboundMonitor(hass) if self.options[CONF_OUTBOUND] else None
 
     async def async_start(self) -> None:
         data = await self._store.async_load() or {}
@@ -114,9 +120,14 @@ class SecurityWatcher:
         self.attempts = [a for a in data.get("attempts", []) if a.get("at", 0) > since]
         self.banned = {ip: at for ip, at in (data.get("banned") or {}).items() if at > since}
         logging.getLogger(BAN_LOGGER).addHandler(self._handler)
+        if self.outbound is not None:
+            await self.outbound.async_start()
 
     async def async_stop(self) -> None:
-        """Remove the log handler and save; a second call (failed setup, then unload callbacks) does nothing."""
+        """Remove the log handler and the outbound hooks and save; a second call (failed setup, then unload
+        callbacks) does nothing."""
+        if self.outbound is not None:
+            await self.outbound.async_stop()
         logger = logging.getLogger(BAN_LOGGER)
         if self._handler not in logger.handlers:
             return
@@ -366,4 +377,6 @@ async def security_state(
         "config": cached["config"],
         "scanned_at": cached["at"],
         "token_unused_days": chosen[CONF_TOKEN_DAYS],
+        # None: not tracked (turned off in the settings)
+        "outbound": watcher.outbound.state() if watcher and watcher.outbound else None,
     }

@@ -146,6 +146,11 @@ export class SystemHubPanel extends HTMLElement {
     .lgmsg { font-family:var(--code-font-family, monospace); font-size:13px; white-space:pre-wrap; word-break:break-word; }
     .scnote { font-size:12.5px; color:var(--secondary-text-color); }
     .list .scnote { padding:6px 14px 12px; }
+    .obgrp .avatar { width:36px; height:36px; --mdc-icon-size:20px; }
+    .obgrp .who .n { font-weight:500; }
+    .obhost { padding-left:62px; }
+    .obsegs { padding:2px 14px 8px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+    .obsep { height:1px; margin:0 14px; background:var(--divider-color, rgba(127,127,127,.15)); }
     .sctwo { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:12px; align-items:start; }
     .list code { font-family:var(--code-font-family, monospace); font-size:12px; }
     .dbrow { width:100%; border:0; background:none; font:inherit; color:inherit; text-align:left; cursor:pointer; }
@@ -756,6 +761,8 @@ export class SystemHubPanel extends HTMLElement {
     this._dbOpen = null;
     // Automations: lists folded and shortened again
     this._autoFolds = {};
+    // Security: the outbound connections' filter and integrations unfolded
+    this._scOb = null;
     this._autoMore = {};
     // Silent devices: the filter, the list view, the device picked and Silent only on a network; Batteries: the view (by level); Resources: the curves' periods
     this._slFilter = null;
@@ -2756,9 +2763,11 @@ export class SystemHubPanel extends HTMLElement {
     var unused = (d.tokens || []).filter((t) => t.unused);
     var clear = d.config || [];
     var http = d.exposure?.https === false;
+    // Outbound connections (when tracked): a host new for an integration, until marked as known
+    var obNew = (d.outbound?.integrations || []).reduce((n, g) => n + g.new, 0);
     var bad = refused.length + bans.length + unprotected.length;
-    var warn = noMfa.length + unused.length + clear.length + (http ? 1 : 0);
-    return { refused, bans, unprotected, noMfa, admins, unused, clear, http, bad, warn, tone: bad ? 'bad' : warn ? 'warn' : 'good' };
+    var warn = noMfa.length + unused.length + clear.length + (http ? 1 : 0) + obNew;
+    return { refused, bans, unprotected, noMfa, admins, unused, clear, http, obNew, bad, warn, tone: bad ? 'bad' : warn ? 'warn' : 'good' };
   }
 
   _scWhen(ts) {
@@ -2830,6 +2839,16 @@ export class SystemHubPanel extends HTMLElement {
         ex.external_url ? (ex.https ? 'good' : 'warn') : '',
       ),
     ];
+    if (d.outbound) {
+      tiles.push(
+        this._tile(
+          'mdi:lan-connect',
+          `<b>${d.outbound.hosts}</b>${sum.obNew ? ` · ${shEsc(this._t('sc_ob_new_n', { n: sum.obNew }))}` : ''}`,
+          this._t('sc_ob_hosts'),
+          sum.obNew ? 'warn' : '',
+        ),
+      );
+    }
     var actions = `<div class="actions">${this._message('sc')}<span class="grow"></span>
       <span class="scnote">${shEsc(this._t('sc_scanned', { when: this._scWhen(d.scanned_at) }))}</span>
       ${this._button('sc_scan', 'mdi:magnify-scan', this._t('sc_scan'), { quiet: true, busy: this._busy.sc_scan })}${this._configure()}</div>`;
@@ -2933,10 +2952,89 @@ export class SystemHubPanel extends HTMLElement {
       clear ? shEsc(this._t('sc_config_note')) : '',
     );
 
-    return `<div class="tiles">${tiles.join('')}</div>${actions}${refusedCard}
+    return `<div class="tiles">${tiles.join('')}</div>${actions}${this._scOutbound(d.outbound, pill)}${refusedCard}
       ${this._scList('mdi:account-group-outline', this._t('sc_accounts'), String((d.users || []).length), users)}
       ${(d.tokens || []).length ? this._scList('mdi:key-chain-variant', this._t('sc_tokens'), String(d.tokens.length), tokens, shEsc(this._t('sc_tokens_note'))) : ''}
       <div class="sctwo">${this._scList('mdi:web', this._t('sc_exposure'), '', exposure)}${addonsCard}</div>${configCard}`;
+  }
+
+  // The integrations whose hosts are unfolded: as chosen, else those with a new host
+  _scObOpen(ob) {
+    return (this._scOb ??= { filter: 'all', open: null }).open ?? new Set((ob?.integrations || []).filter((g) => g.new).map((g) => g.domain));
+  }
+
+  // Outbound connections, by integration (folded, those with a new host unfolded): its hosts, the new ones first, each
+  // marked as known or ignored; a filter on the new ones, the custom integrations or the ignored hosts. Not tracked:
+  // where to turn it on
+  _scOutbound(ob, pill) {
+    var head = (extra = '') =>
+      `<div class="lhead"><ha-icon icon="mdi:lan-connect"></ha-icon><span class="lname">${shEsc(this._t('sc_outbound'))}</span>${extra}</div>`;
+    if (!ob) return `<ha-card class="list">${head()}<div class="scnote">${shEsc(this._t('sc_ob_off'))}</div></ha-card>`;
+    var st = (this._scOb ??= { filter: 'all', open: null });
+    var open = this._scObOpen(ob);
+    var all = ob.integrations;
+    var count = (test) => all.reduce((n, g) => n + g.hosts.filter(test).length, 0);
+    var newN = count((h) => h.new);
+    var ignoredN = count((h) => h.ignored);
+    var filters = [
+      ['all', this._t('sc_ob_all')],
+      ['new', `${this._t('sc_ob_new')} · ${newN}`],
+      ['custom', this._t('sc_ob_custom_only')],
+      ['ignored', `${this._t('sc_ignored')} · ${ignoredN}`],
+    ]
+      .map(([key, label]) => `<button class="seg${st.filter === key ? ' active' : ''}" data-action="sc_ob_filter" data-filter="${key}" aria-pressed="${st.filter === key}">${shEsc(label)}</button>`)
+      .join('');
+    var markAll = newN
+      ? this._button('sc_ob_mark', 'mdi:check-all', this._t('sc_ob_all_known'), { quiet: true, busy: this._busy['sc_ob:'], data: { mark: 'known' } })
+      : '';
+    var groups = all
+      .filter((g) => st.filter !== 'custom' || g.custom)
+      .map((g) => ({ ...g, shown: g.hosts.filter((h) => (st.filter === 'ignored' ? h.ignored : !h.ignored && (st.filter !== 'new' || h.new))) }))
+      .filter((g) => g.shown.length);
+    var rows = groups
+      .map((g) => {
+        var isOpen = open.has(g.domain);
+        var label = this._t(isOpen ? 'sc_ob_fold' : 'sc_ob_unfold', { name: g.name });
+        var sub = this._t('sc_ob_group_sub', { hosts: g.hosts.filter((h) => !h.ignored).length, n: g.count.toLocaleString(this._hass?.language), when: this._scWhen(g.last) });
+        var end = (g.new ? pill(this._t('sc_ob_new_n', { n: g.new }), 'warn') : '') + pill(this._t(g.custom ? 'sc_ob_custom' : 'sc_ob_core'), g.custom ? 'info' : '');
+        var row = `<div class="item obgrp${g.new ? ' warn' : ''}"><button class="icon-btn" data-action="sc_ob_open" data-domain="${shEsc(g.domain)}" aria-expanded="${isOpen}" title="${shEsc(label)}" aria-label="${shEsc(label)}"><ha-icon icon="mdi:chevron-${isOpen ? 'down' : 'right'}"></ha-icon></button>
+          <div class="avatar${g.custom ? ' info' : ''}"><ha-icon icon="mdi:puzzle-outline"></ha-icon></div><div class="who"><div class="n">${shEsc(g.name)}</div><div class="s">${shEsc(sub)}</div></div>${end}</div>`;
+        var hosts = isOpen
+          ? g.shown
+              .map((h) => {
+                var hsub = [
+                  h.ports.join(', '),
+                  h.local ? this._t('sc_local') : '',
+                  this._t('sc_ob_connections', { n: h.count.toLocaleString(this._hass?.language) }),
+                  h.new ? this._t('sc_ob_first', { when: this._scWhen(h.first) }) : this._t('sc_last', { when: this._scWhen(h.last) }),
+                ].filter(Boolean);
+                var key = `sc_ob:${g.domain}|${h.host}`;
+                var hend =
+                  (h.new
+                    ? pill(this._t('sc_ob_new'), 'warn') +
+                      this._button('sc_ob_mark', 'mdi:check', this._t('sc_ob_known'), { quiet: true, busy: this._busy[key], data: { mark: 'known', host: h.host, domain: g.domain } })
+                    : '') +
+                  this._button('sc_ob_mark', h.ignored ? 'mdi:eye-outline' : 'mdi:eye-off-outline', this._t(h.ignored ? 'sc_unignore' : 'sc_ignore'), {
+                    quiet: true,
+                    busy: this._busy[`sc_ob:${h.host}`],
+                    data: { mark: h.ignored ? 'unignore' : 'ignore', host: h.host },
+                  });
+                var icon = h.new ? 'mdi:alert-outline' : h.local ? 'mdi:lan' : 'mdi:web';
+                return `<div class="item obhost${h.new ? ' warn' : ''}"><ha-icon icon="${icon}"></ha-icon><div class="who"><div class="n"><code>${shEsc(h.host)}</code></div><div class="s">${shEsc(hsub.join(' · '))}</div></div>${hend}</div>`;
+              })
+              .join('')
+          : '';
+        return `${row}${hosts}`;
+      })
+      .join('<div class="obsep"></div>');
+    var notes = [
+      ob.learning_until ? this._t('sc_ob_learning', { when: this._scWhen(ob.learning_until) }) : '',
+      this._t('sc_ob_note', { ms: (ob.cost_us / 1000).toLocaleString(this._hass?.language, { maximumFractionDigits: 1 }), n: ob.connections.toLocaleString(this._hass?.language) }),
+    ].filter(Boolean);
+    var countLabel = this._t('sc_ob_summary', { integrations: all.length, hosts: ob.hosts });
+    return `<ha-card class="list">${head(`<span class="muted">${shEsc(countLabel)}</span>`)}
+      <div class="obsegs"><div class="segs" role="group" aria-label="${shEsc(this._t('sc_outbound'))}">${filters}</div><span class="grow"></span>${markAll}</div>
+      ${rows || this._scRow('mdi:check-circle-outline', '', shEsc(this._t('sc_ob_none')))}<div class="scnote">${notes.map(shEsc).join(' ')}</div></ha-card>`;
   }
 
   // The Marketplace's installs running (its Update all, or one card's Update): the backup first, then which one of how
@@ -3782,6 +3880,23 @@ export class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'sc_revoke') return this._scRevoke(button.dataset.token);
+    if (action === 'sc_ob_filter') {
+      (this._scOb ??= { filter: 'all', open: null }).filter = button.dataset.filter;
+      return this._render();
+    }
+    if (action === 'sc_ob_open') {
+      var obOpen = (this._scOb.open = new Set(this._scObOpen(this._sc?.data?.outbound)));
+      if (obOpen.has(button.dataset.domain)) obOpen.delete(button.dataset.domain);
+      else obOpen.add(button.dataset.domain);
+      return this._render();
+    }
+    if (action === 'sc_ob_mark') {
+      var obMsg = { type: 'system_hub/security_outbound', action: button.dataset.mark };
+      if (button.dataset.host) obMsg.host = button.dataset.host;
+      if (button.dataset.domain) obMsg.domain = button.dataset.domain;
+      var obKey = button.dataset.mark === 'known' && obMsg.host ? `${obMsg.domain}|${obMsg.host}` : obMsg.host || '';
+      return this._scCall(`sc_ob:${obKey}`, obMsg);
+    }
     if (action === 'sc_allow') {
       var allow = button.dataset.allow !== 'false';
       return this._scCall(`sc_allow:${button.dataset.slug}`, { type: 'system_hub/security_allow_addon', slug: button.dataset.slug, allow });

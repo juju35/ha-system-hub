@@ -158,14 +158,16 @@
           "notify_services": "Radnje obaveštenja",
           "token_unused_days": "Token nekorišćen posle",
           "ignored_ips": "Ignorisane adrese",
-          "allowed_addons": "Dodaci dozvoljeni bez zaštite"
+          "allowed_addons": "Dodaci dozvoljeni bez zaštite",
+          "outbound": "Prati odlazne veze"
         },
         "data_description": {
           "notify": "Trajno obaveštenje, najviše jednom na sat po adresi; o lokalnim adresama nema obaveštenja.",
           "notify_services": "Šalje se i ovim radnjama obaveštenja.",
           "token_unused_days": "Dugotrajni token nekorišćen toliko dana se označava.",
           "ignored_ips": "Njihove odbijene prijave se označavaju kao ignorisane, bez obaveštenja.",
-          "allowed_addons": "Dodaci koji smeju da rade sa isključenim zaštićenim režimom (na primer SSH terminal): i dalje na spisku, ali više nisu problem."
+          "allowed_addons": "Dodaci koji smeju da rade sa isključenim zaštićenim režimom (na primer SSH terminal): i dalje na spisku, ali više nisu problem.",
+          "outbound": "Hostovi koje Home Assistant Core kontaktira, po integraciji; novi se označava. Isključeno: ništa se ne presreće, bez troška."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Opozovi",
         "mk_backing_up": "Pravljenje rezervne kopije Home Assistant-a…",
         "mk_installing": "Instaliranje {n} / {total}: {name}",
-        "mk_queued": "Na čekanju"
+        "mk_queued": "Na čekanju",
+        "sc_outbound": "Odlazne veze",
+        "sc_ob_hosts": "Kontaktirani hostovi · 7 dana",
+        "sc_ob_new_n": "novih: {n}",
+        "sc_ob_new": "Novo",
+        "sc_ob_all": "Sve",
+        "sc_ob_custom_only": "Samo prilagođene",
+        "sc_ob_all_known": "Označi sve kao poznato",
+        "sc_ob_known": "Poznato",
+        "sc_ob_fold": "Sakrij hostove za {name}",
+        "sc_ob_unfold": "Prikaži hostove za {name}",
+        "sc_ob_group_sub": "hostova: {hosts} · veza: {n} · poslednja {when}",
+        "sc_ob_custom": "Prilagođena",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "veza: {n}",
+        "sc_ob_first": "prvi kontakt {when}",
+        "sc_ob_learning": "Učenje do {when}: hostovi viđeni do tada smatraju se poznatim.",
+        "sc_ob_note": "Veze koje otvara Home Assistant Core, pripisane integraciji koja ih traži; čuvaju se 7 dana (dodaci i Supervisor se ne vide). Dosadašnji trošak praćenja: {ms} ms za {n} veza.",
+        "sc_ob_summary": "integracija: {integrations} · hostova: {hosts}",
+        "sc_ob_off": "Ne prate se. Uključite u Podešavanja → Bezbednost; isključeno, ništa se ne presreće i ništa ne troši.",
+        "sc_ob_none": "Još nije viđena nijedna veza.",
+        "sc_n_outbound_new": "novih odlaznih hostova: {n}"
       }
     },
     "battery_type": {

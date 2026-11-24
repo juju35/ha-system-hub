@@ -158,14 +158,16 @@
           "notify_services": "Notify actions",
           "token_unused_days": "Token unused after",
           "ignored_ips": "Ignored addresses",
-          "allowed_addons": "Add-ons allowed unprotected"
+          "allowed_addons": "Add-ons allowed unprotected",
+          "outbound": "Track outbound connections"
         },
         "data_description": {
           "notify": "A persistent notification, once an hour at most per address; local addresses are never notified.",
           "notify_services": "Also sent to these notify actions.",
           "token_unused_days": "A long-lived token not used for this many days is flagged.",
           "ignored_ips": "Their refused logins are flagged as ignored and never notified.",
-          "allowed_addons": "Add-ons that may run with their protection mode off (an SSH terminal, say): still listed, no longer a problem."
+          "allowed_addons": "Add-ons that may run with their protection mode off (an SSH terminal, say): still listed, no longer a problem.",
+          "outbound": "The hosts Home Assistant Core contacts, by integration; a new one is flagged. Off: nothing is hooked, no cost."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Withdraw",
         "mk_backing_up": "Backing up Home Assistant…",
         "mk_installing": "Installing {n} / {total}: {name}",
-        "mk_queued": "Waiting"
+        "mk_queued": "Waiting",
+        "sc_outbound": "Outbound connections",
+        "sc_ob_hosts": "Hosts contacted · 7 days",
+        "sc_ob_new_n": "{n} new",
+        "sc_ob_new": "New",
+        "sc_ob_all": "All",
+        "sc_ob_custom_only": "Custom only",
+        "sc_ob_all_known": "Mark all as known",
+        "sc_ob_known": "Known",
+        "sc_ob_fold": "Hide the hosts of {name}",
+        "sc_ob_unfold": "Show the hosts of {name}",
+        "sc_ob_group_sub": "{hosts} hosts · {n} connections · last {when}",
+        "sc_ob_custom": "Custom",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} connections",
+        "sc_ob_first": "first contact {when}",
+        "sc_ob_learning": "Learning until {when}: the hosts seen until then count as known.",
+        "sc_ob_note": "Connections opened by Home Assistant Core, by the integration that asks; kept 7 days (add-ons and the Supervisor are not seen). Tracking cost so far: {ms} ms for {n} connections.",
+        "sc_ob_summary": "{integrations} integrations · {hosts} hosts",
+        "sc_ob_off": "Not tracked. Turn it on in Settings → Security; while off, nothing is hooked and nothing is spent.",
+        "sc_ob_none": "No connection seen yet.",
+        "sc_n_outbound_new": "{n} new outbound hosts"
       }
     },
     "battery_type": {

@@ -158,14 +158,16 @@
           "notify_services": "Notifikationshandlinger",
           "token_unused_days": "Token ubrugt efter",
           "ignored_ips": "Ignorerede adresser",
-          "allowed_addons": "Tilføjelser tilladt uden beskyttelse"
+          "allowed_addons": "Tilføjelser tilladt uden beskyttelse",
+          "outbound": "Spor udgående forbindelser"
         },
         "data_description": {
           "notify": "En vedvarende notifikation, højst én gang i timen pr. adresse; lokale adresser meldes aldrig.",
           "notify_services": "Sendes også til disse notifikationshandlinger.",
           "token_unused_days": "Et langtidstoken, der ikke er brugt i så mange dage, markeres.",
           "ignored_ips": "Deres afviste logins markeres som ignoreret og meldes aldrig.",
-          "allowed_addons": "Tilføjelser, der må køre uden beskyttet tilstand (f.eks. en SSH-terminal): vises stadig, men er ikke længere et problem."
+          "allowed_addons": "Tilføjelser, der må køre uden beskyttet tilstand (f.eks. en SSH-terminal): vises stadig, men er ikke længere et problem.",
+          "outbound": "De værter, Home Assistant Core kontakter, efter integration; en ny markeres. Fra: intet opfanges, ingen omkostning."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Tilbagekald",
         "mk_backing_up": "Sikkerhedskopierer Home Assistant…",
         "mk_installing": "Installerer {n} / {total}: {name}",
-        "mk_queued": "Venter"
+        "mk_queued": "Venter",
+        "sc_outbound": "Udgående forbindelser",
+        "sc_ob_hosts": "Kontaktede værter · 7 dage",
+        "sc_ob_new_n": "{n} nye",
+        "sc_ob_new": "Ny",
+        "sc_ob_all": "Alle",
+        "sc_ob_custom_only": "Kun brugerdefinerede",
+        "sc_ob_all_known": "Markér alle som kendte",
+        "sc_ob_known": "Kendt",
+        "sc_ob_fold": "Skjul værterne for {name}",
+        "sc_ob_unfold": "Vis værterne for {name}",
+        "sc_ob_group_sub": "{hosts} værter · {n} forbindelser · seneste {when}",
+        "sc_ob_custom": "Brugerdefineret",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} forbindelser",
+        "sc_ob_first": "første kontakt {when}",
+        "sc_ob_learning": "Indlæring indtil {when}: værter set indtil da regnes som kendte.",
+        "sc_ob_note": "Forbindelser åbnet af Home Assistant Core, tilknyttet den integration, der beder om dem; gemt i 7 dage (tilføjelser og Supervisor ses ikke). Omkostning ved sporingen indtil nu: {ms} ms for {n} forbindelser.",
+        "sc_ob_summary": "{integrations} integrationer · {hosts} værter",
+        "sc_ob_off": "Spores ikke. Slå det til under Indstillinger → Sikkerhed; slået fra opfanges intet, og intet forbruges.",
+        "sc_ob_none": "Ingen forbindelse set endnu.",
+        "sc_n_outbound_new": "{n} nye udgående værter"
       }
     },
     "battery_type": {

@@ -1,5 +1,5 @@
 """Settings of the Security module: notifications of refused logins, unused tokens, ignored addresses, add-ons allowed
-to run unprotected."""
+to run unprotected, outbound connections tracked."""
 
 from __future__ import annotations
 
@@ -18,7 +18,15 @@ from homeassistant.helpers.selector import (
 )
 
 from ..notify import notify_choices
-from . import CONF_ALLOWED_ADDONS, CONF_IGNORED_IPS, CONF_NOTIFY, CONF_NOTIFY_SERVICES, CONF_TOKEN_DAYS, settings
+from . import (
+    CONF_ALLOWED_ADDONS,
+    CONF_IGNORED_IPS,
+    CONF_NOTIFY,
+    CONF_NOTIFY_SERVICES,
+    CONF_OUTBOUND,
+    CONF_TOKEN_DAYS,
+    settings,
+)
 
 
 def settings_schema(
@@ -51,6 +59,7 @@ def settings_schema(
                     options=addon_choices, multiple=True, custom_value=True, mode=SelectSelectorMode.DROPDOWN
                 )
             ),
+            vol.Required(CONF_OUTBOUND, default=chosen[CONF_OUTBOUND]): BooleanSelector(),
         }
     )
 

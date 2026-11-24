@@ -158,14 +158,16 @@
           "notify_services": "Ações de notificação",
           "token_unused_days": "Token sem uso após",
           "ignored_ips": "Endereços ignorados",
-          "allowed_addons": "Add-ons permitidos sem proteção"
+          "allowed_addons": "Add-ons permitidos sem proteção",
+          "outbound": "Acompanhar as ligações de saída"
         },
         "data_description": {
           "notify": "Uma notificação persistente, no máximo uma vez por hora por endereço; os endereços locais nunca são notificados.",
           "notify_services": "Enviada também para estas ações de notificação.",
           "token_unused_days": "Um token de longa duração sem uso há este número de dias é assinalado.",
           "ignored_ips": "Os seus inícios recusados são marcados como ignorados e nunca notificados.",
-          "allowed_addons": "Add-ons que podem correr com o modo protegido desativado (um terminal SSH, por exemplo): continuam listados, deixam de ser um problema."
+          "allowed_addons": "Add-ons que podem correr com o modo protegido desativado (um terminal SSH, por exemplo): continuam listados, deixam de ser um problema.",
+          "outbound": "Os hosts que o Home Assistant Core contacta, por integração; um novo é assinalado. Desativado: nada é intercetado, sem custo."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Retirar",
         "mk_backing_up": "A criar cópia de segurança do Home Assistant…",
         "mk_installing": "A instalar {n} / {total}: {name}",
-        "mk_queued": "Em espera"
+        "mk_queued": "Em espera",
+        "sc_outbound": "Ligações de saída",
+        "sc_ob_hosts": "Hosts contactados · 7 dias",
+        "sc_ob_new_n": "{n} novos",
+        "sc_ob_new": "Novo",
+        "sc_ob_all": "Todos",
+        "sc_ob_custom_only": "Só personalizadas",
+        "sc_ob_all_known": "Marcar tudo como conhecido",
+        "sc_ob_known": "Conhecido",
+        "sc_ob_fold": "Ocultar os hosts de {name}",
+        "sc_ob_unfold": "Mostrar os hosts de {name}",
+        "sc_ob_group_sub": "{hosts} hosts · {n} ligações · última {when}",
+        "sc_ob_custom": "Personalizada",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} ligações",
+        "sc_ob_first": "primeiro contacto {when}",
+        "sc_ob_learning": "Aprendizagem até {when}: os hosts vistos até lá contam como conhecidos.",
+        "sc_ob_note": "Ligações abertas pelo Home Assistant Core, atribuídas à integração que as pede; guardadas 7 dias (os add-ons e o Supervisor não são vistos). Custo do acompanhamento até agora: {ms} ms para {n} ligações.",
+        "sc_ob_summary": "{integrations} integrações · {hosts} hosts",
+        "sc_ob_off": "Não acompanhadas. Ative em Definições → Segurança; desativado, nada é intercetado e nada é gasto.",
+        "sc_ob_none": "Ainda nenhuma ligação vista.",
+        "sc_n_outbound_new": "{n} novos hosts de saída"
       }
     },
     "battery_type": {

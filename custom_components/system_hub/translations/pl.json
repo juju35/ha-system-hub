@@ -158,14 +158,16 @@
           "notify_services": "Akcje powiadomień",
           "token_unused_days": "Token nieużywany po",
           "ignored_ips": "Ignorowane adresy",
-          "allowed_addons": "Dodatki dozwolone bez ochrony"
+          "allowed_addons": "Dodatki dozwolone bez ochrony",
+          "outbound": "Śledź połączenia wychodzące"
         },
         "data_description": {
           "notify": "Trwałe powiadomienie, najwyżej raz na godzinę na adres; adresy lokalne nigdy nie są powiadamiane.",
           "notify_services": "Wysyłane też do tych akcji powiadomień.",
           "token_unused_days": "Token długoterminowy nieużywany od tylu dni jest oznaczany.",
           "ignored_ips": "Ich odrzucone logowania są oznaczane jako ignorowane i nigdy nie są powiadamiane.",
-          "allowed_addons": "Dodatki, które mogą działać z wyłączonym trybem chronionym (np. terminal SSH): nadal na liście, ale nie są już problemem."
+          "allowed_addons": "Dodatki, które mogą działać z wyłączonym trybem chronionym (np. terminal SSH): nadal na liście, ale nie są już problemem.",
+          "outbound": "Hosty, z którymi łączy się Home Assistant Core, według integracji; nowy jest zgłaszany. Wyłączone: nic nie jest przechwytywane, brak kosztów."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Cofnij",
         "mk_backing_up": "Tworzenie kopii zapasowej Home Assistant…",
         "mk_installing": "Instalowanie {n} / {total}: {name}",
-        "mk_queued": "Oczekuje"
+        "mk_queued": "Oczekuje",
+        "sc_outbound": "Połączenia wychodzące",
+        "sc_ob_hosts": "Kontaktowane hosty · 7 dni",
+        "sc_ob_new_n": "nowe: {n}",
+        "sc_ob_new": "Nowy",
+        "sc_ob_all": "Wszystkie",
+        "sc_ob_custom_only": "Tylko niestandardowe",
+        "sc_ob_all_known": "Oznacz wszystkie jako znane",
+        "sc_ob_known": "Znany",
+        "sc_ob_fold": "Ukryj hosty {name}",
+        "sc_ob_unfold": "Pokaż hosty {name}",
+        "sc_ob_group_sub": "hosty: {hosts} · połączenia: {n} · ostatnie {when}",
+        "sc_ob_custom": "Niestandardowa",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "połączenia: {n}",
+        "sc_ob_first": "pierwszy kontakt {when}",
+        "sc_ob_learning": "Nauka do {when}: hosty widziane do tego czasu są uznawane za znane.",
+        "sc_ob_note": "Połączenia otwierane przez Home Assistant Core, przypisane do integracji, która o nie prosi; przechowywane 7 dni (dodatki i Supervisor nie są widoczne). Dotychczasowy koszt śledzenia: {ms} ms na {n} połączeń.",
+        "sc_ob_summary": "integracje: {integrations} · hosty: {hosts}",
+        "sc_ob_off": "Nie są śledzone. Włącz w Ustawienia → Bezpieczeństwo; wyłączone niczego nie przechwytuje i niczego nie zużywa.",
+        "sc_ob_none": "Nie widziano jeszcze żadnego połączenia.",
+        "sc_n_outbound_new": "nowe hosty wychodzące: {n}"
       }
     },
     "battery_type": {

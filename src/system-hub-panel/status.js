@@ -100,6 +100,7 @@ export var SH_STATUS_METHODS = {
           sc.noMfa.length ? n('sc_n_no_mfa', sc.noMfa.length) : '',
           sc.clear.length ? n('sc_n_in_clear', sc.clear.length) : '',
           sc.unused.length ? n('sc_n_unused', sc.unused.length) : '',
+          sc.obNew ? n('sc_n_outbound_new', sc.obNew) : '',
           sc.http ? this._t('sc_https_no') : '',
         ]),
       ];

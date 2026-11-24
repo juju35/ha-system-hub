@@ -158,14 +158,16 @@
           "notify_services": "Aviseringsåtgärder",
           "token_unused_days": "Token oanvänd efter",
           "ignored_ips": "Ignorerade adresser",
-          "allowed_addons": "Tillägg tillåtna utan skydd"
+          "allowed_addons": "Tillägg tillåtna utan skydd",
+          "outbound": "Spåra utgående anslutningar"
         },
         "data_description": {
           "notify": "En beständig avisering, högst en gång i timmen per adress; lokala adresser aviseras aldrig.",
           "notify_services": "Skickas även till dessa aviseringsåtgärder.",
           "token_unused_days": "En långlivad token som inte använts på så många dagar markeras.",
           "ignored_ips": "Deras nekade inloggningar markeras som ignorerade och aviseras aldrig.",
-          "allowed_addons": "Tillägg som får köras utan skyddat läge (till exempel en SSH-terminal): listas fortfarande, men är inte längre ett problem."
+          "allowed_addons": "Tillägg som får köras utan skyddat läge (till exempel en SSH-terminal): listas fortfarande, men är inte längre ett problem.",
+          "outbound": "Värdarna som Home Assistant Core kontaktar, per integration; en ny flaggas. Av: ingenting fångas upp, ingen kostnad."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Återkalla",
         "mk_backing_up": "Säkerhetskopierar Home Assistant…",
         "mk_installing": "Installerar {n} / {total}: {name}",
-        "mk_queued": "Väntar"
+        "mk_queued": "Väntar",
+        "sc_outbound": "Utgående anslutningar",
+        "sc_ob_hosts": "Kontaktade värdar · 7 dagar",
+        "sc_ob_new_n": "{n} nya",
+        "sc_ob_new": "Ny",
+        "sc_ob_all": "Alla",
+        "sc_ob_custom_only": "Endast anpassade",
+        "sc_ob_all_known": "Markera alla som kända",
+        "sc_ob_known": "Känd",
+        "sc_ob_fold": "Dölj värdarna för {name}",
+        "sc_ob_unfold": "Visa värdarna för {name}",
+        "sc_ob_group_sub": "{hosts} värdar · {n} anslutningar · senast {when}",
+        "sc_ob_custom": "Anpassad",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} anslutningar",
+        "sc_ob_first": "första kontakt {when}",
+        "sc_ob_learning": "Inlärning till {when}: värdar som ses fram till dess räknas som kända.",
+        "sc_ob_note": "Anslutningar som öppnas av Home Assistant Core, kopplade till integrationen som begär dem; sparas i 7 dagar (tillägg och Supervisor syns inte). Kostnad för spårningen hittills: {ms} ms för {n} anslutningar.",
+        "sc_ob_summary": "{integrations} integrationer · {hosts} värdar",
+        "sc_ob_off": "Spåras inte. Aktivera under Inställningar → Säkerhet; avstängt fångas ingenting upp och ingenting förbrukas.",
+        "sc_ob_none": "Ingen anslutning sedd ännu.",
+        "sc_n_outbound_new": "{n} nya utgående värdar"
       }
     },
     "battery_type": {

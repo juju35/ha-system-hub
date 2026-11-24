@@ -158,14 +158,16 @@
           "notify_services": "Benachrichtigungsaktionen",
           "token_unused_days": "Token ungenutzt nach",
           "ignored_ips": "Ignorierte Adressen",
-          "allowed_addons": "Ungeschützt erlaubte Add-ons"
+          "allowed_addons": "Ungeschützt erlaubte Add-ons",
+          "outbound": "Ausgehende Verbindungen erfassen"
         },
         "data_description": {
           "notify": "Eine dauerhafte Benachrichtigung, höchstens einmal pro Stunde je Adresse; lokale Adressen werden nie gemeldet.",
           "notify_services": "Auch an diese Benachrichtigungsaktionen gesendet.",
           "token_unused_days": "Ein langlebiger Token, der so viele Tage nicht genutzt wurde, wird markiert.",
           "ignored_ips": "Ihre abgelehnten Anmeldungen werden als ignoriert markiert und nie gemeldet.",
-          "allowed_addons": "Add-ons, die ohne Schutzmodus laufen dürfen (etwa ein SSH-Terminal): weiter aufgelistet, aber kein Problem mehr."
+          "allowed_addons": "Add-ons, die ohne Schutzmodus laufen dürfen (etwa ein SSH-Terminal): weiter aufgelistet, aber kein Problem mehr.",
+          "outbound": "Die Hosts, die Home Assistant Core kontaktiert, nach Integration; ein neuer wird gemeldet. Aus: nichts wird eingehängt, keine Kosten."
         }
       },
       "logs": {
@@ -1896,7 +1898,28 @@
         "sc_disallow": "Zurücknehmen",
         "mk_backing_up": "Home Assistant wird gesichert…",
         "mk_installing": "Installation {n} / {total}: {name}",
-        "mk_queued": "Wartet"
+        "mk_queued": "Wartet",
+        "sc_outbound": "Ausgehende Verbindungen",
+        "sc_ob_hosts": "Kontaktierte Hosts · 7 Tage",
+        "sc_ob_new_n": "{n} neu",
+        "sc_ob_new": "Neu",
+        "sc_ob_all": "Alle",
+        "sc_ob_custom_only": "Nur benutzerdefinierte",
+        "sc_ob_all_known": "Alle als bekannt markieren",
+        "sc_ob_known": "Bekannt",
+        "sc_ob_fold": "Hosts von {name} ausblenden",
+        "sc_ob_unfold": "Hosts von {name} anzeigen",
+        "sc_ob_group_sub": "{hosts} Hosts · {n} Verbindungen · zuletzt {when}",
+        "sc_ob_custom": "Benutzerdefiniert",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} Verbindungen",
+        "sc_ob_first": "erster Kontakt {when}",
+        "sc_ob_learning": "Lernphase bis {when}: bis dahin gesehene Hosts gelten als bekannt.",
+        "sc_ob_note": "Von Home Assistant Core geöffnete Verbindungen, der anfragenden Integration zugeordnet; 7 Tage aufbewahrt (Add-ons und Supervisor werden nicht erfasst). Bisherige Kosten der Erfassung: {ms} ms für {n} Verbindungen.",
+        "sc_ob_summary": "{integrations} Integrationen · {hosts} Hosts",
+        "sc_ob_off": "Nicht erfasst. In Einstellungen → Sicherheit aktivieren; ausgeschaltet wird nichts eingehängt und nichts verbraucht.",
+        "sc_ob_none": "Noch keine Verbindung erfasst.",
+        "sc_n_outbound_new": "{n} neue ausgehende Hosts"
       }
     },
     "battery_type": {
