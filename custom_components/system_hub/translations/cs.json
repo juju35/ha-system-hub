@@ -158,14 +158,16 @@
           "notify_services": "Akce oznámení",
           "token_unused_days": "Token nepoužívaný po",
           "ignored_ips": "Ignorované adresy",
-          "allowed_addons": "Doplňky povolené bez ochrany"
+          "allowed_addons": "Doplňky povolené bez ochrany",
+          "outbound": "Sledovat odchozí připojení"
         },
         "data_description": {
           "notify": "Trvalé oznámení, nejvýše jednou za hodinu na adresu; místní adresy se nikdy neoznamují.",
           "notify_services": "Posílá se i těmto akcím oznámení.",
           "token_unused_days": "Dlouhodobý token nepoužitý tolik dní se označí.",
           "ignored_ips": "Jejich odmítnutá přihlášení se označí jako ignorovaná a nikdy se neoznamují.",
-          "allowed_addons": "Doplňky, které mohou běžet s vypnutým chráněným režimem (například terminál SSH): stále v seznamu, už nejsou problém."
+          "allowed_addons": "Doplňky, které mohou běžet s vypnutým chráněným režimem (například terminál SSH): stále v seznamu, už nejsou problém.",
+          "outbound": "Hostitelé, které Home Assistant Core kontaktuje, podle integrace; nový je označen. Vypnuto: nic se nezachytává, žádné náklady."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Odvolat",
         "mk_backing_up": "Zálohování Home Assistant…",
         "mk_installing": "Instalace {n} / {total}: {name}",
-        "mk_queued": "Čeká"
+        "mk_queued": "Čeká",
+        "sc_outbound": "Odchozí připojení",
+        "sc_ob_hosts": "Kontaktovaní hostitelé · 7 dní",
+        "sc_ob_new_n": "nové: {n}",
+        "sc_ob_new": "Nový",
+        "sc_ob_all": "Vše",
+        "sc_ob_custom_only": "Jen vlastní",
+        "sc_ob_all_known": "Označit vše jako známé",
+        "sc_ob_known": "Známý",
+        "sc_ob_fold": "Skrýt hostitele {name}",
+        "sc_ob_unfold": "Zobrazit hostitele {name}",
+        "sc_ob_group_sub": "hostitelé: {hosts} · připojení: {n} · poslední {when}",
+        "sc_ob_custom": "Vlastní",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "připojení: {n}",
+        "sc_ob_first": "první kontakt {when}",
+        "sc_ob_learning": "Učení do {when}: hostitelé viděni do té doby se považují za známé.",
+        "sc_ob_note": "Připojení otevřená Home Assistant Core, přiřazená integraci, která o ně žádá; uchovávána 7 dní (doplňky a Supervisor nejsou vidět). Dosavadní náklady sledování: {ms} ms na {n} připojení.",
+        "sc_ob_summary": "integrace: {integrations} · hostitelé: {hosts}",
+        "sc_ob_off": "Nesledováno. Zapněte v Nastavení → Zabezpečení; vypnuto nic nezachytává a nic nespotřebovává.",
+        "sc_ob_none": "Zatím nebylo zaznamenáno žádné připojení.",
+        "sc_n_outbound_new": "noví odchozí hostitelé: {n}",
+        "sc_ob_unattributed": "Nepřiřazené",
+        "sc_ob_partial": "Resolver aiohttp se nepodařilo zachytit: většina HTTP připojení uniká."
       }
     },
     "battery_type": {

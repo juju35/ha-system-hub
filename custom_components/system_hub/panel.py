@@ -130,6 +130,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_security_revoke)
         websocket_api.async_register_command(hass, ws_security_ignore)
         websocket_api.async_register_command(hass, ws_security_allow_addon)
+        websocket_api.async_register_command(hass, ws_security_outbound)
         data["version"] = await hass.async_add_executor_job(_version)
         frontend.add_extra_js_url(hass, f"{STATIC_URL}/{ICONS_MODULE}?v={data['version']}")
         data["panel_registered"] = True
@@ -776,6 +777,33 @@ def ws_security_allow_addon(
     current = security_settings(entry.options.get(MODULE_SECURITY))
     allowed = _ignore(hass, entry, MODULE_SECURITY, current, CONF_ALLOWED_ADDONS, msg["slug"], msg["allow"])
     connection.send_result(msg["id"], {"allowed": allowed})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {
+        vol.Required("type"): "system_hub/security_outbound",
+        vol.Required("action"): vol.In(["known", "unknown", "ignore", "unignore"]),
+        vol.Optional("host"): str,
+        vol.Optional("domain"): str,
+    }
+)
+@websocket_api.async_response
+async def ws_security_outbound(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """An outbound host marked as known (or new again) for one integration, every one, or all; or ignored."""
+    entry = _entry(hass)
+    watcher = getattr(entry.runtime_data, "security", None) if entry is not None else None
+    monitor = getattr(watcher, "outbound", None)
+    if monitor is None:
+        connection.send_error(msg["id"], "not_enabled", "Outbound connections are not tracked")
+        return
+    if msg["action"] in ("ignore", "unignore") and not msg.get("host"):
+        connection.send_error(msg["id"], "invalid_format", "A host is needed")
+        return
+    await monitor.async_mark(msg["action"], msg.get("host"), msg.get("domain"))
+    connection.send_result(msg["id"], {"done": True})
 
 
 def _enabled(entry: ConfigEntry) -> list[str]:

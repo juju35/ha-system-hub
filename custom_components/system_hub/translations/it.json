@@ -158,14 +158,16 @@
           "notify_services": "Azioni di notifica",
           "token_unused_days": "Token inutilizzato dopo",
           "ignored_ips": "Indirizzi ignorati",
-          "allowed_addons": "Componenti consentiti non protetti"
+          "allowed_addons": "Componenti consentiti non protetti",
+          "outbound": "Monitora le connessioni in uscita"
         },
         "data_description": {
           "notify": "Una notifica persistente, al massimo una volta all'ora per indirizzo; gli indirizzi locali non sono mai notificati.",
           "notify_services": "Inviata anche a queste azioni di notifica.",
           "token_unused_days": "Un token di lunga durata non usato da questo numero di giorni viene segnalato.",
           "ignored_ips": "I loro accessi rifiutati sono segnati come ignorati e mai notificati.",
-          "allowed_addons": "Componenti che possono funzionare con la modalità protetta disattivata (un terminale SSH, per esempio): ancora elencati, non sono più un problema."
+          "allowed_addons": "Componenti che possono funzionare con la modalità protetta disattivata (un terminale SSH, per esempio): ancora elencati, non sono più un problema.",
+          "outbound": "Gli host contattati da Home Assistant Core, per integrazione; uno nuovo viene segnalato. Disattivato: nulla viene intercettato, nessun costo."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Revoca",
         "mk_backing_up": "Backup di Home Assistant in corso…",
         "mk_installing": "Installazione {n} / {total}: {name}",
-        "mk_queued": "In attesa"
+        "mk_queued": "In attesa",
+        "sc_outbound": "Connessioni in uscita",
+        "sc_ob_hosts": "Host contattati · 7 giorni",
+        "sc_ob_new_n": "{n} nuovi",
+        "sc_ob_new": "Nuovo",
+        "sc_ob_all": "Tutti",
+        "sc_ob_custom_only": "Solo personalizzate",
+        "sc_ob_all_known": "Segna tutto come noto",
+        "sc_ob_known": "Noto",
+        "sc_ob_fold": "Nascondi gli host di {name}",
+        "sc_ob_unfold": "Mostra gli host di {name}",
+        "sc_ob_group_sub": "{hosts} host · {n} connessioni · ultima {when}",
+        "sc_ob_custom": "Personalizzata",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} connessioni",
+        "sc_ob_first": "primo contatto {when}",
+        "sc_ob_learning": "Apprendimento fino a {when}: gli host visti fino ad allora contano come noti.",
+        "sc_ob_note": "Connessioni aperte da Home Assistant Core, attribuite all'integrazione che le richiede; conservate 7 giorni (componenti aggiuntivi e Supervisor non sono visti). Costo del monitoraggio finora: {ms} ms per {n} connessioni.",
+        "sc_ob_summary": "{integrations} integrazioni · {hosts} host",
+        "sc_ob_off": "Non monitorate. Attivalo in Impostazioni → Sicurezza; disattivato, nulla viene intercettato e nulla viene consumato.",
+        "sc_ob_none": "Nessuna connessione vista finora.",
+        "sc_n_outbound_new": "{n} nuovi host in uscita",
+        "sc_ob_unattributed": "Non attribuite",
+        "sc_ob_partial": "Non è stato possibile intercettare il resolver di aiohttp: la maggior parte delle connessioni HTTP sfugge."
       }
     },
     "battery_type": {

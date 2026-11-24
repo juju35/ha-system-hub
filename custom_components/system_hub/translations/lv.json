@@ -158,14 +158,16 @@
           "notify_services": "Paziņojumu darbības",
           "token_unused_days": "Marķieris neizmantots pēc",
           "ignored_ips": "Ignorētās adreses",
-          "allowed_addons": "Bez aizsardzības atļautie papildinājumi"
+          "allowed_addons": "Bez aizsardzības atļautie papildinājumi",
+          "outbound": "Izsekot izejošos savienojumus"
         },
         "data_description": {
           "notify": "Pastāvīgs paziņojums, ne biežāk kā reizi stundā katrai adresei; par lokālām adresēm paziņojumu nav.",
           "notify_services": "Sūtīts arī šīm paziņojumu darbībām.",
           "token_unused_days": "Ilgtermiņa marķieris, kas nav izmantots tik dienas, tiek atzīmēts.",
           "ignored_ips": "To noraidītās pieteikšanās tiek atzīmētas kā ignorētas, bez paziņojumiem.",
-          "allowed_addons": "Papildinājumi, kas drīkst darboties ar izslēgtu aizsargāto režīmu (piemēram, SSH terminālis): joprojām sarakstā, bet vairs nav problēma."
+          "allowed_addons": "Papildinājumi, kas drīkst darboties ar izslēgtu aizsargāto režīmu (piemēram, SSH terminālis): joprojām sarakstā, bet vairs nav problēma.",
+          "outbound": "Resursdatori, ar kuriem sazinās Home Assistant Core, pa integrācijām; jauns tiek atzīmēts. Izslēgts: nekas netiek pārtverts, bez izmaksām."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Atsaukt",
         "mk_backing_up": "Veido Home Assistant dublējumu…",
         "mk_installing": "Instalē {n} / {total}: {name}",
-        "mk_queued": "Gaida"
+        "mk_queued": "Gaida",
+        "sc_outbound": "Izejošie savienojumi",
+        "sc_ob_hosts": "Sazinātie resursdatori · 7 dienas",
+        "sc_ob_new_n": "jauni: {n}",
+        "sc_ob_new": "Jauns",
+        "sc_ob_all": "Visi",
+        "sc_ob_custom_only": "Tikai pielāgotās",
+        "sc_ob_all_known": "Atzīmēt visus kā zināmus",
+        "sc_ob_known": "Zināms",
+        "sc_ob_fold": "Paslēpt {name} resursdatorus",
+        "sc_ob_unfold": "Rādīt {name} resursdatorus",
+        "sc_ob_group_sub": "resursdatori: {hosts} · savienojumi: {n} · pēdējais {when}",
+        "sc_ob_custom": "Pielāgota",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "savienojumi: {n}",
+        "sc_ob_first": "pirmais kontakts {when}",
+        "sc_ob_learning": "Mācīšanās līdz {when}: līdz tam redzētie resursdatori tiek uzskatīti par zināmiem.",
+        "sc_ob_note": "Home Assistant Core atvērtie savienojumi, piesaistīti integrācijai, kas tos pieprasa; glabāti 7 dienas (papildinājumi un Supervisor nav redzami). Izsekošanas izmaksas līdz šim: {ms} ms par {n} savienojumiem.",
+        "sc_ob_summary": "integrācijas: {integrations} · resursdatori: {hosts}",
+        "sc_ob_off": "Netiek izsekoti. Ieslēdziet sadaļā Iestatījumi → Drošība; izslēgts nekas netiek pārtverts un nekas netiek patērēts.",
+        "sc_ob_none": "Vēl nav redzēts neviens savienojums.",
+        "sc_n_outbound_new": "jauni izejošie resursdatori: {n}",
+        "sc_ob_unattributed": "Nepiesaistītie",
+        "sc_ob_partial": "aiohttp atrisinātāju neizdevās pārtvert: lielākā daļa HTTP savienojumu netiek redzēti."
       }
     },
     "battery_type": {

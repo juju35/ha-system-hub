@@ -158,14 +158,16 @@
           "notify_services": "Dejanja obveščanja",
           "token_unused_days": "Žeton neuporabljen po",
           "ignored_ips": "Prezrti naslovi",
-          "allowed_addons": "Dodatki, dovoljeni brez zaščite"
+          "allowed_addons": "Dodatki, dovoljeni brez zaščite",
+          "outbound": "Sledi odhodnim povezavam"
         },
         "data_description": {
           "notify": "Trajno obvestilo, največ enkrat na uro na naslov; o lokalnih naslovih ni obvestil.",
           "notify_services": "Pošlje se tudi tem dejanjem obveščanja.",
           "token_unused_days": "Dolgotrajni žeton, ki ni bil uporabljen toliko dni, je označen.",
           "ignored_ips": "Njihove zavrnjene prijave so označene kot prezrte in brez obvestil.",
-          "allowed_addons": "Dodatki, ki lahko tečejo z izklopljenim zaščitenim načinom (na primer terminal SSH): še vedno na seznamu, a niso več težava."
+          "allowed_addons": "Dodatki, ki lahko tečejo z izklopljenim zaščitenim načinom (na primer terminal SSH): še vedno na seznamu, a niso več težava.",
+          "outbound": "Gostitelji, s katerimi se povezuje Home Assistant Core, po integracijah; nov je označen. Izklopljeno: nič se ne prestreže, brez stroškov."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Prekliči",
         "mk_backing_up": "Varnostno kopiranje Home Assistant…",
         "mk_installing": "Nameščanje {n} / {total}: {name}",
-        "mk_queued": "Čaka"
+        "mk_queued": "Čaka",
+        "sc_outbound": "Odhodne povezave",
+        "sc_ob_hosts": "Kontaktirani gostitelji · 7 dni",
+        "sc_ob_new_n": "novi: {n}",
+        "sc_ob_new": "Nov",
+        "sc_ob_all": "Vse",
+        "sc_ob_custom_only": "Samo prilagojene",
+        "sc_ob_all_known": "Označi vse kot znane",
+        "sc_ob_known": "Znan",
+        "sc_ob_fold": "Skrij gostitelje za {name}",
+        "sc_ob_unfold": "Prikaži gostitelje za {name}",
+        "sc_ob_group_sub": "gostitelji: {hosts} · povezave: {n} · zadnja {when}",
+        "sc_ob_custom": "Prilagojena",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "povezave: {n}",
+        "sc_ob_first": "prvi stik {when}",
+        "sc_ob_learning": "Učenje do {when}: gostitelji, videni do takrat, štejejo kot znani.",
+        "sc_ob_note": "Povezave, ki jih odpre Home Assistant Core, pripisane integraciji, ki jih zahteva; hranjene 7 dni (dodatki in Supervisor niso vidni). Dosedanji strošek sledenja: {ms} ms za {n} povezav.",
+        "sc_ob_summary": "integracije: {integrations} · gostitelji: {hosts}",
+        "sc_ob_off": "Ni sledeno. Vklopite v Nastavitve → Varnost; izklopljeno nič ne prestreže in nič ne porabi.",
+        "sc_ob_none": "Še ni videne povezave.",
+        "sc_n_outbound_new": "novi odhodni gostitelji: {n}",
+        "sc_ob_unattributed": "Nepripisane",
+        "sc_ob_partial": "Razreševalnika aiohttp ni bilo mogoče prestreči: večina povezav HTTP uide."
       }
     },
     "battery_type": {

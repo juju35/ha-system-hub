@@ -639,6 +639,135 @@ def mock_security():
         ],
         "scanned_at": now - 900,
         "token_unused_days": 90,
+        "outbound": {
+            "since": now - 30 * 86400,
+            "learning_until": None,
+            "connections": 8412,
+            "cost_us": 1840,
+            "hosts": 9,
+            "integrations": [
+                {
+                    "domain": "iptv",
+                    "name": "IPTV",
+                    "custom": True,
+                    "new": 1,
+                    "count": 2862,
+                    "last": now - 40,
+                    "hosts": [
+                        {
+                            "host": "collector.example.net",
+                            "ports": [443],
+                            "count": 12,
+                            "first": now - 7200,
+                            "last": now - 600,
+                            "local": False,
+                            "new": True,
+                            "ignored": False,
+                        },
+                        {
+                            "host": "line.example.tld",
+                            "ports": [8080],
+                            "count": 2310,
+                            "first": now - 1728000,
+                            "last": now - 40,
+                            "local": False,
+                            "new": False,
+                            "ignored": False,
+                        },
+                        {
+                            "host": "image.tmdb.org",
+                            "ports": [443],
+                            "count": 540,
+                            "first": now - 1728000,
+                            "last": now - 240,
+                            "local": False,
+                            "new": False,
+                            "ignored": False,
+                        },
+                    ],
+                },
+                {
+                    "domain": "github_card",
+                    "name": "GitHub",
+                    "custom": True,
+                    "new": 0,
+                    "count": 1300,
+                    "last": now - 180,
+                    "hosts": [
+                        {
+                            "host": "api.github.com",
+                            "ports": [443],
+                            "count": 1300,
+                            "first": now - 1728000,
+                            "last": now - 180,
+                            "local": False,
+                            "new": False,
+                            "ignored": False,
+                        }
+                    ],
+                },
+                {
+                    "domain": "met",
+                    "name": "Meteorologisk institutt (Met.no)",
+                    "custom": False,
+                    "new": 0,
+                    "count": 672,
+                    "last": now - 360,
+                    "hosts": [
+                        {
+                            "host": "api.met.no",
+                            "ports": [443],
+                            "count": 672,
+                            "first": now - 1728000,
+                            "last": now - 360,
+                            "local": False,
+                            "new": False,
+                            "ignored": False,
+                        }
+                    ],
+                },
+                {
+                    "domain": "mqtt",
+                    "name": "MQTT",
+                    "custom": False,
+                    "new": 0,
+                    "count": 3,
+                    "last": now - 5,
+                    "hosts": [
+                        {
+                            "host": "core-mosquitto",
+                            "ports": [1883],
+                            "count": 3,
+                            "first": now - 1728000,
+                            "last": now - 5,
+                            "local": True,
+                            "new": False,
+                            "ignored": False,
+                        }
+                    ],
+                },
+                {
+                    "domain": "homeassistant",
+                    "name": "Home Assistant",
+                    "custom": False,
+                    "new": 0,
+                    "count": 84,
+                    "last": now - 3600,
+                    "hosts": [
+                        {
+                            "host": "version.home-assistant.io",
+                            "ports": [443],
+                            "count": 84,
+                            "first": now - 1728000,
+                            "last": now - 3600,
+                            "local": False,
+                            "new": False,
+                            "ignored": False,
+                        }
+                    ],
+                },
+            ],
+        },
     }
 
 

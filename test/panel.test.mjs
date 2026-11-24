@@ -1946,6 +1946,73 @@ test('security tab: refused logins, accounts, tokens (Revoke), exposure, add-ons
   assert.deepEqual([...p._stArea('security')].slice(0, 2), ['warn', '3 points to check']);
 });
 
+test('security tab: outbound connections by integration (new ones unfolded, Known, Ignore, filters), or where to turn it on', async () => {
+  const now = Date.now() / 1000;
+  const host = (name, extra = {}) => ({ host: name, ports: [443], count: 12, first: now - 7200, last: now - 60, local: false, new: false, ignored: false, ...extra });
+  const outbound = {
+    since: now - 10 * 86400,
+    learning_until: null,
+    connections: 1300,
+    cost_us: 412,
+    hosts: 3,
+    integrations: [
+      { domain: 'iptv', name: 'IPTV', custom: true, new: 1, count: 24, last: now - 60, hosts: [host('collector.example.net', { new: true }), host('line.example.tld', { ports: [8080] })] },
+      { domain: 'met', name: 'Meteorologisk institutt', custom: false, new: 0, count: 12, last: now - 600, hosts: [host('api.met.no'), host('old.example.org', { ignored: true })] },
+      { domain: '_unattributed', name: '_unattributed', custom: false, new: 0, count: 2, last: now - 900, hosts: [host('lib.example.org')] },
+    ],
+    aiohttp: false,
+  };
+  const data = { refused: [], bans: [], exposure: {}, users: [], tokens: [], addons: [], config: [], scanned_at: now, token_unused_days: 90, outbound };
+  const state = { loaded: true, modules: ['security'], tabs: ['security'], security: { notify: true, ignored_ips: [], outbound: true } };
+  const p = panel(state, 'security');
+  const calls = [];
+  p._hass.callWS = async (msg) => {
+    if (msg.type === 'system_hub/security_outbound') calls.push(`${msg.action} ${msg.host || '-'} ${msg.domain || '-'}`);
+    return msg.type === 'system_hub/security' ? data : state;
+  };
+  p._render = () => {};
+  await p._scLoad(true);
+  let html = p._content();
+  assert.match(html, /tile warn[\s\S]*?<b>3<\/b> · 1 new[\s\S]*?Hosts contacted · 7 days/);
+  assert.match(html, /Outbound connections[\s\S]*?3 integrations · 3 hosts/);
+  // The integration with a new host unfolded, the other folded
+  assert.match(html, /IPTV[\s\S]*?1 new[\s\S]*?Custom[\s\S]*?collector\.example\.net[\s\S]*?first contact[\s\S]*?data-mark="known"[^>]*data-host="collector\.example\.net"[^>]*data-domain="iptv"/);
+  assert.match(html, /line\.example\.tld[\s\S]*?8080 · 12 connections/);
+  assert.doesNotMatch(html, /api\.met\.no/);
+  assert.match(html, /Tracking cost so far: 0\.4 ms for 1,300 connections/);
+  assert.match(html, /aiohttp(&#39;|')s resolver could not be hooked/);
+  assert.match(html, /mdi:help-circle-outline[\s\S]*?Unattributed/);
+  assert.doesNotMatch(html, /Unattributed[^<]*<\/div><div class="s">[^<]*<\/div><\/div><span class="pill[^"]*">(Core|Custom)/);
+  assert.equal(p._scSummary().obNew, 1);
+  assert.deepEqual([...p._stArea('security')].slice(0, 2), ['warn', '1 points to check']);
+  const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
+  // A fold clicked before the card set its state: no error
+  p._scOb = null;
+  click('sc_ob_open', { domain: 'met' });
+  html = p._content();
+  assert.match(html, /api\.met\.no/);
+  assert.doesNotMatch(html, /old\.example\.org/);
+  click('sc_ob_filter', { filter: 'ignored' });
+  html = p._content();
+  assert.match(html, /old\.example\.org[\s\S]*?data-mark="unignore"/);
+  assert.doesNotMatch(html, /collector\.example\.net/);
+  click('sc_ob_filter', { filter: 'custom' });
+  assert.doesNotMatch(p._content(), /Meteorologisk/);
+  await click('sc_ob_mark', { mark: 'known', host: 'collector.example.net', domain: 'iptv' });
+  await click('sc_ob_mark', { mark: 'ignore', host: 'line.example.tld' });
+  await click('sc_ob_mark', { mark: 'known' });
+  assert.deepEqual(calls, ['known collector.example.net iptv', 'ignore line.example.tld -', 'known - -']);
+  // Another tab and back: the filter and the folds as they were at first
+  p._resetTabState();
+  assert.equal(p._scOb, null);
+  // Not tracked: where to turn it on, no tile
+  data.outbound = null;
+  await p._scLoad(true);
+  html = p._content();
+  assert.match(html, /Not tracked\. Turn it on in Settings → Security/);
+  assert.doesNotMatch(html, /Hosts contacted/);
+});
+
 test('settings form (#63): no null for an entity not chosen; the errors of a refused form by field', async () => {
   // The Sentinel form as Home Assistant sends it: the pause entity suggested as null
   const schema = [

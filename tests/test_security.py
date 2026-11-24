@@ -42,6 +42,7 @@ def test_internet_addresses() -> None:
         "token_unused_days": 90,
         "ignored_ips": [],
         "allowed_addons": [],
+        "outbound": False,
     }
 
 
@@ -181,6 +182,7 @@ async def test_settings_step(hass: HomeAssistant) -> None:
         "token_unused_days": 30,
         "ignored_ips": ["1.2.3.4"],
         "allowed_addons": ["a0d7b954_ssh"],
+        "outbound": False,
     }
 
 

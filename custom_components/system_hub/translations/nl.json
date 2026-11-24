@@ -158,14 +158,16 @@
           "notify_services": "Meldingsacties",
           "token_unused_days": "Token ongebruikt na",
           "ignored_ips": "Genegeerde adressen",
-          "allowed_addons": "Add-ons toegestaan zonder bescherming"
+          "allowed_addons": "Add-ons toegestaan zonder bescherming",
+          "outbound": "Uitgaande verbindingen volgen"
         },
         "data_description": {
           "notify": "Een blijvende melding, hoogstens eens per uur per adres; lokale adressen worden nooit gemeld.",
           "notify_services": "Ook naar deze meldingsacties gestuurd.",
           "token_unused_days": "Een langdurig token dat zoveel dagen niet gebruikt is, wordt gemarkeerd.",
           "ignored_ips": "Hun geweigerde aanmeldingen worden als genegeerd gemarkeerd en nooit gemeld.",
-          "allowed_addons": "Add-ons die zonder beschermingsmodus mogen draaien (een SSH-terminal bijvoorbeeld): nog steeds getoond, geen probleem meer."
+          "allowed_addons": "Add-ons die zonder beschermingsmodus mogen draaien (een SSH-terminal bijvoorbeeld): nog steeds getoond, geen probleem meer.",
+          "outbound": "De hosts die Home Assistant Core contacteert, per integratie; een nieuwe wordt gemeld. Uit: niets wordt onderschept, geen kosten."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Intrekken",
         "mk_backing_up": "Back-up van Home Assistant maken…",
         "mk_installing": "Installeren {n} / {total}: {name}",
-        "mk_queued": "Wachten"
+        "mk_queued": "Wachten",
+        "sc_outbound": "Uitgaande verbindingen",
+        "sc_ob_hosts": "Gecontacteerde hosts · 7 dagen",
+        "sc_ob_new_n": "{n} nieuw",
+        "sc_ob_new": "Nieuw",
+        "sc_ob_all": "Alle",
+        "sc_ob_custom_only": "Alleen aangepaste",
+        "sc_ob_all_known": "Alles als bekend markeren",
+        "sc_ob_known": "Bekend",
+        "sc_ob_fold": "Hosts van {name} verbergen",
+        "sc_ob_unfold": "Hosts van {name} tonen",
+        "sc_ob_group_sub": "{hosts} hosts · {n} verbindingen · laatst {when}",
+        "sc_ob_custom": "Aangepast",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} verbindingen",
+        "sc_ob_first": "eerste contact {when}",
+        "sc_ob_learning": "Leerperiode tot {when}: hosts die tot dan gezien worden, gelden als bekend.",
+        "sc_ob_note": "Verbindingen geopend door Home Assistant Core, toegewezen aan de integratie die erom vraagt; 7 dagen bewaard (add-ons en de Supervisor worden niet gezien). Kosten van het volgen tot nu: {ms} ms voor {n} verbindingen.",
+        "sc_ob_summary": "{integrations} integraties · {hosts} hosts",
+        "sc_ob_off": "Niet gevolgd. Zet het aan in Instellingen → Beveiliging; uit wordt niets onderschept en niets verbruikt.",
+        "sc_ob_none": "Nog geen verbinding gezien.",
+        "sc_n_outbound_new": "{n} nieuwe uitgaande hosts",
+        "sc_ob_unattributed": "Niet toegewezen",
+        "sc_ob_partial": "De resolver van aiohttp kon niet worden onderschept: de meeste HTTP-verbindingen worden gemist."
       }
     },
     "battery_type": {

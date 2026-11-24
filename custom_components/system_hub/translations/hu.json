@@ -158,14 +158,16 @@
           "notify_services": "Értesítési műveletek",
           "token_unused_days": "Token használatlan ennyi után",
           "ignored_ips": "Mellőzött címek",
-          "allowed_addons": "Védelem nélkül engedélyezett bővítmények"
+          "allowed_addons": "Védelem nélkül engedélyezett bővítmények",
+          "outbound": "Kimenő kapcsolatok követése"
         },
         "data_description": {
           "notify": "Állandó értesítés, címenként legfeljebb óránként egyszer; helyi címekről nincs értesítés.",
           "notify_services": "Ezekre az értesítési műveletekre is elküldve.",
           "token_unused_days": "Az ennyi napja nem használt hosszú élettartamú token meg van jelölve.",
           "ignored_ips": "Elutasított bejelentkezéseik mellőzöttként jelennek meg, értesítés nélkül.",
-          "allowed_addons": "Bővítmények, amelyek kikapcsolt védett móddal futhatnak (például egy SSH-terminál): továbbra is listázva, de már nem probléma."
+          "allowed_addons": "Bővítmények, amelyek kikapcsolt védett móddal futhatnak (például egy SSH-terminál): továbbra is listázva, de már nem probléma.",
+          "outbound": "A gazdagépek, amelyekhez a Home Assistant Core kapcsolódik, integrációnként; az új jelölve van. Ki: semmi sincs elfogva, nincs költség."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Visszavonás",
         "mk_backing_up": "Home Assistant biztonsági mentése…",
         "mk_installing": "Telepítés {n} / {total}: {name}",
-        "mk_queued": "Várakozik"
+        "mk_queued": "Várakozik",
+        "sc_outbound": "Kimenő kapcsolatok",
+        "sc_ob_hosts": "Elért gazdagépek · 7 nap",
+        "sc_ob_new_n": "{n} új",
+        "sc_ob_new": "Új",
+        "sc_ob_all": "Mind",
+        "sc_ob_custom_only": "Csak egyéni",
+        "sc_ob_all_known": "Összes megjelölése ismertként",
+        "sc_ob_known": "Ismert",
+        "sc_ob_fold": "{name} gazdagépeinek elrejtése",
+        "sc_ob_unfold": "{name} gazdagépeinek megjelenítése",
+        "sc_ob_group_sub": "{hosts} gazdagép · {n} kapcsolat · utolsó {when}",
+        "sc_ob_custom": "Egyéni",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} kapcsolat",
+        "sc_ob_first": "első kapcsolat {when}",
+        "sc_ob_learning": "Tanulás eddig: {when}; az addig látott gazdagépek ismertnek számítanak.",
+        "sc_ob_note": "A Home Assistant Core által nyitott kapcsolatok, a kérő integrációhoz rendelve; 7 napig megőrizve (a kiegészítők és a Supervisor nem láthatók). A követés eddigi költsége: {ms} ms {n} kapcsolatra.",
+        "sc_ob_summary": "{integrations} integráció · {hosts} gazdagép",
+        "sc_ob_off": "Nincs követve. Kapcsold be: Beállítások → Biztonság; kikapcsolva semmi sincs elfogva, és semmi sem fogy.",
+        "sc_ob_none": "Még nem látható kapcsolat.",
+        "sc_n_outbound_new": "{n} új kimenő gazdagép",
+        "sc_ob_unattributed": "Hozzá nem rendelt",
+        "sc_ob_partial": "Az aiohttp feloldóját nem sikerült elfogni: a legtöbb HTTP-kapcsolat kimarad."
       }
     },
     "battery_type": {

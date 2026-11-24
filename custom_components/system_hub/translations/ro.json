@@ -158,14 +158,16 @@
           "notify_services": "Acțiuni de notificare",
           "token_unused_days": "Token nefolosit după",
           "ignored_ips": "Adrese ignorate",
-          "allowed_addons": "Suplimente permise neprotejate"
+          "allowed_addons": "Suplimente permise neprotejate",
+          "outbound": "Urmărește conexiunile de ieșire"
         },
         "data_description": {
           "notify": "O notificare persistentă, cel mult o dată pe oră pe adresă; adresele locale nu sunt notificate niciodată.",
           "notify_services": "Trimisă și acestor acțiuni de notificare.",
           "token_unused_days": "Un token de lungă durată nefolosit de atâtea zile este semnalat.",
           "ignored_ips": "Autentificările lor refuzate sunt marcate ignorate și nu sunt notificate niciodată.",
-          "allowed_addons": "Suplimente care pot rula cu modul protejat dezactivat (un terminal SSH, de exemplu): tot listate, nu mai sunt o problemă."
+          "allowed_addons": "Suplimente care pot rula cu modul protejat dezactivat (un terminal SSH, de exemplu): tot listate, nu mai sunt o problemă.",
+          "outbound": "Gazdele pe care le contactează Home Assistant Core, pe integrare; una nouă este semnalată. Dezactivat: nimic nu este interceptat, niciun cost."
         }
       },
       "logs": {
@@ -1896,7 +1898,30 @@
         "sc_disallow": "Retrage",
         "mk_backing_up": "Se face backup pentru Home Assistant…",
         "mk_installing": "Se instalează {n} / {total}: {name}",
-        "mk_queued": "În așteptare"
+        "mk_queued": "În așteptare",
+        "sc_outbound": "Conexiuni de ieșire",
+        "sc_ob_hosts": "Gazde contactate · 7 zile",
+        "sc_ob_new_n": "{n} noi",
+        "sc_ob_new": "Nou",
+        "sc_ob_all": "Toate",
+        "sc_ob_custom_only": "Doar personalizate",
+        "sc_ob_all_known": "Marchează toate ca cunoscute",
+        "sc_ob_known": "Cunoscut",
+        "sc_ob_fold": "Ascunde gazdele pentru {name}",
+        "sc_ob_unfold": "Arată gazdele pentru {name}",
+        "sc_ob_group_sub": "{hosts} gazde · {n} conexiuni · ultima {when}",
+        "sc_ob_custom": "Personalizată",
+        "sc_ob_core": "Core",
+        "sc_ob_connections": "{n} conexiuni",
+        "sc_ob_first": "primul contact {when}",
+        "sc_ob_learning": "Învățare până la {when}: gazdele văzute până atunci sunt considerate cunoscute.",
+        "sc_ob_note": "Conexiuni deschise de Home Assistant Core, atribuite integrării care le cere; păstrate 7 zile (suplimentele și Supervisorul nu sunt văzute). Costul urmăririi până acum: {ms} ms pentru {n} conexiuni.",
+        "sc_ob_summary": "{integrations} integrări · {hosts} gazde",
+        "sc_ob_off": "Neurmărite. Activează în Setări → Securitate; dezactivat, nimic nu este interceptat și nimic nu se consumă.",
+        "sc_ob_none": "Nicio conexiune văzută încă.",
+        "sc_n_outbound_new": "{n} gazde de ieșire noi",
+        "sc_ob_unattributed": "Neatribuite",
+        "sc_ob_partial": "Rezolvatorul aiohttp nu a putut fi interceptat: majoritatea conexiunilor HTTP scapă."
       }
     },
     "battery_type": {

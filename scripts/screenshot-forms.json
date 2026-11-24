@@ -247,8 +247,8 @@
           "select": {
             "options": [],
             "multiple": true,
-            "custom_value": false,
             "mode": "dropdown",
+            "custom_value": false,
             "sort": false
           }
         },
@@ -300,6 +300,14 @@
         "required": false,
         "optional": true,
         "default": []
+      },
+      {
+        "selector": {
+          "boolean": {}
+        },
+        "name": "outbound",
+        "required": true,
+        "default": false
       }
     ],
     "errors": {},
