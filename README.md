@@ -272,7 +272,8 @@ The header (90 px, on both cards) draws a home server's dashboard: the server ic
 ```yaml
 type: custom:system-hub-card
 module: status                    # optional: the default
-groups: [system, reliability]   # optional: only these groups (system, reliability, maintenance, devices)
+groups: [system, security]      # optional: only these groups (system, security, reliability, maintenance, devices);
+                                  # a card listing system also shows security (in System until 3.15)
 hide_ok: true                     # optional: hide the areas that are fine
 show_title: false                 # optional: hide the header's title (default: true)
 show_subtitle: false              # optional: hide the header's subtitle (default: true)
