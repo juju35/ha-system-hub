@@ -5,3 +5,6 @@ __pycache__/
 .venv/
 report/
 node_modules/
+# Assembled from src/ by scripts/build-frontend.mjs (not committed)
+custom_components/system_hub/frontend/system-hub-panel.js
+custom_components/system_hub/frontend/cards/*.js

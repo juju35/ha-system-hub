@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.13.1 - 2026-11-24
+
+### Maintenance
+- The frontend source is split into ES modules: the panel in `src/system-hub-panel/` and each Lovelace card in `src/<card>/` (entry `index.js` in each), cut at their sections, with the cards' translations in one file per language (`i18n/<lang>.js`). `scripts/build-frontend.mjs` assembles them back, in their original order, into the same `frontend/system-hub-panel.js` and `frontend/cards/*.js` the integration serves; they are no longer committed. The release zip is unchanged.
+
 ## 3.13.0 - 2026-11-23
 
 ### Features

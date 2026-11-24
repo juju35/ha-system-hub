@@ -19,6 +19,7 @@
 ## Before opening a PR — run the checks locally
 CI mirrors these; running them first avoids round-trips:
 ```sh
+npm install --no-save --no-package-lock acorn@8.19.0 && node scripts/build-frontend.mjs
 pre-commit run -a
 vulture custom_components .vulture_whitelist.py --min-confidence 60
 npx --yes jscpd@5.4.2 .
@@ -41,7 +42,7 @@ carries the new version, updated together in one commit:
 1. `CHANGELOG.md` → add a "## X.Y.Z - YYYY-MM-DD" section at the top (`### Features` | `Fixes` | `Performance` | `Maintenance`).
 2. `custom_components/system_hub/manifest.json` → `"version": "X.Y.Z"`.
 3. `custom_components/system_hub/const.py` → `VERSION: Final = "X.Y.Z"`.
-4. `custom_components/system_hub/frontend/system-hub-panel.js` → `SYSTEM_HUB_PANEL_VERSION = 'X.Y.Z'`.
+4. `src/system-hub-panel/core.js` → `SYSTEM_HUB_PANEL_VERSION = 'X.Y.Z'`.
 - Bump rule: `fix` → patch, `feat` → minor, breaking change → major.
 - The PR/commit title carries the version in parentheses, e.g. `feat: new option (X.Y.Z)`.
 
@@ -59,6 +60,12 @@ carries the new version, updated together in one commit:
 
 ## Supported integrations
 This builds on other Home Assistant integrations, so keep the `## Supported integrations` section (title verbatim) listing the HA integrations it works on top of, with a link to each.
+
+## Source layout
+- The panel and the cards are ES modules in `src/system-hub-panel/` and `src/<card>/` (entry `src/<stem>/index.js`), assembled by `scripts/build-frontend.mjs` (`scripts/bundle.mjs`) into `custom_components/system_hub/frontend/system-hub-panel.js` and `frontend/cards/<card>.js` (a stem ending in `-card`), the classic scripts the integration serves: modules concatenated in the order of the entry file, import lines removed, `export` dropped. The assembled files are **not committed** (gitignored); build them before `pytest`, the node tests and the screenshots (CI and the release do).
+- Modules share one scope, so top-level names stay unique across modules; a new module must be listed in its `index.js`.
+- Translations: one file per language in `src/<card>/i18n/<lang>.js` (`export default { … };`), gathered by the table file next to them and rebuilt into a single object literal at build for `scripts/i18n-split.mjs`.
+- `system-hub-icons.js` (under 40 KB) stays committed as it is.
 
 ## Translations
 - English is the source. Keep every language in sync when a user-facing string changes.

@@ -12,6 +12,7 @@
     "**/.git/**",
     "**/*.min.js",
     "**/frontend/cards/**",
+    "src/*-card/**",
     "**/translations/**",
     "scripts/screenshot-forms.json"
   ],
