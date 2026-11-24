@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.13.2 - 2026-11-24
+
+### Fixes
+- **Security**: the scan for credentials written in clear no longer flags Zigbee2MQTT's `secret.yaml` (its secrets file, without an *s*, next to its `configuration.yaml`): like `secrets.yaml`, it is left out of the scan, and its `!secret.yaml key` references were already recognised.
+
 ## 3.13.1 - 2026-11-24
 
 ### Maintenance
