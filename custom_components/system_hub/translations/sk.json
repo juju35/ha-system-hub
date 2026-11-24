@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "integrácie: {integrations} · hostitelia: {hosts}",
         "sc_ob_off": "Nesledované. Zapnite v Nastavenia → Zabezpečenie; vypnuté nič nezachytáva a nič nespotrebúva.",
         "sc_ob_none": "Zatiaľ nebolo zaznamenané žiadne pripojenie.",
-        "sc_n_outbound_new": "noví odchádzajúci hostitelia: {n}"
+        "sc_n_outbound_new": "noví odchádzajúci hostitelia: {n}",
+        "sc_ob_unattributed": "Nepriradené",
+        "sc_ob_partial": "Resolver aiohttp sa nepodarilo zachytiť: väčšina HTTP pripojení uniká."
       }
     },
     "battery_type": {

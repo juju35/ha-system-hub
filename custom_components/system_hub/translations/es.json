@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integraciones · {hosts} hosts",
         "sc_ob_off": "Sin seguimiento. Actívalo en Ajustes → Seguridad; desactivado, no se intercepta nada ni se consume nada.",
         "sc_ob_none": "Aún no se ha visto ninguna conexión.",
-        "sc_n_outbound_new": "{n} hosts salientes nuevos"
+        "sc_n_outbound_new": "{n} hosts salientes nuevos",
+        "sc_ob_unattributed": "Sin atribuir",
+        "sc_ob_partial": "No se pudo interceptar el resolvedor de aiohttp: la mayoría de las conexiones HTTP no se ven."
       }
     },
     "battery_type": {

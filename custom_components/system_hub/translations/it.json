@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integrazioni · {hosts} host",
         "sc_ob_off": "Non monitorate. Attivalo in Impostazioni → Sicurezza; disattivato, nulla viene intercettato e nulla viene consumato.",
         "sc_ob_none": "Nessuna connessione vista finora.",
-        "sc_n_outbound_new": "{n} nuovi host in uscita"
+        "sc_n_outbound_new": "{n} nuovi host in uscita",
+        "sc_ob_unattributed": "Non attribuite",
+        "sc_ob_partial": "Non è stato possibile intercettare il resolver di aiohttp: la maggior parte delle connessioni HTTP sfugge."
       }
     },
     "battery_type": {

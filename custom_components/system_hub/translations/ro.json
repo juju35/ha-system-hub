@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integrări · {hosts} gazde",
         "sc_ob_off": "Neurmărite. Activează în Setări → Securitate; dezactivat, nimic nu este interceptat și nimic nu se consumă.",
         "sc_ob_none": "Nicio conexiune văzută încă.",
-        "sc_n_outbound_new": "{n} gazde de ieșire noi"
+        "sc_n_outbound_new": "{n} gazde de ieșire noi",
+        "sc_ob_unattributed": "Neatribuite",
+        "sc_ob_partial": "Rezolvatorul aiohttp nu a putut fi interceptat: majoritatea conexiunilor HTTP scapă."
       }
     },
     "battery_type": {

@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integraties · {hosts} hosts",
         "sc_ob_off": "Niet gevolgd. Zet het aan in Instellingen → Beveiliging; uit wordt niets onderschept en niets verbruikt.",
         "sc_ob_none": "Nog geen verbinding gezien.",
-        "sc_n_outbound_new": "{n} nieuwe uitgaande hosts"
+        "sc_n_outbound_new": "{n} nieuwe uitgaande hosts",
+        "sc_ob_unattributed": "Niet toegewezen",
+        "sc_ob_partial": "De resolver van aiohttp kon niet worden onderschept: de meeste HTTP-verbindingen worden gemist."
       }
     },
     "battery_type": {

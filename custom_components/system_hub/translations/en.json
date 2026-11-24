@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integrations · {hosts} hosts",
         "sc_ob_off": "Not tracked. Turn it on in Settings → Security; while off, nothing is hooked and nothing is spent.",
         "sc_ob_none": "No connection seen yet.",
-        "sc_n_outbound_new": "{n} new outbound hosts"
+        "sc_n_outbound_new": "{n} new outbound hosts",
+        "sc_ob_unattributed": "Unattributed",
+        "sc_ob_partial": "aiohttp's resolver could not be hooked: most HTTP connections are missed."
       }
     },
     "battery_type": {

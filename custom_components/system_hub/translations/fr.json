@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} intégrations · {hosts} hosts",
         "sc_ob_off": "Non suivies. À activer dans Réglages → Sécurité ; désactivé, rien n'est intercepté et rien n'est consommé.",
         "sc_ob_none": "Aucune connexion vue pour l'instant.",
-        "sc_n_outbound_new": "{n} hosts sortants nouveaux"
+        "sc_n_outbound_new": "{n} hosts sortants nouveaux",
+        "sc_ob_unattributed": "Non attribuées",
+        "sc_ob_partial": "Le résolveur d'aiohttp n'a pas pu être intercepté : la plupart des connexions HTTP échappent au suivi."
       }
     },
     "battery_type": {

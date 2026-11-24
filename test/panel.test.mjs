@@ -1958,7 +1958,9 @@ test('security tab: outbound connections by integration (new ones unfolded, Know
     integrations: [
       { domain: 'iptv', name: 'IPTV', custom: true, new: 1, count: 24, last: now - 60, hosts: [host('collector.example.net', { new: true }), host('line.example.tld', { ports: [8080] })] },
       { domain: 'met', name: 'Meteorologisk institutt', custom: false, new: 0, count: 12, last: now - 600, hosts: [host('api.met.no'), host('old.example.org', { ignored: true })] },
+      { domain: '_unattributed', name: '_unattributed', custom: false, new: 0, count: 2, last: now - 900, hosts: [host('lib.example.org')] },
     ],
+    aiohttp: false,
   };
   const data = { refused: [], bans: [], exposure: {}, users: [], tokens: [], addons: [], config: [], scanned_at: now, token_unused_days: 90, outbound };
   const state = { loaded: true, modules: ['security'], tabs: ['security'], security: { notify: true, ignored_ips: [], outbound: true } };
@@ -1972,15 +1974,20 @@ test('security tab: outbound connections by integration (new ones unfolded, Know
   await p._scLoad(true);
   let html = p._content();
   assert.match(html, /tile warn[\s\S]*?<b>3<\/b> · 1 new[\s\S]*?Hosts contacted · 7 days/);
-  assert.match(html, /Outbound connections[\s\S]*?2 integrations · 3 hosts/);
+  assert.match(html, /Outbound connections[\s\S]*?3 integrations · 3 hosts/);
   // The integration with a new host unfolded, the other folded
   assert.match(html, /IPTV[\s\S]*?1 new[\s\S]*?Custom[\s\S]*?collector\.example\.net[\s\S]*?first contact[\s\S]*?data-mark="known"[^>]*data-host="collector\.example\.net"[^>]*data-domain="iptv"/);
   assert.match(html, /line\.example\.tld[\s\S]*?8080 · 12 connections/);
   assert.doesNotMatch(html, /api\.met\.no/);
   assert.match(html, /Tracking cost so far: 0\.4 ms for 1,300 connections/);
+  assert.match(html, /aiohttp(&#39;|')s resolver could not be hooked/);
+  assert.match(html, /mdi:help-circle-outline[\s\S]*?Unattributed/);
+  assert.doesNotMatch(html, /Unattributed[^<]*<\/div><div class="s">[^<]*<\/div><\/div><span class="pill[^"]*">(Core|Custom)/);
   assert.equal(p._scSummary().obNew, 1);
   assert.deepEqual([...p._stArea('security')].slice(0, 2), ['warn', '1 points to check']);
   const click = (action, dataset) => p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action, ...dataset } } : null) } });
+  // A fold clicked before the card set its state: no error
+  p._scOb = null;
   click('sc_ob_open', { domain: 'met' });
   html = p._content();
   assert.match(html, /api\.met\.no/);

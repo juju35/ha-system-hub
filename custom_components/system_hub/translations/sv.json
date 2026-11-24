@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integrationer · {hosts} värdar",
         "sc_ob_off": "Spåras inte. Aktivera under Inställningar → Säkerhet; avstängt fångas ingenting upp och ingenting förbrukas.",
         "sc_ob_none": "Ingen anslutning sedd ännu.",
-        "sc_n_outbound_new": "{n} nya utgående värdar"
+        "sc_n_outbound_new": "{n} nya utgående värdar",
+        "sc_ob_unattributed": "Ej tillskrivna",
+        "sc_ob_partial": "aiohttps resolver kunde inte fångas upp: de flesta HTTP-anslutningar missas."
       }
     },
     "battery_type": {

@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "{integrations} integrationer · {hosts} værter",
         "sc_ob_off": "Spores ikke. Slå det til under Indstillinger → Sikkerhed; slået fra opfanges intet, og intet forbruges.",
         "sc_ob_none": "Ingen forbindelse set endnu.",
-        "sc_n_outbound_new": "{n} nye udgående værter"
+        "sc_n_outbound_new": "{n} nye udgående værter",
+        "sc_ob_unattributed": "Ikke tilknyttet",
+        "sc_ob_partial": "aiohttp's resolver kunne ikke opfanges: de fleste HTTP-forbindelser ses ikke."
       }
     },
     "battery_type": {

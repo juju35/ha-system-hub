@@ -11,7 +11,15 @@ from homeassistant.core import HomeAssistant
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.system_hub.const import CONF_MODULES, DOMAIN
-from custom_components.system_hub.security.outbound import LEARN_SECONDS, OutboundMonitor, domain_of, is_local
+from custom_components.system_hub.security import outbound
+from custom_components.system_hub.security.outbound import (
+    CORE_FILE,
+    LEARN_SECONDS,
+    UNATTRIBUTED,
+    OutboundMonitor,
+    domain_of,
+    is_local,
+)
 
 ORIGINAL_SOCKET = socket.getaddrinfo
 ORIGINAL_RESOLVE = TCPConnector._resolve_host  # noqa: SLF001
@@ -45,6 +53,8 @@ def test_domains_and_local_hosts() -> None:
     assert domain_of("/config/custom_components/iptv/api.py") == ("iptv", True)
     assert domain_of("/usr/src/homeassistant/homeassistant/components/met/coordinator.py") == ("met", False)
     assert domain_of("/usr/lib/python3.13/site-packages/aiohttp/client.py") is None
+    assert domain_of("/usr/src/homeassistant/homeassistant/helpers/network.py") is CORE_FILE
+    assert domain_of("/usr/src/homeassistant/homeassistant/core.py") is CORE_FILE
     assert is_local("192.168.1.10")
     assert is_local("mqtt.local")
     assert is_local("core-mosquitto")
@@ -150,3 +160,81 @@ async def test_kept_across_restarts_and_bounded(hass: HomeAssistant, hass_storag
     finally:
         await monitor.async_stop()
     assert hass_storage["system_hub.outbound"]["data"]["known"] == ["github|api.github.com"]
+
+
+async def test_unattributed_core_and_bounded(hass: HomeAssistant, monkeypatch) -> None:
+    monkeypatch.setattr(outbound, "MAX_HOSTS", 2)
+    monitor = OutboundMonitor(hass)
+    await monitor.async_start()
+    try:
+        # No integration and no Home Assistant code on the stack (a library's task): unattributed, not core
+        monitor.seen("lib.example.org", 443, sys._getframe())  # noqa: SLF001
+        # Home Assistant's own code, no integration: core; an integration above it wins
+        _from(
+            "/usr/src/homeassistant/homeassistant/helpers/network.py",
+            "seen('ha.example.org', 443, frame())",
+            seen=monitor.seen,
+            frame=sys._getframe,
+        )
+        _from(
+            "/config/custom_components/iptv/api.py",
+            "core()",
+            core=lambda: _from(
+                "/usr/src/homeassistant/homeassistant/helpers/update_coordinator.py",
+                "seen('tv.example.org', 443, frame())",
+                seen=monitor.seen,
+                frame=sys._getframe,
+            ),
+        )
+        assert {h: set(by) for h, by in monitor.hosts.items()} == {
+            "ha.example.org": {"homeassistant"},
+            "tv.example.org": {"iptv"},
+        }
+        # 500 hosts at most (2 here): the one contacted longest ago went first
+        assert UNATTRIBUTED not in {d for by in monitor.hosts.values() for d in by}
+        monitor.seen("lib.example.org", 443, sys._getframe())  # noqa: SLF001
+        assert "lib.example.org" in monitor.hosts
+        assert len(monitor.hosts) == 2
+        assert monitor.hosts["lib.example.org"][UNATTRIBUTED]["count"] == 1
+        assert monitor.cost_ns > 0
+    finally:
+        await monitor.async_stop()
+
+
+async def test_learning_again_after_a_long_pause(hass: HomeAssistant, hass_storage) -> None:
+    old = time.time() - 30 * 86400
+    hass_storage["system_hub.outbound"] = {
+        "version": 1,
+        "data": {
+            "since": old,
+            "hosts": {
+                "api.github.com": {"github": {"count": 3, "first": old, "last": old, "ports": [], "custom": True}}
+            },
+            "known": ["github|api.github.com"],
+            "ignored": [],
+        },
+    }
+    monitor = OutboundMonitor(hass)
+    await monitor.async_start()
+    try:
+        # Every host forgotten: learning again, the hosts seen now are known
+        assert monitor.since > time.time() - 60
+        monitor.seen("api.github.com", 443, sys._getframe())  # noqa: SLF001
+        data = monitor.state()
+        assert data["learning_until"]
+        assert not any(g["new"] for g in data["integrations"])
+    finally:
+        await monitor.async_stop()
+
+
+async def test_aiohttp_resolver_missing(hass: HomeAssistant, monkeypatch, caplog) -> None:
+    monkeypatch.setattr("aiohttp.connector.TCPConnector", type("TCPConnector", (), {}))
+    monitor = OutboundMonitor(hass)
+    await monitor.async_start()
+    try:
+        assert monitor.state()["aiohttp"] is False
+        assert "could not be hooked" in caplog.text
+        assert socket.getaddrinfo is not ORIGINAL_SOCKET
+    finally:
+        await monitor.async_stop()
+    assert socket.getaddrinfo is ORIGINAL_SOCKET

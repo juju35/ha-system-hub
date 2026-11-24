@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "integrace: {integrations} · hostitelé: {hosts}",
         "sc_ob_off": "Nesledováno. Zapněte v Nastavení → Zabezpečení; vypnuto nic nezachytává a nic nespotřebovává.",
         "sc_ob_none": "Zatím nebylo zaznamenáno žádné připojení.",
-        "sc_n_outbound_new": "noví odchozí hostitelé: {n}"
+        "sc_n_outbound_new": "noví odchozí hostitelé: {n}",
+        "sc_ob_unattributed": "Nepřiřazené",
+        "sc_ob_partial": "Resolver aiohttp se nepodařilo zachytit: většina HTTP připojení uniká."
       }
     },
     "battery_type": {

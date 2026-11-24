@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "integracija: {integrations} · hostova: {hosts}",
         "sc_ob_off": "Ne prate se. Uključite u Podešavanja → Bezbednost; isključeno, ništa se ne presreće i ništa ne troši.",
         "sc_ob_none": "Još nije viđena nijedna veza.",
-        "sc_n_outbound_new": "novih odlaznih hostova: {n}"
+        "sc_n_outbound_new": "novih odlaznih hostova: {n}",
+        "sc_ob_unattributed": "Nepripisane",
+        "sc_ob_partial": "Rezolver biblioteke aiohttp nije mogao da se presretne: većina HTTP veza se ne vidi."
       }
     },
     "battery_type": {

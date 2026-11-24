@@ -15,8 +15,10 @@ time spent is summed and shown in the tab, so it can be checked. No I/O: kept in
 after their last contact), saved at most once an hour and only when something changed; no entity, nothing in the
 recorder.
 
-The hosts seen during the first 24 hours count as known (learning); after that, a host new for an integration is
-flagged until it is marked as known. A host can be ignored: listed apart, never flagged.
+The hosts seen during the first 24 hours count as known (learning), and again after a pause long enough to have
+forgotten them all; after that, a host new for an integration is flagged until it is marked as known. A host can be
+ignored: listed apart, never flagged. A connection asked from no integration's code goes to Home Assistant when its
+own code (helpers, core) is on the stack, else to "unattributed" (a library's background task, say).
 """
 
 from __future__ import annotations
@@ -47,20 +49,30 @@ MAX_HOSTS: Final = 500
 MAX_PORTS: Final = 4
 MAX_DEPTH: Final = 64
 CORE: Final = "homeassistant"
+UNATTRIBUTED: Final = "_unattributed"
 
 _CUSTOM = re.compile(r"[/\\]custom_components[/\\]([^/\\]+)[/\\]")
 _BUILT_IN = re.compile(r"[/\\]homeassistant[/\\]components[/\\]([^/\\]+)[/\\]")
+# Home Assistant's own code outside the integrations
+_CORE_FILE = re.compile(
+    r"[/\\]homeassistant[/\\](?:helpers|util|auth|core\.py|runner\.py|bootstrap\.py|config_entries\.py|loader\.py"
+    r"|setup\.py|data_entry_flow\.py)"
+)
 _MISS: Final = object()
+CORE_FILE: Final = (CORE, False)
 # Set while aiohttp resolves a host: its threaded resolver then calls the loop's getaddrinfo, already counted
 _IN_AIOHTTP: contextvars.ContextVar[bool] = contextvars.ContextVar(f"{DOMAIN}_outbound_aiohttp", default=False)
 
 
 def domain_of(filename: str) -> tuple[str, bool] | None:
-    """The integration a source file belongs to, and whether it is a custom one; None for any other file."""
+    """The integration a source file belongs to, and whether it is a custom one; CORE_FILE for Home Assistant's own
+    code outside the integrations; None for any other file."""
     if match := _CUSTOM.search(filename):
         return match[1], True
     if match := _BUILT_IN.search(filename):
         return match[1], False
+    if _CORE_FILE.search(filename):
+        return CORE_FILE
     return None
 
 
@@ -92,6 +104,8 @@ class OutboundMonitor:
         self._save_pending = False
         self._loop_thread = 0
         self._originals: dict[str, Any] = {}
+        # False when aiohttp's resolver could not be wrapped: most HTTP connections are then missed
+        self.aiohttp = False
 
     # --- Start and stop -------------------------------------------------------------------------------------------
 
@@ -102,6 +116,9 @@ class OutboundMonitor:
         self.known = set(data.get("known") or [])
         self.ignored = set(data.get("ignored") or [])
         self._prune(time.time())
+        # Nothing left (first start, or off long enough to have forgotten every host): learning again
+        if not self.hosts:
+            self.since = time.time()
         self._loop_thread = threading.get_ident()
         self._install()
         if not data:
@@ -133,8 +150,9 @@ class OutboundMonitor:
 
             TCPConnector._resolve_host = _resolve_host  # type: ignore[method-assign] # noqa: SLF001
             self._originals["aiohttp"] = (TCPConnector, resolve, _resolve_host)
+            self.aiohttp = True
         except Exception as err:  # noqa: BLE001 - an aiohttp without this method: the other hooks still count
-            _LOGGER.debug("aiohttp connections not tracked: %s", err)
+            _LOGGER.warning("Outbound connections: aiohttp's resolver could not be hooked, most are missed (%s)", err)
 
         loop = self.hass.loop
         loop_getaddrinfo = loop.getaddrinfo
@@ -179,19 +197,23 @@ class OutboundMonitor:
     # --- Counting ---------------------------------------------------------------------------------------------------
 
     def _caller(self, frame: FrameType | None) -> tuple[str, bool] | None:
-        """The nearest integration on the stack: its file's domain, read once per file."""
+        """The nearest integration on the stack (its file's domain, read once per file); else Home Assistant when its
+        own code is on it; else None."""
         depth = 0
         files = self._files
+        core = False
         while frame is not None and depth < MAX_DEPTH:
             filename = frame.f_code.co_filename
             hit = files.get(filename, _MISS)
             if hit is _MISS:
                 hit = files[filename] = domain_of(filename)
-            if hit is not None:
+            if hit is CORE_FILE:
+                core = True
+            elif hit is not None:
                 return hit  # type: ignore[return-value]
             frame = frame.f_back
             depth += 1
-        return None
+        return CORE_FILE if core else None
 
     def seen(self, host: Any, port: Any, frame: FrameType | None, sync: bool = False) -> None:
         """A new connection to host:port, asked from frame; never raises."""
@@ -205,12 +227,14 @@ class OutboundMonitor:
             if caller is None:
                 if sync:  # the event loop's own resolver, from a worker thread: counted by its loop hook
                     return
-                caller = (CORE, False)
+                caller = (UNATTRIBUTED, False)
             self._count(host.rstrip(".").lower(), port, *caller)
         except Exception as err:  # noqa: BLE001 - never in the way of a connection
             _LOGGER.debug("Outbound connection not counted: %s", err)
         finally:
-            self.cost_ns += time.perf_counter_ns() - start
+            spent = time.perf_counter_ns() - start
+            with self._lock:
+                self.cost_ns += spent
 
     def _count(self, host: str, port: Any, domain: str, custom: bool) -> None:
         now = time.time()
@@ -331,6 +355,7 @@ class OutboundMonitor:
             "since": self.since,
             "learning_until": self.since + LEARN_SECONDS if now - self.since < LEARN_SECONDS else None,
             "connections": self.connections,
+            "aiohttp": self.aiohttp,
             "cost_us": round(self.cost_ns / 1000),
             "hosts": len({h for h, by in self.hosts.items() if h not in self.ignored}),
             "integrations": sorted(groups.values(), key=lambda g: (-g["new"], -g["last"])),

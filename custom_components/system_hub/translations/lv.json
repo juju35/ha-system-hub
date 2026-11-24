@@ -1919,7 +1919,9 @@
         "sc_ob_summary": "integrācijas: {integrations} · resursdatori: {hosts}",
         "sc_ob_off": "Netiek izsekoti. Ieslēdziet sadaļā Iestatījumi → Drošība; izslēgts nekas netiek pārtverts un nekas netiek patērēts.",
         "sc_ob_none": "Vēl nav redzēts neviens savienojums.",
-        "sc_n_outbound_new": "jauni izejošie resursdatori: {n}"
+        "sc_n_outbound_new": "jauni izejošie resursdatori: {n}",
+        "sc_ob_unattributed": "Nepiesaistītie",
+        "sc_ob_partial": "aiohttp atrisinātāju neizdevās pārtvert: lielākā daļa HTTP savienojumu netiek redzēti."
       }
     },
     "battery_type": {

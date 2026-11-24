@@ -2994,11 +2994,14 @@ export class SystemHubPanel extends HTMLElement {
     var rows = groups
       .map((g) => {
         var isOpen = open.has(g.domain);
+        // Asked from no integration's code (a library's background task, say): neither custom nor core
+        var none = g.domain === '_unattributed';
+        if (none) g = { ...g, name: this._t('sc_ob_unattributed') };
         var label = this._t(isOpen ? 'sc_ob_fold' : 'sc_ob_unfold', { name: g.name });
         var sub = this._t('sc_ob_group_sub', { hosts: g.hosts.filter((h) => !h.ignored).length, n: g.count.toLocaleString(this._hass?.language), when: this._scWhen(g.last) });
-        var end = (g.new ? pill(this._t('sc_ob_new_n', { n: g.new }), 'warn') : '') + pill(this._t(g.custom ? 'sc_ob_custom' : 'sc_ob_core'), g.custom ? 'info' : '');
+        var end = (g.new ? pill(this._t('sc_ob_new_n', { n: g.new }), 'warn') : '') + (none ? '' : pill(this._t(g.custom ? 'sc_ob_custom' : 'sc_ob_core'), g.custom ? 'info' : ''));
         var row = `<div class="item obgrp${g.new ? ' warn' : ''}"><button class="icon-btn" data-action="sc_ob_open" data-domain="${shEsc(g.domain)}" aria-expanded="${isOpen}" title="${shEsc(label)}" aria-label="${shEsc(label)}"><ha-icon icon="mdi:chevron-${isOpen ? 'down' : 'right'}"></ha-icon></button>
-          <div class="avatar${g.custom ? ' info' : ''}"><ha-icon icon="mdi:puzzle-outline"></ha-icon></div><div class="who"><div class="n">${shEsc(g.name)}</div><div class="s">${shEsc(sub)}</div></div>${end}</div>`;
+          <div class="avatar${g.custom ? ' info' : ''}"><ha-icon icon="${none ? 'mdi:help-circle-outline' : 'mdi:puzzle-outline'}"></ha-icon></div><div class="who"><div class="n">${shEsc(g.name)}</div><div class="s">${shEsc(sub)}</div></div>${end}</div>`;
         var hosts = isOpen
           ? g.shown
               .map((h) => {
@@ -3028,6 +3031,7 @@ export class SystemHubPanel extends HTMLElement {
       })
       .join('<div class="obsep"></div>');
     var notes = [
+      ob.aiohttp === false ? this._t('sc_ob_partial') : '',
       ob.learning_until ? this._t('sc_ob_learning', { when: this._scWhen(ob.learning_until) }) : '',
       this._t('sc_ob_note', { ms: (ob.cost_us / 1000).toLocaleString(this._hass?.language, { maximumFractionDigits: 1 }), n: ob.connections.toLocaleString(this._hass?.language) }),
     ].filter(Boolean);
@@ -3885,7 +3889,9 @@ export class SystemHubPanel extends HTMLElement {
       return this._render();
     }
     if (action === 'sc_ob_open') {
-      var obOpen = (this._scOb.open = new Set(this._scObOpen(this._sc?.data?.outbound)));
+      // Read before it is set: _scObOpen creates this._scOb when there is none yet
+      var obOpen = new Set(this._scObOpen(this._sc?.data?.outbound));
+      this._scOb.open = obOpen;
       if (obOpen.has(button.dataset.domain)) obOpen.delete(button.dataset.domain);
       else obOpen.add(button.dataset.domain);
       return this._render();
