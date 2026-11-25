@@ -3,7 +3,7 @@
 // it says in a few words, its details; a click opens its tab. Worked out here from what the panel already reads.
 import { SH_MODULE_ICONS, shEsc, shGroupOf, shIntegration, shNum } from "./core.js";
 import { shBytes, shTone } from "./network-graphs.js";
-import { SH_THRESHOLDS, shProcess } from "./monitor-helpers.js";
+import { SH_THRESHOLDS, shDisks, shProcess } from "./monitor-helpers.js";
 import { SystemHubPanel } from "./panel.js";
 
 export var SH_STATUS_WEIGHTS = { bad: 15, warn: 5, info: 1, good: 0 };
@@ -27,7 +27,7 @@ export var SH_STATUS_METHODS = {
       if (!sensors.length) return null;
       var one = (key) => sensors.find((x) => x.key === key);
       var th = { ...SH_THRESHOLDS, ...(s.thresholds || {}) };
-      var disks = sensors.filter((x) => x.key === 'disk_use_percent');
+      var disks = shDisks(sensors);
       var disk = disks.map((d) => shNum(d.state)).filter((v) => v !== null);
       var checks = [
         ['cpu', shNum(one('processor_use')?.state), 'CPU', '%'],

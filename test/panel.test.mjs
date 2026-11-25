@@ -904,6 +904,43 @@ test('system tab: the thresholds chosen colour the rings, the swap and the disks
   assert.match(html, /class="tile good link" data-more="sensor.swap"/);
 });
 
+test('system tab: a disk without its percentage sensor, worked out from the space used and free', async () => {
+  const state = {
+    loaded: true,
+    modules: [],
+    tabs: ['system'],
+    system: [
+      { key: 'disk_use', entity_id: 'sensor.disk_used', name: 'Disk use /', state: '42.6', unit: 'GiB' },
+      { key: 'disk_free', entity_id: 'sensor.disk_free', name: 'Disk free /', state: '51.1', unit: 'GiB' },
+      // A free space in MiB: converted before the sum
+      { key: 'disk_use', entity_id: 'sensor.media_used', name: 'Disk use /media', state: '90', unit: 'GiB' },
+      { key: 'disk_free', entity_id: 'sensor.media_free', name: 'Disk free /media', state: '10240', unit: 'MiB' },
+      // A mount with its percentage sensor keeps it, not worked out twice
+      { key: 'disk_use_percent', entity_id: 'sensor.data', name: 'Disk usage /data', state: '20', unit: '%' },
+      { key: 'disk_use', entity_id: 'sensor.data_used', name: 'Disk use /data', state: '1', unit: 'GiB' },
+      { key: 'disk_free', entity_id: 'sensor.data_free', name: 'Disk free /data', state: '9', unit: 'GiB' },
+    ],
+  };
+  const p = panel(state);
+  const now = Date.now() / 1000;
+  p._hass.callWS = async (msg) =>
+    Object.fromEntries(msg.entity_ids.map((id) => [id, [{ s: id === 'sensor.disk_used' ? '25' : id === 'sensor.disk_free' ? '75' : '50', lu: now - 60 }]]));
+  let html = p._content();
+  assert.match(html, /class="ring link" data-more="sensor.data"/);
+  assert.match(html, /class="item link good" data-more="sensor.disk_used"[\s\S]*?<span>46%<\/span>/);
+  assert.match(html, /class="item link bad" data-more="sensor.media_used"[\s\S]*?<span>90%<\/span>/);
+  assert.equal((html.match(/data-more="sensor.data_used"/g) || []).length, 0);
+  await new Promise((resolve) => setImmediate(resolve));
+  await new Promise((resolve) => setImmediate(resolve));
+  // The history of the used and free sensors, as a usage in %
+  html = p._content();
+  assert.match(html, /chart_disks|Disks/);
+  assert.deepEqual([...p._values({ 'sensor.disk_used': [25, null], 'sensor.disk_free': [75, 5] }, { derive: ['sensor.disk_used', 'sensor.disk_free', 1] })], [25, null]);
+  // The Status tab checks it too
+  const status = p._stArea('system');
+  assert.match(status[2], /90 %/);
+});
+
 test('batteries tab: search, spares and their stock, CSV export', async () => {
   const state = {
     loaded: true,
