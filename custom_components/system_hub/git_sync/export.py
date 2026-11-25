@@ -53,6 +53,19 @@ def _dashboard_config(raw: str) -> Any | None:
     return data
 
 
+def _is_storage_copy(file: Path, name: str) -> bool:
+    """Whether file is a raw copy of the .storage file `name` (an old export, `cp .storage/lovelace*`).
+
+    HA writes its storage files as a JSON document whose `key` is the file name: a file of the user (a
+    YAML-mode dashboard) never has that shape, so such a file can be refreshed although no manifest lists it.
+    """
+    try:
+        document = json.loads(file.read_text(encoding="utf-8"))
+    except (OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return False
+    return isinstance(document, dict) and document.get("key") == name and "data" in document
+
+
 @dataclass(slots=True)
 class ExportResult:
     """Outcome of an export.
@@ -91,7 +104,8 @@ def export_dashboards(
     overwritten either when it has the name of an export (it is reported in `skipped`).
 
     adopt: overwrite the existing files with an export name although `previous` does not list them, for the
-    first export after an update from a version that kept no manifest (they are its own old exports).
+    first export after an update from a version that kept no manifest (they are its own old exports). A raw
+    JSON copy of the .storage file of the same name (left by a script or an older export) is refreshed too.
     """
     previous = previous or {}
     source = Path(storage_dir)
@@ -109,7 +123,7 @@ def export_dashboards(
                 result.files.append(name)
                 result.managed[name] = _digest(content)
                 return
-            if name not in previous and not adopt:
+            if name not in previous and not adopt and not _is_storage_copy(file, name):
                 # Not written by the integration: a file of the user that happens to have this name.
                 _LOGGER.warning("Not exporting %s: %s is not a file the export wrote, it is left as is", name, file)
                 result.skipped.append(name)
