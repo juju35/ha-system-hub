@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.15.2 - 2026-11-25
+
+### Fixes
+- **System, disk space**: a disk whose usage sensor in % is off (System Monitor's default) now shows anyway: its usage is worked out from the space used and free of the same mount point, units converted, in the disk ring, the disk list, the disk history chart (bucket by bucket) and the Status tab's check, as the System Monitor card and the swap tile already did. A mount with its percentage sensor keeps it.
+
 ## 3.15.1 - 2026-11-25
 
 ### Fixes

@@ -2,7 +2,7 @@
 import { SH_AUTO_MAX, SH_DOMAIN, SH_GIT_FILES_MAX, SH_GROUPS, SH_SUBTAB_ICONS, SH_SUBTABS, SH_MODULE_ICONS, SH_MODULE_NAMES, SH_REFRESH_MS, SH_RETRY_MS, SYSTEM_HUB_PANEL_VERSION, shChange, shErr, shEsc, shExcerpt, shFocusSelector, shGroupOf, shGroupTabs, shHue, shIntegration, shNum, shProject, shTabBase } from "./core.js";
 import { SH_NET_RANK, shBytes, shMatterGraph, shNetBox, shNetForce, shNetTree, shSignal, shSpark, shTone, shZ2mGraph, shZhaGraph, shZwaveGraph } from "./network-graphs.js";
 import { SH_BUTTONS, SH_DEFAULT_SHORTCUTS, SH_HIDE_BAR_KEY, SH_SHORTCUTS } from "./diff-dialog.js";
-import { SH_BUCKETS, SH_COLORS, SH_ORPHANS_STYLE, SH_THRESHOLDS, SH_VIRTUAL_IF, shArea, shBuckets, shIface, shMount, shNiceMax, shPoints, shProcess, shRate, shRound } from "./monitor-helpers.js";
+import { SH_BUCKETS, SH_COLORS, SH_ORPHANS_STYLE, SH_THRESHOLDS, SH_VIRTUAL_IF, shArea, shBuckets, shDiskPct, shDisks, shIface, shMount, shNiceMax, shPoints, shProcess, shRate, shRound } from "./monitor-helpers.js";
 import { systemHubPanelFold } from "./fold.js";
 import { SH_BANNER_STYLE } from "./banner-style.js";
 
@@ -1187,7 +1187,8 @@ export class SystemHubPanel extends HTMLElement {
     var cpu = one('processor_use');
     var ram = one('memory_use_percent');
     var temp = one('processor_temperature');
-    var disks = all('disk_use_percent');
+    // Usage in %, worked out from the space used and free where the percentage sensor is off
+    var disks = shDisks(sensors);
     // Physical interfaces only: docker0, hassio, veth… would count the same traffic twice
     var physical = (s) => !SH_VIRTUAL_IF.test(shIface(s));
     var rx = all('throughput_network_in').filter(physical);
@@ -1201,8 +1202,8 @@ export class SystemHubPanel extends HTMLElement {
       [temp, this._t('temperature'), SH_COLORS.temp, temp?.unit || '°C', 'temperature'],
       [disks[0], disks.length > 1 ? `${this._t('disk')} ${shMount(disks[0])}` : this._t('disk'), SH_COLORS.disks[0], '%', 'disk'],
     ].filter(([s]) => s);
-    var ringHist = this._history(ringDefs.map(([s]) => s.entity_id), 24);
-    var rings = ringDefs.map(([s, label, color, unit, key]) => this._ring(s, label, color, unit, ringHist?.[s.entity_id], level(shNum(s.state), key))).join('');
+    var ringHist = this._history(ringDefs.flatMap(([s]) => s.derive?.slice(0, 2) || [s.entity_id]), 24);
+    var rings = ringDefs.map(([s, label, color, unit, key]) => this._ring(s, label, color, unit, this._values(ringHist, s), level(shNum(s.state), key))).join('');
     var tiles = [];
     // Swap: its percentage, else worked out from the swap used and free (the percentage sensor is off by default)
     var swap = one('swap_use_percent');
@@ -1491,7 +1492,7 @@ export class SystemHubPanel extends HTMLElement {
   _chart(id, title, lines, opts) {
     var hours = this._periods[id] || 24;
     var data = this._history(
-      lines.map(([s]) => s.entity_id),
+      lines.flatMap(([s]) => s.derive?.slice(0, 2) || [s.entity_id]),
       hours,
     );
     var periods = [1, 6, 24, 168]
@@ -1500,7 +1501,7 @@ export class SystemHubPanel extends HTMLElement {
         return `<button class="seg${h === hours ? ' active' : ''}" data-action="period" data-chart="${id}" data-hours="${h}" aria-pressed="${h === hours}">${shEsc(label)}</button>`;
       })
       .join('');
-    var series = lines.map(([s, , color]) => ({ color, values: data?.[s.entity_id] || [] }));
+    var series = lines.map(([s, , color]) => ({ color, values: this._values(data, s) || [] }));
     var max = opts.max || shNiceMax(series.flatMap((x) => x.values));
     var w = 1000;
     var h = opts.height;
@@ -1529,6 +1530,16 @@ export class SystemHubPanel extends HTMLElement {
       <div class="xaxis">${axis}</div>
       <div class="legend">${lines.map(([s, label, color]) => `<span class="lg link" data-more="${shEsc(s.entity_id)}"><i style="background:${color}"></i>${shEsc(label)}</span>`).join('')}</div>
     </ha-card>`;
+  }
+
+  // The recorded values of a sensor in `data` (from _history); a disk worked out from its space used and free gets
+  // its usage in % bucket by bucket
+  _values(data, sensor) {
+    if (!data) return undefined;
+    if (!sensor.derive) return data[sensor.entity_id];
+    var [useId, freeId, factor] = sensor.derive;
+    var free = data[freeId] || [];
+    return (data[useId] || []).map((u, i) => (u === null || free[i] == null ? null : shDiskPct(u, free[i], factor)));
   }
 
   // The recorded values of `ids` over the last `hours`, SH_BUCKETS averages each (null where nothing is known),

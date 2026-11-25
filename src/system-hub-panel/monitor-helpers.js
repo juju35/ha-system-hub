@@ -85,6 +85,36 @@ export function shMount(sensor) {
   return m ? m[1] : sensor.name;
 }
 
+// Sizes in bytes, by unit (System Monitor gives GiB, or the unit the user chose)
+var SH_SIZE_UNITS = { B: 1, kB: 1e3, KB: 1e3, KiB: 1024, MB: 1e6, MiB: 1024 ** 2, GB: 1e9, GiB: 1024 ** 3, TB: 1e12, TiB: 1024 ** 4 };
+
+// The disks, one per mount point, as a usage in %: the percentage sensor, else worked out from the space used and
+// free of the same mount (the percentage sensor is off by default). A worked-out disk carries `derive`: the ids of its
+// used and free sensors and the factor turning the free one into the used one's unit, to work out its history too.
+export function shDisks(sensors) {
+  var percents = sensors.filter((s) => s.key === 'disk_use_percent');
+  var mounts = new Set(percents.map(shMount));
+  var frees = sensors.filter((s) => s.key === 'disk_free');
+  var derived = sensors
+    .filter((s) => s.key === 'disk_use' && !mounts.has(shMount(s)))
+    .map((use) => {
+      var free = frees.find((f) => shMount(f) === shMount(use));
+      if (!free) return null;
+      var factor = (SH_SIZE_UNITS[free.unit] || 1) / (SH_SIZE_UNITS[use.unit] || 1);
+      var pct = shDiskPct(Number.parseFloat(use.state), Number.parseFloat(free.state), factor);
+      return { ...use, key: 'disk_use_percent', state: pct === null ? 'unavailable' : String(pct), unit: '%', derive: [use.entity_id, free.entity_id, factor] };
+    })
+    .filter(Boolean);
+  return [...percents, ...derived];
+}
+
+// The usage in % of `used` and `free` (free × factor in the unit of used), null when unknown
+export function shDiskPct(used, free, factor = 1) {
+  if (!Number.isFinite(used) || !Number.isFinite(free)) return null;
+  var total = used + free * factor;
+  return total > 0 ? Math.round((used * 1000) / total) / 10 : null;
+}
+
 // "System Monitor Process python3" → "python3"
 export function shProcess(sensor) {
   var name = String(sensor.name || '');
