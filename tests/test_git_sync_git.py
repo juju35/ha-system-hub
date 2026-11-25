@@ -306,6 +306,25 @@ def test_export_adopts_the_files_of_an_older_version(tmp_path: Path) -> None:
     assert "title: lovelace" in (out / "lovelace.yaml").read_text(encoding="utf-8")
 
 
+def test_export_refreshes_an_old_raw_copy_of_storage(tmp_path: Path) -> None:
+    """A JSON copy of .storage left by a script (no manifest) is refreshed and owned, a foreign file is not."""
+    storage = _storage(tmp_path, "lovelace.dashboard_maison", "lovelace_resources")
+    out = tmp_path / "export"
+    out.mkdir()
+    (out / "lovelace.dashboard_maison").write_text(
+        json.dumps({"version": 1, "key": "lovelace.dashboard_maison", "data": {"config": {"views": []}}}),
+        encoding="utf-8",
+    )
+    (out / "lovelace_resources").write_text('{"key": "something_else", "data": {}}', encoding="utf-8")
+
+    result = export_dashboards(str(storage), str(out), "json", {"lovelace": "x"})
+    assert result.skipped == ["lovelace_resources"]
+    assert set(result.managed) == {"lovelace.dashboard_maison"}
+    assert (out / "lovelace.dashboard_maison").read_text(encoding="utf-8") == (
+        storage / "lovelace.dashboard_maison"
+    ).read_text(encoding="utf-8")
+
+
 def test_parse_patch_file_by_file() -> None:
     patch = """diff --git a/configuration.yaml b/configuration.yaml
 index 1111111..2222222 100644

@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.15.1 - 2026-11-25
+
+### Fixes
+- **Versioning, dashboard export**: a raw JSON copy of a `.storage` dashboard already in the export folder but not in the export's manifest (left by a script or by the standalone Git Sync) is now refreshed and taken over, instead of being skipped and no longer updated in Git. A file whose content is not that copy (a YAML-mode dashboard of the user) is still left as is.
+
 ## 3.15.0 - 2026-11-24
 
 ### Features
