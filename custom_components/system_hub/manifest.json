@@ -6,6 +6,7 @@
     "recorder",
     "systemmonitor"
   ],
+  "categories": ["computers_network.monitoring"],
   "codeowners": [
     "@juju35"
   ],
