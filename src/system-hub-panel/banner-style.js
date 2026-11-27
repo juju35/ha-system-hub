@@ -69,7 +69,7 @@ export var SH_BANNER_STYLE = `
     :host { --sh-sec: color-mix(in srgb, var(--primary-text-color) 6%, var(--card-background-color, #fff)); }
     .shtop .shbody { padding:12px 16px 16px; display:flex; flex-direction:column; gap:12px; }
     .tiles { gap:8px; }
-    .tile { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius:12px; min-height:56px; box-sizing:border-box;
+    .tile { background:var(--sh-sec); box-shadow:none; border:1px solid transparent; border-radius: 10px; min-height:56px; box-sizing:border-box;
             padding:8px 10px 8px 8px; gap:10px; }
     .tile .avatar { width:40px; height:40px; --mdc-icon-size:22px; }
     .tile:not(.warn):not(.bad):not(.info) .avatar { color:var(--primary-text-color); background:color-mix(in srgb, var(--secondary-text-color) 14%, transparent); }

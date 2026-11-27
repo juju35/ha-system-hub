@@ -5,4 +5,4 @@
  * Served and added to the dashboard resources by System Hub.
  * https://github.com/juju35/ha-system-hub
  */
-export var SECURITY_CARD_VERSION = '1.0.0';
+export var SECURITY_CARD_VERSION = '3.15.3';
