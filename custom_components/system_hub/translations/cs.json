@@ -16,7 +16,8 @@
           "batteries": "Baterie",
           "git_sync": "Verzování",
           "orphans": "Úklid",
-          "automations": "Automatizace"
+          "automations": "Automatizace",
+          "purge": "Čištění"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
@@ -30,7 +31,8 @@
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
           "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
           "orphans": "Zobrazuje entity, které jejich integrace již neposkytuje, abyste je mohli hromadně odebrat.",
-          "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit."
+          "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit.",
+          "purge": "Každou noc maže soubory, které se nezměnily po určitý počet dní, ve zvolených složkách (výchozí mcp_backups: zálohy konfigurace serveru MCP). Vypnuto, dokud se nezapne."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizace",
           "git_sync_add_repository": "Verzování: Přidat repozitář",
           "git_sync_other": "Verzování: Jiný repozitář",
-          "git_sync_remove_repository": "Verzování: Odebrat repozitáře"
+          "git_sync_remove_repository": "Verzování: Odebrat repozitáře",
+          "purge": "Čištění"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Tichá zařízení",
           "batteries": "Baterie",
           "git_sync": "Verzování",
-          "automations": "Automatizace"
+          "automations": "Automatizace",
+          "purge": "Čištění"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplňky: stav, verzi, CPU a paměť. Pouze sledování: nic se nerestartuje.",
@@ -124,7 +128,8 @@
           "silent": "Sleduje zařízení ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome a deCONZ: ta, která se už neozývají, a slabé signály. Bez vlastních entit.",
           "batteries": "Dvakrát denně upozorní na zařízení, jejichž baterie zůstala slabá.",
           "git_sync": "Složka Home Assistanta verzovaná v Gitu a odesílaná na remote (GitHub, Gitea…).",
-          "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit."
+          "automations": "Zobrazuje selhané automatizace a nedostupné entity hlášené integrací Automation Monitor (instaluje se zvlášť). Bez vlastních entit.",
+          "purge": "Každou noc maže soubory, které se nezměnily po určitý počet dní, ve zvolených složkách (výchozí mcp_backups: zálohy konfigurace serveru MCP). Vypnuto, dokud se nezapne."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repozitáře k odebrání"
         }
+      },
+      "purge": {
+        "title": "Čištění",
+        "description": "Složky relativní ke konfigurační složce, nebo absolutní, pokud je povoluje allowlist_external_dirs. Podsložky, které zůstanou prázdné, se odstraní, zvolená složka nikdy.",
+        "data": {
+          "directories": "Složky",
+          "max_age": "Mazat soubory starší než"
+        },
+        "data_description": {
+          "directories": "Každá čištěná složka, např. mcp_backups. Vyprázdněte seznam, aby se nic nečistilo.",
+          "max_age": "Dny bez změny, po kterých se soubor smaže, každou noc a tlačítkem Vyčistit nyní."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Zařízení této baterie nemá model: nastavte typ pro samotnou baterii.",
       "critical_below_warning": "Červený práh musí být nad oranžovým.",
       "repository_exists": "Tento repozitář je již nastaven.",
-      "backup_not_loaded": "Integrace Backup není načtena."
+      "backup_not_loaded": "Integrace Backup není načtena.",
+      "purge_refused": "Tyto složky nelze čistit: {refused}. Odmítají se konfigurační složka, složka, která ji obsahuje, vlastní složky Home Assistant (.storage, custom_components…) a složky mimo allowlist_external_dirs."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor není co importovat."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Databáze"
+    },
+    "purge": {
+      "name": "System Hub Čištění"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Skenovat nyní"
+      },
+      "purge_now": {
+        "name": "Vyčistit nyní"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Engine"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Poslední čištění"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Zařízení",
           "description": "ID zařízení z atributu devices senzoru osiřelých. Ponechte prázdné pro všechna osiřelá zařízení z poslední kontroly."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Vyčistit soubory",
+      "description": "Smaže soubory starší než nastavené stáří ve složkách modulu Čištění. Vrací, co bylo smazáno.",
+      "fields": {
+        "dry_run": {
+          "name": "Zkušební běh",
+          "description": "Pouze sdělí, co by se smazalo, nic nesmaže."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Přihlášení",
         "sub_security_accounts": "Účty",
         "sub_security_system": "Doplňky a konfigurace",
-        "sub_security_outbound": "Odchozí"
+        "sub_security_outbound": "Odchozí",
+        "purge": "Čištění",
+        "tab_purge": "Čištění",
+        "pg_folders": "Složky",
+        "pg_to_delete": "Soubory starší než {n} dní",
+        "pg_reclaim": "Místo k uvolnění",
+        "pg_last": "Poslední čištění",
+        "pg_last_done": "Smazáno {n} souborů, uvolněno {size}",
+        "pg_never": "Zatím nespuštěno",
+        "pg_now": "Vyčistit nyní",
+        "pg_confirm": "Smazat {n} souborů ({size}) beze změny {days} dní? Nelze vrátit zpět.",
+        "pg_errors": "Při posledním čištění nešlo smazat {n} souborů",
+        "pg_files": "{n} souborů, {size}",
+        "pg_oldest": "nejstarší {when}",
+        "pg_n_old": "{n} ke smazání · {size}",
+        "pg_nothing": "Nic ke smazání",
+        "pg_missing": "Složka nenalezena: zatím nic k čištění",
+        "pg_missing_short": "Nenalezeno",
+        "pg_left_out": "Vynecháno",
+        "pg_refused_root": "Konfigurační složka (ani složka, která ji obsahuje) se nikdy nečistí",
+        "pg_refused_protected": "Vlastní složka Home Assistant: nikdy se nečistí",
+        "pg_refused_outside": "Mimo konfigurační složku a není v allowlist_external_dirs",
+        "pg_n_left_out": "Vynecháno složek: {n}",
+        "pg_rule": "Každou noc: soubory starší než {n} dní",
+        "pg_none": "Žádná složka: přidejte ji přes Konfigurovat."
       }
     },
     "battery_type": {

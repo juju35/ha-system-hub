@@ -37,6 +37,7 @@ from .const import (
     MODULE_GIT_SYNC,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
+    MODULE_PURGE,
     MODULE_SECURITY,
     MODULE_WATCHDOG,
     MODULES,
@@ -57,6 +58,8 @@ from .orphans import async_setup_orphans
 from .orphans.scanner import OrphanScanner
 from .orphans.services import NO_RELOAD_KEY, async_setup_orphans_services
 from .panel import async_register_panel, async_remove_panel
+from .purge import ATTR_DRY_RUN, SERVICE_PURGE
+from .purge.purger import FilePurger
 from .security import SecurityWatcher
 from .watchdog import async_disable_watchdog, async_remove_watchdog, async_setup_watchdog, async_wait_idle
 from .watchdog.const import ATTR_ENTRY_ID, SERVICE_CHECK, SERVICE_RESET
@@ -94,15 +97,18 @@ class SystemHubData:
     orphans: OrphanScanner | None = None
     security: SecurityWatcher | None = None
     database: DatabaseMonitor | None = None
+    purge: FilePurger | None = None
 
 
 type SystemHubConfigEntry = ConfigEntry[SystemHubData]
 
 
 def enabled_modules(entry: ConfigEntry) -> list[str]:
-    """The modules turned on in the options; every module when the options don't say."""
+    """The modules turned on in the options; every module but Purge (which deletes files) when the options don't say."""
     modules = entry.options.get(CONF_MODULES)
-    return [m for m in MODULES if m in modules] if isinstance(modules, list) else list(MODULES)
+    return (
+        [m for m in MODULES if m in modules] if isinstance(modules, list) else [m for m in MODULES if m != MODULE_PURGE]
+    )
 
 
 def module_options(entry: ConfigEntry, module: str) -> dict[str, Any]:
@@ -165,6 +171,16 @@ def loaded_orphans(hass: HomeAssistant) -> tuple[ConfigEntry, OrphanScanner]:
             translation_placeholders={"module": "Cleanup"},
         )
     return entry, scanner
+
+
+def loaded_purge(hass: HomeAssistant) -> FilePurger:
+    if (purger := _loaded_data(hass).purge) is None:
+        raise ServiceValidationError(
+            translation_domain=DOMAIN,
+            translation_key="module_disabled",
+            translation_placeholders={"module": "Purge"},
+        )
+    return purger
 
 
 def loaded_watchdog(hass: HomeAssistant) -> IntegrationWatchdog:
@@ -323,6 +339,19 @@ async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
         supports_response=SupportsResponse.OPTIONAL,
     )
 
+    async def purge_files(call: ServiceCall) -> ServiceResponse:
+        result = await loaded_purge(hass).async_purge(dry_run=call.data[ATTR_DRY_RUN])
+        return result if call.return_response else None
+
+    # Deletes files on the server: administrators only.
+    hass.services.async_register(
+        DOMAIN,
+        SERVICE_PURGE,
+        admin_only(hass, purge_files),
+        schema=vol.Schema({vol.Optional(ATTR_DRY_RUN, default=False): cv.boolean}),
+        supports_response=SupportsResponse.OPTIONAL,
+    )
+
     async_setup_git_sync_services(hass, lambda: loaded_git_syncs(hass))
     async_setup_orphans_services(hass, lambda: loaded_orphans(hass))
     return True
@@ -381,6 +410,10 @@ async def _async_setup_rest(
         data.database = DatabaseMonitor(hass)
         await data.database.async_start()
         entry.async_on_unload(data.database.async_stop)
+    if MODULE_PURGE in modules:
+        data.purge = FilePurger(hass, module_options(entry, MODULE_PURGE))
+        await data.purge.async_start()
+        entry.async_on_unload(data.purge.async_stop)
     entry.runtime_data = data
     # Added again after a removal (which drops the panel and the cards) without a restart: they come back.
     await async_register_panel(hass)
@@ -442,6 +475,7 @@ async def async_remove_entry(hass: HomeAssistant, entry: SystemHubConfigEntry) -
     await async_remove_watchdog(hass)
     await async_remove_marketplace(hass)
     await async_remove_batteries(hass)
+    await FilePurger.async_remove_store(hass)
     await async_remove_git_sync(hass, [item[CONF_REPO_ID] for item in further_repositories(entry.options)])
 
 

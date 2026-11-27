@@ -16,7 +16,8 @@
           "batteries": "Baterijas",
           "git_sync": "Versiju pārvaldība",
           "orphans": "Tīrīšana",
-          "automations": "Automatizācijas"
+          "automations": "Automatizācijas",
+          "purge": "Tīrīšana"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
@@ -30,7 +31,8 @@
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
           "orphans": "Parāda vienības, ko to integrācija vairs nenodrošina, lai tās varētu noņemt vienlaikus.",
-          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
+          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām.",
+          "purge": "Katru nakti izdzēš failus, kas noteiktu dienu skaitu nav mainīti, izvēlētajās mapēs (pēc noklusējuma mcp_backups: MCP servera konfigurācijas dublējumi). Izslēgts, līdz to ieslēdz."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizācijas",
           "git_sync_add_repository": "Versiju pārvaldība: Pievienot repozitoriju",
           "git_sync_other": "Versiju pārvaldība: Cits repozitorijs",
-          "git_sync_remove_repository": "Versiju pārvaldība: Noņemt repozitorijus"
+          "git_sync_remove_repository": "Versiju pārvaldība: Noņemt repozitorijus",
+          "purge": "Tīrīšana"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Klusās ierīces",
           "batteries": "Baterijas",
           "git_sync": "Versiju pārvaldība",
-          "automations": "Automatizācijas"
+          "automations": "Automatizācijas",
+          "purge": "Tīrīšana"
         },
         "data_description": {
           "containers": "Uzrauga Home Assistant Core, Supervisor un papildinājumus: stāvokli, versiju, CPU un atmiņu. Tikai uzraudzība: nekas netiek restartēts.",
@@ -124,7 +128,8 @@
           "silent": "Seko ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome un deCONZ ierīcēm: tām, kas vairs nesazinās, un vājajiem signāliem. Bez savām entītijām.",
           "batteries": "Divreiz dienā paziņo par ierīcēm, kuru baterija joprojām ir izlādēta.",
           "git_sync": "Home Assistant mape, kuras versijas pārvalda Git un kas tiek nosūtīta uz remote (GitHub, Gitea…).",
-          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām."
+          "automations": "Rāda neizdevušās automatizācijas un nepieejamās entītijas, par kurām ziņo integrācija Automation Monitor (instalē atsevišķi). Bez savām entītijām.",
+          "purge": "Katru nakti izdzēš failus, kas noteiktu dienu skaitu nav mainīti, izvēlētajās mapēs (pēc noklusējuma mcp_backups: MCP servera konfigurācijas dublējumi). Izslēgts, līdz to ieslēdz."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Noņemamie repozitoriji"
         }
+      },
+      "purge": {
+        "title": "Tīrīšana",
+        "description": "Mapes attiecībā pret konfigurācijas mapi vai absolūtas, ja allowlist_external_dirs tās atļauj. Apakšmapes, kas paliek tukšas, tiek noņemtas, izvēlētā mape nekad.",
+        "data": {
+          "directories": "Mapes",
+          "max_age": "Dzēst failus, kas vecāki par"
+        },
+        "data_description": {
+          "directories": "Katra tīrītā mape, piem., mcp_backups. Iztukšojiet sarakstu, lai neko netīrītu.",
+          "max_age": "Dienas bez izmaiņām, pēc kurām fails tiek izdzēsts, katru nakti un ar Tīrīt tagad."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Šīs baterijas ierīcei nav modeļa: iestatiet veidu pašai baterijai.",
       "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā.",
       "repository_exists": "Šis repozitorijs jau ir iestatīts.",
-      "backup_not_loaded": "Backup integrācija nav ielādēta."
+      "backup_not_loaded": "Backup integrācija nav ielādēta.",
+      "purge_refused": "Šīs mapes nevar tīrīt: {refused}. Tiek noraidīta konfigurācijas mape, mape, kas to satur, Home Assistant pašu mapes (.storage, custom_components…) un mapes ārpus allowlist_external_dirs."
     },
     "abort": {
       "nothing_to_import": "No Battery Monitor nav ko importēt."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Datubāze"
+    },
+    "purge": {
+      "name": "System Hub Tīrīšana"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Skenēt tagad"
+      },
+      "purge_now": {
+        "name": "Tīrīt tagad"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Dzinējs"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Pēdējā tīrīšana"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Ierīces",
           "description": "Ierīču ID no bāreņu sensora atribūta devices. Atstājiet tukšu visām pēdējās skenēšanas bāreņu ierīcēm."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Tīrīt failus",
+      "description": "Izdzēš failus, kas vecāki par iestatīto vecumu, moduļa Tīrīšana mapēs. Atgriež, kas tika izdzēsts.",
+      "fields": {
+        "dry_run": {
+          "name": "Izmēģinājums",
+          "description": "Tikai pasaka, kas tiktu izdzēsts, neko neizdzēšot."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Pieteikšanās",
         "sub_security_accounts": "Konti",
         "sub_security_system": "Papildinājumi un konfigurācija",
-        "sub_security_outbound": "Izejošie"
+        "sub_security_outbound": "Izejošie",
+        "purge": "Tīrīšana",
+        "tab_purge": "Tīrīšana",
+        "pg_folders": "Mapes",
+        "pg_to_delete": "Faili, kas vecāki par {n} dienām",
+        "pg_reclaim": "Atbrīvojamā vieta",
+        "pg_last": "Pēdējā tīrīšana",
+        "pg_last_done": "Izdzēsti faili: {n}, atbrīvoti {size}",
+        "pg_never": "Vēl nav palaista",
+        "pg_now": "Tīrīt tagad",
+        "pg_confirm": "Dzēst {n} failus ({size}), kas nav mainīti {days} dienas? To nevar atsaukt.",
+        "pg_errors": "Pēdējā tīrīšanā neizdevās izdzēst failus: {n}",
+        "pg_files": "{n} faili, {size}",
+        "pg_oldest": "vecākais {when}",
+        "pg_n_old": "{n} dzēšanai · {size}",
+        "pg_nothing": "Nav ko dzēst",
+        "pg_missing": "Mape nav atrasta: pagaidām nav ko tīrīt",
+        "pg_missing_short": "Nav atrasta",
+        "pg_left_out": "Izlaista",
+        "pg_refused_root": "Konfigurācijas mape (vai mape, kas to satur) nekad netiek tīrīta",
+        "pg_refused_protected": "Home Assistant pašu mape: nekad netiek tīrīta",
+        "pg_refused_outside": "Ārpus konfigurācijas mapes un nav allowlist_external_dirs",
+        "pg_n_left_out": "Izlaistas mapes: {n}",
+        "pg_rule": "Katru nakti: faili, kas vecāki par {n} dienām",
+        "pg_none": "Nav mapes: pievienojiet to ar Konfigurēt."
       }
     },
     "battery_type": {

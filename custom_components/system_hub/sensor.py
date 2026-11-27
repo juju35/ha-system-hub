@@ -1,4 +1,4 @@
-"""Sensors of the modules: Containers, Watchdog, Marketplace, Batteries and Database."""
+"""Sensors of the modules: Containers, Watchdog, Marketplace, Batteries, Database and Purge."""
 
 from __future__ import annotations
 
@@ -13,7 +13,15 @@ from homeassistant.util import dt as dt_util
 
 from . import SystemHubConfigEntry
 from .batteries.monitor import BatteryMonitor
-from .const import DOMAIN, MODULE_BATTERIES, MODULE_CONTAINERS, MODULE_DATABASE, MODULE_MARKETPLACE, MODULE_WATCHDOG
+from .const import (
+    DOMAIN,
+    MODULE_BATTERIES,
+    MODULE_CONTAINERS,
+    MODULE_DATABASE,
+    MODULE_MARKETPLACE,
+    MODULE_PURGE,
+    MODULE_WATCHDOG,
+)
 from .containers.monitor import ContainerMonitor
 from .database.monitor import DatabaseMonitor
 from .entity import SystemHubEntity
@@ -21,6 +29,7 @@ from .git_sync.entities import SENSORS, GitSyncSensor
 from .marketplace.const import STATE_ERROR, STATE_IDLE, STATE_RUNNING
 from .marketplace.refresher import MarketplaceRefresher
 from .orphans import entities as orphans_entities
+from .purge.purger import FilePurger
 from .watchdog.core import IntegrationWatchdog
 
 
@@ -62,6 +71,8 @@ async def async_setup_entry(
         entities += orphans_entities.sensors(o, entry.entry_id)
     if (d := data.database) is not None:
         entities.append(DatabaseSizeSensor(d, entry.entry_id, MODULE_DATABASE, "size"))
+    if (p := data.purge) is not None:
+        entities.append(PurgeLastRunSensor(p, entry.entry_id, "last_run"))
     async_add_entities(entities)
 
 
@@ -401,3 +412,32 @@ class DatabaseSizeSensor(SystemHubEntity, SensorEntity):
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
         return {"engine": self.monitor.engine}
+
+
+class PurgeEntity(SystemHubEntity):
+    """An entity of the Purge module."""
+
+    def __init__(self, purger: FilePurger, entry_id: str, key: str) -> None:
+        super().__init__(purger, entry_id, MODULE_PURGE, key)
+        self.purger = purger
+
+
+class PurgeLastRunSensor(PurgeEntity, SensorEntity):
+    """Time of the last purge, with the files deleted, the space freed and the errors."""
+
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    @property
+    def native_value(self) -> datetime | None:
+        return self.purger.last_run
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "files": self.purger.last_files,
+            "bytes": self.purger.last_bytes,
+            "errors": self.purger.last_errors,
+            "max_age": self.purger.max_age,
+            "directories": self.purger.directories,
+        }

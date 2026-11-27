@@ -126,6 +126,7 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_silent_ignore)
         websocket_api.async_register_command(hass, ws_logs_ignore)
         websocket_api.async_register_command(hass, ws_database)
+        websocket_api.async_register_command(hass, ws_purge)
         websocket_api.async_register_command(hass, ws_security)
         websocket_api.async_register_command(hass, ws_security_revoke)
         websocket_api.async_register_command(hass, ws_security_ignore)
@@ -586,6 +587,9 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["automations"] = automations.state(hass, options if isinstance(options, dict) else None)
     if data.orphans is not None:
         result["orphans"] = orphans_panel.summary(data.orphans)
+    if (purger := getattr(data, "purge", None)) is not None:
+        # The tab asks for the folders itself (system_hub/purge); the state carries the settings and the last purge
+        result["purge"] = purger.state()
     connection.send_result(msg["id"], result)
 
 
@@ -700,6 +704,24 @@ async def ws_database(hass: HomeAssistant, connection: websocket_api.ActiveConne
         connection.send_error(msg["id"], "failed", str(err))
         return
     connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "system_hub/purge"})
+@websocket_api.async_response
+async def ws_purge(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The folders of the Purge module: their files, those a purge would delete now, and the last purge."""
+    entry = _entry(hass)
+    purger = getattr(entry.runtime_data, "purge", None) if entry is not None else None
+    if purger is None:
+        connection.send_error(msg["id"], "not_enabled", "The Purge module is not turned on")
+        return
+    try:
+        directories = await purger.async_scan()
+    except Exception as err:  # noqa: BLE001 - shown in the tab
+        connection.send_error(msg["id"], "failed", str(err))
+        return
+    connection.send_result(msg["id"], {**purger.state(), "folders": directories})
 
 
 @websocket_api.require_admin

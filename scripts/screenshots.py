@@ -1105,6 +1105,55 @@ def mock_backup_info():
     }
 
 
+def mock_purge():
+    """What system_hub/purge answers: mcp_backups with a few snapshots to go, a folder not created yet.
+
+    Drawn in panel-purge, config-purge and header-purge (their dark twins too).
+    """
+    now = datetime.fromisoformat(NOW)
+    return {
+        "directories": ["mcp_backups", "exports"],
+        "max_age": 30,
+        "last_run": (now - timedelta(hours=6)).isoformat(),
+        "last_files": 24,
+        "last_bytes": 1_843_200,
+        "last_errors": 0,
+        "running": False,
+        "folders": [
+            {
+                "directory": "mcp_backups",
+                "path": "/config/mcp_backups",
+                "refused": None,
+                "exists": True,
+                "files": 132,
+                "size": 9_961_472,
+                "old_files": 11,
+                "old_size": 845_000,
+                "oldest": (now - timedelta(days=31)).timestamp(),
+                "deleted": 0,
+                "freed": 0,
+                "folders_removed": 0,
+                "errors": [],
+            },
+            {
+                "directory": "exports",
+                "path": "/config/exports",
+                "refused": None,
+                "exists": False,
+                "files": 0,
+                "size": 0,
+                "old_files": 0,
+                "old_size": 0,
+                "oldest": None,
+                "deleted": 0,
+                "freed": 0,
+                "folders_removed": 0,
+                "errors": [],
+            },
+        ],
+    }
+
+
 def mock_state():
     """What system_hub/state answers: every module turned on, with neutral data."""
     system = [
@@ -1223,6 +1272,7 @@ def mock_state():
             "watchdog",
             "marketplace",
             "backups",
+            "purge",
             "silent",
             "batteries",
             "git_sync",
@@ -1238,12 +1288,24 @@ def mock_state():
             "watchdog",
             "marketplace",
             "backups",
+            "purge",
             "silent",
             "batteries",
             "git_sync",
             "orphans",
         ],
         "backups": {"max_age": 3},
+        # The Purge module: mcp_backups, purged last night; the Purge tab: what system_hub/purge answers
+        "purge": {
+            "directories": ["mcp_backups", "exports"],
+            "max_age": 30,
+            "last_run": (datetime.fromisoformat(NOW) - timedelta(hours=6)).isoformat(),
+            "last_files": 24,
+            "last_bytes": 1_843_200,
+            "last_errors": 0,
+            "running": False,
+        },
+        "purge_info": mock_purge(),
         "database": {"max_size": 2},
         "security": {"notify": True, "notify_services": [], "token_unused_days": 90, "ignored_ips": []},
         # The Security tab: what system_hub/security answers
@@ -1723,6 +1785,8 @@ MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
                   ? state.security_info
                   : msg.type === "system_hub/database"
                   ? state.database_info
+                  : msg.type === "system_hub/purge"
+                  ? state.purge_info
                   : msg.type === "system_log/list"
                   ? state.system_log
                   : msg.type === "config/device_registry/list"
@@ -1816,6 +1880,7 @@ TABS = [
     "watchdog",
     "marketplace",
     "backups",
+    "purge",
     "silent",
     "batteries",
     "git_sync",
@@ -1903,6 +1968,7 @@ SHOTS = [
             ("watchdog", "watchdog_add_power_cycle"),
             ("marketplace", "marketplace"),
             ("backups", "backups"),
+            ("purge", "purge"),
             ("silent", "silent"),
             ("batteries", "batteries"),
             ("batteries", "batteries_types"),

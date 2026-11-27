@@ -16,7 +16,8 @@
           "batteries": "Batterier",
           "git_sync": "Versionshantering",
           "orphans": "Städning",
-          "automations": "Automationer"
+          "automations": "Automationer",
+          "purge": "Rensning"
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
@@ -30,7 +31,8 @@
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
           "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
           "orphans": "Listar de entiteter som deras integration inte längre tillhandahåller, så att du kan ta bort dem samtidigt.",
-          "automations": "Visar de misslyckade automationerna och de otillgängliga entiteterna som integrationen Automation Monitor rapporterar (installeras separat). Inga egna entiteter."
+          "automations": "Visar de misslyckade automationerna och de otillgängliga entiteterna som integrationen Automation Monitor rapporterar (installeras separat). Inga egna entiteter.",
+          "purge": "Raderar varje natt filer som inte ändrats på ett antal dagar i de valda mapparna (som standard mcp_backups: MCP-serverns konfigurationssäkerhetskopior). Av tills den slås på."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automationer",
           "git_sync_add_repository": "Versionshantering: Lägg till ett repository",
           "git_sync_other": "Versionshantering: Annat repository",
-          "git_sync_remove_repository": "Versionshantering: Ta bort repositories"
+          "git_sync_remove_repository": "Versionshantering: Ta bort repositories",
+          "purge": "Rensning"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Tysta enheter",
           "batteries": "Batterier",
           "git_sync": "Versionshantering",
-          "automations": "Automationer"
+          "automations": "Automationer",
+          "purge": "Rensning"
         },
         "data_description": {
           "containers": "Övervakar Home Assistant Core, Supervisor och tilläggen: status, version, CPU och minne. Endast övervakning: inget startas om.",
@@ -124,7 +128,8 @@
           "silent": "Följer enheterna från ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome och deCONZ: de som inte längre hörs av och de svaga signalerna. Inga egna entiteter.",
           "batteries": "Aviserar två gånger om dagen om enheter vars batteri har förblivit lågt.",
           "git_sync": "Home Assistant-mapp versionshanterad med Git och pushad till en remote (GitHub, Gitea…).",
-          "automations": "Visar de misslyckade automationerna och de otillgängliga entiteterna som integrationen Automation Monitor rapporterar (installeras separat). Inga egna entiteter."
+          "automations": "Visar de misslyckade automationerna och de otillgängliga entiteterna som integrationen Automation Monitor rapporterar (installeras separat). Inga egna entiteter.",
+          "purge": "Raderar varje natt filer som inte ändrats på ett antal dagar i de valda mapparna (som standard mcp_backups: MCP-serverns konfigurationssäkerhetskopior). Av tills den slås på."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repositories att ta bort"
         }
+      },
+      "purge": {
+        "title": "Rensning",
+        "description": "Mappar relativt till konfigurationsmappen, eller absoluta om allowlist_external_dirs tillåter dem. Undermappar som blir tomma tas bort, aldrig den valda mappen.",
+        "data": {
+          "directories": "Mappar",
+          "max_age": "Radera filer äldre än"
+        },
+        "data_description": {
+          "directories": "Varje mapp som rensas, t.ex. mcp_backups. Töm listan för att inte rensa något.",
+          "max_age": "Dagar utan ändring efter vilka en fil raderas, varje natt och med Rensa nu."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Det här batteriets enhet har ingen modell: ange typen för själva batteriet.",
       "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange.",
       "repository_exists": "Detta repository är redan konfigurerat.",
-      "backup_not_loaded": "Backup-integrationen är inte inläst."
+      "backup_not_loaded": "Backup-integrationen är inte inläst.",
+      "purge_refused": "Dessa mappar kan inte rensas: {refused}. Konfigurationsmappen, en mapp som innehåller den, Home Assistants egna mappar (.storage, custom_components…) och mappar utanför allowlist_external_dirs nekas."
     },
     "abort": {
       "nothing_to_import": "Inget att importera från Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Databas"
+    },
+    "purge": {
+      "name": "System Hub Rensning"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Skanna nu"
+      },
+      "purge_now": {
+        "name": "Rensa nu"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Motor"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Senaste rensning"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Enheter",
           "description": "Enhets-id:n från attributet devices på sensorn för föräldralösa. Lämna tomt för alla föräldralösa enheter från den senaste skanningen."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Rensa filer",
+      "description": "Raderar filer äldre än den inställda åldern i Rensningsmodulens mappar. Returnerar vad som raderades.",
+      "fields": {
+        "dry_run": {
+          "name": "Testkörning",
+          "description": "Visa bara vad som skulle raderas, utan att radera något."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Inloggningar",
         "sub_security_accounts": "Konton",
         "sub_security_system": "Tillägg och konfiguration",
-        "sub_security_outbound": "Utgående"
+        "sub_security_outbound": "Utgående",
+        "purge": "Rensning",
+        "tab_purge": "Rensning",
+        "pg_folders": "Mappar",
+        "pg_to_delete": "Filer äldre än {n} dagar",
+        "pg_reclaim": "Utrymme att frigöra",
+        "pg_last": "Senaste rensning",
+        "pg_last_done": "{n} filer raderade, {size} frigjort",
+        "pg_never": "Inte körd ännu",
+        "pg_now": "Rensa nu",
+        "pg_confirm": "Radera {n} filer ({size}) som inte ändrats på {days} dagar? Det går inte att ångra.",
+        "pg_errors": "{n} filer kunde inte raderas vid senaste rensningen",
+        "pg_files": "{n} filer, {size}",
+        "pg_oldest": "äldsta {when}",
+        "pg_n_old": "{n} att radera · {size}",
+        "pg_nothing": "Inget att radera",
+        "pg_missing": "Mappen hittades inte: inget att rensa än",
+        "pg_missing_short": "Hittades inte",
+        "pg_left_out": "Utesluten",
+        "pg_refused_root": "Konfigurationsmappen (eller en mapp som innehåller den) rensas aldrig",
+        "pg_refused_protected": "En av Home Assistants egna mappar: rensas aldrig",
+        "pg_refused_outside": "Utanför konfigurationsmappen och inte i allowlist_external_dirs",
+        "pg_n_left_out": "{n} mappar uteslutna",
+        "pg_rule": "Varje natt: filer äldre än {n} dagar",
+        "pg_none": "Ingen mapp vald: lägg till en med Konfigurera."
       }
     },
     "battery_type": {

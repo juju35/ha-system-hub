@@ -16,7 +16,8 @@
           "batteries": "Batterier",
           "git_sync": "Versionering",
           "orphans": "Oprydning",
-          "automations": "Automatiseringer"
+          "automations": "Automatiseringer",
+          "purge": "Oprydning"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
@@ -30,7 +31,8 @@
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
           "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
           "orphans": "Viser de entiteter, som deres integration ikke længere leverer, så du kan fjerne dem samlet.",
-          "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder."
+          "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder.",
+          "purge": "Sletter hver nat filer, der ikke er ændret i et antal dage, i de valgte mapper (som standard mcp_backups: MCP-serverens konfigurationssikkerhedskopier). Slået fra, indtil det slås til."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatiseringer",
           "git_sync_add_repository": "Versionering: Tilføj et repository",
           "git_sync_other": "Versionering: Andet repository",
-          "git_sync_remove_repository": "Versionering: Fjern repositories"
+          "git_sync_remove_repository": "Versionering: Fjern repositories",
+          "purge": "Oprydning"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Tavse enheder",
           "batteries": "Batterier",
           "git_sync": "Versionering",
-          "automations": "Automatiseringer"
+          "automations": "Automatiseringer",
+          "purge": "Oprydning"
         },
         "data_description": {
           "containers": "Overvåger Home Assistant Core, Supervisor og tilføjelserne: tilstand, version, CPU og hukommelse. Kun overvågning: intet genstartes.",
@@ -124,7 +128,8 @@
           "silent": "Følger enhederne fra ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome og deCONZ: dem, der ikke længere giver lyd fra sig, og de svage signaler. Ingen egne entiteter.",
           "batteries": "Giver besked to gange om dagen om de enheder, hvis batteri er forblevet lavt.",
           "git_sync": "Home Assistant-mappe versioneret med Git og pushet til en remote (GitHub, Gitea…).",
-          "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder."
+          "automations": "Viser de mislykkede automatiseringer og de utilgængelige enheder, som integrationen Automation Monitor rapporterer (installeres separat). Ingen egne enheder.",
+          "purge": "Sletter hver nat filer, der ikke er ændret i et antal dage, i de valgte mapper (som standard mcp_backups: MCP-serverens konfigurationssikkerhedskopier). Slået fra, indtil det slås til."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repositories der skal fjernes"
         }
+      },
+      "purge": {
+        "title": "Oprydning",
+        "description": "Mapper relativt til konfigurationsmappen eller absolutte, hvis allowlist_external_dirs tillader dem. Undermapper, der bliver tomme, fjernes, aldrig den valgte mappe.",
+        "data": {
+          "directories": "Mapper",
+          "max_age": "Slet filer ældre end"
+        },
+        "data_description": {
+          "directories": "Hver mappe, der ryddes op, f.eks. mcp_backups. Tøm listen for ikke at rydde noget op.",
+          "max_age": "Dage uden ændring, hvorefter en fil slettes, hver nat og med Ryd op nu."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Dette batteris enhed har ingen model: angiv typen for selve batteriet.",
       "critical_below_warning": "Den røde tærskel skal ligge over den orange.",
       "repository_exists": "Dette repository er allerede sat op.",
-      "backup_not_loaded": "Backup-integrationen er ikke indlæst."
+      "backup_not_loaded": "Backup-integrationen er ikke indlæst.",
+      "purge_refused": "Disse mapper kan ikke ryddes op: {refused}. Konfigurationsmappen, en mappe, der indeholder den, Home Assistants egne mapper (.storage, custom_components…) og mapper uden for allowlist_external_dirs afvises."
     },
     "abort": {
       "nothing_to_import": "Intet at importere fra Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Database"
+    },
+    "purge": {
+      "name": "System Hub Oprydning"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Scan nu"
+      },
+      "purge_now": {
+        "name": "Ryd op nu"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Motor"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Seneste oprydning"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Enheder",
           "description": "Enheds-id'er fra attributten devices på sensoren for forældreløse. Lad stå tom for alle forældreløse enheder fra den seneste scanning."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Ryd op i filer",
+      "description": "Sletter filer ældre end den valgte alder i Oprydningsmodulets mapper. Returnerer, hvad der blev slettet.",
+      "fields": {
+        "dry_run": {
+          "name": "Prøvekørsel",
+          "description": "Fortæl kun, hvad der ville blive slettet, uden at slette noget."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Logins",
         "sub_security_accounts": "Konti",
         "sub_security_system": "Tilføjelser og konfiguration",
-        "sub_security_outbound": "Udgående"
+        "sub_security_outbound": "Udgående",
+        "purge": "Oprydning",
+        "tab_purge": "Oprydning",
+        "pg_folders": "Mapper",
+        "pg_to_delete": "Filer ældre end {n} dage",
+        "pg_reclaim": "Plads at frigøre",
+        "pg_last": "Seneste oprydning",
+        "pg_last_done": "{n} filer slettet, {size} frigjort",
+        "pg_never": "Ikke kørt endnu",
+        "pg_now": "Ryd op nu",
+        "pg_confirm": "Slet {n} filer ({size}), der ikke er ændret i {days} dage? Det kan ikke fortrydes.",
+        "pg_errors": "{n} filer kunne ikke slettes ved seneste oprydning",
+        "pg_files": "{n} filer, {size}",
+        "pg_oldest": "ældste {when}",
+        "pg_n_old": "{n} at slette · {size}",
+        "pg_nothing": "Intet at slette",
+        "pg_missing": "Mappe ikke fundet: intet at rydde op endnu",
+        "pg_missing_short": "Ikke fundet",
+        "pg_left_out": "Udeladt",
+        "pg_refused_root": "Konfigurationsmappen (eller en mappe, der indeholder den) ryddes aldrig op",
+        "pg_refused_protected": "En af Home Assistants egne mapper: ryddes aldrig op",
+        "pg_refused_outside": "Uden for konfigurationsmappen og ikke i allowlist_external_dirs",
+        "pg_n_left_out": "{n} mapper udeladt",
+        "pg_rule": "Hver nat: filer ældre end {n} dage",
+        "pg_none": "Ingen mappe valgt: tilføj en med Konfigurer."
       }
     },
     "battery_type": {

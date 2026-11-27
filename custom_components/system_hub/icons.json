@@ -18,6 +18,9 @@
       },
       "orphans_scan": {
         "default": "mdi:magnify-scan"
+      },
+      "purge_now": {
+        "default": "mdi:delete-clock-outline"
       }
     },
     "sensor": {
@@ -99,6 +102,9 @@
       },
       "orphans_last_scan": {
         "default": "mdi:clock-check-outline"
+      },
+      "purge_last_run": {
+        "default": "mdi:delete-clock-outline"
       }
     }
   },
@@ -159,6 +165,9 @@
     },
     "orphans_remove_devices": {
       "service": "mdi:devices"
+    },
+    "purge_files": {
+      "service": "mdi:delete-clock-outline"
     }
   }
 }

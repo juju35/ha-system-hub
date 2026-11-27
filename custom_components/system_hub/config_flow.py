@@ -44,6 +44,7 @@ from .const import (
     MODULE_LOGS,
     MODULE_MARKETPLACE,
     MODULE_ORPHANS,
+    MODULE_PURGE,
     MODULE_SECURITY,
     MODULE_SILENT,
     MODULE_WATCHDOG,
@@ -63,6 +64,7 @@ from .logs import SYSTEM_LOG_DOMAIN
 from .logs import flow as logs_flow
 from .marketplace import flow as marketplace_flow
 from .orphans import flow as orphans_flow
+from .purge import flow as purge_flow
 from .security import flow as security_flow
 from .silent import DEFAULT_INTEGRATIONS
 from .silent import flow as silent_flow
@@ -103,6 +105,8 @@ def _available(hass: HomeAssistant) -> list[str]:
         and (m != MODULE_AUTOMATIONS or AUTOMATION_MONITOR in hass.config.components)
         # Needs a repository set up first: turned on by choice.
         and m != MODULE_GIT_SYNC
+        # Deletes files: turned on by choice.
+        and m != MODULE_PURGE
     ]
 
 
@@ -203,7 +207,11 @@ class SystemHubOptionsFlow(OptionsFlow):
 
     def _modules(self) -> list[str]:
         modules = self.config_entry.options.get(CONF_MODULES)
-        return [m for m in MODULES if m in modules] if isinstance(modules, list) else list(MODULES)
+        return (
+            [m for m in MODULES if m in modules]
+            if isinstance(modules, list)
+            else [m for m in MODULES if m != MODULE_PURGE]
+        )
 
     def _module(self, module: str) -> dict[str, Any]:
         options = self.config_entry.options.get(module)
@@ -232,6 +240,8 @@ class SystemHubOptionsFlow(OptionsFlow):
             menu.append("marketplace")
         if MODULE_BACKUPS in modules:
             menu.append("backups")
+        if MODULE_PURGE in modules:
+            menu.append("purge")
         if MODULE_SILENT in modules:
             menu.append("silent")
         if MODULE_BATTERIES in modules:
@@ -607,6 +617,26 @@ class SystemHubOptionsFlow(OptionsFlow):
             }
         )
         return self.async_show_form(step_id="backups", data_schema=schema)
+
+    # Purge
+
+    async def async_step_purge(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
+        """The folders purged and the age from which their files are deleted."""
+        errors: dict[str, str] = {}
+        placeholders = {"refused": ""}
+        if user_input is not None:
+            options = purge_flow.settings_options(user_input)
+            if refused := await purge_flow.async_refused(self.hass, options):
+                errors["directories"] = "purge_refused"
+                placeholders["refused"] = ", ".join(refused)
+            else:
+                return self._save(**{MODULE_PURGE: options})
+        schema = purge_flow.settings_schema(self._module(MODULE_PURGE))
+        if user_input is not None:
+            schema = self.add_suggested_values_to_schema(schema, user_input)
+        return self.async_show_form(
+            step_id="purge", data_schema=schema, errors=errors, description_placeholders=placeholders
+        )
 
     # Database
 

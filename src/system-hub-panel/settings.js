@@ -11,6 +11,7 @@ export var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   backups: ['backups'],
+  purge: ['purge'],
   database: ['database'],
   security: ['security'],
   logs: ['logs'],

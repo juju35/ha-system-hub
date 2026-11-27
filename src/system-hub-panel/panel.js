@@ -675,6 +675,8 @@ export class SystemHubPanel extends HTMLElement {
       else if (slow.length) Promise.all(slow).then(() => this._idleRender());
       // The Backups tab shown: Home Assistant's backups, read again every minute at most
       if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
+      // The Purge tab shown: its folders scanned again every minute at most
+      if (this._state?.purge && (this._routeTab || this._tab) === 'purge') await this._pgLoad();
       this._reportTone();
       clearTimeout(this._retry);
     } catch (err) {
@@ -1082,6 +1084,7 @@ export class SystemHubPanel extends HTMLElement {
       watchdog: () => this._watchdog(),
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
+      purge: () => this._purge(),
       database: () => this._database(),
       security: () => this._security('security'),
       security_accounts: () => this._security('security_accounts'),
@@ -3634,6 +3637,12 @@ export class SystemHubPanel extends HTMLElement {
       this._confirm = null;
       return this._run('purge', 'db', { keep_days: this._db?.data?.keep_days ?? 10, repack: true }, () => this._dbLoad(true, true), 'recorder', 'db_repack');
     }
+    if (action === 'pg_refresh') return this._pgLoad(true);
+    if (action === 'pg_purge_confirm') {
+      this._confirm = 'pg_purge';
+      return this._render();
+    }
+    if (action === 'pg_purge') return this._pgPurge();
     if (action === 'bk_now') return this._run('create_automatic', 'bk', {}, () => this._bkLoad(true), 'backup', 'bk_now');
     if (action === 'upd_backup') {
       this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));

@@ -16,7 +16,8 @@
           "batteries": "Batteries",
           "git_sync": "Versioning",
           "orphans": "Cleanup",
-          "automations": "Automations"
+          "automations": "Automations",
+          "purge": "Purge"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
@@ -30,7 +31,8 @@
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
           "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
           "orphans": "Lists the entities that their integration no longer provides, so that you can remove them in bulk.",
-          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
+          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own.",
+          "purge": "Deletes every night the files not modified for a number of days in the folders set (mcp_backups by default: the configuration backups of the MCP server). Off until turned on."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automations",
           "git_sync_add_repository": "Versioning: Add a repository",
           "git_sync_other": "Versioning: Another repository",
-          "git_sync_remove_repository": "Versioning: Remove repositories"
+          "git_sync_remove_repository": "Versioning: Remove repositories",
+          "purge": "Purge"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Silent devices",
           "batteries": "Batteries",
           "git_sync": "Versioning",
-          "automations": "Automations"
+          "automations": "Automations",
+          "purge": "Purge"
         },
         "data_description": {
           "containers": "Monitors Home Assistant Core, the Supervisor and the add-ons: state, version, CPU and memory. Monitoring only: nothing is restarted.",
@@ -124,7 +128,8 @@
           "silent": "Follows the devices of ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome and deCONZ: the ones not heard from for a while, and the weak signals. No entities of its own.",
           "batteries": "Notifies twice a day the devices whose battery has stayed low.",
           "git_sync": "Home Assistant folder versioned with Git and pushed to a remote (GitHub, Gitea…).",
-          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own."
+          "automations": "Shows the failed automations and the unavailable entities reported by the Automation Monitor integration (installed separately). No entities of its own.",
+          "purge": "Deletes every night the files not modified for a number of days in the folders set (mcp_backups by default: the configuration backups of the MCP server). Off until turned on."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repositories to remove"
         }
+      },
+      "purge": {
+        "title": "Purge",
+        "description": "Folders relative to the configuration folder, or absolute when allowlist_external_dirs allows them. The sub-folders left empty are removed, never the folder set.",
+        "data": {
+          "directories": "Folders",
+          "max_age": "Delete files older than"
+        },
+        "data_description": {
+          "directories": "Each folder purged, e.g. mcp_backups. Empty the list to purge nothing.",
+          "max_age": "Days without a change after which a file is deleted, every night and with Purge now."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "This battery's device has no model: set the type for the battery itself.",
       "critical_below_warning": "The red threshold must be above the orange one.",
       "repository_exists": "This repository is already set up.",
-      "backup_not_loaded": "The Backup integration is not loaded."
+      "backup_not_loaded": "The Backup integration is not loaded.",
+      "purge_refused": "These folders can't be purged: {refused}. The configuration folder, a folder holding it, Home Assistant's own folders (.storage, custom_components…) and the folders outside allowlist_external_dirs are refused."
     },
     "abort": {
       "nothing_to_import": "Nothing to import from Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Database"
+    },
+    "purge": {
+      "name": "System Hub Purge"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Scan now"
+      },
+      "purge_now": {
+        "name": "Purge now"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Engine"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Last purge"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Devices",
           "description": "Device IDs from the devices attribute of the orphans sensor. Leave empty for every orphan device of the last scan."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Purge files",
+      "description": "Delete the files older than the age set in the folders of the Purge module. Returns what was deleted.",
+      "fields": {
+        "dry_run": {
+          "name": "Dry run",
+          "description": "Only tell what would be deleted, without deleting anything."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Logins",
         "sub_security_accounts": "Accounts",
         "sub_security_system": "Add-ons & config",
-        "sub_security_outbound": "Outbound"
+        "sub_security_outbound": "Outbound",
+        "purge": "Purge",
+        "tab_purge": "Purge",
+        "pg_folders": "Folders",
+        "pg_to_delete": "Files older than {n} days",
+        "pg_reclaim": "Space to free",
+        "pg_last": "Last purge",
+        "pg_last_done": "{n} files deleted, {size} freed",
+        "pg_never": "Not run yet",
+        "pg_now": "Purge now",
+        "pg_confirm": "Delete {n} files ({size}) not modified for {days} days? This can't be undone.",
+        "pg_errors": "{n} files could not be deleted in the last purge",
+        "pg_files": "{n} files, {size}",
+        "pg_oldest": "oldest {when}",
+        "pg_n_old": "{n} to delete · {size}",
+        "pg_nothing": "Nothing to delete",
+        "pg_missing": "Folder not found: nothing to purge yet",
+        "pg_missing_short": "Not found",
+        "pg_left_out": "Left out",
+        "pg_refused_root": "The configuration folder (or a folder holding it) is never purged",
+        "pg_refused_protected": "One of Home Assistant's own folders: never purged",
+        "pg_refused_outside": "Outside the configuration folder and not in allowlist_external_dirs",
+        "pg_n_left_out": "{n} folders left out",
+        "pg_rule": "Every night: files older than {n} days",
+        "pg_none": "No folder set: add one with Configure."
       }
     },
     "battery_type": {

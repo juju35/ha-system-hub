@@ -16,7 +16,8 @@
           "batteries": "Baterías",
           "git_sync": "Versionado",
           "orphans": "Limpieza",
-          "automations": "Automatizaciones"
+          "automations": "Automatizaciones",
+          "purge": "Purga"
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
@@ -30,7 +31,8 @@
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
           "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
           "orphans": "Muestra las entidades que su integración ya no proporciona, para que puedas eliminarlas en bloque.",
-          "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias."
+          "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias.",
+          "purge": "Elimina cada noche los archivos no modificados desde hace un número de días en las carpetas elegidas (mcp_backups por defecto: las copias de configuración del servidor MCP). Desactivado hasta que se active."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizaciones",
           "git_sync_add_repository": "Versionado: Añadir un repositorio",
           "git_sync_other": "Versionado: Otro repositorio",
-          "git_sync_remove_repository": "Versionado: Quitar repositorios"
+          "git_sync_remove_repository": "Versionado: Quitar repositorios",
+          "purge": "Purga"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Dispositivos mudos",
           "batteries": "Baterías",
           "git_sync": "Versionado",
-          "automations": "Automatizaciones"
+          "automations": "Automatizaciones",
+          "purge": "Purga"
         },
         "data_description": {
           "containers": "Supervisa Home Assistant Core, el Supervisor y los complementos: estado, versión, CPU y memoria. Solo supervisión: no se reinicia nada.",
@@ -124,7 +128,8 @@
           "silent": "Sigue los dispositivos de ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome y deCONZ: los que ya no dan señales de vida y las señales débiles. Sin entidades propias.",
           "batteries": "Notifica dos veces al día los dispositivos cuya batería ha seguido baja.",
           "git_sync": "Carpeta de Home Assistant versionada con Git y enviada a un remoto (GitHub, Gitea…).",
-          "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias."
+          "automations": "Muestra las automatizaciones fallidas y las entidades no disponibles que informa la integración Automation Monitor (se instala aparte). Sin entidades propias.",
+          "purge": "Elimina cada noche los archivos no modificados desde hace un número de días en las carpetas elegidas (mcp_backups por defecto: las copias de configuración del servidor MCP). Desactivado hasta que se active."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repositorios a quitar"
         }
+      },
+      "purge": {
+        "title": "Purga",
+        "description": "Carpetas relativas a la carpeta de configuración, o absolutas si allowlist_external_dirs las permite. Las subcarpetas que quedan vacías se eliminan, nunca la carpeta elegida.",
+        "data": {
+          "directories": "Carpetas",
+          "max_age": "Eliminar archivos de más de"
+        },
+        "data_description": {
+          "directories": "Cada carpeta purgada, p. ej. mcp_backups. Vacía la lista para no purgar nada.",
+          "max_age": "Días sin cambios tras los que se elimina un archivo, cada noche y con Purgar ahora."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "El dispositivo de esta batería no tiene modelo: define el tipo para la propia batería.",
       "critical_below_warning": "El umbral rojo debe estar por encima del naranja.",
       "repository_exists": "Este repositorio ya está configurado.",
-      "backup_not_loaded": "La integración Backup no está cargada."
+      "backup_not_loaded": "La integración Backup no está cargada.",
+      "purge_refused": "Estas carpetas no se pueden purgar: {refused}. Se rechazan la carpeta de configuración, una carpeta que la contenga, las carpetas propias de Home Assistant (.storage, custom_components…) y las carpetas fuera de allowlist_external_dirs."
     },
     "abort": {
       "nothing_to_import": "Nada que importar desde Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Base de datos"
+    },
+    "purge": {
+      "name": "System Hub Purga"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Escanear ahora"
+      },
+      "purge_now": {
+        "name": "Purgar ahora"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Motor"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Última purga"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Dispositivos",
           "description": "ID de dispositivos del atributo devices del sensor de huérfanos. Déjelo vacío para todos los dispositivos huérfanos del último análisis."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Purgar archivos",
+      "description": "Elimina los archivos más antiguos que la edad elegida en las carpetas del módulo Purga. Devuelve lo que se eliminó.",
+      "fields": {
+        "dry_run": {
+          "name": "Simulación",
+          "description": "Solo indica lo que se eliminaría, sin eliminar nada."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Inicios de sesión",
         "sub_security_accounts": "Cuentas",
         "sub_security_system": "Complementos y config.",
-        "sub_security_outbound": "Salientes"
+        "sub_security_outbound": "Salientes",
+        "purge": "Purga",
+        "tab_purge": "Purga",
+        "pg_folders": "Carpetas",
+        "pg_to_delete": "Archivos de más de {n} días",
+        "pg_reclaim": "Espacio a liberar",
+        "pg_last": "Última purga",
+        "pg_last_done": "{n} archivos eliminados, {size} liberados",
+        "pg_never": "Aún no ejecutada",
+        "pg_now": "Purgar ahora",
+        "pg_confirm": "¿Eliminar {n} archivos ({size}) sin cambios desde hace {days} días? No se puede deshacer.",
+        "pg_errors": "{n} archivos no se pudieron eliminar en la última purga",
+        "pg_files": "{n} archivos, {size}",
+        "pg_oldest": "el más antiguo {when}",
+        "pg_n_old": "{n} por eliminar · {size}",
+        "pg_nothing": "Nada que eliminar",
+        "pg_missing": "Carpeta no encontrada: aún nada que purgar",
+        "pg_missing_short": "No encontrada",
+        "pg_left_out": "Excluida",
+        "pg_refused_root": "La carpeta de configuración (o una que la contenga) nunca se purga",
+        "pg_refused_protected": "Una carpeta propia de Home Assistant: nunca se purga",
+        "pg_refused_outside": "Fuera de la carpeta de configuración y no está en allowlist_external_dirs",
+        "pg_n_left_out": "{n} carpetas excluidas",
+        "pg_rule": "Cada noche: archivos de más de {n} días",
+        "pg_none": "Ninguna carpeta: añade una con Configurar."
       }
     },
     "battery_type": {

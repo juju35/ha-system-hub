@@ -300,6 +300,7 @@ export var SH_BANNER_METHODS = {
         }
         extra = { installing: Boolean(run), count: (mk.list || []).length + (this._state.system_updates?.available || []).length };
       }
+      if (tab === 'purge') extra = { count: this._pgSummary?.()?.old || 0 };
       if (tab === 'backups') extra = { failing: Boolean(this._bkSummary?.()?.failing?.length) };
     }
     var [day, dark, floor] = SH_WALLS[tab] || SH_WALLS.status;

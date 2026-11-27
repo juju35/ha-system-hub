@@ -16,7 +16,8 @@
           "batteries": "Elemek",
           "git_sync": "Verziókezelés",
           "orphans": "Takarítás",
-          "automations": "Automatizálások"
+          "automations": "Automatizálások",
+          "purge": "Takarítás"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
@@ -30,7 +31,8 @@
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
           "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
           "orphans": "Listázza azokat az entitásokat, amelyeket az integrációjuk már nem biztosít, hogy egyszerre eltávolíthassa őket.",
-          "automations": "Megjeleníti az Automation Monitor integráció (külön telepítendő) által jelentett hibás automatizálásokat és nem elérhető entitásokat. Saját entitása nincs."
+          "automations": "Megjeleníti az Automation Monitor integráció (külön telepítendő) által jelentett hibás automatizálásokat és nem elérhető entitásokat. Saját entitása nincs.",
+          "purge": "Minden éjjel törli a kiválasztott mappákban a bizonyos napja nem módosított fájlokat (alapértelmezés: mcp_backups, az MCP-szerver konfigurációs mentései). Kikapcsolva, amíg be nem kapcsolják."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizálások",
           "git_sync_add_repository": "Verziókezelés: Tároló hozzáadása",
           "git_sync_other": "Verziókezelés: Másik tároló",
-          "git_sync_remove_repository": "Verziókezelés: Tárolók eltávolítása"
+          "git_sync_remove_repository": "Verziókezelés: Tárolók eltávolítása",
+          "purge": "Takarítás"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Néma eszközök",
           "batteries": "Elemek",
           "git_sync": "Verziókezelés",
-          "automations": "Automatizálások"
+          "automations": "Automatizálások",
+          "purge": "Takarítás"
         },
         "data_description": {
           "containers": "Figyeli a Home Assistant Core-t, a Supervisort és a kiegészítőket: állapot, verzió, CPU és memória. Csak figyelés: semmi sem indul újra.",
@@ -124,7 +128,8 @@
           "silent": "Követi a ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome és deCONZ eszközeit: azokat, amelyek már nem jelentkeznek, és a gyenge jeleket. Saját entitások nélkül.",
           "batteries": "Naponta kétszer értesít azokról az eszközökről, amelyeknek az eleme tartósan gyenge maradt.",
           "git_sync": "Gittel verziókezelt Home Assistant-mappa, amely egy remote-ra kerül pusholásra (GitHub, Gitea…).",
-          "automations": "Megjeleníti az Automation Monitor integráció (külön telepítendő) által jelentett hibás automatizálásokat és nem elérhető entitásokat. Saját entitása nincs."
+          "automations": "Megjeleníti az Automation Monitor integráció (külön telepítendő) által jelentett hibás automatizálásokat és nem elérhető entitásokat. Saját entitása nincs.",
+          "purge": "Minden éjjel törli a kiválasztott mappákban a bizonyos napja nem módosított fájlokat (alapértelmezés: mcp_backups, az MCP-szerver konfigurációs mentései). Kikapcsolva, amíg be nem kapcsolják."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Eltávolítandó tárolók"
         }
+      },
+      "purge": {
+        "title": "Takarítás",
+        "description": "A konfigurációs mappához viszonyított mappák, vagy abszolút útvonalak, ha az allowlist_external_dirs engedi őket. Az üresen maradt almappák törlődnek, a kiválasztott mappa soha.",
+        "data": {
+          "directories": "Mappák",
+          "max_age": "Ennél régebbi fájlok törlése"
+        },
+        "data_description": {
+          "directories": "Minden takarított mappa, pl. mcp_backups. Ürítse ki a listát, ha semmit sem szeretne takarítani.",
+          "max_age": "Módosítás nélküli napok, amelyek után egy fájl törlődik, minden éjjel és a Takarítás most gombbal."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Ennek az elemnek az eszközéhez nincs modell: állítsa be a típust magára az elemre.",
       "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie.",
       "repository_exists": "Ez a tároló már be van állítva.",
-      "backup_not_loaded": "A Backup integráció nincs betöltve."
+      "backup_not_loaded": "A Backup integráció nincs betöltve.",
+      "purge_refused": "Ezek a mappák nem takaríthatók: {refused}. Elutasításra kerül a konfigurációs mappa, az azt tartalmazó mappa, a Home Assistant saját mappái (.storage, custom_components…) és az allowlist_external_dirs-en kívüli mappák."
     },
     "abort": {
       "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Adatbázis"
+    },
+    "purge": {
+      "name": "System Hub Takarítás"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Vizsgálat most"
+      },
+      "purge_now": {
+        "name": "Takarítás most"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Motor"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Utolsó takarítás"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Eszközök",
           "description": "Eszközazonosítók az árva-érzékelő devices attribútumából. Hagyja üresen a legutóbbi vizsgálat összes árva eszközéhez."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Fájlok takarítása",
+      "description": "Törli a beállított kornál régebbi fájlokat a Takarítás modul mappáiban. Visszaadja, mi lett törölve.",
+      "fields": {
+        "dry_run": {
+          "name": "Próbafuttatás",
+          "description": "Csak megmondja, mi törlődne, semmit sem töröl."
         }
       }
     }
@@ -1925,7 +1962,31 @@
         "sub_security": "Bejelentkezések",
         "sub_security_accounts": "Fiókok",
         "sub_security_system": "Kiegészítők és konfiguráció",
-        "sub_security_outbound": "Kimenő"
+        "sub_security_outbound": "Kimenő",
+        "purge": "Takarítás",
+        "tab_purge": "Takarítás",
+        "pg_folders": "Mappák",
+        "pg_to_delete": "{n} napnál régebbi fájlok",
+        "pg_reclaim": "Felszabadítható hely",
+        "pg_last": "Utolsó takarítás",
+        "pg_last_done": "{n} fájl törölve, {size} felszabadítva",
+        "pg_never": "Még nem futott",
+        "pg_now": "Takarítás most",
+        "pg_confirm": "Törli a {days} napja nem módosított {n} fájlt ({size})? Ez nem vonható vissza.",
+        "pg_errors": "{n} fájlt nem sikerült törölni az utolsó takarításkor",
+        "pg_files": "{n} fájl, {size}",
+        "pg_oldest": "legrégebbi {when}",
+        "pg_n_old": "{n} törlendő · {size}",
+        "pg_nothing": "Nincs mit törölni",
+        "pg_missing": "A mappa nem található: még nincs mit takarítani",
+        "pg_missing_short": "Nem található",
+        "pg_left_out": "Kihagyva",
+        "pg_refused_root": "A konfigurációs mappa (vagy az azt tartalmazó mappa) soha nem takarítható",
+        "pg_refused_protected": "A Home Assistant saját mappája: soha nem takarítható",
+        "pg_refused_outside": "A konfigurációs mappán kívül, és nincs az allowlist_external_dirs-ben",
+        "pg_n_left_out": "{n} mappa kihagyva",
+        "pg_rule": "Minden éjjel: {n} napnál régebbi fájlok",
+        "pg_none": "Nincs mappa: adjon hozzá egyet a Konfigurálás gombbal."
       }
     },
     "battery_type": {

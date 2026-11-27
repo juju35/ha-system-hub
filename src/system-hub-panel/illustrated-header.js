@@ -16,6 +16,7 @@ export var SH_WALLS = {
   automations: ['#eef3f4', '#283040', 'tiles'],
   marketplace: ['#f3f1ec', '#23262f', 'concrete'],
   backups: ['#e4e6ea', '#22262e', 'concrete'],
+  purge: ['#eef2f5', '#262c36', 'tiles'],
   git_sync: ['#eef1f6', '#262c3a', 'parquet'],
   silent: ['#f4ede3', '#2a2f3d', 'parquet'],
   batteries: ['#f2efe9', '#2a2b33', 'parquet'],
@@ -26,7 +27,7 @@ export var SH_WALLS = {
 // pipes, fuse box, pallet and cone (D)
 export var SH_DECOR = {
   status: 'A', system: 'D', containers: 'D', database: 'C', security: 'B', logs: 'A', watchdog: 'C', automations: 'B',
-  marketplace: 'D', backups: 'D', git_sync: 'A', silent: 'B', batteries: 'C', orphans: 'A', settings: 'D',
+  marketplace: 'D', backups: 'D', purge: 'C', git_sync: 'A', silent: 'B', batteries: 'C', orphans: 'A', settings: 'D',
 };
 export var SH_COG =
   'M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z';
@@ -212,6 +213,21 @@ export function shScene(name, tone, n, extra = {}) {
       <rect x="160" y="12" width="32" height="30" rx="1.5" fill="${p('#cfe8f8', '#1b2f52')}" stroke="${p('#fff', '#4a5568')}" stroke-width="2"/>${sky}${shCloud(176, 30, 0.8, fail ? '#fde2e2' : '#fff')}
       <line x1="176" y1="12" x2="176" y2="42" stroke="${p('#fff', '#4a5568')}" stroke-width="1.4"/>
       ${fail ? `<g transform="translate(186 20)"><circle r="4.5" fill="${SH_TONE_HEX.bad}"/><path d="M-1.8 -1.8 l3.6 3.6 M1.8 -1.8 l-3.6 3.6" stroke="#fff" stroke-width="1.3" stroke-linecap="round"/></g>` : ''}`;
+  }
+  if (name === 'purge') {
+    // A wall calendar (the age of the files), papers falling into a bin, the bin's lid open while files are to go
+    var cal = `<g transform="translate(64 10)"><rect width="34" height="32" rx="2" fill="${face}" stroke="${edge}"/><rect width="34" height="8" rx="2" fill="${c}"/>
+      <g fill="${edge}">${[0, 1, 2, 3].map((r) => [0, 1, 2, 3].map((k) => `<rect x="${4 + k * 7.5}" y="${12 + r * 5}" width="4.5" height="3" rx=".6"/>`).join('')).join('')}</g>
+      <path d="M4 12 l4.5 3 M8.5 12 l-4.5 3" stroke="${c}" stroke-width="1.1"/><circle cx="9" cy="0" r="1.6" fill="${dark}"/><circle cx="25" cy="0" r="1.6" fill="${dark}"/></g>`;
+    var sheet = (x, y, r, cls) =>
+      `<g transform="translate(${x} ${y}) rotate(${r})"><g class="${cls}"><path d="M-5 -6 h7 l3 3 v9 h-10z" fill="${face}" stroke="${ink}" stroke-width=".9"/><path d="M-3 -1 h6 M-3 2 h6" stroke="${edge}" stroke-width=".9"/></g></g>`;
+    var open = extra.count > 0;
+    var lid = open
+      ? '<g transform="translate(108 46) rotate(-28)"><rect width="34" height="4" rx="1.5" fill="#2f78bd"/><rect x="13" y="-3" width="8" height="3" rx="1" fill="#2f78bd"/></g>'
+      : '<rect x="106" y="45" width="36" height="4" rx="1.5" fill="#2f78bd"/><rect x="120" y="42" width="8" height="3" rx="1" fill="#2f78bd"/>';
+    return `${cal}<path d="M110 50 h28 l-3 30 h-22z" fill="#3b8fd6"/><path d="M118 55 v20 M124 55 v20 M130 55 v20" stroke="#2f78bd" stroke-width="1.4" stroke-linecap="round"/>${lid}
+      ${open ? `${sheet(124, 30, 18, 'sh-float')}${sheet(144, 18, -14, 'sh-float')}` : ''}${sheet(160, 74, 80, '')}
+      ${open ? `<g transform="translate(150 40)">${badge(0, 0, extra.count > 99 ? '99+' : extra.count)}</g>` : ''}${shPlant(186, 1.2, n)}`;
   }
   if (name === 'git_sync') {
     var cm = (x, y, col) => `<circle cx="${x}" cy="${y}" r="3.6" fill="${col || p('#fff', '#3d475c')}" stroke="${col || ink}" stroke-width="1.4"/>`;

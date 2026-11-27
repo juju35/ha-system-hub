@@ -13,7 +13,7 @@
  *
  * https://github.com/juju35/ha-system-hub
  */
-export var SYSTEM_HUB_PANEL_VERSION = '3.15.3';
+export var SYSTEM_HUB_PANEL_VERSION = '3.16.0';
 export var SH_DOMAIN = 'system_hub';
 export var SH_REFRESH_MS = 10000;
 // A state that could not be read (Home Assistant restarting, connection lost): read again after
@@ -27,6 +27,7 @@ export var SH_MODULE_ICONS = {
   database: 'mdi:database-outline',
   security: 'mdi:shield-lock-outline',
   backups: 'mdi:backup-restore',
+  purge: 'mdi:delete-clock-outline',
   logs: 'mdi:text-box-search-outline',
   silent: 'mdi:access-point-off',
   batteries: 'mdi:battery-heart-variant',
@@ -43,6 +44,7 @@ export var SH_MODULE_NAMES = {
   watchdog: 'Watchdog',
   marketplace: 'Marketplace',
   backups: 'Backups',
+  purge: 'Purge',
   logs: 'Logs',
   silent: 'Silent devices',
   batteries: 'Batteries',
@@ -56,7 +58,7 @@ export var SH_GROUPS = {
   // A group of its own: one module, its sections as sub-tabs (SH_SUBTABS)
   security: ['security', 'security_accounts', 'security_system', 'security_outbound'],
   reliability: ['logs', 'watchdog', 'automations'],
-  maintenance: ['marketplace', 'backups', 'git_sync'],
+  maintenance: ['marketplace', 'backups', 'purge', 'git_sync'],
   devices: ['silent', 'batteries', 'orphans'],
 };
 // A module whose sections are sub-tabs: the first keeps the module's name (and its address, /system-hub/security)

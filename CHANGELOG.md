@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.16.0 - 2026-11-27
+
+### Features
+- **Purge** module (off until turned on): deletes every night the files not modified for a number of days (30 by default) in the folders listed — `mcp_backups` by default, the configuration backups of the Home Assistant MCP server — and the sub-folders left empty. A **Purge** sub-tab in Maintenance (folders, files to delete, space to free, last purge, **Purge now** once confirmed), its settings in the Settings tab, a tile on the Status tab, the action `system_hub.purge_files` (with `dry_run`), a **Purge now** button and a **Last purge** sensor. The configuration folder, a folder holding it, Home Assistant's own folders and the folders outside `allowlist_external_dirs` are refused.
+
 ## 3.15.3 - 2026-11-27
 
 ### Fixes
