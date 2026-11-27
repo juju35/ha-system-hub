@@ -675,6 +675,8 @@ export class SystemHubPanel extends HTMLElement {
       else if (slow.length) Promise.all(slow).then(() => this._idleRender());
       // The Backups tab shown: Home Assistant's backups, read again every minute at most
       if (this._state?.backups && (this._routeTab || this._tab) === 'backups') await this._bkLoad();
+      // The Purge tab shown: its folders scanned again every minute at most
+      if (this._state?.purge && (this._routeTab || this._tab) === 'purge') await this._pgLoad();
       this._reportTone();
       clearTimeout(this._retry);
     } catch (err) {
@@ -884,6 +886,10 @@ export class SystemHubPanel extends HTMLElement {
     root.querySelector('main').addEventListener('pointerdown', (ev) => this._cfgDragStart?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => this._cfgDragKey?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && this._pk) {
+        this._pk = null;
+        return this._render();
+      }
       if (ev.key === 'Escape' && this._confirm?.startsWith?.('ha_')) {
         this._confirm = null;
         this._haCheck = null;
@@ -906,7 +912,7 @@ export class SystemHubPanel extends HTMLElement {
       if (ev.target.dataset?.draft) this._draft[ev.target.dataset.draft] = ev.target.value;
       // The Orphans search and filters narrow the list as they change
       if (ev.target.dataset?.draft?.startsWith('orph_')) this._render();
-      if (ev.target.dataset?.draft === 'batt_search' || ev.target.dataset?.draft === 'sl_search') this._render();
+      if (ev.target.dataset?.draft === 'batt_search' || ev.target.dataset?.draft === 'sl_search' || ev.target.dataset?.draft === 'pk_q') this._render();
     });
     this._attachFold();
   }
@@ -1082,6 +1088,7 @@ export class SystemHubPanel extends HTMLElement {
       watchdog: () => this._watchdog(),
       marketplace: () => this._marketplace(),
       backups: () => this._backups(),
+      purge: () => this._purge(),
       database: () => this._database(),
       security: () => this._security('security'),
       security_accounts: () => this._security('security_accounts'),
@@ -3457,6 +3464,7 @@ export class SystemHubPanel extends HTMLElement {
     if (!button || button.disabled) return;
     var action = button.dataset.action;
     if ((action.startsWith('cfg_') || action.startsWith('open_settings')) && this._cfgClick(button)) return;
+    if (action.startsWith('pk_') || action === 'pg_remove') return this._pkClick(button, action);
     if (action.startsWith('sc_')) {
       var handled = this._scClick(button, action);
       if (handled !== false) return handled;
@@ -3634,6 +3642,12 @@ export class SystemHubPanel extends HTMLElement {
       this._confirm = null;
       return this._run('purge', 'db', { keep_days: this._db?.data?.keep_days ?? 10, repack: true }, () => this._dbLoad(true, true), 'recorder', 'db_repack');
     }
+    if (action === 'pg_refresh') return this._pgLoad(true);
+    if (action === 'pg_purge_confirm') {
+      this._confirm = 'pg_purge';
+      return this._render();
+    }
+    if (action === 'pg_purge') return this._pgPurge();
     if (action === 'bk_now') return this._run('create_automatic', 'bk', {}, () => this._bkLoad(true), 'backup', 'bk_now');
     if (action === 'upd_backup') {
       this._updBackup = !(this._updBackup ?? Boolean(this._state.marketplace?.backup_before_install));

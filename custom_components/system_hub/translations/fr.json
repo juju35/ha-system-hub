@@ -16,7 +16,8 @@
           "batteries": "Batteries",
           "git_sync": "Versionnage",
           "orphans": "Nettoyage",
-          "automations": "Automatisations"
+          "automations": "Automatisations",
+          "purge": "Purge"
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
@@ -30,7 +31,8 @@
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
           "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
           "orphans": "Liste les entités que leur intégration ne fournit plus, pour pouvoir les supprimer en masse.",
-          "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre."
+          "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre.",
+          "purge": "Supprime chaque nuit les fichiers non modifiés depuis un nombre de jours dans les dossiers choisis (mcp_backups par défaut : les sauvegardes de configuration du serveur MCP). Désactivé tant qu'il n'est pas activé."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatisations",
           "git_sync_add_repository": "Versionnage : Ajouter un dépôt",
           "git_sync_other": "Versionnage : Autre dépôt",
-          "git_sync_remove_repository": "Versionnage : Retirer des dépôts"
+          "git_sync_remove_repository": "Versionnage : Retirer des dépôts",
+          "purge": "Purge"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Appareils muets",
           "batteries": "Batteries",
           "git_sync": "Versionnage",
-          "automations": "Automatisations"
+          "automations": "Automatisations",
+          "purge": "Purge"
         },
         "data_description": {
           "containers": "Surveille Home Assistant Core, le Supervisor et les add-ons : état, version, CPU et mémoire. Surveillance uniquement : rien n'est redémarré.",
@@ -124,7 +128,8 @@
           "silent": "Suit les appareils ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome et deCONZ : ceux qui ne donnent plus signe de vie, et les signaux faibles. Aucune entité propre.",
           "batteries": "Notifie deux fois par jour les appareils dont la batterie est restée faible.",
           "git_sync": "Dossier Home Assistant versionné avec Git et poussé vers un dépôt distant (GitHub, Gitea…).",
-          "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre."
+          "automations": "Affiche les automatisations en échec et les entités indisponibles signalées par l'intégration Automation Monitor (à installer à part). Aucune entité propre.",
+          "purge": "Supprime chaque nuit les fichiers non modifiés depuis un nombre de jours dans les dossiers choisis (mcp_backups par défaut : les sauvegardes de configuration du serveur MCP). Désactivé tant qu'il n'est pas activé."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Dépôts à retirer"
         }
+      },
+      "purge": {
+        "title": "Purge",
+        "description": "Uniquement des dossiers du dossier de configuration. Les sous-dossiers laissés vides sont supprimés, jamais le dossier choisi.",
+        "data": {
+          "directories": "Dossiers",
+          "max_age": "Supprimer les fichiers de plus de"
+        },
+        "data_description": {
+          "directories": "Chaque dossier purgé, relatif au dossier de configuration, par ex. mcp_backups. Videz la liste pour ne rien purger.",
+          "max_age": "Jours sans modification au-delà desquels un fichier est supprimé, chaque nuit et avec Purger maintenant."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "L'appareil de cette batterie n'a pas de modèle : réglez le type pour la batterie elle-même.",
       "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange.",
       "repository_exists": "Ce dépôt est déjà configuré.",
-      "backup_not_loaded": "L'intégration Backup n'est pas chargée."
+      "backup_not_loaded": "L'intégration Backup n'est pas chargée.",
+      "purge_refused": "Ces dossiers ne peuvent pas être purgés : {refused}. Seuls les dossiers du dossier de configuration sont acceptés, sauf les dossiers cachés (.storage…) et ceux de Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Rien à importer depuis Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Base de données"
+    },
+    "purge": {
+      "name": "System Hub Purge"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Analyser maintenant"
+      },
+      "purge_now": {
+        "name": "Purger maintenant"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Moteur"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Dernière purge"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Appareils",
           "description": "ID d'appareils de l'attribut devices du capteur des orphelins. Laisser vide pour tous les appareils orphelins de la dernière analyse."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Purger les fichiers",
+      "description": "Supprime les fichiers plus anciens que l'âge choisi dans les dossiers du module Purge. Renvoie ce qui a été supprimé.",
+      "fields": {
+        "dry_run": {
+          "name": "Simulation",
+          "description": "Indique seulement ce qui serait supprimé, sans rien supprimer."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Connexions",
         "sub_security_accounts": "Comptes",
         "sub_security_system": "Add-ons et config",
-        "sub_security_outbound": "Sortantes"
+        "sub_security_outbound": "Sortantes",
+        "purge": "Purge",
+        "tab_purge": "Purge",
+        "pg_folders": "Dossiers",
+        "pg_to_delete": "Fichiers de plus de {n} jours",
+        "pg_reclaim": "Espace à libérer",
+        "pg_last": "Dernière purge",
+        "pg_last_done": "{n} fichiers supprimés, {size} libérés",
+        "pg_never": "Pas encore lancée",
+        "pg_now": "Purger maintenant",
+        "pg_confirm": "Supprimer {n} fichiers ({size}) non modifiés depuis {days} jours ? C'est définitif.",
+        "pg_errors": "{n} fichiers n'ont pas pu être supprimés lors de la dernière purge",
+        "pg_files": "{n} fichiers, {size}",
+        "pg_oldest": "le plus ancien {when}",
+        "pg_n_old": "{n} à supprimer · {size}",
+        "pg_nothing": "Rien à supprimer",
+        "pg_missing": "Dossier introuvable : rien à purger pour l'instant",
+        "pg_missing_short": "Introuvable",
+        "pg_left_out": "Écarté",
+        "pg_refused_root": "Le dossier de configuration (ou un dossier qui le contient) n'est jamais purgé",
+        "pg_refused_protected": "Dossier caché ou propre à Home Assistant : jamais purgé",
+        "pg_refused_outside": "Hors du dossier de configuration",
+        "pg_n_left_out": "{n} dossiers écartés",
+        "pg_rule": "Chaque nuit : fichiers de plus de {n} jours",
+        "pg_none": "Aucun dossier : ajoutez-en un avec Configurer.",
+        "pk_title": "Choisir les dossiers à purger",
+        "pk_sub": "Uniquement des dossiers de /config",
+        "pk_back": "Précédent",
+        "pk_up": "Dossier parent",
+        "pk_search": "Rechercher",
+        "pk_name": "Nom",
+        "pk_content": "Contenu",
+        "pk_modified": "Modifié",
+        "pk_protected": "Protégé",
+        "pk_empty": "Aucun sous-dossier ici",
+        "pk_old": "{n} de plus de {days} j",
+        "pk_use": "Utiliser {n} dossiers",
+        "pk_open": "Ouvrir",
+        "pk_many": "{n}+ fichiers",
+        "pg_choose": "Choisir les dossiers",
+        "pg_remove": "Retirer",
+        "pk_this": "Sélectionner ce dossier"
       }
     },
     "battery_type": {

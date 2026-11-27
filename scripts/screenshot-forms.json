@@ -586,6 +586,51 @@
     "errors": {},
     "description_placeholders": {}
   },
+  "purge": {
+    "type": "form",
+    "step_id": "purge",
+    "data_schema": [
+      {
+        "selector": {
+          "select": {
+            "options": [
+              "mcp_backups"
+            ],
+            "multiple": true,
+            "custom_value": true,
+            "mode": "dropdown",
+            "sort": false
+          }
+        },
+        "name": "directories",
+        "description": {
+          "suggested_value": [
+            "mcp_backups"
+          ]
+        },
+        "required": false,
+        "optional": true
+      },
+      {
+        "selector": {
+          "number": {
+            "min": 1.0,
+            "max": 3650.0,
+            "step": 1.0,
+            "mode": "box",
+            "unit_of_measurement": "d"
+          }
+        },
+        "name": "max_age",
+        "required": true,
+        "default": 30
+      }
+    ],
+    "errors": {},
+    "description_placeholders": {
+      "refused": ""
+    }
+  },
   "silent": {
     "type": "form",
     "step_id": "silent",

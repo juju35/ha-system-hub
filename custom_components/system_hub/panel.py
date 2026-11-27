@@ -41,6 +41,7 @@ from .const import (
     MODULE_DATABASE,
     MODULE_GIT_SYNC,
     MODULE_LOGS,
+    MODULE_PURGE,
     MODULE_SECURITY,
     MODULE_SILENT,
     MODULES,
@@ -59,6 +60,9 @@ from .logs import settings as logs_settings
 from .marketplace import refresher as refresher_module
 from .orphans import panel as orphans_panel
 from .orphans.services import NO_RELOAD_KEY
+from .purge import CONF_DIRECTORIES
+from .purge import flow as purge_flow
+from .purge import settings as purge_settings
 from .security import CONF_ALLOWED_ADDONS, CONF_IGNORED_IPS, security_state
 from .security import settings as security_settings
 from .silent import CONF_IGNORED_DEVICES, silent_state
@@ -126,6 +130,9 @@ async def async_register_panel(hass: HomeAssistant) -> None:
         websocket_api.async_register_command(hass, ws_silent_ignore)
         websocket_api.async_register_command(hass, ws_logs_ignore)
         websocket_api.async_register_command(hass, ws_database)
+        websocket_api.async_register_command(hass, ws_purge)
+        websocket_api.async_register_command(hass, ws_purge_browse)
+        websocket_api.async_register_command(hass, ws_purge_set_folders)
         websocket_api.async_register_command(hass, ws_security)
         websocket_api.async_register_command(hass, ws_security_revoke)
         websocket_api.async_register_command(hass, ws_security_ignore)
@@ -586,6 +593,9 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
         result["automations"] = automations.state(hass, options if isinstance(options, dict) else None)
     if data.orphans is not None:
         result["orphans"] = orphans_panel.summary(data.orphans)
+    if (purger := getattr(data, "purge", None)) is not None:
+        # The tab asks for the folders itself (system_hub/purge); the state carries the settings and the last purge
+        result["purge"] = purger.state()
     connection.send_result(msg["id"], result)
 
 
@@ -700,6 +710,70 @@ async def ws_database(hass: HomeAssistant, connection: websocket_api.ActiveConne
         connection.send_error(msg["id"], "failed", str(err))
         return
     connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command({vol.Required("type"): "system_hub/purge"})
+@websocket_api.async_response
+async def ws_purge(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The folders of the Purge module: their files, those a purge would delete now, and the last purge."""
+    entry = _entry(hass)
+    purger = getattr(entry.runtime_data, "purge", None) if entry is not None else None
+    if purger is None:
+        connection.send_error(msg["id"], "not_enabled", "The Purge module is not turned on")
+        return
+    try:
+        directories = await purger.async_scan()
+    except Exception as err:  # noqa: BLE001 - shown in the tab
+        connection.send_error(msg["id"], "failed", str(err))
+        return
+    connection.send_result(msg["id"], {**purger.state(), "folders": directories})
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "system_hub/purge_browse", vol.Optional("path", default=""): str}
+)
+@websocket_api.async_response
+async def ws_purge_browse(hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]) -> None:
+    """The sub-folders of a folder of the configuration folder (never above it), for the folder picker."""
+    entry = _entry(hass)
+    purger = getattr(entry.runtime_data, "purge", None) if entry is not None else None
+    if purger is None:
+        connection.send_error(msg["id"], "not_enabled", "The Purge module is not turned on")
+        return
+    try:
+        result = await purger.async_browse(msg["path"])
+    except ValueError as err:
+        connection.send_error(msg["id"], str(err), "This folder can't be opened")
+        return
+    connection.send_result(msg["id"], result)
+
+
+@websocket_api.require_admin
+@websocket_api.websocket_command(
+    {vol.Required("type"): "system_hub/purge_set_folders", vol.Required("directories"): [str]}
+)
+@websocket_api.async_response
+async def ws_purge_set_folders(
+    hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
+) -> None:
+    """The folders of the Purge module chosen in the folder picker, saved without a reload."""
+    entry = _entry(hass)
+    purger = getattr(entry.runtime_data, "purge", None) if entry is not None else None
+    if entry is None or purger is None:
+        connection.send_error(msg["id"], "not_enabled", "The Purge module is not turned on")
+        return
+    current = purge_settings(entry.options.get(MODULE_PURGE))
+    chosen = purge_flow.settings_options({**current, CONF_DIRECTORIES: msg["directories"]})
+    if refused := await purge_flow.async_refused(hass, chosen):
+        connection.send_error(msg["id"], "purge_refused", ", ".join(refused))
+        return
+    options = {**entry.options, MODULE_PURGE: chosen}
+    hass.data.setdefault(DOMAIN, {})[NO_RELOAD_KEY] = options
+    hass.config_entries.async_update_entry(entry, options=options)
+    purger.directories = chosen[CONF_DIRECTORIES]
+    connection.send_result(msg["id"], purger.state())
 
 
 @websocket_api.require_admin

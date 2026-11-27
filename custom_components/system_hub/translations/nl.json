@@ -16,7 +16,8 @@
           "batteries": "Batterijen",
           "git_sync": "Versiebeheer",
           "orphans": "Opruimen",
-          "automations": "Automatiseringen"
+          "automations": "Automatiseringen",
+          "purge": "Opschonen"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
@@ -30,7 +31,8 @@
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
           "orphans": "Toont de entiteiten die hun integratie niet meer levert, zodat je ze in één keer kunt verwijderen.",
-          "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
+          "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten.",
+          "purge": "Verwijdert elke nacht de bestanden die al een aantal dagen niet zijn gewijzigd in de gekozen mappen (standaard mcp_backups: de configuratieback-ups van de MCP-server). Uit tot het wordt ingeschakeld."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatiseringen",
           "git_sync_add_repository": "Versiebeheer: Repository toevoegen",
           "git_sync_other": "Versiebeheer: Andere repository",
-          "git_sync_remove_repository": "Versiebeheer: Repository's verwijderen"
+          "git_sync_remove_repository": "Versiebeheer: Repository's verwijderen",
+          "purge": "Opschonen"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Stille apparaten",
           "batteries": "Batterijen",
           "git_sync": "Versiebeheer",
-          "automations": "Automatiseringen"
+          "automations": "Automatiseringen",
+          "purge": "Opschonen"
         },
         "data_description": {
           "containers": "Bewaakt Home Assistant Core, de Supervisor en de add-ons: status, versie, CPU en geheugen. Alleen bewaking: er wordt niets herstart.",
@@ -124,7 +128,8 @@
           "silent": "Volgt de apparaten van ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome en deCONZ: de apparaten die niets meer laten horen en de zwakke signalen. Geen eigen entiteiten.",
           "batteries": "Meldt twee keer per dag de apparaten waarvan de batterij bijna leeg is gebleven.",
           "git_sync": "Home Assistant-map, met Git geversioneerd en naar een remote gepusht (GitHub, Gitea…).",
-          "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten."
+          "automations": "Toont de mislukte automatiseringen en de niet-beschikbare entiteiten die de integratie Automation Monitor meldt (apart te installeren). Geen eigen entiteiten.",
+          "purge": "Verwijdert elke nacht de bestanden die al een aantal dagen niet zijn gewijzigd in de gekozen mappen (standaard mcp_backups: de configuratieback-ups van de MCP-server). Uit tot het wordt ingeschakeld."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Te verwijderen repository's"
         }
+      },
+      "purge": {
+        "title": "Opschonen",
+        "description": "Alleen mappen binnen de configuratiemap. Leeg geraakte submappen worden verwijderd, nooit de gekozen map.",
+        "data": {
+          "directories": "Mappen",
+          "max_age": "Bestanden verwijderen ouder dan"
+        },
+        "data_description": {
+          "directories": "Elke opgeschoonde map, relatief aan de configuratiemap, bijv. mcp_backups. Maak de lijst leeg om niets op te schonen.",
+          "max_age": "Dagen zonder wijziging waarna een bestand wordt verwijderd, elke nacht en met Nu opschonen."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Het apparaat van deze batterij heeft geen model: stel het type in voor de batterij zelf.",
       "critical_below_warning": "De rode drempel moet boven de oranje liggen.",
       "repository_exists": "Deze repository is al ingesteld.",
-      "backup_not_loaded": "De Backup-integratie is niet geladen."
+      "backup_not_loaded": "De Backup-integratie is niet geladen.",
+      "purge_refused": "Deze mappen kunnen niet worden opgeschoond: {refused}. Alleen mappen binnen de configuratiemap zijn toegestaan, behalve verborgen mappen (.storage…) en de eigen mappen van Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Niets te importeren uit Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Database"
+    },
+    "purge": {
+      "name": "System Hub Opschonen"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Nu scannen"
+      },
+      "purge_now": {
+        "name": "Nu opschonen"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Engine"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Laatste opschoning"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Apparaten",
           "description": "Apparaat-ID's uit het attribuut devices van de wezensensor. Leeg laten voor alle verweesde apparaten van de laatste scan."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Bestanden opschonen",
+      "description": "Verwijdert de bestanden ouder dan de ingestelde leeftijd in de mappen van de module Opschonen. Geeft terug wat is verwijderd.",
+      "fields": {
+        "dry_run": {
+          "name": "Proefrun",
+          "description": "Alleen aangeven wat zou worden verwijderd, zonder iets te verwijderen."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Aanmeldingen",
         "sub_security_accounts": "Accounts",
         "sub_security_system": "Add-ons & configuratie",
-        "sub_security_outbound": "Uitgaand"
+        "sub_security_outbound": "Uitgaand",
+        "purge": "Opschonen",
+        "tab_purge": "Opschonen",
+        "pg_folders": "Mappen",
+        "pg_to_delete": "Bestanden ouder dan {n} dagen",
+        "pg_reclaim": "Vrij te maken ruimte",
+        "pg_last": "Laatste opschoning",
+        "pg_last_done": "{n} bestanden verwijderd, {size} vrijgemaakt",
+        "pg_never": "Nog niet uitgevoerd",
+        "pg_now": "Nu opschonen",
+        "pg_confirm": "{n} bestanden ({size}) die {days} dagen niet zijn gewijzigd verwijderen? Dit kan niet ongedaan worden gemaakt.",
+        "pg_errors": "{n} bestanden konden bij de laatste opschoning niet worden verwijderd",
+        "pg_files": "{n} bestanden, {size}",
+        "pg_oldest": "oudste {when}",
+        "pg_n_old": "{n} te verwijderen · {size}",
+        "pg_nothing": "Niets te verwijderen",
+        "pg_missing": "Map niet gevonden: nog niets op te schonen",
+        "pg_missing_short": "Niet gevonden",
+        "pg_left_out": "Uitgesloten",
+        "pg_refused_root": "De configuratiemap (of een map die haar bevat) wordt nooit opgeschoond",
+        "pg_refused_protected": "Verborgen map of eigen map van Home Assistant: wordt nooit opgeschoond",
+        "pg_refused_outside": "Buiten de configuratiemap",
+        "pg_n_left_out": "{n} mappen uitgesloten",
+        "pg_rule": "Elke nacht: bestanden ouder dan {n} dagen",
+        "pg_none": "Geen map ingesteld: voeg er een toe met Configureren.",
+        "pk_title": "Mappen kiezen om op te schonen",
+        "pk_sub": "Alleen mappen binnen /config",
+        "pk_back": "Terug",
+        "pk_up": "Bovenliggende map",
+        "pk_search": "Zoeken",
+        "pk_name": "Naam",
+        "pk_content": "Inhoud",
+        "pk_modified": "Gewijzigd",
+        "pk_protected": "Beschermd",
+        "pk_empty": "Geen submappen hier",
+        "pk_old": "{n} ouder dan {days} d",
+        "pk_use": "{n} mappen gebruiken",
+        "pk_open": "Openen",
+        "pk_many": "{n}+ bestanden",
+        "pg_choose": "Mappen kiezen",
+        "pg_remove": "Verwijderen",
+        "pk_this": "Deze map selecteren"
       }
     },
     "battery_type": {

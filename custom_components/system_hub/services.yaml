@@ -139,3 +139,10 @@ orphans_remove_devices:
       selector:
         text:
           multiple: true
+
+purge_files:
+  fields:
+    dry_run:
+      default: false
+      selector:
+        boolean:

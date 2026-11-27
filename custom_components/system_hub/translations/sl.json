@@ -16,7 +16,8 @@
           "batteries": "Baterije",
           "git_sync": "Upravljanje različic",
           "orphans": "Čiščenje",
-          "automations": "Avtomatizacije"
+          "automations": "Avtomatizacije",
+          "purge": "Čiščenje"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
@@ -30,7 +31,8 @@
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
           "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
           "orphans": "Prikaže entitete, ki jih njihova integracija ne zagotavlja več, da jih lahko odstranite naenkrat.",
-          "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet."
+          "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet.",
+          "purge": "Vsako noč izbriše datoteke, ki se nekaj dni niso spremenile, v izbranih mapah (privzeto mcp_backups: varnostne kopije konfiguracije strežnika MCP). Izklopljeno, dokler ga ne vklopite."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Avtomatizacije",
           "git_sync_add_repository": "Upravljanje različic: Dodaj repozitorij",
           "git_sync_other": "Upravljanje različic: Drug repozitorij",
-          "git_sync_remove_repository": "Upravljanje različic: Odstrani repozitorije"
+          "git_sync_remove_repository": "Upravljanje različic: Odstrani repozitorije",
+          "purge": "Čiščenje"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Tihe naprave",
           "batteries": "Baterije",
           "git_sync": "Upravljanje različic",
-          "automations": "Avtomatizacije"
+          "automations": "Avtomatizacije",
+          "purge": "Čiščenje"
         },
         "data_description": {
           "containers": "Spremlja Home Assistant Core, Supervisor in dodatke: stanje, različico, CPU in pomnilnik. Samo spremljanje: nič se ne zažene znova.",
@@ -124,7 +128,8 @@
           "silent": "Spremlja naprave ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome in deCONZ: tiste, ki se ne oglašajo več, in šibke signale. Brez lastnih entitet.",
           "batteries": "Dvakrat na dan obvesti o napravah, katerih baterija je ostala šibka.",
           "git_sync": "Mapa Home Assistanta, upravljana z Gitom in poslana na remote (GitHub, Gitea…).",
-          "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet."
+          "automations": "Prikaže neuspele avtomatizacije in nedosegljive entitete, ki jih javlja integracija Automation Monitor (namesti se posebej). Brez lastnih entitet.",
+          "purge": "Vsako noč izbriše datoteke, ki se nekaj dni niso spremenile, v izbranih mapah (privzeto mcp_backups: varnostne kopije konfiguracije strežnika MCP). Izklopljeno, dokler ga ne vklopite."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repozitoriji za odstranitev"
         }
+      },
+      "purge": {
+        "title": "Čiščenje",
+        "description": "Samo mape znotraj konfiguracijske mape. Podmape, ki ostanejo prazne, se odstranijo, izbrana mapa nikoli.",
+        "data": {
+          "directories": "Mape",
+          "max_age": "Izbriši datoteke, starejše od"
+        },
+        "data_description": {
+          "directories": "Vsaka očiščena mapa, glede na konfiguracijsko mapo, npr. mcp_backups. Izpraznite seznam, da se nič ne čisti.",
+          "max_age": "Dnevi brez spremembe, po katerih se datoteka izbriše, vsako noč in z Očisti zdaj."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Naprava te baterije nima modela: nastavite vrsto za samo baterijo.",
       "critical_below_warning": "Rdeči prag mora biti nad oranžnim.",
       "repository_exists": "Ta repozitorij je že nastavljen.",
-      "backup_not_loaded": "Integracija Backup ni naložena."
+      "backup_not_loaded": "Integracija Backup ni naložena.",
+      "purge_refused": "Teh map ni mogoče čistiti: {refused}. Sprejete so samo mape znotraj konfiguracijske mape, razen skritih (.storage…) in lastnih map Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Podatkovna baza"
+    },
+    "purge": {
+      "name": "System Hub Čiščenje"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Preglej zdaj"
+      },
+      "purge_now": {
+        "name": "Očisti zdaj"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Pogon"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Zadnje čiščenje"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Naprave",
           "description": "ID-ji naprav iz atributa devices senzorja sirot. Pustite prazno za vse osirotele naprave zadnjega pregleda."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Očisti datoteke",
+      "description": "Izbriše datoteke, starejše od nastavljene starosti, v mapah modula Čiščenje. Vrne, kaj je bilo izbrisano.",
+      "fields": {
+        "dry_run": {
+          "name": "Poskusni zagon",
+          "description": "Samo pove, kaj bi bilo izbrisano, ne da bi kar koli izbrisal."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Prijave",
         "sub_security_accounts": "Računi",
         "sub_security_system": "Dodatki in konfiguracija",
-        "sub_security_outbound": "Odhodne"
+        "sub_security_outbound": "Odhodne",
+        "purge": "Čiščenje",
+        "tab_purge": "Čiščenje",
+        "pg_folders": "Mape",
+        "pg_to_delete": "Datoteke, starejše od {n} dni",
+        "pg_reclaim": "Prostor za sprostitev",
+        "pg_last": "Zadnje čiščenje",
+        "pg_last_done": "Izbrisanih datotek: {n}, sproščeno {size}",
+        "pg_never": "Še ni zagnano",
+        "pg_now": "Očisti zdaj",
+        "pg_confirm": "Izbrisati {n} datotek ({size}), nespremenjenih {days} dni? Tega ni mogoče razveljaviti.",
+        "pg_errors": "Pri zadnjem čiščenju ni bilo mogoče izbrisati datotek: {n}",
+        "pg_files": "{n} datotek, {size}",
+        "pg_oldest": "najstarejša {when}",
+        "pg_n_old": "{n} za izbris · {size}",
+        "pg_nothing": "Nič za izbris",
+        "pg_missing": "Mape ni mogoče najti: še nič za čiščenje",
+        "pg_missing_short": "Ni najdeno",
+        "pg_left_out": "Izpuščeno",
+        "pg_refused_root": "Konfiguracijska mapa (ali mapa, ki jo vsebuje) se nikoli ne čisti",
+        "pg_refused_protected": "Skrita ali lastna mapa Home Assistant: nikoli se ne čisti",
+        "pg_refused_outside": "Zunaj konfiguracijske mape",
+        "pg_n_left_out": "Izpuščenih map: {n}",
+        "pg_rule": "Vsako noč: datoteke, starejše od {n} dni",
+        "pg_none": "Ni mape: dodajte jo z Konfiguriraj.",
+        "pk_title": "Izberite mape za čiščenje",
+        "pk_sub": "Samo mape znotraj /config",
+        "pk_back": "Nazaj",
+        "pk_up": "Nadrejena mapa",
+        "pk_search": "Iskanje",
+        "pk_name": "Ime",
+        "pk_content": "Vsebina",
+        "pk_modified": "Spremenjeno",
+        "pk_protected": "Zaščiteno",
+        "pk_empty": "Tu ni podmap",
+        "pk_old": "{n} starejših od {days} d",
+        "pk_use": "Uporabi mape: {n}",
+        "pk_open": "Odpri",
+        "pk_many": "{n}+ datotek",
+        "pg_choose": "Izberi mape",
+        "pg_remove": "Odstrani",
+        "pk_this": "Izberi to mapo"
       }
     },
     "battery_type": {

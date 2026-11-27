@@ -6,7 +6,7 @@ from typing import Final
 
 DOMAIN: Final = "system_hub"
 # Same as manifest.json: the frontend URLs carry it, so that browsers load a new release.
-VERSION: Final = "3.15.3"
+VERSION: Final = "3.16.0"
 
 # Options: the modules turned on, then one dict of settings per module ({"watchdog": {...}}).
 CONF_MODULES: Final = "modules"
@@ -21,6 +21,8 @@ MODULE_SECURITY: Final = "security"
 MODULE_MARKETPLACE: Final = "marketplace"
 # Reads Home Assistant's own backups (the Backup integration); no entities of its own.
 MODULE_BACKUPS: Final = "backups"
+# Deletes the files older than a number of days in the folders set (mcp_backups by default); turned on by choice.
+MODULE_PURGE: Final = "purge"
 # The devices of the radio integrations not heard from for a while; no entities of its own.
 MODULE_SILENT: Final = "silent"
 MODULE_BATTERIES: Final = "batteries"
@@ -36,6 +38,7 @@ MODULES: Final = (
     MODULE_WATCHDOG,
     MODULE_MARKETPLACE,
     MODULE_BACKUPS,
+    MODULE_PURGE,
     MODULE_SILENT,
     MODULE_BATTERIES,
     MODULE_GIT_SYNC,

@@ -137,6 +137,21 @@ export var SH_STATUS_METHODS = {
         join([bk.failed ? this._t('backup_failed') : '', ...bk.failing.map((a) => a.name), bk.next ? `${this._t('next_backup')} ${this._rel(bk.next)}` : '']),
       ];
     }
+    if (tab === 'purge') {
+      var pg = s.purge;
+      if (!pg) return null;
+      var pgSum = this._pgSummary();
+      return [
+        pg.last_errors ? 'warn' : pgSum?.refused.length ? 'info' : 'good',
+        pg.last_run ? this._t('pg_last_done', { n: pg.last_files ?? 0, size: shBytes(pg.last_bytes || 0) }) : this._t('pg_never'),
+        join([
+          pg.last_run ? this._rel(pg.last_run) : '',
+          pg.last_errors ? this._t('pg_errors', { n: pg.last_errors }) : '',
+          pgSum?.refused.length ? this._t('pg_n_left_out', { n: pgSum.refused.length }) : '',
+          this._t('pg_rule', { n: pg.max_age ?? 30 }),
+        ]),
+      ];
+    }
     if (tab === 'watchdog') {
       var wd = s.watchdog;
       if (!wd) return null;

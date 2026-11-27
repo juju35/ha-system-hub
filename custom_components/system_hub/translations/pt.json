@@ -16,7 +16,8 @@
           "batteries": "Baterias",
           "git_sync": "Versionamento",
           "orphans": "Limpeza",
-          "automations": "Automatizações"
+          "automations": "Automatizações",
+          "purge": "Limpeza"
         },
         "data_description": {
           "containers": "Monitoriza o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitorização: nada é reiniciado.",
@@ -30,7 +31,8 @@
           "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca.",
           "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…).",
           "orphans": "Lista as entidades que a respetiva integração já não fornece, para que as possa remover em massa.",
-          "automations": "Mostra as automatizações com falha e as entidades indisponíveis reportadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias."
+          "automations": "Mostra as automatizações com falha e as entidades indisponíveis reportadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias.",
+          "purge": "Apaga todas as noites os ficheiros não modificados há um número de dias nas pastas escolhidas (mcp_backups por omissão: as cópias de configuração do servidor MCP). Desligado até ser ligado."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizações",
           "git_sync_add_repository": "Versionamento: Adicionar um repositório",
           "git_sync_other": "Versionamento: Outro repositório",
-          "git_sync_remove_repository": "Versionamento: Remover repositórios"
+          "git_sync_remove_repository": "Versionamento: Remover repositórios",
+          "purge": "Limpeza"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Dispositivos silenciosos",
           "batteries": "Baterias",
           "git_sync": "Versionamento",
-          "automations": "Automatizações"
+          "automations": "Automatizações",
+          "purge": "Limpeza"
         },
         "data_description": {
           "containers": "Monitoriza o Home Assistant Core, o Supervisor e os add-ons: estado, versão, CPU e memória. Apenas monitorização: nada é reiniciado.",
@@ -124,7 +128,8 @@
           "silent": "Segue os dispositivos ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome e deCONZ: os que deixaram de dar sinal de vida e os sinais fracos. Sem entidades próprias.",
           "batteries": "Notifica duas vezes por dia os dispositivos cuja bateria se manteve fraca.",
           "git_sync": "Pasta do Home Assistant versionada com Git e enviada para um remote (GitHub, Gitea…).",
-          "automations": "Mostra as automatizações com falha e as entidades indisponíveis reportadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias."
+          "automations": "Mostra as automatizações com falha e as entidades indisponíveis reportadas pela integração Automation Monitor (instalada à parte). Sem entidades próprias.",
+          "purge": "Apaga todas as noites os ficheiros não modificados há um número de dias nas pastas escolhidas (mcp_backups por omissão: as cópias de configuração do servidor MCP). Desligado até ser ligado."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repositórios a remover"
         }
+      },
+      "purge": {
+        "title": "Limpeza",
+        "description": "Apenas pastas dentro da pasta de configuração. As subpastas que ficam vazias são removidas, nunca a pasta escolhida.",
+        "data": {
+          "directories": "Pastas",
+          "max_age": "Apagar ficheiros com mais de"
+        },
+        "data_description": {
+          "directories": "Cada pasta limpa, relativa à pasta de configuração, p. ex. mcp_backups. Esvazie a lista para não limpar nada.",
+          "max_age": "Dias sem alterações após os quais um ficheiro é apagado, todas as noites e com Limpar agora."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "O dispositivo desta bateria não tem modelo: defina o tipo para a própria bateria.",
       "critical_below_warning": "O limiar vermelho tem de estar acima do laranja.",
       "repository_exists": "Este repositório já está configurado.",
-      "backup_not_loaded": "A integração Backup não está carregada."
+      "backup_not_loaded": "A integração Backup não está carregada.",
+      "purge_refused": "Estas pastas não podem ser limpas: {refused}. Só são aceites pastas dentro da pasta de configuração, exceto as ocultas (.storage…) e as próprias do Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nada a importar do Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Base de dados"
+    },
+    "purge": {
+      "name": "System Hub Limpeza"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Analisar agora"
+      },
+      "purge_now": {
+        "name": "Limpar agora"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Motor"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Última limpeza"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Dispositivos",
           "description": "ID de dispositivos do atributo devices do sensor de órfãos. Deixe vazio para todos os dispositivos órfãos da última verificação."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Limpar ficheiros",
+      "description": "Apaga os ficheiros mais antigos do que a idade definida nas pastas do módulo Limpeza. Devolve o que foi apagado.",
+      "fields": {
+        "dry_run": {
+          "name": "Simulação",
+          "description": "Indica apenas o que seria apagado, sem apagar nada."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Inícios de sessão",
         "sub_security_accounts": "Contas",
         "sub_security_system": "Extras e configuração",
-        "sub_security_outbound": "Saída"
+        "sub_security_outbound": "Saída",
+        "purge": "Limpeza",
+        "tab_purge": "Limpeza",
+        "pg_folders": "Pastas",
+        "pg_to_delete": "Ficheiros com mais de {n} dias",
+        "pg_reclaim": "Espaço a libertar",
+        "pg_last": "Última limpeza",
+        "pg_last_done": "{n} ficheiros apagados, {size} libertados",
+        "pg_never": "Ainda não executada",
+        "pg_now": "Limpar agora",
+        "pg_confirm": "Apagar {n} ficheiros ({size}) sem alterações há {days} dias? Não pode ser desfeito.",
+        "pg_errors": "{n} ficheiros não puderam ser apagados na última limpeza",
+        "pg_files": "{n} ficheiros, {size}",
+        "pg_oldest": "o mais antigo {when}",
+        "pg_n_old": "{n} a apagar · {size}",
+        "pg_nothing": "Nada a apagar",
+        "pg_missing": "Pasta não encontrada: ainda nada a limpar",
+        "pg_missing_short": "Não encontrada",
+        "pg_left_out": "Excluída",
+        "pg_refused_root": "A pasta de configuração (ou uma que a contenha) nunca é limpa",
+        "pg_refused_protected": "Pasta oculta ou própria do Home Assistant: nunca é limpa",
+        "pg_refused_outside": "Fora da pasta de configuração",
+        "pg_n_left_out": "{n} pastas excluídas",
+        "pg_rule": "Todas as noites: ficheiros com mais de {n} dias",
+        "pg_none": "Nenhuma pasta definida: adicione uma em Configurar.",
+        "pk_title": "Escolher as pastas a limpar",
+        "pk_sub": "Apenas pastas dentro de /config",
+        "pk_back": "Voltar",
+        "pk_up": "Pasta superior",
+        "pk_search": "Pesquisar",
+        "pk_name": "Nome",
+        "pk_content": "Conteúdo",
+        "pk_modified": "Modificada",
+        "pk_protected": "Protegida",
+        "pk_empty": "Sem subpastas aqui",
+        "pk_old": "{n} com mais de {days} d",
+        "pk_use": "Usar {n} pastas",
+        "pk_open": "Abrir",
+        "pk_many": "{n}+ ficheiros",
+        "pg_choose": "Escolher pastas",
+        "pg_remove": "Remover",
+        "pk_this": "Selecionar esta pasta"
       }
     },
     "battery_type": {

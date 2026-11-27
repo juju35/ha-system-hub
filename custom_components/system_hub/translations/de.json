@@ -16,7 +16,8 @@
           "batteries": "Batterien",
           "git_sync": "Versionierung",
           "orphans": "Aufräumen",
-          "automations": "Automatisierungen"
+          "automations": "Automatisierungen",
+          "purge": "Bereinigung"
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
@@ -30,7 +31,8 @@
           "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist.",
           "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird.",
           "orphans": "Listet die Entitäten auf, die ihre Integration nicht mehr bereitstellt, damit du sie gesammelt entfernen kannst.",
-          "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten."
+          "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten.",
+          "purge": "Löscht jede Nacht die Dateien, die seit einer Anzahl von Tagen nicht geändert wurden, in den gewählten Ordnern (standardmäßig mcp_backups: die Konfigurationssicherungen des MCP-Servers). Aus, bis es eingeschaltet wird."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatisierungen",
           "git_sync_add_repository": "Versionierung: Repository hinzufügen",
           "git_sync_other": "Versionierung: Weiteres Repository",
-          "git_sync_remove_repository": "Versionierung: Repositorys entfernen"
+          "git_sync_remove_repository": "Versionierung: Repositorys entfernen",
+          "purge": "Bereinigung"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Stumme Geräte",
           "batteries": "Batterien",
           "git_sync": "Versionierung",
-          "automations": "Automatisierungen"
+          "automations": "Automatisierungen",
+          "purge": "Bereinigung"
         },
         "data_description": {
           "containers": "Überwacht Home Assistant Core, den Supervisor und die Add-ons: Status, Version, CPU und Speicher. Nur Überwachung: nichts wird neu gestartet.",
@@ -124,7 +128,8 @@
           "silent": "Verfolgt die Geräte von ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome und deCONZ: die, die sich nicht mehr melden, und die schwachen Signale. Keine eigenen Entitäten.",
           "batteries": "Meldet zweimal am Tag die Geräte, deren Batterie schwach geblieben ist.",
           "git_sync": "Mit Git versionierter Home-Assistant-Ordner, der zu einem Remote (GitHub, Gitea…) gepusht wird.",
-          "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten."
+          "automations": "Zeigt die fehlgeschlagenen Automatisierungen und die nicht verfügbaren Entitäten, die die Integration Automation Monitor meldet (separat zu installieren). Keine eigenen Entitäten.",
+          "purge": "Löscht jede Nacht die Dateien, die seit einer Anzahl von Tagen nicht geändert wurden, in den gewählten Ordnern (standardmäßig mcp_backups: die Konfigurationssicherungen des MCP-Servers). Aus, bis es eingeschaltet wird."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Zu entfernende Repositorys"
         }
+      },
+      "purge": {
+        "title": "Bereinigung",
+        "description": "Nur Ordner innerhalb des Konfigurationsordners. Leer gewordene Unterordner werden entfernt, nie der gewählte Ordner.",
+        "data": {
+          "directories": "Ordner",
+          "max_age": "Dateien löschen älter als"
+        },
+        "data_description": {
+          "directories": "Jeder bereinigte Ordner, relativ zum Konfigurationsordner, z. B. mcp_backups. Leeren Sie die Liste, um nichts zu bereinigen.",
+          "max_age": "Tage ohne Änderung, nach denen eine Datei gelöscht wird, jede Nacht und mit Jetzt bereinigen."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Das Gerät dieser Batterie hat kein Modell: den Typ für die Batterie selbst festlegen.",
       "critical_below_warning": "Der rote Schwellenwert muss über dem orangen liegen.",
       "repository_exists": "Dieses Repository ist bereits eingerichtet.",
-      "backup_not_loaded": "Die Backup-Integration ist nicht geladen."
+      "backup_not_loaded": "Die Backup-Integration ist nicht geladen.",
+      "purge_refused": "Diese Ordner können nicht bereinigt werden: {refused}. Nur Ordner innerhalb des Konfigurationsordners sind erlaubt, außer versteckten (.storage…) und den eigenen von Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nichts aus Battery Monitor zu importieren."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Datenbank"
+    },
+    "purge": {
+      "name": "System Hub Bereinigung"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Jetzt scannen"
+      },
+      "purge_now": {
+        "name": "Jetzt bereinigen"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Engine"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Letzte Bereinigung"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Geräte",
           "description": "Geräte-IDs aus dem Attribut devices des Waisen-Sensors. Leer lassen für alle verwaisten Geräte des letzten Scans."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Dateien bereinigen",
+      "description": "Löscht die Dateien, die älter als das eingestellte Alter sind, in den Ordnern des Bereinigungsmoduls. Gibt zurück, was gelöscht wurde.",
+      "fields": {
+        "dry_run": {
+          "name": "Probelauf",
+          "description": "Nur angeben, was gelöscht würde, ohne etwas zu löschen."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Anmeldungen",
         "sub_security_accounts": "Konten",
         "sub_security_system": "Add-ons & Konfiguration",
-        "sub_security_outbound": "Ausgehend"
+        "sub_security_outbound": "Ausgehend",
+        "purge": "Bereinigung",
+        "tab_purge": "Bereinigung",
+        "pg_folders": "Ordner",
+        "pg_to_delete": "Dateien älter als {n} Tage",
+        "pg_reclaim": "Freizugebender Speicher",
+        "pg_last": "Letzte Bereinigung",
+        "pg_last_done": "{n} Dateien gelöscht, {size} freigegeben",
+        "pg_never": "Noch nicht ausgeführt",
+        "pg_now": "Jetzt bereinigen",
+        "pg_confirm": "{n} Dateien ({size}), seit {days} Tagen nicht geändert, löschen? Das lässt sich nicht rückgängig machen.",
+        "pg_errors": "{n} Dateien konnten bei der letzten Bereinigung nicht gelöscht werden",
+        "pg_files": "{n} Dateien, {size}",
+        "pg_oldest": "älteste {when}",
+        "pg_n_old": "{n} zu löschen · {size}",
+        "pg_nothing": "Nichts zu löschen",
+        "pg_missing": "Ordner nicht gefunden: noch nichts zu bereinigen",
+        "pg_missing_short": "Nicht gefunden",
+        "pg_left_out": "Ausgeschlossen",
+        "pg_refused_root": "Der Konfigurationsordner (oder ein Ordner, der ihn enthält) wird nie bereinigt",
+        "pg_refused_protected": "Versteckter Ordner oder eigener Ordner von Home Assistant: wird nie bereinigt",
+        "pg_refused_outside": "Außerhalb des Konfigurationsordners",
+        "pg_n_left_out": "{n} Ordner ausgeschlossen",
+        "pg_rule": "Jede Nacht: Dateien älter als {n} Tage",
+        "pg_none": "Kein Ordner festgelegt: fügen Sie einen über Konfigurieren hinzu.",
+        "pk_title": "Zu bereinigende Ordner wählen",
+        "pk_sub": "Nur Ordner innerhalb von /config",
+        "pk_back": "Zurück",
+        "pk_up": "Übergeordneter Ordner",
+        "pk_search": "Suchen",
+        "pk_name": "Name",
+        "pk_content": "Inhalt",
+        "pk_modified": "Geändert",
+        "pk_protected": "Geschützt",
+        "pk_empty": "Hier keine Unterordner",
+        "pk_old": "{n} älter als {days} T.",
+        "pk_use": "{n} Ordner verwenden",
+        "pk_open": "Öffnen",
+        "pk_many": "{n}+ Dateien",
+        "pg_choose": "Ordner wählen",
+        "pg_remove": "Entfernen",
+        "pk_this": "Diesen Ordner wählen"
       }
     },
     "battery_type": {

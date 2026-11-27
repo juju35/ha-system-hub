@@ -16,7 +16,8 @@
           "batteries": "Baterije",
           "git_sync": "Verzionisanje",
           "orphans": "Čišćenje",
-          "automations": "Automatizacije"
+          "automations": "Automatizacije",
+          "purge": "Čišćenje"
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
@@ -30,7 +31,8 @@
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
           "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
           "orphans": "Prikazuje entitete koje njihova integracija više ne obezbeđuje, kako biste mogli da ih uklonite odjednom.",
-          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
+          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta.",
+          "purge": "Svake noći briše datoteke koje nisu menjane određeni broj dana u izabranim fasciklama (podrazumevano mcp_backups: rezervne kopije konfiguracije MCP servera). Isključeno dok se ne uključi."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizacije",
           "git_sync_add_repository": "Verzionisanje: Dodaj repozitorijum",
           "git_sync_other": "Verzionisanje: Drugi repozitorijum",
-          "git_sync_remove_repository": "Verzionisanje: Ukloni repozitorijume"
+          "git_sync_remove_repository": "Verzionisanje: Ukloni repozitorijume",
+          "purge": "Čišćenje"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Tihi uređaji",
           "batteries": "Baterije",
           "git_sync": "Verzionisanje",
-          "automations": "Automatizacije"
+          "automations": "Automatizacije",
+          "purge": "Čišćenje"
         },
         "data_description": {
           "containers": "Prati Home Assistant Core, Supervisor i dodatke: stanje, verziju, CPU i memoriju. Samo praćenje: ništa se ne pokreće ponovo.",
@@ -124,7 +128,8 @@
           "silent": "Prati uređaje ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome i deCONZ: one koji se više ne javljaju i slabe signale. Bez sopstvenih entiteta.",
           "batteries": "Obaveštava dvaput dnevno o uređajima čija je baterija ostala slaba.",
           "git_sync": "Fascikla Home Assistant-a verzionisana pomoću Git-a i push-ovana na udaljeni repozitorijum (GitHub, Gitea…).",
-          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta."
+          "automations": "Prikazuje neuspele automatizacije i nedostupne entitete koje prijavljuje integracija Automation Monitor (instalira se zasebno). Bez sopstvenih entiteta.",
+          "purge": "Svake noći briše datoteke koje nisu menjane određeni broj dana u izabranim fasciklama (podrazumevano mcp_backups: rezervne kopije konfiguracije MCP servera). Isključeno dok se ne uključi."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repozitorijumi za uklanjanje"
         }
+      },
+      "purge": {
+        "title": "Čišćenje",
+        "description": "Samo fascikle unutar fascikle konfiguracije. Potfascikle koje ostanu prazne se uklanjaju, izabrana fascikla nikada.",
+        "data": {
+          "directories": "Fascikle",
+          "max_age": "Briši datoteke starije od"
+        },
+        "data_description": {
+          "directories": "Svaka fascikla koja se čisti, u odnosu na fasciklu konfiguracije, npr. mcp_backups. Ispraznite listu da se ništa ne čisti.",
+          "max_age": "Dani bez izmene nakon kojih se datoteka briše, svake noći i sa Očisti sada."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Uređaj ove baterije nema model: podesite tip za samu bateriju.",
       "critical_below_warning": "Crveni prag mora biti iznad narandžastog.",
       "repository_exists": "Ovaj repozitorijum je već podešen.",
-      "backup_not_loaded": "Integracija Backup nije učitana."
+      "backup_not_loaded": "Integracija Backup nije učitana.",
+      "purge_refused": "Ove fascikle se ne mogu čistiti: {refused}. Prihvataju se samo fascikle unutar fascikle konfiguracije, osim skrivenih (.storage…) i sopstvenih fascikli Home Assistant-a (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nema šta da se uveze iz Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Baza podataka"
+    },
+    "purge": {
+      "name": "System Hub Čišćenje"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Skeniraj sada"
+      },
+      "purge_now": {
+        "name": "Očisti sada"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Motor"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Poslednje čišćenje"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Uređaji",
           "description": "Identifikatori uređaja iz atributa uređaja senzora napuštenih. Ostavite prazno za sve napuštene uređaje poslednjeg skeniranja."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Očisti datoteke",
+      "description": "Briše datoteke starije od podešene starosti u fasciklama modula Čišćenje. Vraća šta je obrisano.",
+      "fields": {
+        "dry_run": {
+          "name": "Probno pokretanje",
+          "description": "Samo kaže šta bi bilo obrisano, bez brisanja."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Prijave",
         "sub_security_accounts": "Nalozi",
         "sub_security_system": "Dodaci i konfiguracija",
-        "sub_security_outbound": "Odlazne"
+        "sub_security_outbound": "Odlazne",
+        "purge": "Čišćenje",
+        "tab_purge": "Čišćenje",
+        "pg_folders": "Fascikle",
+        "pg_to_delete": "Datoteke starije od {n} dana",
+        "pg_reclaim": "Prostor za oslobađanje",
+        "pg_last": "Poslednje čišćenje",
+        "pg_last_done": "Obrisano datoteka: {n}, oslobođeno {size}",
+        "pg_never": "Još nije pokrenuto",
+        "pg_now": "Očisti sada",
+        "pg_confirm": "Obrisati {n} datoteka ({size}) nepromenjenih {days} dana? Ovo se ne može opozvati.",
+        "pg_errors": "Pri poslednjem čišćenju nije obrisano datoteka: {n}",
+        "pg_files": "Datoteka: {n}, {size}",
+        "pg_oldest": "najstarija {when}",
+        "pg_n_old": "{n} za brisanje · {size}",
+        "pg_nothing": "Ništa za brisanje",
+        "pg_missing": "Fascikla nije pronađena: još ništa za čišćenje",
+        "pg_missing_short": "Nije pronađeno",
+        "pg_left_out": "Izostavljeno",
+        "pg_refused_root": "Fascikla konfiguracije (ili ona koja je sadrži) se nikada ne čisti",
+        "pg_refused_protected": "Skrivena ili sopstvena fascikla Home Assistant-a: nikada se ne čisti",
+        "pg_refused_outside": "Van fascikle konfiguracije",
+        "pg_n_left_out": "Izostavljeno fascikli: {n}",
+        "pg_rule": "Svake noći: datoteke starije od {n} dana",
+        "pg_none": "Nema fascikle: dodajte je preko Konfiguriši.",
+        "pk_title": "Izaberite fascikle za čišćenje",
+        "pk_sub": "Samo fascikle unutar /config",
+        "pk_back": "Nazad",
+        "pk_up": "Nadređena fascikla",
+        "pk_search": "Pretraga",
+        "pk_name": "Naziv",
+        "pk_content": "Sadržaj",
+        "pk_modified": "Izmenjeno",
+        "pk_protected": "Zaštićeno",
+        "pk_empty": "Ovde nema potfascikli",
+        "pk_old": "{n} starijih od {days} d",
+        "pk_use": "Koristi fascikle: {n}",
+        "pk_open": "Otvori",
+        "pk_many": "Datoteka: {n}+",
+        "pg_choose": "Izaberi fascikle",
+        "pg_remove": "Ukloni",
+        "pk_this": "Izaberi ovu fasciklu"
       }
     },
     "battery_type": {

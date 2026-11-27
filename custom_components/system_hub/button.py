@@ -1,4 +1,4 @@
-"""Buttons of the modules: Watchdog check, Marketplace check, low-battery notification."""
+"""Buttons of the modules: Watchdog check, Marketplace check, low-battery notification, purge."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from . import SystemHubConfigEntry
 from .git_sync.entities import BUTTONS, GitSyncButton
 from .orphans import entities as orphans_entities
-from .sensor import BatteriesEntity, MarketplaceEntity, WatchdogEntity
+from .sensor import BatteriesEntity, MarketplaceEntity, PurgeEntity, WatchdogEntity
 
 
 async def async_setup_entry(
@@ -29,6 +29,8 @@ async def async_setup_entry(
         entities += [GitSyncButton(git_sync, entry.entry_id, description) for description in BUTTONS]
     if data.orphans is not None:
         entities += orphans_entities.buttons(data.orphans, entry.entry_id)
+    if data.purge is not None:
+        entities.append(PurgeNowButton(data.purge, entry.entry_id, "now"))
     async_add_entities(entities)
 
 
@@ -61,3 +63,14 @@ class BatteriesNotifyButton(BatteriesEntity, ButtonEntity):
 
     async def async_press(self) -> None:
         await self.monitor.async_notify(manual=True)
+
+
+class PurgeNowButton(PurgeEntity, ButtonEntity):
+    """Purge the folders now, without waiting for the night."""
+
+    @property
+    def available(self) -> bool:
+        return not self.purger.running
+
+    async def async_press(self) -> None:
+        await self.purger.async_purge()

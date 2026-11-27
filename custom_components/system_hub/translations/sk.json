@@ -16,7 +16,8 @@
           "batteries": "Batérie",
           "git_sync": "Verziovanie",
           "orphans": "Čistenie",
-          "automations": "Automatizácie"
+          "automations": "Automatizácie",
+          "purge": "Čistenie"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
@@ -30,7 +31,8 @@
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
           "orphans": "Zobrazuje entity, ktoré ich integrácia už neposkytuje, aby ste ich mohli hromadne odstrániť.",
-          "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít."
+          "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít.",
+          "purge": "Každú noc maže súbory, ktoré sa nezmenili určitý počet dní, vo zvolených priečinkoch (predvolene mcp_backups: zálohy konfigurácie servera MCP). Vypnuté, kým sa nezapne."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatizácie",
           "git_sync_add_repository": "Verziovanie: Pridať repozitár",
           "git_sync_other": "Verziovanie: Iný repozitár",
-          "git_sync_remove_repository": "Verziovanie: Odstrániť repozitáre"
+          "git_sync_remove_repository": "Verziovanie: Odstrániť repozitáre",
+          "purge": "Čistenie"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Tiché zariadenia",
           "batteries": "Batérie",
           "git_sync": "Verziovanie",
-          "automations": "Automatizácie"
+          "automations": "Automatizácie",
+          "purge": "Čistenie"
         },
         "data_description": {
           "containers": "Sleduje Home Assistant Core, Supervisor a doplnky: stav, verziu, CPU a pamäť. Iba sledovanie: nič sa nereštartuje.",
@@ -124,7 +128,8 @@
           "silent": "Sleduje zariadenia ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome a deCONZ: tie, ktoré sa už neozývajú, a slabé signály. Bez vlastných entít.",
           "batteries": "Dvakrát denne upozorní na zariadenia, ktorých batéria zostala slabá.",
           "git_sync": "Priečinok Home Assistanta verzovaný v Gite a odosielaný na remote (GitHub, Gitea…).",
-          "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít."
+          "automations": "Zobrazuje zlyhané automatizácie a nedostupné entity hlásené integráciou Automation Monitor (inštaluje sa samostatne). Bez vlastných entít.",
+          "purge": "Každú noc maže súbory, ktoré sa nezmenili určitý počet dní, vo zvolených priečinkoch (predvolene mcp_backups: zálohy konfigurácie servera MCP). Vypnuté, kým sa nezapne."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repozitáre na odstránenie"
         }
+      },
+      "purge": {
+        "title": "Čistenie",
+        "description": "Iba priečinky vo vnútri konfiguračného priečinka. Podpriečinky, ktoré ostanú prázdne, sa odstránia, zvolený priečinok nikdy.",
+        "data": {
+          "directories": "Priečinky",
+          "max_age": "Mazať súbory staršie ako"
+        },
+        "data_description": {
+          "directories": "Každý čistený priečinok, relatívne ku konfiguračnému priečinku, napr. mcp_backups. Vyprázdnite zoznam, aby sa nič nečistilo.",
+          "max_age": "Dni bez zmeny, po ktorých sa súbor zmaže, každú noc a tlačidlom Vyčistiť teraz."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Zariadenie tejto batérie nemá model: nastavte typ pre samotnú batériu.",
       "critical_below_warning": "Červený prah musí byť nad oranžovým.",
       "repository_exists": "Tento repozitár je už nastavený.",
-      "backup_not_loaded": "Integrácia Backup nie je načítaná."
+      "backup_not_loaded": "Integrácia Backup nie je načítaná.",
+      "purge_refused": "Tieto priečinky nemožno čistiť: {refused}. Prijímajú sa iba priečinky vo vnútri konfiguračného priečinka, okrem skrytých (.storage…) a vlastných priečinkov Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor nie je čo importovať."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Databáza"
+    },
+    "purge": {
+      "name": "System Hub Čistenie"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Skenovať teraz"
+      },
+      "purge_now": {
+        "name": "Vyčistiť teraz"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Engine"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Posledné čistenie"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Zariadenia",
           "description": "ID zariadení z atribútu devices senzora osirotených. Ponechajte prázdne pre všetky osirotené zariadenia z poslednej kontroly."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Vyčistiť súbory",
+      "description": "Zmaže súbory staršie ako nastavený vek v priečinkoch modulu Čistenie. Vráti, čo bolo zmazané.",
+      "fields": {
+        "dry_run": {
+          "name": "Skúšobný beh",
+          "description": "Iba povie, čo by sa zmazalo, nič nezmaže."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Prihlásenia",
         "sub_security_accounts": "Účty",
         "sub_security_system": "Doplnky a konfigurácia",
-        "sub_security_outbound": "Odchádzajúce"
+        "sub_security_outbound": "Odchádzajúce",
+        "purge": "Čistenie",
+        "tab_purge": "Čistenie",
+        "pg_folders": "Priečinky",
+        "pg_to_delete": "Súbory staršie ako {n} dní",
+        "pg_reclaim": "Miesto na uvoľnenie",
+        "pg_last": "Posledné čistenie",
+        "pg_last_done": "Zmazaných {n} súborov, uvoľnených {size}",
+        "pg_never": "Zatiaľ nespustené",
+        "pg_now": "Vyčistiť teraz",
+        "pg_confirm": "Zmazať {n} súborov ({size}) bez zmeny {days} dní? Nedá sa to vrátiť.",
+        "pg_errors": "Pri poslednom čistení nebolo možné zmazať {n} súborov",
+        "pg_files": "{n} súborov, {size}",
+        "pg_oldest": "najstarší {when}",
+        "pg_n_old": "{n} na zmazanie · {size}",
+        "pg_nothing": "Nič na zmazanie",
+        "pg_missing": "Priečinok sa nenašiel: zatiaľ nič na čistenie",
+        "pg_missing_short": "Nenájdené",
+        "pg_left_out": "Vynechané",
+        "pg_refused_root": "Konfiguračný priečinok (ani priečinok, ktorý ho obsahuje) sa nikdy nečistí",
+        "pg_refused_protected": "Skrytý alebo vlastný priečinok Home Assistant: nikdy sa nečistí",
+        "pg_refused_outside": "Mimo konfiguračného priečinka",
+        "pg_n_left_out": "Vynechaných priečinkov: {n}",
+        "pg_rule": "Každú noc: súbory staršie ako {n} dní",
+        "pg_none": "Žiadny priečinok: pridajte ho cez Konfigurovať.",
+        "pk_title": "Vyberte priečinky na čistenie",
+        "pk_sub": "Iba priečinky vo vnútri /config",
+        "pk_back": "Späť",
+        "pk_up": "Nadradený priečinok",
+        "pk_search": "Hľadať",
+        "pk_name": "Názov",
+        "pk_content": "Obsah",
+        "pk_modified": "Zmenené",
+        "pk_protected": "Chránené",
+        "pk_empty": "Žiadne podpriečinky",
+        "pk_old": "{n} starších ako {days} d",
+        "pk_use": "Použiť priečinky: {n}",
+        "pk_open": "Otvoriť",
+        "pk_many": "{n}+ súborov",
+        "pg_choose": "Vybrať priečinky",
+        "pg_remove": "Odobrať",
+        "pk_this": "Vybrať tento priečinok"
       }
     },
     "battery_type": {

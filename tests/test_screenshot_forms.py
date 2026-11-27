@@ -36,6 +36,7 @@ STEPS = (
     "watchdog_add_power_cycle",
     "marketplace",
     "backups",
+    "purge",
     "silent",
     "batteries",
     "batteries_types",
@@ -48,7 +49,7 @@ STEPS = (
 
 # A set-up instance, with nothing personal in it
 OPTIONS = {
-    "modules": ["containers", "watchdog", "marketplace", "batteries", "git_sync", "automations", "orphans"],
+    "modules": ["containers", "watchdog", "marketplace", "purge", "batteries", "git_sync", "automations", "orphans"],
     "git_sync": {
         "repo_path": "/config",
         "remote": "origin",

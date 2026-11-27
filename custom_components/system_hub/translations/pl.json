@@ -16,7 +16,8 @@
           "batteries": "Baterie",
           "git_sync": "Wersjonowanie",
           "orphans": "Porządki",
-          "automations": "Automatyzacje"
+          "automations": "Automatyzacje",
+          "purge": "Czyszczenie"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
@@ -30,7 +31,8 @@
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
           "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
           "orphans": "Wyświetla encje, których ich integracja już nie dostarcza, aby można je było usunąć zbiorczo.",
-          "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji."
+          "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji.",
+          "purge": "Co noc usuwa pliki niezmieniane od określonej liczby dni w wybranych folderach (domyślnie mcp_backups: kopie konfiguracji serwera MCP). Wyłączone, dopóki nie zostanie włączone."
         }
       },
       "git_sync_repository": {
@@ -94,7 +96,8 @@
           "automations": "Automatyzacje",
           "git_sync_add_repository": "Wersjonowanie: Dodaj repozytorium",
           "git_sync_other": "Wersjonowanie: Inne repozytorium",
-          "git_sync_remove_repository": "Wersjonowanie: Usuń repozytoria"
+          "git_sync_remove_repository": "Wersjonowanie: Usuń repozytoria",
+          "purge": "Czyszczenie"
         }
       },
       "modules": {
@@ -111,7 +114,8 @@
           "silent": "Ciche urządzenia",
           "batteries": "Baterie",
           "git_sync": "Wersjonowanie",
-          "automations": "Automatyzacje"
+          "automations": "Automatyzacje",
+          "purge": "Czyszczenie"
         },
         "data_description": {
           "containers": "Monitoruje Home Assistant Core, Supervisor i dodatki: stan, wersję, CPU i pamięć. Tylko monitorowanie: nic nie jest restartowane.",
@@ -124,7 +128,8 @@
           "silent": "Obserwuje urządzenia ZHA, Zigbee2MQTT, Z-Wave, Matter, ESPHome i deCONZ: te, które przestały się odzywać, i słabe sygnały. Bez własnych encji.",
           "batteries": "Dwa razy dziennie powiadamia o urządzeniach, których bateria pozostaje słaba.",
           "git_sync": "Folder Home Assistant wersjonowany w Git i wypychany do remote (GitHub, Gitea…).",
-          "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji."
+          "automations": "Pokazuje nieudane automatyzacje i niedostępne encje zgłaszane przez integrację Automation Monitor (instalowaną osobno). Bez własnych encji.",
+          "purge": "Co noc usuwa pliki niezmieniane od określonej liczby dni w wybranych folderach (domyślnie mcp_backups: kopie konfiguracji serwera MCP). Wyłączone, dopóki nie zostanie włączone."
         }
       },
       "containers": {
@@ -490,6 +495,18 @@
         "data": {
           "git_sync_repositories": "Repozytoria do usunięcia"
         }
+      },
+      "purge": {
+        "title": "Czyszczenie",
+        "description": "Tylko foldery wewnątrz folderu konfiguracji. Puste podfoldery są usuwane, nigdy wybrany folder.",
+        "data": {
+          "directories": "Foldery",
+          "max_age": "Usuwaj pliki starsze niż"
+        },
+        "data_description": {
+          "directories": "Każdy czyszczony folder, względem folderu konfiguracji, np. mcp_backups. Opróżnij listę, aby niczego nie czyścić.",
+          "max_age": "Dni bez zmian, po których plik jest usuwany, co noc oraz przyciskiem Wyczyść teraz."
+        }
       }
     },
     "error": {
@@ -510,7 +527,8 @@
       "no_model": "Urządzenie tej baterii nie ma modelu: ustaw typ dla samej baterii.",
       "critical_below_warning": "Próg czerwony musi być wyższy niż pomarańczowy.",
       "repository_exists": "To repozytorium jest już skonfigurowane.",
-      "backup_not_loaded": "Integracja Backup nie jest załadowana."
+      "backup_not_loaded": "Integracja Backup nie jest załadowana.",
+      "purge_refused": "Tych folderów nie można czyścić: {refused}. Akceptowane są tylko foldery wewnątrz folderu konfiguracji, z wyjątkiem ukrytych (.storage…) i własnych folderów Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
@@ -540,6 +558,9 @@
     },
     "database": {
       "name": "System Hub Baza danych"
+    },
+    "purge": {
+      "name": "System Hub Czyszczenie"
     }
   },
   "entity": {
@@ -561,6 +582,9 @@
       },
       "orphans_scan": {
         "name": "Skanuj teraz"
+      },
+      "purge_now": {
+        "name": "Wyczyść teraz"
       }
     },
     "sensor": {
@@ -885,6 +909,9 @@
             "name": "Silnik"
           }
         }
+      },
+      "purge_last_run": {
+        "name": "Ostatnie czyszczenie"
       }
     }
   },
@@ -1072,6 +1099,16 @@
         "devices": {
           "name": "Urządzenia",
           "description": "Identyfikatory urządzeń z atrybutu devices czujnika sierot. Pozostaw puste dla wszystkich osieroconych urządzeń z ostatniego skanowania."
+        }
+      }
+    },
+    "purge_files": {
+      "name": "Wyczyść pliki",
+      "description": "Usuwa pliki starsze niż ustawiony wiek w folderach modułu Czyszczenie. Zwraca, co zostało usunięte.",
+      "fields": {
+        "dry_run": {
+          "name": "Próba",
+          "description": "Tylko pokazuje, co zostałoby usunięte, niczego nie usuwając."
         }
       }
     }
@@ -1925,7 +1962,48 @@
         "sub_security": "Logowania",
         "sub_security_accounts": "Konta",
         "sub_security_system": "Dodatki i konfiguracja",
-        "sub_security_outbound": "Wychodzące"
+        "sub_security_outbound": "Wychodzące",
+        "purge": "Czyszczenie",
+        "tab_purge": "Czyszczenie",
+        "pg_folders": "Foldery",
+        "pg_to_delete": "Pliki starsze niż {n} dni",
+        "pg_reclaim": "Miejsce do zwolnienia",
+        "pg_last": "Ostatnie czyszczenie",
+        "pg_last_done": "Usunięto {n} plików, zwolniono {size}",
+        "pg_never": "Jeszcze nie uruchomiono",
+        "pg_now": "Wyczyść teraz",
+        "pg_confirm": "Usunąć {n} plików ({size}) niezmienianych od {days} dni? Tego nie można cofnąć.",
+        "pg_errors": "Nie udało się usunąć {n} plików podczas ostatniego czyszczenia",
+        "pg_files": "{n} plików, {size}",
+        "pg_oldest": "najstarszy {when}",
+        "pg_n_old": "{n} do usunięcia · {size}",
+        "pg_nothing": "Nic do usunięcia",
+        "pg_missing": "Nie znaleziono folderu: na razie nic do czyszczenia",
+        "pg_missing_short": "Nie znaleziono",
+        "pg_left_out": "Pominięty",
+        "pg_refused_root": "Folder konfiguracji (ani folder, który go zawiera) nigdy nie jest czyszczony",
+        "pg_refused_protected": "Folder ukryty lub własny Home Assistant: nigdy nie jest czyszczony",
+        "pg_refused_outside": "Poza folderem konfiguracji",
+        "pg_n_left_out": "Pominięto {n} folderów",
+        "pg_rule": "Co noc: pliki starsze niż {n} dni",
+        "pg_none": "Brak folderu: dodaj go w Konfiguruj.",
+        "pk_title": "Wybierz foldery do czyszczenia",
+        "pk_sub": "Tylko foldery wewnątrz /config",
+        "pk_back": "Wstecz",
+        "pk_up": "Folder nadrzędny",
+        "pk_search": "Szukaj",
+        "pk_name": "Nazwa",
+        "pk_content": "Zawartość",
+        "pk_modified": "Zmieniono",
+        "pk_protected": "Chroniony",
+        "pk_empty": "Brak podfolderów",
+        "pk_old": "{n} starszych niż {days} d",
+        "pk_use": "Użyj folderów: {n}",
+        "pk_open": "Otwórz",
+        "pk_many": "{n}+ plików",
+        "pg_choose": "Wybierz foldery",
+        "pg_remove": "Usuń",
+        "pk_this": "Zaznacz ten folder"
       }
     },
     "battery_type": {

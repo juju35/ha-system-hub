@@ -11,6 +11,7 @@ export var SH_SETTINGS_STEPS = {
   watchdog: ['watchdog', 'watchdog_add_power_cycle', 'watchdog_remove_power_cycle'],
   marketplace: ['marketplace'],
   backups: ['backups'],
+  purge: ['purge'],
   database: ['database'],
   security: ['security'],
   logs: ['logs'],
@@ -218,12 +219,14 @@ export var SH_SETTINGS_METHODS = {
       : '';
     var description = this._l(`component.${SH_DOMAIN}.options.step.${cfg.step}.description`, cfg.flow.description_placeholders || {});
     var base = cfg.errors?.base ? this._l(`component.${SH_DOMAIN}.options.error.${cfg.errors.base}`) || cfg.errors.base : '';
+    // The Purge folders: chosen in the folder picker too, which fills the form
+    var browse = cfg.step === 'purge' ? this._button('pk_open', 'mdi:folder-search-outline', this._t('pg_choose'), { quiet: true, data: { origin: 'settings' } }) : '';
     return `<div class="cfgbody">${tabs}
       ${description ? `<div class="s cfgdesc">${shEsc(description)}</div>` : ''}
       <div class="cfgform" data-step="${shEsc(cfg.step)}"></div>
       ${base ? `<span class="msg bad">${shEsc(base)}</span>` : ''}
-      <div class="actions"><span class="grow"></span>${this._button('cfg_close', 'mdi:close', this._t('cancel'), { quiet: true, disabled: cfg.busy })}
-        ${this._button('cfg_submit', 'mdi:content-save-outline', this._t('save'), { busy: cfg.busy })}</div></div>`;
+      <div class="actions">${browse}<span class="grow"></span>${this._button('cfg_close', 'mdi:close', this._t('cancel'), { quiet: true, disabled: cfg.busy })}
+        ${this._button('cfg_submit', 'mdi:content-save-outline', this._t('save'), { busy: cfg.busy })}</div>${cfg.step === 'purge' ? this._pkDialog() : ''}</div>`;
   },
 
   _cfgTitle(step) {
