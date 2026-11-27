@@ -86,18 +86,7 @@ def test_resolve_keeps_to_the_configuration_folder(tmp_path: Path) -> None:
     assert resolve(str(config), "store")[1] == REFUSED_PROTECTED
     (config / "out").symlink_to(tmp_path)
     assert resolve(str(config), "out/media")[1] == REFUSED_OUTSIDE
-
-
-def test_resolve_accepts_backup(tmp_path: Path) -> None:
-    config, backup = tmp_path / "config", tmp_path / "backup"
-    config.mkdir()
-    backup.mkdir()
-    assert resolve(str(config), str(backup), str(backup)) == (backup, None)
-    assert resolve(str(config), str(backup / "old"), str(backup))[1] is None
-    assert resolve(str(config), str(tmp_path / "backup2"), str(backup))[1] == REFUSED_OUTSIDE
-    # The default: Home Assistant OS's /backup
-    assert resolve(str(config), "/backup")[1] is None
-    assert resolve(str(config), "/backups")[1] == REFUSED_OUTSIDE
+    assert resolve(str(config), "/backup")[1] == REFUSED_OUTSIDE
 
 
 def test_browse_lists_the_folders_of_the_configuration_folder(tmp_path: Path) -> None:
@@ -123,22 +112,9 @@ def test_browse_lists_the_folders_of_the_configuration_folder(tmp_path: Path) ->
     ]
     for outside in ("..", "../..", "link", "missing", str(tmp_path)):
         with pytest.raises(ValueError):
-            browse(str(config), outside, 30, str(tmp_path / "backup"))
-    assert top["roots"] == [{"path": "", "name": "config"}] or top["roots"][1]["path"] == "/backup"
+            browse(str(config), outside, 30)
     assert top["current"] is None
     assert inside["current"]["files"] == 3
-
-
-def test_browse_backup(tmp_path: Path) -> None:
-    config, backup = tmp_path / "config", tmp_path / "backup"
-    config.mkdir()
-    _file(backup / "a1b2c3d4.tar", 40, 100)
-    _file(backup / "tmp" / "x.tar", 1, 5)
-    result = browse(str(config), str(backup), 30, str(backup))
-    assert result["path"] == str(backup)
-    assert result["roots"] == [{"path": "", "name": "config"}, {"path": str(backup), "name": "backup"}]
-    assert result["current"] == {"files": 2, "size": 105, "old_files": 1, "truncated": False}
-    assert [(e["path"], e["protected"]) for e in result["entries"]] == [(str(backup / "tmp"), False)]
 
 
 def test_purge_deletes_the_old_files_and_their_empty_folders(tmp_path: Path) -> None:

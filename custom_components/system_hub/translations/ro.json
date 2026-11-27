@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Curățare",
-        "description": "Foldere din folderul de configurație (relative) sau din /backup (absolute, inclusiv /backup). Subfolderele rămase goale sunt eliminate, niciodată folderul ales.",
+        "description": "Doar foldere din folderul de configurație. Subfolderele rămase goale sunt eliminate, niciodată folderul ales.",
         "data": {
           "directories": "Foldere",
           "max_age": "Șterge fișierele mai vechi de"
         },
         "data_description": {
-          "directories": "Fiecare folder curățat: relativ la folderul de configurație (de ex. mcp_backups) sau /backup și subfolderele sale. Goliți lista pentru a nu curăța nimic.",
+          "directories": "Fiecare folder curățat, relativ la folderul de configurație, de ex. mcp_backups. Goliți lista pentru a nu curăța nimic.",
           "max_age": "Zile fără modificări după care un fișier este șters, în fiecare noapte și cu Curăță acum."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Pragul roșu trebuie să fie peste cel portocaliu.",
       "repository_exists": "Acest depozit este deja configurat.",
       "backup_not_loaded": "Integrarea Backup nu este încărcată.",
-      "purge_refused": "Aceste foldere nu pot fi curățate: {refused}. Sunt acceptate doar foldere din folderul de configurație sau din /backup, cu excepția celor ascunse (.storage…) și a celor proprii Home Assistant (custom_components, backups…)."
+      "purge_refused": "Aceste foldere nu pot fi curățate: {refused}. Sunt acceptate doar foldere din folderul de configurație, cu excepția celor ascunse (.storage…) și a celor proprii Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nimic de importat din Battery Monitor."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Exclus",
         "pg_refused_root": "Folderul de configurație (sau unul care îl conține) nu este curățat niciodată",
         "pg_refused_protected": "Folder ascuns sau propriu Home Assistant: nu este curățat niciodată",
-        "pg_refused_outside": "În afara /config și /backup",
+        "pg_refused_outside": "În afara folderului de configurație",
         "pg_n_left_out": "{n} foldere excluse",
         "pg_rule": "În fiecare noapte: fișiere mai vechi de {n} zile",
         "pg_none": "Niciun folder: adăugați unul cu Configurare.",
         "pk_title": "Alegeți folderele de curățat",
-        "pk_sub": "Doar foldere din /config sau /backup",
+        "pk_sub": "Doar foldere din /config",
         "pk_back": "Înapoi",
         "pk_up": "Folder părinte",
         "pk_search": "Căutare",

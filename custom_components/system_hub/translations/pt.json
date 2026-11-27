@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Limpeza",
-        "description": "Pastas dentro da pasta de configuração (relativas) ou em /backup (absolutas, incluindo /backup). As subpastas que ficam vazias são removidas, nunca a pasta escolhida.",
+        "description": "Apenas pastas dentro da pasta de configuração. As subpastas que ficam vazias são removidas, nunca a pasta escolhida.",
         "data": {
           "directories": "Pastas",
           "max_age": "Apagar ficheiros com mais de"
         },
         "data_description": {
-          "directories": "Cada pasta limpa: relativa à pasta de configuração (p. ex. mcp_backups), ou /backup e as suas subpastas. Esvazie a lista para não limpar nada.",
+          "directories": "Cada pasta limpa, relativa à pasta de configuração, p. ex. mcp_backups. Esvazie a lista para não limpar nada.",
           "max_age": "Dias sem alterações após os quais um ficheiro é apagado, todas as noites e com Limpar agora."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "O limiar vermelho tem de estar acima do laranja.",
       "repository_exists": "Este repositório já está configurado.",
       "backup_not_loaded": "A integração Backup não está carregada.",
-      "purge_refused": "Estas pastas não podem ser limpas: {refused}. Só são aceites pastas dentro da pasta de configuração ou em /backup, exceto as ocultas (.storage…) e as próprias do Home Assistant (custom_components, backups…)."
+      "purge_refused": "Estas pastas não podem ser limpas: {refused}. Só são aceites pastas dentro da pasta de configuração, exceto as ocultas (.storage…) e as próprias do Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nada a importar do Battery Monitor."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Excluída",
         "pg_refused_root": "A pasta de configuração (ou uma que a contenha) nunca é limpa",
         "pg_refused_protected": "Pasta oculta ou própria do Home Assistant: nunca é limpa",
-        "pg_refused_outside": "Fora de /config e /backup",
+        "pg_refused_outside": "Fora da pasta de configuração",
         "pg_n_left_out": "{n} pastas excluídas",
         "pg_rule": "Todas as noites: ficheiros com mais de {n} dias",
         "pg_none": "Nenhuma pasta definida: adicione uma em Configurar.",
         "pk_title": "Escolher as pastas a limpar",
-        "pk_sub": "Apenas pastas dentro de /config ou /backup",
+        "pk_sub": "Apenas pastas dentro de /config",
         "pk_back": "Voltar",
         "pk_up": "Pasta superior",
         "pk_search": "Pesquisar",

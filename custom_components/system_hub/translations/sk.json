@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Čistenie",
-        "description": "Priečinky v konfiguračnom priečinku (relatívne) alebo v /backup (absolútne, vrátane /backup). Podpriečinky, ktoré ostanú prázdne, sa odstránia, zvolený priečinok nikdy.",
+        "description": "Iba priečinky vo vnútri konfiguračného priečinka. Podpriečinky, ktoré ostanú prázdne, sa odstránia, zvolený priečinok nikdy.",
         "data": {
           "directories": "Priečinky",
           "max_age": "Mazať súbory staršie ako"
         },
         "data_description": {
-          "directories": "Každý čistený priečinok: relatívne ku konfiguračnému priečinku (napr. mcp_backups), alebo /backup a jeho podpriečinky. Vyprázdnite zoznam, aby sa nič nečistilo.",
+          "directories": "Každý čistený priečinok, relatívne ku konfiguračnému priečinku, napr. mcp_backups. Vyprázdnite zoznam, aby sa nič nečistilo.",
           "max_age": "Dni bez zmeny, po ktorých sa súbor zmaže, každú noc a tlačidlom Vyčistiť teraz."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Červený prah musí byť nad oranžovým.",
       "repository_exists": "Tento repozitár je už nastavený.",
       "backup_not_loaded": "Integrácia Backup nie je načítaná.",
-      "purge_refused": "Tieto priečinky nemožno čistiť: {refused}. Prijímajú sa iba priečinky v konfiguračnom priečinku alebo v /backup, okrem skrytých (.storage…) a vlastných priečinkov Home Assistant (custom_components, backups…)."
+      "purge_refused": "Tieto priečinky nemožno čistiť: {refused}. Prijímajú sa iba priečinky vo vnútri konfiguračného priečinka, okrem skrytých (.storage…) a vlastných priečinkov Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor nie je čo importovať."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Vynechané",
         "pg_refused_root": "Konfiguračný priečinok (ani priečinok, ktorý ho obsahuje) sa nikdy nečistí",
         "pg_refused_protected": "Skrytý alebo vlastný priečinok Home Assistant: nikdy sa nečistí",
-        "pg_refused_outside": "Mimo /config a /backup",
+        "pg_refused_outside": "Mimo konfiguračného priečinka",
         "pg_n_left_out": "Vynechaných priečinkov: {n}",
         "pg_rule": "Každú noc: súbory staršie ako {n} dní",
         "pg_none": "Žiadny priečinok: pridajte ho cez Konfigurovať.",
         "pk_title": "Vyberte priečinky na čistenie",
-        "pk_sub": "Iba priečinky v /config alebo /backup",
+        "pk_sub": "Iba priečinky vo vnútri /config",
         "pk_back": "Späť",
         "pk_up": "Nadradený priečinok",
         "pk_search": "Hľadať",

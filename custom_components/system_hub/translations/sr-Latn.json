@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Čišćenje",
-        "description": "Fascikle unutar fascikle konfiguracije (relativne) ili u /backup (apsolutne, uključujući i sam /backup). Potfascikle koje ostanu prazne se uklanjaju, izabrana fascikla nikada.",
+        "description": "Samo fascikle unutar fascikle konfiguracije. Potfascikle koje ostanu prazne se uklanjaju, izabrana fascikla nikada.",
         "data": {
           "directories": "Fascikle",
           "max_age": "Briši datoteke starije od"
         },
         "data_description": {
-          "directories": "Svaka fascikla koja se čisti: u odnosu na fasciklu konfiguracije (npr. mcp_backups) ili /backup i njegove potfascikle. Ispraznite listu da se ništa ne čisti.",
+          "directories": "Svaka fascikla koja se čisti, u odnosu na fasciklu konfiguracije, npr. mcp_backups. Ispraznite listu da se ništa ne čisti.",
           "max_age": "Dani bez izmene nakon kojih se datoteka briše, svake noći i sa Očisti sada."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Crveni prag mora biti iznad narandžastog.",
       "repository_exists": "Ovaj repozitorijum je već podešen.",
       "backup_not_loaded": "Integracija Backup nije učitana.",
-      "purge_refused": "Ove fascikle se ne mogu čistiti: {refused}. Prihvataju se samo fascikle unutar fascikle konfiguracije ili u /backup, osim skrivenih (.storage…) i sopstvenih fascikli Home Assistant-a (custom_components, backups…)."
+      "purge_refused": "Ove fascikle se ne mogu čistiti: {refused}. Prihvataju se samo fascikle unutar fascikle konfiguracije, osim skrivenih (.storage…) i sopstvenih fascikli Home Assistant-a (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nema šta da se uveze iz Battery Monitor."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Izostavljeno",
         "pg_refused_root": "Fascikla konfiguracije (ili ona koja je sadrži) se nikada ne čisti",
         "pg_refused_protected": "Skrivena ili sopstvena fascikla Home Assistant-a: nikada se ne čisti",
-        "pg_refused_outside": "Van /config i /backup",
+        "pg_refused_outside": "Van fascikle konfiguracije",
         "pg_n_left_out": "Izostavljeno fascikli: {n}",
         "pg_rule": "Svake noći: datoteke starije od {n} dana",
         "pg_none": "Nema fascikle: dodajte je preko Konfiguriši.",
         "pk_title": "Izaberite fascikle za čišćenje",
-        "pk_sub": "Samo fascikle unutar /config ili /backup",
+        "pk_sub": "Samo fascikle unutar /config",
         "pk_back": "Nazad",
         "pk_up": "Nadređena fascikla",
         "pk_search": "Pretraga",

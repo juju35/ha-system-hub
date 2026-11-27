@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Purge",
-        "description": "Folders inside the configuration folder (relative) or in /backup (absolute, /backup itself included). The sub-folders left empty are removed, never the folder set.",
+        "description": "Folders inside the configuration folder only. The sub-folders left empty are removed, never the folder set.",
         "data": {
           "directories": "Folders",
           "max_age": "Delete files older than"
         },
         "data_description": {
-          "directories": "Each folder purged: relative to the configuration folder (e.g. mcp_backups), or /backup and its sub-folders. Empty the list to purge nothing.",
+          "directories": "Each folder purged, relative to the configuration folder, e.g. mcp_backups. Empty the list to purge nothing.",
           "max_age": "Days without a change after which a file is deleted, every night and with Purge now."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "The red threshold must be above the orange one.",
       "repository_exists": "This repository is already set up.",
       "backup_not_loaded": "The Backup integration is not loaded.",
-      "purge_refused": "These folders can't be purged: {refused}. Only folders inside the configuration folder or in /backup are accepted, except the hidden ones (.storage…) and Home Assistant's own (custom_components, backups…)."
+      "purge_refused": "These folders can't be purged: {refused}. Only folders inside the configuration folder are accepted, except the hidden ones (.storage…) and Home Assistant's own (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nothing to import from Battery Monitor."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Left out",
         "pg_refused_root": "The configuration folder (or a folder holding it) is never purged",
         "pg_refused_protected": "Hidden folder or one of Home Assistant's own: never purged",
-        "pg_refused_outside": "Outside /config and /backup",
+        "pg_refused_outside": "Outside the configuration folder",
         "pg_n_left_out": "{n} folders left out",
         "pg_rule": "Every night: files older than {n} days",
         "pg_none": "No folder set: add one with Configure.",
         "pk_title": "Choose the folders to purge",
-        "pk_sub": "Only folders inside /config or /backup",
+        "pk_sub": "Only folders inside /config",
         "pk_back": "Back",
         "pk_up": "Parent folder",
         "pk_search": "Search",

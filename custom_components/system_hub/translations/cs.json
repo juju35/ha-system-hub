@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Čištění",
-        "description": "Složky v konfigurační složce (relativní) nebo v /backup (absolutní, včetně /backup). Podsložky, které zůstanou prázdné, se odstraní, zvolená složka nikdy.",
+        "description": "Pouze složky uvnitř konfigurační složky. Podsložky, které zůstanou prázdné, se odstraní, zvolená složka nikdy.",
         "data": {
           "directories": "Složky",
           "max_age": "Mazat soubory starší než"
         },
         "data_description": {
-          "directories": "Každá čištěná složka: relativně ke konfigurační složce (např. mcp_backups), nebo /backup a jeho podsložky. Vyprázdněte seznam, aby se nic nečistilo.",
+          "directories": "Každá čištěná složka, relativně ke konfigurační složce, např. mcp_backups. Vyprázdněte seznam, aby se nic nečistilo.",
           "max_age": "Dny bez změny, po kterých se soubor smaže, každou noc a tlačítkem Vyčistit nyní."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Červený práh musí být nad oranžovým.",
       "repository_exists": "Tento repozitář je již nastaven.",
       "backup_not_loaded": "Integrace Backup není načtena.",
-      "purge_refused": "Tyto složky nelze čistit: {refused}. Přijímají se pouze složky v konfigurační složce nebo v /backup, kromě skrytých (.storage…) a vlastních složek Home Assistant (custom_components, backups…)."
+      "purge_refused": "Tyto složky nelze čistit: {refused}. Přijímají se pouze složky uvnitř konfigurační složky, kromě skrytých (.storage…) a vlastních složek Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Z Battery Monitor není co importovat."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Vynecháno",
         "pg_refused_root": "Konfigurační složka (ani složka, která ji obsahuje) se nikdy nečistí",
         "pg_refused_protected": "Skrytá nebo vlastní složka Home Assistant: nikdy se nečistí",
-        "pg_refused_outside": "Mimo /config a /backup",
+        "pg_refused_outside": "Mimo konfigurační složku",
         "pg_n_left_out": "Vynecháno složek: {n}",
         "pg_rule": "Každou noc: soubory starší než {n} dní",
         "pg_none": "Žádná složka: přidejte ji přes Konfigurovat.",
         "pk_title": "Vyberte složky k čištění",
-        "pk_sub": "Pouze složky v /config nebo /backup",
+        "pk_sub": "Pouze složky uvnitř /config",
         "pk_back": "Zpět",
         "pk_up": "Nadřazená složka",
         "pk_search": "Hledat",

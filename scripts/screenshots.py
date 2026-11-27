@@ -1179,7 +1179,6 @@ def mock_purge_browse():
             folder("tts", protected=True),
             folder("www", 61, 25_165_824, 0, 1, True),
         ],
-        "/backup": [],
         "mcp_backups": [
             folder(f"mcp_backups/2026-{d}_10-00-00", 11, 830_000, 11 if d < "10-28" else 0, 0)
             for d in ("10-20", "10-24", "11-02", "11-14", "11-24", "11-26")
@@ -1826,7 +1825,6 @@ MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
                       path: msg.path || "",
                       entries: state.purge_browse[msg.path || ""] || [],
                       current: msg.path ? { files: 66, size: 4_980_000, old_files: 11, truncated: false } : null,
-                      roots: [{ path: "", name: "config" }, { path: "/backup", name: "backup" }],
                     }
                   : msg.type === "system_log/list"
                   ? state.system_log

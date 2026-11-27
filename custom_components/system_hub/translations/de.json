@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Bereinigung",
-        "description": "Ordner im Konfigurationsordner (relativ) oder in /backup (absolut, /backup selbst inbegriffen). Leer gewordene Unterordner werden entfernt, nie der gewählte Ordner.",
+        "description": "Nur Ordner innerhalb des Konfigurationsordners. Leer gewordene Unterordner werden entfernt, nie der gewählte Ordner.",
         "data": {
           "directories": "Ordner",
           "max_age": "Dateien löschen älter als"
         },
         "data_description": {
-          "directories": "Jeder bereinigte Ordner: relativ zum Konfigurationsordner (z. B. mcp_backups) oder /backup und seine Unterordner. Leeren Sie die Liste, um nichts zu bereinigen.",
+          "directories": "Jeder bereinigte Ordner, relativ zum Konfigurationsordner, z. B. mcp_backups. Leeren Sie die Liste, um nichts zu bereinigen.",
           "max_age": "Tage ohne Änderung, nach denen eine Datei gelöscht wird, jede Nacht und mit Jetzt bereinigen."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Der rote Schwellenwert muss über dem orangen liegen.",
       "repository_exists": "Dieses Repository ist bereits eingerichtet.",
       "backup_not_loaded": "Die Backup-Integration ist nicht geladen.",
-      "purge_refused": "Diese Ordner können nicht bereinigt werden: {refused}. Nur Ordner im Konfigurationsordner oder in /backup sind erlaubt, außer versteckten (.storage…) und den eigenen von Home Assistant (custom_components, backups…)."
+      "purge_refused": "Diese Ordner können nicht bereinigt werden: {refused}. Nur Ordner innerhalb des Konfigurationsordners sind erlaubt, außer versteckten (.storage…) und den eigenen von Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nichts aus Battery Monitor zu importieren."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Ausgeschlossen",
         "pg_refused_root": "Der Konfigurationsordner (oder ein Ordner, der ihn enthält) wird nie bereinigt",
         "pg_refused_protected": "Versteckter Ordner oder eigener Ordner von Home Assistant: wird nie bereinigt",
-        "pg_refused_outside": "Außerhalb von /config und /backup",
+        "pg_refused_outside": "Außerhalb des Konfigurationsordners",
         "pg_n_left_out": "{n} Ordner ausgeschlossen",
         "pg_rule": "Jede Nacht: Dateien älter als {n} Tage",
         "pg_none": "Kein Ordner festgelegt: fügen Sie einen über Konfigurieren hinzu.",
         "pk_title": "Zu bereinigende Ordner wählen",
-        "pk_sub": "Nur Ordner in /config oder /backup",
+        "pk_sub": "Nur Ordner innerhalb von /config",
         "pk_back": "Zurück",
         "pk_up": "Übergeordneter Ordner",
         "pk_search": "Suchen",

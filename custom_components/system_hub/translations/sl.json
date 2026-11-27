@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Čiščenje",
-        "description": "Mape v konfiguracijski mapi (relativne) ali v /backup (absolutne, vključno z /backup). Podmape, ki ostanejo prazne, se odstranijo, izbrana mapa nikoli.",
+        "description": "Samo mape znotraj konfiguracijske mape. Podmape, ki ostanejo prazne, se odstranijo, izbrana mapa nikoli.",
         "data": {
           "directories": "Mape",
           "max_age": "Izbriši datoteke, starejše od"
         },
         "data_description": {
-          "directories": "Vsaka očiščena mapa: glede na konfiguracijsko mapo (npr. mcp_backups) ali /backup in njegove podmape. Izpraznite seznam, da se nič ne čisti.",
+          "directories": "Vsaka očiščena mapa, glede na konfiguracijsko mapo, npr. mcp_backups. Izpraznite seznam, da se nič ne čisti.",
           "max_age": "Dnevi brez spremembe, po katerih se datoteka izbriše, vsako noč in z Očisti zdaj."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Rdeči prag mora biti nad oranžnim.",
       "repository_exists": "Ta repozitorij je že nastavljen.",
       "backup_not_loaded": "Integracija Backup ni naložena.",
-      "purge_refused": "Teh map ni mogoče čistiti: {refused}. Sprejete so samo mape v konfiguracijski mapi ali v /backup, razen skritih (.storage…) in lastnih map Home Assistant (custom_components, backups…)."
+      "purge_refused": "Teh map ni mogoče čistiti: {refused}. Sprejete so samo mape znotraj konfiguracijske mape, razen skritih (.storage…) in lastnih map Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Iz Battery Monitor ni ničesar za uvoz."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Izpuščeno",
         "pg_refused_root": "Konfiguracijska mapa (ali mapa, ki jo vsebuje) se nikoli ne čisti",
         "pg_refused_protected": "Skrita ali lastna mapa Home Assistant: nikoli se ne čisti",
-        "pg_refused_outside": "Zunaj /config in /backup",
+        "pg_refused_outside": "Zunaj konfiguracijske mape",
         "pg_n_left_out": "Izpuščenih map: {n}",
         "pg_rule": "Vsako noč: datoteke, starejše od {n} dni",
         "pg_none": "Ni mape: dodajte jo z Konfiguriraj.",
         "pk_title": "Izberite mape za čiščenje",
-        "pk_sub": "Samo mape v /config ali /backup",
+        "pk_sub": "Samo mape znotraj /config",
         "pk_back": "Nazaj",
         "pk_up": "Nadrejena mapa",
         "pk_search": "Iskanje",

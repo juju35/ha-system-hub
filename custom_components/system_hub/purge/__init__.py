@@ -1,10 +1,9 @@
 """Purge module: the files older than a number of days, deleted from a list of folders once a day.
 
 By default the folder of the configuration backups written by the Home Assistant MCP server (mcp_backups, one
-sub-folder per snapshot). Only folders inside the configuration folder (relative to it) or in /backup, where Home
-Assistant OS keeps its backups (/backup itself included). The configuration folder itself, a folder outside both, a
-hidden folder of the configuration (.storage, .ssh, .git…) and Home Assistant's own folders there (custom_components,
-backups…) are refused, whatever the path or link used to reach them.
+sub-folder per snapshot). Only folders inside the configuration folder, relative to it (an absolute path is accepted
+when it is inside). The configuration folder itself, a folder outside it, a hidden folder (.storage, .ssh, .git…) and
+Home Assistant's own folders (custom_components, backups…) are refused, whatever the path or link used to reach them.
 The sub-folders left empty by the purge are removed, never the folder set.
 """
 
@@ -23,8 +22,6 @@ MAX_AGE_LIMIT: Final = 3650
 SERVICE_PURGE: Final = "purge_files"
 ATTR_DRY_RUN: Final = "dry_run"
 
-# The other folder that may be purged, besides the configuration folder: Home Assistant OS's backups, itself included.
-BACKUP_DIR: Final = "/backup"
 # Folders of the configuration folder never purged, nor anything in them (a hidden folder never either).
 PROTECTED: Final = frozenset({"custom_components", "deps", "blueprints", "tts", "backups", "www/community"})
 # Why a folder is refused: the configuration folder (or one holding it), a protected folder, one outside it.
@@ -58,23 +55,16 @@ def protected(relative: Path) -> bool:
     )
 
 
-def _backup(backup_dir: str | None) -> Path:
-    return Path(os.path.realpath(backup_dir or BACKUP_DIR))
-
-
-def resolve(config_dir: str, directory: str, backup_dir: str | None = None) -> tuple[Path, str | None]:
+def resolve(config_dir: str, directory: str) -> tuple[Path, str | None]:
     """The folder's real path and why it is refused (None when it may be purged). Blocking: reads symlinks."""
     root = Path(os.path.realpath(config_dir))
-    backup = _backup(backup_dir)
     path = Path(os.path.expanduser(directory))
     real = Path(os.path.realpath(path if path.is_absolute() else root / path))
     if real == root or root.is_relative_to(real):
         return real, REFUSED_ROOT
-    if real.is_relative_to(root):
-        return real, REFUSED_PROTECTED if protected(real.relative_to(root)) else None
-    if real.is_relative_to(backup):
-        return real, None
-    return real, REFUSED_OUTSIDE
+    if not real.is_relative_to(root):
+        return real, REFUSED_OUTSIDE
+    return real, REFUSED_PROTECTED if protected(real.relative_to(root)) else None
 
 
 def _count(folder: str, cutoff: float) -> dict[str, Any]:
@@ -103,25 +93,23 @@ def _has_folders(folder: str) -> bool:
         return False
 
 
-def browse(config_dir: str, directory: str, max_age: int, backup_dir: str | None = None) -> dict[str, Any]:
-    """The sub-folders of a folder of the configuration folder or of /backup, for the folder picker. Blocking.
+def browse(config_dir: str, directory: str, max_age: int) -> dict[str, Any]:
+    """The sub-folders of a folder of the configuration folder (given relative to it, "" for itself), for the folder
+    picker. Blocking.
 
-    A folder of the configuration folder is given relative to it ("" for the configuration folder), one of /backup by
-    its absolute path. Each sub-folder with its files (and those older than max_age days), when it was modified,
-    whether it holds folders and whether it may be purged; symbolic links are left out. Raises ValueError for a folder
-    outside both or that can't be read.
+    Each with its files (and those older than max_age days), when it was modified, whether it holds folders and
+    whether it may be purged; symbolic links are left out. Raises ValueError for a folder outside the configuration
+    folder or that can't be read.
     """
     root = Path(os.path.realpath(config_dir))
-    backup = _backup(backup_dir)
-    asked = directory.strip()
-    target = Path(os.path.realpath(asked if Path(asked).is_absolute() else root / asked.strip("/"))) if asked else root
-    inside = target == root or target.is_relative_to(root)
-    if not (inside or target.is_relative_to(backup)) or not target.is_dir():
+    asked = directory.strip().strip("/")
+    target = Path(os.path.realpath(root / asked)) if asked else root
+    if not (target == root or target.is_relative_to(root)) or not target.is_dir():
         raise ValueError("outside")
     cutoff = time.time() - max_age * 86400
 
     def shown(path: Path) -> str:
-        return path.relative_to(root).as_posix() if inside else path.as_posix()
+        return path.relative_to(root).as_posix()
 
     try:
         items = sorted(os.scandir(target), key=lambda i: i.name.lower())
@@ -135,7 +123,7 @@ def browse(config_dir: str, directory: str, max_age: int, backup_dir: str | None
         entry: dict[str, Any] = {
             "name": item.name,
             "path": shown(path),
-            "protected": inside and protected(path.relative_to(root)),
+            "protected": protected(path.relative_to(root)),
         }
         try:
             entry["modified"] = item.stat(follow_symlinks=False).st_mtime
@@ -146,12 +134,9 @@ def browse(config_dir: str, directory: str, max_age: int, backup_dir: str | None
             entry["folders"] = _has_folders(item.path)
         entries.append(entry)
     here = "" if target == root else shown(target)
-    # The folder itself (to pick /backup, or the folder shown): what it holds
-    current = None if target == root else _count(str(target), cutoff)
-    roots = [{"path": "", "name": "config"}]
-    if backup.is_dir():
-        roots.append({"path": backup.as_posix(), "name": backup.name or backup.as_posix()})
-    return {"path": here, "entries": entries, "current": current, "roots": roots}
+    # The folder itself (picked from the address bar): what it holds
+    current = None if target == root or protected(target.relative_to(root)) else _count(str(target), cutoff)
+    return {"path": here, "entries": entries, "current": current}
 
 
 def purge(directory: Path, max_age: int, dry_run: bool) -> dict[str, Any]:

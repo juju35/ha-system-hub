@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Purge",
-        "description": "Dossiers du dossier de configuration (relatifs) ou de /backup (absolus, /backup compris). Les sous-dossiers laissés vides sont supprimés, jamais le dossier choisi.",
+        "description": "Uniquement des dossiers du dossier de configuration. Les sous-dossiers laissés vides sont supprimés, jamais le dossier choisi.",
         "data": {
           "directories": "Dossiers",
           "max_age": "Supprimer les fichiers de plus de"
         },
         "data_description": {
-          "directories": "Chaque dossier purgé : relatif au dossier de configuration (par ex. mcp_backups), ou /backup et ses sous-dossiers. Videz la liste pour ne rien purger.",
+          "directories": "Chaque dossier purgé, relatif au dossier de configuration, par ex. mcp_backups. Videz la liste pour ne rien purger.",
           "max_age": "Jours sans modification au-delà desquels un fichier est supprimé, chaque nuit et avec Purger maintenant."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Le seuil rouge doit être au-dessus du seuil orange.",
       "repository_exists": "Ce dépôt est déjà configuré.",
       "backup_not_loaded": "L'intégration Backup n'est pas chargée.",
-      "purge_refused": "Ces dossiers ne peuvent pas être purgés : {refused}. Seuls les dossiers du dossier de configuration ou de /backup sont acceptés, sauf les dossiers cachés (.storage…) et ceux de Home Assistant (custom_components, backups…)."
+      "purge_refused": "Ces dossiers ne peuvent pas être purgés : {refused}. Seuls les dossiers du dossier de configuration sont acceptés, sauf les dossiers cachés (.storage…) et ceux de Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Rien à importer depuis Battery Monitor."
@@ -1983,12 +1983,12 @@
         "pg_left_out": "Écarté",
         "pg_refused_root": "Le dossier de configuration (ou un dossier qui le contient) n'est jamais purgé",
         "pg_refused_protected": "Dossier caché ou propre à Home Assistant : jamais purgé",
-        "pg_refused_outside": "Hors de /config et de /backup",
+        "pg_refused_outside": "Hors du dossier de configuration",
         "pg_n_left_out": "{n} dossiers écartés",
         "pg_rule": "Chaque nuit : fichiers de plus de {n} jours",
         "pg_none": "Aucun dossier : ajoutez-en un avec Configurer.",
         "pk_title": "Choisir les dossiers à purger",
-        "pk_sub": "Uniquement des dossiers de /config ou /backup",
+        "pk_sub": "Uniquement des dossiers de /config",
         "pk_back": "Précédent",
         "pk_up": "Dossier parent",
         "pk_search": "Rechercher",

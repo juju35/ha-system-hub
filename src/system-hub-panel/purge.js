@@ -114,7 +114,7 @@ export var SH_PURGE_METHODS = {
   _pkOpen(origin) {
     var cfg = origin === 'settings' ? this._cfgState() : null;
     var current = cfg ? cfg.data?.directories || [] : this._state.purge?.directories || [];
-    this._pk = { origin, path: '', back: [], cache: {}, current: {}, roots: [{ path: '', name: 'config' }], selected: [...current], busy: false, error: null };
+    this._pk = { origin, path: '', back: [], cache: {}, current: {}, selected: [...current], busy: false, error: null };
     this._draft.pk_q = '';
     this._pkGo('', false);
   },
@@ -124,7 +124,7 @@ export var SH_PURGE_METHODS = {
     if (!pk) return;
     if (push && pk.path !== path) pk.back.push(pk.path);
     this._draft.pk_q = '';
-    var wanted = [...new Set(['', this._pkRoot(path), path])].filter((p) => !(p in pk.cache));
+    var wanted = [...new Set(['', path])].filter((p) => !(p in pk.cache));
     pk.path = path;
     if (wanted.length) {
       pk.busy = true;
@@ -134,7 +134,6 @@ export var SH_PURGE_METHODS = {
           var result = await this._hass.callWS({ type: `${SH_DOMAIN}/purge_browse`, path: p });
           pk.cache[result.path] = result.entries;
           pk.current[result.path] = result.current;
-          if (result.roots) pk.roots = result.roots;
         }
         pk.error = null;
       } catch (err) {
@@ -144,19 +143,6 @@ export var SH_PURGE_METHODS = {
       pk.busy = false;
     }
     if (this._pk === pk) this._render();
-  },
-
-  // The place a folder is in: /config ("") or /backup (its absolute path)
-  _pkRoot(path) {
-    return (this._pk.roots || []).find((r) => r.path && (path === r.path || path.startsWith(`${r.path}/`)))?.path || '';
-  },
-
-  // The parent of a folder, never above its place
-  _pkParent(path) {
-    var root = this._pkRoot(path);
-    if (path === root) return root;
-    var parent = path.split('/').slice(0, -1).join('/');
-    return parent.length < root.length ? root : parent;
   },
 
   // The tree: /config, then the folders on the way to the one shown, unfolded
@@ -179,16 +165,11 @@ export var SH_PURGE_METHODS = {
     var pk = this._pk;
     if (!pk) return '';
     var days = this._state.purge?.max_age ?? 30;
-    var root = this._pkRoot(pk.path);
-    var rootName = root ? (pk.roots.find((r) => r.path === root)?.name ?? 'backup') : 'config';
-    var rootIcon = root ? 'mdi:archive-outline' : 'mdi:home-assistant';
-    var rest = pk.path.slice(root.length).replace(/^\//, '');
-    var parts = rest ? rest.split('/') : [];
-    var join = (i) => [root, ...parts.slice(0, i + 1)].filter(Boolean).join('/').replace(/^(?!\/)/, root ? '/' : '');
-    var crumbs = [`<button class="pkc${parts.length ? '' : ' on'}" data-action="pk_go" data-path="${shEsc(root)}"><ha-icon icon="${rootIcon}"></ha-icon>${shEsc(rootName)}</button>`]
-      .concat(parts.map((name, i) => `<span class="pksep">›</span><button class="pkc${i === parts.length - 1 ? ' on' : ''}" data-action="pk_go" data-path="${shEsc(join(i))}">${shEsc(name)}</button>`))
+    var parts = pk.path ? pk.path.split('/') : [];
+    var crumbs = [`<button class="pkc${parts.length ? '' : ' on'}" data-action="pk_go" data-path=""><ha-icon icon="mdi:home-assistant"></ha-icon>config</button>`]
+      .concat(parts.map((name, i) => `<span class="pksep">›</span><button class="pkc${i === parts.length - 1 ? ' on' : ''}" data-action="pk_go" data-path="${shEsc(parts.slice(0, i + 1).join('/'))}">${shEsc(name)}</button>`))
       .join('');
-    // The folder shown, when it may be purged: ticked from the address bar (/backup itself, for its backups)
+    // The folder shown, when it may be purged: ticked from the address bar
     var here = pk.path && pk.current[pk.path];
     var hereOn = pk.selected.includes(pk.path);
     var pickHere = here
@@ -218,15 +199,10 @@ export var SH_PURGE_METHODS = {
         <div class="pkhd"><span class="pkav"><ha-icon icon="mdi:folder-search-outline"></ha-icon></span><div><div class="pkt" id="pk-title">${shEsc(this._t('pk_title'))}</div><div class="s">${shEsc(this._t('pk_sub'))}</div></div>
           <button class="pkrb pkclose" data-action="pk_close" title="${shEsc(this._t('cancel'))}" aria-label="${shEsc(this._t('cancel'))}"><ha-icon icon="mdi:close"></ha-icon></button></div>
         <div class="pkbar"><button class="pkrb" data-action="pk_back" title="${shEsc(this._t('pk_back'))}" aria-label="${shEsc(this._t('pk_back'))}"${pk.back.length ? '' : ' disabled'}><ha-icon icon="mdi:arrow-left"></ha-icon></button>
-          <button class="pkrb" data-action="pk_up" title="${shEsc(this._t('pk_up'))}" aria-label="${shEsc(this._t('pk_up'))}"${pk.path && pk.path !== root ? '' : ' disabled'}><ha-icon icon="mdi:arrow-up"></ha-icon></button>
+          <button class="pkrb" data-action="pk_up" title="${shEsc(this._t('pk_up'))}" aria-label="${shEsc(this._t('pk_up'))}"${pk.path ? '' : ' disabled'}><ha-icon icon="mdi:arrow-up"></ha-icon></button>
           <div class="pkaddr">${crumbs}</div>${pickHere}
           <label class="pksrch"><ha-icon icon="mdi:magnify"></ha-icon><input type="search" data-draft="pk_q" value="${shEsc(this._draft.pk_q || '')}" placeholder="${shEsc(this._t('pk_search'))}" aria-label="${shEsc(this._t('pk_search'))}"></label></div>
-        <div class="pkbody"><nav class="pktree">${(pk.roots || [])
-          .map((r) => {
-            var open = this._pkRoot(pk.path) === r.path;
-            return `<button class="pktn${pk.path === r.path ? ' on' : ''}" data-action="pk_go" data-path="${shEsc(r.path)}"><span class="pkch"><ha-icon icon="${open ? 'mdi:chevron-down' : 'mdi:chevron-right'}"></ha-icon></span><ha-icon class="pkfi" icon="${r.path ? 'mdi:archive-outline' : 'mdi:home-assistant'}"></ha-icon><span class="pkn">${shEsc(r.path ? r.name : 'config')}</span></button>${open ? this._pkTree(r.path, 1) : ''}`;
-          })
-          .join('')}</nav>
+        <div class="pkbody"><nav class="pktree"><button class="pktn${pk.path ? '' : ' on'}" data-action="pk_go" data-path=""><span class="pkch"><ha-icon icon="mdi:chevron-down"></ha-icon></span><ha-icon class="pkfi" icon="mdi:home-assistant"></ha-icon><span class="pkn">config</span></button>${this._pkTree('', 1)}</nav>
           <div class="pklist"><div class="pkth"><span></span><span>${shEsc(this._t('pk_name'))}</span><span>${shEsc(this._t('pk_content'))}</span><span class="pkmod">${shEsc(this._t('pk_modified'))}</span></div>${body}</div></div>
         ${pk.error ? `<div class="pkerr msg bad" role="alert">${shEsc(pk.error)}</div>` : ''}
         <div class="pkft"><div class="pkchips">${chips}</div>
@@ -244,7 +220,7 @@ export var SH_PURGE_METHODS = {
       return this._render();
     }
     if (action === 'pk_go') return this._pkGo(button.dataset.path || '');
-    if (action === 'pk_up') return this._pkGo(this._pkParent(pk.path));
+    if (action === 'pk_up') return this._pkGo(pk.path.split('/').slice(0, -1).join('/'));
     if (action === 'pk_back') return this._pkGo(pk.back.pop() ?? '', false);
     if (action === 'pk_pick') {
       var path = button.dataset.path;
