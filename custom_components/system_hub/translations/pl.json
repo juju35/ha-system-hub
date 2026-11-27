@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Czyszczenie",
-        "description": "Foldery względem folderu konfiguracji lub bezwzględne, jeśli zezwala na nie allowlist_external_dirs. Puste podfoldery są usuwane, nigdy wybrany folder.",
+        "description": "Foldery w folderze konfiguracji (względne) lub w /backup (bezwzględne, łącznie z /backup). Puste podfoldery są usuwane, nigdy wybrany folder.",
         "data": {
           "directories": "Foldery",
           "max_age": "Usuwaj pliki starsze niż"
         },
         "data_description": {
-          "directories": "Każdy czyszczony folder, np. mcp_backups. Opróżnij listę, aby niczego nie czyścić.",
+          "directories": "Każdy czyszczony folder: względem folderu konfiguracji (np. mcp_backups) albo /backup i jego podfoldery. Opróżnij listę, aby niczego nie czyścić.",
           "max_age": "Dni bez zmian, po których plik jest usuwany, co noc oraz przyciskiem Wyczyść teraz."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Próg czerwony musi być wyższy niż pomarańczowy.",
       "repository_exists": "To repozytorium jest już skonfigurowane.",
       "backup_not_loaded": "Integracja Backup nie jest załadowana.",
-      "purge_refused": "Tych folderów nie można czyścić: {refused}. Odrzucane są folder konfiguracji, folder, który go zawiera, własne foldery Home Assistant (.storage, custom_components…) i foldery spoza allowlist_external_dirs."
+      "purge_refused": "Tych folderów nie można czyścić: {refused}. Akceptowane są tylko foldery w folderze konfiguracji lub w /backup, z wyjątkiem ukrytych (.storage…) i własnych folderów Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nic do zaimportowania z Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Nie znaleziono",
         "pg_left_out": "Pominięty",
         "pg_refused_root": "Folder konfiguracji (ani folder, który go zawiera) nigdy nie jest czyszczony",
-        "pg_refused_protected": "Własny folder Home Assistant: nigdy nie jest czyszczony",
-        "pg_refused_outside": "Poza folderem konfiguracji i nie w allowlist_external_dirs",
+        "pg_refused_protected": "Folder ukryty lub własny Home Assistant: nigdy nie jest czyszczony",
+        "pg_refused_outside": "Poza /config i /backup",
         "pg_n_left_out": "Pominięto {n} folderów",
         "pg_rule": "Co noc: pliki starsze niż {n} dni",
-        "pg_none": "Brak folderu: dodaj go w Konfiguruj."
+        "pg_none": "Brak folderu: dodaj go w Konfiguruj.",
+        "pk_title": "Wybierz foldery do czyszczenia",
+        "pk_sub": "Tylko foldery w /config lub /backup",
+        "pk_back": "Wstecz",
+        "pk_up": "Folder nadrzędny",
+        "pk_search": "Szukaj",
+        "pk_name": "Nazwa",
+        "pk_content": "Zawartość",
+        "pk_modified": "Zmieniono",
+        "pk_protected": "Chroniony",
+        "pk_empty": "Brak podfolderów",
+        "pk_old": "{n} starszych niż {days} d",
+        "pk_use": "Użyj folderów: {n}",
+        "pk_open": "Otwórz",
+        "pk_many": "{n}+ plików",
+        "pg_choose": "Wybierz foldery",
+        "pg_remove": "Usuń",
+        "pk_this": "Zaznacz ten folder"
       }
     },
     "battery_type": {

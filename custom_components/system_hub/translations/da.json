@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Oprydning",
-        "description": "Mapper relativt til konfigurationsmappen eller absolutte, hvis allowlist_external_dirs tillader dem. Undermapper, der bliver tomme, fjernes, aldrig den valgte mappe.",
+        "description": "Mapper i konfigurationsmappen (relative) eller i /backup (absolutte, inkl. /backup selv). Undermapper, der bliver tomme, fjernes, aldrig den valgte mappe.",
         "data": {
           "directories": "Mapper",
           "max_age": "Slet filer ældre end"
         },
         "data_description": {
-          "directories": "Hver mappe, der ryddes op, f.eks. mcp_backups. Tøm listen for ikke at rydde noget op.",
+          "directories": "Hver mappe, der ryddes op: relativt til konfigurationsmappen (f.eks. mcp_backups) eller /backup og dens undermapper. Tøm listen for ikke at rydde noget op.",
           "max_age": "Dage uden ændring, hvorefter en fil slettes, hver nat og med Ryd op nu."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Den røde tærskel skal ligge over den orange.",
       "repository_exists": "Dette repository er allerede sat op.",
       "backup_not_loaded": "Backup-integrationen er ikke indlæst.",
-      "purge_refused": "Disse mapper kan ikke ryddes op: {refused}. Konfigurationsmappen, en mappe, der indeholder den, Home Assistants egne mapper (.storage, custom_components…) og mapper uden for allowlist_external_dirs afvises."
+      "purge_refused": "Disse mapper kan ikke ryddes op: {refused}. Kun mapper i konfigurationsmappen eller i /backup accepteres, undtagen skjulte (.storage…) og Home Assistants egne (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Intet at importere fra Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Ikke fundet",
         "pg_left_out": "Udeladt",
         "pg_refused_root": "Konfigurationsmappen (eller en mappe, der indeholder den) ryddes aldrig op",
-        "pg_refused_protected": "En af Home Assistants egne mapper: ryddes aldrig op",
-        "pg_refused_outside": "Uden for konfigurationsmappen og ikke i allowlist_external_dirs",
+        "pg_refused_protected": "Skjult mappe eller en af Home Assistants egne: ryddes aldrig op",
+        "pg_refused_outside": "Uden for /config og /backup",
         "pg_n_left_out": "{n} mapper udeladt",
         "pg_rule": "Hver nat: filer ældre end {n} dage",
-        "pg_none": "Ingen mappe valgt: tilføj en med Konfigurer."
+        "pg_none": "Ingen mappe valgt: tilføj en med Konfigurer.",
+        "pk_title": "Vælg mapper, der skal ryddes op",
+        "pk_sub": "Kun mapper i /config eller /backup",
+        "pk_back": "Tilbage",
+        "pk_up": "Overordnet mappe",
+        "pk_search": "Søg",
+        "pk_name": "Navn",
+        "pk_content": "Indhold",
+        "pk_modified": "Ændret",
+        "pk_protected": "Beskyttet",
+        "pk_empty": "Ingen undermapper her",
+        "pk_old": "{n} ældre end {days} d",
+        "pk_use": "Brug {n} mapper",
+        "pk_open": "Åbn",
+        "pk_many": "{n}+ filer",
+        "pg_choose": "Vælg mapper",
+        "pg_remove": "Fjern",
+        "pk_this": "Vælg denne mappe"
       }
     },
     "battery_type": {

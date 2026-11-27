@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Tīrīšana",
-        "description": "Mapes attiecībā pret konfigurācijas mapi vai absolūtas, ja allowlist_external_dirs tās atļauj. Apakšmapes, kas paliek tukšas, tiek noņemtas, izvēlētā mape nekad.",
+        "description": "Mapes konfigurācijas mapē (relatīvas) vai /backup (absolūtas, ieskaitot pašu /backup). Apakšmapes, kas paliek tukšas, tiek noņemtas, izvēlētā mape nekad.",
         "data": {
           "directories": "Mapes",
           "max_age": "Dzēst failus, kas vecāki par"
         },
         "data_description": {
-          "directories": "Katra tīrītā mape, piem., mcp_backups. Iztukšojiet sarakstu, lai neko netīrītu.",
+          "directories": "Katra tīrītā mape: attiecībā pret konfigurācijas mapi (piem., mcp_backups) vai /backup un tās apakšmapes. Iztukšojiet sarakstu, lai neko netīrītu.",
           "max_age": "Dienas bez izmaiņām, pēc kurām fails tiek izdzēsts, katru nakti un ar Tīrīt tagad."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Sarkanajam slieksnim jābūt virs oranžā.",
       "repository_exists": "Šis repozitorijs jau ir iestatīts.",
       "backup_not_loaded": "Backup integrācija nav ielādēta.",
-      "purge_refused": "Šīs mapes nevar tīrīt: {refused}. Tiek noraidīta konfigurācijas mape, mape, kas to satur, Home Assistant pašu mapes (.storage, custom_components…) un mapes ārpus allowlist_external_dirs."
+      "purge_refused": "Šīs mapes nevar tīrīt: {refused}. Tiek pieņemtas tikai mapes konfigurācijas mapē vai /backup, izņemot slēptās (.storage…) un Home Assistant pašu mapes (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "No Battery Monitor nav ko importēt."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Nav atrasta",
         "pg_left_out": "Izlaista",
         "pg_refused_root": "Konfigurācijas mape (vai mape, kas to satur) nekad netiek tīrīta",
-        "pg_refused_protected": "Home Assistant pašu mape: nekad netiek tīrīta",
-        "pg_refused_outside": "Ārpus konfigurācijas mapes un nav allowlist_external_dirs",
+        "pg_refused_protected": "Slēpta vai Home Assistant pašu mape: nekad netiek tīrīta",
+        "pg_refused_outside": "Ārpus /config un /backup",
         "pg_n_left_out": "Izlaistas mapes: {n}",
         "pg_rule": "Katru nakti: faili, kas vecāki par {n} dienām",
-        "pg_none": "Nav mapes: pievienojiet to ar Konfigurēt."
+        "pg_none": "Nav mapes: pievienojiet to ar Konfigurēt.",
+        "pk_title": "Izvēlieties tīrāmās mapes",
+        "pk_sub": "Tikai mapes /config vai /backup iekšpusē",
+        "pk_back": "Atpakaļ",
+        "pk_up": "Vecākmape",
+        "pk_search": "Meklēt",
+        "pk_name": "Nosaukums",
+        "pk_content": "Saturs",
+        "pk_modified": "Mainīts",
+        "pk_protected": "Aizsargāta",
+        "pk_empty": "Šeit nav apakšmapju",
+        "pk_old": "{n} vecāki par {days} d",
+        "pk_use": "Izmantot mapes: {n}",
+        "pk_open": "Atvērt",
+        "pk_many": "{n}+ faili",
+        "pg_choose": "Izvēlēties mapes",
+        "pg_remove": "Noņemt",
+        "pk_this": "Izvēlēties šo mapi"
       }
     },
     "battery_type": {

@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Rensning",
-        "description": "Mappar relativt till konfigurationsmappen, eller absoluta om allowlist_external_dirs tillåter dem. Undermappar som blir tomma tas bort, aldrig den valda mappen.",
+        "description": "Mappar i konfigurationsmappen (relativa) eller i /backup (absoluta, inklusive /backup). Undermappar som blir tomma tas bort, aldrig den valda mappen.",
         "data": {
           "directories": "Mappar",
           "max_age": "Radera filer äldre än"
         },
         "data_description": {
-          "directories": "Varje mapp som rensas, t.ex. mcp_backups. Töm listan för att inte rensa något.",
+          "directories": "Varje mapp som rensas: relativt till konfigurationsmappen (t.ex. mcp_backups) eller /backup och dess undermappar. Töm listan för att inte rensa något.",
           "max_age": "Dagar utan ändring efter vilka en fil raderas, varje natt och med Rensa nu."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "Det röda tröskelvärdet måste ligga över det orange.",
       "repository_exists": "Detta repository är redan konfigurerat.",
       "backup_not_loaded": "Backup-integrationen är inte inläst.",
-      "purge_refused": "Dessa mappar kan inte rensas: {refused}. Konfigurationsmappen, en mapp som innehåller den, Home Assistants egna mappar (.storage, custom_components…) och mappar utanför allowlist_external_dirs nekas."
+      "purge_refused": "Dessa mappar kan inte rensas: {refused}. Endast mappar i konfigurationsmappen eller i /backup godtas, utom dolda (.storage…) och Home Assistants egna (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Inget att importera från Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Hittades inte",
         "pg_left_out": "Utesluten",
         "pg_refused_root": "Konfigurationsmappen (eller en mapp som innehåller den) rensas aldrig",
-        "pg_refused_protected": "En av Home Assistants egna mappar: rensas aldrig",
-        "pg_refused_outside": "Utanför konfigurationsmappen och inte i allowlist_external_dirs",
+        "pg_refused_protected": "Dold mapp eller en av Home Assistants egna: rensas aldrig",
+        "pg_refused_outside": "Utanför /config och /backup",
         "pg_n_left_out": "{n} mappar uteslutna",
         "pg_rule": "Varje natt: filer äldre än {n} dagar",
-        "pg_none": "Ingen mapp vald: lägg till en med Konfigurera."
+        "pg_none": "Ingen mapp vald: lägg till en med Konfigurera.",
+        "pk_title": "Välj mappar att rensa",
+        "pk_sub": "Endast mappar i /config eller /backup",
+        "pk_back": "Tillbaka",
+        "pk_up": "Överordnad mapp",
+        "pk_search": "Sök",
+        "pk_name": "Namn",
+        "pk_content": "Innehåll",
+        "pk_modified": "Ändrad",
+        "pk_protected": "Skyddad",
+        "pk_empty": "Inga undermappar här",
+        "pk_old": "{n} äldre än {days} d",
+        "pk_use": "Använd {n} mappar",
+        "pk_open": "Öppna",
+        "pk_many": "{n}+ filer",
+        "pg_choose": "Välj mappar",
+        "pg_remove": "Ta bort",
+        "pk_this": "Välj den här mappen"
       }
     },
     "battery_type": {

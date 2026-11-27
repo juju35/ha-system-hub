@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Pulizia",
-        "description": "Cartelle relative alla cartella di configurazione, o assolute se consentite da allowlist_external_dirs. Le sottocartelle rimaste vuote vengono rimosse, mai la cartella scelta.",
+        "description": "Cartelle nella cartella di configurazione (relative) o in /backup (assolute, /backup inclusa). Le sottocartelle rimaste vuote vengono rimosse, mai la cartella scelta.",
         "data": {
           "directories": "Cartelle",
           "max_age": "Elimina i file più vecchi di"
         },
         "data_description": {
-          "directories": "Ogni cartella ripulita, ad es. mcp_backups. Svuota l'elenco per non ripulire nulla.",
+          "directories": "Ogni cartella ripulita: relativa alla cartella di configurazione (ad es. mcp_backups), oppure /backup e le sue sottocartelle. Svuota l'elenco per non ripulire nulla.",
           "max_age": "Giorni senza modifiche dopo i quali un file viene eliminato, ogni notte e con Pulisci ora."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "La soglia rossa deve essere sopra quella arancione.",
       "repository_exists": "Questo repository è già configurato.",
       "backup_not_loaded": "L'integrazione Backup non è caricata.",
-      "purge_refused": "Queste cartelle non possono essere ripulite: {refused}. Sono rifiutate la cartella di configurazione, una cartella che la contiene, le cartelle proprie di Home Assistant (.storage, custom_components…) e le cartelle fuori da allowlist_external_dirs."
+      "purge_refused": "Queste cartelle non possono essere ripulite: {refused}. Sono accettate solo cartelle nella cartella di configurazione o in /backup, tranne quelle nascoste (.storage…) e quelle proprie di Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Niente da importare da Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Non trovata",
         "pg_left_out": "Esclusa",
         "pg_refused_root": "La cartella di configurazione (o una che la contiene) non viene mai ripulita",
-        "pg_refused_protected": "Una cartella propria di Home Assistant: mai ripulita",
-        "pg_refused_outside": "Fuori dalla cartella di configurazione e non in allowlist_external_dirs",
+        "pg_refused_protected": "Cartella nascosta o propria di Home Assistant: mai ripulita",
+        "pg_refused_outside": "Fuori da /config e /backup",
         "pg_n_left_out": "{n} cartelle escluse",
         "pg_rule": "Ogni notte: file più vecchi di {n} giorni",
-        "pg_none": "Nessuna cartella: aggiungine una con Configura."
+        "pg_none": "Nessuna cartella: aggiungine una con Configura.",
+        "pk_title": "Scegli le cartelle da ripulire",
+        "pk_sub": "Solo cartelle dentro /config o /backup",
+        "pk_back": "Indietro",
+        "pk_up": "Cartella superiore",
+        "pk_search": "Cerca",
+        "pk_name": "Nome",
+        "pk_content": "Contenuto",
+        "pk_modified": "Modificata",
+        "pk_protected": "Protetta",
+        "pk_empty": "Nessuna sottocartella qui",
+        "pk_old": "{n} più vecchi di {days} g",
+        "pk_use": "Usa {n} cartelle",
+        "pk_open": "Apri",
+        "pk_many": "{n}+ file",
+        "pg_choose": "Scegli cartelle",
+        "pg_remove": "Rimuovi",
+        "pk_this": "Seleziona questa cartella"
       }
     },
     "battery_type": {

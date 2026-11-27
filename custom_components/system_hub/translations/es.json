@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Purga",
-        "description": "Carpetas relativas a la carpeta de configuración, o absolutas si allowlist_external_dirs las permite. Las subcarpetas que quedan vacías se eliminan, nunca la carpeta elegida.",
+        "description": "Carpetas dentro de la carpeta de configuración (relativas) o en /backup (absolutas, incluida /backup). Las subcarpetas que quedan vacías se eliminan, nunca la carpeta elegida.",
         "data": {
           "directories": "Carpetas",
           "max_age": "Eliminar archivos de más de"
         },
         "data_description": {
-          "directories": "Cada carpeta purgada, p. ej. mcp_backups. Vacía la lista para no purgar nada.",
+          "directories": "Cada carpeta purgada: relativa a la carpeta de configuración (p. ej. mcp_backups), o /backup y sus subcarpetas. Vacía la lista para no purgar nada.",
           "max_age": "Días sin cambios tras los que se elimina un archivo, cada noche y con Purgar ahora."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "El umbral rojo debe estar por encima del naranja.",
       "repository_exists": "Este repositorio ya está configurado.",
       "backup_not_loaded": "La integración Backup no está cargada.",
-      "purge_refused": "Estas carpetas no se pueden purgar: {refused}. Se rechazan la carpeta de configuración, una carpeta que la contenga, las carpetas propias de Home Assistant (.storage, custom_components…) y las carpetas fuera de allowlist_external_dirs."
+      "purge_refused": "Estas carpetas no se pueden purgar: {refused}. Solo se aceptan carpetas dentro de la carpeta de configuración o en /backup, salvo las ocultas (.storage…) y las propias de Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nada que importar desde Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "No encontrada",
         "pg_left_out": "Excluida",
         "pg_refused_root": "La carpeta de configuración (o una que la contenga) nunca se purga",
-        "pg_refused_protected": "Una carpeta propia de Home Assistant: nunca se purga",
-        "pg_refused_outside": "Fuera de la carpeta de configuración y no está en allowlist_external_dirs",
+        "pg_refused_protected": "Carpeta oculta o propia de Home Assistant: nunca se purga",
+        "pg_refused_outside": "Fuera de /config y /backup",
         "pg_n_left_out": "{n} carpetas excluidas",
         "pg_rule": "Cada noche: archivos de más de {n} días",
-        "pg_none": "Ninguna carpeta: añade una con Configurar."
+        "pg_none": "Ninguna carpeta: añade una con Configurar.",
+        "pk_title": "Elegir las carpetas a purgar",
+        "pk_sub": "Solo carpetas dentro de /config o /backup",
+        "pk_back": "Atrás",
+        "pk_up": "Carpeta superior",
+        "pk_search": "Buscar",
+        "pk_name": "Nombre",
+        "pk_content": "Contenido",
+        "pk_modified": "Modificado",
+        "pk_protected": "Protegida",
+        "pk_empty": "No hay subcarpetas aquí",
+        "pk_old": "{n} de más de {days} d",
+        "pk_use": "Usar {n} carpetas",
+        "pk_open": "Abrir",
+        "pk_many": "{n}+ archivos",
+        "pg_choose": "Elegir carpetas",
+        "pg_remove": "Quitar",
+        "pk_this": "Seleccionar esta carpeta"
       }
     },
     "battery_type": {

@@ -886,6 +886,10 @@ export class SystemHubPanel extends HTMLElement {
     root.querySelector('main').addEventListener('pointerdown', (ev) => this._cfgDragStart?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => this._cfgDragKey?.(ev));
     root.querySelector('main').addEventListener('keydown', (ev) => {
+      if (ev.key === 'Escape' && this._pk) {
+        this._pk = null;
+        return this._render();
+      }
       if (ev.key === 'Escape' && this._confirm?.startsWith?.('ha_')) {
         this._confirm = null;
         this._haCheck = null;
@@ -908,7 +912,7 @@ export class SystemHubPanel extends HTMLElement {
       if (ev.target.dataset?.draft) this._draft[ev.target.dataset.draft] = ev.target.value;
       // The Orphans search and filters narrow the list as they change
       if (ev.target.dataset?.draft?.startsWith('orph_')) this._render();
-      if (ev.target.dataset?.draft === 'batt_search' || ev.target.dataset?.draft === 'sl_search') this._render();
+      if (ev.target.dataset?.draft === 'batt_search' || ev.target.dataset?.draft === 'sl_search' || ev.target.dataset?.draft === 'pk_q') this._render();
     });
     this._attachFold();
   }
@@ -3460,6 +3464,7 @@ export class SystemHubPanel extends HTMLElement {
     if (!button || button.disabled) return;
     var action = button.dataset.action;
     if ((action.startsWith('cfg_') || action.startsWith('open_settings')) && this._cfgClick(button)) return;
+    if (action.startsWith('pk_') || action === 'pg_remove') return this._pkClick(button, action);
     if (action.startsWith('sc_')) {
       var handled = this._scClick(button, action);
       if (handled !== false) return handled;

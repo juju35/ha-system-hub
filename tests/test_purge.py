@@ -20,6 +20,7 @@ from custom_components.system_hub.purge import (
     REFUSED_OUTSIDE,
     REFUSED_PROTECTED,
     REFUSED_ROOT,
+    browse,
     purge,
     resolve,
     settings,
@@ -59,22 +60,85 @@ def test_settings_defaults() -> None:
     assert settings({"directories": [" a ", "a", ""], "max_age": 0}) == {"directories": ["a"], "max_age": 30}
 
 
-def test_resolve_refuses_the_configuration_and_its_own_folders(tmp_path: Path) -> None:
+def test_resolve_keeps_to_the_configuration_folder(tmp_path: Path) -> None:
     config = tmp_path / "config"
     config.mkdir()
-    never = lambda _path: False  # noqa: E731
-    assert resolve(str(config), "mcp_backups", never) == (config / "mcp_backups", None)
-    assert resolve(str(config), ".", never)[1] == REFUSED_ROOT
-    assert resolve(str(config), "mcp_backups/..", never)[1] == REFUSED_ROOT
-    assert resolve(str(config), str(tmp_path), never)[1] == REFUSED_ROOT
-    assert resolve(str(config), "/", never)[1] == REFUSED_ROOT
-    assert resolve(str(config), ".storage", never)[1] == REFUSED_PROTECTED
-    assert resolve(str(config), "custom_components/system_hub", never)[1] == REFUSED_PROTECTED
-    assert resolve(str(config), "../elsewhere", never)[1] == REFUSED_OUTSIDE
-    assert resolve(str(config), str(tmp_path / "media"), lambda _path: True)[1] is None
-    # A symbolic link to the configuration folder is the configuration folder
+    assert resolve(str(config), "mcp_backups") == (config / "mcp_backups", None)
+    assert resolve(str(config), str(config / "exports"))[1] is None
+    assert resolve(str(config), "x/../mcp_backups")[1] is None
+    assert resolve(str(config), ".")[1] == REFUSED_ROOT
+    assert resolve(str(config), "mcp_backups/..")[1] == REFUSED_ROOT
+    assert resolve(str(config), str(tmp_path))[1] == REFUSED_ROOT
+    assert resolve(str(config), "/")[1] == REFUSED_ROOT
+    assert resolve(str(config), ".storage")[1] == REFUSED_PROTECTED
+    assert resolve(str(config), ".ssh/old")[1] == REFUSED_PROTECTED
+    assert resolve(str(config), "custom_components/system_hub")[1] == REFUSED_PROTECTED
+    assert resolve(str(config), "backups")[1] == REFUSED_PROTECTED
+    assert resolve(str(config), "www/community")[1] == REFUSED_PROTECTED
+    assert resolve(str(config), "www/snapshots")[1] is None
+    assert resolve(str(config), "../elsewhere")[1] == REFUSED_OUTSIDE
+    assert resolve(str(config), str(tmp_path / "media"))[1] == REFUSED_OUTSIDE
+    # A symbolic link is judged by where it leads
     (config / "loop").symlink_to(config)
-    assert resolve(str(config), "loop", never)[1] == REFUSED_ROOT
+    assert resolve(str(config), "loop")[1] == REFUSED_ROOT
+    (config / ".storage").mkdir()
+    (config / "store").symlink_to(config / ".storage")
+    assert resolve(str(config), "store")[1] == REFUSED_PROTECTED
+    (config / "out").symlink_to(tmp_path)
+    assert resolve(str(config), "out/media")[1] == REFUSED_OUTSIDE
+
+
+def test_resolve_accepts_backup(tmp_path: Path) -> None:
+    config, backup = tmp_path / "config", tmp_path / "backup"
+    config.mkdir()
+    backup.mkdir()
+    assert resolve(str(config), str(backup), str(backup)) == (backup, None)
+    assert resolve(str(config), str(backup / "old"), str(backup))[1] is None
+    assert resolve(str(config), str(tmp_path / "backup2"), str(backup))[1] == REFUSED_OUTSIDE
+    # The default: Home Assistant OS's /backup
+    assert resolve(str(config), "/backup")[1] is None
+    assert resolve(str(config), "/backups")[1] == REFUSED_OUTSIDE
+
+
+def test_browse_lists_the_folders_of_the_configuration_folder(tmp_path: Path) -> None:
+    config = tmp_path / "config"
+    _snapshots(config)
+    (config / ".storage").mkdir()
+    (config / "custom_components" / "x").mkdir(parents=True)
+    _file(config / "configuration.yaml", 1)
+    (config / "link").symlink_to(tmp_path)
+    top = browse(str(config), "", 30)
+    assert top["path"] == ""
+    entries = {e["name"]: e for e in top["entries"]}
+    assert set(entries) == {".storage", "custom_components", "mcp_backups"}
+    assert entries[".storage"]["protected"] is True
+    assert "files" not in entries["custom_components"]
+    mcp = entries["mcp_backups"]
+    assert (mcp["protected"], mcp["files"], mcp["old_files"], mcp["size"], mcp["folders"]) == (False, 3, 2, 50, True)
+    inside = browse(str(config), "mcp_backups/", 30)
+    assert inside["path"] == "mcp_backups"
+    assert [e["path"] for e in inside["entries"]] == [
+        "mcp_backups/2026-10-01_10-00-00",
+        "mcp_backups/2026-11-26_10-00-00",
+    ]
+    for outside in ("..", "../..", "link", "missing", str(tmp_path)):
+        with pytest.raises(ValueError):
+            browse(str(config), outside, 30, str(tmp_path / "backup"))
+    assert top["roots"] == [{"path": "", "name": "config"}] or top["roots"][1]["path"] == "/backup"
+    assert top["current"] is None
+    assert inside["current"]["files"] == 3
+
+
+def test_browse_backup(tmp_path: Path) -> None:
+    config, backup = tmp_path / "config", tmp_path / "backup"
+    config.mkdir()
+    _file(backup / "a1b2c3d4.tar", 40, 100)
+    _file(backup / "tmp" / "x.tar", 1, 5)
+    result = browse(str(config), str(backup), 30, str(backup))
+    assert result["path"] == str(backup)
+    assert result["roots"] == [{"path": "", "name": "config"}, {"path": str(backup), "name": "backup"}]
+    assert result["current"] == {"files": 2, "size": 105, "old_files": 1, "truncated": False}
+    assert [(e["path"], e["protected"]) for e in result["entries"]] == [(str(backup / "tmp"), False)]
 
 
 def test_purge_deletes_the_old_files_and_their_empty_folders(tmp_path: Path) -> None:
@@ -103,6 +167,16 @@ def test_purge_keeps_a_recent_empty_folder_and_follows_no_link(tmp_path: Path) -
     assert purge(tmp_path / "missing", 30, dry_run=False)["exists"] is False
 
 
+@pytest.fixture
+def config(hass: HomeAssistant, tmp_path: Path) -> Path:
+    """A configuration folder of the test's own, so that nothing is written in the shared testing config."""
+    folder = tmp_path / "config"
+    folder.mkdir()
+    (folder / "custom_components").symlink_to(Path(hass.config.config_dir) / "custom_components")
+    hass.config.config_dir = str(folder)
+    return folder
+
+
 async def _setup(hass: HomeAssistant, **purge_options) -> MockConfigEntry:
     options = {CONF_MODULES: ["purge"]} | ({"purge": purge_options} if purge_options else {})
     entry = MockConfigEntry(domain=DOMAIN, title="System Hub", options=options)
@@ -116,8 +190,8 @@ def test_off_unless_turned_on() -> None:
     assert "purge" not in enabled_modules(MockConfigEntry(domain=DOMAIN, options={}))
 
 
-async def test_purge_at_start_action_and_entities(hass: HomeAssistant) -> None:
-    old, new = _snapshots(Path(hass.config.config_dir))
+async def test_purge_at_start_action_and_entities(hass: HomeAssistant, config: Path) -> None:
+    old, new = _snapshots(config)
     entry = await _setup(hass)
     # Never purged: purged once Home Assistant runs
     assert not old.exists()
@@ -129,7 +203,7 @@ async def test_purge_at_start_action_and_entities(hass: HomeAssistant) -> None:
     assert sensor.attributes["files"] == 2
     assert hass.states.get("button.system_hub_purge_purge_now") is not None
 
-    _file(Path(hass.config.config_dir) / "mcp_backups" / "2026-10-02_10-00-00" / "scenes.yaml", 45, 7)
+    _file(config / "mcp_backups" / "2026-10-02_10-00-00" / "scenes.yaml", 45, 7)
     preview = await hass.services.async_call(
         DOMAIN, "purge_files", {"dry_run": True}, blocking=True, return_response=True
     )
@@ -149,7 +223,7 @@ async def test_action_refused_with_the_module_off(hass: HomeAssistant) -> None:
         await hass.services.async_call(DOMAIN, "purge_files", {}, blocking=True)
 
 
-async def test_settings_step_refuses_the_configuration_folder(hass: HomeAssistant) -> None:
+async def test_settings_step_refuses_the_configuration_folder(hass: HomeAssistant, config: Path) -> None:
     entry = await _setup(hass, directories=[], max_age=30)
     flow = await hass.config_entries.options.async_init(entry.entry_id)
     result = await hass.config_entries.options.async_configure(flow["flow_id"], {"next_step_id": "purge"})
@@ -167,10 +241,10 @@ async def test_settings_step_refuses_the_configuration_folder(hass: HomeAssistan
     assert entry.options["purge"] == {"directories": ["mcp_backups", "tmp/exports"], "max_age": 14}
 
 
-async def test_panel_scans_without_deleting(hass: HomeAssistant, hass_ws_client) -> None:
+async def test_panel_scans_without_deleting(hass: HomeAssistant, hass_ws_client, config: Path) -> None:
     assert await async_setup_component(hass, "frontend", {})
     entry = await _setup(hass, directories=["mcp_backups", ".storage"], max_age=30)
-    old, _new = _snapshots(Path(hass.config.config_dir))
+    old, _new = _snapshots(config)
     client = await hass_ws_client(hass)
     await client.send_json_auto_id({"type": "system_hub/purge"})
     result = (await client.receive_json())["result"]
@@ -188,3 +262,28 @@ async def test_user_flow_leaves_it_off(hass: HomeAssistant) -> None:
     result = await hass.config_entries.flow.async_init(DOMAIN, context={"source": config_entries.SOURCE_USER})
     defaults = {str(key): key.default() for key in result["data_schema"].schema}
     assert defaults["purge"] is False
+
+
+async def test_panel_browses_and_saves_the_folders(hass: HomeAssistant, hass_ws_client, config: Path) -> None:
+    assert await async_setup_component(hass, "frontend", {})
+    entry = await _setup(hass, directories=["mcp_backups"], max_age=30)
+    _snapshots(config)
+    (config / "exports").mkdir()
+    client = await hass_ws_client(hass)
+    await client.send_json_auto_id({"type": "system_hub/purge_browse", "path": ""})
+    names = [e["name"] for e in (await client.receive_json())["result"]["entries"]]
+    assert {"exports", "mcp_backups"} <= set(names)
+    await client.send_json_auto_id({"type": "system_hub/purge_browse", "path": ".."})
+    assert (await client.receive_json())["error"]["code"] == "outside"
+
+    data = entry.runtime_data
+    await client.send_json_auto_id({"type": "system_hub/purge_set_folders", "directories": ["mcp_backups", ".storage"]})
+    response = await client.receive_json()
+    assert response["error"] == {"code": "purge_refused", "message": ".storage"}
+    await client.send_json_auto_id({"type": "system_hub/purge_set_folders", "directories": ["mcp_backups", "exports/"]})
+    assert (await client.receive_json())["result"]["directories"] == ["mcp_backups", "exports"]
+    await hass.async_block_till_done()
+    # Saved without a reload
+    assert entry.runtime_data is data
+    assert entry.options["purge"] == {"directories": ["mcp_backups", "exports"], "max_age": 30}
+    assert data.purge.directories == ["mcp_backups", "exports"]

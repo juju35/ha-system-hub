@@ -46,12 +46,10 @@ def settings_options(user_input: dict[str, Any]) -> dict[str, Any]:
 
 
 async def async_refused(hass: HomeAssistant, options: dict[str, Any]) -> list[str]:
-    """The folders that may not be purged: the configuration folder, a protected one, one not allowed."""
+    """The folders that may not be purged: the configuration folder, a protected one, one outside it."""
 
     def _refused() -> list[str]:
         config_dir = hass.config.config_dir
-        return [
-            d for d in options[CONF_DIRECTORIES] if resolve(config_dir, d, hass.config.is_allowed_path)[1] is not None
-        ]
+        return [d for d in options[CONF_DIRECTORIES] if resolve(config_dir, d)[1] is not None]
 
     return await hass.async_add_executor_job(_refused)

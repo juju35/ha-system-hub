@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Limpeza",
-        "description": "Pastas relativas à pasta de configuração, ou absolutas se allowlist_external_dirs permitir. As subpastas que ficam vazias são removidas, nunca a pasta escolhida.",
+        "description": "Pastas dentro da pasta de configuração (relativas) ou em /backup (absolutas, incluindo /backup). As subpastas que ficam vazias são removidas, nunca a pasta escolhida.",
         "data": {
           "directories": "Pastas",
           "max_age": "Excluir arquivos com mais de"
         },
         "data_description": {
-          "directories": "Cada pasta limpa, ex.: mcp_backups. Esvazie a lista para não limpar nada.",
+          "directories": "Cada pasta limpa: relativa à pasta de configuração (ex.: mcp_backups), ou /backup e suas subpastas. Esvazie a lista para não limpar nada.",
           "max_age": "Dias sem alteração após os quais um arquivo é excluído, toda noite e com Limpar agora."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "O limite vermelho precisa estar acima do laranja.",
       "repository_exists": "Este repositório já está configurado.",
       "backup_not_loaded": "A integração Backup não está carregada.",
-      "purge_refused": "Estas pastas não podem ser limpas: {refused}. São recusadas a pasta de configuração, uma pasta que a contenha, as pastas próprias do Home Assistant (.storage, custom_components…) e as pastas fora de allowlist_external_dirs."
+      "purge_refused": "Estas pastas não podem ser limpas: {refused}. Só são aceitas pastas dentro da pasta de configuração ou em /backup, exceto as ocultas (.storage…) e as próprias do Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nada para importar do Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Não encontrada",
         "pg_left_out": "Excluída",
         "pg_refused_root": "A pasta de configuração (ou uma que a contenha) nunca é limpa",
-        "pg_refused_protected": "Uma pasta própria do Home Assistant: nunca é limpa",
-        "pg_refused_outside": "Fora da pasta de configuração e não em allowlist_external_dirs",
+        "pg_refused_protected": "Pasta oculta ou própria do Home Assistant: nunca é limpa",
+        "pg_refused_outside": "Fora de /config e /backup",
         "pg_n_left_out": "{n} pastas excluídas",
         "pg_rule": "Toda noite: arquivos com mais de {n} dias",
-        "pg_none": "Nenhuma pasta definida: adicione uma em Configurar."
+        "pg_none": "Nenhuma pasta definida: adicione uma em Configurar.",
+        "pk_title": "Escolher as pastas a limpar",
+        "pk_sub": "Apenas pastas dentro de /config ou /backup",
+        "pk_back": "Voltar",
+        "pk_up": "Pasta superior",
+        "pk_search": "Pesquisar",
+        "pk_name": "Nome",
+        "pk_content": "Conteúdo",
+        "pk_modified": "Modificada",
+        "pk_protected": "Protegida",
+        "pk_empty": "Nenhuma subpasta aqui",
+        "pk_old": "{n} com mais de {days} d",
+        "pk_use": "Usar {n} pastas",
+        "pk_open": "Abrir",
+        "pk_many": "{n}+ arquivos",
+        "pg_choose": "Escolher pastas",
+        "pg_remove": "Remover",
+        "pk_this": "Selecionar esta pasta"
       }
     },
     "battery_type": {

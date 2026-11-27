@@ -14,7 +14,7 @@ from homeassistant.helpers.start import async_at_started
 from homeassistant.helpers.storage import Store
 from homeassistant.util import dt as dt_util
 
-from . import CONF_DIRECTORIES, CONF_MAX_AGE, purge, resolve, settings
+from . import CONF_DIRECTORIES, CONF_MAX_AGE, browse, purge, resolve, settings
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -91,7 +91,7 @@ class FilePurger:
         config_dir = self.hass.config.config_dir
         results = []
         for directory in self.directories:
-            path, refused = resolve(config_dir, directory, self.hass.config.is_allowed_path)
+            path, refused = resolve(config_dir, directory)
             item: dict[str, Any] = {"directory": directory, "path": str(path), "refused": refused}
             if refused is None:
                 item |= purge(path, self.max_age, dry_run)
@@ -140,6 +140,10 @@ class FilePurger:
                     )
             self._notify()
             return result
+
+    async def async_browse(self, directory: str) -> dict[str, Any]:
+        """The sub-folders of a folder of the configuration folder, for the folder picker."""
+        return await self.hass.async_add_executor_job(browse, self.hass.config.config_dir, directory, self.max_age)
 
     def state(self) -> dict[str, Any]:
         """The settings and the last purge, for the panel."""

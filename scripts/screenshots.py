@@ -1108,7 +1108,8 @@ def mock_backup_info():
 def mock_purge():
     """What system_hub/purge answers: mcp_backups with a few snapshots to go, a folder not created yet.
 
-    Drawn in panel-purge, config-purge and header-purge (their dark twins too).
+    Drawn in panel-purge, config-purge and header-purge, the folder picker in panel-purge-picker and
+    panel-purge-picker-phone (their dark twins too).
     """
     now = datetime.fromisoformat(NOW)
     return {
@@ -1150,6 +1151,38 @@ def mock_purge():
                 "folders_removed": 0,
                 "errors": [],
             },
+        ],
+    }
+
+
+def mock_purge_browse():
+    """What system_hub/purge_browse answers for /config and mcp_backups: the folder picker."""
+    now = datetime.fromisoformat(NOW)
+
+    def folder(name, files=0, size=0, old=0, days=0, sub=False, protected=False):
+        item = {"name": name.split("/")[-1], "path": name, "protected": protected}
+        item["modified"] = (now - timedelta(days=days, hours=3)).timestamp()
+        if not protected:
+            item |= {"files": files, "size": size, "old_files": old, "truncated": False, "folders": sub}
+        return item
+
+    return {
+        "": [
+            folder(".storage", protected=True),
+            folder("backups", protected=True),
+            folder("blueprints", protected=True),
+            folder("custom_components", protected=True),
+            folder("exports", 12, 348_160, 3, 25, True),
+            folder("mcp_backups", 132, 9_961_472, 11, 0, True),
+            folder("packages", 18, 98_304, 0, 3),
+            folder("themes", 7, 215_040, 0, 8, True),
+            folder("tts", protected=True),
+            folder("www", 61, 25_165_824, 0, 1, True),
+        ],
+        "/backup": [],
+        "mcp_backups": [
+            folder(f"mcp_backups/2026-{d}_10-00-00", 11, 830_000, 11 if d < "10-28" else 0, 0)
+            for d in ("10-20", "10-24", "11-02", "11-14", "11-24", "11-26")
         ],
     }
 
@@ -1306,6 +1339,7 @@ def mock_state():
             "running": False,
         },
         "purge_info": mock_purge(),
+        "purge_browse": mock_purge_browse(),
         "database": {"max_size": 2},
         "security": {"notify": True, "notify_services": [], "token_unused_days": 90, "ignored_ips": []},
         # The Security tab: what system_hub/security answers
@@ -1787,6 +1821,13 @@ MOUNT = """([state, strings, tab, narrow, view, forms, dark]) => {
                   ? state.database_info
                   : msg.type === "system_hub/purge"
                   ? state.purge_info
+                  : msg.type === "system_hub/purge_browse"
+                  ? {
+                      path: msg.path || "",
+                      entries: state.purge_browse[msg.path || ""] || [],
+                      current: msg.path ? { files: 66, size: 4_980_000, old_files: 11, truncated: false } : null,
+                      roots: [{ path: "", name: "config" }, { path: "/backup", name: "backup" }],
+                    }
                   : msg.type === "system_log/list"
                   ? state.system_log
                   : msg.type === "config/device_registry/list"
@@ -1864,6 +1905,11 @@ OPEN_DEVICE = (
     """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="db_open"]')?.click()"""
 )
 
+# Opens the folder picker from the Purge tab.
+OPEN_PICKER = (
+    """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="pk_open"]').click()"""
+)
+
 # Opens the diff viewer from the Git Sync tab.
 OPEN_DIFF = """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="git_sync_diff"]').click()"""
 
@@ -1919,6 +1965,18 @@ SHOTS = [
     {"file": "status-score-dark", "theme": "dark", "tab": "status", "health": True, "hero": True},
     {"file": "panel-automations", "theme": "light", "tab": "automations", "automations": True},
     {"file": "panel-automations-dark", "theme": "dark", "tab": "automations", "automations": True},
+    # The folder picker of the Purge tab, on a wide screen and on a phone
+    *(
+        {
+            "file": f"panel-purge-picker{phone}{suffix}",
+            "theme": theme,
+            "tab": "purge",
+            "picker": True,
+            "phone": bool(phone),
+        }
+        for phone in ("", "-phone")
+        for theme, suffix in (("light", ""), ("dark", "-dark"))
+    ),
     {"file": "panel-orphans-confirm", "theme": "light", "tab": "orphans", "orphans_confirm": True},
     {"file": "panel-orphans-confirm-dark", "theme": "dark", "tab": "orphans", "orphans_confirm": True},
     # The illustrated header of each tab, animated (one GIF per scene), and the Status tab's three states (and the Updates tab installing): some
@@ -2333,6 +2391,17 @@ def main():
             if shot.get("orphans_confirm"):
                 page.evaluate(ORPHANS_CONFIRM)
                 page.wait_for_timeout(200)
+            if shot.get("picker"):
+                # The dialog covers the window: the capture is the window.
+                page.set_viewport_size({"width": width, "height": PHONE[1] if shot.get("phone") else 760})
+                page.wait_for_function(
+                    """() => document.querySelector("system-hub-panel").shadowRoot.querySelector('[data-action="pk_open"]')"""
+                )
+                page.evaluate(OPEN_PICKER)
+                page.wait_for_timeout(500)
+                capture(page, out / f"{shot['file']}.png", animations="disabled")
+                page.close()
+                continue
             if shot.get("diff"):
                 # The viewer covers the window: the capture is the window.
                 page.set_viewport_size({"width": width, "height": PHONE[1] if shot.get("phone") else 760})

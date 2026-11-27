@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Takarítás",
-        "description": "A konfigurációs mappához viszonyított mappák, vagy abszolút útvonalak, ha az allowlist_external_dirs engedi őket. Az üresen maradt almappák törlődnek, a kiválasztott mappa soha.",
+        "description": "A konfigurációs mappán belüli (relatív) vagy a /backup alatti (abszolút, magát a /backup-ot is beleértve) mappák. Az üresen maradt almappák törlődnek, a kiválasztott mappa soha.",
         "data": {
           "directories": "Mappák",
           "max_age": "Ennél régebbi fájlok törlése"
         },
         "data_description": {
-          "directories": "Minden takarított mappa, pl. mcp_backups. Ürítse ki a listát, ha semmit sem szeretne takarítani.",
+          "directories": "Minden takarított mappa: a konfigurációs mappához viszonyítva (pl. mcp_backups), vagy a /backup és almappái. Ürítse ki a listát, ha semmit sem szeretne takarítani.",
           "max_age": "Módosítás nélküli napok, amelyek után egy fájl törlődik, minden éjjel és a Takarítás most gombbal."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "A piros küszöbnek a narancssárga fölött kell lennie.",
       "repository_exists": "Ez a tároló már be van állítva.",
       "backup_not_loaded": "A Backup integráció nincs betöltve.",
-      "purge_refused": "Ezek a mappák nem takaríthatók: {refused}. Elutasításra kerül a konfigurációs mappa, az azt tartalmazó mappa, a Home Assistant saját mappái (.storage, custom_components…) és az allowlist_external_dirs-en kívüli mappák."
+      "purge_refused": "Ezek a mappák nem takaríthatók: {refused}. Csak a konfigurációs mappán vagy a /backup mappán belüli mappák fogadhatók el, kivéve a rejtetteket (.storage…) és a Home Assistant saját mappáit (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Nincs mit importálni a Battery Monitorból."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Nem található",
         "pg_left_out": "Kihagyva",
         "pg_refused_root": "A konfigurációs mappa (vagy az azt tartalmazó mappa) soha nem takarítható",
-        "pg_refused_protected": "A Home Assistant saját mappája: soha nem takarítható",
-        "pg_refused_outside": "A konfigurációs mappán kívül, és nincs az allowlist_external_dirs-ben",
+        "pg_refused_protected": "Rejtett vagy a Home Assistant saját mappája: soha nem takarítható",
+        "pg_refused_outside": "A /config és a /backup mappán kívül",
         "pg_n_left_out": "{n} mappa kihagyva",
         "pg_rule": "Minden éjjel: {n} napnál régebbi fájlok",
-        "pg_none": "Nincs mappa: adjon hozzá egyet a Konfigurálás gombbal."
+        "pg_none": "Nincs mappa: adjon hozzá egyet a Konfigurálás gombbal.",
+        "pk_title": "Takarítandó mappák kiválasztása",
+        "pk_sub": "Csak a /config vagy a /backup mappán belül",
+        "pk_back": "Vissza",
+        "pk_up": "Szülőmappa",
+        "pk_search": "Keresés",
+        "pk_name": "Név",
+        "pk_content": "Tartalom",
+        "pk_modified": "Módosítva",
+        "pk_protected": "Védett",
+        "pk_empty": "Itt nincs almappa",
+        "pk_old": "{n} régebbi {days} napnál",
+        "pk_use": "{n} mappa használata",
+        "pk_open": "Megnyitás",
+        "pk_many": "{n}+ fájl",
+        "pg_choose": "Mappák kiválasztása",
+        "pg_remove": "Eltávolítás",
+        "pk_this": "Ennek a mappának a kiválasztása"
       }
     },
     "battery_type": {

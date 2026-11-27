@@ -498,13 +498,13 @@
       },
       "purge": {
         "title": "Opschonen",
-        "description": "Mappen relatief aan de configuratiemap, of absoluut als allowlist_external_dirs ze toestaat. Leeg geraakte submappen worden verwijderd, nooit de gekozen map.",
+        "description": "Mappen in de configuratiemap (relatief) of in /backup (absoluut, /backup zelf inbegrepen). Leeg geraakte submappen worden verwijderd, nooit de gekozen map.",
         "data": {
           "directories": "Mappen",
           "max_age": "Bestanden verwijderen ouder dan"
         },
         "data_description": {
-          "directories": "Elke opgeschoonde map, bijv. mcp_backups. Maak de lijst leeg om niets op te schonen.",
+          "directories": "Elke opgeschoonde map: relatief aan de configuratiemap (bijv. mcp_backups), of /backup en zijn submappen. Maak de lijst leeg om niets op te schonen.",
           "max_age": "Dagen zonder wijziging waarna een bestand wordt verwijderd, elke nacht en met Nu opschonen."
         }
       }
@@ -528,7 +528,7 @@
       "critical_below_warning": "De rode drempel moet boven de oranje liggen.",
       "repository_exists": "Deze repository is al ingesteld.",
       "backup_not_loaded": "De Backup-integratie is niet geladen.",
-      "purge_refused": "Deze mappen kunnen niet worden opgeschoond: {refused}. De configuratiemap, een map die haar bevat, de eigen mappen van Home Assistant (.storage, custom_components…) en mappen buiten allowlist_external_dirs worden geweigerd."
+      "purge_refused": "Deze mappen kunnen niet worden opgeschoond: {refused}. Alleen mappen in de configuratiemap of in /backup zijn toegestaan, behalve verborgen mappen (.storage…) en de eigen mappen van Home Assistant (custom_components, backups…)."
     },
     "abort": {
       "nothing_to_import": "Niets te importeren uit Battery Monitor."
@@ -1982,11 +1982,28 @@
         "pg_missing_short": "Niet gevonden",
         "pg_left_out": "Uitgesloten",
         "pg_refused_root": "De configuratiemap (of een map die haar bevat) wordt nooit opgeschoond",
-        "pg_refused_protected": "Een eigen map van Home Assistant: wordt nooit opgeschoond",
-        "pg_refused_outside": "Buiten de configuratiemap en niet in allowlist_external_dirs",
+        "pg_refused_protected": "Verborgen map of eigen map van Home Assistant: wordt nooit opgeschoond",
+        "pg_refused_outside": "Buiten /config en /backup",
         "pg_n_left_out": "{n} mappen uitgesloten",
         "pg_rule": "Elke nacht: bestanden ouder dan {n} dagen",
-        "pg_none": "Geen map ingesteld: voeg er een toe met Configureren."
+        "pg_none": "Geen map ingesteld: voeg er een toe met Configureren.",
+        "pk_title": "Mappen kiezen om op te schonen",
+        "pk_sub": "Alleen mappen in /config of /backup",
+        "pk_back": "Terug",
+        "pk_up": "Bovenliggende map",
+        "pk_search": "Zoeken",
+        "pk_name": "Naam",
+        "pk_content": "Inhoud",
+        "pk_modified": "Gewijzigd",
+        "pk_protected": "Beschermd",
+        "pk_empty": "Geen submappen hier",
+        "pk_old": "{n} ouder dan {days} d",
+        "pk_use": "{n} mappen gebruiken",
+        "pk_open": "Openen",
+        "pk_many": "{n}+ bestanden",
+        "pg_choose": "Mappen kiezen",
+        "pg_remove": "Verwijderen",
+        "pk_this": "Deze map selecteren"
       }
     },
     "battery_type": {
