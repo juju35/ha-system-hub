@@ -215,6 +215,9 @@ async def test_settings_step_refuses_the_configuration_folder(hass: HomeAssistan
     )
     assert result["type"] is FlowResultType.CREATE_ENTRY
     assert entry.options["purge"] == {"directories": ["mcp_backups", "tmp/exports"], "max_age": 14}
+    # The reload the new options start, done before the test ends (its purger's timer stopped with the entry)
+    await hass.async_block_till_done()
+    assert await hass.config_entries.async_unload(entry.entry_id)
 
 
 async def test_panel_scans_without_deleting(hass: HomeAssistant, hass_ws_client, config: Path) -> None:
