@@ -5,4 +5,4 @@
  * Served and added to the dashboard resources by System Hub.
  * https://github.com/juju35/ha-system-hub
  */
-export var INTEGRATION_WATCHDOG_CARD_VERSION = '2.11.0';
+export var INTEGRATION_WATCHDOG_CARD_VERSION = '3.15.3';

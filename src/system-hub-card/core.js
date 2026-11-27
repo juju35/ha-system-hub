@@ -7,7 +7,7 @@
 // unchanged. The status cards show the Status tab of the panel: they read it with the panel's own code (its module,
 // without showing it), as the sidebar icon does, so the three always agree. Administrators only, as the panel.
 
-export var SYSTEM_HUB_CARD_VERSION = '2.11.0';
+export var SYSTEM_HUB_CARD_VERSION = '3.15.3';
 export var SH_CARD_MODULES = ['status', 'system', 'security', 'watchdog', 'marketplace', 'batteries', 'git_sync', 'automations', 'orphans'];
 export var SH_MINI_MODULES = ['status', 'system', 'security', 'watchdog', 'batteries', 'git_sync', 'automations', 'orphans'];
 export var SH_CARD_GROUPS = ['system', 'security', 'reliability', 'maintenance', 'devices'];

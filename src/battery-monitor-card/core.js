@@ -4,4 +4,4 @@
  * Served and added to the dashboard resources by System Hub; the card types are those of Battery Monitor, so its
  * dashboards keep working. https://github.com/juju35/ha-system-hub
  */
-export var BATTERY_MONITOR_CARD_VERSION = '2.11.0';
+export var BATTERY_MONITOR_CARD_VERSION = '3.15.3';
