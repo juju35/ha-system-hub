@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ souborů",
         "pg_choose": "Vybrat složky",
         "pg_remove": "Odebrat",
-        "pk_this": "Vybrat tuto složku"
+        "pk_this": "Vybrat tuto složku",
+        "panel_outdated": "System Hub byl aktualizován na {version}, zatímco byla tato stránka otevřená: znovu ji načtěte, abyste použili nový panel.",
+        "panel_reload": "Znovu načíst stránku"
       }
     },
     "battery_type": {

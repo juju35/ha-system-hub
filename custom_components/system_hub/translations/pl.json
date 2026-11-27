@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ plików",
         "pg_choose": "Wybierz foldery",
         "pg_remove": "Usuń",
-        "pk_this": "Zaznacz ten folder"
+        "pk_this": "Zaznacz ten folder",
+        "panel_outdated": "System Hub został zaktualizowany do {version}, gdy ta strona była otwarta: odśwież ją, aby użyć nowego panelu.",
+        "panel_reload": "Odśwież stronę"
       }
     },
     "battery_type": {

@@ -50,6 +50,7 @@ from .const import (
     SOURCE_PANEL,
     TAB_STATUS,
     TAB_SYSTEM,
+    VERSION,
 )
 from .containers.flow import stoppable_processes
 from .database import database_state
@@ -546,6 +547,8 @@ def ws_state(hass: HomeAssistant, connection: websocket_api.ActiveConnection, ms
     data = entry.runtime_data
     result: dict[str, Any] = {
         "loaded": True,
+        # The version running on the server: a panel of another version (loaded before an update) offers a reload
+        "version": VERSION,
         "entry_id": entry.entry_id,
         "modules": enabled_modules(entry),
         "tabs": tab_order(dict(entry.options)),

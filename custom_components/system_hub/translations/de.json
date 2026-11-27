@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ Dateien",
         "pg_choose": "Ordner wählen",
         "pg_remove": "Entfernen",
-        "pk_this": "Diesen Ordner wählen"
+        "pk_this": "Diesen Ordner wählen",
+        "panel_outdated": "System Hub wurde auf {version} aktualisiert, während diese Seite geöffnet war: Laden Sie sie neu, um das neue Panel zu verwenden.",
+        "panel_reload": "Seite neu laden"
       }
     },
     "battery_type": {

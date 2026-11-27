@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ datotek",
         "pg_choose": "Izberi mape",
         "pg_remove": "Odstrani",
-        "pk_this": "Izberi to mapo"
+        "pk_this": "Izberi to mapo",
+        "panel_outdated": "System Hub je bil posodobljen na {version}, medtem ko je bila ta stran odprta: znova jo naložite za uporabo nove plošče.",
+        "panel_reload": "Znova naloži stran"
       }
     },
     "battery_type": {

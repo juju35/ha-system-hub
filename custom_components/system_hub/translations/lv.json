@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ faili",
         "pg_choose": "Izvēlēties mapes",
         "pg_remove": "Noņemt",
-        "pk_this": "Izvēlēties šo mapi"
+        "pk_this": "Izvēlēties šo mapi",
+        "panel_outdated": "System Hub tika atjaunināts uz {version}, kamēr šī lapa bija atvērta: pārlādējiet to, lai izmantotu jauno paneli.",
+        "panel_reload": "Pārlādēt lapu"
       }
     },
     "battery_type": {

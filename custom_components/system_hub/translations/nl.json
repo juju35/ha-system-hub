@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ bestanden",
         "pg_choose": "Mappen kiezen",
         "pg_remove": "Verwijderen",
-        "pk_this": "Deze map selecteren"
+        "pk_this": "Deze map selecteren",
+        "panel_outdated": "System Hub is bijgewerkt naar {version} terwijl deze pagina open was: herlaad de pagina om het nieuwe paneel te gebruiken.",
+        "panel_reload": "Pagina herladen"
       }
     },
     "battery_type": {

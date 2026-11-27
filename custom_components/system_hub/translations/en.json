@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ files",
         "pg_choose": "Choose folders",
         "pg_remove": "Remove",
-        "pk_this": "Select this folder"
+        "pk_this": "Select this folder",
+        "panel_outdated": "System Hub was updated to {version} while this page was open: reload it to use the new panel.",
+        "panel_reload": "Reload the page"
       }
     },
     "battery_type": {
