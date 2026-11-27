@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ filer",
         "pg_choose": "Vælg mapper",
         "pg_remove": "Fjern",
-        "pk_this": "Vælg denne mappe"
+        "pk_this": "Vælg denne mappe",
+        "panel_outdated": "System Hub blev opdateret til {version}, mens denne side var åben: genindlæs den for at bruge det nye panel.",
+        "panel_reload": "Genindlæs siden"
       }
     },
     "battery_type": {

@@ -2384,3 +2384,14 @@ test('the top bar Settings cog opens the Settings tab', () => {
   p._onClick({ target: { closest: (sel) => (sel === '[data-action]' ? { dataset: { action: 'go_settings' } } : null) } });
   assert.equal(went, 'settings');
 });
+
+test('a panel loaded before an update offers to reload the page', () => {
+  const state = { loaded: true, modules: [], tabs: [], system: [] };
+  const p = panel({ ...state, version: SystemHubPanel.VERSION }, 'system');
+  assert.doesNotMatch(p._content(), /shstale/);
+  const old = panel({ ...state, version: '99.0.0' }, 'system');
+  const html = old._content();
+  assert.match(html, /class="note warn shstale"/);
+  assert.match(html, /99\.0\.0/);
+  assert.match(html, /data-action="page_reload"/);
+});

@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ fișiere",
         "pg_choose": "Alege folderele",
         "pg_remove": "Elimină",
-        "pk_this": "Selectează acest folder"
+        "pk_this": "Selectează acest folder",
+        "panel_outdated": "System Hub a fost actualizat la {version} cât timp această pagină era deschisă: reîncărcați-o pentru a folosi noul panou.",
+        "panel_reload": "Reîncarcă pagina"
       }
     },
     "battery_type": {

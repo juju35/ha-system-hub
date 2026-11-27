@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ súborov",
         "pg_choose": "Vybrať priečinky",
         "pg_remove": "Odobrať",
-        "pk_this": "Vybrať tento priečinok"
+        "pk_this": "Vybrať tento priečinok",
+        "panel_outdated": "System Hub bol aktualizovaný na {version}, kým bola táto stránka otvorená: znovu ju načítajte, aby ste použili nový panel.",
+        "panel_reload": "Znovu načítať stránku"
       }
     },
     "battery_type": {

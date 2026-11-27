@@ -2003,7 +2003,9 @@
         "pk_many": "Datoteka: {n}+",
         "pg_choose": "Izaberi fascikle",
         "pg_remove": "Ukloni",
-        "pk_this": "Izaberi ovu fasciklu"
+        "pk_this": "Izaberi ovu fasciklu",
+        "panel_outdated": "System Hub je ažuriran na {version} dok je ova stranica bila otvorena: ponovo je učitajte da biste koristili novi panel.",
+        "panel_reload": "Ponovo učitaj stranicu"
       }
     },
     "battery_type": {

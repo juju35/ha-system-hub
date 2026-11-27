@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.16.1 - 2026-11-27
+
+### Fixes
+- **Panel**: a panel loaded before an update of System Hub (the page left open while Home Assistant restarted) no longer runs on unnoticed — it shows that System Hub was updated, with **Reload the page**. An old panel could drop the settings it did not know, such as turning on a new module.
+
 ## 3.16.0 - 2026-11-27
 
 ### Features

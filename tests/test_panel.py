@@ -11,7 +11,7 @@ from homeassistant.setup import async_setup_component
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.system_hub.config_flow import SystemHubOptionsFlow
-from custom_components.system_hub.const import CONF_MODULES, DOMAIN
+from custom_components.system_hub.const import CONF_MODULES, DOMAIN, VERSION
 from custom_components.system_hub.panel import PANEL_PATH, tab_order
 
 from .conftest import add_battery
@@ -118,6 +118,7 @@ async def test_state_gathers_the_modules(hass: HomeAssistant, hass_ws_client) ->
     result = (await client.receive_json())["result"]
     assert result["loaded"] is True
     assert result["modules"] == ["watchdog", "batteries"]
+    assert result["version"] == VERSION
     assert result["tabs"] == [
         "status",
         "system",

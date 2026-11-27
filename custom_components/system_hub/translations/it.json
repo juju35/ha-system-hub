@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ file",
         "pg_choose": "Scegli cartelle",
         "pg_remove": "Rimuovi",
-        "pk_this": "Seleziona questa cartella"
+        "pk_this": "Seleziona questa cartella",
+        "panel_outdated": "System Hub è stato aggiornato alla {version} mentre questa pagina era aperta: ricaricala per usare il nuovo pannello.",
+        "panel_reload": "Ricarica la pagina"
       }
     },
     "battery_type": {

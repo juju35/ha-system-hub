@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ fájl",
         "pg_choose": "Mappák kiválasztása",
         "pg_remove": "Eltávolítás",
-        "pk_this": "Ennek a mappának a kiválasztása"
+        "pk_this": "Ennek a mappának a kiválasztása",
+        "panel_outdated": "A System Hub {version} verzióra frissült, miközben ez az oldal nyitva volt: töltse újra az új panel használatához.",
+        "panel_reload": "Oldal újratöltése"
       }
     },
     "battery_type": {

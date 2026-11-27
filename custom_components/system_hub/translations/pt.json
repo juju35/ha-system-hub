@@ -2003,7 +2003,9 @@
         "pk_many": "{n}+ ficheiros",
         "pg_choose": "Escolher pastas",
         "pg_remove": "Remover",
-        "pk_this": "Selecionar esta pasta"
+        "pk_this": "Selecionar esta pasta",
+        "panel_outdated": "O System Hub foi atualizado para {version} enquanto esta página estava aberta: recarregue-a para usar o novo painel.",
+        "panel_reload": "Recarregar a página"
       }
     },
     "battery_type": {

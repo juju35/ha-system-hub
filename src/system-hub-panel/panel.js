@@ -64,6 +64,9 @@ export class SystemHubPanel extends HTMLElement {
     main { max-width:1040px; margin:0 auto; padding:16px; box-sizing:border-box; display:flex; flex-direction:column; gap:12px; }
     .note { padding:16px; color:var(--secondary-text-color); display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
     .note.error { color:var(--primary-text-color); border-left:3px solid var(--tone-bad); }
+    .note.shstale { flex-direction:row; flex-wrap:wrap; align-items:center; margin-bottom:12px; color:var(--primary-text-color);
+                    border-left:3px solid var(--tone-warn); }
+    .note.shstale > ha-icon { color:var(--tone-warn); }
     .tiles { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px; }
     .tile { position:relative; overflow:hidden; padding:12px 14px; display:flex; align-items:center; gap:12px; min-width:0; }
     .tile.link { cursor:pointer; }
@@ -1081,6 +1084,11 @@ export class SystemHubPanel extends HTMLElement {
     }
     if (this._state === null) return `<ha-card class="note">${this._spinner(this._t('loading'))}</ha-card>`;
     if (!this._state.loaded) return `<ha-card class="note">${shEsc(this._t('not_loaded'))}</ha-card>`;
+    // Updated while this page was open: the panel shown is still the one loaded before, until the page is reloaded
+    var stale = this._state.version && this._state.version !== SYSTEM_HUB_PANEL_VERSION
+      ? `<ha-card class="note warn shstale" role="alert"><ha-icon icon="mdi:update"></ha-icon><span class="grow">${shEsc(this._t('panel_outdated', { version: this._state.version }))}</span>
+        <button class="act" data-action="page_reload"><ha-icon icon="mdi:refresh"></ha-icon>${shEsc(this._t('panel_reload'))}</button></ha-card>`
+      : '';
     var html = {
       status: () => this._status(),
       system: () => this._system(),
@@ -1102,7 +1110,7 @@ export class SystemHubPanel extends HTMLElement {
       orphans: () => this._orphans(),
       settings: () => this._settings(),
     }[this._tab];
-    return html ? html() : '';
+    return stale + (html ? html() : '');
   }
 
   _message(key) {
@@ -3470,6 +3478,7 @@ export class SystemHubPanel extends HTMLElement {
       if (handled !== false) return handled;
     }
     if (action === 'reload') return this._load();
+    if (action === 'page_reload') return location.reload();
     if (action === 'go_settings') return this._goTab('settings');
     if (action === 'cancel' || action === 'confirm_install') {
       this._haCheck = null;
